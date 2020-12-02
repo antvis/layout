@@ -1,0 +1,81 @@
+{
+  "name": "@antv/layout",
+  "version": "0.0.1",
+  "description": "graph layout algorithm",
+  "main": "lib/index.js",
+  "module": "es/index.js",
+  "types": "lib/index.d.ts",
+  "files": [
+    "es",
+    "lib"
+  ],
+  "keywords": [
+    "graph",
+    "layout",
+    "algorithm",
+    "antv"
+  ],
+  "scripts": {
+    "clean": "rimraf es lib",
+    "lint:es": "eslint --ext .js --fix",
+    "lint:ts": "tslint -c tslint.json -p tsconfig.json --fix",
+    "lint": "yarn run lint:ts && yarn run lint:es",
+    "build:esm": "tsc --module esnext --target es2015 --outDir ./es",
+    "build:cjs": "tsc --module commonjs --target es5 --outDir ./lib",
+    "build": "yarn run build:cjs && yarn run build:esm",
+    "build:watch": "yarn build:esm --w",
+    "precommit": "lint-staged",
+    "release": "release-it"
+  },
+  "lint-staged": {
+    "*.js": [
+      "eslint --fix"
+    ],
+    "src/**/*.ts": [
+      "tslint -c tslint.json -p ./tsconfig.json --fix"
+    ]
+  },
+  "dependencies": {
+    "d3-force": "^2.0.1",
+    "dagre": "^0.8.5",
+    "ml-matrix": "^6.5.0"
+  },
+  "devDependencies": {
+    "@types/d3-force": "^2.1.0",
+    "@types/dagre": "^0.7.44",
+    "eslint": "^7.11.0",
+    "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-config-prettier": "^6.7.0",
+    "eslint-plugin-import": "^2.18.2",
+    "lint-staged": "^10.2.2",
+    "rimraf": "^3.0.0",
+    "tslint": "^6.1.3",
+    "tslint-config-airbnb": "^5.11.2",
+    "tslint-config-prettier": "^1.18.0",
+    "tslint-eslint-rules": "^5.4.0",
+    "typescript": "^4.0.3",
+    "release-it": "^14.0.1"
+  },
+  "release-it": {
+    "git": {
+      "commitMessage": ":sparkles: Release ${version}"
+    },
+    "github": {
+      "release": true
+    }
+  },
+  "contributors": [],
+  "license": "MIT",
+  "homepage": "https://github.com/antvis/layout",
+  "bugs": {
+    "url": "https://github.com/antvis/layout/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/antvis/layout.git"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
+  }
+}
