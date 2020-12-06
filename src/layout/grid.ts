@@ -8,6 +8,11 @@ import { isString, isArray, isNumber, getDegree, isNaN } from '../util'
 import { Base } from './base'
 import { Node, Edge, PointTuple, IndexMap } from './types'
 
+type INode = Node & {
+  degree: number,
+  size: number | PointTuple
+}
+
 /**
  * 网格布局
  */
@@ -31,14 +36,14 @@ export class GridLayout extends Base {
   public cols: number | undefined
 
   /** returns { row, col } for element */
-  public position: ((node: Node) => { row: number; col: number }) | undefined
+  public position: ((node: INode) => { row: number; col: number }) | undefined
 
   /** a sorting function to order the nodes; e.g. function(a, b){ return a.datapublic ('weight') - b.data('weight') } */
   public sortBy: string = 'degree'
 
   public nodeSize: number | number[] = 30
 
-  public nodes: Node[] = []
+  public nodes: INode[] = []
 
   public edges: Edge[] = []
 
@@ -74,6 +79,11 @@ export class GridLayout extends Base {
     }
   } = {}
 
+  constructor(options?: GridLayout.GridLayoutOptions) {
+    super()
+    this.updateCfg(options)
+  }
+
   public getDefaultCfg() {
     return {
       begin: [0, 0],
@@ -106,7 +116,7 @@ export class GridLayout extends Base {
     }
 
     const edges = self.edges
-    const layoutNodes: Node[] = []
+    const layoutNodes: INode[] = []
     nodes.forEach((node) => {
       layoutNodes.push(node)
     })
@@ -278,6 +288,8 @@ export class GridLayout extends Base {
       }
       self.getPos(node)
     }
+
+    return layoutNodes
   }
 
   private small(val?: number): number | undefined {
@@ -336,7 +348,7 @@ export class GridLayout extends Base {
     }
   }
 
-  private getPos(node: Node) {
+  private getPos(node: INode) {
     const self = this
     const begin = self.begin
     const cellWidth = self.cellWidth
@@ -369,7 +381,7 @@ export class GridLayout extends Base {
 
 export namespace GridLayout {
   export interface GridLayoutOptions {
-    name: 'grid'
+    type: 'grid'
     center?: PointTuple
     width?: number
     height?: number

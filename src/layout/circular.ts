@@ -7,8 +7,16 @@ import { Node, Edge, PointTuple, IndexMap } from './types'
 import { Base } from './base'
 import { getDegree, clone } from '../util'
 
+type INode = Node & {
+  degree: number,
+  size: number | PointTuple,
+  weight: number,
+  children: string[],
+  parent: string[]
+}
+
 function initHierarchy(
-  nodes: Node[],
+  nodes: INode[],
   edges: Edge[],
   nodeMap: IndexMap,
   directed: boolean,
@@ -50,7 +58,7 @@ function initHierarchy(
   }
 }
 
-function connect(a: Node, b: Node, edges: Edge[]) {
+function connect(a: INode, b: INode, edges: Edge[]) {
   const m = edges.length
   for (let i = 0; i < m; i++) {
     if (
@@ -63,7 +71,7 @@ function connect(a: Node, b: Node, edges: Edge[]) {
   return false
 }
 
-function compareDegree(a: Node, b: Node) {
+function compareDegree(a: INode, b: INode) {
   const aDegree = a.degree!
   const bDegree = b.degree!
   if (aDegree < bDegree) {
@@ -109,7 +117,7 @@ export class CircularLayout extends Base {
   /** how many 2*pi from first to last nodes */
   public angleRatio = 1
 
-  public nodes: Node[] = []
+  public nodes: INode[] = []
 
   public edges: Edge[] = []
 
@@ -120,6 +128,11 @@ export class CircularLayout extends Base {
   public width: number = 300
 
   public height: number = 300
+
+  constructor(options?: CircularLayout.CircularLayoutOptions) {
+    super()
+    this.updateCfg(options)
+  }
 
   public getDefaultCfg() {
     return {
@@ -226,6 +239,8 @@ export class CircularLayout extends Base {
       layoutNodes[i].y = center[1] + Math.sin(angle) * r
       layoutNodes[i].weight = degrees[i]
     }
+
+    return layoutNodes
   }
 
   /**
@@ -294,10 +309,10 @@ export class CircularLayout extends Base {
    * 根据节点度数大小排序
    * @return {array} orderedNodes 排序后的结果
    */
-  public degreeOrdering(): Node[] {
+  public degreeOrdering(): INode[] {
     const self = this
     const nodes = self.nodes
-    const orderedNodes: Node[] = []
+    const orderedNodes: INode[] = []
     const degrees = self.degrees
     nodes.forEach((node, i) => {
       node.degree = degrees[i]
@@ -310,7 +325,7 @@ export class CircularLayout extends Base {
 
 export namespace CircularLayout {
   export interface CircularLayoutOptions {
-    name: 'circular'
+    type: 'circular'
     center?: PointTuple
     width?: number
     height?: number

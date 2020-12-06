@@ -1,6 +1,6 @@
 import * as d3Force from 'd3-force'
 
-interface Node {
+interface INode {
   id: string
   x: number
   y: number
@@ -8,7 +8,6 @@ interface Node {
   vy: number
   cluster: any
 }
-interface Link {}
 
 // https://github.com/john-guerra/forceInABox/blob/master/src/forceInABox.js
 export default function forceInABox() {
@@ -16,7 +15,7 @@ export default function forceInABox() {
     return () => _
   }
 
-  let groupBy = (d: Node) => {
+  let groupBy = (d: INode) => {
     return d.cluster
   }
   let forceNodeSize: (() => number) | ((d: any) => number) = constant(1)
@@ -25,9 +24,9 @@ export default function forceInABox() {
   let forceLinkStrength: (() => number) | ((d: any) => number) = constant(0.1)
   let offset = [0, 0]
 
-  let nodes: Node[] = []
+  let nodes: INode[] = []
   let nodesMap: any = {}
-  let links: Link[] = []
+  let links: any[] = []
   let centerX = 100
   let centerY = 100
   let foci: any = {
@@ -36,7 +35,7 @@ export default function forceInABox() {
       y: 0,
     },
   }
-  let templateNodes: Node[] = []
+  let templateNodes: INode[] = []
   let templateForce: any
   let template = 'force'
   let enableGrouping = true

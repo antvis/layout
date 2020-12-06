@@ -38,6 +38,11 @@ export class DagreLayout extends Base {
   /** 每层节点是否根据节点数据中的 comboId 进行排序，以放置同层 combo 重叠 */
   public sortByCombo: boolean = false
 
+  constructor(options?: DagreLayout.DagreLayoutOptions) {
+    super()
+    this.updateCfg(options)
+  }
+
   public getDefaultCfg() {
     return {
       rankdir: 'TB', // layout 方向, 可选 TB, BT, LR, RL
@@ -119,6 +124,8 @@ export class DagreLayout extends Base {
     if (self.sortByCombo) {
       self.sortLevel('comboId')
     }
+
+    return nodes
   }
 
   public sortLevel(propertyName: string) {
@@ -191,7 +198,7 @@ function getFunc(
 
 export namespace DagreLayout {
   export interface DagreLayoutOptions {
-    name: 'dagre'
+    type: 'dagre'
     rankdir?: 'TB' | 'BT' | 'LR' | 'RL'
     align?: 'UL' | 'UR' | 'DL' | 'DR'
     nodesep?: number

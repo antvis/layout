@@ -1,12 +1,6 @@
-import { Matrix, Model } from '../layout/types'
+import { Matrix, Model, IndexMap, Edge } from '../layout/types'
 
-export const getDegree = (
-  n: number,
-  nodeIdxMap: {
-    [key: string]: number
-  },
-  edges: any[],
-): number[] => {
+export const getDegree = (n: number, nodeIdxMap: IndexMap, edges: Edge[]) => {
   const degrees: number[] = []
   for (let i = 0; i < n; i++) {
     degrees[i] = 0

@@ -9,6 +9,10 @@ import { Base } from '../base'
 import MDS from './mds'
 import RadialNonoverlapForce, { RadialNonoverlapForceParam } from './radialNonoverlapForce'
 
+type INode = Node & {
+  size?: number | PointTuple
+}
+
 function getWeightMatrix(M: Matrix[]) {
   const rows = M.length
   const cols = M[0].length
@@ -93,6 +97,11 @@ export class RadialLayout extends Base {
 
   private radii: number[] | undefined
 
+  constructor(options?: RadialLayout.RadialLayoutOptions) {
+    super()
+    this.updateCfg(options)
+  }
+
   public getDefaultCfg() {
     return {
       center: [0, 0],
@@ -128,7 +137,7 @@ export class RadialLayout extends Base {
     }
     const linkDistance = self.linkDistance
     // layout
-    let focusNode: Node | null = null
+    let focusNode: INode | null = null
     if (isString(self.focusNode)) {
       let found = false
       for (let i = 0; i < nodes.length; i++) {
@@ -143,7 +152,7 @@ export class RadialLayout extends Base {
         focusNode = null
       }
     } else {
-      focusNode = self.focusNode as Node
+      focusNode = self.focusNode as INode
     }
     // default focus node
     if (!focusNode) {
@@ -238,7 +247,7 @@ export class RadialLayout extends Base {
         nodeSpacingFunc = () => 0
       }
       if (!nodeSize) {
-        nodeSizeFunc = (d: Node) => {
+        nodeSizeFunc = (d: INode) => {
           if (d.size) {
             if (isArray(d.size)) {
               const res = d.size[0] > d.size[1] ? d.size[0] : d.size[1]
@@ -249,12 +258,12 @@ export class RadialLayout extends Base {
           return 10 + nodeSpacingFunc(d)
         }
       } else if (isArray(nodeSize)) {
-        nodeSizeFunc = (d: Node) => {
+        nodeSizeFunc = (d: INode) => {
           const res = nodeSize[0] > nodeSize[1] ? nodeSize[0] : nodeSize[1]
           return res + nodeSpacingFunc(d)
         }
       } else {
-        nodeSizeFunc = (d: Node) => nodeSize + nodeSpacingFunc(d)
+        nodeSizeFunc = (d: INode) => nodeSize + nodeSpacingFunc(d)
       }
       const nonoverlapForceParams: RadialNonoverlapForceParam = {
         nodes,
@@ -277,6 +286,8 @@ export class RadialLayout extends Base {
       nodes[i].x = p[0] + center[0]
       nodes[i].y = p[1] + center[1]
     })
+
+    return nodes
   }
 
   public run() {
@@ -437,7 +448,7 @@ export class RadialLayout extends Base {
 
 export namespace RadialLayout {
   export interface RadialLayoutOptions {
-    name: 'radial'
+    type: 'radial'
     center?: PointTuple
     width?: number
     height?: number
@@ -446,10 +457,10 @@ export namespace RadialLayout {
     focusNode?: string | Node | null
     unitRadius?: number | null
     preventOverlap?: boolean
-    nodeSize?: number
+    nodeSize?: number | undefined
     nodeSpacing?: number | Function | undefined
     maxPreventOverlapIteration?: number
-    strictRadial?: number
+    strictRadial?: boolean
     sortBy?: string | undefined
     sortStrength?: number
     workerEnabled?: boolean

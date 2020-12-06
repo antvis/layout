@@ -2,11 +2,6 @@ export interface Node {
   id: string
   x: number
   y: number
-  degree?: number
-  size?: number | PointTuple
-  children?: string[]
-  parent?: string[]
-  weight?: number
 }
 
 export interface Edge {

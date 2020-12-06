@@ -19,6 +19,11 @@ export class RandomLayout extends Base {
   /** 高度 */
   public height: number = 300
 
+  constructor(options?: RandomLayout.RandomLayoutOptions) {
+    super()
+    this.updateCfg(options)
+  }
+
   public getDefaultCfg() {
     return {
       center: [0, 0],
@@ -48,12 +53,14 @@ export class RandomLayout extends Base {
         node.y = (Math.random() - 0.5) * layoutScale * self.height + center[1]
       })
     }
+
+    return nodes
   }
 }
 
 export namespace RandomLayout {
   export interface RandomLayoutOptions {
-    name: 'random'
+    type: 'random'
     center?: PointTuple
     width?: number
     height?: number

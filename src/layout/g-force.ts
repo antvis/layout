@@ -3,17 +3,17 @@
  * @author shiwu.wyy@antfin.com
  */
 
-import { Node, Edge, PointTuple, IndexMap } from './types'
+import { Node, Edge, PointTuple, IndexMap, Point } from './types'
 import { Base } from './base'
 import { isNumber, isFunction, isArray, getDegree } from '../util'
 
-type NodeMap = {
-  [key: string]: Node
+
+type INode = Node & {
+  size: number | PointTuple
 }
 
-interface Point {
-  x: number
-  y: number
+type NodeMap = {
+  [key: string]: INode
 }
 
 const proccessToFunc = (
@@ -96,7 +96,7 @@ export class GForceLayout extends Base {
   /** 是否允许每次迭代结束调用回调函数 */
   public enableTick: boolean
 
-  public nodes: Node[] = []
+  public nodes: INode[] = []
 
   public edges: Edge[] = []
 
@@ -117,6 +117,11 @@ export class GForceLayout extends Base {
 
   /** 迭代中的标识 */
   private timeInterval: number
+
+  constructor(options?: GForceLayout.GForceLayoutOptions) {
+    super()
+    this.updateCfg(options)
+  }
 
   public getDefaultCfg() {
     return {
@@ -176,7 +181,7 @@ export class GForceLayout extends Base {
         nodeSpacingFunc = () => 0
       }
       if (!nodeSize) {
-        nodeSizeFunc = (d: Node) => {
+        nodeSizeFunc = (d: INode) => {
           if (d.size) {
             if (isArray(d.size)) {
               const res = d.size[0] > d.size[1] ? d.size[0] : d.size[1]
@@ -187,12 +192,12 @@ export class GForceLayout extends Base {
           return 10 + nodeSpacingFunc(d)
         }
       } else if (isArray(nodeSize)) {
-        nodeSizeFunc = (d: Node) => {
+        nodeSizeFunc = (d: INode) => {
           const res = nodeSize[0] > nodeSize[1] ? nodeSize[0] : nodeSize[1]
           return res + nodeSpacingFunc(d)
         }
       } else {
-        nodeSizeFunc = (d: Node) => (nodeSize as number) + nodeSpacingFunc(d)
+        nodeSizeFunc = (d: INode) => (nodeSize as number) + nodeSpacingFunc(d)
       }
     }
     self.nodeSize = nodeSizeFunc
@@ -264,7 +269,7 @@ export class GForceLayout extends Base {
     if (self.onLayoutEnd) self.onLayoutEnd()
   }
 
-  public calRepulsive(accArray: number[], nodes: Node[]) {
+  public calRepulsive(accArray: number[], nodes: INode[]) {
     const self = this
     // const nodes = self.nodes;
     const getMass = self.getMass
@@ -273,7 +278,7 @@ export class GForceLayout extends Base {
     const coulombDisScale = self.coulombDisScale
     const preventOverlap = self.preventOverlap
     const nodeSize = self.nodeSize as Function
-    nodes.forEach((ni: Node, i) => {
+    nodes.forEach((ni: INode, i) => {
       const massi = getMass ? getMass(ni) : 1
       nodes.forEach((nj, j) => {
         if (i >= j) return
@@ -334,7 +339,7 @@ export class GForceLayout extends Base {
     })
   }
 
-  public calGravity(accArray: number[], nodes: Node[]) {
+  public calGravity(accArray: number[], nodes: INode[]) {
     const self = this
     // const nodes = self.nodes;
     const center = self.center
@@ -371,7 +376,7 @@ export class GForceLayout extends Base {
     accArray: number[],
     velArray: number[],
     stepInterval: number,
-    nodes: Node[],
+    nodes: INode[],
   ) {
     const self = this
     const param = stepInterval * self.damping
@@ -393,7 +398,7 @@ export class GForceLayout extends Base {
   public updatePosition(
     velArray: number[],
     stepInterval: number,
-    nodes: Node[],
+    nodes: INode[],
   ) {
     nodes.forEach((node, i) => {
       const distX = velArray[2 * i] * stepInterval
@@ -412,7 +417,7 @@ export class GForceLayout extends Base {
 
 export namespace GForceLayout {
   export interface GForceLayoutOptions {
-    name: 'gForce'
+    type: 'gForce'
     center?: PointTuple
     width?: number
     height?: number
@@ -425,11 +430,14 @@ export namespace GForceLayout {
     minMovement?: number
     maxIteration?: number
     damping?: number
+    maxSpeed?: number
     coulombDisScale?: number
     getMass?: ((d?: any) => number) | undefined
     getCenter?: ((d?: any, degree?: number) => number[]) | undefined
     gravity?: number
     tick?: () => void
+    onLayoutEnd?: () => void
     workerEnabled?: boolean
+    gpuEnabled?: boolean
   }
 }

@@ -7,9 +7,9 @@ export class Base {
   public positions: PointTuple[] | null = []
   public destroyed: boolean = false
 
-  public layout(data: Model) {
+  public layout(data: Model): Model {
     this.init(data)
-    this.execute()
+    return this.execute()
   }
 
   public init(data: Model) {
@@ -18,14 +18,16 @@ export class Base {
     this.combos = data.combos || []
   }
 
-  public execute() {}
+  public execute(): any {}
   public executeWithWorker() {}
   public getDefaultCfg() {
     return {}
   }
 
   public updateCfg(cfg: any) {
-    Object.assign(this, cfg)
+    if (cfg) {
+      Object.assign(this, cfg)
+    }
   }
 
   public destroy() {

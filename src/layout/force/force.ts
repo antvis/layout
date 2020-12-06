@@ -4,7 +4,6 @@
  */
 
 import { Edge, Model, PointTuple } from '../types'
-
 import * as d3Force from 'd3-force'
 import forceInABox from './force-in-a-box'
 import { isArray, isFunction, isNumber } from '../../util'
@@ -14,7 +13,7 @@ import { LAYOUT_MESSAGE } from '../worker/layoutConst'
 /**
  * 经典力导布局 force-directed
  */
-export class ForceLayout<Cfg = any> extends Base {
+export class ForceLayout extends Base {
   /** 向心力作用点 */
   public center: PointTuple = [0, 0]
 
@@ -86,6 +85,13 @@ export class ForceLayout<Cfg = any> extends Base {
   private edgeForce: any
 
   private clusterForce: any
+
+  constructor(options?: ForceLayout.ForceLayoutOptions) {
+    super()
+    if (options) {
+      this.updateCfg(options)
+    }
+  }
 
   public getDefaultCfg() {
     return {
@@ -328,14 +334,14 @@ export class ForceLayout<Cfg = any> extends Base {
    * 更新布局配置，但不执行布局
    * @param {object} cfg 需要更新的配置项
    */
-  public updateCfg(cfg: Partial<Cfg>) {
+  public updateCfg(cfg: ForceLayout.ForceLayoutOptions) {
     const self = this
     if (self.ticking) {
       self.forceSimulation.stop()
       self.ticking = false
     }
     self.forceSimulation = null
-    Object.assign(self as any, cfg)
+    Object.assign(self, cfg)
   }
 
   public destroy() {
@@ -374,7 +380,7 @@ function isInWorker(): boolean {
 
 export namespace ForceLayout {
   export interface ForceLayoutOptions {
-    name: 'force'
+    type: 'force'
     center?: PointTuple
     width?: number
     height?: number
@@ -396,6 +402,7 @@ export namespace ForceLayout {
     clusterFociStrength?: number
     forceSimulation?: any
     tick?: () => void
+    onLayoutEnd?: () => void
     workerEnabled?: boolean
   }
 }
