@@ -38,6 +38,15 @@ registLayout('circular', CircularLayout)
 registLayout('dagre', DagreLayout)
 registLayout('radial', RadialLayout)
 
+export type LayoutTypes =
+  | 'grid'
+  | 'random'
+  | 'gForce'
+  | 'force'
+  | 'circular'
+  | 'dagre'
+  | 'radial'
+
 export type LayoutOptions =
   | GridLayout.GridLayoutOptions
   | RandomLayout.RandomLayoutOptions
