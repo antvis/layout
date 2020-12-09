@@ -62,6 +62,11 @@
     },
     "github": {
       "release": true
+    },
+    "hooks": {
+      "before:init": [
+        "yarn run build"
+      ]
     }
   },
   "contributors": [],
