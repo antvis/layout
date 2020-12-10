@@ -25,7 +25,8 @@
     "build": "yarn run build:cjs && yarn run build:esm",
     "build:watch": "yarn build:esm --w",
     "precommit": "lint-staged",
-    "release": "release-it"
+    "release": "release-it",
+    "test": "jest"
   },
   "lint-staged": {
     "*.js": [
@@ -47,14 +48,20 @@
     "eslint-config-airbnb-base": "^14.0.0",
     "eslint-config-prettier": "^6.7.0",
     "eslint-plugin-import": "^2.18.2",
+    "@babel/core": "*",
+    "@babel/preset-env": "*",
+    "@babel/preset-typescript": "*",
+    "@types/jest": "*",
+    "babel-jest": "*",
+    "jest": "*",
     "lint-staged": "^10.2.2",
+    "release-it": "^14.0.1",
     "rimraf": "^3.0.0",
     "tslint": "^6.1.3",
     "tslint-config-airbnb": "^5.11.2",
     "tslint-config-prettier": "^1.18.0",
     "tslint-eslint-rules": "^5.4.0",
-    "typescript": "^4.0.3",
-    "release-it": "^14.0.1"
+    "typescript": "^4.0.3"
   },
   "release-it": {
     "git": {
@@ -65,6 +72,7 @@
     },
     "hooks": {
       "before:init": [
+        "yarn run test",
         "yarn run build"
       ]
     }

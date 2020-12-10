@@ -1,9 +1,5 @@
 {
-  "exclude": [
-      "node_modules",
-      "**/es",
-      "**/lib"
-  ],
+  "include": ["src"],
   "compilerOptions": {
     "module": "commonjs",
     "moduleResolution": "node",
