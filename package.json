@@ -54,6 +54,8 @@
     "@types/jest": "*",
     "babel-jest": "*",
     "jest": "*",
+    "jest-electron": "^0.1.7",
+    "ts-jest": "^24.1.0",
     "lint-staged": "^10.2.2",
     "release-it": "^14.0.1",
     "rimraf": "^3.0.0",

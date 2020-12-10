@@ -1,4 +1,4 @@
-import { Layout } from '../es'
+import { Layout } from '../src'
 
 describe('#GridLayout', () => {
   it('return correct default config', () => {
