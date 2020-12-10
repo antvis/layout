@@ -3,12 +3,12 @@
  * @author shiwu.wyy@antfin.com
  */
 
-import { Node, Edge, PointTuple, IndexMap, Point } from './types'
+import { OutNode, Edge, PointTuple, IndexMap, Point } from './types'
 import { Base } from './base'
 import { isNumber, isFunction, isArray, getDegree } from '../util'
 
 
-type INode = Node & {
+type INode = OutNode & {
   size: number | PointTuple
 }
 

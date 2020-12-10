@@ -380,7 +380,7 @@ function isInWorker(): boolean {
 
 export namespace ForceLayout {
   export interface ForceLayoutOptions {
-    type: 'force'
+    type?: 'force'
     center?: PointTuple
     width?: number
     height?: number

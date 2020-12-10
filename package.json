@@ -28,7 +28,7 @@
     "release": "release-it",
     "test": "jest",
     "coverage": "jest --coverage",
-    "test-live": "DEBUG_MODE=1 jest --watch  ./tests"
+    "test-live": "DEBUG_MODE=1 jest --watch  __tests__"
   },
   "lint-staged": {
     "*.js": [
@@ -67,9 +67,7 @@
     "tslint-eslint-rules": "^5.4.0",
     "typescript": "^4.0.3",
     "@antv/g6": "^4.0.3",
-    "jest-electron": "^0.1.7",
     "jest-extended": "^0.11.2",
-    "ts-jest": "^24.1.0"
   },
   "release-it": {
     "git": {

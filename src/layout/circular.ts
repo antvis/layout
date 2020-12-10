@@ -3,11 +3,11 @@
  * @author shiwu.wyy@antfin.com
  */
 
-import { Node, Edge, PointTuple, IndexMap } from './types'
+import { OutNode, Edge, PointTuple, IndexMap } from './types'
 import { Base } from './base'
 import { getDegree, clone } from '../util'
 
-type INode = Node & {
+type INode = OutNode & {
   degree: number,
   size: number | PointTuple,
   weight: number,

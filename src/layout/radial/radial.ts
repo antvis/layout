@@ -3,13 +3,13 @@
  * @author shiwu.wyy@antfin.com
  */
 
-import { PointTuple, Node, Matrix } from '../types'
+import { PointTuple, Node, OutNode, Edge,Matrix } from '../types'
 import { isNaN, isArray, isFunction, isNumber, isString, floydWarshall, getAdjMatrix } from '../../util'
 import { Base } from '../base'
 import MDS from './mds'
 import RadialNonoverlapForce, { RadialNonoverlapForceParam } from './radialNonoverlapForce'
 
-type INode = Node & {
+type INode = OutNode & {
   size?: number | PointTuple
 }
 
@@ -96,6 +96,10 @@ export class RadialLayout extends Base {
   private weights: Matrix[] | undefined
 
   private radii: number[] | undefined
+
+  public nodes: INode[] = []
+
+  public edges: Edge[] = []
 
   constructor(options?: RadialLayout.RadialLayoutOptions) {
     super()

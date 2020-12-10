@@ -1,5 +1,8 @@
 export interface Node {
   id: string
+}
+
+export interface OutNode extends Node {
   x: number
   y: number
 }
@@ -15,6 +18,10 @@ export interface Model {
   nodes?: Node[]
   edges?: Edge[]
   combos?: Combo[]
+}
+
+export interface OutModel extends Model{
+  nodes?: OutNode[]
 }
 
 export type PointTuple = [number, number]

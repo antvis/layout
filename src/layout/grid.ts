@@ -6,9 +6,9 @@
 
 import { isString, isArray, isNumber, getDegree, isNaN } from '../util'
 import { Base } from './base'
-import { Node, Edge, PointTuple, IndexMap } from './types'
+import { OutNode, Edge, PointTuple, IndexMap } from './types'
 
-type INode = Node & {
+type INode = OutNode & {
   degree: number,
   size: number | PointTuple
 }
@@ -381,7 +381,7 @@ export class GridLayout extends Base {
 
 export namespace GridLayout {
   export interface GridLayoutOptions {
-    type: 'grid'
+    type?: 'grid'
     center?: PointTuple
     width?: number
     height?: number

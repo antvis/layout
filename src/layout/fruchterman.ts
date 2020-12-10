@@ -3,15 +3,15 @@
  * @author shiwu.wyy@antfin.com
  */
 
-import { Node, Edge, PointTuple, IndexMap, Point } from './types'
+import { OutNode, Edge, PointTuple, IndexMap, Point } from './types'
 import { Base } from './base'
 import { isNumber } from '../util'
 
 type NodeMap = {
-  [key: string]: Node;
+  [key: string]: INode;
 };
 
-type INode = Node & {
+type INode = OutNode & {
   cluster: string;
 }
 
@@ -214,13 +214,13 @@ export class FruchtermanLayout extends Base {
     }
   }
 
-  private applyCalculate(nodes: Node[], edges: Edge[], displacements: Point[], k: number, k2: number) {
+  private applyCalculate(nodes: INode[], edges: Edge[], displacements: Point[], k: number, k2: number) {
     const self = this;
     self.calRepulsive(nodes, displacements, k2);
     self.calAttractive(edges, displacements, k);
   }
 
-  private calRepulsive(nodes: Node[], displacements: Point[], k2: number) {
+  private calRepulsive(nodes: INode[], displacements: Point[], k2: number) {
     nodes.forEach((v, i) => {
       displacements[i] = { x: 0, y: 0 };
       nodes.forEach((u, j) => {

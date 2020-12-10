@@ -4,8 +4,8 @@ module.exports = {
   preset: 'ts-jest',
   collectCoverage: false,
   collectCoverageFrom: ['src/**/*.{ts,js}', '!**/node_modules/**', '!**/vendor/**'],
-  testRegex: '/tests/.*-spec\\.ts?$',
-  moduleDirectories: ['node_modules', 'src'],
+  testRegex: '__tests__/.*-spec\\.ts?$',
+  moduleDirectories: ['node_modules', 'src', 'es'],
   moduleFileExtensions: ['js', 'ts', 'json'],
   moduleNameMapper: {
     '@layout/types': '<rootDir>/types',

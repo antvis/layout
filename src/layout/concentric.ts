@@ -4,11 +4,11 @@
  * this algorithm refers to <cytoscape.js> - https://github.com/cytoscape/cytoscape.js/
  */
 
-import { Node, Edge, PointTuple, IndexMap } from './types'
+import { OutNode, Edge, PointTuple, IndexMap } from './types'
 import { isString, isArray, isNumber, getDegree } from '../util'
 import { Base } from './base'
 
-type INode = Node & {
+type INode = OutNode & {
   degree: number,
   size: number | PointTuple,
 }
