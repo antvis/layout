@@ -37,7 +37,7 @@ const model = [
   ],
 ]
 
-const girdLayout = new Layout.GridLayout({
+const girdLayout = new Layout({
   width: 600,
   height: 400,
   rows: 4,
