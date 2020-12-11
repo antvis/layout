@@ -38,6 +38,7 @@ const model = [
 ]
 
 const girdLayout = new Layout({
+  type: 'grid',
   width: 600,
   height: 400,
   rows: 4,
