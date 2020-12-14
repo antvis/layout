@@ -36,7 +36,7 @@ export class GridLayout extends Base {
   public cols: number | undefined
 
   /** returns { row, col } for element */
-  public position: ((node: INode) => { row: number; col: number }) | undefined
+  public position: ((node: INode) => { row?: number; col?: number }) | undefined
 
   /** a sorting function to order the nodes; e.g. function(a, b){ return a.datapublic ('weight') - b.data('weight') } */
   public sortBy: string = 'degree'
@@ -46,9 +46,6 @@ export class GridLayout extends Base {
   public nodes: INode[] = []
 
   public edges: Edge[] = []
-
-  /** 布局中心 */
-  public center: PointTuple = [0, 0]
 
   public width: number = 300
 
@@ -105,13 +102,13 @@ export class GridLayout extends Base {
     const self = this
     const nodes = self.nodes
     const n = nodes.length
-    const center = self.center
+    const begin = self.begin
     if (n === 0) {
       return
     }
     if (n === 1) {
-      nodes[0].x = center[0]
-      nodes[0].y = center[1]
+      nodes[0].x = begin[0]
+      nodes[0].y = begin[1]
       return
     }
 
@@ -283,7 +280,7 @@ export class GridLayout extends Base {
           }
         }
 
-        self.id2manPos[node.id] = pos
+        self.id2manPos[node.id] = pos as { row: number, col: number}
         self.use(pos.row, pos.col)
       }
       self.getPos(node)
@@ -328,12 +325,12 @@ export class GridLayout extends Base {
     return res
   }
 
-  private used(row: number, col: number) {
+  private used(row: number | undefined, col: number | undefined) {
     const self = this
     return self.cellUsed[`c-${row}-${col}`] || false
   }
 
-  private use(row: number, col: number) {
+  private use(row: number | undefined, col: number | undefined) {
     const self = this
     self.cellUsed[`c-${row}-${col}`] = true
   }
@@ -382,7 +379,6 @@ export class GridLayout extends Base {
 export namespace GridLayout {
   export interface GridLayoutOptions {
     type?: 'grid'
-    center?: PointTuple
     width?: number
     height?: number
     begin?: PointTuple
@@ -394,5 +390,6 @@ export namespace GridLayout {
     cols?: number
     sortBy?: string
     workerEnabled?: boolean
+    position?: ((node: INode) => { row?: number; col?: number }) | undefined
   }
 }

@@ -50,7 +50,7 @@ function getEDistance(p1: PointTuple, p2: PointTuple) {
  */
 export class RadialLayout extends Base {
   /** 布局中心 */
-  public center: PointTuple = [0, 0]
+  public center: PointTuple
 
   /** 停止迭代的最大迭代数 */
   public maxIteration: number = 1000
@@ -68,7 +68,7 @@ export class RadialLayout extends Base {
   public preventOverlap: boolean = false
 
   /** 节点直径 */
-  public nodeSize: number | undefined
+  public nodeSize: number | number[] | undefined
 
   /** 节点间距，防止节点重叠时节点之间的最小距离（两节点边缘最短距离） */
   public nodeSpacing: number | Function | undefined
@@ -108,7 +108,6 @@ export class RadialLayout extends Base {
 
   public getDefaultCfg() {
     return {
-      center: [0, 0],
       maxIteration: 1000,
       focusNode: null,
       unitRadius: null,
@@ -130,10 +129,21 @@ export class RadialLayout extends Base {
     const self = this
     const nodes = self.nodes
     const edges = self.edges || []
-    const center = self.center
     if (!nodes || nodes.length === 0) {
       return
     }
+
+    if (!self.width && typeof window !== 'undefined') {
+      self.width = window.innerWidth
+    }
+    if (!self.height && typeof window !== 'undefined') {
+      self.height = window.innerHeight
+    }
+    if (!self.center) {
+      self.center = [self.width! / 2, self.height! / 2];
+    }
+    const center = self.center
+
     if (nodes.length === 1) {
       nodes[0].x = center[0]
       nodes[0].y = center[1]
@@ -177,12 +187,6 @@ export class RadialLayout extends Base {
 
     // the shortest path distance from each node to focusNode
     const focusNodeD = D[focusIndex]
-    if (!self.width && typeof window !== 'undefined') {
-      self.width = window.innerWidth
-    }
-    if (!self.height && typeof window !== 'undefined') {
-      self.height = window.innerHeight
-    }
     const width = self.width || 500
     const height = self.height || 500
     let semiWidth = width - center[0] > center[0] ? center[0] : width - center[0]
@@ -452,7 +456,7 @@ export class RadialLayout extends Base {
 
 export namespace RadialLayout {
   export interface RadialLayoutOptions {
-    type: 'radial'
+    type?: 'radial'
     center?: PointTuple
     width?: number
     height?: number
@@ -461,7 +465,7 @@ export namespace RadialLayout {
     focusNode?: string | Node | null
     unitRadius?: number | null
     preventOverlap?: boolean
-    nodeSize?: number | undefined
+    nodeSize?: number | number[] | undefined
     nodeSpacing?: number | Function | undefined
     maxPreventOverlapIteration?: number
     strictRadial?: boolean

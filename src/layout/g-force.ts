@@ -40,7 +40,7 @@ const proccessToFunc = (
  */
 export class GForceLayout extends Base {
   /** 布局中心 */
-  public center: PointTuple = [0, 0]
+  public center: PointTuple
 
   /** 停止迭代的最大迭代数 */
   public maxIteration: number = 1000
@@ -126,7 +126,6 @@ export class GForceLayout extends Base {
   public getDefaultCfg() {
     return {
       maxIteration: 500,
-      center: [0, 0],
       gravity: 10,
       enableTick: true,
     }
@@ -138,7 +137,6 @@ export class GForceLayout extends Base {
   public execute() {
     const self = this
     const nodes = self.nodes
-    const center = self.center
 
     if (self.timeInterval !== undefined && typeof window !== 'undefined') {
       window.clearInterval(self.timeInterval)
@@ -147,6 +145,18 @@ export class GForceLayout extends Base {
     if (!nodes || nodes.length === 0) {
       return
     }
+
+    if (!self.width && typeof window !== 'undefined') {
+      self.width = window.innerWidth
+    }
+    if (!self.height && typeof window !== 'undefined') {
+      self.height = window.innerHeight
+    }
+    if (!self.center) {
+      self.center = [self.width / 2, self.height / 2];
+    }
+    const center = self.center
+    
     if (nodes.length === 1) {
       nodes[0].x = center[0]
       nodes[0].y = center[1]
@@ -219,12 +229,6 @@ export class GForceLayout extends Base {
     const nodes = self.nodes
     const edges = self.edges
     const maxIteration = self.maxIteration
-    if (!self.width && typeof window !== 'undefined') {
-      self.width = window.innerWidth
-    }
-    if (!self.height && typeof window !== 'undefined') {
-      self.height = window.innerHeight
-    }
 
     if (typeof window === 'undefined') return
 
@@ -417,7 +421,7 @@ export class GForceLayout extends Base {
 
 export namespace GForceLayout {
   export interface GForceLayoutOptions {
-    type: 'gForce'
+    type?: 'gForce'
     center?: PointTuple
     width?: number
     height?: number

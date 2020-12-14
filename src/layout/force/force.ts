@@ -76,9 +76,6 @@ export class ForceLayout extends Base {
   /** 布局完成回调 */
   public onLayoutEnd: () => void = () => {}
 
-  /** 布局每一次迭代完成的回调 */
-  public onTick: () => void = () => {}
-
   /** 是否正在布局 */
   private ticking: boolean | undefined = undefined
 
@@ -115,7 +112,6 @@ export class ForceLayout extends Base {
       clusterNodeSize: 10,
       tick() {},
       onLayoutEnd() {}, // 布局完成回调
-      onTick() {}, // 每一迭代布局回调
       // 是否启用web worker。前提是在web worker里执行布局，否则无效
       workerEnabled: false,
     }
@@ -266,7 +262,23 @@ export class ForceLayout extends Base {
           self.clusterForce.links(edges)
         }
         simulation.nodes(nodes)
-        self.edgeForce.links(edges)
+        if (edges && self.edgeForce) self.edgeForce.links(edges)
+        
+        else if (edges && !self.edgeForce) {
+          // d3 的 forceLayout 会重新生成边的数据模型，为了避免污染源数据
+          const edgeForce = d3Force
+            .forceLink()
+            .id((d: any) => d.id)
+            .links(edges)
+          if (self.edgeStrength) {
+            edgeForce.strength(self.edgeStrength)
+          }
+          if (self.linkDistance) {
+            edgeForce.distance(self.linkDistance)
+          }
+          self.edgeForce = edgeForce
+          simulation.force('link', edgeForce)
+        }
       }
       if (self.preventOverlap) {
         self.overlapProcess(simulation)
@@ -382,8 +394,6 @@ export namespace ForceLayout {
   export interface ForceLayoutOptions {
     type?: 'force'
     center?: PointTuple
-    width?: number
-    height?: number
     linkDistance?: number | ((d?: any) => number) | undefined
     edgeStrength?: number | ((d?: any) => number) | undefined
     nodeStrength?: number | ((d?: any) => number) | undefined

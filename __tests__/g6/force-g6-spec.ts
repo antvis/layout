@@ -48,7 +48,7 @@ describe('Force Layout', () => {
     graph.render();
     
   });
-  it.only('force layout with complex data', () => {
+  it('force layout with complex data with pre grid layout', () => {
   
     const graph = new G6.Graph({
       container: div,
@@ -62,13 +62,20 @@ describe('Force Layout', () => {
     fetch(complexDataUrl)
       .then((res) => res.json())
       .then((data) => {
+
+        const preLayout = new Layout.GridLayout({
+          width: 500,
+          height: 500
+        });
+        preLayout.layout(data);
+
         const layout = new Layout.ForceLayout({
           center: [250, 250],
           tick: () => {
             graph.refreshPositions();
           },
           onLayoutEnd: () => {
-            // graph.destroy();
+            graph.destroy();
           }
         });
         layout.layout(data);
@@ -77,17 +84,24 @@ describe('Force Layout', () => {
         graph.render();
 
         graph.on('dragstart', e => {
-          console.log(e)
           const { item } = e;
-          // const model = item.getModel();
-          // model.fx = e.x
-          // model.fy = e.y
-          // layout.execute()
+          const model = item.getModel();
+          model.fx = e.x
+          model.fy = e.y
+          layout.execute()
         });
       });
   });
   it('swtich data', () => {
-    const layout = new Layout.GridLayout();
+    const layout = new Layout.ForceLayout({
+      center: [250, 250],
+      tick: () => {
+        graph.refreshPositions();
+      },
+      onLayoutEnd: () => {
+        graph.destroy();
+      }
+    });
     layout.layout(simpleData);
   
     const graph = new G6.Graph({
@@ -103,16 +117,15 @@ describe('Force Layout', () => {
   
     graph.data(simpleData)
     graph.render();
+
     graph.on('canvas:click', e => {
       fetch(complexDataUrl)
         .then((res) => res.json())
         .then((data) => {
+          graph.changeData(data);
           layout.layout(data);
-          graph.data(data)
-          graph.render();
         });
     });
-    graph.destroy();
   });
   it('update cfg', () => {
     const graph = new G6.Graph({
@@ -126,13 +139,20 @@ describe('Force Layout', () => {
       },
     });
   
-    const layout = new Layout.GridLayout({
-      rows: 5
+    const layout = new Layout.ForceLayout({
+      preventOverlap: false,
+      center: [250, 250],
+      tick: () => {
+        graph.refreshPositions();
+      },
     });
 
     fetch(complexDataUrl)
     .then((res) => res.json())
     .then((data) => {
+      data.nodes.forEach(node => {
+        node.size = Math.random() * 20 + 20;
+      })
       layout.layout(data);
       graph.data(data)
       graph.render();
@@ -141,8 +161,16 @@ describe('Force Layout', () => {
 
     graph.on('canvas:click', e => {
       layout.updateCfg({
-        preventOverlapPadding: 30,
-        width: 1000
+        preventOverlap: true,
+        nodeSize: node => {
+          return node.size / 2;
+        },
+        nodeSpacing: node => {
+          return node.size / 5;
+        },
+        onLayoutEnd: () => {
+          graph.destroy();
+        }
       });
       layout.execute();
       graph.refreshPositions();

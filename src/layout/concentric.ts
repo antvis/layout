@@ -22,7 +22,7 @@ type NodeMap = {
  */
 export class ConcentricLayout extends Base {
   /** 布局中心 */
-  public center: PointTuple = [0, 0]
+  public center: PointTuple
 
   public nodeSize: number | PointTuple = 30
 
@@ -69,7 +69,6 @@ export class ConcentricLayout extends Base {
 
   public getDefaultCfg() {
     return {
-      center: [0, 0],
       nodeSize: 30,
       minNodeSpacing: 10,
       preventOverlap: false,
@@ -90,10 +89,21 @@ export class ConcentricLayout extends Base {
     const nodes = self.nodes
     const edges = self.edges
     const n = nodes.length
-    const center = self.center
     if (n === 0) {
       return
     }
+
+    if (!self.width && typeof window !== 'undefined') {
+      self.width = window.innerWidth
+    }
+    if (!self.height && typeof window !== 'undefined') {
+      self.height = window.innerHeight
+    }
+    if (!self.center) {
+      self.center = [self.width / 2, self.height / 2];
+    }
+    const center = self.center
+
     if (n === 1) {
       nodes[0].x = center[0]
       nodes[0].y = center[1]
@@ -117,13 +127,6 @@ export class ConcentricLayout extends Base {
       }
       maxNodeSize = Math.max(maxNodeSize, nodeSize)
     })
-
-    if (!self.width && typeof window !== 'undefined') {
-      self.width = window.innerWidth
-    }
-    if (!self.height && typeof window !== 'undefined') {
-      self.height = window.innerHeight
-    }
     self.clockwise = self.counterclockwise !== undefined ? !self.counterclockwise : self.clockwise
 
     // layout
@@ -235,17 +238,19 @@ export class ConcentricLayout extends Base {
 	
 export namespace ConcentricLayout {	
   export interface ConcentricLayoutOptions {	
-    type: 'concentric'	
+    type?: 'concentric'	
     center?: PointTuple	
     preventOverlap?: boolean
-    nodeSize?: number
+    nodeSize?: number | PointTuple
     minNodeSpacing?: number
     sweep?: number
     equidistant?: boolean
     startAngle?: number
     clockwise?: boolean
     maxLevelDiff?: number
-    sortBy?: string,
+    sortBy?: string
     workerEnabled?: boolean
+    width?: number
+    height?: number
   }	
 }

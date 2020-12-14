@@ -41,11 +41,13 @@
   "dependencies": {
     "d3-force": "^2.0.1",
     "dagre": "^0.8.5",
-    "ml-matrix": "^6.5.0"
+    "ml-matrix": "^6.5.0",
+    "@antv/g-webgpu": "^0.5.1"
   },
   "devDependencies": {
     "@types/d3-force": "^2.1.0",
     "@types/dagre": "^0.7.44",
+    "@antv/g-webgpu-compiler": "^0.5.1",
     "@types/jest": "^25.2.1",
     "eslint": "^7.11.0",
     "eslint-config-airbnb-base": "^14.0.0",
@@ -67,7 +69,7 @@
     "tslint-eslint-rules": "^5.4.0",
     "typescript": "^4.0.3",
     "@antv/g6": "^4.0.3",
-    "jest-extended": "^0.11.2",
+    "jest-extended": "^0.11.2"
   },
   "release-it": {
     "git": {

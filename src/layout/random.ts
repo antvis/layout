@@ -3,7 +3,7 @@
  * @author shiwu.wyy@antfin.com
  */
 
-import { PointTuple } from './types'
+import { PointTuple, OutNode, Edge } from './types'
 import { Base } from './base'
 
 /**
@@ -18,6 +18,10 @@ export class RandomLayout extends Base {
 
   /** 高度 */
   public height: number = 300
+
+  public nodes: OutNode[] = []
+
+  public edges: Edge[] = []
 
   constructor(options?: RandomLayout.RandomLayoutOptions) {
     super()
@@ -60,7 +64,7 @@ export class RandomLayout extends Base {
 
 export namespace RandomLayout {
   export interface RandomLayoutOptions {
-    type: 'random'
+    type?: 'random'
     center?: PointTuple
     width?: number
     height?: number
