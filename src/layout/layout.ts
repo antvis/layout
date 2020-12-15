@@ -19,7 +19,7 @@ export class Layout {
   public readonly layoutInstance: Base
 
   constructor(options: ILayout.LayoutOptions) {
-    const layoutClass = getLayoutByName(options.type)
+    const layoutClass = getLayoutByName(options.type as string)
     this.layoutInstance  = new layoutClass(options)
   }
 
