@@ -283,7 +283,7 @@ export class FruchtermanGPULayout extends Base {
 
 export namespace FruchtermanGPULayout {
   export interface FruchtermanGPULayoutOptions {
-    type?: 'fruchterman-gpu'	
+    type: 'fruchterman-gpu'	
     center?: PointTuple
     width?: number
     height?: number

@@ -273,7 +273,7 @@ export class FruchtermanLayout extends Base {
 
 export namespace FruchtermanLayout {	
   export interface FruchtermanLayoutOptions {
-    type?: 'fruchterman'	
+    type: 'fruchterman'	
     center?: PointTuple	
     maxIteration?: number
     width?: number

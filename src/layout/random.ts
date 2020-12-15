@@ -64,7 +64,7 @@ export class RandomLayout extends Base {
 
 export namespace RandomLayout {
   export interface RandomLayoutOptions {
-    type?: 'random'
+    type: 'random'
     center?: PointTuple
     width?: number
     height?: number

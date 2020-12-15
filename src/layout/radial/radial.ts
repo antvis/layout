@@ -456,7 +456,7 @@ export class RadialLayout extends Base {
 
 export namespace RadialLayout {
   export interface RadialLayoutOptions {
-    type?: 'radial'
+    type: 'radial'
     center?: PointTuple
     width?: number
     height?: number

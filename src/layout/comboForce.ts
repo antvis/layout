@@ -863,7 +863,7 @@ export class ComboForceLayout extends Base {
 
 export namespace ComboForceLayout {
   export interface ComboForceLayoutOptions {
-    type?: 'comboForce'
+    type: 'comboForce'
     center?: PointTuple
     maxIteration?: number
     linkDistance?: number | ((d?: unknown) => number)

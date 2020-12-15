@@ -392,7 +392,7 @@ function isInWorker(): boolean {
 
 export namespace ForceLayout {
   export interface ForceLayoutOptions {
-    type?: 'force'
+    type: 'force'
     center?: PointTuple
     linkDistance?: number | ((d?: any) => number) | undefined
     edgeStrength?: number | ((d?: any) => number) | undefined

@@ -122,7 +122,7 @@ export class MDSLayout extends Base {
 
 export namespace MDSLayout {
   export interface MDSLayoutOptions {
-    type?: 'mds'
+    type: 'mds'
     center?: PointTuple
     linkDistance?: number
     workerEnabled?: boolean

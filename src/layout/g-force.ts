@@ -421,7 +421,7 @@ export class GForceLayout extends Base {
 
 export namespace GForceLayout {
   export interface GForceLayoutOptions {
-    type?: 'gForce'
+    type: 'gForce'
     center?: PointTuple
     width?: number
     height?: number

@@ -363,7 +363,7 @@ export class GForceGPULayout extends Base {
 
 export namespace GForceGPULayout {
   export interface GForceGPULayoutOptions {
-    type?: 'gForce-gpu'	
+    type: 'gForce-gpu'	
     center?: PointTuple
     linkDistance?: number | ((d?: any) => number) | undefined
     nodeStrength?: number | ((d?: any) => number) | undefined

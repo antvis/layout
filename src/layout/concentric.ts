@@ -238,7 +238,7 @@ export class ConcentricLayout extends Base {
 	
 export namespace ConcentricLayout {	
   export interface ConcentricLayoutOptions {	
-    type?: 'concentric'	
+    type: 'concentric'	
     center?: PointTuple	
     preventOverlap?: boolean
     nodeSize?: number | PointTuple

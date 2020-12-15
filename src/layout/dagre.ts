@@ -203,7 +203,7 @@ function getFunc(
 
 export namespace DagreLayout {
   export interface DagreLayoutOptions {
-    type?: 'dagre'
+    type: 'dagre'
     rankdir?: 'TB' | 'BT' | 'LR' | 'RL'
     align?: 'UL' | 'UR' | 'DL' | 'DR'
     nodeSize?: number | number[] | undefined

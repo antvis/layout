@@ -378,7 +378,7 @@ export class GridLayout extends Base {
 
 export namespace GridLayout {
   export interface GridLayoutOptions {
-    type?: 'grid'
+    type: 'grid'
     width?: number
     height?: number
     begin?: PointTuple
