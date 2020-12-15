@@ -42,7 +42,7 @@ describe('Force Layout', () => {
         graph.destroy();
       }
     });
-    layout.layout(simpleData);
+    Layout.layout(simpleData);
   
     graph.data(simpleData)
     graph.render();
@@ -78,7 +78,7 @@ describe('Force Layout', () => {
             graph.destroy();
           }
         });
-        layout.layout(data);
+        Layout.layout(data);
 
         graph.data(data)
         graph.render();
@@ -88,7 +88,7 @@ describe('Force Layout', () => {
           const model = item.getModel();
           model.fx = e.x
           model.fy = e.y
-          layout.execute()
+          Layout.execute()
         });
       });
   });
@@ -102,7 +102,7 @@ describe('Force Layout', () => {
         graph.destroy();
       }
     });
-    layout.layout(simpleData);
+    Layout.layout(simpleData);
   
     const graph = new G6.Graph({
       container: div,
@@ -123,7 +123,7 @@ describe('Force Layout', () => {
         .then((res) => res.json())
         .then((data) => {
           graph.changeData(data);
-          layout.layout(data);
+          Layout.layout(data);
         });
     });
   });
@@ -153,14 +153,14 @@ describe('Force Layout', () => {
       data.nodes.forEach(node => {
         node.size = Math.random() * 20 + 20;
       })
-      layout.layout(data);
+      Layout.layout(data);
       graph.data(data)
       graph.render();
       graph.destroy();
     });
 
     graph.on('canvas:click', e => {
-      layout.updateCfg({
+      Layout.updateCfg({
         preventOverlap: true,
         nodeSize: node => {
           return node.size / 2;
@@ -172,7 +172,7 @@ describe('Force Layout', () => {
           graph.destroy();
         }
       });
-      layout.execute();
+      Layout.execute();
       graph.refreshPositions();
     });
   });

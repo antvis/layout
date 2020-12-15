@@ -1,5 +1,4 @@
-import { Layout } from '../../src'
-import { Node, Edge } from '../../src/layout/types'
+import { Layouts } from '../../src'
 import dataset from '../data';
 import * as d3Force from 'd3-force';
 const data = dataset.data;
@@ -23,7 +22,7 @@ const data = dataset.data;
 
 describe('#ForceLayout', () => {
   it('force layout with default configs, test emit afterlayout', () => {
-    const force = new Layout.ForceLayout({
+    const force = new Layouts['force']({
       alphaDecay: 0.2,
       nodeSize: 10
     });
@@ -41,7 +40,7 @@ describe('#ForceLayout', () => {
     let count = 0;
     let isEnd = false;
 
-    const force = new Layout.ForceLayout({
+    const force = new Layouts['force']({
       nodeSize: 10,
       tick() {
         count++;
@@ -73,7 +72,7 @@ describe('#ForceLayout', () => {
     let count = 0;
     let isEnd = false;
 
-    const force = new Layout.ForceLayout({
+    const force = new Layouts['force']({
       nodeSize: 10,
       linkDistance: 140,
       edgeStrength: 0.5,
@@ -106,7 +105,7 @@ describe('#ForceLayout', () => {
     const nodeSpacing = 10;
     const nodeSize = 10;
 
-    const force = new Layout.ForceLayout({
+    const force = new Layouts['force']({
       nodeSize,
       preventOverlap: true,
       nodeSpacing,
@@ -133,7 +132,7 @@ describe('#ForceLayout', () => {
       node.type = 'rect';
     });
 
-    const force = new Layout.ForceLayout({
+    const force = new Layouts['force']({
       preventOverlap: true,
       nodeSpacing,
       onLayoutEnd() {
@@ -159,7 +158,7 @@ describe('#ForceLayout', () => {
       node.type = 'rect';
     });
 
-    const force = new Layout.ForceLayout({
+    const force = new Layouts['force']({
       preventOverlap: true,
       nodeSpacing,
       nodeSize,
@@ -178,7 +177,7 @@ describe('#ForceLayout', () => {
     let isEnd = false;
     const nodeSize = [30, 18];
 
-    const force = new Layout.ForceLayout({
+    const force = new Layouts['force']({
       preventOverlap: true,
       nodeSize,
       alphaDecay: 0.3,
@@ -196,7 +195,7 @@ describe('#ForceLayout', () => {
     let isEnd = false;
     const nodeSize = 30;
 
-    const force = new Layout.ForceLayout({
+    const force = new Layouts['force']({
       preventOverlap: true,
       nodeSize,
       onLayoutEnd() {
@@ -211,7 +210,7 @@ describe('#ForceLayout', () => {
 
   it('force re-execute, isTicking', () => {
 
-    const force = new Layout.ForceLayout();
+    const force = new Layouts['force']();
     force.layout(data);
     const node = data.nodes[0];
     expect(node.x).not.toEqual(undefined);
@@ -222,7 +221,7 @@ describe('#ForceLayout', () => {
 describe('update and simulation', () => {
   it('force update layout', () => {
 
-    const force = new Layout.ForceLayout();
+    const force = new Layouts['force']();
     force.layout(data);
     const node = data.nodes[0];
     expect(node.x).not.toEqual(undefined);
@@ -251,7 +250,7 @@ describe('update and simulation', () => {
       .alphaDecay(0.028)
       .alphaMin(0.1);
 
-    const force = new Layout.ForceLayout({
+    const force = new Layouts['force']({
       forceSimulation,
       preventOverlap: true,
     });
@@ -264,7 +263,7 @@ describe('update and simulation', () => {
     data.nodes.forEach(node => {
       node.cluster = `${Math.ceil(Math.random() * 4)}`
     })
-    const force = new Layout.ForceLayout({
+    const force = new Layouts['force']({
       preventOverlap: true,
       clustering: true,
       center: [200, 400]

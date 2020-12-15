@@ -1,4 +1,4 @@
-import { Layout } from '../../src'
+import { Layouts } from '../../src'
 import dataset from '../data';
 const data = dataset.data;
 
@@ -17,13 +17,13 @@ const data = dataset.data;
 // })
 
 describe('#gForceLayout', () => {
-  const preGrid = new Layout.GridLayout({
+  const preGrid = new Layouts['grid']({
     width: 500,
     height: 500
   });
   preGrid.layout(data);
   it('return correct default config', () => {
-    const gForce = new Layout.GForceLayout();
+    const gForce = new Layouts['gForce']();
     expect(gForce.getDefaultCfg()).toEqual({
       maxIteration: 500,
       gravity: 10,
@@ -34,7 +34,7 @@ describe('#gForceLayout', () => {
     expect((data.nodes[0] as any).y).not.toBe(undefined);
   });
   it('gforce layout with default configs, test emit afterlayout', () => {
-    const gForce = new Layout.GForceLayout({
+    const gForce = new Layouts['gForce']({
       minMovement: 0.2,
     });
     gForce.layout(data);
@@ -48,7 +48,7 @@ describe('#gForceLayout', () => {
     const edge = data.edges[0];
     let isEnd;
 
-    const gForce = new Layout.GForceLayout({
+    const gForce = new Layouts['gForce']({
       linkDistance: 140,
       edgeStrength: 0.5,
       nodeStrength: -30,

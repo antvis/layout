@@ -1,4 +1,4 @@
-import { Layout } from '../../src'
+import { Layouts } from '../../src'
 import dataset from '../data';
 import { mathEqual } from '../util';
 const data = dataset.data;
@@ -19,7 +19,7 @@ const data = dataset.data;
 
 describe('#CircularLayout', () => {
   it('return correct default config', () => {
-    const circular = new Layout.CircularLayout();
+    const circular = new Layouts['circular']();
     expect(circular.getDefaultCfg()).toEqual({
       radius: null,
       startRadius: null,
@@ -41,7 +41,7 @@ describe('#CircularLayout', () => {
   });
 
   it('fixed radius, start angle, end angle', () => {
-    const circular = new Layout.CircularLayout({
+    const circular = new Layouts['circular']({
       center: [250, 250],
       radius: 200,
       startAngle: Math.PI / 4,
@@ -54,13 +54,13 @@ describe('#CircularLayout', () => {
     expect(mathEqual(data.nodes[0].y, 250 + pos)).toEqual(true);
   });
   it('circular with no node', () => {
-    const circular = new Layout.CircularLayout();
+    const circular = new Layouts['circular']();
     circular.layout({
       nodes: [],
     });
   });
   it('circular with one node', () => {
-    const circular = new Layout.CircularLayout({
+    const circular = new Layouts['circular']({
       center: [150, 50]
     });
     const oneNodeData = {
@@ -71,11 +71,11 @@ describe('#CircularLayout', () => {
       ],
     };
     circular.layout(oneNodeData)
-    expect(oneNodeData.nodes[0].x).toEqual(150);
-    expect(oneNodeData.nodes[0].y).toEqual(50);
+    expect((oneNodeData.nodes[0] as any).x).toEqual(150);
+    expect((oneNodeData.nodes[0] as any).y).toEqual(50);
   });
   it('circular with no radius but startRadius and endRadius', () => {
-    const circular = new Layout.CircularLayout({
+    const circular = new Layouts['circular']({
       center: [150, 200],
       startRadius: 1,
       endRadius: 100,
@@ -89,7 +89,7 @@ describe('#CircularLayout', () => {
     expect(mathEqual(nodeModelLast.y, 180)).toEqual(true);
   });
   it('circular with no radius and startRadius but endRadius', () => {
-    const circular = new Layout.CircularLayout({
+    const circular = new Layouts['circular']({
       center: [150, 200],
       endRadius: 100,
     });
@@ -100,7 +100,7 @@ describe('#CircularLayout', () => {
   });
 
   it('circular with no radius and endRadius but startRadius', () => {
-    const circular = new Layout.CircularLayout({
+    const circular = new Layouts['circular']({
       center: [150, 200],
       startRadius: 100,
     });
@@ -111,7 +111,7 @@ describe('#CircularLayout', () => {
   });
 
   it('circular with topology ordering', () => {
-    const circular = new Layout.CircularLayout({
+    const circular = new Layouts['circular']({
       center: [250, 250],
       ordering: 'topology',
       radius: 200,
@@ -140,7 +140,7 @@ describe('#CircularLayout', () => {
   });
 
   it('circular with topology-directed ordering', () => {
-    const circular = new Layout.CircularLayout({
+    const circular = new Layouts['circular']({
       center: [250, 250],
       ordering: 'topology-directed',
       radius: 200,
@@ -168,7 +168,7 @@ describe('#CircularLayout', () => {
   });
 
   it('circular with degree ordering, counterclockwise', () => {
-    const circular = new Layout.CircularLayout({
+    const circular = new Layouts['circular']({
       center: [250, 250],
       ordering: 'degree',
       radius: 200,

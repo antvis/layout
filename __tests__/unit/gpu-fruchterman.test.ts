@@ -1,4 +1,4 @@
-import { Layout } from '../../src'
+import { Layouts } from '../../src'
 import dataset from '../data';
 const data = dataset.data;
 
@@ -17,7 +17,7 @@ const data = dataset.data;
 // })
 
 describe('#FruchtermanGPULayout', () => {
-  const preGrid = new Layout.GridLayout({
+  const preGrid = new Layouts['grid']({
     width: 500,
     height: 500
   });
@@ -26,12 +26,11 @@ describe('#FruchtermanGPULayout', () => {
   // 1. await fruchtermanGPU.layout 后调用渲染
   // 2. 实例化 FruchtermanGPULayout 时将渲染语句传入 onLayoutEnd 回调函数
   it('return correct default config', async () => {
-    const fruchtermanGPU = new Layout.FruchtermanGPULayout();
+    const fruchtermanGPU = new Layouts['fruchterman-gpu']();
     expect(fruchtermanGPU.getDefaultCfg()).toEqual({
       maxIteration: 1000,
-      center: undefined,
       gravity: 10,
-      speed: 0.1,
+      speed: 1,
       clustering: false,
       clusterGravity: 10,
     });
@@ -40,7 +39,7 @@ describe('#FruchtermanGPULayout', () => {
     expect((data.nodes[0] as any).y).not.toBe(undefined);
   });
   it('new graph with fruchterman layout, with configurations', async () => {
-    const fruchtermanGPU = new Layout.FruchtermanGPULayout({
+    const fruchtermanGPU = new Layouts['fruchterman-gpu']({
       center: [100, 100],
       maxIteration: 5000
     });
@@ -52,7 +51,7 @@ describe('#FruchtermanGPULayout', () => {
     expect(data.nodes[1].y).not.toEqual(undefined);
   });
   it('fruchterman layout with no node', async () => {
-    const fruchtermanGPU = new Layout.FruchtermanGPULayout({
+    const fruchtermanGPU = new Layouts['fruchterman-gpu']({
       center: [100, 100],
       maxIteration: 5000
     });
@@ -61,7 +60,7 @@ describe('#FruchtermanGPULayout', () => {
     });
   });
   it('fruchterman layout with one node', async () => {
-    const fruchtermanGPU = new Layout.FruchtermanGPULayout({
+    const fruchtermanGPU = new Layouts['fruchterman-gpu']({
       width: 500,
       height: 500
     });
@@ -73,7 +72,7 @@ describe('#FruchtermanGPULayout', () => {
       ]
     }
     await fruchtermanGPU.layout(data1);
-    const nodeModel = data1.nodes[0];
+    const nodeModel: any = data1.nodes[0];
     expect(nodeModel.x).toEqual(250);
     expect(nodeModel.y).toEqual(250);
   });
@@ -87,7 +86,7 @@ describe('#FruchtermanGPULayout', () => {
       };
     });
 
-    const fruchtermanGPU = new Layout.FruchtermanGPULayout({
+    const fruchtermanGPU = new Layouts['fruchterman-gpu']({
       clustering: true,
       maxIteration: 3000,
       clusterGravity: null,
@@ -99,7 +98,7 @@ describe('#FruchtermanGPULayout', () => {
     expect(node0.y).not.toEqual(NaN);
   });
   it('fruchterman layout with overlapped nodes and loop edge', async () => {
-    const fruchtermanGPU = new Layout.FruchtermanGPULayout({
+    const fruchtermanGPU = new Layouts['fruchterman-gpu']({
       clustering: true,
       maxIteration: 5000,
       clusterGravity: null,
@@ -136,7 +135,7 @@ describe('#FruchtermanGPULayout', () => {
     expect(node0.y).not.toEqual(node1.y);
   });
   it('update fructherman layout configurations', async () => {
-    const fruchtermanGPU = new Layout.FruchtermanGPULayout();
+    const fruchtermanGPU = new Layouts['fruchterman-gpu']();
     await fruchtermanGPU.layout(data);
     
     fruchtermanGPU.updateCfg({

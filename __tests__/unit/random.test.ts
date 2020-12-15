@@ -1,4 +1,4 @@
-import { Layout } from '../../src'
+import { Layouts } from '../../src'
 import { Node, Edge } from '../../src/layout/types'
 // import G6 from '@antv/g6';
 
@@ -31,7 +31,7 @@ const data: { nodes: Node[]; edges: Edge[] } = {
 
 describe('#RandomLayout', () => {
   it('return correct default config', () => {
-    const random = new Layout.RandomLayout();
+    const random = new Layouts['random']();
     expect(random.getDefaultCfg()).toEqual({
       center: [0, 0],
       width: 300,

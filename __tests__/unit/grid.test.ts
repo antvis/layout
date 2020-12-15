@@ -1,4 +1,4 @@
-import { Layout } from '../../src'
+import { Layouts } from '../../src'
 import { OutNode } from '../../src/layout/types'
 // import G6 from '@antv/g6';
 
@@ -39,7 +39,7 @@ const data = {
 
 describe('#GridLayout', () => {
   it('return correct default config', () => {
-    const grid = new Layout.GridLayout();
+    const grid = new Layouts['grid']();
     expect(grid.getDefaultCfg()).toEqual({
       begin: [0, 0],
       cols: undefined,
@@ -57,19 +57,19 @@ describe('#GridLayout', () => {
   });
   it('grid layout without node', () => {
     const dataNoNode = {nodes: [], edges: []};
-    const grid = new Layout.GridLayout();
+    const grid = new Layouts['grid']();
     grid.layout(dataNoNode);
     expect(dataNoNode.nodes).not.toBe(undefined);
   });
   it('grid layout without one node', () => {
     const dataOneNode = {nodes: [{id: 'node'}], edges: []};
-    const grid = new Layout.GridLayout({ begin: [10, 20] });
+    const grid = new Layouts['grid']({ begin: [10, 20] });
     grid.layout(dataOneNode);
     expect((dataOneNode.nodes[0] as OutNode).x).toBe(10);
     expect((dataOneNode.nodes[0] as OutNode).y).toBe(20);
   });
   it('grid layout with fixed columns', () => {
-    const grid = new Layout.GridLayout({
+    const grid = new Layouts['grid']({
       cols: 2,
       sortBy: 'id',
       begin: [10, 20]
@@ -81,7 +81,7 @@ describe('#GridLayout', () => {
     expect((data.nodes[0] as OutNode).y > (data.nodes[2] as OutNode).y).toEqual(true);
   });
   it('grid layout with fixed rows', () => {
-    const grid = new Layout.GridLayout({
+    const grid = new Layouts['grid']({
       rows: 2,
       sortBy: 'id',
       begin: [10 ,20]
@@ -94,7 +94,7 @@ describe('#GridLayout', () => {
     expect((data.nodes[3] as OutNode).y > (data.nodes[7] as OutNode).y).toEqual(true);
   });
   it('grid layout with fixed cols and rows, rows*cols>nodes, situation 1', () => {
-    const grid = new Layout.GridLayout({
+    const grid = new Layouts['grid']({
       rows: 2,
       cols: 6,
       sortBy: 'id',
@@ -105,7 +105,7 @@ describe('#GridLayout', () => {
     expect((data.nodes[2] as OutNode).y > (data.nodes[7] as OutNode).y).toEqual(true);
   });
   it('grid layout with fixed cols and rows, rows*cols>nodes, situation 2', () => {
-    const grid = new Layout.GridLayout({
+    const grid = new Layouts['grid']({
       rows: 3,
       cols: 4,
       sortBy: 'id',
@@ -116,7 +116,7 @@ describe('#GridLayout', () => {
     expect((data.nodes[3] as OutNode).y > (data.nodes[7] as OutNode).y).toEqual(true);
   });
   it('grid layout with fixed cols and rows, rows*cols<nodes, situation 1', () => {
-    const grid = new Layout.GridLayout({
+    const grid = new Layouts['grid']({
       rows: 2,
       cols: 2,
       sortBy: 'id',
@@ -129,7 +129,7 @@ describe('#GridLayout', () => {
     expect((data.nodes[5] as OutNode).y > (data.nodes[7] as OutNode).y).toEqual(true);
   });
   it('grid layout with fixed cols and rows, rows*cols<nodes, situation 2', () => {
-    const grid = new Layout.GridLayout({
+    const grid = new Layouts['grid']({
       rows: 2,
       cols: 3,
       sortBy: 'id',
@@ -140,7 +140,7 @@ describe('#GridLayout', () => {
     expect((data.nodes[3] as OutNode).y > (data.nodes[7] as OutNode).y).toEqual(true);
   });
   it('grid layout with condense', () => {
-    const grid = new Layout.GridLayout({
+    const grid = new Layouts['grid']({
       condense: true,
       begin: [10 ,20]
     });
@@ -149,7 +149,7 @@ describe('#GridLayout', () => {
     expect((data.nodes[1] as OutNode).y < (data.nodes[6] as OutNode).y).toEqual(true);
   });
   it('grid layout with preventOverlap', () => {
-    const grid = new Layout.GridLayout({
+    const grid = new Layouts['grid']({
       preventOverlap: true,
       begin: [10 ,20]
     });
@@ -158,7 +158,7 @@ describe('#GridLayout', () => {
     expect((data.nodes[0] as any).y).not.toBe(undefined);
   });
   it('grid layout with preventOverlap, nodeSize is an array', () => {
-    const grid = new Layout.GridLayout({
+    const grid = new Layouts['grid']({
       preventOverlap: true,
       nodeSize: [20, 10],
       begin: [10 ,20]
@@ -168,7 +168,7 @@ describe('#GridLayout', () => {
     expect((data.nodes[1] as OutNode).y < (data.nodes[6] as OutNode).y).toEqual(true);
   });
   it('grid layout with preventOverlap, nodeSize is null', () => {
-    const grid = new Layout.GridLayout({
+    const grid = new Layouts['grid']({
       preventOverlap: true,
       nodeSize: null,
       begin: [10 ,20]
@@ -184,7 +184,7 @@ describe('#GridLayout', () => {
       node['row'] = rows;
       if (node['col'] === 2) rows++;
     });
-    const grid = new Layout.GridLayout({
+    const grid = new Layouts['grid']({
       position: (d) => {
         return {
           row: d['row'],
@@ -200,7 +200,7 @@ describe('#GridLayout', () => {
     expect((data.nodes[3] as OutNode).y < (data.nodes[6] as OutNode).y).toEqual(true);
   });
   it('grid layout with position function, col undefined', () => {
-    const grid = new Layout.GridLayout({
+    const grid = new Layouts['grid']({
       position: (d) => {
         return {
           row: d['row'],
@@ -215,7 +215,7 @@ describe('#GridLayout', () => {
     expect((data.nodes[3] as OutNode).y < (data.nodes[6] as OutNode).y).toEqual(true);
   });
   it('grid layout with position function, row undefined', () => {
-    const grid = new Layout.GridLayout({
+    const grid = new Layouts['grid']({
       position: (d) => {
         return {
           col: d['col'],

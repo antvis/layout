@@ -22,7 +22,7 @@ const complexDataUrl = 'https://gw.alipayobjects.com/os/antvdemo/assets/data/rel
 describe('Grid Layout', () => {
   it('grid layout with small data', () => {
     const layout = new Layout.GridLayout();
-    layout.layout(simpleData);
+    Layout.layout(simpleData);
   
     const graph = new G6.Graph({
       container: div,
@@ -53,7 +53,7 @@ describe('Grid Layout', () => {
         const layout = new Layout.GridLayout({
           begin: [150, 200]
         });
-        layout.layout(data);
+        Layout.layout(data);
         graph.data(data)
         graph.render();
         graph.destroy();
@@ -61,7 +61,7 @@ describe('Grid Layout', () => {
   });
   it('swtich data', () => {
     const layout = new Layout.GridLayout();
-    layout.layout(simpleData);
+    Layout.layout(simpleData);
   
     const graph = new G6.Graph({
       container: div,
@@ -80,7 +80,7 @@ describe('Grid Layout', () => {
       fetch(complexDataUrl)
         .then((res) => res.json())
         .then((data) => {
-          layout.layout(data);
+          Layout.layout(data);
           graph.data(data)
           graph.render();
         });
@@ -106,18 +106,18 @@ describe('Grid Layout', () => {
     fetch(complexDataUrl)
     .then((res) => res.json())
     .then((data) => {
-      layout.layout(data);
+      Layout.layout(data);
       graph.data(data)
       graph.render();
       graph.destroy();
     });
 
     graph.on('canvas:click', e => {
-      layout.updateCfg({
+      Layout.updateCfg({
         preventOverlapPadding: 30,
         width: 1000
       });
-      layout.execute();
+      Layout.execute();
       graph.refreshPositions();
     });
   });

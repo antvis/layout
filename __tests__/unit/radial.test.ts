@@ -1,4 +1,4 @@
-import { Layout } from '../../src'
+import { Layouts } from '../../src'
 import { mathEqual } from '../util';
 import MDS from '../../src/layout/radial/mds';
 // import G6 from '@antv/g6';
@@ -45,7 +45,7 @@ const data: any = {
 
 describe('#RadialLayout', () => {
   it('return correct default config', () => {
-    const radial = new Layout.RadialLayout();
+    const radial = new Layouts['radial']();
     expect(radial.getDefaultCfg()).toEqual({
       maxIteration: 1000,
       focusNode: null,
@@ -64,7 +64,7 @@ describe('#RadialLayout', () => {
     expect((data.nodes[0] as any).y).not.toBe(undefined);
   });
   it('new graph with radial layout, without configurations', () => {
-    const radial = new Layout.RadialLayout({
+    const radial = new Layouts['radial']({
       width: 500,
       height: 600
     });
@@ -79,7 +79,7 @@ describe('#RadialLayout', () => {
     const focusNode = data.nodes[fnIndex];
     const center: any = [250, 250];
 
-    const radial = new Layout.RadialLayout({
+    const radial = new Layouts['radial']({
       width: 500,
       height: 600,
       center,
@@ -118,14 +118,14 @@ describe('#RadialLayout', () => {
   });
 
   it('radial layout with no node', () => {
-    const radial = new Layout.RadialLayout();
+    const radial = new Layouts['radial']();
     radial.layout({
       nodes: [],
     })
   });
 
   it('radial layout with one node', () => {
-    const radial = new Layout.RadialLayout({
+    const radial = new Layouts['radial']({
       width: 500,
       height: 600
     });
@@ -147,7 +147,7 @@ describe('#RadialLayout', () => {
     const focusNode = data.nodes[5]; //data.nodes[5];//'5';
     const nodeSize = 40;
 
-    const radial = new Layout.RadialLayout({
+    const radial = new Layouts['radial']({
       focusNode: '5',
       unitRadius,
       preventOverlap: true,
@@ -189,7 +189,7 @@ describe('#RadialLayout', () => {
     const focusNode = data.nodes[5];
     const nodeSize = 40;
 
-    const radial = new Layout.RadialLayout({
+    const radial = new Layouts['radial']({
       focusNode,
       unitRadius,
       preventOverlap: true,
@@ -233,7 +233,7 @@ describe('#RadialLayout', () => {
     const focusNode = data.nodes[5];
     const nodeSize = 40;
 
-    const radial = new Layout.RadialLayout({
+    const radial = new Layouts['radial']({
       focusNode,
       unitRadius,
       preventOverlap: true,
@@ -281,7 +281,7 @@ describe('#RadialLayout', () => {
       node.size = nodeSize;
     });
 
-    const radial = new Layout.RadialLayout({
+    const radial = new Layouts['radial']({
       focusNode,
       unitRadius,
       preventOverlap: true,
@@ -325,7 +325,7 @@ describe('#RadialLayout', () => {
     });
 
 
-    const radial = new Layout.RadialLayout({
+    const radial = new Layouts['radial']({
       focusNode,
       unitRadius,
       preventOverlap: true,
@@ -366,7 +366,7 @@ describe('#RadialLayout', () => {
     const focusNode = data.nodes[5];
     const nodeSize = 40;
 
-    const radial = new Layout.RadialLayout({
+    const radial = new Layouts['radial']({
       focusNode,
       unitRadius,
       sortBy: 'data',
@@ -391,7 +391,7 @@ describe('#RadialLayout', () => {
     const focusNode = data.nodes[5];
     const nodeSize = 40;
 
-    const radial = new Layout.RadialLayout({
+    const radial = new Layouts['radial']({
       focusNode,
       unitRadius,
       sortBy: 'sortProperty',
@@ -420,7 +420,7 @@ describe('radial layout', () => {
     const unitRadius = 100;
     const focusNodeId = '3';
 
-    const radial = new Layout.RadialLayout({
+    const radial = new Layouts['radial']({
       focusNode: focusNodeId,
       unitRadius,
       nodeSize: 30
@@ -459,7 +459,7 @@ describe('radial layout', () => {
     const unitRadius = 100;
     const focusNodeId = 'test'; // does not exist in data
 
-    const radial = new Layout.RadialLayout({
+    const radial = new Layouts['radial']({
       focusNode: focusNodeId,
       unitRadius,
       nodeSize: 30
@@ -470,7 +470,7 @@ describe('radial layout', () => {
 
   it('focus node undefined', () => {
     const unitRadius = 100;
-    const radial = new Layout.RadialLayout({
+    const radial = new Layouts['radial']({
       focusNode: undefined,
       unitRadius,
       nodeSize: 30
@@ -481,7 +481,7 @@ describe('radial layout', () => {
 
   it('instantiate layout', () => {
     const unitRadius = 50;
-    const radial = new Layout.RadialLayout({
+    const radial = new Layouts['radial']({
       unitRadius,
       preventOverlap: true,
       maxPreventOverlapIteration: null,
@@ -516,7 +516,7 @@ describe('radial layout', () => {
     expect(mathEqual(Math.sqrt(DistFnToDescreteComNode3), unitRadius)).toEqual(true);
   });
   it('instantiate layout with center on the left', () => {
-    const radial = new Layout.RadialLayout({
+    const radial = new Layouts['radial']({
       center: [0, 250],
     });
     radial.layout(data);
@@ -528,7 +528,7 @@ describe('radial layout', () => {
     data.nodes.forEach((node) => {
       delete node.size;
     });
-    const radial = new Layout.RadialLayout({
+    const radial = new Layouts['radial']({
       center: [250, 0],
       preventOverlap: true,
     });
@@ -1011,7 +1011,7 @@ describe('radial layout', () => {
       };
     });
 
-    const radial = new Layout.RadialLayout({
+    const radial = new Layouts['radial']({
       center: [250, 250],
       preventOverlap: true,
       sortBy: 'sortAttr2',

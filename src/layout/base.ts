@@ -20,6 +20,7 @@ export class Base {
 
   public execute(reloadData?: boolean): any {}
   public executeWithWorker() {}
+
   public getDefaultCfg() {
     return {}
   }

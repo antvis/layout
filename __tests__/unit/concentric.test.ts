@@ -1,4 +1,4 @@
-import { Layout } from '../../src'
+import { Layouts } from '../../src'
 import { mathEqual } from '../util';
 import dataset from '../data';
 const data = dataset.data;
@@ -24,7 +24,7 @@ graph.render()
 
 describe('#ConcentricLayout', () => {
   it('return correct default config', () => {
-    const concentric = new Layout.ConcentricLayout();
+    const concentric = new Layouts['concentric']();
     expect(concentric.getDefaultCfg()).toEqual({
       center: undefined,
       nodeSize: 30,
@@ -42,12 +42,12 @@ describe('#ConcentricLayout', () => {
     expect((data.nodes[0] as any).y).not.toBe(undefined);
   });
   it('concentric with no node', () => {
-    const concentric = new Layout.ConcentricLayout();
+    const concentric = new Layouts['concentric']();
     concentric.layout({nodes:[]})
   });
 
   it('concentric with one node', () => {
-    const concentric = new Layout.ConcentricLayout({
+    const concentric = new Layouts['concentric']({
       center: [150, 50]
     });
     const data1 = {
@@ -67,7 +67,7 @@ describe('#ConcentricLayout', () => {
   it('concentric with array nodeSize', () => {
     const width = 500;
     const height = 500;
-    const concentric = new Layout.ConcentricLayout({
+    const concentric = new Layouts['concentric']({
       nodeSize: [10, 20],
       width,
       height
@@ -89,7 +89,7 @@ describe('#ConcentricLayout', () => {
         }
       }
     });
-    const concentric = new Layout.ConcentricLayout({
+    const concentric = new Layouts['concentric']({
       sortBy: 'ttt',
       width,
       height
@@ -103,7 +103,7 @@ describe('#ConcentricLayout', () => {
   it('concentric preventOverlap', () => {
     const width = 500;
     const height = 500;
-    const concentric = new Layout.ConcentricLayout({
+    const concentric = new Layouts['concentric']({
       width,
       height,
       preventOverlap: true,
@@ -117,7 +117,7 @@ describe('#ConcentricLayout', () => {
   it('concentric equidistant', () => {
     const width = 500;
     const height = 500;
-    const concentric = new Layout.ConcentricLayout({
+    const concentric = new Layouts['concentric']({
       width,
       height,
       equidistant: true,
@@ -129,7 +129,7 @@ describe('#ConcentricLayout', () => {
   });
 
   it('instantiate layout', () => {
-    const concentric = new Layout.ConcentricLayout({
+    const concentric = new Layouts['concentric']({
       center: [250, 250],
       sweep: 1
     });

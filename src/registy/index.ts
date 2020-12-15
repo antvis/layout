@@ -1,13 +1,34 @@
+import { Base } from "../layout/base";
+import { isObject } from "../util"
+
 const map: Map<string, any> = new Map()
 
-export const registLayout = (name: string, customClass: any) => {
+export const registerLayout = (name: string, layoutOverroden: any) => {
   if (map.get(name)) {
-    throw new Error('already have a layout with the same name')
+    throw new Error(`The layout with the name ${name} exists already`)
   }
-  map.set(name, customClass)
+  if (isObject(layoutOverroden)) {
+    // tslint:disable-next-line: max-classes-per-file
+    class GLayout extends Base {
+      constructor(cfg: any) {
+        super()
+        const self = this as any
+        const props: any = {}
+        const defaultCfg = self.getDefaultCfg()
+        Object.assign(props, defaultCfg, layoutOverroden, cfg as unknown)
+        Object.keys(props).forEach((key: string) => {
+          const value = props[key]
+          self[key] = value
+        })
+      }
+    }
+    map.set(name, GLayout);
+  } else {
+    map.set(name, layoutOverroden);
+  }
 }
 
-export const unRegistLayout = (name: string) => {
+export const unRegisterLayout = (name: string) => {
   if (map.has(name)) {
     map.delete(name)
   }

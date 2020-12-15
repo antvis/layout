@@ -1,5 +1,4 @@
-import { Layout } from '../../src'
-import { Node, Edge } from '../../src/layout/types'
+import { Layouts } from '../../src'
 import dataset from '../data';
 
 const data = dataset.data;
@@ -23,7 +22,7 @@ const data = dataset.data;
 
 describe('#MDSLayout', () => {
   it('return correct default config', () => {
-    const mds = new Layout.MDSLayout();
+    const mds = new Layouts['mds']();
     expect(mds.getDefaultCfg()).toEqual({
       center: [0, 0],
       linkDistance: 50,
@@ -34,7 +33,7 @@ describe('#MDSLayout', () => {
   });
 
   it('mds with fixed link length', () => {
-    const mds = new Layout.MDSLayout({
+    const mds = new Layouts['mds']({
       center: [250, 250],
       linkDistance: 120,
     });
@@ -43,7 +42,7 @@ describe('#MDSLayout', () => {
   });
 
   it('mds layout with no node', () => {
-    const mds = new Layout.MDSLayout({
+    const mds = new Layouts['mds']({
       center: [250, 250],
       linkDistance: 120,
     });
@@ -60,7 +59,7 @@ describe('#MDSLayout', () => {
         },
       ],
     };
-    const mds = new Layout.MDSLayout({
+    const mds = new Layouts['mds']({
       center: [250, 250],
       linkDistance: 120,
     });
@@ -70,7 +69,7 @@ describe('#MDSLayout', () => {
     expect(nodeModel.y).toEqual(250);
   });
   it('mds layout with unconnected graph', () => {
-    const mds = new Layout.MDSLayout({
+    const mds = new Layouts['mds']({
       center: [250, 250],
       linkDistance: 120,
     });

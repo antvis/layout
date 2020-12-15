@@ -1,4 +1,4 @@
-import { Layout } from '../../src'
+import { Layouts } from '../../src'
 import dataset from '../data';
 const data = dataset.data;
 
@@ -17,7 +17,7 @@ const data = dataset.data;
 // })
 
 describe('#FruchtermanLayout', () => {
-  const preGrid = new Layout.GridLayout({
+  const preGrid = new Layouts['grid']({
     width: 500,
     height: 500
   });
@@ -26,7 +26,7 @@ describe('#FruchtermanLayout', () => {
   // 1. fruchterman.layout 后调用渲染
   // 2. 实例化 FruchtermanLayout 时将渲染语句传入 onLayoutEnd 回调函数
   it('return correct default config', () => {
-    const fruchterman = new Layout.FruchtermanLayout();
+    const fruchterman = new Layouts['fruchterman']();
     expect(fruchterman.getDefaultCfg()).toEqual({
       maxIteration: 1000,
       gravity: 10,
@@ -39,7 +39,7 @@ describe('#FruchtermanLayout', () => {
     expect((data.nodes[0] as any).y).not.toBe(undefined);
   });
   it('new graph with fruchterman layout, with configurations', () => {
-    const fruchterman = new Layout.FruchtermanLayout({
+    const fruchterman = new Layouts['fruchterman']({
       center: [100, 100],
       maxIteration: 5000
     });
@@ -51,7 +51,7 @@ describe('#FruchtermanLayout', () => {
     expect(data.nodes[1].y).not.toEqual(undefined);
   });
   it('fruchterman layout with no node', () => {
-    const fruchterman = new Layout.FruchtermanLayout({
+    const fruchterman = new Layouts['fruchterman']({
       center: [100, 100],
       maxIteration: 5000
     });
@@ -60,7 +60,7 @@ describe('#FruchtermanLayout', () => {
     });
   });
   it('fruchterman layout with one node', () => {
-    const fruchterman = new Layout.FruchtermanLayout({
+    const fruchterman = new Layouts['fruchterman']({
       width: 500,
       height: 500
     });
@@ -72,7 +72,7 @@ describe('#FruchtermanLayout', () => {
       ]
     }
     fruchterman.layout(data1);
-    const nodeModel = data1.nodes[0];
+    const nodeModel: any = data1.nodes[0];
     expect(nodeModel.x).toEqual(250);
     expect(nodeModel.y).toEqual(250);
   });
@@ -86,7 +86,7 @@ describe('#FruchtermanLayout', () => {
       };
     });
 
-    const fruchterman = new Layout.FruchtermanLayout({
+    const fruchterman = new Layouts['fruchterman']({
       clustering: true,
       maxIteration: 3000,
       clusterGravity: null,
@@ -98,7 +98,7 @@ describe('#FruchtermanLayout', () => {
     expect(node0.y).not.toEqual(NaN);
   });
   it('fruchterman layout with overlapped nodes and loop edge', () => {
-    const fruchterman = new Layout.FruchtermanLayout({
+    const fruchterman = new Layouts['fruchterman']({
       clustering: true,
       maxIteration: 5000,
       clusterGravity: null,
@@ -135,7 +135,7 @@ describe('#FruchtermanLayout', () => {
     expect(node0.y).not.toEqual(node1.y);
   });
   it('update fructherman layout configurations', () => {
-    const fruchterman = new Layout.FruchtermanLayout();
+    const fruchterman = new Layouts['fruchterman']();
     fruchterman.layout(data);
     
     fruchterman.updateCfg({

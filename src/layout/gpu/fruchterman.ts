@@ -78,7 +78,7 @@ export class FruchtermanGPULayout extends Base {
     return {
       maxIteration: 1000,
       gravity: 10,
-      speed: 0.1,
+      speed: 1,
       clustering: false,
       clusterGravity: 10,
     }

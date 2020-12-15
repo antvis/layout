@@ -1,4 +1,4 @@
-import { Layout } from '../../src'
+import { Layouts } from '../../src'
 import { mathEqual } from '../util';
 // import G6 from '@antv/g6';
 
@@ -227,7 +227,7 @@ data.nodes.forEach(node => {
 
 describe('#DagreLayout', () => {
   it('return correct default config', () => {
-    const dagre = new Layout.DagreLayout();
+    const dagre = new Layouts['dagre']();
     expect(dagre.getDefaultCfg()).toEqual({
       rankdir: 'TB', // layout 方向, 可选 TB, BT, LR, RL
       align: undefined, // 节点对齐方式，可选 UL, UR, DL, DR
@@ -250,7 +250,7 @@ describe('#DagreLayout', () => {
       delete edgeItem.type;
     });
 
-    const dagre = new Layout.DagreLayout({
+    const dagre = new Layouts['dagre']({
       rankdir: 'LR',
       controlPoints: false,
       nodeSize: 30,
@@ -277,7 +277,7 @@ describe('#DagreLayout', () => {
       delete edgeItem.controlPoints;
     });
     const nodeSize = [100, 50];
-    const dagre = new Layout.DagreLayout({
+    const dagre = new Layouts['dagre']({
       controlPoints: false,
       nodeSize,
       nodesepFunc: () => {
@@ -305,7 +305,7 @@ describe('#DagreLayout', () => {
     data.nodes.forEach((node, i) => {
       node.size = 20 + i * 5;
     });
-    const dagre = new Layout.DagreLayout({
+    const dagre = new Layouts['dagre']({
       rankdir: 'LR',
       controlPoints: true,
     });
@@ -329,7 +329,7 @@ describe('#DagreLayout', () => {
     data.nodes.forEach((node, i) => {
       node.size = [100, 70];
     });
-    const dagre = new Layout.DagreLayout({
+    const dagre = new Layouts['dagre']({
       rankdir: 'LR',
     });
     dagre.layout(data);
@@ -355,7 +355,7 @@ describe('#DagreLayout', () => {
     data.nodes[2].comboId = 'combo2';
     data.nodes[5].comboId = 'combo2';
     data.nodes[6].comboId = 'combo2';
-    const dagre = new Layout.DagreLayout({
+    const dagre = new Layouts['dagre']({
       rankdir: 'TB',
       sortByCombo: true
     });

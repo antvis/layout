@@ -1,4 +1,4 @@
-import { Layout } from '../../src'
+import { Layouts } from '../../src'
 import { isFunction } from '../../src/util';
 import dataset from '../data';
 const data = dataset.comboData;
@@ -21,7 +21,7 @@ const data = dataset.comboData;
 
 describe('#ComboForceLayout', () => {
   it('return correct default config', () => {
-    const comboForce = new Layout.ComboForceLayout();
+    const comboForce = new Layouts['comboForce']();
     expect(comboForce.getDefaultCfg()).toEqual({
       maxIteration: 100,
       center: [0, 0],
@@ -47,7 +47,7 @@ describe('#ComboForceLayout', () => {
   });
   it('layout without node', () => {
     const testData = {};
-    const comboForce = new Layout.ComboForceLayout();
+    const comboForce = new Layouts['comboForce']();
     comboForce.layout(testData);
   });
   it('layout with one node', () => {
@@ -60,7 +60,7 @@ describe('#ComboForceLayout', () => {
         },
       ],
     };
-    const comboForce = new Layout.ComboForceLayout({
+    const comboForce = new Layouts['comboForce']({
       center: [250, 250]
     });
     comboForce.layout(testData);
@@ -72,7 +72,7 @@ describe('#ComboForceLayout', () => {
 describe('combo force layout', () => {
   it('combo force layout with default configs, emit afterlayout', () => {
     const node = data.nodes[0];
-    const comboForce = new Layout.ComboForceLayout({
+    const comboForce = new Layouts['comboForce']({
       center: [250, 250]
     });
     comboForce.layout(data);
@@ -85,7 +85,7 @@ describe('combo force layout', () => {
 
   it('force with fixed edgeStrength, nodeStrength, preventOverlap', () => {
     const node = data.nodes[0];
-    const comboForce = new Layout.ComboForceLayout({
+    const comboForce = new Layouts['comboForce']({
       center: [250, 250],
       linkDistance: 140,
       edgeStrength: 0.5,
@@ -106,7 +106,7 @@ describe('combo force layout', () => {
     const comboSpacing = 20;
     const nodeSize = 10;
 
-    const comboForce = new Layout.ComboForceLayout({
+    const comboForce = new Layouts['comboForce']({
       center: [250, 250],
       preventOverlap: true,
       nodeSpacing,
@@ -134,7 +134,7 @@ describe('combo force layout', () => {
     });
 
 
-    const comboForce = new Layout.ComboForceLayout({
+    const comboForce = new Layouts['comboForce']({
       center: [250, 250],
       preventOverlap: true,
       nodeSpacing,
@@ -153,7 +153,7 @@ describe('combo force layout', () => {
   });
 
   it('force re-execute, isTicking', () => {
-    const comboForce = new Layout.ComboForceLayout({
+    const comboForce = new Layouts['comboForce']({
       center: [250, 250],
     });
     comboForce.layout(data)
@@ -172,7 +172,7 @@ describe('undefined configurations and update layout', () => {
       id: 'newcombo',
     });
 
-    const comboForce = new Layout.ComboForceLayout({
+    const comboForce = new Layouts['comboForce']({
       center: [500, 500],
       preventComboOverlap: false,
       preventNodeOverlap: false,
