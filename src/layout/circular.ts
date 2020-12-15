@@ -3,11 +3,11 @@
  * @author shiwu.wyy@antfin.com
  */
 
-import { Node, Edge, PointTuple, IndexMap } from './types'
+import { OutNode, Edge, PointTuple, IndexMap } from './types'
 import { Base } from './base'
 import { getDegree, clone } from '../util'
 
-type INode = Node & {
+type INode = OutNode & {
   degree: number,
   size: number | PointTuple,
   weight: number,
@@ -50,10 +50,10 @@ function initHierarchy(
       if (e.target) {
         targetIdx = nodeMap[e.target]
       }
-      const child = nodes[sourceIdx].children!
-      const parent = nodes[targetIdx].parent!
-      child.push(nodes[targetIdx].id)
-      parent.push(nodes[sourceIdx].id)
+      const sourceChildren = nodes[sourceIdx].children!
+      const targetChildren = nodes[targetIdx].children!
+      sourceChildren.push(nodes[targetIdx].id)
+      targetChildren.push(nodes[sourceIdx].id)
     })
   }
 }
@@ -88,7 +88,7 @@ function compareDegree(a: INode, b: INode) {
  */
 export class CircularLayout extends Base {
   /** 布局中心 */
-  public center: PointTuple = [0, 0]
+  public center: PointTuple
 
   /** 固定半径，若设置了 radius，则 startRadius 与 endRadius 不起效 */
   public radius: number | null = null
@@ -136,7 +136,6 @@ export class CircularLayout extends Base {
 
   public getDefaultCfg() {
     return {
-      center: [0, 0],
       radius: null,
       startRadius: null,
       endRadius: null,
@@ -157,10 +156,21 @@ export class CircularLayout extends Base {
     const nodes = self.nodes
     const edges = self.edges
     const n = nodes.length
-    const center = self.center
     if (n === 0) {
       return
     }
+
+    if (!self.width && typeof window !== 'undefined') {
+      self.width = window.innerWidth
+    }
+    if (!self.height && typeof window !== 'undefined') {
+      self.height = window.innerHeight
+    }
+    if (!self.center) {
+      self.center = [self.width / 2, self.height / 2]
+    }
+    const center = self.center
+
     if (n === 1) {
       nodes[0].x = center[0]
       nodes[0].y = center[1]
@@ -182,13 +192,6 @@ export class CircularLayout extends Base {
     self.nodeMap = nodeMap
     const degrees = getDegree(nodes.length, nodeMap, edges)
     self.degrees = degrees
-
-    if (!self.width && typeof window !== 'undefined') {
-      self.width = window.innerWidth
-    }
-    if (!self.height && typeof window !== 'undefined') {
-      self.height = window.innerHeight
-    }
     if (!radius && !startRadius && !endRadius) {
       radius = self.height > self.width ? self.width / 2 : self.height / 2
     } else if (!startRadius && endRadius) {
@@ -337,5 +340,7 @@ export namespace CircularLayout {
     ordering?: 'topology' | 'topology-directed' | 'degree' | null
     angleRatio?: number
     workerEnabled?: boolean
+    startAngle?: number
+    endAngle?: number
   }
 }

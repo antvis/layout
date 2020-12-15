@@ -9,7 +9,7 @@ export class Base {
 
   public layout(data: Model): Model {
     this.init(data)
-    return this.execute()
+    return this.execute(true)
   }
 
   public init(data: Model) {
@@ -18,8 +18,9 @@ export class Base {
     this.combos = data.combos || []
   }
 
-  public execute(): any {}
+  public execute(reloadData?: boolean): any {}
   public executeWithWorker() {}
+
   public getDefaultCfg() {
     return {}
   }

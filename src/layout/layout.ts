@@ -7,7 +7,13 @@ import { ForceLayout } from './force'
 import { CircularLayout } from './circular'
 import { DagreLayout } from './dagre'
 import { RadialLayout } from './radial'
-import { registLayout, getLayoutByName } from '../registy'
+import { registerLayout, getLayoutByName } from '../registy'
+import { ConcentricLayout } from './concentric'
+import { MDSLayout } from './mds'
+import { FruchtermanLayout } from './fruchterman'
+import { FruchtermanGPULayout } from './gpu/fruchterman'
+import { GForceGPULayout } from './gpu/gForce'
+import { ComboForceLayout } from './comboForce'
 
 export class Layout {
   public readonly layoutInstance: Base
@@ -49,35 +55,53 @@ export const Layouts: {[key: string]: any} = new Proxy({}, { // tslint:disable-l
     return getLayoutByName(propKey as string)
   },
   set: (target, propKey, value) => {
-    registLayout(propKey as string, value)
+    registerLayout(propKey as string, value)
     return true
   }
 })
 
 export namespace Layout {
-  registLayout('grid', GridLayout)
-  registLayout('random', RandomLayout)
-  registLayout('gForce', GForceLayout)
-  registLayout('force', ForceLayout)
-  registLayout('circular', CircularLayout)
-  registLayout('dagre', DagreLayout)
-  registLayout('radial', RadialLayout)
+  registerLayout('grid', GridLayout)
+  registerLayout('random', RandomLayout)
+  registerLayout('force', ForceLayout)
+  registerLayout('circular', CircularLayout)
+  registerLayout('dagre', DagreLayout)
+  registerLayout('radial', RadialLayout)
+  registerLayout('concentric', ConcentricLayout)
+  registerLayout('mds', MDSLayout)
+  registerLayout('fruchterman', FruchtermanLayout)
+  registerLayout('fruchterman-gpu', FruchtermanGPULayout)
+  registerLayout('gForce', GForceLayout)
+  registerLayout('gForce-gpu', GForceGPULayout)
+  registerLayout('comboForce', ComboForceLayout)
 
   export type LayoutTypes =
     | 'grid'
     | 'random'
-    | 'gForce'
     | 'force'
     | 'circular'
     | 'dagre'
     | 'radial'
+    | 'concentric'
+    | 'mds'
+    | 'fruchterman'
+    | 'fruchterman-gpu'
+    | 'gForce'
+    | 'gForce-gpu'
+    | 'comboForce'
 
   export type LayoutOptions =
     | GridLayout.GridLayoutOptions
     | RandomLayout.RandomLayoutOptions
-    | GForceLayout.GForceLayoutOptions
     | ForceLayout.ForceLayoutOptions
     | CircularLayout.CircularLayoutOptions
     | DagreLayout.DagreLayoutOptions
     | RadialLayout.RadialLayoutOptions
+    | ConcentricLayout.ConcentricLayoutOptions
+    | MDSLayout.MDSLayoutOptions
+    | FruchtermanLayout.FruchtermanLayoutOptions
+    | FruchtermanGPULayout.FruchtermanGPULayoutOptions
+    | GForceLayout.GForceLayoutOptions
+    | GForceGPULayout.GForceGPULayoutOptions
+    | ComboForceLayout.ComboForceLayoutOptions
 }

@@ -3,6 +3,7 @@
  * @author shiwu.wyy@antfin.com
  */
 
+import { Edge, OutNode } from './types'
 import dagre from 'dagre'
 import { isArray, isNumber } from '../util'
 import { Base } from './base'
@@ -37,6 +38,10 @@ export class DagreLayout extends Base {
 
   /** 每层节点是否根据节点数据中的 comboId 进行排序，以放置同层 combo 重叠 */
   public sortByCombo: boolean = false
+
+  public nodes: OutNode[] = []
+
+  public edges: Edge[] = []
 
   constructor(options?: DagreLayout.DagreLayoutOptions) {
     super()
@@ -201,6 +206,7 @@ export namespace DagreLayout {
     type: 'dagre'
     rankdir?: 'TB' | 'BT' | 'LR' | 'RL'
     align?: 'UL' | 'UR' | 'DL' | 'DR'
+    nodeSize?: number | number[] | undefined
     nodesep?: number
     ranksep?: number,
     nodesepFunc?: ((d?: any) => number) | undefined
