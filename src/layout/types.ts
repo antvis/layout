@@ -38,16 +38,16 @@ export type Point = {
 }
 
 export interface ComboTree {
-  id: string;
-  children?: ComboTree[];
-  depth?: number;
-  parentId?: string;
-  itemType?: 'node' | 'combo';
-  [key: string]: unknown;
+  id: string
+  children?: ComboTree[]
+  depth?: number
+  parentId?: string
+  itemType?: 'node' | 'combo'
+  [key: string]: unknown
 }
 export interface ComboConfig {
-  id: string;
-  parentId?: string;
-  children?: ComboTree[];
-  depth?: number;
+  id: string
+  parentId?: string
+  children?: ComboTree[]
+  depth?: number
 }

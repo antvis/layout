@@ -11,7 +11,7 @@ import { World } from '@antv/g-webgpu'
 // compile at runtime in dev mode
 // @ts-ignore
 // import { Compiler } from '@antv/g-webgpu-compiler'
-import { fruchtermanCode, clusterCode } from './fruchtermanShader'
+// import { fruchtermanCode, clusterCode } from './fruchtermanShader'
 import { buildTextureData, attributesToTextureData } from '../../util/gpu'
 // use compiled bundle in prod mode 
 import { fruchtermanBundle, clusterBundle } from './fruchtermanShader'
@@ -101,7 +101,7 @@ export class FruchtermanGPULayout extends Base {
       self.height = window.innerHeight
     }
     if (!self.center) {
-      self.center = [self.width / 2, self.height / 2];
+      self.center = [self.width / 2, self.height / 2]
     }
     const center = self.center
     if (nodes.length === 1) {

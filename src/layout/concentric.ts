@@ -100,7 +100,7 @@ export class ConcentricLayout extends Base {
       self.height = window.innerHeight
     }
     if (!self.center) {
-      self.center = [self.width / 2, self.height / 2];
+      self.center = [self.width / 2, self.height / 2]
     }
     const center = self.center
 
@@ -131,10 +131,10 @@ export class ConcentricLayout extends Base {
 
     // layout
     const nodeMap: NodeMap = {}
-    const IndexMap: IndexMap = {}
+    const indexMap: IndexMap = {}
     layoutNodes.forEach((node, i) => {
       nodeMap[node.id] = node
-      IndexMap[node.id] = i
+      indexMap[node.id] = i
     })
 
     // get the node degrees
@@ -145,7 +145,7 @@ export class ConcentricLayout extends Base {
     ) {
       self.sortBy = 'degree'
       if (!isNumber(nodes[0].degree)) {
-        const values = getDegree(nodes.length, IndexMap, edges)
+        const values = getDegree(nodes.length, indexMap, edges)
         layoutNodes.forEach((node, i) => {
           node.degree = values[i]
         })

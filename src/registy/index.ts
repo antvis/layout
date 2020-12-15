@@ -1,4 +1,4 @@
-import { Base } from "../layout/base";
+import { Base } from "../layout/base"
 import { isObject } from "../util"
 
 const map: Map<string, any> = new Map()
@@ -22,9 +22,9 @@ export const registerLayout = (name: string, layoutOverroden: any) => {
         })
       }
     }
-    map.set(name, GLayout);
+    map.set(name, GLayout)
   } else {
-    map.set(name, layoutOverroden);
+    map.set(name, layoutOverroden)
   }
 }
 

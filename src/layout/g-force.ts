@@ -153,7 +153,7 @@ export class GForceLayout extends Base {
       self.height = window.innerHeight
     }
     if (!self.center) {
-      self.center = [self.width / 2, self.height / 2];
+      self.center = [self.width / 2, self.height / 2]
     }
     const center = self.center
     

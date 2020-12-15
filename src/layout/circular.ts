@@ -167,7 +167,7 @@ export class CircularLayout extends Base {
       self.height = window.innerHeight
     }
     if (!self.center) {
-      self.center = [self.width / 2, self.height / 2];
+      self.center = [self.width / 2, self.height / 2]
     }
     const center = self.center
 
@@ -328,7 +328,7 @@ export class CircularLayout extends Base {
 
 export namespace CircularLayout {
   export interface CircularLayoutOptions {
-    type?: 'circular'
+    type: 'circular'
     center?: PointTuple
     width?: number
     height?: number

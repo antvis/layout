@@ -91,16 +91,16 @@ export const getAdjMatrix = (data: Model, directed: boolean): Matrix[] => {
  * @param ratio
  */
 export const scaleMatrix = (matrix: Matrix[], ratio: number) => {
-  const result: Matrix[] = [];
+  const result: Matrix[] = []
   matrix.forEach((row) => {
-    const newRow: number[] = [];
+    const newRow: number[] = []
     row.forEach((v) => {
-      newRow.push(v * ratio);
-    });
-    result.push(newRow);
-  });
-  return result;
-};
+      newRow.push(v * ratio)
+    })
+    result.push(newRow)
+  })
+  return result
+}
 
 /**
  * depth first traverse, from leaves to root, children in inverse order
@@ -109,15 +109,15 @@ export const scaleMatrix = (matrix: Matrix[], ratio: number) => {
 const traverseUp = <T extends { children?: T[] }>(data: T, fn: (param: T) => boolean) => {
   if (data && data.children) {
     for (let i = data.children.length - 1; i >= 0; i--) {
-      if (!traverseUp(data.children[i], fn)) return;
+      if (!traverseUp(data.children[i], fn)) return
     }
   }
 
-  if (fn(data) === false) {
-    return false;
+  if (!fn(data)) {
+    return false
   }
-  return true;
-};
+  return true
+}
 
 /**
  * depth first traverse, from leaves to root, children in inverse order
@@ -128,7 +128,7 @@ export const traverseTreeUp = <T extends { children?: T[] }>(
   fn: (param: T) => boolean,
 ) => {
   if (typeof fn !== 'function') {
-    return;
+    return
   }
-  traverseUp(data, fn);
-};
+  traverseUp(data, fn)
+}
