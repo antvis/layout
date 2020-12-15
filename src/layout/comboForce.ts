@@ -859,6 +859,10 @@ export class ComboForceLayout extends Base {
       displacements[uIndex].y += vecY * (1 - b)
     })
   }
+
+  public getType() {
+    return 'comboForce'
+  }
 }
 
 export namespace ComboForceLayout {

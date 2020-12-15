@@ -269,6 +269,10 @@ export class FruchtermanLayout extends Base {
       displacements[uIndex].y += (vecY / vecLength) * common
     })
   }
+
+  public getType() {
+    return 'fruchterman'
+  }
 }
 
 export namespace FruchtermanLayout {	

@@ -359,6 +359,10 @@ export class GForceGPULayout extends Base {
 
     await execute()
   }
+
+  public getType() {
+    return 'gForce-gpu'
+  }
 }
 
 export namespace GForceGPULayout {

@@ -31,6 +31,10 @@ export class Base {
     }
   }
 
+  public getType() {
+    return 'base'
+  }
+
   public destroy() {
     this.nodes = null
     this.edges = null

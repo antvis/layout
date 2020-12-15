@@ -1,10 +1,11 @@
 import { Matrix, Model, IndexMap, Edge } from '../layout/types'
 
-export const getDegree = (n: number, nodeIdxMap: IndexMap, edges: Edge[]) => {
+export const getDegree = (n: number, nodeIdxMap: IndexMap, edges: Edge[] | null) => {
   const degrees: number[] = []
   for (let i = 0; i < n; i++) {
     degrees[i] = 0
   }
+  if (!edges) return degrees
   edges.forEach((e) => {
     if (e.source) {
       degrees[nodeIdxMap[e.source]] += 1

@@ -91,14 +91,14 @@ export class GForceLayout extends Base {
   public nodeSpacing: number | number[] | ((d?: any) => number) | undefined
 
   /** 每次迭代结束的回调函数 */
-  public tick: () => void = () => {}
+  public tick: (() => void) | null = () => {}
 
   /** 是否允许每次迭代结束调用回调函数 */
   public enableTick: boolean
 
-  public nodes: INode[] = []
+  public nodes: INode[] | null = []
 
-  public edges: Edge[] = []
+  public edges: Edge[] | null = []
 
   public width: number = 300
 
@@ -237,6 +237,7 @@ export class GForceLayout extends Base {
     this.timeInterval = window.setInterval(() => {
       const accArray: number[] = []
       const velArray: number[] = []
+      if (!nodes) return
       nodes.forEach((_, i) => {
         accArray[2 * i] = 0
         accArray[2 * i + 1] = 0
@@ -244,7 +245,7 @@ export class GForceLayout extends Base {
         velArray[2 * i + 1] = 0
       })
       self.calRepulsive(accArray, nodes)
-      self.calAttractive(accArray, edges)
+      if (edges) self.calAttractive(accArray, edges)
       self.calGravity(accArray, nodes)
       const stepInterval = Math.max(0.02, self.interval - iter * 0.002)
       self.updateVelocity(accArray, velArray, stepInterval, nodes)
@@ -266,11 +267,16 @@ export class GForceLayout extends Base {
         movement += Math.sqrt(vx * vx + vy * vy)
       })
       movement /= nodes.length
-      if (movement < self.minMovement) window.clearInterval(self.timeInterval)
+      if (movement < self.minMovement) {
+        window.clearInterval(self.timeInterval)
+        if (self.onLayoutEnd) self.onLayoutEnd()
+      }
       iter++
-      if (iter > maxIteration) window.clearInterval(self.timeInterval)
+      if (iter > maxIteration) {
+        window.clearInterval(self.timeInterval)
+        if (self.onLayoutEnd) self.onLayoutEnd()
+      }
     }, 0)
-    if (self.onLayoutEnd) self.onLayoutEnd()
   }
 
   public calRepulsive(accArray: number[], nodes: INode[]) {
@@ -417,11 +423,24 @@ export class GForceLayout extends Base {
       window.clearInterval(this.timeInterval)
     }
   }
+
+  public destroy() {
+    const self = this
+    self.stop()
+    self.tick = null
+    self.nodes = null
+    self.edges = null
+    self.destroyed = true
+  }
+
+  public getType() {
+    return 'gForce'
+  }
 }
 
 export namespace GForceLayout {
   export interface GForceLayoutOptions {
-    type: 'gForce'
+    type?: 'gForce'
     center?: PointTuple
     width?: number
     height?: number

@@ -234,6 +234,10 @@ export class ConcentricLayout extends Base {
       })
     })
   }
+
+  public getType() {
+    return 'concentric'
+  }
 }
 	
 export namespace ConcentricLayout {	

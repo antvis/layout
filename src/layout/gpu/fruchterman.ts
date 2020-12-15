@@ -279,6 +279,10 @@ export class FruchtermanGPULayout extends Base {
 
     await execute()
   }
+
+  public getType() {
+    return 'fruchterman-gpu'
+  }
 }
 
 export namespace FruchtermanGPULayout {
