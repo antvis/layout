@@ -18,7 +18,7 @@ import { ComboForceLayout } from './comboForce'
 export class Layout {
   public readonly layoutInstance: Base
 
-  constructor(options: Layout.LayoutOptions) {
+  constructor(options: ILayout.LayoutOptions) {
     const layoutClass = getLayoutByName(options.type)
     this.layoutInstance  = new layoutClass(options)
   }
@@ -27,7 +27,7 @@ export class Layout {
     return this.layoutInstance.layout(data)
   }
 
-  updateCfg(cfg: Layout.LayoutOptions) {
+  updateCfg(cfg: ILayout.LayoutOptions) {
     this.layoutInstance.updateCfg(cfg)
   }
 
@@ -60,7 +60,7 @@ export const Layouts: {[key: string]: any} = new Proxy({}, { // tslint:disable-l
   }
 })
 
-export namespace Layout {
+export namespace ILayout {
   registerLayout('grid', GridLayout)
   registerLayout('random', RandomLayout)
   registerLayout('force', ForceLayout)
