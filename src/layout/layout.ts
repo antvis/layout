@@ -7,7 +7,7 @@ import { ForceLayout } from './force'
 import { CircularLayout } from './circular'
 import { DagreLayout } from './dagre'
 import { RadialLayout } from './radial'
-import {  registLayout, getLayoutByName } from '../registy'
+import { registLayout, getLayoutByName } from '../registy'
 
 export class Layout {
   public readonly layoutInstance: Base
@@ -41,6 +41,18 @@ export class Layout {
     return this.layoutInstance.destroy()
   }
 }
+
+// FIXME
+// FOR G6
+export const Layouts: {[key: string]: any} = new Proxy({}, { // tslint:disable-line
+  get: (target, propKey) => {
+    return getLayoutByName(propKey as string)
+  },
+  set: (target, propKey, value) => {
+    registLayout(propKey as string, value)
+    return true
+  }
+})
 
 export namespace Layout {
   registLayout('grid', GridLayout)
