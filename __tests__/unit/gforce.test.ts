@@ -43,15 +43,21 @@ describe('#gForceLayout', () => {
     expect(node.y).not.toEqual(undefined);
   });
 
-  it('force with fixed edgeStrength, nodeStrength', () => {
+  it('force with fixed edgeStrength, nodeStrength', (done) => {
     const node = data.nodes[0];
     const edge = data.edges[0];
     let isEnd;
+
+    const smallData = {
+      nodes: [{id: 'a'}, {id: 'b'}],
+      edges: [{source: 'a', target: 'b'}]
+    }
 
     const gForce = new Layouts['gForce']({
       linkDistance: 140,
       edgeStrength: 0.5,
       nodeStrength: -30,
+      maxIteration: 10,
       onLayoutEnd() {
         isEnd = true;
         expect(node.x);
@@ -60,9 +66,12 @@ describe('#gForceLayout', () => {
         expect(edge.y).toEqual(undefined);
       },
     });
-    gForce.layout(data);
-    expect(isEnd === true).toEqual(true);
-    expect(node.x).not.toEqual(undefined);
-    expect(node.y).not.toEqual(undefined);
+    gForce.layout(smallData);
+    setTimeout(e => {
+      expect(isEnd === true).toEqual(true);
+      expect(node.x).not.toEqual(undefined);
+      expect(node.y).not.toEqual(undefined);
+      done()
+    }, 200)
   });
 })
