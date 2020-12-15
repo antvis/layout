@@ -374,6 +374,10 @@ export class GridLayout extends Base {
     node.x = x
     node.y = y
   }
+
+  public getType() {
+    return 'grid';
+  }
 }
 
 export namespace GridLayout {

@@ -60,6 +60,10 @@ export class RandomLayout extends Base {
 
     return nodes
   }
+
+  public getType() {
+    return 'random';
+  }
 }
 
 export namespace RandomLayout {

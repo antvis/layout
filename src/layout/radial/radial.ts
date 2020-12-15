@@ -452,6 +452,10 @@ export class RadialLayout extends Base {
     }
     return max
   }
+
+  public getType() {
+    return 'radial';
+  }
 }
 
 export namespace RadialLayout {

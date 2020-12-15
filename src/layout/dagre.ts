@@ -183,6 +183,10 @@ export class DagreLayout extends Base {
       })
     })
   }
+
+  public getType() {
+    return 'dagre';
+  }
 }
 
 function getFunc(

@@ -117,6 +117,10 @@ export class MDSLayout extends Base {
       })
     })
   }
+
+  public getType() {
+    return 'mds';
+  }
 }
 
 

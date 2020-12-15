@@ -324,6 +324,10 @@ export class CircularLayout extends Base {
     orderedNodes.sort(compareDegree)
     return orderedNodes
   }
+
+  public getType() {
+    return 'circular';
+  }
 }
 
 export namespace CircularLayout {
