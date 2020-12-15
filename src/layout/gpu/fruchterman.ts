@@ -281,7 +281,7 @@ export class FruchtermanGPULayout extends Base {
   }
 
   public getType() {
-    return 'fruchterman-gpu';
+    return 'fruchterman-gpu'
   }
 }
 

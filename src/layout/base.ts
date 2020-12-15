@@ -32,7 +32,7 @@ export class Base {
   }
 
   public getType() {
-    return 'base';
+    return 'base'
   }
 
   public destroy() {

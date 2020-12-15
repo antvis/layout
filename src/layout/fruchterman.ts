@@ -271,7 +271,7 @@ export class FruchtermanLayout extends Base {
   }
 
   public getType() {
-    return 'fruchterman';
+    return 'fruchterman'
   }
 }
 

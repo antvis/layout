@@ -236,7 +236,7 @@ export class ConcentricLayout extends Base {
   }
 
   public getType() {
-    return 'concentric';
+    return 'concentric'
   }
 }
 	

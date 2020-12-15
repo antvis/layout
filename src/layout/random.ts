@@ -62,7 +62,7 @@ export class RandomLayout extends Base {
   }
 
   public getType() {
-    return 'random';
+    return 'random'
   }
 }
 

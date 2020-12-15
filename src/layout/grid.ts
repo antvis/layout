@@ -376,7 +376,7 @@ export class GridLayout extends Base {
   }
 
   public getType() {
-    return 'grid';
+    return 'grid'
   }
 }
 

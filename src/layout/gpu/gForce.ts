@@ -361,7 +361,7 @@ export class GForceGPULayout extends Base {
   }
 
   public getType() {
-    return 'gForce-gpu';
+    return 'gForce-gpu'
   }
 }
 

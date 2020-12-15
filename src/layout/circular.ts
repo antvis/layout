@@ -326,7 +326,7 @@ export class CircularLayout extends Base {
   }
 
   public getType() {
-    return 'circular';
+    return 'circular'
   }
 }
 

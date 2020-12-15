@@ -454,7 +454,7 @@ export class RadialLayout extends Base {
   }
 
   public getType() {
-    return 'radial';
+    return 'radial'
   }
 }
 

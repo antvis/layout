@@ -861,7 +861,7 @@ export class ComboForceLayout extends Base {
   }
 
   public getType() {
-    return 'comboForce';
+    return 'comboForce'
   }
 }
 

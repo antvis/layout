@@ -153,7 +153,7 @@ export class GForceLayout extends Base {
       self.height = window.innerHeight
     }
     if (!self.center) {
-      self.center = [self.width / 2, self.height / 2];
+      self.center = [self.width / 2, self.height / 2]
     }
     const center = self.center
     
@@ -237,7 +237,7 @@ export class GForceLayout extends Base {
     this.timeInterval = window.setInterval(() => {
       const accArray: number[] = []
       const velArray: number[] = []
-      if (!nodes) return;
+      if (!nodes) return
       nodes.forEach((_, i) => {
         accArray[2 * i] = 0
         accArray[2 * i + 1] = 0
@@ -426,15 +426,15 @@ export class GForceLayout extends Base {
 
   public destroy() {
     const self = this
-    self.stop();
-    self.tick = null;
+    self.stop()
+    self.tick = null
     self.nodes = null
     self.edges = null
     self.destroyed = true
   }
 
   public getType() {
-    return 'gForce';
+    return 'gForce'
   }
 }
 
