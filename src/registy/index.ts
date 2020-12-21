@@ -3,11 +3,11 @@ import { isObject } from "../util"
 
 const map: Map<string, any> = new Map()
 
-export const registerLayout = (name: string, layoutOverroden: any) => {
+export const registerLayout = (name: string, layoutOverride: any) => {
   if (map.get(name)) {
     throw new Error(`The layout with the name ${name} exists already`)
   }
-  if (isObject(layoutOverroden)) {
+  if (isObject(layoutOverride)) {
     // tslint:disable-next-line: max-classes-per-file
     class GLayout extends Base {
       constructor(cfg: any) {
@@ -15,7 +15,7 @@ export const registerLayout = (name: string, layoutOverroden: any) => {
         const self = this as any
         const props: any = {}
         const defaultCfg = self.getDefaultCfg()
-        Object.assign(props, defaultCfg, layoutOverroden, cfg as unknown)
+        Object.assign(props, defaultCfg, layoutOverride, cfg as unknown)
         Object.keys(props).forEach((key: string) => {
           const value = props[key]
           self[key] = value
@@ -24,7 +24,7 @@ export const registerLayout = (name: string, layoutOverroden: any) => {
     }
     map.set(name, GLayout)
   } else {
-    map.set(name, layoutOverroden)
+    map.set(name, layoutOverride)
   }
 }
 

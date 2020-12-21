@@ -130,7 +130,10 @@ export class DagreLayout extends Base {
       self.sortLevel('comboId')
     }
 
-    return nodes
+    return {
+      nodes,
+      edges,
+    }
   }
 
   public sortLevel(propertyName: string) {

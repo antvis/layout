@@ -104,7 +104,7 @@ export class FruchtermanLayout extends Base {
     self.nodeMap = nodeMap
     self.nodeIdxMap = nodeIdxMap
     // layout
-    self.run()
+    return self.run()
   }
 
   public run() {
@@ -215,6 +215,11 @@ export class FruchtermanLayout extends Base {
           n.y += (displacements[j].y / distLength) * limitedDist
         }
       })
+    }
+
+    return {
+      nodes,
+      edges,
     }
   }
 

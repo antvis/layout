@@ -286,7 +286,10 @@ export class GridLayout extends Base {
       self.getPos(node)
     }
 
-    return layoutNodes
+    return {
+      edges,
+      nodes: layoutNodes,
+    }
   }
 
   private small(val?: number): number | undefined {

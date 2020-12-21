@@ -243,7 +243,10 @@ export class CircularLayout extends Base {
       layoutNodes[i].weight = degrees[i]
     }
 
-    return layoutNodes
+    return {
+      nodes: layoutNodes,
+      edges: this.edges,
+    }
   }
 
   /**

@@ -68,6 +68,11 @@ export class MDSLayout extends Base {
       nodes[i].x = p[0] + center[0]
       nodes[i].y = p[1] + center[1]
     })
+
+    return {
+      nodes,
+      edges,
+    }
   }
 
   /**

@@ -233,6 +233,11 @@ export class ConcentricLayout extends Base {
         node.y = center[1] + rr * Math.sin(theta)
       })
     })
+
+    return {
+      nodes,
+      edges,
+    }
   }
 
   public getType() {

@@ -58,7 +58,10 @@ export class RandomLayout extends Base {
       })
     }
 
-    return nodes
+    return {
+      nodes,
+      edges: this.edges,
+    }
   }
 
   public getType() {

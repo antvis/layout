@@ -295,7 +295,10 @@ export class RadialLayout extends Base {
       nodes[i].y = p[1] + center[1]
     })
 
-    return nodes
+    return {
+      nodes,
+      edges,
+    }
   }
 
   public run() {
