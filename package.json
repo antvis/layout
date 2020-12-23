@@ -80,7 +80,6 @@
     },
     "hooks": {
       "before:init": [
-        "yarn run test",
         "yarn run build"
       ]
     }
