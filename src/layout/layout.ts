@@ -11,6 +11,8 @@ import { registerLayout, getLayoutByName } from '../registy'
 import { ConcentricLayout } from './concentric'
 import { MDSLayout } from './mds'
 import { FruchtermanLayout } from './fruchterman'
+import { FruchtermanGPULayout } from './gpu/fruchterman'
+import { GForceGPULayout } from './gpu/gForce'
 import { ComboForceLayout } from './comboForce'
 
 export class Layout {
@@ -68,7 +70,9 @@ export namespace ILayout {
   registerLayout('concentric', ConcentricLayout)
   registerLayout('mds', MDSLayout)
   registerLayout('fruchterman', FruchtermanLayout)
+  registerLayout('fruchterman-gpu', FruchtermanGPULayout)
   registerLayout('gForce', GForceLayout)
+  registerLayout('gForce-gpu', GForceGPULayout)
   registerLayout('comboForce', ComboForceLayout)
 
   export type LayoutTypes =
@@ -81,7 +85,9 @@ export namespace ILayout {
     | 'concentric'
     | 'mds'
     | 'fruchterman'
+    | 'fruchterman-gpu'
     | 'gForce'
+    | 'gForce-gpu'
     | 'comboForce'
 
   export type LayoutOptions =
@@ -94,6 +100,8 @@ export namespace ILayout {
     | ConcentricLayout.ConcentricLayoutOptions
     | MDSLayout.MDSLayoutOptions
     | FruchtermanLayout.FruchtermanLayoutOptions
+    | FruchtermanGPULayout.FruchtermanGPULayoutOptions
     | GForceLayout.GForceLayoutOptions
+    | GForceGPULayout.GForceGPULayoutOptions
     | ComboForceLayout.ComboForceLayoutOptions
 }
