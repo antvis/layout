@@ -167,7 +167,10 @@ export class DagreLayout extends Base {
         comboCenters[ckey].y /= comboCenters[ckey].count
       })
 
-      if (nodesNum === 1) return
+      if (nodesNum === 1) {
+        if (self.onLayoutEnd) self.onLayoutEnd()
+        return
+      }
       const sortedByX = levelNodes.sort((a: any, b: any) => {
         return a.x - b.x
       })
