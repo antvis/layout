@@ -5,7 +5,7 @@ const map: Map<string, any> = new Map()
 
 export const registerLayout = (name: string, layoutOverride: any) => {
   if (map.get(name)) {
-    throw new Error(`The layout with the name ${name} exists already`)
+    console.warn(`The layout with the name ${name} exists already, it will be overridden`)
   }
   if (isObject(layoutOverride)) {
     // tslint:disable-next-line: max-classes-per-file
