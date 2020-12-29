@@ -75,6 +75,9 @@ export class GridLayout extends Base {
       col: number
     }
   } = {}
+  
+  /** 迭代结束的回调函数 */
+  public onLayoutEnd: () => void = () => { }
 
   constructor(options?: GridLayout.GridLayoutOptions) {
     super()
@@ -285,6 +288,8 @@ export class GridLayout extends Base {
       }
       self.getPos(node)
     }
+    
+    if (self.onLayoutEnd) self.onLayoutEnd()
 
     return {
       edges,
@@ -398,5 +403,6 @@ export namespace GridLayout {
     sortBy?: string
     workerEnabled?: boolean
     position?: ((node: INode) => { row?: number; col?: number }) | undefined
+    onLayoutEnd?: () => void
   }
 }

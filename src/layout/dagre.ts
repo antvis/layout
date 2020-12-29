@@ -42,6 +42,9 @@ export class DagreLayout extends Base {
   public nodes: OutNode[] = []
 
   public edges: Edge[] = []
+  
+  /** 迭代结束的回调函数 */
+  public onLayoutEnd: () => void = () => { }
 
   constructor(options?: DagreLayout.DagreLayoutOptions) {
     super()
@@ -129,6 +132,8 @@ export class DagreLayout extends Base {
     if (self.sortByCombo) {
       self.sortLevel('comboId')
     }
+
+    if (self.onLayoutEnd) self.onLayoutEnd()
 
     return {
       nodes,
@@ -221,5 +226,6 @@ export namespace DagreLayout {
     controlPoints?: boolean
     sortByCombo?: boolean
     workerEnabled?: boolean
+    onLayoutEnd?: () => void
   }
 }

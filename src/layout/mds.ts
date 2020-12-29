@@ -23,6 +23,9 @@ export class MDSLayout extends Base {
   public nodes: OutNode[] = []
 
   public edges: Edge[] = []
+  
+  /** 迭代结束的回调函数 */
+  public onLayoutEnd: () => void = () => { }
 
   constructor(options?: MDSLayout.MDSLayoutOptions) {
     super()
@@ -68,6 +71,8 @@ export class MDSLayout extends Base {
       nodes[i].x = p[0] + center[0]
       nodes[i].y = p[1] + center[1]
     })
+    
+    if (self.onLayoutEnd) self.onLayoutEnd()
 
     return {
       nodes,
@@ -135,5 +140,6 @@ export namespace MDSLayout {
     center?: PointTuple
     linkDistance?: number
     workerEnabled?: boolean
+    onLayoutEnd?: () => void
   }
 }

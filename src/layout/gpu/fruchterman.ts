@@ -298,5 +298,6 @@ export namespace FruchtermanGPULayout {
     clusterGravity?: number
     workerEnabled?: boolean
     gpuEnabled?: boolean
+    onLayoutEnd?: () => void
   }
 }

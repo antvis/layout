@@ -50,6 +50,9 @@ export class FruchtermanLayout extends Base {
   public nodeMap: NodeMap = {}
 
   public nodeIdxMap: IndexMap = {}
+  
+  /** 迭代结束的回调函数 */
+  public onLayoutEnd: () => void = () => { }
 
   constructor(options?: FruchtermanLayout.FruchtermanLayoutOptions) {	
     super()	
@@ -217,6 +220,8 @@ export class FruchtermanLayout extends Base {
       })
     }
 
+    if (self.onLayoutEnd) self.onLayoutEnd()
+
     return {
       nodes,
       edges,
@@ -293,5 +298,6 @@ export namespace FruchtermanLayout {
     clusterGravity?: number
     workerEnabled?: boolean
     gpuEnabled?: boolean
+    onLayoutEnd?: () => void
   }	
 }

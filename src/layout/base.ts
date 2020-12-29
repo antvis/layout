@@ -6,6 +6,7 @@ export class Base {
   public combos: Combo[] | null = []
   public positions: PointTuple[] | null = []
   public destroyed: boolean = false
+  public onLayoutEnd: () => void = () => { } 
 
   public layout(data: Model): Model {
     this.init(data)
