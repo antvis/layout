@@ -101,6 +101,8 @@ export class RadialLayout extends Base {
 
   public edges: Edge[] = []
 
+  public onLayoutEnd: () => void
+
   constructor(options?: RadialLayout.RadialLayoutOptions) {
     super()
     this.updateCfg(options)
@@ -295,6 +297,8 @@ export class RadialLayout extends Base {
       nodes[i].y = p[1] + center[1]
     })
 
+    if (self.onLayoutEnd) self.onLayoutEnd()
+
     return {
       nodes,
       edges,
@@ -479,5 +483,6 @@ export namespace RadialLayout {
     sortBy?: string | undefined
     sortStrength?: number
     workerEnabled?: boolean
+    onLayoutEnd?: () => void
   }
 }

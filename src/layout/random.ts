@@ -22,6 +22,9 @@ export class RandomLayout extends Base {
   public nodes: OutNode[] = []
 
   public edges: Edge[] = []
+  
+  /** 迭代结束的回调函数 */
+  public onLayoutEnd: () => void = () => { }
 
   constructor(options?: RandomLayout.RandomLayoutOptions) {
     super()
@@ -57,6 +60,8 @@ export class RandomLayout extends Base {
         node.y = (Math.random() - 0.5) * layoutScale * self.height + center[1]
       })
     }
+    
+    if (self.onLayoutEnd) self.onLayoutEnd()
 
     return {
       nodes,
@@ -76,5 +81,6 @@ export namespace RandomLayout {
     width?: number
     height?: number
     workerEnabled?: boolean
+    onLayoutEnd?: () => void
   }
 }

@@ -129,6 +129,8 @@ export class CircularLayout extends Base {
 
   public height: number = 300
 
+  public onLayoutEnd: () => void
+
   constructor(options?: CircularLayout.CircularLayoutOptions) {
     super()
     this.updateCfg(options)
@@ -243,6 +245,8 @@ export class CircularLayout extends Base {
       layoutNodes[i].weight = degrees[i]
     }
 
+    if (self.onLayoutEnd) self.onLayoutEnd()
+
     return {
       nodes: layoutNodes,
       edges: this.edges,
@@ -349,5 +353,6 @@ export namespace CircularLayout {
     workerEnabled?: boolean
     startAngle?: number
     endAngle?: number
+    onLayoutEnd?: () => void
   }
 }

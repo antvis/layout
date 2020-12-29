@@ -58,6 +58,9 @@ export class ConcentricLayout extends Base {
 
   public height: number = 300
 
+  /** 迭代结束的回调函数 */
+  public onLayoutEnd: () => void = () => { }
+
   private maxValueNode: INode | undefined
 
   private counterclockwise: boolean | undefined
@@ -234,6 +237,8 @@ export class ConcentricLayout extends Base {
       })
     })
 
+    if (self.onLayoutEnd) self.onLayoutEnd()
+
     return {
       nodes,
       edges,
@@ -261,5 +266,6 @@ export namespace ConcentricLayout {
     workerEnabled?: boolean
     width?: number
     height?: number
+    onLayoutEnd?: () => void
   }	
 }

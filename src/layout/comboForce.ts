@@ -113,7 +113,7 @@ export class ComboForceLayout extends Base {
   /** 每次迭代的回调函数 */
   public onTick: () => void = () => { }
 
-  /** 每次迭代的回调函数 */
+  /** 迭代结束的回调函数 */
   public onLayoutEnd: () => void = () => { }
 
   /** 根据边两端节点层级差距的调整引力系数的因子，取值范围 [0, 1]。层级差距越大，引力越小 */
@@ -203,7 +203,7 @@ export class ComboForceLayout extends Base {
 
     // layout
     self.run()
-    self.onLayoutEnd()
+    if (self.onLayoutEnd) self.onLayoutEnd()
   }
 
   public run() {
