@@ -224,9 +224,7 @@ export class ForceLayout extends Base {
             })
             .on('end', () => {
               self.ticking = false
-              if (self.onLayoutEnd) {
-                self.onLayoutEnd()
-              }
+              if (self.onLayoutEnd) self.onLayoutEnd()
             })
           self.ticking = true
         } else {

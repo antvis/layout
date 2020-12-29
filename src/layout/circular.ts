@@ -159,6 +159,7 @@ export class CircularLayout extends Base {
     const edges = self.edges
     const n = nodes.length
     if (n === 0) {
+      if (self.onLayoutEnd) self.onLayoutEnd()
       return
     }
 
@@ -176,6 +177,7 @@ export class CircularLayout extends Base {
     if (n === 1) {
       nodes[0].x = center[0]
       nodes[0].y = center[1]
+      if (self.onLayoutEnd) self.onLayoutEnd()
       return
     }
 

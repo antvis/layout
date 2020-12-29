@@ -143,6 +143,7 @@ export class GForceLayout extends Base {
     }
 
     if (!nodes || nodes.length === 0) {
+      if (self.onLayoutEnd) self.onLayoutEnd()
       return
     }
 
@@ -160,6 +161,7 @@ export class GForceLayout extends Base {
     if (nodes.length === 1) {
       nodes[0].x = center[0]
       nodes[0].y = center[1]
+      if (self.onLayoutEnd) self.onLayoutEnd()
       return
     }
     const nodeMap: NodeMap = {}

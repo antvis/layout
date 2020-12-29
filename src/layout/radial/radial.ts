@@ -132,6 +132,7 @@ export class RadialLayout extends Base {
     const nodes = self.nodes
     const edges = self.edges || []
     if (!nodes || nodes.length === 0) {
+      if (self.onLayoutEnd) self.onLayoutEnd()
       return
     }
 
@@ -149,6 +150,7 @@ export class RadialLayout extends Base {
     if (nodes.length === 1) {
       nodes[0].x = center[0]
       nodes[0].y = center[1]
+      if (self.onLayoutEnd) self.onLayoutEnd()
       return
     }
     const linkDistance = self.linkDistance
