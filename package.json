@@ -23,7 +23,7 @@
     "build:esm": "tsc --module esnext --target es2015 --outDir ./es",
     "build:cjs": "tsc --module commonjs --target es5 --outDir ./lib",
     "build:umd": "father build",
-    "build": "yarn run build:cjs && yarn run build:esm && yarn run build:umd",
+    "build": "yarn run build:cjs && yarn run build:esm",
     "build:watch": "yarn build:esm --w",
     "precommit": "lint-staged",
     "release": "release-it",
