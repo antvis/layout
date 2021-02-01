@@ -4,7 +4,13 @@
  * @author shiwu.wyy@antfin.com
  */
 
-import { IndexMap, OutNode, PointTuple, Edge } from "../types";
+import {
+  IndexMap,
+  OutNode,
+  PointTuple,
+  Edge,
+  GForceGPULayoutOptions
+} from "../types";
 import { Base } from "../base";
 import { isNumber } from "../../util";
 // @ts-ignore
@@ -91,7 +97,7 @@ export class GForceGPULayout extends Base {
   /** 存储节点度数 */
   private degrees: number[];
 
-  constructor(options?: GForceGPULayout.GForceGPULayoutOptions) {
+  constructor(options?: GForceGPULayoutOptions) {
     super();
     this.updateCfg(options);
   }
@@ -384,26 +390,5 @@ export class GForceGPULayout extends Base {
 
   public getType() {
     return "gForce-gpu";
-  }
-}
-
-export namespace GForceGPULayout {
-  export interface GForceGPULayoutOptions {
-    type: "gForce-gpu";
-    center?: PointTuple;
-    linkDistance?: number | ((d?: any) => number) | undefined;
-    nodeStrength?: number | ((d?: any) => number) | undefined;
-    edgeStrength?: number | ((d?: any) => number) | undefined;
-    minMovement?: number;
-    maxIteration?: number;
-    damping?: number;
-    maxSpeed?: number;
-    coulombDisScale?: number;
-    getMass?: ((d?: any) => number) | undefined;
-    getCenter?: ((d?: any, degree?: number) => number[]) | undefined;
-    gravity?: number;
-    onLayoutEnd?: () => void;
-    workerEnabled?: boolean;
-    gpuEnabled?: boolean;
   }
 }

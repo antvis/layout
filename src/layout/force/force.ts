@@ -3,90 +3,90 @@
  * @author shiwu.wyy@antfin.com
  */
 
-import { Edge, Model, PointTuple } from '../types'
-import * as d3Force from 'd3-force'
-import forceInABox from './force-in-a-box'
-import { isArray, isFunction, isNumber } from '../../util'
-import { Base } from '../base'
-import { LAYOUT_MESSAGE } from '../worker/layoutConst'
+import { Edge, Model, PointTuple, ForceLayoutOptions } from "../types";
+import * as d3Force from "d3-force";
+import forceInABox from "./force-in-a-box";
+import { isArray, isFunction, isNumber } from "../../util";
+import { Base } from "../base";
+import { LAYOUT_MESSAGE } from "../worker/layoutConst";
 
 /**
  * 经典力导布局 force-directed
  */
 export class ForceLayout extends Base {
   /** 向心力作用点 */
-  public center: PointTuple = [0, 0]
+  public center: PointTuple = [0, 0];
 
   /** 节点作用力 */
-  public nodeStrength: number | null = null
+  public nodeStrength: number | null = null;
 
   /** 边的作用力, 默认为根据节点的入度出度自适应 */
-  public edgeStrength: number | null = null
+  public edgeStrength: number | null = null;
 
   /** 是否防止节点相互覆盖 */
-  public preventOverlap: boolean = false
+  public preventOverlap: boolean = false;
 
   /** 节点大小 / 直径，用于防止重叠时的碰撞检测 */
-  public nodeSize: number | number[] | ((d?: unknown) => number) | undefined
+  public nodeSize: number | number[] | ((d?: unknown) => number) | undefined;
 
   /** 节点间距，防止节点重叠时节点之间的最小距离（两节点边缘最短距离） */
-  public nodeSpacing: ((d?: unknown) => number) | undefined
+  public nodeSpacing: ((d?: unknown) => number) | undefined;
 
   /** 是否支持按类聚合 */
-  public clustering: boolean
+  public clustering: boolean;
 
   /** 聚类节点作用力 */
-  public clusterNodeStrength: number | null = null
+  public clusterNodeStrength: number | null = null;
 
   /** 聚类边作用力 */
-  public clusterEdgeStrength: number | null = null
+  public clusterEdgeStrength: number | null = null;
 
   /** 聚类边长度 */
-  public clusterEdgeDistance: number | null = null
+  public clusterEdgeDistance: number | null = null;
 
   /** 聚类节点大小 / 直径，直径越大，越分散 */
-  public clusterNodeSize: number | null = null
+  public clusterNodeSize: number | null = null;
 
   /** 用于 foci 的力 */
-  public clusterFociStrength: number | null = null
+  public clusterFociStrength: number | null = null;
 
   /** 默认边长度 */
-  public linkDistance: number = 50
+  public linkDistance: number = 50;
 
   /** 自定义 force 方法 */
-  public forceSimulation: any
+  public forceSimulation: any;
 
   /** 迭代阈值的衰减率 [0, 1]，0.028 对应最大迭代数为 300 */
-  public alphaDecay: number = 0.028
+  public alphaDecay: number = 0.028;
 
   /** 停止迭代的阈值 */
-  public alphaMin: number = 0.001
+  public alphaMin: number = 0.001;
 
   /** 当前阈值 */
-  public alpha: number = 0.3
+  public alpha: number = 0.3;
 
   /** 防止重叠的力强度 */
-  public collideStrength: number = 1
+  public collideStrength: number = 1;
 
   /** 是否启用web worker。前提是在web worker里执行布局，否则无效	*/
-  public workerEnabled: boolean = false
+  public workerEnabled: boolean = false;
 
-  public tick: () => void = () => {}
+  public tick: () => void = () => {};
 
   /** 布局完成回调 */
-  public onLayoutEnd: () => void = () => {}
+  public onLayoutEnd: () => void = () => {};
 
   /** 是否正在布局 */
-  private ticking: boolean | undefined = undefined
+  private ticking: boolean | undefined = undefined;
 
-  private edgeForce: any
+  private edgeForce: any;
 
-  private clusterForce: any
+  private clusterForce: any;
 
-  constructor(options?: ForceLayout.ForceLayoutOptions) {
-    super()
+  constructor(options?: ForceLayoutOptions) {
+    super();
     if (options) {
-      this.updateCfg(options)
+      this.updateCfg(options);
     }
   }
 
@@ -113,8 +113,8 @@ export class ForceLayout extends Base {
       tick() {},
       onLayoutEnd() {}, // 布局完成回调
       // 是否启用web worker。前提是在web worker里执行布局，否则无效
-      workerEnabled: false,
-    }
+      workerEnabled: false
+    };
   }
 
   /**
@@ -122,77 +122,77 @@ export class ForceLayout extends Base {
    * @param {object} data 数据
    */
   public init(data: Model) {
-    const self = this
-    self.nodes = data.nodes || []
-    const edges = data.edges || []
-    self.edges = edges.map((edge) => {
-      const res: any = {}
-      const expectKeys = ['targetNode', 'sourceNode', 'startPoint', 'endPoint']
+    const self = this;
+    self.nodes = data.nodes || [];
+    const edges = data.edges || [];
+    self.edges = edges.map(edge => {
+      const res: any = {};
+      const expectKeys = ["targetNode", "sourceNode", "startPoint", "endPoint"];
       Object.keys(edge).forEach((key: keyof Edge) => {
         if (!(expectKeys.indexOf(key) > -1)) {
-          res[key] = edge[key]
+          res[key] = edge[key];
         }
-      })
-      return res
-    })
-    self.ticking = false
+      });
+      return res;
+    });
+    self.ticking = false;
   }
 
   /**
    * 执行布局
    */
   public execute(reloadData?: boolean) {
-    const self = this
-    const nodes = self.nodes
-    const edges = self.edges
+    const self = this;
+    const nodes = self.nodes;
+    const edges = self.edges;
     // 如果正在布局，忽略布局请求
     if (self.ticking) {
-      return
+      return;
     }
-    let simulation = self.forceSimulation
-    const alphaMin = self.alphaMin
-    const alphaDecay = self.alphaDecay
-    const alpha = self.alpha
+    let simulation = self.forceSimulation;
+    const alphaMin = self.alphaMin;
+    const alphaDecay = self.alphaDecay;
+    const alpha = self.alpha;
     if (!simulation) {
       try {
         // 定义节点的力
-        const nodeForce = d3Force.forceManyBody()
+        const nodeForce = d3Force.forceManyBody();
         if (self.nodeStrength) {
-          nodeForce.strength(self.nodeStrength)
+          nodeForce.strength(self.nodeStrength);
         }
-        simulation = d3Force.forceSimulation().nodes(nodes as any)
+        simulation = d3Force.forceSimulation().nodes(nodes as any);
 
         if (self.clustering) {
-          const clusterForce = forceInABox() as any
+          const clusterForce = forceInABox() as any;
           clusterForce
             .centerX(self.center[0])
             .centerY(self.center[1])
-            .template('force')
-            .strength(self.clusterFociStrength)
+            .template("force")
+            .strength(self.clusterFociStrength);
           if (edges) {
-            clusterForce.links(edges)
+            clusterForce.links(edges);
           }
           if (nodes) {
-            clusterForce.nodes(nodes)
+            clusterForce.nodes(nodes);
           }
           clusterForce
             .forceLinkDistance(self.clusterEdgeDistance)
             .forceLinkStrength(self.clusterEdgeStrength)
             .forceCharge(self.clusterNodeStrength)
-            .forceNodeSize(self.clusterNodeSize)
+            .forceNodeSize(self.clusterNodeSize);
 
-          self.clusterForce = clusterForce
-          simulation.force('group', clusterForce)
+          self.clusterForce = clusterForce;
+          simulation.force("group", clusterForce);
         }
         simulation
-          .force('center', d3Force.forceCenter(self.center[0], self.center[1]))
-          .force('charge', nodeForce)
+          .force("center", d3Force.forceCenter(self.center[0], self.center[1]))
+          .force("charge", nodeForce)
           .alpha(alpha)
           .alphaDecay(alphaDecay)
-          .alphaMin(alphaMin)
+          .alphaMin(alphaMin);
 
         if (self.preventOverlap) {
-          self.overlapProcess(simulation)
+          self.overlapProcess(simulation);
         }
         // 如果有边，定义边的力
         if (edges) {
@@ -200,89 +200,88 @@ export class ForceLayout extends Base {
           const edgeForce = d3Force
             .forceLink()
             .id((d: any) => d.id)
-            .links(edges)
+            .links(edges);
           if (self.edgeStrength) {
-            edgeForce.strength(self.edgeStrength)
+            edgeForce.strength(self.edgeStrength);
           }
           if (self.linkDistance) {
-            edgeForce.distance(self.linkDistance)
+            edgeForce.distance(self.linkDistance);
           }
-          self.edgeForce = edgeForce
-          simulation.force('link', edgeForce)
+          self.edgeForce = edgeForce;
+          simulation.force("link", edgeForce);
         }
         if (self.workerEnabled && !isInWorker()) {
           // 如果不是运行在web worker里，不用web worker布局
-          self.workerEnabled = false
+          self.workerEnabled = false;
           console.warn(
-            'workerEnabled option is only supported when running in web worker.',
-          )
+            "workerEnabled option is only supported when running in web worker."
+          );
         }
         if (!self.workerEnabled) {
           simulation
-            .on('tick', () => {
-              self.tick()
+            .on("tick", () => {
+              self.tick();
             })
-            .on('end', () => {
-              self.ticking = false
-              if (self.onLayoutEnd) self.onLayoutEnd()
-            })
-          self.ticking = true
+            .on("end", () => {
+              self.ticking = false;
+              if (self.onLayoutEnd) self.onLayoutEnd();
+            });
+          self.ticking = true;
         } else {
           // worker is enabled
-          simulation.stop()
-          const totalTicks = getSimulationTicks(simulation)
+          simulation.stop();
+          const totalTicks = getSimulationTicks(simulation);
           for (let currentTick = 1; currentTick <= totalTicks; currentTick++) {
-            simulation.tick()
+            simulation.tick();
             // currentTick starts from 1.
             postMessage(
               {
                 nodes,
                 currentTick,
                 totalTicks,
-                type: LAYOUT_MESSAGE.TICK,
+                type: LAYOUT_MESSAGE.TICK
               },
-              undefined as any,
-            )
+              undefined as any
+            );
           }
-          self.ticking = false
+          self.ticking = false;
         }
 
-        self.forceSimulation = simulation
-        self.ticking = true
+        self.forceSimulation = simulation;
+        self.ticking = true;
       } catch (e) {
-        self.ticking = false
-        console.warn(e)
+        self.ticking = false;
+        console.warn(e);
       }
     } else {
       if (reloadData) {
         if (self.clustering && self.clusterForce) {
-          self.clusterForce.nodes(nodes)
-          self.clusterForce.links(edges)
+          self.clusterForce.nodes(nodes);
+          self.clusterForce.links(edges);
         }
-        simulation.nodes(nodes)
-        if (edges && self.edgeForce) self.edgeForce.links(edges)
-        
+        simulation.nodes(nodes);
+        if (edges && self.edgeForce) self.edgeForce.links(edges);
         else if (edges && !self.edgeForce) {
           // d3 的 forceLayout 会重新生成边的数据模型，为了避免污染源数据
           const edgeForce = d3Force
             .forceLink()
             .id((d: any) => d.id)
-            .links(edges)
+            .links(edges);
           if (self.edgeStrength) {
-            edgeForce.strength(self.edgeStrength)
+            edgeForce.strength(self.edgeStrength);
           }
           if (self.linkDistance) {
-            edgeForce.distance(self.linkDistance)
+            edgeForce.distance(self.linkDistance);
           }
-          self.edgeForce = edgeForce
-          simulation.force('link', edgeForce)
+          self.edgeForce = edgeForce;
+          simulation.force("link", edgeForce);
         }
       }
       if (self.preventOverlap) {
-        self.overlapProcess(simulation)
+        self.overlapProcess(simulation);
       }
-      simulation.alpha(alpha).restart()
-      this.ticking = true
+      simulation.alpha(alpha).restart();
+      this.ticking = true;
     }
   }
 
@@ -291,126 +290,99 @@ export class ForceLayout extends Base {
    * @param {object} simulation 力模拟模型
    */
   public overlapProcess(simulation: any) {
-    const self = this
-    const nodeSize = self.nodeSize
-    const nodeSpacing = self.nodeSpacing
-    let nodeSizeFunc: (d: any) => number
-    let nodeSpacingFunc: any
-    const collideStrength = self.collideStrength
+    const self = this;
+    const nodeSize = self.nodeSize;
+    const nodeSpacing = self.nodeSpacing;
+    let nodeSizeFunc: (d: any) => number;
+    let nodeSpacingFunc: any;
+    const collideStrength = self.collideStrength;
 
     if (isNumber(nodeSpacing)) {
-      nodeSpacingFunc = () => nodeSpacing
+      nodeSpacingFunc = () => nodeSpacing;
     } else if (isFunction(nodeSpacing)) {
-      nodeSpacingFunc = nodeSpacing
+      nodeSpacingFunc = nodeSpacing;
     } else {
-      nodeSpacingFunc = () => 0
+      nodeSpacingFunc = () => 0;
     }
 
     if (!nodeSize) {
-      nodeSizeFunc = (d) => {
+      nodeSizeFunc = d => {
         if (d.size) {
           if (isArray(d.size)) {
-            const res = d.size[0] > d.size[1] ? d.size[0] : d.size[1]
-            return res / 2 + nodeSpacingFunc(d)
+            const res = d.size[0] > d.size[1] ? d.size[0] : d.size[1];
+            return res / 2 + nodeSpacingFunc(d);
           }
-          return d.size / 2 + nodeSpacingFunc(d)
+          return d.size / 2 + nodeSpacingFunc(d);
         }
-        return 10 + nodeSpacingFunc(d)
-      }
+        return 10 + nodeSpacingFunc(d);
+      };
     } else if (isFunction(nodeSize)) {
-      nodeSizeFunc = (d) => {
-        const size = nodeSize(d)
-        return size + nodeSpacingFunc(d)
-      }
+      nodeSizeFunc = d => {
+        const size = nodeSize(d);
+        return size + nodeSpacingFunc(d);
+      };
     } else if (isArray(nodeSize)) {
-      const larger = nodeSize[0] > nodeSize[1] ? nodeSize[0] : nodeSize[1]
-      const radius = larger / 2
-      nodeSizeFunc = (d) => radius + nodeSpacingFunc(d)
+      const larger = nodeSize[0] > nodeSize[1] ? nodeSize[0] : nodeSize[1];
+      const radius = larger / 2;
+      nodeSizeFunc = d => radius + nodeSpacingFunc(d);
     } else if (isNumber(nodeSize)) {
-      const radius = nodeSize / 2
-      nodeSizeFunc = (d) => radius + nodeSpacingFunc(d)
+      const radius = nodeSize / 2;
+      nodeSizeFunc = d => radius + nodeSpacingFunc(d);
     } else {
-      nodeSizeFunc = () => 10
+      nodeSizeFunc = () => 10;
     }
 
     // forceCollide's parameter is a radius
     simulation.force(
-      'collisionForce',
-      d3Force.forceCollide(nodeSizeFunc).strength(collideStrength),
-    )
+      "collisionForce",
+      d3Force.forceCollide(nodeSizeFunc).strength(collideStrength)
+    );
   }
 
   /**
    * 更新布局配置，但不执行布局
    * @param {object} cfg 需要更新的配置项
    */
-  public updateCfg(cfg: ForceLayout.ForceLayoutOptions) {
-    const self = this
+  public updateCfg(cfg: ForceLayoutOptions) {
+    const self = this;
     if (self.ticking) {
-      self.forceSimulation.stop()
-      self.ticking = false
+      self.forceSimulation.stop();
+      self.ticking = false;
     }
-    self.forceSimulation = null
-    Object.assign(self, cfg)
+    self.forceSimulation = null;
+    Object.assign(self, cfg);
   }
 
   public destroy() {
-    const self = this
+    const self = this;
     if (self.ticking) {
-      self.forceSimulation.stop()
-      self.ticking = false
+      self.forceSimulation.stop();
+      self.ticking = false;
     }
-    self.nodes = null
-    self.edges = null
-    self.destroyed = true
+    self.nodes = null;
+    self.edges = null;
+    self.destroyed = true;
   }
 }
 
 // Return total ticks of d3-force simulation
 function getSimulationTicks(simulation: any): number {
-  const alphaMin = simulation.alphaMin()
-  const alphaTarget = simulation.alphaTarget()
-  const alpha = simulation.alpha()
+  const alphaMin = simulation.alphaMin();
+  const alphaTarget = simulation.alphaTarget();
+  const alpha = simulation.alpha();
   const totalTicksFloat =
     Math.log((alphaMin - alphaTarget) / (alpha - alphaTarget)) /
-    Math.log(1 - simulation.alphaDecay())
-  const totalTicks = Math.ceil(totalTicksFloat)
-  return totalTicks
+    Math.log(1 - simulation.alphaDecay());
+  const totalTicks = Math.ceil(totalTicksFloat);
+  return totalTicks;
 }
-declare const WorkerGlobalScope: any
+declare const WorkerGlobalScope: any;
 
 // 判断是否运行在web worker里
 function isInWorker(): boolean {
   // eslint-disable-next-line no-undef
   return (
-    typeof WorkerGlobalScope !== 'undefined' &&
+    typeof WorkerGlobalScope !== "undefined" &&
     self instanceof WorkerGlobalScope
-  )
-}
-
-export namespace ForceLayout {
-  export interface ForceLayoutOptions {
-    type: 'force'
-    center?: PointTuple
-    linkDistance?: number | ((d?: any) => number) | undefined
-    edgeStrength?: number | ((d?: any) => number) | undefined
-    nodeStrength?: number | ((d?: any) => number) | undefined
-    preventOverlap?: boolean
-    collideStrength?: number
-    nodeSize?: number | number[] | ((d?: any) => number) | undefined
-    nodeSpacing?: number | number[] | ((d?: any) => number) | undefined
-    alpha?: number
-    alphaDecay?: number
-    alphaMin?: number
-    clustering?: boolean
-    clusterNodeStrength?: number
-    clusterEdgeStrength?: number
-    clusterEdgeDistance?: number
-    clusterNodeSize?: number
-    clusterFociStrength?: number
-    forceSimulation?: any
-    tick?: () => void
-    onLayoutEnd?: () => void
-    workerEnabled?: boolean
-  }
+  );
 }

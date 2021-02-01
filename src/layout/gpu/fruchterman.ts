@@ -4,7 +4,13 @@
  * @author shiwu.wyy@antfin.com
  */
 
-import { OutNode, Edge, PointTuple, IndexMap } from "../types";
+import {
+  OutNode,
+  Edge,
+  PointTuple,
+  IndexMap,
+  FruchtermanGPULayoutOptions
+} from "../types";
 import { Base } from "../base";
 import { isNumber } from "../../util";
 // @ts-ignore
@@ -70,7 +76,7 @@ export class FruchtermanGPULayout extends Base {
 
   public onLayoutEnd: () => void;
 
-  constructor(options?: FruchtermanGPULayout.FruchtermanGPULayoutOptions) {
+  constructor(options?: FruchtermanGPULayoutOptions) {
     super();
     this.updateCfg(options);
   }
@@ -291,22 +297,5 @@ export class FruchtermanGPULayout extends Base {
 
   public getType() {
     return "fruchterman-gpu";
-  }
-}
-
-export namespace FruchtermanGPULayout {
-  export interface FruchtermanGPULayoutOptions {
-    type: "fruchterman-gpu";
-    center?: PointTuple;
-    width?: number;
-    height?: number;
-    maxIteration?: number;
-    gravity?: number;
-    speed?: number;
-    clustering?: boolean;
-    clusterGravity?: number;
-    workerEnabled?: boolean;
-    gpuEnabled?: boolean;
-    onLayoutEnd?: () => void;
   }
 }

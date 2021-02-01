@@ -12,8 +12,8 @@ import { FruchtermanGPULayout } from "./gpu/fruchterman";
 import { GForceGPULayout } from "./gpu/gForce";
 import { ComboForceLayout } from "./comboForce";
 
-import { Layout, Layouts, ILayout } from "./layout";
-export { Layout, Layouts, ILayout };
+import { Layout, Layouts } from "./layout";
+export { Layout, Layouts };
 
 // layout
 export {

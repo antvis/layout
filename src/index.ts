@@ -1,7 +1,6 @@
 import {
   Layout,
   Layouts,
-  ILayout,
   GridLayout,
   RandomLayout,
   GForceLayout,
@@ -19,7 +18,7 @@ import {
 import { registerLayout, unRegisterLayout, getLayoutByName } from "./registy";
 
 // Layout class & types
-export { Layout, Layouts, ILayout };
+export { Layout, Layouts };
 
 // register layout
 export { registerLayout, unRegisterLayout, getLayoutByName };
@@ -39,6 +38,9 @@ export {
   GForceGPULayout,
   ComboForceLayout
 };
+
+// types file
+export * from "./layout/types";
 
 // layout worker
 export * from "./layout/worker";
