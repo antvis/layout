@@ -2,74 +2,90 @@
  * @fileoverview web worker for layout
  * @author changzhe.zb@antfin.com
  */
-import { getLayoutByName } from '../../registy'
-import { LAYOUT_MESSAGE } from './layoutConst'
+import { getLayoutByName } from "../../registy";
+import { LAYOUT_MESSAGE } from "./layoutConst";
 
 interface Event {
-  type: string
-  data: any
+  type: string;
+  data: any;
 }
 
-const ctx: Worker = self as any
-
-function isLayoutMessage(event: Event) {
-  const { type } = event.data
-  return type === LAYOUT_MESSAGE.RUN || type === LAYOUT_MESSAGE.GPURUN
-}
-
-function handleLayoutMessage(event: Event) {
-  const { type } = event.data
-
-  switch (type) {
-    case LAYOUT_MESSAGE.RUN: {
-      const { nodes, edges, layoutCfg = {} } = event.data
-      const { type: layoutType } = layoutCfg
-      const LayoutClass = getLayoutByName(layoutType) // tslint:disable-line
-      if (!LayoutClass) {
-        ctx.postMessage({ type: LAYOUT_MESSAGE.ERROR, message: `layout ${layoutType} not found` })
-        break
-      }
-
-      const layoutMethod = new LayoutClass(layoutCfg)
-      layoutMethod.init({ nodes, edges })
-      layoutMethod.execute()
-      ctx.postMessage({ nodes, type: LAYOUT_MESSAGE.END })
-      layoutMethod.destroy()
-      break
+class LayoutWorker {
+  // listen to message posted to web worker
+  onmessage = (event: Event) => {
+    if (this.isLayoutMessage(event)) {
+      this.handleLayoutMessage(event, postMessage);
     }
+  };
 
-    case LAYOUT_MESSAGE.GPURUN: {
-      const { nodes, edges, layoutCfg = {}, canvas } = event.data
+  isLayoutMessage(event: Event) {
+    const { type } = event.data;
+    return type === LAYOUT_MESSAGE.RUN || type === LAYOUT_MESSAGE.GPURUN;
+  }
 
-      const { type: layoutType } = layoutCfg
+  handleLayoutMessage(event: Event, postMessage: any) {
+    const { type } = event.data;
 
-      const LayoutClass = getLayoutByName(layoutType) // tslint:disable-line
-      if (!LayoutClass) {
-        ctx.postMessage({ type: LAYOUT_MESSAGE.ERROR, message: `layout ${layoutType} not found` })
-        break
+    switch (type) {
+      case LAYOUT_MESSAGE.RUN: {
+        const { nodes, edges, layoutCfg = {} } = event.data;
+        const { type: layoutType } = layoutCfg;
+        const LayoutClass = getLayoutByName(layoutType); // tslint:disable-line
+        if (!LayoutClass) {
+          postMessage({
+            type: LAYOUT_MESSAGE.ERROR,
+            message: `layout ${layoutType} not found`
+          });
+          break;
+        }
+
+        const layoutMethod = new LayoutClass(layoutCfg);
+        layoutMethod.init({ nodes, edges });
+        layoutMethod.execute();
+        postMessage({ nodes, type: LAYOUT_MESSAGE.END });
+        layoutMethod.destroy();
+        break;
       }
-      if (layoutType.split('-')[1] !== 'gpu') {
-        ctx.postMessage({ type: LAYOUT_MESSAGE.ERROR, message: `layout ${layoutType} does not support GPU` })
-        break
+
+      case LAYOUT_MESSAGE.GPURUN: {
+        const { nodes, edges, layoutCfg = {}, canvas } = event.data;
+
+        const { type: layoutType } = layoutCfg;
+
+        const LayoutClass = getLayoutByName(layoutType); // tslint:disable-line
+        if (!LayoutClass) {
+          postMessage({
+            type: LAYOUT_MESSAGE.ERROR,
+            message: `layout ${layoutType} not found`
+          });
+          break;
+        }
+        if (layoutType.split("-")[1] !== "gpu") {
+          postMessage({
+            type: LAYOUT_MESSAGE.ERROR,
+            message: `layout ${layoutType} does not support GPU`
+          });
+          break;
+        }
+
+        const layoutMethod = new LayoutClass(layoutCfg);
+        layoutMethod.init({ nodes, edges });
+        layoutMethod.executeWithWorker(canvas, new (LayoutWorker as any)());
+        break;
       }
-
-
-      const layoutMethod = new LayoutClass(layoutCfg)
-      layoutMethod.init({ nodes, edges })
-      layoutMethod.executeWithWorker(canvas, ctx)
-      break
+      default:
+        break;
     }
-    default:
-      break
   }
 }
 
-// listen to message posted to web worker
-ctx.onmessage = (event: Event) => {
-  if (isLayoutMessage(event)) {
-    handleLayoutMessage(event)
-  }
-}
+// const LayoutWorker = () => {
+//   onmessage = event => {
+//     if (isLayoutMessage(event)) {
+//       handleLayoutMessage(event, postMessage);
+//     }
+//   };
+// };
 
 // https://stackoverflow.com/questions/50210416/webpack-worker-loader-fails-to-compile-typescript-worker
-export default null as any
+export default LayoutWorker;

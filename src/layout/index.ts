@@ -13,6 +13,7 @@ import { GForceGPULayout } from "./gpu/gForce";
 import { ComboForceLayout } from "./comboForce";
 
 import { Layout, Layouts } from "./layout";
+
 export { Layout, Layouts };
 
 // layout
@@ -31,3 +32,9 @@ export {
   GForceGPULayout,
   ComboForceLayout
 };
+
+// types file
+export * from "./types";
+
+// layout worker
+export * from "./worker";
