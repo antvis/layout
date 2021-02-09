@@ -8,7 +8,7 @@ import * as d3Force from "d3-force";
 import forceInABox from "./force-in-a-box";
 import { isArray, isFunction, isNumber } from "../../util";
 import { Base } from "../base";
-import { LAYOUT_MESSAGE } from "../worker/layoutConst";
+import { LAYOUT_MESSAGE } from "../constants";
 
 /**
  * 经典力导布局 force-directed

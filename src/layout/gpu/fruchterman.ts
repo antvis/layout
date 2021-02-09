@@ -22,7 +22,7 @@ import { World } from "@antv/g-webgpu";
 import { buildTextureData, attributesToTextureData } from "../../util/gpu";
 // use compiled bundle in prod mode
 import { fruchtermanBundle, clusterBundle } from "./fruchtermanShader";
-import { LAYOUT_MESSAGE } from "../worker/layoutConst";
+import { LAYOUT_MESSAGE } from "../constants";
 
 type INode = OutNode & {
   cluster: string | number;

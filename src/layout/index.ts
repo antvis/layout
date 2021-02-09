@@ -35,6 +35,3 @@ export {
 
 // types file
 export * from "./types";
-
-// layout worker
-export * from "./worker";

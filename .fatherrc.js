@@ -1,16 +1,8 @@
 export default {
-  entry: ["src/index.ts", "src/layout/worker"],
-  overridesByEntry: {
-    "src/layout/worker": {
-      file: "index.worker"
-    }
-  },
-  esm: "rollup",
-  cjs: "rollup"
+  entry: "src/index.ts",
+  umd: {
+    name: "AntVLayout",
+    file: "layout",
+    sourcemap: true
+  }
 };
-
-// umd: {
-//   name: 'AntVLayout',
-//   file: 'layout',
-//   sourcemap: true,
-// },
