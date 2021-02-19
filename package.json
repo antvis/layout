@@ -43,7 +43,7 @@
     ]
   },
   "dependencies": {
-    "@antv/g-webgpu": "^0.5.1",
+    "@antv/g-webgpu": "0.5.1",
     "d3-force": "^2.0.1",
     "dagre": "^0.8.5",
     "ml-matrix": "^6.5.0"
