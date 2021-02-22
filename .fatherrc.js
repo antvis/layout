@@ -1,8 +1,8 @@
 export default {
-  entry: 'src/index.ts',
+  entry: "src/index.ts",
   umd: {
-    name: 'AntVLayout',
-    file: 'layout',
-    sourcemap: true,
-  },
-}
+    name: "AntVLayout",
+    file: "layout",
+    sourcemap: true
+  }
+};
