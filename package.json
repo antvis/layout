@@ -1,6 +1,6 @@
 {
   "name": "@antv/layout",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "graph layout algorithm",
   "main": "lib/index.js",
   "module": "es/index.js",
@@ -21,18 +21,17 @@
     "clean": "rimraf es lib dist",
     "lint:es": "eslint --ext .js --fix",
     "lint:ts": "tslint -c tslint.json -p tsconfig.json --fix",
-    "lint": "yarn run lint:ts && yarn run lint:es",
+    "lint": "npm run lint:ts && npm run lint:es",
     "build:esm": "tsc --module esnext --target es2015 --outDir ./es",
     "build:cjs": "tsc --module commonjs --target es5 --outDir ./lib",
-    "build:umd": "father build",
-    "build": "yarn run build:cjs && yarn run build:esm && yarn run dist",
-    "build:watch": "yarn build:esm --w",
+    "build:umd": "webpack --config webpack.config.js --mode production",
+    "build": "npm run clean && npm run build:cjs && npm run build:esm && npm run build:umd",
+    "build:watch": "npm build:esm --w",
     "precommit": "lint-staged",
     "release": "release-it",
     "test": "jest",
     "coverage": "jest --coverage",
-    "test-live": "DEBUG_MODE=1 jest --watch  __tests__",
-    "dist": "webpack --config webpack.config.js --mode production"
+    "test-live": "DEBUG_MODE=1 jest --watch  __tests__"
   },
   "lint-staged": {
     "*.js": [
@@ -64,7 +63,6 @@
     "eslint-config-airbnb-base": "^14.0.0",
     "eslint-config-prettier": "^6.7.0",
     "eslint-plugin-import": "^2.18.2",
-    "father": "^2.30.1",
     "jest": "*",
     "jest-electron": "^0.1.7",
     "jest-extended": "^0.11.2",
