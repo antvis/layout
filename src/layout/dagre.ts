@@ -60,7 +60,7 @@ export class DagreLayout extends Base {
       ranksepFunc: undefined, // 每一层节点之间间距
       nodesep: 50, // 节点水平间距(px)
       ranksep: 50, // 每一层节点之间间距
-      controlPoints: false // 是否保留布局连线的控制点
+      controlPoints: false, // 是否保留布局连线的控制点
     };
   }
 
@@ -72,7 +72,10 @@ export class DagreLayout extends Base {
     const { nodes, nodeSize, rankdir } = self;
     if (!nodes) return;
     const edges = (self.edges as any[]) || [];
-    const g = new dagre.graphlib.Graph();
+    const g = new dagre.graphlib.Graph({
+      multigraph: true,
+      compound: true,
+    });
 
     let nodeSizeFunc: (d?: any) => number[];
     if (!nodeSize) {
@@ -99,32 +102,43 @@ export class DagreLayout extends Base {
     }
     g.setDefaultEdgeLabel(() => ({}));
     g.setGraph(self);
-    nodes.forEach(node => {
+
+    const comboMap: { [key: string]: boolean } = {};
+    nodes.forEach((node) => {
       const size = nodeSizeFunc(node);
       const verti = vertisep(node);
       const hori = horisep(node);
       const width = size[0] + 2 * hori;
       const height = size[1] + 2 * verti;
       g.setNode(node.id, { width, height });
+
+      if (this.sortByCombo && node.comboId) {
+        if (!comboMap[node.comboId]) {
+          comboMap[node.comboId] = true;
+          g.setNode(node.comboId, {});
+        }
+        g.setParent(node.id, node.comboId);
+      }
     });
-    edges.forEach(edge => {
+    edges.forEach((edge) => {
       // dagrejs Wiki https://github.com/dagrejs/dagre/wiki#configuring-the-layout
       g.setEdge(edge.source, edge.target, {
-        weight: edge.weight || 1
+        weight: edge.weight || 1,
       });
     });
     dagre.layout(g);
     let coord;
     g.nodes().forEach((node: any) => {
       coord = g.node(node);
-      const i = nodes.findIndex(it => it.id === node);
+      const i = nodes.findIndex((it) => it.id === node);
+      if (!nodes[i]) return;
       nodes[i].x = coord.x;
       nodes[i].y = coord.y;
     });
     g.edges().forEach((edge: any) => {
       coord = g.edge(edge);
       const i = edges.findIndex(
-        it => it.source === edge.v && it.target === edge.w
+        (it) => it.source === edge.v && it.target === edge.w
       );
       if (self.controlPoints && edges[i].type !== "loop") {
         edges[i].controlPoints = coord.points.slice(1, coord.points.length - 1);
@@ -139,7 +153,7 @@ export class DagreLayout extends Base {
 
     return {
       nodes,
-      edges
+      edges,
     };
   }
 
@@ -148,12 +162,12 @@ export class DagreLayout extends Base {
     const nodes = self.nodes as any[];
 
     const levels: any = {};
-    nodes.forEach(node => {
+    nodes.forEach((node) => {
       if (!levels[node.y]) levels[node.y] = { y: node.y, nodes: [] };
       levels[node.y].nodes.push(node);
     });
 
-    Object.keys(levels).forEach(key => {
+    Object.keys(levels).forEach((key) => {
       const levelNodes: any = levels[key].nodes;
       const nodesNum = levelNodes.length;
       const comboCenters: any = {};
@@ -165,7 +179,7 @@ export class DagreLayout extends Base {
         comboCenters[lnodeCombo].y += lnode.y;
         comboCenters[lnodeCombo].count++;
       });
-      Object.keys(comboCenters).forEach(ckey => {
+      Object.keys(comboCenters).forEach((ckey) => {
         comboCenters[ckey].x /= comboCenters[ckey].count;
         comboCenters[ckey].y /= comboCenters[ckey].count;
       });
