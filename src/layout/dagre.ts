@@ -145,71 +145,12 @@ export class DagreLayout extends Base {
       }
     });
 
-    if (self.sortByCombo) {
-      self.sortLevel("comboId");
-    }
-
     if (self.onLayoutEnd) self.onLayoutEnd();
 
     return {
       nodes,
       edges,
     };
-  }
-
-  public sortLevel(propertyName: string) {
-    const self = this;
-    const nodes = self.nodes as any[];
-
-    const levels: any = {};
-    nodes.forEach((node) => {
-      if (!levels[node.y]) levels[node.y] = { y: node.y, nodes: [] };
-      levels[node.y].nodes.push(node);
-    });
-
-    Object.keys(levels).forEach((key) => {
-      const levelNodes: any = levels[key].nodes;
-      const nodesNum = levelNodes.length;
-      const comboCenters: any = {};
-      levelNodes.forEach((lnode: any) => {
-        const lnodeCombo = lnode.comboId;
-        if (!comboCenters[lnodeCombo])
-          comboCenters[lnodeCombo] = { x: 0, y: 0, count: 0 };
-        comboCenters[lnodeCombo].x += lnode.x;
-        comboCenters[lnodeCombo].y += lnode.y;
-        comboCenters[lnodeCombo].count++;
-      });
-      Object.keys(comboCenters).forEach((ckey) => {
-        comboCenters[ckey].x /= comboCenters[ckey].count;
-        comboCenters[ckey].y /= comboCenters[ckey].count;
-      });
-
-      if (nodesNum === 1) {
-        if (self.onLayoutEnd) self.onLayoutEnd();
-        return;
-      }
-      const sortedByX = levelNodes.sort((a: any, b: any) => {
-        return a.x - b.x;
-      });
-      const minX = sortedByX[0].x;
-      const maxX = sortedByX[nodesNum - 1].x;
-      const gap = (maxX - minX) / (nodesNum - 1);
-
-      const sortedByCombo = levelNodes.sort((a: any, b: any) => {
-        const aValue = a[propertyName] || "undefined";
-        const bValue = b[propertyName] || "undefined";
-        if (aValue < bValue) {
-          return -1;
-        }
-        if (aValue > bValue) {
-          return 1;
-        }
-        return 0;
-      });
-      sortedByCombo.forEach((node: any, i: number) => {
-        node.x = minX + i * gap;
-      });
-    });
   }
 
   public getType() {
