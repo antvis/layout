@@ -5,6 +5,7 @@ export interface Node {
 export interface OutNode extends Node {
   x: number;
   y: number;
+  comboId?: string;
 }
 
 export interface Edge {
