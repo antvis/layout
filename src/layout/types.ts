@@ -13,7 +13,10 @@ export interface Edge {
   target: string;
 }
 
-export interface Combo {}
+export interface Combo {
+  id: string;
+  parentId?: string;
+}
 
 export interface Model {
   nodes?: Node[];

@@ -69,7 +69,7 @@ export class DagreLayout extends Base {
    */
   public execute() {
     const self = this;
-    const { nodes, nodeSize, rankdir } = self;
+    const { nodes, nodeSize, rankdir, combos } = self;
     if (!nodes) return;
     const edges = (self.edges as any[]) || [];
     const g = new dagre.graphlib.Graph({
@@ -120,6 +120,18 @@ export class DagreLayout extends Base {
         g.setParent(node.id, node.comboId);
       }
     });
+    
+    if (this.sortByCombo && combos) {
+      combos.forEach(combo => {
+        if (!combo.parentId) return;
+        if (!comboMap[combo.parentId]) {
+          comboMap[combo.parentId] = true;
+          g.setNode(combo.parentId, {});
+        }
+        g.setParent(combo.id, combo.parentId);
+      })
+    }
+
     edges.forEach((edge) => {
       // dagrejs Wiki https://github.com/dagrejs/dagre/wiki#configuring-the-layout
       g.setEdge(edge.source, edge.target, {
