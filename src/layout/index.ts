@@ -11,6 +11,7 @@ import { FruchtermanLayout } from "./fruchterman";
 import { FruchtermanGPULayout } from "./gpu/fruchterman";
 import { GForceGPULayout } from "./gpu/gForce";
 import { ComboForceLayout } from "./comboForce";
+import { ForceAtlas2Layout } from "./forceAtlas2";
 
 import { Layout, Layouts } from "./layout";
 
@@ -30,7 +31,8 @@ export {
   FruchtermanLayout,
   FruchtermanGPULayout,
   GForceGPULayout,
-  ComboForceLayout
+  ComboForceLayout,
+  ForceAtlas2Layout
 };
 
 // types file

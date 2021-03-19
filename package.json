@@ -31,7 +31,7 @@
     "release": "release-it",
     "test": "jest",
     "coverage": "jest --coverage",
-    "test-live": "DEBUG_MODE=1 jest --watch  __tests__"
+    "test-live": "DEBUG_MODE=1 jest --watch  __tests__/g6/fa2-g6-spec"
   },
   "lint-staged": {
     "*.js": [
