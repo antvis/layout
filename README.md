@@ -15,7 +15,7 @@ $ yarn add @antv/layout
 ## Usage
 
 ```ts
-import { Layout } from '@antv/layout'
+import { GridLayout } from '@antv/layout'
 
 const model = {
   nodes: [
@@ -37,7 +37,7 @@ const model = {
   ],
 }
 
-const gridLayout = new Layout({
+const gridLayout = new GridLayout({
   type: 'grid',
   width: 600,
   height: 400,
