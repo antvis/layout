@@ -296,6 +296,27 @@ export interface GForceGPULayoutOptions {
   gpuEnabled?: boolean;
 }
 
+
+export interface ForceAtlas2LayoutOptions {
+  type: "forceAtlas2";
+  center?: PointTuple;
+  width?: number;
+  height?: number;
+  workerEnabled?: boolean;
+  onLayoutEnd?: () => void;
+  tick?: () => void;
+  kr?: number;
+  kg?: number;
+  ks?: number;
+  ksmax?: number;
+  tao?: number;
+  maxIteration?: number;
+  mode?: 'normal' | 'linlog';
+  prevOverlapping?: boolean;
+  dissuadeHubs?: boolean;
+  barnesHut?: boolean;
+  prune?: boolean;
+}
 export namespace ILayout {
   export type LayoutTypes =
     | "grid"
@@ -310,7 +331,8 @@ export namespace ILayout {
     | "fruchterman-gpu"
     | "gForce"
     | "gForce-gpu"
-    | "comboForce";
+    | "comboForce"
+    | 'forceAtlas2';
 
   export type LayoutOptions =
     | GridLayoutOptions
@@ -325,5 +347,6 @@ export namespace ILayout {
     | FruchtermanGPULayoutOptions
     | GForceLayoutOptions
     | GForceGPULayoutOptions
-    | ComboForceLayoutOptions;
+    | ComboForceLayoutOptions
+    | ForceAtlas2LayoutOptions;
 }

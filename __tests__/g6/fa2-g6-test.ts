@@ -1,4 +1,4 @@
-import { Layout } from '../../src';
+import { ForceAtlas2Layout } from '../../src';
 import G6 from '@antv/g6';
 
 const div = document.createElement('div');
@@ -19,17 +19,18 @@ const simpleData = {
 
 const complexDataUrl = 'https://gw.alipayobjects.com/os/antvdemo/assets/data/relations.json';
 
-describe('Grid Layout', () => {
-  it('grid layout with small data', () => {
-    const layout = new Layout({
-      type: 'grid'
-    });
+describe('force atlas2 Layout', () => {
+  it('force atlas2 with small data', () => {
+    const layout = new ForceAtlas2Layout();
     layout.layout(simpleData);
   
     const graph = new G6.Graph({
       container: div,
       width: 500,
       height: 500,
+      modes: {
+        default: [ 'drag-node' ]
+      },
       defaultEdge: {
         style: {
           endArrow: true,
@@ -41,21 +42,23 @@ describe('Grid Layout', () => {
     graph.render();
     graph.destroy();
   });
-  it('grid layout with complex data', () => {
-  
+  it('force atlas2 with complex data', () => {
     const graph = new G6.Graph({
       container: div,
       width: 500,
       height: 500,
+      fitView: true
     });
   
     fetch(complexDataUrl)
       .then((res) => res.json())
       .then((data) => {
-        const layout = new Layout({
-          type: 'grid',
-          begin: [150, 200]
-        });
+        const layout = new ForceAtlas2Layout({
+          barnesHut: true,
+          tick: () => {
+            graph.refreshPositions();
+          }
+        } as any);
         layout.layout(data);
         graph.data(data)
         graph.render();
@@ -63,9 +66,7 @@ describe('Grid Layout', () => {
       });
   });
   it('swtich data', () => {
-    const layout = new Layout({
-      type: 'grid'
-    });
+    const layout = new ForceAtlas2Layout();
     layout.layout(simpleData);
   
     const graph = new G6.Graph({
@@ -104,10 +105,7 @@ describe('Grid Layout', () => {
       },
     });
   
-    const layout = new Layout({
-      type: 'grid',
-      rows: 5
-    });
+    const layout = new ForceAtlas2Layout();
 
     fetch(complexDataUrl)
     .then((res) => res.json())
@@ -120,8 +118,8 @@ describe('Grid Layout', () => {
 
     graph.on('canvas:click', e => {
       layout.updateCfg({
-        preventOverlapPadding: 30,
-        width: 1000
+        center: [300, 300],
+        preventOverlap: true
       });
       layout.execute();
       graph.refreshPositions();
