@@ -224,7 +224,7 @@ export class GForceLayout extends Base {
     self.degrees = getDegree(nodes.length, self.nodeIdxMap, edges);
     if (!self.getMass) {
       self.getMass = d => {
-        return self.degrees[self.nodeIdxMap[d.id]];
+        return self.degrees[self.nodeIdxMap[d.id]] || 1;
       };
     }
 
