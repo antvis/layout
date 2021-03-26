@@ -45,8 +45,8 @@ describe('force atlas2 Layout', () => {
   it('force atlas2 with complex data', () => {
     const graph = new G6.Graph({
       container: div,
-      width: 500,
-      height: 500,
+      width: 800,
+      height: 600,
       fitView: true
     });
   
@@ -55,6 +55,7 @@ describe('force atlas2 Layout', () => {
       .then((data) => {
         const layout = new ForceAtlas2Layout({
           barnesHut: true,
+          preventOverlap: true,
           tick: () => {
             graph.refreshPositions();
           }
@@ -62,7 +63,7 @@ describe('force atlas2 Layout', () => {
         layout.layout(data);
         graph.data(data)
         graph.render();
-        graph.destroy();
+        // graph.destroy();
       });
   });
   it('swtich data', () => {
