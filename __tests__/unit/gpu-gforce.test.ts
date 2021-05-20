@@ -1,5 +1,6 @@
-import { Layouts } from '../../src'
+import { GridLayout, GForceGPULayout } from '../../src'
 import dataset from '../data';
+
 const data = dataset.data;
 
 // import G6 from '@antv/g6';
@@ -17,7 +18,7 @@ const data = dataset.data;
 // })
 
 describe('#gForceGPULayout', () => {
-  const preGrid = new Layouts['grid']({
+  const preGrid = new GridLayout({
     width: 500,
     height: 500
   });
@@ -26,7 +27,7 @@ describe('#gForceGPULayout', () => {
   // 1. await gForceGPU.layout 后调用渲染
   // 2. 实例化 GForceGPULayout 时将渲染语句传入 onLayoutEnd 回调函数
   it('return correct default config', async () => {
-    const gForceGPU = new Layouts['gForce-gpu']();
+    const gForceGPU = new GForceGPULayout();
     expect(gForceGPU.getDefaultCfg()).toEqual({
       maxIteration: 2000,
       gravity: 10,
@@ -38,8 +39,8 @@ describe('#gForceGPULayout', () => {
     expect((data.nodes[0] as any).y).not.toBe(undefined);
   });
   it('gforce layout with default configs, test emit afterlayout', async () => {
-    const gForceGPU = new Layouts['gForce-gpu']({
-      minMovement: 0.2,
+    const gForceGPU = new GForceGPULayout({
+      minMovement: 0.2
     });
     await gForceGPU.layout(data);
     const node = data.nodes[0];
@@ -52,7 +53,7 @@ describe('#gForceGPULayout', () => {
     const edge = data.edges[0];
     let isEnd;
 
-    const gForceGPU = new Layouts['gForce-gpu']({
+    const gForceGPU = new GForceGPULayout({
       linkDistance: 140,
       edgeStrength: 0.5,
       nodeStrength: -30,

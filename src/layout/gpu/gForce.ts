@@ -21,11 +21,11 @@ import {
   arrayToTextureData
 } from "../../util/gpu";
 import { getDegree } from "../../util/math";
-// import { gForceCode, aveMovementCode } from './gForceShader';
 import { gForceBundle, aveMovementBundle } from "./gForceShader";
 import { LAYOUT_MESSAGE } from "../constants";
 // @ts-ignore
 // import { Compiler } from '@antv/g-webgpu-compiler';
+// import { gForceCode, aveMovementCode } from './gForceShader';
 
 type NodeMap = {
   [key: string]: OutNode;
