@@ -57,7 +57,7 @@ export class GForceGPULayout extends Base {
   public maxSpeed: number = 1000;
 
   /** 一次迭代的平均移动距离小于该值时停止迭代 */
-  public minMovement: number = 1;
+  public minMovement: number = 0.5;
 
   /** 迭代中衰减 */
   public interval: number = 0.02;

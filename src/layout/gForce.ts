@@ -311,10 +311,10 @@ export class GForceLayout extends Base {
           (((nodeStrength(ni) + nodeStrength(nj)) / 2) * factor) /
           (nVecLength * nVecLength);
         const massj = getMass ? getMass(nj) : 1;
-        accArray[2 * i] += (direX * param) / massi;
-        accArray[2 * i + 1] += (direY * param) / massi;
-        accArray[2 * j] -= (direX * param) / massj;
-        accArray[2 * j + 1] -= (direY * param) / massj;
+        accArray[2 * i] += (direX * param);
+        accArray[2 * i + 1] += (direY * param);
+        accArray[2 * j] -= (direX * param);
+        accArray[2 * j + 1] -= (direY * param);
         if (preventOverlap && vecLength < (nodeSize(ni) + nodeSize(nj)) / 2) {
           const paramOverlap =
             (nodeStrength(ni) + nodeStrength(nj)) / 2 / (vecLength * vecLength);

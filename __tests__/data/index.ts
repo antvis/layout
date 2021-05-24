@@ -1,5 +1,6 @@
 import testData from './test-data-1';
 import comboTestData from './combo-test-data';
+import smallWorld from './small-world';
 
 export interface TestNode {
   id: string;
@@ -32,4 +33,5 @@ const comboData: TestData = comboTestData;
 export default {
   data: typeData,
   comboData,
+  smallWorld
 };
