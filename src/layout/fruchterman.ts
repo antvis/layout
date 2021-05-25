@@ -38,7 +38,7 @@ export class FruchtermanLayout extends Base {
   public gravity: number = 10;
 
   /** 速度 */
-  public speed: number = 1;
+  public speed: number = 5;
 
   /** 是否产生聚类力 */
   public clustering: boolean = false;
@@ -61,6 +61,9 @@ export class FruchtermanLayout extends Base {
   /** 迭代结束的回调函数 */
   public onLayoutEnd: () => void = () => {};
 
+  /** 迭代中的标识 */
+  private timeInterval: number;
+
   constructor(options?: FruchtermanLayoutOptions) {
     super();
     this.updateCfg(options);
@@ -82,6 +85,10 @@ export class FruchtermanLayout extends Base {
   public execute() {
     const self = this;
     const nodes = self.nodes;
+
+    if (self.timeInterval !== undefined && typeof window !== "undefined") {
+      window.clearInterval(self.timeInterval);
+    }
 
     if (!nodes || nodes.length === 0) {
       if (self.onLayoutEnd) self.onLayoutEnd();
@@ -165,7 +172,14 @@ export class FruchtermanLayout extends Base {
         clusterMap[key].cy /= clusterMap[key].count;
       }
     }
-    for (let i = 0; i < maxIteration; i++) {
+
+    if (typeof window === "undefined") return;
+
+    let iter = 0;
+    // interval for render the result after each iteration
+    this.timeInterval = window.setInterval(() => {
+
+    // for (let i = 0; i < maxIteration; i++) {
       const displacements: Point[] = [];
       nodes.forEach((_, j) => {
         displacements[j] = { x: 0, y: 0 };
@@ -218,7 +232,12 @@ export class FruchtermanLayout extends Base {
 
       // move
       nodes.forEach((n, j) => {
-        if (!isNumber(n.x) || !isNumber(n.y)) return;
+        if (isNumber(n.fx) && isNumber(n.fy)) {
+          n.x = n.fx;
+          n.y = n.fy;
+          return;
+        }
+        if (!isNumber(n.x) || !isNumber(n.y)) return;  
         const distLength = Math.sqrt(
           displacements[j].x * displacements[j].x +
             displacements[j].y * displacements[j].y
@@ -233,9 +252,15 @@ export class FruchtermanLayout extends Base {
           n.y += (displacements[j].y / distLength) * limitedDist;
         }
       });
-    }
 
-    if (self.onLayoutEnd) self.onLayoutEnd();
+      if (self.tick) self.tick();
+
+      iter++;
+      if (iter >= maxIteration) {
+        if (self.onLayoutEnd) self.onLayoutEnd();
+        window.clearInterval(self.timeInterval);
+      }
+    }, 0);
 
     return {
       nodes,
@@ -306,6 +331,21 @@ export class FruchtermanLayout extends Base {
       displacements[uIndex].x += (vecX / vecLength) * common;
       displacements[uIndex].y += (vecY / vecLength) * common;
     });
+  }
+
+  public stop() {
+    if (this.timeInterval && typeof window !== "undefined") {
+      window.clearInterval(this.timeInterval);
+    }
+  }
+
+  public destroy() {
+    const self = this;
+    self.stop();
+    self.tick = null;
+    self.nodes = null;
+    self.edges = null;
+    self.destroyed = true;
   }
 
   public getType() {

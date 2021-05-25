@@ -16,13 +16,13 @@ import { isNumber } from "../../util";
 // @ts-ignore
 import { World } from "@antv/g-webgpu";
 // compile at runtime in dev mode
-// @ts-ignore
-// import { Compiler } from '@antv/g-webgpu-compiler'
-// import { fruchtermanCode, clusterCode } from './fruchtermanShader'
 import { buildTextureData, attributesToTextureData } from "../../util/gpu";
 // use compiled bundle in prod mode
 import { fruchtermanBundle, clusterBundle } from "./fruchtermanShader";
 import { LAYOUT_MESSAGE } from "../constants";
+// @ts-ignore
+// import { Compiler } from '@antv/g-webgpu-compiler'
+// import { fruchtermanCode, clusterCode } from './fruchtermanShader'
 
 type INode = OutNode & {
   cluster: string | number;
@@ -176,6 +176,18 @@ export class FruchtermanGPULayout extends Base {
       array: attributeArray,
       count: clusterCount
     } = attributesToTextureData([self.clusterField], nodes);
+
+    // pushing the fx and fy
+    nodes.forEach((node, i) => {
+      let fx = 0, fy = 0;
+      if (isNumber(node.fx) && isNumber(node.fy)) {
+        fx = node.fx || 0.001;
+        fy = node.fy || 0.001;
+      }
+      attributeArray[4 * i + 1] = fx;
+      attributeArray[4 * i + 2] = fy;
+    })
+
 
     const numParticles = nodes.length;
     const { maxEdgePerVetex, array: nodesEdgesArray } = buildTextureData(

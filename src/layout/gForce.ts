@@ -224,7 +224,8 @@ export class GForceLayout extends Base {
     self.degrees = getDegree(nodes.length, self.nodeIdxMap, edges);
     if (!self.getMass) {
       self.getMass = d => {
-        return self.degrees[self.nodeIdxMap[d.id]] || 1;
+        const mass = self.degrees[self.nodeIdxMap[d.id]] || 1;
+        return mass;
       };
     }
 
@@ -280,9 +281,9 @@ export class GForceLayout extends Base {
         if (self.onLayoutEnd) self.onLayoutEnd();
       }
       iter++;
-      if (iter > maxIteration) {
-        window.clearInterval(self.timeInterval);
+      if (iter >= maxIteration) {
         if (self.onLayoutEnd) self.onLayoutEnd();
+        window.clearInterval(self.timeInterval);
       }
     }, 0);
   }
@@ -311,10 +312,10 @@ export class GForceLayout extends Base {
           (((nodeStrength(ni) + nodeStrength(nj)) / 2) * factor) /
           (nVecLength * nVecLength);
         const massj = getMass ? getMass(nj) : 1;
-        accArray[2 * i] += (direX * param) / massi;
-        accArray[2 * i + 1] += (direY * param) / massi;
-        accArray[2 * j] -= (direX * param) / massj;
-        accArray[2 * j + 1] -= (direY * param) / massj;
+        accArray[2 * i] += (direX * param);
+        accArray[2 * i + 1] += (direY * param);
+        accArray[2 * j] -= (direX * param);
+        accArray[2 * j + 1] -= (direY * param);
         if (preventOverlap && vecLength < (nodeSize(ni) + nodeSize(nj)) / 2) {
           const paramOverlap =
             (nodeStrength(ni) + nodeStrength(nj)) / 2 / (vecLength * vecLength);
@@ -419,6 +420,11 @@ export class GForceLayout extends Base {
     nodes: INode[]
   ) {
     nodes.forEach((node, i) => {
+      if (isNumber(node.fx) && isNumber(node.fy)) {
+        node.x = node.fx;
+        node.y = node.fy;
+        return;
+      }
       const distX = velArray[2 * i] * stepInterval;
       const distY = velArray[2 * i + 1] * stepInterval;
       node.x += distX;
