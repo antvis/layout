@@ -46,9 +46,9 @@ export class FruchtermanLayout extends Base {
   /** 聚类力大小 */
   public clusterGravity: number = 10;
 
-  public nodes: INode[] = [];
+  public nodes: INode[] | null = [];
 
-  public edges: Edge[] = [];
+  public edges: Edge[] | null = [];
 
   public width: number = 300;
 
@@ -60,6 +60,9 @@ export class FruchtermanLayout extends Base {
 
   /** 迭代结束的回调函数 */
   public onLayoutEnd: () => void = () => {};
+
+  /** 每次迭代结束的回调函数 */
+  public tick: (() => void) | null = () => {};
 
   /** 迭代中的标识 */
   private timeInterval: number;
@@ -129,6 +132,7 @@ export class FruchtermanLayout extends Base {
   public run() {
     const self = this;
     const nodes = self.nodes;
+    if (!nodes) return;
     const edges = self.edges;
     const maxIteration = self.maxIteration;
     const center = self.center;
@@ -178,6 +182,8 @@ export class FruchtermanLayout extends Base {
     let iter = 0;
     // interval for render the result after each iteration
     this.timeInterval = window.setInterval(() => {
+
+      if (!nodes) return;
 
     // for (let i = 0; i < maxIteration; i++) {
       const displacements: Point[] = [];
@@ -231,7 +237,7 @@ export class FruchtermanLayout extends Base {
       });
 
       // move
-      nodes.forEach((n, j) => {
+      nodes.forEach((n: any, j) => {
         if (isNumber(n.fx) && isNumber(n.fy)) {
           n.x = n.fx;
           n.y = n.fy;
@@ -270,14 +276,14 @@ export class FruchtermanLayout extends Base {
 
   private applyCalculate(
     nodes: INode[],
-    edges: Edge[],
+    edges: Edge[] | null,
     displacements: Point[],
     k: number,
     k2: number
   ) {
     const self = this;
     self.calRepulsive(nodes, displacements, k2);
-    self.calAttractive(edges, displacements, k);
+    if (edges) self.calAttractive(edges, displacements, k);
   }
 
   private calRepulsive(nodes: INode[], displacements: Point[], k2: number) {

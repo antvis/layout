@@ -419,7 +419,7 @@ export class GForceLayout extends Base {
     stepInterval: number,
     nodes: INode[]
   ) {
-    nodes.forEach((node, i) => {
+    nodes.forEach((node: any, i) => {
       if (isNumber(node.fx) && isNumber(node.fy)) {
         node.x = node.fx;
         node.y = node.fy;
