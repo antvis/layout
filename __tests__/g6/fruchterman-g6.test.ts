@@ -50,6 +50,24 @@ describe('Grid Layout', () => {
         });
         preGrid.layout(data);
 
+        const colors = [
+          '#5F95FF', // blue
+          '#61DDAA',
+          '#65789B',
+          '#F6BD16',
+          '#7262FD',
+          '#78D3F8',
+          '#9661BC',
+          '#F6903D',
+          '#008685',
+          '#F08BB4',
+        ];
+
+        data.nodes.forEach(node => {
+          node.cluster = Math.floor(Math.random() * 5);
+          node.color = colors[node.cluster];
+        })
+
         data.nodes[0].fx = 100;
         data.nodes[0].fy = 100;
 
@@ -61,20 +79,21 @@ describe('Grid Layout', () => {
         })
 
         
-        const layout = new FruchtermanLayout({ // FruchtermanGPULayout FruchtermanLayout
-          maxIteration: 100,
-          speed: 50,
-          // onLayoutEnd: () => {
-          //   console.log('on layout end')
-          //   graph.refreshPositions();
-          // }
-          // gravity: 100,
-          tick: () => {
+        const layout = new FruchtermanGPULayout({ // FruchtermanGPULayout FruchtermanLayout
+          maxIteration: 1000,
+          speed: 5,
+          // clustering: true,
+          // clusterField: 'cluster',
+          onLayoutEnd: () => {
             graph.refreshPositions();
           }
+          // gravity: 100,
+          // tick: () => {
+          //   graph.refreshPositions();
+          // }
         });
-        // await layout.layout(data);
-        layout.layout(data);
+        await layout.layout(data);
+        // layout.layout(data);
 
         graph.data(data)
         graph.render();

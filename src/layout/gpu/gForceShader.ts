@@ -166,10 +166,6 @@ class GGForce {
     }
 
     // move
-    let distx = vx * this.u_interval;
-    let disty = vy * this.u_interval;
-    let distLength = sqrt(distx * distx + disty * disty);
-
     if (nodeAttributes1[3] != 0 && nodeAttributes2[3] != 0) {
       this.u_Data[i] = [
         nodeAttributes1[3],
@@ -178,6 +174,9 @@ class GGForce {
         0
       ];
     } else {
+      const distx = vx * this.u_interval;
+      const disty = vy * this.u_interval;
+      const distLength = sqrt(distx * distx + disty * disty);
       this.u_Data[i] = [
         currentNode[0] + distx,
         currentNode[1] + disty,
