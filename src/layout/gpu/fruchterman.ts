@@ -18,11 +18,11 @@ import { World } from "@antv/g-webgpu";
 // compile at runtime in dev mode
 import { buildTextureData, attributesToTextureData } from "../../util/gpu";
 // use compiled bundle in prod mode
-// import { fruchtermanBundle, clusterBundle } from "./fruchtermanShader";
+import { fruchtermanBundle, clusterBundle } from "./fruchtermanShader";
 import { LAYOUT_MESSAGE } from "../constants";
 // @ts-ignore
-import { Compiler } from '@antv/g-webgpu-compiler'
-import { fruchtermanCode, clusterCode } from './fruchtermanShader'
+// import { Compiler } from '@antv/g-webgpu-compiler'
+// import { fruchtermanCode, clusterCode } from './fruchtermanShader'
 
 type INode = OutNode & {
   cluster: string | number;
@@ -215,13 +215,13 @@ export class FruchtermanGPULayout extends Base {
     }
 
     // compile at runtime in dev mode
-    const compiler = new Compiler()
-    const fruchtermanBundle = compiler.compileBundle(fruchtermanCode)
-    const clusterBundle = compiler.compileBundle(clusterCode)
+    // const compiler = new Compiler()
+    // const fruchtermanBundle = compiler.compileBundle(fruchtermanCode)
+    // const clusterBundle = compiler.compileBundle(clusterCode)
 
     // use compiled bundle in prod mode
     // console.log(fruchtermanBundle.toString())
-    console.log(clusterBundle.toString())
+    // console.log(clusterBundle.toString())
 
     const onLayoutEnd = self.onLayoutEnd;
 
