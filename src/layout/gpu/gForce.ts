@@ -226,6 +226,9 @@ export class GForceGPULayout extends Base {
     const centerXs: number[] = [];
     const centerYs: number[] = [];
     const centerGravities: number[] = [];
+    const fxs: number[] = [];
+    const fys: number[] = [];
+
     if (!self.getMass) {
       self.getMass = d => {
         return self.degrees[self.nodeIdxMap[d.id]] || 1;
@@ -252,19 +255,28 @@ export class GForceGPULayout extends Base {
       centerXs.push(nodeGravity[0]);
       centerYs.push(nodeGravity[1]);
       centerGravities.push(nodeGravity[2]);
+      if (isNumber(node.fx) && isNumber(node.fy)) {
+        fxs.push(node.fx || 0.001);
+        fys.push(node.fy || 0.001);
+      } else {
+        fxs.push(0);
+        fys.push(0);
+      }
     });
 
     // 每个节点的额外属性占两个数组各一格，nodeAttributeArray1 中是：mass, degree, nodeSterngth, 0
     const nodeAttributeArray1 = arrayToTextureData([
       masses,
       self.degrees,
-      nodeStrengths
+      nodeStrengths,
+      fxs
     ]);
     // nodeAttributeArray2 中是：centerX, centerY, gravity, 0,
     const nodeAttributeArray2 = arrayToTextureData([
       centerXs,
       centerYs,
-      centerGravities
+      centerGravities,
+      fys
     ]);
 
     const workerEnabled = self.workerEnabled;

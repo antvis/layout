@@ -1,5 +1,5 @@
 import { Layout } from '../../src';
-import { GridLayout, GForceGPULayout, GForceLayout } from '../../src'
+import { GridLayout, FruchtermanGPULayout, FruchtermanLayout } from '../../src'
 import G6 from '@antv/g6';
 import dataset from '../data';
 
@@ -61,18 +61,21 @@ describe('Grid Layout', () => {
         })
 
         
-        const layout = new GForceGPULayout({ // GForceGPULayout GForceLayout
-          maxIteration: 1000,
+        const layout = new FruchtermanLayout({ // FruchtermanGPULayout FruchtermanLayout
+          maxIteration: 100,
+          speed: 50,
+          // onLayoutEnd: () => {
+          //   console.log('on layout end')
+          //   graph.refreshPositions();
+          // }
           // gravity: 100,
-          nodeStrength: 1000,
           tick: () => {
             graph.refreshPositions();
           }
         });
-        await layout.layout(data);
-        // layout.layout(data);
+        // await layout.layout(data);
+        layout.layout(data);
 
-        console.log("layout", layout, layout.getMass(data.nodes[10]))
         graph.data(data)
         graph.render();
 
@@ -81,9 +84,9 @@ describe('Grid Layout', () => {
           model.fx = e.x;
           model.fy = e.y;
         }
-        // graph.on('node:dragstart', (e) => {
-        //   refreshDragedNodePosition(e);
-        // });
+        graph.on('node:dragstart', (e) => {
+          layout.stop();
+        });
         graph.on('node:drag', (e) => {
           const model = e.item.get('model');
           model.x = e.x;
@@ -92,7 +95,7 @@ describe('Grid Layout', () => {
         });
         graph.on('node:dragend', async (e) => {
           refreshDragedNodePosition(e);
-          await layout.execute();
+          layout.execute();
           graph.refreshPositions();
         });
         // graph.destroy();
