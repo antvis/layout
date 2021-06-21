@@ -36,7 +36,7 @@ export class DagreLayout extends Base {
   /** 是否保留布局连线的控制点 */
   public controlPoints: boolean = false;
 
-  /** 每层节点是否根据节点数据中的 comboId 进行排序，以放置同层 combo 重叠 */
+  /** 每层节点是否根据节点数据中的 comboId 进行排序，以防止同层 combo 重叠 */
   public sortByCombo: boolean = false;
 
   public nodes: OutNode[] = [];
