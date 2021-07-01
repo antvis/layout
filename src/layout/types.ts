@@ -6,6 +6,7 @@ export interface OutNode extends Node {
   x: number;
   y: number;
   comboId?: string;
+  layout?: boolean
 }
 
 export interface Edge {

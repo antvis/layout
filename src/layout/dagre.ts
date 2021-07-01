@@ -104,7 +104,7 @@ export class DagreLayout extends Base {
     g.setGraph(self);
 
     const comboMap: { [key: string]: boolean } = {};
-    nodes.forEach((node) => {
+    nodes.filter((node) => node.layout !== false).forEach((node) => {
       const size = nodeSizeFunc(node);
       const verti = vertisep(node);
       const hori = horisep(node);
