@@ -1,5 +1,6 @@
 import { OutNode, Edge, IndexMap } from '../layout/types'
 import { isNumber } from './'
+import { getEdgeTerminal } from './math'
 
 
 /**
@@ -49,8 +50,10 @@ export const buildTextureData = (nodes: OutNode[], edges: Edge[]): {
   }
   for (i = 0; i < edges.length; i++) {
     const e = edges[i]
-    nodeDict[mapIdPos[e.source]].push(mapIdPos[e.target])
-    nodeDict[mapIdPos[e.target]].push(mapIdPos[e.source])
+    const source = getEdgeTerminal(e, 'source')
+    const target = getEdgeTerminal(e, 'target')
+    nodeDict[mapIdPos[source]].push(mapIdPos[target])
+    nodeDict[mapIdPos[target]].push(mapIdPos[source])
   }
 
   let maxEdgePerVetex = 0
@@ -158,14 +161,16 @@ export const buildTextureDataWithTwoEdgeAttr = (nodes: OutNode[], edges: Edge[],
   }
   for (i = 0; i < edges.length; i++) {
     const e = edges[i]
-    nodeDict[mapIdPos[e.source]].push(mapIdPos[e.target])
-    nodeDict[mapIdPos[e.source]].push(attrs1(e))
-    nodeDict[mapIdPos[e.source]].push(attrs2(e))
-    nodeDict[mapIdPos[e.source]].push(0)
-    nodeDict[mapIdPos[e.target]].push(mapIdPos[e.source])
-    nodeDict[mapIdPos[e.target]].push(attrs1(e))
-    nodeDict[mapIdPos[e.target]].push(attrs2(e))
-    nodeDict[mapIdPos[e.target]].push(0)
+    const source = getEdgeTerminal(e, 'source')
+    const target = getEdgeTerminal(e, 'target')
+    nodeDict[mapIdPos[source]].push(mapIdPos[target])
+    nodeDict[mapIdPos[source]].push(attrs1(e))
+    nodeDict[mapIdPos[source]].push(attrs2(e))
+    nodeDict[mapIdPos[source]].push(0)
+    nodeDict[mapIdPos[target]].push(mapIdPos[source])
+    nodeDict[mapIdPos[target]].push(attrs1(e))
+    nodeDict[mapIdPos[target]].push(attrs2(e))
+    nodeDict[mapIdPos[target]].push(0)
   }
 
   let maxEdgePerVetex = 0

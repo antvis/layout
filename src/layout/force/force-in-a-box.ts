@@ -1,4 +1,5 @@
 import * as d3Force from 'd3-force'
+import { getEdgeTerminal } from '../../util'
 
 interface INode {
   id: string
@@ -118,8 +119,10 @@ export default function forceInABox() {
     })
 
     clustersLinks.forEach((l: any) => {
-      const source = dNodes[l.source]
-      const target = dNodes[l.target]
+      const sourceTerminal = getEdgeTerminal(l, 'source')
+      const targetTerminal = getEdgeTerminal(l, 'target')
+      const source = dNodes[sourceTerminal]
+      const target = dNodes[targetTerminal]
       if (source !== undefined && target !== undefined) {
         glinks.push({
           source,
@@ -207,8 +210,10 @@ export default function forceInABox() {
   }
 
   function getLinkKey(l: any) {
-    const sourceID = groupBy(nodesMap[l.source])
-    const targetID = groupBy(nodesMap[l.target])
+    const source = getEdgeTerminal(l, 'source')
+    const target = getEdgeTerminal(l, 'target')
+    const sourceID = groupBy(nodesMap[source])
+    const targetID = groupBy(nodesMap[target])
 
     return sourceID <= targetID
       ? `${sourceID}~${targetID}`

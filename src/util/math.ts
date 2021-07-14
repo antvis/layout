@@ -1,4 +1,13 @@
 import { Matrix, Model, IndexMap, Edge } from '../layout/types'
+import { isObject } from './object'
+
+export const getEdgeTerminal = (edge: Edge, type: 'source' | 'target') => {
+  const terminal = edge[type]
+  if (isObject(terminal)) {
+    return terminal.cell
+  }
+  return terminal
+}
 
 export const getDegree = (n: number, nodeIdxMap: IndexMap, edges: Edge[] | null) => {
   const degrees: number[] = []
@@ -7,11 +16,13 @@ export const getDegree = (n: number, nodeIdxMap: IndexMap, edges: Edge[] | null)
   }
   if (!edges) return degrees
   edges.forEach((e) => {
-    if (e.source) {
-      degrees[nodeIdxMap[e.source]] += 1
+    const source = getEdgeTerminal(e, 'source')
+    const target = getEdgeTerminal(e, 'target')
+    if (source) {
+      degrees[nodeIdxMap[source]] += 1
     }
-    if (e.target) {
-      degrees[nodeIdxMap[e.target]] += 1
+    if (target) {
+      degrees[nodeIdxMap[target]] += 1
     }
   })
   return degrees
@@ -70,10 +81,8 @@ export const getAdjMatrix = (data: Model, directed: boolean): Matrix[] => {
 
   if (edges) {
     edges.forEach((e) => {
-      const {
-        source,
-        target
-      } = e
+      const source = getEdgeTerminal(e, 'source')
+      const target = getEdgeTerminal(e, 'target')
       const sIndex = nodeMap[source as string]
       const tIndex = nodeMap[target as string]
       matrix[sIndex][tIndex] = 1
