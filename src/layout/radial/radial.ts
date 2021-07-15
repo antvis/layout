@@ -18,7 +18,8 @@ import {
   isNumber,
   isString,
   floydWarshall,
-  getAdjMatrix
+  getAdjMatrix,
+  isObject
 } from "../../util";
 import { Base } from "../base";
 import MDS from "./mds";
@@ -285,6 +286,9 @@ export class RadialLayout extends Base {
             if (isArray(d.size)) {
               const res = d.size[0] > d.size[1] ? d.size[0] : d.size[1];
               return res + nodeSpacingFunc(d);
+            }  if (isObject(d.size)) {
+              const res = d.size.width > d.size.height ? d.size.width : d.size.height;
+              return res + nodeSpacingFunc(d);  
             }
             return d.size + nodeSpacingFunc(d);
           }

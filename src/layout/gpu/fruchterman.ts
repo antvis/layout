@@ -179,14 +179,15 @@ export class FruchtermanGPULayout extends Base {
 
     // pushing the fx and fy
     nodes.forEach((node, i) => {
-      let fx = 0, fy = 0;
+      let fx = 0;
+      let fy = 0;
       if (isNumber(node.fx) && isNumber(node.fy)) {
         fx = node.fx || 0.001;
         fy = node.fy || 0.001;
       }
       attributeArray[4 * i + 1] = fx;
       attributeArray[4 * i + 2] = fy;
-    })
+    });
 
 
     const numParticles = nodes.length;

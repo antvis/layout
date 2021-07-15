@@ -8,15 +8,16 @@ import {
   OutNode,
   Edge,
   PointTuple,
+  Size,
   IndexMap,
   ConcentricLayoutOptions
 } from "./types";
-import { isString, isArray, isNumber, getDegree } from "../util";
+import { isString, isArray, isNumber, getDegree, isObject } from "../util";
 import { Base } from "./base";
 
 type INode = OutNode & {
   degree: number;
-  size: number | PointTuple;
+  size: number | PointTuple | Size;
 };
 
 type NodeMap = {
@@ -128,13 +129,15 @@ export class ConcentricLayout extends Base {
     } else {
       maxNodeSize = self.nodeSize;
     }
-    nodes.forEach(node => {
+    nodes.forEach((node) => {
       layoutNodes.push(node);
       let nodeSize: number = maxNodeSize;
       if (isArray(node.size)) {
         nodeSize = Math.max(node.size[0], node.size[1]);
       } else if (isNumber(node.size)) {
         nodeSize = node.size;
+      } else if (isObject(node.size)) {
+        nodeSize = Math.max(node.size.width, node.size.height);
       }
       maxNodeSize = Math.max(maxNodeSize, nodeSize);
     });
@@ -179,7 +182,7 @@ export class ConcentricLayout extends Base {
     // put the values into levels
     const levels: any[] = [[]];
     let currentLevel = levels[0];
-    layoutNodes.forEach(node => {
+    layoutNodes.forEach((node) => {
       if (currentLevel.length > 0) {
         const diff = Math.abs(
           currentLevel[0][self.sortBy] - (node as any)[self.sortBy]
@@ -205,7 +208,7 @@ export class ConcentricLayout extends Base {
 
     // find the metrics for each level
     let r = 0;
-    levels.forEach(level => {
+    levels.forEach((level) => {
       let sweep = self.sweep;
       if (sweep === undefined) {
         sweep = 2 * Math.PI - (2 * Math.PI) / level.length;
@@ -246,7 +249,7 @@ export class ConcentricLayout extends Base {
     }
 
     // calculate the node positions
-    levels.forEach(level => {
+    levels.forEach((level) => {
       const dTheta = level.dTheta;
       const rr = level.r;
       level.forEach((node: INode, j: number) => {

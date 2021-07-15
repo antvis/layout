@@ -4,19 +4,20 @@
  * this algorithm refers to <cytoscape.js> - https://github.com/cytoscape/cytoscape.js/
  */
 
-import { isString, isArray, isNumber, getDegree, isNaN } from "../util";
+import { isString, isArray, isNumber, getDegree, isNaN, isObject } from "../util";
 import { Base } from "./base";
 import {
   OutNode,
   Edge,
   PointTuple,
+  Size,
   IndexMap,
   GridLayoutOptions
 } from "./types";
 
 type INode = OutNode & {
   degree: number;
-  size: number | PointTuple;
+  size: number | PointTuple | Size;
 };
 
 /**
@@ -49,7 +50,7 @@ export class GridLayout extends Base {
   /** a sorting function to order the nodes; e.g. function(a, b){ return a.datapublic ('weight') - b.data('weight') } */
   public sortBy: string = "degree";
 
-  public nodeSize: number | number[] = 30;
+  public nodeSize: number | number[] | { width: number, height: number } = 30;
 
   public nodes: INode[] = [];
 
@@ -127,7 +128,7 @@ export class GridLayout extends Base {
 
     const edges = self.edges;
     const layoutNodes: INode[] = [];
-    nodes.forEach(node => {
+    nodes.forEach((node) => {
       layoutNodes.push(node);
     });
     const nodeIdxMap: IndexMap = {};
@@ -216,7 +217,7 @@ export class GridLayout extends Base {
     }
 
     if (self.preventOverlap) {
-      layoutNodes.forEach(node => {
+      layoutNodes.forEach((node) => {
         if (!node.x || !node.y) {
           // for bb
           node.x = 0;
@@ -231,6 +232,9 @@ export class GridLayout extends Base {
         } else if (isNumber(node.size)) {
           nodew = node.size as number;
           nodeh = node.size as number;
+        } else if (isObject(node.size)) {
+          nodew = node.size.width;
+          nodeh = node.size.height;
         }
         if (nodew === undefined || nodeh === undefined) {
           if (isArray(self.nodeSize)) {

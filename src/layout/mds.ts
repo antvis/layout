@@ -115,8 +115,8 @@ export class MDSLayout extends Base {
 
   public handleInfinity(distances: Matrix[]) {
     let maxDistance = -999999;
-    distances.forEach(row => {
-      row.forEach(value => {
+    distances.forEach((row) => {
+      row.forEach((value) => {
         if (value === Infinity) {
           return;
         }

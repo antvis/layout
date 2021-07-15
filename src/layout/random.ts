@@ -55,7 +55,7 @@ export class RandomLayout extends Base {
     }
 
     if (nodes) {
-      nodes.forEach(node => {
+      nodes.forEach((node) => {
         node.x = (Math.random() - 0.5) * layoutScale * self.width + center[0];
         node.y = (Math.random() - 0.5) * layoutScale * self.height + center[1];
       });

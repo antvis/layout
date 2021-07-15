@@ -11,7 +11,7 @@ import {
   CircularLayoutOptions
 } from "./types";
 import { Base } from "./base";
-import { getDegree, clone } from "../util";
+import { getDegree, clone, getEdgeTerminal } from "../util";
 
 type INode = OutNode & {
   degree: number;
@@ -32,14 +32,16 @@ function initHierarchy(
     nodes[i].parent = [];
   });
   if (directed) {
-    edges.forEach(e => {
+    edges.forEach((e) => {
+      const source = getEdgeTerminal(e, 'source');
+      const target = getEdgeTerminal(e, 'target');
       let sourceIdx = 0;
-      if (e.source) {
-        sourceIdx = nodeMap[e.source];
+      if (source) {
+        sourceIdx = nodeMap[source];
       }
       let targetIdx = 0;
-      if (e.target) {
-        targetIdx = nodeMap[e.target];
+      if (target) {
+        targetIdx = nodeMap[target];
       }
       const child = nodes[sourceIdx].children!;
       const parent = nodes[targetIdx].parent!;
@@ -47,14 +49,16 @@ function initHierarchy(
       parent.push(nodes[sourceIdx].id);
     });
   } else {
-    edges.forEach(e => {
+    edges.forEach((e) => {
+      const source = getEdgeTerminal(e, 'source');
+      const target = getEdgeTerminal(e, 'target');
       let sourceIdx = 0;
-      if (e.source) {
-        sourceIdx = nodeMap[e.source];
+      if (source) {
+        sourceIdx = nodeMap[source];
       }
       let targetIdx = 0;
-      if (e.target) {
-        targetIdx = nodeMap[e.target];
+      if (target) {
+        targetIdx = nodeMap[target];
       }
       const sourceChildren = nodes[sourceIdx].children!;
       const targetChildren = nodes[targetIdx].children!;
@@ -67,9 +71,11 @@ function initHierarchy(
 function connect(a: INode, b: INode, edges: Edge[]) {
   const m = edges.length;
   for (let i = 0; i < m; i++) {
+    const source = getEdgeTerminal(edges[i], 'source');
+    const target = getEdgeTerminal(edges[i], 'target');
     if (
-      (a.id === edges[i].source && b.id === edges[i].target) ||
-      (b.id === edges[i].source && a.id === edges[i].target)
+      (a.id === source && b.id === target) ||
+      (b.id === source && a.id === target)
     ) {
       return true;
     }

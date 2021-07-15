@@ -37,6 +37,7 @@ export class Layout {
 
 // FIXME
 // FOR G6
+// tslint:disable-next-line
 export const Layouts: { [key: string]: any } = new Proxy(
   {},
   {

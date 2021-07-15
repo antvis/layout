@@ -6,7 +6,7 @@
 import { Edge, Model, PointTuple, ForceLayoutOptions } from "../types";
 import * as d3Force from "d3-force";
 import forceInABox from "./force-in-a-box";
-import { isArray, isFunction, isNumber } from "../../util";
+import { isArray, isFunction, isNumber, isObject } from "../../util";
 import { Base } from "../base";
 import { LAYOUT_MESSAGE } from "../constants";
 
@@ -125,7 +125,7 @@ export class ForceLayout extends Base {
     const self = this;
     self.nodes = data.nodes || [];
     const edges = data.edges || [];
-    self.edges = edges.map(edge => {
+    self.edges = edges.map((edge) => {
       const res: any = {};
       const expectKeys = ["targetNode", "sourceNode", "startPoint", "endPoint"];
       Object.keys(edge).forEach((key: keyof Edge) => {
@@ -306,10 +306,13 @@ export class ForceLayout extends Base {
     }
 
     if (!nodeSize) {
-      nodeSizeFunc = d => {
+      nodeSizeFunc = (d) => {
         if (d.size) {
           if (isArray(d.size)) {
             const res = d.size[0] > d.size[1] ? d.size[0] : d.size[1];
+            return res / 2 + nodeSpacingFunc(d);
+          }  if (isObject(d.size)) {
+            const res = d.size.width > d.size.height ? d.size.width : d.size.height;
             return res / 2 + nodeSpacingFunc(d);
           }
           return d.size / 2 + nodeSpacingFunc(d);
@@ -317,17 +320,17 @@ export class ForceLayout extends Base {
         return 10 + nodeSpacingFunc(d);
       };
     } else if (isFunction(nodeSize)) {
-      nodeSizeFunc = d => {
+      nodeSizeFunc = (d) => {
         const size = nodeSize(d);
         return size + nodeSpacingFunc(d);
       };
     } else if (isArray(nodeSize)) {
       const larger = nodeSize[0] > nodeSize[1] ? nodeSize[0] : nodeSize[1];
       const radius = larger / 2;
-      nodeSizeFunc = d => radius + nodeSpacingFunc(d);
+      nodeSizeFunc = (d) => radius + nodeSpacingFunc(d);
     } else if (isNumber(nodeSize)) {
       const radius = nodeSize / 2;
-      nodeSizeFunc = d => radius + nodeSpacingFunc(d);
+      nodeSizeFunc = (d) => radius + nodeSpacingFunc(d);
     } else {
       nodeSizeFunc = () => 10;
     }

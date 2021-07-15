@@ -230,7 +230,7 @@ export class GForceGPULayout extends Base {
     const fys: number[] = [];
 
     if (!self.getMass) {
-      self.getMass = d => {
+      self.getMass = (d) => {
         return self.degrees[self.nodeIdxMap[d.id]] || 1;
       };
     }
@@ -305,7 +305,7 @@ export class GForceGPULayout extends Base {
     const onLayoutEnd = self.onLayoutEnd;
 
     const initPreviousData = [];
-    nodesEdgesArray.forEach(value => {
+    nodesEdgesArray.forEach((value) => {
       initPreviousData.push(value);
     });
     for (let i = 0; i < 4; i++) {

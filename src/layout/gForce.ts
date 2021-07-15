@@ -12,7 +12,7 @@ import {
   GForceLayoutOptions
 } from "./types";
 import { Base } from "./base";
-import { isNumber, isFunction, isArray, getDegree } from "../util";
+import { isNumber, isFunction, isArray, getDegree, isObject, getEdgeTerminal } from "../util";
 
 type INode = OutNode & {
   size: number | PointTuple;
@@ -204,6 +204,9 @@ export class GForceLayout extends Base {
             if (isArray(d.size)) {
               const res = d.size[0] > d.size[1] ? d.size[0] : d.size[1];
               return res + nodeSpacingFunc(d);
+            }  if(isObject(d.size)) {
+              const res = d.size.width > d.size.height ? d.size.width : d.size.height;
+              return res + nodeSpacingFunc(d);
             }
             return (d.size as number) + nodeSpacingFunc(d);
           }
@@ -223,7 +226,7 @@ export class GForceLayout extends Base {
     const edges = self.edges;
     self.degrees = getDegree(nodes.length, self.nodeIdxMap, edges);
     if (!self.getMass) {
-      self.getMass = d => {
+      self.getMass = (d) => {
         const mass = self.degrees[self.nodeIdxMap[d.id]] || 1;
         return mass;
       };
@@ -259,7 +262,7 @@ export class GForceLayout extends Base {
       const stepInterval = Math.max(0.02, self.interval - iter * 0.002);
       self.updateVelocity(accArray, velArray, stepInterval, nodes);
       const previousPos: Point[] = [];
-      nodes.forEach(node => {
+      nodes.forEach((node) => {
         previousPos.push({
           x: node.x,
           y: node.y
@@ -337,8 +340,10 @@ export class GForceLayout extends Base {
     const edgeStrength = self.edgeStrength as Function;
     const getMass = self.getMass;
     edges.forEach((edge, i) => {
-      const sourceNode = nodeMap[edge.source];
-      const targetNode = nodeMap[edge.target];
+      const source = getEdgeTerminal(edge, 'source');
+      const target = getEdgeTerminal(edge, 'target');
+      const sourceNode = nodeMap[source];
+      const targetNode = nodeMap[target];
       const vecX = targetNode.x - sourceNode.x;
       const vecY = targetNode.y - sourceNode.y;
       const vecLength = Math.sqrt(vecX * vecX + vecY * vecY) + 0.01;
@@ -347,8 +352,8 @@ export class GForceLayout extends Base {
       const length = linkDistance(edge) || 1;
       const diff = length - vecLength;
       const param = diff * edgeStrength(edge);
-      const sourceIdx = nodeIdxMap[edge.source];
-      const targetIdx = nodeIdxMap[edge.target];
+      const sourceIdx = nodeIdxMap[source];
+      const targetIdx = nodeIdxMap[target];
       const massSource = getMass ? getMass(sourceNode) : 1;
       const massTarget = getMass ? getMass(targetNode) : 1;
       accArray[2 * sourceIdx] -= (direX * param) / massSource;
