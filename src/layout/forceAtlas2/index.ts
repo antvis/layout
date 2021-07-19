@@ -63,7 +63,7 @@ export class ForceAtlas2Layout extends Base {
    * whether active the barnes hut optimization on computing repulsive forces
    * @type  {boolean}
    */
-  public barnesHut: boolean = false;
+  public barnesHut: boolean | undefined = undefined;
 
   /**
    * the max iteration number
@@ -105,7 +105,7 @@ export class ForceAtlas2Layout extends Base {
    * note that it will reduce the quality of the layout
    * @type  {boolean}
    */
-  public prune: boolean = false;
+  public prune: boolean | undefined = undefined;
 
   public getWidth: (node: any) => number;
   public getHeight: (node: any) => number;
@@ -161,8 +161,8 @@ export class ForceAtlas2Layout extends Base {
       sizes.push(maxSize);
     }
 
-    if (!self.barnesHut && nodeNum > 250) self.barnesHut = true;
-    if (!self.prune && nodeNum > 100) self.prune = true;
+    if (self.barnesHut === undefined && nodeNum > 250) self.barnesHut = true;
+    if (self.prune === undefined && nodeNum > 100) self.prune = true;
     if (this.maxIteration === 0 && !self.prune) {
       maxIteration = 250;
       if (nodeNum <= 200 && nodeNum > 100) maxIteration = 1000;
