@@ -113,20 +113,27 @@ export class GridLayout extends Base {
   public execute() {
     const self = this;
     const nodes = self.nodes;
+    const edges = self.edges;
     const n = nodes.length;
     const begin = self.begin;
     if (n === 0) {
       if (self.onLayoutEnd) self.onLayoutEnd();
-      return;
+      return {
+        nodes,
+        edges
+      };
     }
     if (n === 1) {
       nodes[0].x = begin[0];
       nodes[0].y = begin[1];
       if (self.onLayoutEnd) self.onLayoutEnd();
-      return;
+      return {
+        nodes,
+        edges,
+      };
     }
 
-    const edges = self.edges;
+    
     const layoutNodes: INode[] = [];
     nodes.forEach((node) => {
       layoutNodes.push(node);
