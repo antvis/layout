@@ -22,7 +22,7 @@ const data = {
     },
     {
       id: "3",
-      label: "3"
+      label: "3",
       layer: 4,
     },
     {
