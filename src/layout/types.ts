@@ -137,6 +137,9 @@ export interface DagreLayoutOptions {
   sortByCombo?: boolean;
   workerEnabled?: boolean;
   onLayoutEnd?: () => void;
+  edgeLabelSpace?: boolean;
+  keepNodeOrder?: boolean;
+  nodeOrder?: string[];
 }
 
 export interface FruchtermanLayoutOptions {

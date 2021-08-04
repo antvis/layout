@@ -4,7 +4,7 @@
  */
 
 import { Edge, OutNode, DagreLayoutOptions } from "./types";
-import dagre from "dagre";
+import dagre from "dagrejs";
 import { isArray, isNumber } from "../util";
 import { Base } from "./base";
 
@@ -171,7 +171,7 @@ export class DagreLayout extends Base {
       const i = edges.findIndex(
         (it) => it.source === edge.v && it.target === edge.w
       );
-      if (self.controlPoints && edges[i].type !== "loop") {
+      if ((self.edgeLabelSpace !== false) && self.controlPoints && edges[i].type !== "loop") {
         edges[i].controlPoints = coord.points.slice(1, coord.points.length - 1);
       }
     });

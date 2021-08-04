@@ -31,7 +31,7 @@
     "release": "release-it",
     "test": "jest",
     "coverage": "jest --coverage",
-    "test-live": "DEBUG_MODE=1 jest --watch  __tests__/g6/fa2-g6-spec"
+    "test-live": "DEBUG_MODE=1 jest --watch __tests__/g6/dagre-g6-test.ts"
   },
   "lint-staged": {
     "*.js": [
@@ -63,7 +63,7 @@
     "eslint-config-airbnb-base": "^14.0.0",
     "eslint-config-prettier": "^6.7.0",
     "eslint-plugin-import": "^2.18.2",
-    "jest": "*",
+    "jest": "^26.0.1",
     "jest-electron": "^0.1.7",
     "jest-extended": "^0.11.2",
     "lint-staged": "^10.2.2",
