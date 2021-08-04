@@ -70,6 +70,7 @@ export default class QuadTree {
     }
   }
   // inserts bo into a quad
+  // tslint:disable-next-line
   _putBody(bo: Body) {
     if (!this.quad) return;
     if (bo.in(this.quad.NW()) && this.NW) this.NW.insert(bo);
@@ -77,6 +78,7 @@ export default class QuadTree {
     else if (bo.in(this.quad.SW()) && this.SW )this.SW.insert(bo);
     else if (bo.in(this.quad.SE()) && this.SE) this.SE.insert(bo);
   }
+  // tslint:disable-next-line
   _isExternal() {
     // four children are null
     return (this.NW == null && this.NE == null && this.SW == null && this.SE == null);

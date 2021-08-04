@@ -12,7 +12,7 @@ import {
   FruchtermanLayoutOptions
 } from "./types";
 import { Base } from "./base";
-import { isNumber } from "../util";
+import { getEdgeTerminal, isNumber } from "../util";
 
 type NodeMap = {
   [key: string]: INode;
@@ -152,7 +152,7 @@ export class FruchtermanLayout extends Base {
       };
     } = {};
     if (clustering) {
-      nodes.forEach(n => {
+      nodes.forEach((n) => {
         if (clusterMap[n.cluster] === undefined) {
           const cluster = {
             name: n.cluster,
@@ -212,7 +212,7 @@ export class FruchtermanLayout extends Base {
           clusterMap[key].count = 0;
         }
 
-        nodes.forEach(n => {
+        nodes.forEach((n) => {
           const c = clusterMap[n.cluster];
           if (isNumber(n.x)) {
             c.cx += n.x;
@@ -298,8 +298,9 @@ export class FruchtermanLayout extends Base {
           !isNumber(u.x) ||
           !isNumber(v.y) ||
           !isNumber(u.y)
-        )
+        ) {
           return;
+        }
         let vecX = v.x - u.x;
         let vecY = v.y - u.y;
         let vecLengthSqr = vecX * vecX + vecY * vecY;
@@ -317,17 +318,20 @@ export class FruchtermanLayout extends Base {
   }
 
   private calAttractive(edges: Edge[], displacements: Point[], k: number) {
-    edges.forEach(e => {
-      if (!e.source || !e.target) return;
-      const uIndex = this.nodeIdxMap[e.source];
-      const vIndex = this.nodeIdxMap[e.target];
+    edges.forEach((e) => {
+      const source = getEdgeTerminal(e, 'source');
+      const target = getEdgeTerminal(e, 'target');
+      if (!source || !target) return;
+      const uIndex = this.nodeIdxMap[source];
+      const vIndex = this.nodeIdxMap[target];
       if (uIndex === vIndex) {
         return;
       }
-      const u = this.nodeMap[e.source];
-      const v = this.nodeMap[e.target];
-      if (!isNumber(v.x) || !isNumber(u.x) || !isNumber(v.y) || !isNumber(u.y))
+      const u = this.nodeMap[source];
+      const v = this.nodeMap[target];
+      if (!isNumber(v.x) || !isNumber(u.x) || !isNumber(v.y) || !isNumber(u.y)) {
         return;
+      }
       const vecX = v.x - u.x;
       const vecY = v.y - u.y;
       const vecLength = Math.sqrt(vecX * vecX + vecY * vecY);

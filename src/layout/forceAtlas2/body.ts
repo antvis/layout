@@ -14,7 +14,7 @@ type BodyProps = {
   mass: number;
   degree: number;
   g?: number;
-}
+};
 
 // represents a body(a point mass) and its position
 export default class Body {

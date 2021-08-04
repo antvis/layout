@@ -1,1 +1,1 @@
-export * from './force'
+export * from './force';

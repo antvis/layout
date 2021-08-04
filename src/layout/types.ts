@@ -7,6 +7,7 @@ export interface OutNode extends Node {
   y: number;
   comboId?: string;
   layer?: number;
+  layout?: boolean;
 }
 
 export interface Edge {
@@ -30,6 +31,11 @@ export interface OutModel extends Model {
 }
 
 export type PointTuple = [number, number];
+
+export interface Size {
+  width: number;
+  height: number;
+}
 
 export type IndexMap = {
   [key: string]: number;

@@ -11,7 +11,7 @@ type QuadProps = {
   length: number;
   massCenter?: PointTuple;
   mass?: number;
-}
+};
 
 export default class Quad {
   public xmid: number;
@@ -57,6 +57,7 @@ export default class Quad {
       y >= this.ymid - halfLen);
   }
   // northwest quadrant
+  // tslint:disable-next-line
   NW() {
     const x = this.xmid - this.length / 4;
     const y = this.ymid + this.length / 4;
@@ -70,6 +71,7 @@ export default class Quad {
     return NW;
   }
   // northeast
+  // tslint:disable-next-line
   NE() {
     const x = this.xmid + this.length / 4;
     const y = this.ymid + this.length / 4;
@@ -83,6 +85,7 @@ export default class Quad {
     return NE;
   }
   // southwest
+  // tslint:disable-next-line
   SW() {
     const x = this.xmid - this.length / 4;
     const y = this.ymid - this.length / 4;
@@ -96,6 +99,7 @@ export default class Quad {
     return SW;
   }
   // southeast
+  // tslint:disable-next-line
   SE() {
     const x = this.xmid + this.length / 4;
     const y = this.ymid - this.length / 4;
