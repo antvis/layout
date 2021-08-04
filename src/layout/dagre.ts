@@ -39,6 +39,15 @@ export class DagreLayout extends Base {
   /** 每层节点是否根据节点数据中的 comboId 进行排序，以放置同层 combo 重叠 */
   public sortByCombo: boolean = false;
 
+  /** 是否保留每条边上的dummy node */
+  public edgeLabelSpace: boolean = true;
+
+  /** 是否按照给定的节点顺序排序 */
+  public keepNodeOrder: boolean = false;
+
+  /** 给定的节点顺序，配合keepNodeOrder使用 */
+  public nodeOrder: string[];
+
   public nodes: OutNode[] = [];
 
   public edges: Edge[] = [];
@@ -110,7 +119,13 @@ export class DagreLayout extends Base {
       const hori = horisep(node);
       const width = size[0] + 2 * hori;
       const height = size[1] + 2 * verti;
-      g.setNode(node.id, { width, height });
+      const layer = node.layer;
+      if (isNumber(layer)) {
+        // 如果有layer属性，加入到node的label中
+        g.setNode(node.id, { width, height, layer })
+      } else {
+        g.setNode(node.id, { width, height })
+      }
 
       if (this.sortByCombo && node.comboId) {
         if (!comboMap[node.comboId]) {
@@ -138,7 +153,11 @@ export class DagreLayout extends Base {
         weight: edge.weight || 1,
       });
     });
-    dagre.layout(g);
+    dagre.layout(g, {
+      edgeLabelSpace: self.edgeLabelSpace,
+      keepNodeOrder: self.keepNodeOrder,
+      nodeOrder: self.nodeOrder,
+    })
     let coord;
     g.nodes().forEach((node: any) => {
       coord = g.node(node);
