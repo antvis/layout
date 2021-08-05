@@ -149,7 +149,7 @@ export class DagreLayout extends Base {
       // dagrejs Wiki https://github.com/dagrejs/dagre/wiki#configuring-the-layout
       const source = getEdgeTerminal(edge, 'source');
       const target = getEdgeTerminal(edge, 'target');
-      if (this.layoutNode(source) && this.layoutNode(target) {
+      if (this.layoutNode(source) && this.layoutNode(target)) {
         g.setEdge(source, target, {
           weight: edge.weight || 1,
         });
