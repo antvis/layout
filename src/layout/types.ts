@@ -6,6 +6,7 @@ export interface OutNode extends Node {
   x: number;
   y: number;
   comboId?: string;
+  layer?: number;
   layout?: boolean;
 }
 
@@ -142,6 +143,9 @@ export interface DagreLayoutOptions {
   sortByCombo?: boolean;
   workerEnabled?: boolean;
   onLayoutEnd?: () => void;
+  edgeLabelSpace?: boolean;
+  keepNodeOrder?: boolean;
+  nodeOrder?: string[];
 }
 
 export interface FruchtermanLayoutOptions {
