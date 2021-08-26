@@ -48,6 +48,12 @@ export class DagreLayout extends Base {
   /** 给定的节点顺序，配合keepNodeOrder使用 */
   public nodeOrder: string[];
 
+  /** 上次的布局结果 */
+  public preset: {
+    nodes: OutNode[],
+    edges: any[],
+  };
+
   public nodes: OutNode[] = [];
 
   public edges: Edge[] = [];
@@ -124,9 +130,9 @@ export class DagreLayout extends Base {
       const layer = node.layer;
       if (isNumber(layer)) {
         // 如果有layer属性，加入到node的label中
-        g.setNode(node.id, { width, height, layer })
+        g.setNode(node.id, { width, height, layer });
       } else {
-        g.setNode(node.id, { width, height })
+        g.setNode(node.id, { width, height });
       }
 
       if (this.sortByCombo && node.comboId) {
@@ -157,11 +163,25 @@ export class DagreLayout extends Base {
         weight: edge.weight || 1,
       });
     });
+
+    // 考虑增量图中的原始图
+    let prevGraph: dagre.graphlib.Graph | undefined = undefined;
+    if (self.preset) {
+      prevGraph = new dagre.graphlib.Graph({
+        multigraph: true,
+        compound: true,
+      });
+      self.preset.nodes.forEach((node) => {
+        prevGraph?.setNode(node.id, node);
+      });
+    }
+
     dagre.layout(g, {
+      prevGraph,
       edgeLabelSpace: self.edgeLabelSpace,
       keepNodeOrder: self.keepNodeOrder,
       nodeOrder: self.nodeOrder,
-    })
+    });
     let coord;
     g.nodes().forEach((node: any) => {
       coord = g.node(node);
@@ -169,6 +189,8 @@ export class DagreLayout extends Base {
       if (!nodes[i]) return;
       nodes[i].x = coord.x;
       nodes[i].y = coord.y;
+      // @ts-ignore: pass layer order to data for increment layout use
+      nodes[i]._order = coord._order;
     });
     g.edges().forEach((edge: any) => {
       coord = g.edge(edge);
@@ -177,7 +199,7 @@ export class DagreLayout extends Base {
         const target = getEdgeTerminal(it, 'target');
         return source === edge.v && target === edge.w;
       });
-      if ((self.edgeLabelSpace !== false) && self.controlPoints && edges[i].type !== "loop") {
+      if ((self.edgeLabelSpace) && self.controlPoints && edges[i].type !== "loop") {
         edges[i].controlPoints = coord.points.slice(1, coord.points.length - 1);
       }
     });
