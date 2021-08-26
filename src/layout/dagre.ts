@@ -163,10 +163,24 @@ export class DagreLayout extends Base {
         weight: edge.weight || 1,
       });
     });
+
+    // 考虑增量图中的原始图
+    let prevGraph: dagre.graphlib.Graph | undefined = undefined;
+    if (self.prevResult) {
+      prevGraph = new dagre.graphlib.Graph({
+        multigraph: true,
+        compound: true,
+      });
+      self.prevResult.nodes.forEach((node) => {
+        prevGraph?.setNode(node.id, node);
+      });
+    }
+
     dagre.layout(g, {
       edgeLabelSpace: self.edgeLabelSpace,
       keepNodeOrder: self.keepNodeOrder,
       nodeOrder: self.nodeOrder,
+      prevGraph,
     })
     let coord;
     g.nodes().forEach((node: any) => {

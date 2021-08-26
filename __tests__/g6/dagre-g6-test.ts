@@ -214,7 +214,7 @@ describe("dagre layout", () => {
     graph.render();
   });
 
-  it.only("increment layout", () => {
+  it("increment layout", () => {
     const layout = new DagreLayout();
 
     const originGraphData = {
@@ -348,7 +348,7 @@ describe("dagre layout", () => {
     };
 
     layout.updateCfg({
-      prevGraph: originGraphData,
+      prevResult: originGraph,
     });
     layout.layout(newGraph);
 
