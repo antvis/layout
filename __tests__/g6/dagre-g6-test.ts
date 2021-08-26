@@ -1,8 +1,8 @@
-import { DagreLayout } from '../../src';
-import G6 from '@antv/g6';
+import { DagreLayout } from "../../src";
+import G6 from "@antv/g6";
 
-const div = document.createElement('div');
-div.id = 'global-spec';
+const div = document.createElement("div");
+div.id = "global-spec";
 document.body.appendChild(div);
 
 const data = {
@@ -13,7 +13,7 @@ const data = {
     },
     {
       id: "1",
-      label: "1"
+      label: "1",
     },
     {
       id: "2",
@@ -27,93 +27,93 @@ const data = {
     },
     {
       id: "4",
-      label: "4"
+      label: "4",
     },
     {
       id: "5",
-      label: "5"
+      label: "5",
     },
     {
       id: "6",
-      label: "6"
+      label: "6",
     },
     {
       id: "7",
-      label: "7"
+      label: "7",
     },
     {
       id: "8",
-      label: "8"
+      label: "8",
     },
     {
       id: "9",
-      label: "9"
-    }
+      label: "9",
+    },
   ],
   edges: [
     {
       source: "0",
-      target: "1"
+      target: "1",
     },
     {
       source: "0",
-      target: "2"
+      target: "2",
     },
     {
       source: "1",
-      target: "4"
+      target: "4",
     },
     {
       source: "0",
-      target: "3"
+      target: "3",
     },
     {
       source: "3",
-      target: "4"
+      target: "4",
     },
     {
       source: "4",
-      target: "5"
+      target: "5",
     },
     {
       source: "4",
-      target: "6"
+      target: "6",
     },
     {
       source: "5",
-      target: "7"
+      target: "7",
     },
     {
       source: "5",
-      target: "8"
+      target: "8",
     },
     {
       source: "8",
-      target: "9"
+      target: "9",
     },
     {
       source: "2",
-      target: "9"
+      target: "9",
     },
     {
       source: "3",
-      target: "9"
-    }
-  ]
+      target: "9",
+    },
+  ],
 };
 
-describe('dagre layout', () => {
-  it('assign layer', () => {
+describe("dagre layout", () => {
+  it("assign layer", () => {
     const layout = new DagreLayout();
     layout.layout(data);
     console.log(data);
-  
+
     const graph = new G6.Graph({
       container: div,
       width: 500,
       height: 500,
       modes: {
-        default: [ 'drag-node', 'zoom-canvas', 'drag-canvas' ]
+        default: ["drag-node", "zoom-canvas", "drag-canvas"],
       },
       defaultEdge: {
         style: {
@@ -121,12 +121,12 @@ describe('dagre layout', () => {
         },
       },
     });
-  
-    graph.data(data)
+
+    graph.data(data);
     graph.render();
   });
-  it('keep data order', () => {
-    const div = document.createElement('div');
+  it("keep data order", () => {
+    const div = document.createElement("div");
     document.body.appendChild(div);
     const layout = new DagreLayout();
 
@@ -138,7 +138,7 @@ describe('dagre layout', () => {
         },
         {
           id: "1",
-          label: "1"
+          label: "1",
         },
         {
           id: "2",
@@ -146,62 +146,62 @@ describe('dagre layout', () => {
         },
         {
           id: "4",
-          label: "4"
+          label: "4",
         },
         {
           id: "3",
-          label: "3"
+          label: "3",
         },
         {
           id: "5",
-          label: "5"
+          label: "5",
         },
         {
           id: "6",
-          label: "6"
+          label: "6",
         },
       ],
       edges: [
         {
           source: "0",
-          target: "1"
+          target: "1",
         },
         {
           source: "0",
-          target: "2"
+          target: "2",
         },
         {
           source: "1",
-          target: "3"
+          target: "3",
         },
         {
           source: "2",
-          target: "4"
+          target: "4",
         },
         {
           source: "3",
-          target: "5"
+          target: "5",
         },
         {
           source: "4",
-          target: "6"
+          target: "6",
         },
-      ]
+      ],
     };
 
     layout.updateCfg({
       keepNodeOrder: true,
-      nodeOrder: data.nodes.map(n => n.id)
-    })
+      nodeOrder: data.nodes.map((n) => n.id),
+    });
     layout.layout(data);
     console.log(data);
-  
+
     const graph = new G6.Graph({
       container: div,
       width: 500,
       height: 500,
       modes: {
-        default: [ 'drag-node', 'zoom-canvas', 'drag-canvas' ]
+        default: ["drag-node", "zoom-canvas", "drag-canvas"],
       },
       defaultEdge: {
         style: {
@@ -209,8 +209,176 @@ describe('dagre layout', () => {
         },
       },
     });
-  
-    graph.data(data)
+
+    graph.data(data);
     graph.render();
+  });
+
+  it.only("increment layout", () => {
+    const layout = new DagreLayout();
+
+    const originGraphData = {
+      nodes: [
+        {
+          id: "k79zNA0TkCwQPQWw4yn",
+          label: "ETL数据流",
+          color: "#a6cee3",
+        },
+        {
+          id: "GWMF0chbHRKDkENg1hS",
+          label: "ETL数据流2",
+          color: "#1f78b4",
+        },
+        {
+          id: "xCzXirgILRm9fF7gjeb",
+          label: "报告",
+          color: "#b2df8a",
+        },
+        {
+          id: "GxZeEGkky88xKxq1r22",
+          label: "工厂输出表",
+          color: "#33a02c",
+        },
+        {
+          id: "a",
+          label: "a",
+          color: "#fb9a99",
+        },
+        {
+          id: "b",
+          label: "b",
+          color: "#ff7f00",
+        },
+        {
+          id: "c",
+          label: "c",
+          color: "#6a3d9a",
+        },
+        {
+          id: "AKl8iaVQamqiMaMCF7E",
+          label: "csv数据源",
+          color: "#2a9d9a",
+        },
+      ],
+      edges: [
+        {
+          source: "k79zNA0TkCwQPQWw4yn",
+          target: "GxZeEGkky88xKxq1r22",
+        },
+        {
+          source: "GxZeEGkky88xKxq1r22",
+          target: "xCzXirgILRm9fF7gjeb",
+        },
+        {
+          source: "xCzXirgILRm9fF7gjeb",
+          target: "b",
+        },
+        {
+          source: "xCzXirgILRm9fF7gjeb",
+          target: "c",
+        },
+        {
+          source: "AKl8iaVQamqiMaMCF7E",
+          target: "xCzXirgILRm9fF7gjeb",
+        },
+        {
+          source: "GxZeEGkky88xKxq1r22",
+          target: "GWMF0chbHRKDkENg1hS",
+        },
+        {
+          source: "GWMF0chbHRKDkENg1hS",
+          target: "a",
+        },
+      ],
+    };
+    const addGraphData = {
+      nodes: [
+        {
+          id: "vm1234",
+          label: "新增报告",
+        },
+      ],
+      edges: [
+        {
+          source: "a",
+          target: "vm1234",
+        },
+      ],
+    };
+
+    layout.updateCfg({
+      edgeLabelSpace: false,
+      rankdir: "LR",
+    });
+    const originGraph = JSON.parse(JSON.stringify(originGraphData));
+    layout.layout(originGraph);
+    console.log(originGraph);
+
+    // @ts-ignore: modified originGraph
+    expect(originGraph.nodes.find((n) => n.id === "a")._order).toBe(2);
+    // @ts-ignore
+    expect(originGraph.nodes.find((n) => n.id === "b")._order).toBe(0);
+    // @ts-ignore
+    expect(originGraph.nodes.find((n) => n.id === "c")._order).toBe(1);
+
+    {
+      const div = document.createElement("div");
+      document.body.appendChild(div);
+      const graph = new G6.Graph({
+        container: div,
+        width: 500,
+        height: 500,
+        modes: {
+          default: ["drag-node", "zoom-canvas", "drag-canvas"],
+        },
+        defaultEdge: {
+          style: {
+            endArrow: true,
+          },
+        },
+      });
+
+      graph.data(originGraph);
+      graph.render();
+    }
+
+    const newGraph = {
+      nodes: [...originGraphData.nodes, ...addGraphData.nodes],
+      edges: [...originGraphData.edges, ...addGraphData.edges],
+    };
+
+    layout.updateCfg({
+      prevGraph: originGraphData,
+    });
+    layout.layout(newGraph);
+
+    {
+      const div = document.createElement("div");
+      document.body.appendChild(div);
+      const graph = new G6.Graph({
+        container: div,
+        width: 500,
+        height: 500,
+        modes: {
+          default: ["drag-node", "zoom-canvas", "drag-canvas"],
+        },
+        defaultEdge: {
+          style: {
+            endArrow: true,
+          },
+        },
+      });
+
+      graph.data(newGraph);
+      graph.render();
+    }
+
+    // should keep origin order
+    // @ts-ignore: modified newGraph
+    expect(newGraph.nodes.find((n) => n.id === "a")._order).toBe(2);
+    // @ts-ignore
+    expect(newGraph.nodes.find((n) => n.id === "b")._order).toBe(0);
+    // @ts-ignore
+    expect(newGraph.nodes.find((n) => n.id === "c")._order).toBe(1);
   });
 });

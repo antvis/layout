@@ -48,6 +48,12 @@ export class DagreLayout extends Base {
   /** 给定的节点顺序，配合keepNodeOrder使用 */
   public nodeOrder: string[];
 
+  /** 上次的布局结果，用以保持增量布局的稳定性 */
+  public prevResult: {
+    nodes: OutNode[],
+    edges: any[],
+  };
+
   public nodes: OutNode[] = [];
 
   public edges: Edge[] = [];
@@ -169,6 +175,8 @@ export class DagreLayout extends Base {
       if (!nodes[i]) return;
       nodes[i].x = coord.x;
       nodes[i].y = coord.y;
+      // @ts-ignore: pass layer order to data for increment layout use
+      nodes[i]._order = coord._order;
     });
     g.edges().forEach((edge: any) => {
       coord = g.edge(edge);
