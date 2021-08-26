@@ -130,9 +130,9 @@ export class DagreLayout extends Base {
       const layer = node.layer;
       if (isNumber(layer)) {
         // 如果有layer属性，加入到node的label中
-        g.setNode(node.id, { width, height, layer })
+        g.setNode(node.id, { width, height, layer });
       } else {
-        g.setNode(node.id, { width, height })
+        g.setNode(node.id, { width, height });
       }
 
       if (this.sortByCombo && node.comboId) {
@@ -177,11 +177,11 @@ export class DagreLayout extends Base {
     }
 
     dagre.layout(g, {
+      prevGraph,
       edgeLabelSpace: self.edgeLabelSpace,
       keepNodeOrder: self.keepNodeOrder,
       nodeOrder: self.nodeOrder,
-      prevGraph,
-    })
+    });
     let coord;
     g.nodes().forEach((node: any) => {
       coord = g.node(node);
@@ -199,7 +199,7 @@ export class DagreLayout extends Base {
         const target = getEdgeTerminal(it, 'target');
         return source === edge.v && target === edge.w;
       });
-      if ((self.edgeLabelSpace !== false) && self.controlPoints && edges[i].type !== "loop") {
+      if ((self.edgeLabelSpace) && self.controlPoints && edges[i].type !== "loop") {
         edges[i].controlPoints = coord.points.slice(1, coord.points.length - 1);
       }
     });
