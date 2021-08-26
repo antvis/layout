@@ -48,8 +48,8 @@ export class DagreLayout extends Base {
   /** 给定的节点顺序，配合keepNodeOrder使用 */
   public nodeOrder: string[];
 
-  /** 上次的布局结果，用以保持增量布局的稳定性 */
-  public prevResult: {
+  /** 上次的布局结果 */
+  public preset: {
     nodes: OutNode[],
     edges: any[],
   };
@@ -166,12 +166,12 @@ export class DagreLayout extends Base {
 
     // 考虑增量图中的原始图
     let prevGraph: dagre.graphlib.Graph | undefined = undefined;
-    if (self.prevResult) {
+    if (self.preset) {
       prevGraph = new dagre.graphlib.Graph({
         multigraph: true,
         compound: true,
       });
-      self.prevResult.nodes.forEach((node) => {
+      self.preset.nodes.forEach((node) => {
         prevGraph?.setNode(node.id, node);
       });
     }

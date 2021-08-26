@@ -348,7 +348,7 @@ describe("dagre layout", () => {
     };
 
     layout.updateCfg({
-      prevResult: originGraph,
+      preset: originGraph,
     });
     layout.layout(newGraph);
 
