@@ -44,7 +44,7 @@
   "dependencies": {
     "@antv/g-webgpu": "0.5.5",
     "d3-force": "^2.0.1",
-    "dagrejs": "^0.1.1",
+    "dagrejs": "^0.2.1",
     "ml-matrix": "^6.5.0"
   },
   "devDependencies": {

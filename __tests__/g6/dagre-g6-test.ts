@@ -307,7 +307,6 @@ describe("dagre layout", () => {
     };
 
     layout.updateCfg({
-      edgeLabelSpace: false,
       rankdir: "LR",
     });
     const originGraph = JSON.parse(JSON.stringify(originGraphData));
@@ -315,9 +314,9 @@ describe("dagre layout", () => {
     console.log(originGraph);
 
     // @ts-ignore: modified originGraph
-    expect(originGraph.nodes.find((n) => n.id === "a")._order).toBe(2);
+    expect(originGraph.nodes.find((n) => n.id === "a")._order).toBe(0);
     // @ts-ignore
-    expect(originGraph.nodes.find((n) => n.id === "b")._order).toBe(0);
+    expect(originGraph.nodes.find((n) => n.id === "b")._order).toBe(2);
     // @ts-ignore
     expect(originGraph.nodes.find((n) => n.id === "c")._order).toBe(1);
 
@@ -375,9 +374,9 @@ describe("dagre layout", () => {
 
     // should keep origin order
     // @ts-ignore: modified newGraph
-    expect(newGraph.nodes.find((n) => n.id === "a")._order).toBe(2);
+    expect(newGraph.nodes.find((n) => n.id === "a")._order).toBe(0);
     // @ts-ignore
-    expect(newGraph.nodes.find((n) => n.id === "b")._order).toBe(0);
+    expect(newGraph.nodes.find((n) => n.id === "b")._order).toBe(2);
     // @ts-ignore
     expect(newGraph.nodes.find((n) => n.id === "c")._order).toBe(1);
   });
