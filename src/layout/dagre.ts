@@ -79,6 +79,17 @@ export class DagreLayout extends Base {
     };
   }
 
+  public layoutNode = (nodeId: string) => {
+    const self = this;
+    const { nodes } = self;
+    const node = nodes.find(node => node.id === nodeId);
+    if (node) {
+      const layout = node.layout !== false;
+      return layout;
+    }
+    return true;
+  }
+
   /**
    * 执行布局
    */
@@ -159,9 +170,11 @@ export class DagreLayout extends Base {
       // dagrejs Wiki https://github.com/dagrejs/dagre/wiki#configuring-the-layout
       const source = getEdgeTerminal(edge, 'source');
       const target = getEdgeTerminal(edge, 'target');
-      g.setEdge(source, target, {
-        weight: edge.weight || 1,
-      });
+      if (this.layoutNode(source) && this.layoutNode(target)) {
+        g.setEdge(source, target, {
+          weight: edge.weight || 1,
+        });
+      }
     });
 
     // 考虑增量图中的原始图
