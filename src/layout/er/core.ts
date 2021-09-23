@@ -48,8 +48,11 @@ export default function layout(data: any, options: any): Promise<void> {
     n.x = found?.x || width / 2;
     n.y = found?.y || height / 2;
   });
-  const simulation = d3Force.forceSimulation().nodes(nodes)
-  .force("link", d3Force.forceLink(edges).id(d => d.id).distance((d) => {
+  
+  const copyNodes = JSON.parse(JSON.stringify(nodes));
+  const copyEdges = JSON.parse(JSON.stringify(edges));
+  const simulation = d3Force.forceSimulation().nodes(copyNodes)
+  .force("link", d3Force.forceLink(copyEdges).id(d => d.id).distance((d) => {
     const edgeInfo = noLeafEdge.find((edge) => edge.source === d.source && edge.target === d.target);
     if (edgeInfo) {
       return 30;
@@ -66,6 +69,15 @@ export default function layout(data: any, options: any): Promise<void> {
 
   const layoutPromise = new Promise<void>((resolve) => {
     simulation.on('end', () => {
+      // 坐标信息同步到nodes,edges中
+      nodes.forEach((node) => {
+        const nodeInfo = copyNodes.find((item) => item.id === node.id);
+        if (nodeInfo) {
+          node.x = nodeInfo.x;
+          node.y = nodeInfo.y;
+        }
+      })
+      
       let minX = Math.min(...nodes.map((node: INode) => node.x));
       let maxX = Math.max(...nodes.map((node: INode) => node.x));
       let minY = Math.min(...nodes.map((node: INode) => node.y));
@@ -86,22 +98,18 @@ export default function layout(data: any, options: any): Promise<void> {
         node.size_tmp = node.size;
         node.size = [10, 10];
       });
-      const onlyEdge = edges.map((edge) => {
-        return {
-          source: edge.source.id,
-          target: edge.target.id,
-        }
-      });
-      mysqlWorkbench(nodes, onlyEdge);
+     
+      mysqlWorkbench(nodes, edges);
       nodes.forEach((node: INode) => {
         node.size = node.size_tmp || [];
         delete node.size_tmp;
       });
       // 进行网格对齐+节点大小扩增
       forceGrid({
-        nodes: nodes,
-        edges: onlyEdge,
+        nodes,
+        edges,
       }, options);
+
       resolve();
     });
   });
