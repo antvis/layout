@@ -51,6 +51,9 @@ export class GForceLayout extends Base {
   /** 停止迭代的最大迭代数 */
   public maxIteration: number = 1000;
 
+  /** 是否启动 worker */
+  public workerEnabled: boolean = false;
+
   /** 弹簧引力系数 */
   public edgeStrength: number | ((d?: any) => number) | undefined = 200;
 
@@ -149,7 +152,7 @@ export class GForceLayout extends Base {
     }
 
     if (!nodes || nodes.length === 0) {
-      if (self.onLayoutEnd) self.onLayoutEnd();
+      self.onLayoutEnd?.();
       return;
     }
 
@@ -167,7 +170,7 @@ export class GForceLayout extends Base {
     if (nodes.length === 1) {
       nodes[0].x = center[0];
       nodes[0].y = center[1];
-      if (self.onLayoutEnd) self.onLayoutEnd();
+      self.onLayoutEnd?.();
       return;
     }
     const nodeMap: NodeMap = {};
@@ -238,57 +241,78 @@ export class GForceLayout extends Base {
 
   public run() {
     const self = this;
-    const nodes = self.nodes;
-    const edges = self.edges;
-    const maxIteration = self.maxIteration;
+    const { maxIteration, nodes, workerEnabled, minMovement } = self;
+
+    if (!nodes) return;
 
     if (typeof window === "undefined") return;
 
-    let iter = 0;
-    // interval for render the result after each iteration
-    this.timeInterval = window.setInterval(() => {
-      const accArray: number[] = [];
-      const velArray: number[] = [];
-      if (!nodes) return;
-      nodes.forEach((_, i) => {
-        accArray[2 * i] = 0;
-        accArray[2 * i + 1] = 0;
-        velArray[2 * i] = 0;
-        velArray[2 * i + 1] = 0;
-      });
-      self.calRepulsive(accArray, nodes);
-      if (edges) self.calAttractive(accArray, edges);
-      self.calGravity(accArray, nodes);
-      const stepInterval = Math.max(0.02, self.interval - iter * 0.002);
-      self.updateVelocity(accArray, velArray, stepInterval, nodes);
-      const previousPos: Point[] = [];
-      nodes.forEach((node) => {
-        previousPos.push({
-          x: node.x,
-          y: node.y
-        });
-      });
-      self.updatePosition(velArray, stepInterval, nodes);
-      if (self.tick) self.tick();
+    if (workerEnabled) {
+      for (let i = 0; i < maxIteration; i++) {
+        const previousPos = self.runOneStep(i);
+        if (self.reachMoveThreshold(nodes, previousPos, minMovement)) {
+          break;
+        }
+      }
+      self.onLayoutEnd?.();
+    } else {
+      let iter = 0;
+      // interval for render the result after each iteration
+      this.timeInterval = window.setInterval(() => {
+        if (!nodes) return;
+        const previousPos = self.runOneStep(iter) || [];
+        if (self.reachMoveThreshold(nodes, previousPos, minMovement)) {
+          self.onLayoutEnd?.();
+          window.clearInterval(self.timeInterval);
+        }
+        iter++;
+        if (iter >= maxIteration) {
+          self.onLayoutEnd?.();
+          window.clearInterval(self.timeInterval);
+        }
+      }, 0);
+    }
+  }
 
-      // whether to stop the iteration
-      let movement = 0;
-      nodes.forEach((node, j) => {
-        const vx = node.x - previousPos[j].x;
-        const vy = node.y - previousPos[j].y;
-        movement += Math.sqrt(vx * vx + vy * vy);
+  private reachMoveThreshold(nodes: any, previousPos: any, minMovement: number) {
+    // whether to stop the iteration
+    let movement = 0;
+    nodes.forEach((node: any, j: number) => {
+      const vx = node.x - previousPos[j].x;
+      const vy = node.y - previousPos[j].y;
+      movement += Math.sqrt(vx * vx + vy * vy);
+    });
+    movement /= nodes.length;
+    return movement < minMovement;
+  }
+
+  private runOneStep(iter: number) {
+    const self = this;
+    const { nodes, edges } = self;
+    const accArray: number[] = [];
+    const velArray: number[] = [];
+    if (!nodes) return;
+    nodes.forEach((_, i) => {
+      accArray[2 * i] = 0;
+      accArray[2 * i + 1] = 0;
+      velArray[2 * i] = 0;
+      velArray[2 * i + 1] = 0;
+    });
+    self.calRepulsive(accArray, nodes);
+    if (edges) self.calAttractive(accArray, edges);
+    self.calGravity(accArray, nodes);
+    const stepInterval = Math.max(0.02, self.interval - iter * 0.002);
+    self.updateVelocity(accArray, velArray, stepInterval, nodes);
+    const previousPos: Point[] = [];
+    nodes.forEach((node) => {
+      previousPos.push({
+        x: node.x,
+        y: node.y
       });
-      movement /= nodes.length;
-      if (movement < self.minMovement) {
-        window.clearInterval(self.timeInterval);
-        if (self.onLayoutEnd) self.onLayoutEnd();
-      }
-      iter++;
-      if (iter >= maxIteration) {
-        if (self.onLayoutEnd) self.onLayoutEnd();
-        window.clearInterval(self.timeInterval);
-      }
-    }, 0);
+    });
+    self.updatePosition(velArray, stepInterval, nodes);
+    self.tick?.();
+    return previousPos;
   }
 
   public calRepulsive(accArray: number[], nodes: INode[]) {
