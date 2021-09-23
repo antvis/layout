@@ -34,6 +34,9 @@ export class FruchtermanLayout extends Base {
   /** 停止迭代的最大迭代数 */
   public maxIteration: number = 1000;
 
+  /** 是否启动 worker */
+  public workerEnabled: boolean = false;
+
   /** 重力大小，影响图的紧凑程度 */
   public gravity: number = 10;
 
@@ -94,7 +97,7 @@ export class FruchtermanLayout extends Base {
     }
 
     if (!nodes || nodes.length === 0) {
-      if (self.onLayoutEnd) self.onLayoutEnd();
+      self.onLayoutEnd?.();
       return;
     }
 
@@ -112,7 +115,7 @@ export class FruchtermanLayout extends Base {
     if (nodes.length === 1) {
       nodes[0].x = center[0];
       nodes[0].y = center[1];
-      if (self.onLayoutEnd) self.onLayoutEnd();
+      self.onLayoutEnd?.();
       return;
     }
     const nodeMap: NodeMap = {};
@@ -133,15 +136,7 @@ export class FruchtermanLayout extends Base {
     const self = this;
     const nodes = self.nodes;
     if (!nodes) return;
-    const edges = self.edges;
-    const maxIteration = self.maxIteration;
-    const center = self.center;
-    const area = self.height * self.width;
-    const maxDisplace = Math.sqrt(area) / 10;
-    const k2 = area / (nodes.length + 1);
-    const k = Math.sqrt(k2);
-    const gravity = self.gravity;
-    const speed = self.speed;
+    const { edges, maxIteration, workerEnabled } = self;
     const clustering = self.clustering;
     const clusterMap: {
       [key: string]: {
@@ -179,99 +174,113 @@ export class FruchtermanLayout extends Base {
 
     if (typeof window === "undefined") return;
 
-    let iter = 0;
-    // interval for render the result after each iteration
-    this.timeInterval = window.setInterval(() => {
-
-      if (!nodes) return;
-
-    // for (let i = 0; i < maxIteration; i++) {
-      const displacements: Point[] = [];
-      nodes.forEach((_, j) => {
-        displacements[j] = { x: 0, y: 0 };
-      });
-      self.applyCalculate(nodes, edges, displacements, k, k2);
-
-      // gravity for clusters
-      if (clustering) {
-        const clusterGravity = self.clusterGravity || gravity;
-        nodes.forEach((n, j) => {
-          if (!isNumber(n.x) || !isNumber(n.y)) return;
-          const c = clusterMap[n.cluster];
-          const distLength = Math.sqrt(
-            (n.x - c.cx) * (n.x - c.cx) + (n.y - c.cy) * (n.y - c.cy)
-          );
-          const gravityForce = k * clusterGravity;
-          displacements[j].x -= (gravityForce * (n.x - c.cx)) / distLength;
-          displacements[j].y -= (gravityForce * (n.y - c.cy)) / distLength;
-        });
-
-        for (const key in clusterMap) {
-          clusterMap[key].cx = 0;
-          clusterMap[key].cy = 0;
-          clusterMap[key].count = 0;
-        }
-
-        nodes.forEach((n) => {
-          const c = clusterMap[n.cluster];
-          if (isNumber(n.x)) {
-            c.cx += n.x;
-          }
-          if (isNumber(n.y)) {
-            c.cy += n.y;
-          }
-          c.count++;
-        });
-        for (const key in clusterMap) {
-          clusterMap[key].cx /= clusterMap[key].count;
-          clusterMap[key].cy /= clusterMap[key].count;
-        }
+    if (workerEnabled) {
+      for (let i = 0; i < maxIteration; i++) {
+        self.runOneStep(clusterMap);
       }
-
-      // gravity
-      nodes.forEach((n, j) => {
-        if (!isNumber(n.x) || !isNumber(n.y)) return;
-        const gravityForce = 0.01 * k * gravity;
-        displacements[j].x -= gravityForce * (n.x - center[0]);
-        displacements[j].y -= gravityForce * (n.y - center[1]);
-      });
-
-      // move
-      nodes.forEach((n: any, j) => {
-        if (isNumber(n.fx) && isNumber(n.fy)) {
-          n.x = n.fx;
-          n.y = n.fy;
-          return;
+      self.onLayoutEnd?.();
+    } else {
+      let iter = 0;
+      // interval for render the result after each iteration
+      this.timeInterval = window.setInterval(() => {
+        self.runOneStep(clusterMap);
+        iter++;
+        if (iter >= maxIteration) {
+          self.onLayoutEnd?.();
+          window.clearInterval(self.timeInterval);
         }
-        if (!isNumber(n.x) || !isNumber(n.y)) return;  
-        const distLength = Math.sqrt(
-          displacements[j].x * displacements[j].x +
-            displacements[j].y * displacements[j].y
-        );
-        if (distLength > 0) {
-          // && !n.isFixed()
-          const limitedDist = Math.min(
-            maxDisplace * (speed / SPEED_DIVISOR),
-            distLength
-          );
-          n.x += (displacements[j].x / distLength) * limitedDist;
-          n.y += (displacements[j].y / distLength) * limitedDist;
-        }
-      });
-
-      if (self.tick) self.tick();
-
-      iter++;
-      if (iter >= maxIteration) {
-        if (self.onLayoutEnd) self.onLayoutEnd();
-        window.clearInterval(self.timeInterval);
-      }
-    }, 0);
+      }, 0);
+    }
 
     return {
       nodes,
       edges
     };
+  }
+
+  private runOneStep(clusterMap: any) {
+    const self = this;
+    const nodes = self.nodes;
+    if (!nodes) return;
+    const { edges, center, gravity, speed, clustering } = self;
+    const area = self.height * self.width;
+    const maxDisplace = Math.sqrt(area) / 10;
+    const k2 = area / (nodes.length + 1);
+    const k = Math.sqrt(k2);
+    const displacements: Point[] = [];
+    nodes.forEach((_, j) => {
+      displacements[j] = { x: 0, y: 0 };
+    });
+    self.applyCalculate(nodes, edges, displacements, k, k2);
+
+    // gravity for clusters
+    if (clustering) {
+      const clusterGravity = self.clusterGravity || gravity;
+      nodes.forEach((n, j) => {
+        if (!isNumber(n.x) || !isNumber(n.y)) return;
+        const c = clusterMap[n.cluster];
+        const distLength = Math.sqrt(
+          (n.x - c.cx) * (n.x - c.cx) + (n.y - c.cy) * (n.y - c.cy)
+        );
+        const gravityForce = k * clusterGravity;
+        displacements[j].x -= (gravityForce * (n.x - c.cx)) / distLength;
+        displacements[j].y -= (gravityForce * (n.y - c.cy)) / distLength;
+      });
+
+      for (const key in clusterMap) {
+        clusterMap[key].cx = 0;
+        clusterMap[key].cy = 0;
+        clusterMap[key].count = 0;
+      }
+
+      nodes.forEach((n) => {
+        const c = clusterMap[n.cluster];
+        if (isNumber(n.x)) {
+          c.cx += n.x;
+        }
+        if (isNumber(n.y)) {
+          c.cy += n.y;
+        }
+        c.count++;
+      });
+      for (const key in clusterMap) {
+        clusterMap[key].cx /= clusterMap[key].count;
+        clusterMap[key].cy /= clusterMap[key].count;
+      }
+    }
+
+    // gravity
+    nodes.forEach((n, j) => {
+      if (!isNumber(n.x) || !isNumber(n.y)) return;
+      const gravityForce = 0.01 * k * gravity;
+      displacements[j].x -= gravityForce * (n.x - center[0]);
+      displacements[j].y -= gravityForce * (n.y - center[1]);
+    });
+
+    // move
+    nodes.forEach((n: any, j) => {
+      if (isNumber(n.fx) && isNumber(n.fy)) {
+        n.x = n.fx;
+        n.y = n.fy;
+        return;
+      }
+      if (!isNumber(n.x) || !isNumber(n.y)) return;  
+      const distLength = Math.sqrt(
+        displacements[j].x * displacements[j].x +
+          displacements[j].y * displacements[j].y
+      );
+      if (distLength > 0) {
+        // && !n.isFixed()
+        const limitedDist = Math.min(
+          maxDisplace * (speed / SPEED_DIVISOR),
+          distLength
+        );
+        n.x += (displacements[j].x / distLength) * limitedDist;
+        n.y += (displacements[j].y / distLength) * limitedDist;
+      }
+    });
+
+    self.tick?.();
   }
 
   private applyCalculate(
