@@ -1,19 +1,19 @@
 const graphWidth = 1200;
 const graphHeight = 800;
-const overlap_quot = 10000000;
-const _min_dist = 10;
+const OVERLAP_QUOT = 10000000;
+const MIN_DIST = 10;
 const M_PI = 3.14159265358979323846;
 const M_PI_2 = 1.57079632679489661923;
 const PI_38 = M_PI * 0.375;
 const PI_58 = M_PI * 0.625;
 const nodeEdgeMap = new Map();
-let cellW = 10;
-let cellH = 10;
+let CELL_W = 10;
+let CELL_H = 10;
 let T = 0.8;
-const T_min = 0.1;
-const r = 0.5;
+const T_MIN = 0.1;
+const R = 0.5;
 
-function distance_to_node(node1, node2, is_horiz) {
+function distanceToNode(node1, node2, isHoriz) {
 
   const x11 = node1.x - node1.size[0] / 2;
   const y11 = node1.y - node1.size[1] / 2;
@@ -75,13 +75,13 @@ function distance_to_node(node1, node2, is_horiz) {
   }
   const aqr = parseFloat(qr.toFixed(2));
   // 判断是否水平，角度
-  if (is_horiz) {
-    is_horiz = PI_38 < aqr && aqr < PI_58;
+  if (isHoriz) {
+    isHoriz = PI_38 < aqr && aqr < PI_58;
   }
   return Math.abs(l1 < l2 ? l1 : l2);
 }
 
-function calc_node_pair(nodeA, nodeB) {
+function calcNodePair(nodeA, nodeB) {
   // 确定两个节点间是否存在连线
   const edges = nodeEdgeMap.get(nodeA.id) || [];
   const isLinked = edges.find((edge) => {
@@ -131,22 +131,22 @@ function calc_node_pair(nodeA, nodeB) {
       distance = 0.0000001;
     }
 
-    e = _min_dist * 1 / distance * 100 + Sov;
-    e *= overlap_quot;
+    e = MIN_DIST * 1 / distance * 100 + Sov;
+    e *= OVERLAP_QUOT;
   } else {
-    let is_horiz = false;
-    distance = distance_to_node(node1, node2, is_horiz);
+    let isHoriz = false;
+    distance = distanceToNode(node1, node2, isHoriz);
 
-    if (distance <= _min_dist) {
+    if (distance <= MIN_DIST) {
       if (distance != 0) {
         if (isLinked) {
-          e += _min_dist + overlap_quot * 1 / distance;
+          e += MIN_DIST + OVERLAP_QUOT * 1 / distance;
         }
         else {
-          e += _min_dist + overlap_quot * _min_dist / distance;
+          e += MIN_DIST + OVERLAP_QUOT * MIN_DIST / distance;
         }  
       } else {
-        e += overlap_quot;
+        e += OVERLAP_QUOT;
       }
     } else {
       e += distance;
@@ -158,7 +158,7 @@ function calc_node_pair(nodeA, nodeB) {
 
   return e;
 }
-function calc_energy(nodes: any) {
+function calcEnergy(nodes: any) {
   let energy = 0;
   for(let i = 0; i < nodes.length; i++) {
     const node = nodes[i];
@@ -166,7 +166,7 @@ function calc_energy(nodes: any) {
       energy += 1000000000000;
     }
     for (let j = i + 1; j < nodes.length; j++) {
-      energy += calc_node_pair(node, nodes[j]);
+      energy += calcNodePair(node, nodes[j]);
     }
   }
 
@@ -175,7 +175,6 @@ function calc_energy(nodes: any) {
 
 function isCorrectPosition(node, newPosition, nodes, edges, ) {
   const relateEdges = edges.filter((edge) => edge.source.id === node.id || edge.target.id === node.id) || [];
-  // const relateNodes = _.filter(nodes, (item) => item.id !== node.id);
   const relateNodes = [];
   relateEdges.forEach((edge) => {
     const otherNode = edge.source.id === node.id ? edge.target : edge.source;
@@ -213,15 +212,14 @@ function isCorrectPosition(node, newPosition, nodes, edges, ) {
 }
 
 function shuffle(nodes, edges) {
-  let found_smaller_energy = false;
-  // 0-5的随机数
-  // const step = Math.ceil((Math.random() * 5 * T));
+  let foundSmallerEnergy = false;
+  // 多次测试发现step为1时的效果最佳。
   const step = 1;
   for (let i = 0; i < nodes.length; ++i) {
     const node = nodes[i];
-    const wstep = cellW * step;
-    const hstep = cellH * step;
-    let node_energy = calc_node_energy(node, nodes);
+    const wstep = CELL_W * step;
+    const hstep = CELL_H * step;
+    let nodeEnergy = calcNodeEnergy(node, nodes);
 
     const wsteps = [ wstep, -wstep, 0, 0, ];
     const hsteps = [ 0, 0, hstep, -hstep, ];
@@ -234,16 +232,16 @@ function shuffle(nodes, edges) {
         node.y += hsteps[ns];
         
         // 计算移动后节点的能量
-        const energy = calc_node_energy(node, nodes);
+        const energy = calcNodeEnergy(node, nodes);
         const rdm = Math.random();
         
-        if (energy < node_energy) {
-          node_energy = energy;
-          found_smaller_energy = true;
+        if (energy < nodeEnergy) {
+          nodeEnergy = energy;
+          foundSmallerEnergy = true;
          
-        } else if (rdm < T && rdm > T_min) {
-          node_energy = energy;
-          found_smaller_energy = true;
+        } else if (rdm < T && rdm > T_MIN) {
+          nodeEnergy = energy;
+          foundSmallerEnergy = true;
          
         } else {
           // 回归原位
@@ -254,18 +252,18 @@ function shuffle(nodes, edges) {
     }
 
   }
-  if (T > T_min) {
-    T *= r;
+  if (T > T_MIN) {
+    T *= R;
   }
    // 重新计算图整体的能量
-  if (found_smaller_energy) {
-    return calc_energy(nodes);
+  if (foundSmallerEnergy) {
+    return calcEnergy(nodes);
   }
   return 0;
 }
 
 // 计算节点的能量，
-function calc_node_energy(node, nodes) {
+function calcNodeEnergy(node, nodes) {
   let e = 0.0;
 
   if ((node.x < 0) || (node.x < 0) || (node.x + node.size[0] +20 > graphWidth) || (node.y2 + node.size[1] +  20 > graphHeight)) {
@@ -274,7 +272,7 @@ function calc_node_energy(node, nodes) {
 
   for (let i = 0; i < nodes.length; ++i) {
     if (node.id != nodes[i].id) {
-      e += calc_node_pair(node, nodes[i]);
+      e += calcNodePair(node, nodes[i]);
     }
   }
   return e;
@@ -296,28 +294,28 @@ function layout(nodes: any, edges: any) {
   });
 
   // 2. 计算图能量
-  let _min_energy = calc_energy(nodes);
-  let de0_count = 20; // de=0 count
+  let minEnergy = calcEnergy(nodes);
+  let deSameCount = 20; // de=0 count
   let de = 1;      // energy delta
-  let prev_energy = 0;
+  let prevEnergy = 0;
   // 定义总的迭代次数。超过就停掉，防止死循环
   const MAX_COUNT = 50;
   let count = 0;
-  while (de0_count > 0) {
+  while (deSameCount > 0) {
     count ++;
     if (count >= MAX_COUNT) {
       break;
     }
     const ea = shuffle(nodes, edges);
     if (ea !== 0) {
-      prev_energy = ea;
+      prevEnergy = ea;
     } 
-    de = prev_energy - _min_energy;
-    _min_energy = prev_energy;
+    de = prevEnergy - minEnergy;
+    minEnergy = prevEnergy;
     if (de === 0) {
-      --de0_count;
+      --deSameCount;
     } else {
-      de0_count = 20;
+      deSameCount = 20;
     }
   }
   nodes.forEach((node) => {

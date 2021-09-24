@@ -60,4 +60,8 @@ export class ERLayout extends Base {
       if (self.onLayoutEnd) self.onLayoutEnd();
     });
   }
+
+  public getType() {
+    return "er";
+  }
 }
