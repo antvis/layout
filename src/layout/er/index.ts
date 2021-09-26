@@ -5,6 +5,7 @@
 
 import { Base } from "../base";
 import layout from './core';
+import { INode } from './type';
 
 export interface ERLayoutOptions {
   type: "er";
@@ -45,7 +46,7 @@ export class ERLayout extends Base {
     const nodes = self.nodes;
     const edges = self.edges;
     // 节点初始化，size初始化
-    nodes?.forEach((node) => {
+    nodes?.forEach((node: INode) => {
       if (!node.size) {
         node.size = [50, 50];
       }

@@ -1,4 +1,4 @@
-import { ICell } from './type';
+import { ICell, INode } from './type';
 
 export default class Grid {
   public cells: ICell[][] = [];
@@ -57,7 +57,7 @@ export default class Grid {
     return Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2);
   }
 
-  public occupyNearest(p) {
+  public occupyNearest(p: INode) {
     let minDist = Grid.MIN_DIST;
     let d;
     let candidate = null;

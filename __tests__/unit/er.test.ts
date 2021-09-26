@@ -139,16 +139,16 @@ describe('#ERLayout', () => {
     expect((data.nodes[0] as any).x).not.toBe(undefined);
     expect((data.nodes[0] as any).y).not.toBe(undefined);
   });
-  it('er layout without node', () => {
+  it('er layout without node', async () => {
     const dataNoNode = {nodes: [], edges: []};
     const er = new ERLayout();
-    er.layout(dataNoNode);
+    await er.layout(dataNoNode);
     expect(dataNoNode.nodes).not.toBe(undefined);
   });
-  it('er layout without node size is null', () => {
+  it('er layout without node size is null', async () => {
     const dataOneNode = {nodes: [{id: 'node'}], edges: []};
     const er = new ERLayout();
-    er.layout(dataOneNode);
+    await er.layout(dataOneNode);
     expect((dataOneNode.nodes[0] as OutNode).x).not.toBe(undefined);
     expect((dataOneNode.nodes[0] as OutNode).y).not.toBe(undefined);
   });

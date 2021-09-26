@@ -1,4 +1,3 @@
-
 export interface INode {
   id: string;
   label: string;
@@ -8,6 +7,13 @@ export interface INode {
   x?: number;
   y?: number;
   sizeTemp?: number[];
+}
+
+export interface IMysqlNode {
+  id: string;
+  size: number[];
+  x: number;
+  y: number;
 }
 
 export interface IEdge {

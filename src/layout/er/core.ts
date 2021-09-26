@@ -44,15 +44,15 @@ export default function layout(data: any, options: any): Promise<void> {
 
   // 布局后，坐标同步
   nodes.forEach((n: INode) => {
-    const found = (nodesTmp || []).find((temp: any) => temp.id === n.id);
+    const found = ((nodesTmp || []) as INode[]).find((temp: any) => temp.id === n.id);
     n.x = found?.x || width / 2;
     n.y = found?.y || height / 2;
   });
   
-  const copyNodes = JSON.parse(JSON.stringify(nodes));
-  const copyEdges = JSON.parse(JSON.stringify(edges));
+  const copyNodes: INode[] = JSON.parse(JSON.stringify(nodes));
+  const copyEdges: IEdge[] = JSON.parse(JSON.stringify(edges));
   const simulation = d3Force.forceSimulation().nodes(copyNodes)
-  .force("link", d3Force.forceLink(copyEdges).id((d) => d.id).distance((d) => {
+  .force("link", d3Force.forceLink(copyEdges).id((d: any) => d.id).distance((d) => {
     const edgeInfo = noLeafEdge.find((edge) => edge.source === d.source && edge.target === d.target);
     if (edgeInfo) {
       return 30;
@@ -70,7 +70,7 @@ export default function layout(data: any, options: any): Promise<void> {
   const layoutPromise = new Promise<void>((resolve) => {
     simulation.on('end', () => {
       // 坐标信息同步到nodes,edges中
-      nodes.forEach((node) => {
+      nodes.forEach((node: INode) => {
         const nodeInfo = copyNodes.find((item) => item.id === node.id);
         if (nodeInfo) {
           node.x = nodeInfo.x;

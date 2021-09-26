@@ -54,7 +54,81 @@ const simpleData = {
     },
   ]
 };
-
+const erNode1 = {
+  nodes: [{
+    id: 'relTable1',
+    size: [280, 500],
+    label: 'relTable1',
+  }, {
+    id: 'virTable1',
+    size: [280, 100],
+    label: 'virTable1',
+  }, {
+    id: 'virTable2',
+    size: [280, 100],
+    label: 'virTable2',
+  }, {
+    id: 'virTable3',
+    size: [280, 100],
+    label: 'virTable3',
+  }, {
+    id: 'virTable4',
+    size: [280, 100],
+    label: 'virTable4',
+  }, {
+    id: 'virTable5',
+    size: [280, 100],
+    label: 'virTable5',
+  }, {
+    id: 'virTable6',
+    size: [280, 100],
+    label: 'virTable6',
+  }, {
+    id: 'relTable2',
+    size: [280, 300],
+    label: 'relTable2',
+  }, {
+    id: 'virTable7',
+    size: [280, 100],
+    label: 'virTable7',
+  }, {
+    id: 'virTable8',
+    size: [280, 100],
+    label: 'virTable8',
+  }, {
+    id: 'virTable9',
+    size: [280, 100],
+    label: 'virTable9',
+  }],
+  edges: [{
+    source: 'relTable1',
+    target: 'virTable1',
+  }, {
+    source: 'relTable1',
+    target: 'virTable2',
+  }, {
+    source: 'relTable1',
+    target: 'virTable3',
+  }, {
+    source: 'relTable1',
+    target: 'virTable4',
+  }, {
+    source: 'relTable1',
+    target: 'virTable5',
+  }, {
+    source: 'relTable1',
+    target: 'virTable6',
+  }, {
+    source: 'relTable2',
+    target: 'virTable6',
+  }, {
+    source: 'relTable2',
+    target: 'virTable7',
+  }, {
+    source: 'relTable2',
+    target: 'virTable8',
+  }]
+};
 const complexDataUrl = 'https://gw.alipayobjects.com/os/antvdemo/assets/data/relations.json';
 
 describe('ER Layout', () => {
@@ -63,6 +137,9 @@ describe('ER Layout', () => {
       container: div,
       width: 1200,
       height: 800,
+      defaultNode: {
+        type: 'rect',
+      },
     });
     const er = new ERLayout({
       width: 1200,
@@ -72,9 +149,29 @@ describe('ER Layout', () => {
     await er.layout(simpleData);
     graph.data(simpleData);
     graph.render();
-    graph.fitCenter();
+    graph.zoomTo(0.3);
     graph.destroy();
     
+  });
+  it('er layout with er data', async () => {
+    const graph = new G6.Graph({
+      container: div,
+      width: 1200,
+      height: 800,
+      defaultNode: {
+        type: 'rect',
+      },
+    });
+    const er = new ERLayout({
+      width: 1200,
+      height: 800,
+      nodeMinGap: 30,
+    });
+    await er.layout(erNode1);
+    graph.data(erNode1);
+    graph.render();
+    graph.zoomTo(0.3);
+    graph.destroy();
   });
   it('er layout with complex data', () => {
   
@@ -95,6 +192,7 @@ describe('ER Layout', () => {
       await er.layout(data);
       graph.data(data);
       graph.render();
+      graph.zoomTo(0.3);
     });
   });
 });

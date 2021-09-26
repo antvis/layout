@@ -1,3 +1,5 @@
+import { IEdge, IMysqlNode } from './type';
+
 const graphWidth = 1200;
 const graphHeight = 800;
 const OVERLAP_QUOT = 10000000;
@@ -13,13 +15,11 @@ let T = 0.8;
 const T_MIN = 0.1;
 const R = 0.5;
 
-function distanceToNode(node1, node2, isHoriz) {
-
+function distanceToNode(node1: IMysqlNode, node2: IMysqlNode, isHoriz: boolean) {
   const x11 = node1.x - node1.size[0] / 2;
   const y11 = node1.y - node1.size[1] / 2;
   const x12 = node1.x + node1.size[0] / 2;
   const y12 = node1.y + node1.size[1] / 2;
-
   const x21 = node2.x - node2.size[0] / 2;
   const y21 = node2.y - node2.size[1] / 2;
   const x22 = node2.x + node2.size[0] / 2;
@@ -85,10 +85,10 @@ function distanceToNode(node1, node2, isHoriz) {
   };
 }
 
-function calcNodePair(nodeA, nodeB) {
+function calcNodePair(nodeA: IMysqlNode, nodeB: IMysqlNode) {
   // 确定两个节点间是否存在连线
   const edges = nodeEdgeMap.get(nodeA.id) || [];
-  const isLinked = edges.find((edge) => {
+  const isLinked = edges.find((edge: IEdge) => {
     return edge.source === nodeB.id || edge.target === nodeB.id;
   });
 
@@ -101,7 +101,6 @@ function calcNodePair(nodeA, nodeB) {
   const y11 = node1.y - node1.size[1] / 2;
   const x12 = node1.x + node1.size[0] / 2;
   const y12 = node1.y + node1.size[1] / 2;
-
   const x21 = node2.x - node2.size[0] / 2;
   const y21 = node2.y - node2.size[1] / 2;
   const x22 = node2.x + node2.size[0] / 2;
@@ -179,15 +178,23 @@ function calcEnergy(nodes: any) {
   return energy;
 }
 
-function isCorrectPosition(node, newPosition, nodes, edges, ) {
-  const relateEdges = edges.filter((edge) => edge.source.id === node.id || edge.target.id === node.id) || [];
-  const relateNodes = [];
+function isCorrectPosition(node: IMysqlNode, newPosition: {
+  x: number, y: number
+}, nodes: IMysqlNode[], edges: IEdge[]) {
+  const nodeIdxMap = new Map<string, IMysqlNode>();
+  nodes.forEach((o, i) => {
+    nodeIdxMap.set(o.id, o);
+  });
+  const relateEdges = edges.filter((edge) => edge.source === node.id || edge.target === node.id) || [];
+  const relateNodes: IMysqlNode[] = [];
   relateEdges.forEach((edge) => {
-    const otherNode = edge.source.id === node.id ? edge.target : edge.source;
+    const otherNodeId = edge.source === node.id ? edge.target : edge.source;
+    const otherNode = nodeIdxMap.get(otherNodeId);
     if (otherNode) {
       relateNodes.push(otherNode);
     }
   });
+
   let flag = true;
   for(let i = 0; i < relateNodes.length; i++) {
     const item = relateNodes[i];
@@ -214,21 +221,19 @@ function isCorrectPosition(node, newPosition, nodes, edges, ) {
     }
   }
   return flag;
-
 }
 
-function shuffle(nodes, edges) {
+function shuffle(nodes: IMysqlNode[], edges: IEdge[]) {
   let foundSmallerEnergy = false;
   // 多次测试发现step为1时的效果最佳。
-  const step = 1;
+  const step = 1; 
+  const wstep = CELL_W * step;
+  const hstep = CELL_H * step;
+  const wsteps = [ wstep, -wstep, 0, 0, ];
+  const hsteps = [ 0, 0, hstep, -hstep, ];
   for (let i = 0; i < nodes.length; ++i) {
     const node = nodes[i];
-    const wstep = CELL_W * step;
-    const hstep = CELL_H * step;
     let nodeEnergy = calcNodeEnergy(node, nodes);
-
-    const wsteps = [ wstep, -wstep, 0, 0, ];
-    const hsteps = [ 0, 0, hstep, -hstep, ];
     for (let ns = 0; ns < wsteps.length ; ns++) {
       // 判断新位置与其他连线节点的位置关系是否违规
       const flag = isCorrectPosition(node, { x: node.x + wsteps[ns], y: node.y + hsteps[ns] }, nodes, edges);
@@ -269,10 +274,12 @@ function shuffle(nodes, edges) {
 }
 
 // 计算节点的能量，
-function calcNodeEnergy(node, nodes) {
+function calcNodeEnergy(node: IMysqlNode, nodes: IMysqlNode[]) {
   let e = 0.0;
-
-  if ((node.x < 0) || (node.x < 0) || (node.x + node.size[0] +20 > graphWidth) || (node.y2 + node.size[1] +  20 > graphHeight)) {
+  if ((node.x < 0) || (node.y < 0) || 
+    (node.x + node.size[0] + 20 > graphWidth) ||
+    (node.y + node.size[1] + 20 > graphHeight)
+  ) {
     e += 1000000000000.0;
   }
 
@@ -284,7 +291,7 @@ function calcNodeEnergy(node, nodes) {
   return e;
 }
 
-function layout(nodes: any, edges: any) {
+function layout(nodes: IMysqlNode[], edges: IEdge[]) {
   if (nodes.length === 0) {
     return { nodes, edges };
   }
@@ -295,7 +302,7 @@ function layout(nodes: any, edges: any) {
 
   // 1. 初始化
   // 将node按照连接数进行排序
-  nodes.sort((node1, node2) => {
+  nodes.sort((node1: IMysqlNode, node2: IMysqlNode) => {
     return nodeEdgeMap.get(node1.id)?.length - nodeEdgeMap.get(node2.id)?.length;
   });
 
@@ -324,7 +331,7 @@ function layout(nodes: any, edges: any) {
       deSameCount = 20;
     }
   }
-  nodes.forEach((node) => {
+  nodes.forEach((node: IMysqlNode) => {
     node.x = node.x - node.size[0] / 2;
     node.y = node.y - node.size[1] / 2;
   });
