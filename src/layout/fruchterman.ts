@@ -172,14 +172,13 @@ export class FruchtermanLayout extends Base {
       }
     }
 
-    if (typeof window === "undefined") return;
-
     if (workerEnabled) {
       for (let i = 0; i < maxIteration; i++) {
         self.runOneStep(clusterMap);
       }
       self.onLayoutEnd?.();
     } else {
+      if (typeof window === "undefined") return;
       let iter = 0;
       // interval for render the result after each iteration
       this.timeInterval = window.setInterval(() => {

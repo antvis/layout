@@ -245,8 +245,6 @@ export class GForceLayout extends Base {
 
     if (!nodes) return;
 
-    if (typeof window === "undefined") return;
-
     if (workerEnabled) {
       for (let i = 0; i < maxIteration; i++) {
         const previousPos = self.runOneStep(i);
@@ -256,6 +254,7 @@ export class GForceLayout extends Base {
       }
       self.onLayoutEnd?.();
     } else {
+      if (typeof window === "undefined") return;
       let iter = 0;
       // interval for render the result after each iteration
       this.timeInterval = window.setInterval(() => {
