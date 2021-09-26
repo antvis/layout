@@ -7,8 +7,8 @@ const M_PI_2 = 1.57079632679489661923;
 const PI_38 = M_PI * 0.375;
 const PI_58 = M_PI * 0.625;
 const nodeEdgeMap = new Map();
-let CELL_W = 10;
-let CELL_H = 10;
+const CELL_W = 10;
+const CELL_H = 10;
 let T = 0.8;
 const T_MIN = 0.1;
 const R = 0.5;
@@ -69,16 +69,20 @@ function distanceToNode(node1, node2, isHoriz) {
     if (dy > dx) {
       l1 = l2 = parseFloat(dy ? (dy / Math.cos(qr)).toFixed(2) : (dx).toFixed(2));
     } else {
-      l1 = l2 = parseFloat((dx && qr != 0.0) ? (dx / Math.sin(qr)).toFixed(2) : (dy).toFixed(2));
+      l1 = l2 = parseFloat((dx && qr !== 0.0) ? (dx / Math.sin(qr)).toFixed(2) : (dy).toFixed(2));
     }
       
   }
   const aqr = parseFloat(qr.toFixed(2));
   // 判断是否水平，角度
+  let newHoriz = isHoriz;
   if (isHoriz) {
-    isHoriz = PI_38 < aqr && aqr < PI_58;
+    newHoriz = PI_38 < aqr && aqr < PI_58;
   }
-  return Math.abs(l1 < l2 ? l1 : l2);
+  return {
+    distance: Math.abs(l1 < l2 ? l1 : l2),
+    isHoriz: newHoriz,
+  };
 }
 
 function calcNodePair(nodeA, nodeB) {
@@ -90,8 +94,8 @@ function calcNodePair(nodeA, nodeB) {
 
   const areaA = nodeA.size[0] * nodeA.size[1];
   const areaB = nodeB.size[0] * nodeB.size[1];
-  let node1 = areaA > areaB ? nodeB : nodeA;
-  let node2 = areaA > areaB ? nodeA : nodeB;
+  const node1 = areaA > areaB ? nodeB : nodeA;
+  const node2 = areaA > areaB ? nodeA : nodeB;
 
   const x11 = node1.x - node1.size[0] / 2;
   const y11 = node1.y - node1.size[1] / 2;
@@ -109,11 +113,11 @@ function calcNodePair(nodeA, nodeB) {
   const cy2 = node2.y;
 
   // Detect if nodes overlap  检查节点之间是否存在覆盖问题
-  const isOverlap = ((x12 >= x21) && (x22 >= x11) && (y12 >= y21) && (y22 >= y11));
+  const isoverlap = ((x12 >= x21) && (x22 >= x11) && (y12 >= y21) && (y22 >= y11));
   let e = 0;
   let distance = 0;
   
-  if (isOverlap) {
+  if (isoverlap) {
     
     distance = Math.sqrt(Math.pow((cx2 - cx1), 2) + Math.pow((cy2 - cy1), 2));
 
@@ -125,20 +129,22 @@ function calcNodePair(nodeA, nodeB) {
     const dsx = sx2 - sx1;
     const dsy = sy2 - sy1;
 
-    const Sov = dsx * dsy;
+    const sov = dsx * dsy;
 
-    if (distance == 0.0) {
+    if (distance === 0.0) {
       distance = 0.0000001;
     }
 
-    e = MIN_DIST * 1 / distance * 100 + Sov;
+    e = MIN_DIST * 1 / distance * 100 + sov;
     e *= OVERLAP_QUOT;
   } else {
     let isHoriz = false;
-    distance = distanceToNode(node1, node2, isHoriz);
+    const res = distanceToNode(node1, node2, isHoriz);
+    distance = res.distance;
+    isHoriz = res.isHoriz;
 
     if (distance <= MIN_DIST) {
-      if (distance != 0) {
+      if (distance !== 0) {
         if (isLinked) {
           e += MIN_DIST + OVERLAP_QUOT * 1 / distance;
         }
@@ -189,7 +195,7 @@ function isCorrectPosition(node, newPosition, nodes, edges, ) {
     const delta = Math.atan((node.y - item.y) / (item.x - node.y)) * 180;
     const newDelta = Math.atan((newPosition.y - item.y) / (item.x - newPosition.y)) * 180;
     const isHor = delta < 30 || delta > 150;
-    let newIsHor = newDelta < 30 || newDelta > 150;
+    const newIsHor = newDelta < 30 || newDelta > 150;
     const isVer = delta > 70 && delta < 110;
     const newIsVer = newDelta > 70 && newDelta < 110;
     // 定义四个相似角度区间，0-15度，75-90度，90到105度，165到180度。
@@ -271,7 +277,7 @@ function calcNodeEnergy(node, nodes) {
   }
 
   for (let i = 0; i < nodes.length; ++i) {
-    if (node.id != nodes[i].id) {
+    if (node.id !== nodes[i].id) {
       e += calcNodePair(node, nodes[i]);
     }
   }
@@ -289,7 +295,7 @@ function layout(nodes: any, edges: any) {
 
   // 1. 初始化
   // 将node按照连接数进行排序
-  nodes = nodes.sort((node1, node2) => {
+  nodes.sort((node1, node2) => {
     return nodeEdgeMap.get(node1.id)?.length - nodeEdgeMap.get(node2.id)?.length;
   });
 
@@ -321,7 +327,7 @@ function layout(nodes: any, edges: any) {
   nodes.forEach((node) => {
     node.x = node.x - node.size[0] / 2;
     node.y = node.y - node.size[1] / 2;
-  })
+  });
  
   return {
     nodes,

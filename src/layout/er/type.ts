@@ -7,7 +7,7 @@ export interface INode {
   dy?: number;
   x?: number;
   y?: number;
-  size_tmp?: number[];
+  sizeTemp?: number[];
 }
 
 export interface IEdge {
@@ -17,7 +17,7 @@ export interface IEdge {
 
 export interface IEdgeInfo {
   source: INode;
-  target: INode
+  target: INode;
 }
 
 export interface ICell {

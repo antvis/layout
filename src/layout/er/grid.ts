@@ -24,10 +24,10 @@ export default class Grid {
     this.rowNum = Math.ceil(height / this.CELL_H);
     Grid.MIN_DIST = Math.pow(width, 2) + Math.pow(height, 2);
 
-    for(var i = 0; i < this.columnNum; i++) {
+    for(let i = 0; i < this.columnNum; i++) {
       const tmp = [];
-      for(var j = 0; j < this.rowNum; j++) {
-        var cell = {
+      for(let j = 0; j < this.rowNum; j++) {
+        const cell = {
           dx: i,
           dy: j,
           x : i * this.CELL_W,
@@ -35,14 +35,14 @@ export default class Grid {
           occupied : false
         };
         tmp.push(cell);
-      };
+      }
       this.cells.push(tmp);
-    };
+    }
   }
 
   public findGridByNodeId(nodeId: string){
-    for(var i = 0; i < this.columnNum; i++) {
-      for(var j = 0; j < this.rowNum; j++) {
+    for(let i = 0; i < this.columnNum; i++) {
+      for(let j = 0; j < this.rowNum; j++) {
         if(this.cells[i][j].node) {
           if (this.cells[i][j]?.node?.id === nodeId) {
             return {column: i, row: j};
@@ -58,28 +58,29 @@ export default class Grid {
   }
 
   public occupyNearest(p) {
-    var minDist = Grid.MIN_DIST;
-    var d;
-    var candidate = null;
-    for(var i = 0; i < this.columnNum; i++) {
-      for(var j = 0; j < this.rowNum; j++) {
+    let minDist = Grid.MIN_DIST;
+    let d;
+    let candidate = null;
+    for(let i = 0; i < this.columnNum; i++) {
+      for(let j = 0; j < this.rowNum; j++) {
         if(!this.cells[i][j].occupied && ( d = this.sqdist(p, this.cells[i][j])) < minDist) {
           minDist = d;
           candidate = this.cells[i][j];
         }
-      };
-    };
-    if(candidate)
+      }
+    }
+    if(candidate) {
       candidate.occupied = true;
+    }
     return candidate;
   }
 
   public insertColumn(columnIndex: number, length: number) {
     if (length <= 0) return ;
     // 插入空列
-    for (var i = 0; i < length; i++) {
+    for (let i = 0; i < length; i++) {
       this.cells[i + this.columnNum] = [];
-      for(var j = 0; j < this.rowNum; j++) {
+      for(let j = 0; j < this.rowNum; j++) {
         this.cells[i + this.columnNum][j] = {
           dx: i,
           dy: j,
@@ -91,13 +92,13 @@ export default class Grid {
       }
     }
     // 交换数据
-    for(var i = (this.columnNum - 1); i > columnIndex; i--) {
-      for (var j = 0; j < this.rowNum; j++) {
+    for(let i = (this.columnNum - 1); i > columnIndex; i--) {
+      for (let j = 0; j < this.rowNum; j++) {
         this.cells[i + length][j] = {
           ...this.cells[i][j],
           x: (i+length) * this.CELL_W,
           y: j * this.CELL_H,
-        };;
+        };
         this.cells[i][j] = {
           x : i * this.CELL_W,
           y : j * this.CELL_H,
@@ -107,13 +108,13 @@ export default class Grid {
       }
     }
     // 已有行列的处理
-    for (var j = 0; j < this.additionColumn.length; j++) {
+    for (let j = 0; j < this.additionColumn.length; j++) {
       if (this.additionColumn[j] >= columnIndex) {
         this.additionColumn[j] += length;
       }
     }
     // 记录新增的行列
-    for (var i = 0; i < length; i++) {
+    for (let i = 0; i < length; i++) {
       this.additionColumn.push(columnIndex + i + 1);
     }
     this.columnNum += length;
@@ -122,8 +123,8 @@ export default class Grid {
   public insertRow(rowIndex: number, length: number) {
     if (length <= 0) return ;
     // 插入空行
-    for (var j = 0; j < length; j++) {
-      for(var i = 0; i < this.columnNum; i++) {
+    for (let j = 0; j < length; j++) {
+      for(let i = 0; i < this.columnNum; i++) {
         this.cells[i][j + this.rowNum] = {
           dx: i,
           dy: j,
@@ -136,8 +137,8 @@ export default class Grid {
     }
 
     // 交换数据
-    for(var i = 0; i < this.columnNum; i++) {
-      for (var j = (this.rowNum - 1); j > rowIndex; j--) {
+    for(let i = 0; i < this.columnNum; i++) {
+      for (let j = (this.rowNum - 1); j > rowIndex; j--) {
         this.cells[i][j+length] = {
           ...this.cells[i][j],
           dx: i,
@@ -158,13 +159,13 @@ export default class Grid {
     }
     
     // 已有行列的处理
-    for (var j = 0; j < this.additionRow.length; j++) {
+    for (let j = 0; j < this.additionRow.length; j++) {
       if (this.additionRow[j] >= rowIndex) {
         this.additionRow[j] += length;
       }
     }
     // 记录新增的行列
-    for (var i = 0; i < length; i++) {
+    for (let i = 0; i < length; i++) {
       this.additionRow.push(rowIndex + i + 1);
     }
     this.rowNum += length;
@@ -172,10 +173,10 @@ export default class Grid {
 
   public getNodes() {
     const nodes = [];
-    for(var i = 0; i < this.columnNum; i++) {
-      for(var j = 0; j < this.rowNum; j++) {
+    for(let i = 0; i < this.columnNum; i++) {
+      for(let j = 0; j < this.rowNum; j++) {
         if(this.cells[i][j].node) {
-          nodes.push(this.cells[i][j])
+          nodes.push(this.cells[i][j]);
         }
       }
     }

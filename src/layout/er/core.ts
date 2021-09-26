@@ -18,9 +18,9 @@ export default function layout(data: any, options: any): Promise<void> {
       return edge.source === node.id || edge.target === node.id;
     });
     if (relateEdges.length > 1) {
-      const node_c = { ...node };
-      delete node_c.size;
-      noLeafNodes.push(node_c);
+      const temp = { ...node };
+      delete temp.size;
+      noLeafNodes.push(temp);
     }
   });
   const noLeafEdge: IEdge[] = [];
@@ -52,7 +52,7 @@ export default function layout(data: any, options: any): Promise<void> {
   const copyNodes = JSON.parse(JSON.stringify(nodes));
   const copyEdges = JSON.parse(JSON.stringify(edges));
   const simulation = d3Force.forceSimulation().nodes(copyNodes)
-  .force("link", d3Force.forceLink(copyEdges).id(d => d.id).distance((d) => {
+  .force("link", d3Force.forceLink(copyEdges).id((d) => d.id).distance((d) => {
     const edgeInfo = noLeafEdge.find((edge) => edge.source === d.source && edge.target === d.target);
     if (edgeInfo) {
       return 30;
@@ -76,12 +76,12 @@ export default function layout(data: any, options: any): Promise<void> {
           node.x = nodeInfo.x;
           node.y = nodeInfo.y;
         }
-      })
+      });
       
-      let minX = Math.min(...nodes.map((node: INode) => node.x));
-      let maxX = Math.max(...nodes.map((node: INode) => node.x));
-      let minY = Math.min(...nodes.map((node: INode) => node.y));
-      let maxY = Math.max(...nodes.map((node: INode) => node.y));
+      const minX = Math.min(...nodes.map((node: INode) => node.x));
+      const maxX = Math.max(...nodes.map((node: INode) => node.x));
+      const minY = Math.min(...nodes.map((node: INode) => node.y));
+      const maxY = Math.max(...nodes.map((node: INode) => node.y));
       const scalex = width / (maxX - minX);
       const scaley = height / (maxY - minY);
       nodes.forEach((node: INode) => {
@@ -95,14 +95,14 @@ export default function layout(data: any, options: any): Promise<void> {
 
       // 这一步就执行缩小空间。且不考虑节点size
       nodes.forEach((node: INode) => {
-        node.size_tmp = node.size;
+        node.sizeTemp = node.size;
         node.size = [10, 10];
       });
      
       mysqlWorkbench(nodes, edges);
       nodes.forEach((node: INode) => {
-        node.size = node.size_tmp || [];
-        delete node.size_tmp;
+        node.size = node.sizeTemp || [];
+        delete node.sizeTemp;
       });
       // 进行网格对齐+节点大小扩增
       forceGrid({
