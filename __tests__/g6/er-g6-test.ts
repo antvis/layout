@@ -129,6 +129,7 @@ const erNode1 = {
     target: 'virTable8',
   }]
 };
+const data = {"nodes":[{"id":"user","label":"用户","attrs":[{"key":"id","type":"number(6)"},{"key":"birthday","type":"date"},{"key":"hometown","type":"varchar(255)"},{"key":"country","type":"varchar(255)"},{"key":"phone","type":"varchar(255)"}],"size":[250,132]},{"id":"order","label":"订单","attrs":[{"key":"id","type":"number(6)"},{"key":"skuid","type":"number(6)","relation":[{"nodeId":"sku","key":"userId"}]},{"key":"number","type":"number(6)"},{"key":"userId","type":"number(6)","relation":[{"nodeId":"user","key":"userId"}]},{"key":"date","type":"number(6)"},{"key":"tagId","type":"number(6)","relation":[{"nodeId":"tag"}]},{"key":"dim1","type":"number(6)","relation":[{"nodeId":"dim1"}]},{"key":"dim2","type":"number(6)","relation":[{"nodeId":"dim2"}]},{"key":"zoneid","type":"number","relation":[{"nodeId":"zone"}]}],"size":[250,212]},{"id":"sku","label":"商品","attrs":[{"key":"id","type":"number(6)"},{"key":"name","type":"varchar(255)"},{"key":"address","type":"varchar(255)"},{"key":"count","type":"number(6)"}],"size":[250,112]},{"id":"zone","label":"区域","attrs":[{"key":"id","type":"number(6)"},{"key":"name","type":"varchar(255)"},{"key":"address","type":"varchar(255)"}],"size":[250,92]},{"id":"tag","label":"标签","attrs":[{"key":"id","type":"number(6)"},{"key":"name","type":"varchar(255)"},{"key":"desc","type":"varchar(255)"}],"size":[250,92]},{"id":"dim1","label":"dim1","attrs":[{"key":"id","type":"number(6)"},{"key":"name","type":"varchar(255)"}],"size":[250,72]},{"id":"dim2","label":"dim2","attrs":[{"key":"id","type":"number(6)"},{"key":"name","type":"varchar(255)"}],"size":[250,72]}],"edges":[{"source":"order","target":"sku","sourceKey":"skuid","targetKey":"userId"},{"source":"order","target":"user","sourceKey":"userId","targetKey":"userId"},{"source":"order","target":"tag","sourceKey":"tagId"},{"source":"order","target":"dim1","sourceKey":"dim1"},{"source":"order","target":"dim2","sourceKey":"dim2"},{"source":"order","target":"zone","sourceKey":"zoneid"}]}
 const complexDataUrl = 'https://gw.alipayobjects.com/os/antvdemo/assets/data/relations.json';
 
 describe('ER Layout', () => {
@@ -167,11 +168,12 @@ describe('ER Layout', () => {
       height: 800,
       nodeMinGap: 30,
     });
-    await er.layout(erNode1);
-    graph.data(erNode1);
+
+    await er.layout(data);
+    graph.data(data);
     graph.render();
     graph.zoomTo(0.3);
-    graph.destroy();
+    // graph.destroy();
   });
   it('er layout with complex data', () => {
   
@@ -193,6 +195,7 @@ describe('ER Layout', () => {
       graph.data(data);
       graph.render();
       graph.zoomTo(0.3);
+      graph.destroy();
     });
   });
 });

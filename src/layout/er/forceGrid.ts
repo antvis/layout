@@ -21,7 +21,7 @@ export default function layout(data: {
     CELL_H = Math.min(nodeHeight, CELL_H);
   });
 
-  const grid = new Grid();
+  let grid = new Grid();
   grid.init(width, height, {
     CELL_H,
     CELL_W,
@@ -40,7 +40,34 @@ export default function layout(data: {
         d.dy = gridpoint.dy;
       }
   });
+  // 横纵比调整
+  const minX = Math.min(...data.nodes.map((node) => (node.dx || 0)));
+  const maxX = Math.max(...data.nodes.map((node) => (node.dx || 0)));
+  const minY = Math.min(...data.nodes.map((node) => (node.dy || 0)));
+  const maxY = Math.max(...data.nodes.map((node) => (node.dy || 0))); 
 
+  if((maxX - minX) < (maxY - minY)) {
+    const newGrid = new Grid();
+    newGrid.init(height / CELL_H * CELL_W , width / CELL_W * CELL_H , {
+      CELL_H,
+      CELL_W,
+    });
+    data.nodes.forEach((node) => {
+      if (node.dx === undefined || node.dy === undefined) return;
+      newGrid.cells[node.dy][node.dx].node = {
+        id: node.id,
+        size: node.size,
+      };
+      newGrid.cells[node.dy][node.dx].occupied = true;
+      node.x = newGrid.cells[node.dy][node.dx].x;
+      node.y = newGrid.cells[node.dy][node.dx].y;
+      const tmp = node.dx;
+      node.dx = node.dy;
+      node.dy = tmp;
+    });
+    grid = newGrid;
+  }
+  
   // 加入节点size
   for (let i = 0; i < data.nodes.length; i++) {
     //  节点宽度大于网格宽度，则往当前网格的右边插入列

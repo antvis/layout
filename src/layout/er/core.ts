@@ -55,9 +55,9 @@ export default function layout(data: any, options: any): Promise<void> {
   .force("link", d3Force.forceLink(copyEdges).id((d: any) => d.id).distance((d) => {
     const edgeInfo = noLeafEdge.find((edge) => edge.source === d.source && edge.target === d.target);
     if (edgeInfo) {
-      return 30;
+      return 50;
     }
-    return 20;
+    return 70;
   }))
   .force("charge", d3Force.forceManyBody())
   .force("center", d3Force.forceCenter(width / 2, height / 2))
@@ -98,7 +98,6 @@ export default function layout(data: any, options: any): Promise<void> {
         node.sizeTemp = node.size;
         node.size = [10, 10];
       });
-     
       mysqlWorkbench(nodes, edges);
       nodes.forEach((node: INode) => {
         node.size = node.sizeTemp || [];
@@ -109,7 +108,6 @@ export default function layout(data: any, options: any): Promise<void> {
         nodes,
         edges,
       }, options);
-
       resolve();
     });
   });
