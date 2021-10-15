@@ -1,7 +1,20 @@
 import { Base } from "./base";
 import { Model, ILayout } from "./types";
-import { registerLayout, getLayoutByName } from "../registy";
-
+import { getLayoutByName } from "../registy";
+import { GridLayout } from "./grid";
+import { RandomLayout } from "./random";
+import { GForceLayout } from "./gForce";
+import { ForceLayout } from "./force";
+import { CircularLayout } from "./circular";
+import { DagreLayout } from "./dagre";
+import { RadialLayout } from "./radial";
+import { ConcentricLayout } from "./concentric";
+import { MDSLayout } from "./mds";
+import { FruchtermanLayout } from "./fruchterman";
+import { FruchtermanGPULayout } from "./gpu/fruchterman";
+import { GForceGPULayout } from "./gpu/gForce";
+import { ComboForceLayout } from "./comboForce";
+import { ForceAtlas2Layout } from "./forceAtlas2";
 export class Layout {
   public readonly layoutInstance: Base;
 
@@ -38,16 +51,19 @@ export class Layout {
 // FIXME
 // FOR G6
 // tslint:disable-next-line
-export const Layouts: { [key: string]: any } = new Proxy(
-  {},
-  {
-    // tslint:disable-line
-    get: (target, propKey) => {
-      return getLayoutByName(propKey as string);
-    },
-    set: (target, propKey, value) => {
-      registerLayout(propKey as string, value);
-      return true;
-    }
-  }
-);
+export const Layouts: { [key: string]: any } = {
+  force: ForceLayout,
+  fruchterman: FruchtermanLayout,
+  forceAtlas2: ForceAtlas2Layout,
+  gForce: GForceLayout,
+  dagre: DagreLayout,
+  circular: CircularLayout,
+  radial: RadialLayout,
+  concentric: ConcentricLayout,
+  grid: GridLayout,
+  mds: MDSLayout,
+  comboForce: ComboForceLayout,
+  random: RandomLayout,
+  'gForce-gpu': GForceGPULayout,
+  'fruchterman-gpu': FruchtermanGPULayout,
+};
