@@ -26,6 +26,7 @@ export const registerLayout = (name: string, layoutOverride: any) => {
   } else {
     map.set(name, layoutOverride);
   }
+  return map.get(name);
 };
 
 export const unRegisterLayout = (name: string) => {
