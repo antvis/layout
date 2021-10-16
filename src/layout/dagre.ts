@@ -4,7 +4,7 @@
  */
 
 import { Edge, OutNode, DagreLayoutOptions } from "./types";
-import dagre from "dagrejs";
+import dagre from "../../dagre/index.js";
 import { isArray, isNumber, isObject, getEdgeTerminal } from "../util";
 import { Base } from "./base";
 
