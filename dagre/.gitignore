@@ -1,8 +1,0 @@
-build/
-dist/
-node_modules/
-tmp/
-
-!lib
-
-.DS_Store

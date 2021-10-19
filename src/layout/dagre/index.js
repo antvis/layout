@@ -21,13 +21,13 @@ THE SOFTWARE.
 */
 
 module.exports = {
-  graphlib: require("./lib/graphlib"),
+  graphlib: require("./libs/graphlib"),
 
-  layout: require("./lib/layout"),
-  debug: require("./lib/debug"),
+  layout: require("./libs/layout"),
+  debug: require("./libs/debug"),
   util: {
-    time: require("./lib/util").time,
-    notime: require("./lib/util").notime
+    time: require("./libs/util").time,
+    notime: require("./libs/util").notime
   },
-  version: require("./lib/version")
+  version: require("./libs/version")
 };
