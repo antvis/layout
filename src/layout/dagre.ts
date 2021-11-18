@@ -4,7 +4,8 @@
  */
 
 import { Edge, OutNode, DagreLayoutOptions } from "./types";
-import dagre from "./dagre/index.js";
+import dagre from "./dagre/index";
+import { Graph as DagreGraph } from './dagre/types';
 import { isArray, isNumber, isObject, getEdgeTerminal } from "../util";
 import { Base } from "./base";
 
@@ -178,18 +179,18 @@ export class DagreLayout extends Base {
     });
 
     // 考虑增量图中的原始图
-    let prevGraph: dagre.graphlib.Graph | undefined = undefined;
+    let prevGraph: DagreGraph | undefined = undefined;
     if (self.preset) {
       prevGraph = new dagre.graphlib.Graph({
         multigraph: true,
         compound: true,
-      });
+      }) as any;
       self.preset.nodes.forEach((node) => {
         prevGraph?.setNode(node.id, node);
       });
     }
 
-    dagre.layout(g, {
+    dagre.layout(g as any, {
       prevGraph,
       edgeLabelSpace: self.edgeLabelSpace,
       keepNodeOrder: self.keepNodeOrder,
