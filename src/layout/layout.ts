@@ -15,6 +15,7 @@ import { FruchtermanGPULayout } from "./gpu/fruchterman";
 import { GForceGPULayout } from "./gpu/gForce";
 import { ComboForceLayout } from "./comboForce";
 import { ForceAtlas2Layout } from "./forceAtlas2";
+import { ERLayout } from "./er";
 export class Layout {
   public readonly layoutInstance: Base;
 
@@ -66,4 +67,5 @@ export const Layouts: { [key: string]: any } = {
   random: RandomLayout,
   'gForce-gpu': GForceGPULayout,
   'fruchterman-gpu': FruchtermanGPULayout,
+  er: ERLayout,
 };

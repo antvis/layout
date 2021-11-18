@@ -367,5 +367,6 @@ export namespace ILayout {
     | GForceLayoutOptions
     | GForceGPULayoutOptions
     | ComboForceLayoutOptions
-    | ForceAtlas2LayoutOptions;
+    | ForceAtlas2LayoutOptions
+    | ERLayoutOptions;
 }
