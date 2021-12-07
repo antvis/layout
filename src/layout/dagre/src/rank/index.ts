@@ -5,7 +5,7 @@
 // var feasibleTree = require("./feasible-tree").feasibleTreeWithLayer;
 // var networkSimplex = require("./network-simplex");
 
-import { longestPath } from './util';
+import { longestPath, longestPathWithLayer } from './util';
 import { feasibleTreeWithLayer as feasibleTree } from './feasible-tree';
 import networkSimplex from './network-simplex';
 import { Graph as IGraph } from '../../types';
@@ -43,7 +43,7 @@ const rank = (g: IGraph) => {
 const longestPathRanker = longestPath;
 
 const tightTreeRanker = (g: IGraph) => {
-  longestPath(g);
+  longestPathWithLayer(g);
   feasibleTree(g);
 }
 

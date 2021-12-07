@@ -39,10 +39,10 @@ const Graph = (graphlib as any).Graph;
 const order = (g: IGraph) => {
   const maxRank = util.maxRank(g);
   const range1 = [], range2 = [];
-  for (let i = 0; i < maxRank + 1; i ++) {
+  for (let i = 1; i < maxRank + 1; i ++) {
     range1.push(i);
   } // _.range(1, maxRank + 1)
-  for (let i = maxRank - 1; i >= -1; i --) {
+  for (let i = maxRank - 1; i > -1; i --) {
     range2.push(i);
   } // _.range(maxRank - 1, -1, -1)
   const downLayerGraphs = buildLayerGraphs(g, range1, "inEdges"),
@@ -102,7 +102,7 @@ const sweepLayerGraphs = (layerGraphs: IGraph[], biasRight: any, usePrev?: any) 
 }
 
 const assignOrder = (g: IGraph, layering: any) => {
-  layering.forEach((layer: any) => {
+  layering?.forEach((layer: any) => {
     layer.forEach((v: string, i: number) => {
       g.node(v).order = i;
     });

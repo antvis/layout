@@ -45,7 +45,7 @@
     "@antv/g-webgpu": "0.5.5",
     "d3-force": "^2.0.1",
     "ml-matrix": "^6.5.0",
-    "graphlib": "2.1.8"
+    "dagrejs/graphlib": "2.1.4"
   },
   "devDependencies": {
     "@antv/g-webgpu-compiler": "0.5.5",

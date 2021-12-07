@@ -47,7 +47,8 @@ const longestPath = (g: Graph) => {
       rank = 0;
     }
 
-    return (label.rank = rank);
+    label.rank = rank;
+    return rank;
   }
 
   g.sources().forEach(source => dfs(source as any));

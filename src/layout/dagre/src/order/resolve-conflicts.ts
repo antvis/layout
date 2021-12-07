@@ -54,9 +54,7 @@ const resolveConflicts = (entries: any, cg: Graph) => {
     }
   });
 
-  const sourceSet = mappedEntries.filter((entry: any) => {
-    return !entry.indegree;
-  });
+  const sourceSet = Object.values(mappedEntries).filter?.((entry: any) => !entry.indegree);
 
   return doResolveConflicts(sourceSet);
 }
@@ -84,7 +82,7 @@ const doResolveConflicts = (sourceSet: any) => {
     };
   }
 
-  while (sourceSet.length) {
+  while (sourceSet?.length) {
     const entry = sourceSet.pop();
     entries.push(entry);
     entry["in"].reverse().forEach((e: any) => handleIn(entry));
@@ -96,6 +94,7 @@ const doResolveConflicts = (sourceSet: any) => {
   return filtered.map((entry) => {
     const picked: any = {};
     keys.forEach(key => {
+      if (entry[key] === undefined) return;
       picked[key] = entry[key];
     });
     return picked;

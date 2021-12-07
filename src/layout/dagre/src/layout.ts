@@ -172,13 +172,14 @@ const buildLayoutGraph = (inputGraph: IGraph) => {
 
   const pickedProperties: any = {};
   graphAttrs.forEach(key => {
-    pickedProperties[key] = graph[key];
+    if (graph[key] !== undefined) pickedProperties[key] = graph[key];
   });
 
   g.setGraph(Object.assign({},
     graphDefaults,
     selectNumberAttrs(graph, graphNumAttrs),
-    pickedProperties));
+    pickedProperties
+  ));
 
   inputGraph.nodes().forEach((v) => {
     const node = canonicalize(inputGraph.node(v));
@@ -197,7 +198,7 @@ const buildLayoutGraph = (inputGraph: IGraph) => {
     
     const pickedProperties: any = {};
     edgeAttrs.forEach(key => {
-      pickedProperties[key] = edge[key];
+      if (edge[key] !== undefined) pickedProperties[key] = edge[key];
     });
 
     g.setEdge(e, Object.assign({},
@@ -231,7 +232,7 @@ const makeSpaceForEdgeLabels = (g: IGraph) => {
   g.edges().forEach((e) => {
     const edge = g.edge(e);
     edge.minlen *= 2;
-    if (edge.labelpos.toLowerCase() !== "c") {
+    if (edge.labelpos?.toLowerCase() !== "c") {
       if (graph.rankdir === "TB" || graph.rankdir === "BT") {
         edge.width += edge.labeloffset;
       } else {
@@ -321,7 +322,7 @@ const translateGraph = (g: IGraph) => {
 
   g.edges().forEach((e) => {
     const edge = g.edge(e);
-    edge.points.forEach((p) => {
+    edge.points?.forEach((p) => {
       p.x -= minX;
       p.y -= minY;
     });
@@ -461,6 +462,7 @@ const positionSelfEdges = (g: IGraph) => {
 const selectNumberAttrs = (obj: any, attrs: any) => {
   const pickedProperties: any = {};
   attrs.forEach((key: string) => {
+    if (obj[key] === undefined) return;
     pickedProperties[key] = (+obj[key]);
   })
   return pickedProperties;
@@ -468,7 +470,8 @@ const selectNumberAttrs = (obj: any, attrs: any) => {
 
 const canonicalize = (attrs: any) => {
   const newAttrs: any = {};
-  attrs.forEach((v: any, k: string) => {
+  Object.keys(attrs).forEach((k: string) => {
+    const v = attrs[k];
     newAttrs[k.toLowerCase()] = v;
   });
   return newAttrs;

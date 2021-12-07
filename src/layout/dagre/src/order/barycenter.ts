@@ -6,7 +6,7 @@ const barycenter = (g: Graph, movable: string[]) => {
   return movable.map((v) => {
     const inV = g.inEdges(v);
     if (!inV?.length) {
-      return { v: v };
+      return { v };
     } else {
       const result = { sum: 0, weight: 0 };
       inV.forEach(e => {
@@ -25,7 +25,7 @@ const barycenter = (g: Graph, movable: string[]) => {
       // }, { sum: 0, weight: 0 });
 
       return {
-        v: v,
+        v,
         barycenter: result.sum / result.weight,
         weight: result.weight
       };

@@ -149,7 +149,7 @@ const hasConflict = (conflicts: any, v: number, w: number) => {
     v = w;
     w = tmp;
   }
-  return conflicts[v].hasOwnProperty(w);
+  return conflicts[v] && conflicts[v].hasOwnProperty(w);
 }
 
 /*
@@ -230,14 +230,14 @@ const horizontalCompaction = (g: IGraph, layering: any, root: string, align: str
   // First pass, assign smallest coordinates
   const pass1 = (elem: string) => {
     xs[elem] = (blockG.inEdges(elem) || []).reduce((acc: number, e: any) => {
-      return Math.max(acc, xs[e.v] + blockG.edge(e));
+      return Math.max(acc, (xs[e.v] || 0) + blockG.edge(e));
     }, 0);
   }
 
   // Second pass, assign greatest coordinates
   const pass2 = (elem: string) => {
     const min = (blockG.outEdges(elem) || []).reduce((acc: number, e: any) => {
-      return Math.min(acc, xs[e.w] - blockG.edge(e));
+      return Math.min(acc, (xs[e.w] || 0) - blockG.edge(e));
     }, Number.POSITIVE_INFINITY);
 
     const node = g.node(elem);
@@ -250,7 +250,7 @@ const horizontalCompaction = (g: IGraph, layering: any, root: string, align: str
   iterate(pass2, blockG.successors.bind(blockG));
 
   // Assign x coordinates to all nodes
-  align.forEach((v: any) => {
+  Object.values(align).forEach((v: any) => {
     xs[v] = xs[root[v]];
   });
 
@@ -288,7 +288,7 @@ const findSmallestWidthAlignment = (g: IGraph, xss: any) => {
     let min = Number.POSITIVE_INFINITY;
 
     Object.keys(xs).forEach((v: string) => {
-      const x = xs(v);
+      const x = xs[v];
       const halfWidth = width(g, v) / 2;
 
       max = Math.max(x + halfWidth, max);
@@ -338,14 +338,13 @@ const balance = (xss: any, align: string) => {
     if (align) {
       result[key] = xss[align.toLowerCase()][key];
     } else {
-      const values = xss.map((v: any) => v[key]);
+      const values = Object.values(xss).map((x: any) => x[key]);
       const xs = values.sort((a: number, b: number) => (a - b));
       result[key] = (xs[1] + xs[2]) / 2;
     }
   });
   return result;
 
-  // mapValues(obj, (value, key) => {})
   // return _.mapValues(xss.ul, function(ignore, v) {
   //   if (align) {
   //     return xss[align.toLowerCase()][v];
@@ -426,7 +425,7 @@ const sep = (nodeSep: number, edgeSep: number, reverseSep: boolean) => {
   };
 }
 
-const width = (g: IGraph, v: string) => g.node(v).width;
+const width = (g: IGraph, v: string) => g.node(v)?.width || 0;
 
 export {
   positionX,

@@ -8,6 +8,7 @@ import { Graph as IGraph, Node } from '../types';
 
 const Graph = (graphlib as any).Graph;
 
+
 /*
  * A greedy heuristic for finding a feedback arc set for a graph. A feedback
  * arc set is a set of edges that can be removed to make a graph acyclic.

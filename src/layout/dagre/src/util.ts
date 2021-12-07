@@ -100,7 +100,9 @@ const intersectRect = (rect: any, point: any) => {
   let h = rect.height / 2;
 
   if (!dx && !dy) {
-    throw new Error("Not possible to find intersection inside of the rectangle");
+    // throw new Error("Not possible to find intersection inside of the rectangle");
+    // completely overlapped
+    return { x: 0, y: 0 };
   }
 
   let sx, sy;
@@ -207,7 +209,7 @@ const maxRank = (g: IGraph) => {
       return rank;
     }
     return -Infinity;
-  })
+  });
   return Math.max(...nodeRanks);
 }
 

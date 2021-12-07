@@ -1,21 +1,7 @@
-// "use strict";
-
-// const _ = require("../lodash");
-// const util = require("../util");
-// const positionX = require("./bk").positionX;
-
 import { Graph } from '../../types';
 import util from '../util';
-import { positionX } from './bk'
+import { alignCoordinates, balance, findSmallestWidthAlignment, findType1Conflicts, findType2Conflicts, horizontalCompaction, positionX, verticalAlignment } from './bk';
 
-const position = (g: Graph) => {
-  g = util.asNonCompoundGraph(g);
-
-  positionY(g);
-  positionX(g).forEach((x: number, v: string) => {
-    g.node(v).x = x;
-  });
-}
 
 const positionY = (g: Graph) => {
   const layering = util.buildLayerMatrix(g);
@@ -28,6 +14,47 @@ const positionY = (g: Graph) => {
       g.node(v).y = prevY + maxHeight / 2;
     });
     prevY += maxHeight + rankSep;
+  });
+}
+
+const positionX = (g: Graph) => {
+  const layering = util.buildLayerMatrix(g);
+  const conflicts = Object.assign(
+    findType1Conflicts(g, layering),
+    findType2Conflicts(g, layering));
+
+  const xss: any = {};
+  let adjustedLayering: any;
+  ["u", "d"].forEach((vert) => {
+    adjustedLayering = vert === "u" ? layering : Object.values(layering).reverse();
+    ["l", "r"].forEach((horiz) => {
+      if (horiz === "r") {
+        adjustedLayering = adjustedLayering.map((inner: any) => Object.values(inner).reverse());
+      }
+
+      const neighborFn = (vert === "u" ? g.predecessors : g.successors).bind(g);
+      const align = verticalAlignment(g, adjustedLayering, conflicts, neighborFn);
+      let xs = horizontalCompaction(g, adjustedLayering,
+        align.root, align.align, horiz === "r");
+      if (horiz === "r") {
+        Object.keys(xs).forEach(xsKey =>  xs[xsKey] = -xs[xsKey])
+      }
+      xss[vert + horiz] = xs;
+    });
+  });
+
+  const smallestWidth = findSmallestWidthAlignment(g, xss);
+  smallestWidth && alignCoordinates(xss, smallestWidth);
+  return balance(xss, g.graph().align as string);
+}
+
+const position = (g: Graph) => {
+  g = util.asNonCompoundGraph(g);
+
+  positionY(g);
+  const xs = positionX(g);
+  Object.keys(xs)?.forEach((key: string) => {
+    g.node(key).x = xs[key];
   });
 }
 
