@@ -146,32 +146,6 @@ export class FruchtermanLayout extends Base {
         count: number;
       };
     } = {};
-    if (clustering) {
-      nodes.forEach((n) => {
-        if (clusterMap[n.cluster] === undefined) {
-          const cluster = {
-            name: n.cluster,
-            cx: 0,
-            cy: 0,
-            count: 0
-          };
-          clusterMap[n.cluster] = cluster;
-        }
-        const c = clusterMap[n.cluster];
-        if (isNumber(n.x)) {
-          c.cx += n.x;
-        }
-        if (isNumber(n.y)) {
-          c.cy += n.y;
-        }
-        c.count++;
-      });
-      for (const key in clusterMap) {
-        clusterMap[key].cx /= clusterMap[key].count;
-        clusterMap[key].cy /= clusterMap[key].count;
-      }
-    }
-
     if (workerEnabled) {
       for (let i = 0; i < maxIteration; i++) {
         self.runOneStep(clusterMap);
@@ -190,7 +164,6 @@ export class FruchtermanLayout extends Base {
         }
       }, 0);
     }
-
     return {
       nodes,
       edges
@@ -214,24 +187,12 @@ export class FruchtermanLayout extends Base {
 
     // gravity for clusters
     if (clustering) {
-      const clusterGravity = self.clusterGravity || gravity;
-      nodes.forEach((n, j) => {
-        if (!isNumber(n.x) || !isNumber(n.y)) return;
-        const c = clusterMap[n.cluster];
-        const distLength = Math.sqrt(
-          (n.x - c.cx) * (n.x - c.cx) + (n.y - c.cy) * (n.y - c.cy)
-        );
-        const gravityForce = k * clusterGravity;
-        displacements[j].x -= (gravityForce * (n.x - c.cx)) / distLength;
-        displacements[j].y -= (gravityForce * (n.y - c.cy)) / distLength;
-      });
-
+      // re-compute the clustering centers
       for (const key in clusterMap) {
         clusterMap[key].cx = 0;
         clusterMap[key].cy = 0;
         clusterMap[key].count = 0;
       }
-
       nodes.forEach((n) => {
         const c = clusterMap[n.cluster];
         if (isNumber(n.x)) {
@@ -246,6 +207,19 @@ export class FruchtermanLayout extends Base {
         clusterMap[key].cx /= clusterMap[key].count;
         clusterMap[key].cy /= clusterMap[key].count;
       }
+
+      // compute the cluster gravity forces
+      const clusterGravity = self.clusterGravity || gravity;
+      nodes.forEach((n, j) => {
+        if (!isNumber(n.x) || !isNumber(n.y)) return;
+        const c = clusterMap[n.cluster];
+        const distLength = Math.sqrt(
+          (n.x - c.cx) * (n.x - c.cx) + (n.y - c.cy) * (n.y - c.cy)
+        );
+        const gravityForce = k * clusterGravity;
+        displacements[j].x -= (gravityForce * (n.x - c.cx)) / distLength;
+        displacements[j].y -= (gravityForce * (n.y - c.cy)) / distLength;
+      });
     }
 
     // gravity
