@@ -1,19 +1,3 @@
-// refer to: https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/dagre/index.d.ts
-// with small addition
-
-// Type definitions for dagre 0.7
-// Project: https://github.com/dagrejs/dagre
-// Definitions by: Qinfeng Chen <https://github.com/qinfchen>
-//                 Lisa Vallfors <https://github.com/Frankrike>
-//                 Pete Vilter <https://github.com/vilterp>
-//                 David Newell <https://github.com/rustedgrail>
-//                 Graham Lea <https://github.com/GrahamLea>
-// Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
-// TypeScript Version: 2.2
-
-
-// export as namespace dagre;
-
 export interface Graph<T = {}>  {
     constructor(opt?: { directed?: boolean | undefined; multigraph?: boolean | undefined; compound?: boolean | undefined }): any;
 
