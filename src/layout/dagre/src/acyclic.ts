@@ -14,7 +14,7 @@ import greedyFAS from './greedy-fas';
 const run = (g: Graph) => {
   const weightFn = (g: Graph): any => {
     return (e: Edge) => g.edge(e).weight;
-  }
+  };
   const fas = (g.graph().acyclicer === "greedy" ? greedyFAS(g, weightFn(g)) : dfsFAS(g));
   fas.forEach((e: Edge) => {
     const label = g.edge(e);
@@ -23,7 +23,7 @@ const run = (g: Graph) => {
     label.reversed = true;
     g.setEdge(e.w, e.v, label, `rev-${Math.random()}`);
   });
-}
+};
 
 const dfsFAS = (g: Graph) => {
   const fas: Edge[] = [];
@@ -36,7 +36,7 @@ const dfsFAS = (g: Graph) => {
     }
     visited[v] = true;
     stack[v] = true;
-    g.outEdges(v)?.forEach(e => {
+    g.outEdges(v)?.forEach((e) => {
       if (stack.hasOwnProperty(e.w)) {
         fas.push(e);
       } else {
@@ -44,14 +44,14 @@ const dfsFAS = (g: Graph) => {
       }
     });
     delete stack[v];
-  }
+  };
 
   g.nodes().forEach(dfs);
   return fas;
-}
+};
 
 const undo = (g: Graph) => {
-  g.edges().forEach(e => {
+  g.edges().forEach((e) => {
     const label = g.edge(e);
     if (label.reversed) {
       g.removeEdge(e);
@@ -62,6 +62,6 @@ const undo = (g: Graph) => {
       g.setEdge(e.w, e.v, label, forwardName);
     }
   });
-}
+};
 
 export default { run, undo };

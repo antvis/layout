@@ -37,25 +37,24 @@ const findType1Conflicts = (g: IGraph, layering: any) => {
   const conflicts = {};
 
   const visitLayer = (prevLayer: any, layer: any) => {
-    let
-      // last visited node in the previous layer that is incident on an inner
-      // segment.
-      k0 = 0,
+    // last visited node in the previous layer that is incident on an inner
+    // segment.
+    let k0 = 0;
       // Tracks the last node in this layer scanned for crossings with a type-1
       // segment.
-      scanPos = 0,
-      prevLayerLength = prevLayer.length,
-      lastNode = layer[layer?.length - 1];
+    let scanPos = 0;
+    const prevLayerLength = prevLayer.length;
+    const lastNode = layer[layer?.length - 1];
 
       layer.forEach((v: string, i: number) => {
-      const w = findOtherInnerSegmentNode(g, v),
-        k1 = w ? g.node(w).order : prevLayerLength;
+      const w = findOtherInnerSegmentNode(g, v);
+      const k1 = w ? g.node(w).order : prevLayerLength;
 
       if (w || v === lastNode) {
         layer.slice(scanPos, i +1).forEach((scanNode: any) => {
           g.predecessors(scanNode)?.forEach((u: any) => {
-            const uLabel = g.node(u),
-              uPos = uLabel.order as number;
+            const uLabel = g.node(u);
+            const uPos = uLabel.order as number;
             if ((uPos < k0 || k1 < uPos) &&
                 !(uLabel.dummy && g.node(scanNode).dummy)) {
               addConflict(conflicts, u, scanNode);
@@ -68,11 +67,11 @@ const findType1Conflicts = (g: IGraph, layering: any) => {
     });
 
     return layer;
-  }
+  };
 
   layering.reduce(visitLayer);
   return conflicts;
-}
+};
 
 const findType2Conflicts = (g: IGraph, layering: any) => {
   const conflicts = {};
@@ -95,13 +94,13 @@ const findType2Conflicts = (g: IGraph, layering: any) => {
         });
       }
     });
-  }
+  };
 
 
   const visitLayer = (north: string[], south: string[]) => {
-    let prevNorthPos = -1,
-      nextNorthPos: number,
-      southPos = 0;
+    let prevNorthPos = -1;
+    let nextNorthPos: number;
+    let southPos = 0;
 
       south.forEach((v: string, southLookahead: number) => {
       if (g.node(v).dummy === "border") {
@@ -117,40 +116,44 @@ const findType2Conflicts = (g: IGraph, layering: any) => {
     });
 
     return south;
-  }
+  };
 
   layering.reduce(visitLayer);
   return conflicts;
-}
+};
 
 const findOtherInnerSegmentNode = (g: IGraph, v: string) => {
   if (g.node(v).dummy) {
     return g.predecessors(v)?.find((u) => g.node(u).dummy);
   }
-}
+};
 
 const addConflict = (conflicts: any, v: number, w: number) => {
-  if (v > w) {
-    const tmp = v;
-    v = w;
-    w = tmp;
+  let vv = v;
+  let ww = w;
+  if (vv > ww) {
+    const tmp = vv;
+    vv = ww;
+    ww = tmp;
   }
 
-  let conflictsV = conflicts[v];
+  let conflictsV = conflicts[vv];
   if (!conflictsV) {
-    conflicts[v] = conflictsV = {};
+    conflicts[vv] = conflictsV = {};
   }
-  conflictsV[w] = true;
-}
+  conflictsV[ww] = true;
+};
 
 const hasConflict = (conflicts: any, v: number, w: number) => {
-  if (v > w) {
+  let vv = v;
+  let ww = w;
+  if (vv > ww) {
     const tmp = v;
-    v = w;
-    w = tmp;
+    vv = ww;
+    ww = tmp;
   }
-  return conflicts[v] && conflicts[v].hasOwnProperty(w);
-}
+  return conflicts[vv] && conflicts[vv].hasOwnProperty(ww);
+};
 
 /*
  * Try to align nodes into vertical "blocks" where possible. This algorithm
@@ -161,9 +164,9 @@ const hasConflict = (conflicts: any, v: number, w: number) => {
  * blocks would be split in that scenario.
  */
 const verticalAlignment = (g: IGraph, layering: any, conflicts: any, neighborFn: (v: string) => unknown) => {
-  const root: any = {},
-    align: any = {},
-    pos: any = {};
+  const root: any = {};
+  const align: any = {};
+  const pos: any = {};
 
   // We cache the position here based on the layering because the graph and
   // layering may be out of sync. The layering matrix is manipulated to
@@ -198,7 +201,7 @@ const verticalAlignment = (g: IGraph, layering: any, conflicts: any, neighborFn:
   });
 
   return { root, align };
-}
+};
 
 const horizontalCompaction = (g: IGraph, layering: any, root: string, align: string[], reverseSep: boolean) => {
   // This portion of the algorithm differs from BK due to a number of problems.
@@ -206,9 +209,9 @@ const horizontalCompaction = (g: IGraph, layering: any, root: string, align: str
   // sweeps. The first sweep places blocks with the smallest possible
   // coordinates. The second sweep removes unused space by moving blocks to the
   // greatest coordinates without violating separation.
-  const xs: any = {},
-    blockG = buildBlockGraph(g, layering, root, reverseSep),
-    borderType = reverseSep ? "borderLeft" : "borderRight";
+  const xs: any = {};
+  const blockG = buildBlockGraph(g, layering, root, reverseSep);
+  const borderType = reverseSep ? "borderLeft" : "borderRight";
 
   const iterate = (setXsFunc: (param: string) => unknown, nextNodesFunc: (param: string) => any) => {
     let stack = blockG.nodes();
@@ -225,14 +228,14 @@ const horizontalCompaction = (g: IGraph, layering: any, root: string, align: str
 
       elem = stack.pop();
     }
-  }
+  };
 
   // First pass, assign smallest coordinates
   const pass1 = (elem: string) => {
     xs[elem] = (blockG.inEdges(elem) || []).reduce((acc: number, e: any) => {
       return Math.max(acc, (xs[e.v] || 0) + blockG.edge(e));
     }, 0);
-  }
+  };
 
   // Second pass, assign greatest coordinates
   const pass2 = (elem: string) => {
@@ -244,7 +247,7 @@ const horizontalCompaction = (g: IGraph, layering: any, root: string, align: str
     if (min !== Number.POSITIVE_INFINITY && node.borderType !== borderType) {
       xs[elem] = Math.max(xs[elem], min);
     }
-  }
+  };
 
   iterate(pass1, blockG.predecessors.bind(blockG));
   iterate(pass2, blockG.successors.bind(blockG));
@@ -255,13 +258,13 @@ const horizontalCompaction = (g: IGraph, layering: any, root: string, align: str
   });
 
   return xs;
-}
+};
 
 
 const buildBlockGraph = (g: IGraph, layering: any, root: string, reverseSep: boolean) => {
-  const blockGraph = new Graph(),
-    graphLabel = g.graph(),
-    sepFn = sep(graphLabel.nodesep as number, graphLabel.edgesep as number, reverseSep as boolean);
+  const blockGraph = new Graph();
+  const graphLabel = g.graph();
+  const sepFn = sep(graphLabel.nodesep as number, graphLabel.edgesep as number, reverseSep as boolean);
 
   layering.forEach((layer: any) => {
     let u: any;
@@ -269,8 +272,8 @@ const buildBlockGraph = (g: IGraph, layering: any, root: string, reverseSep: boo
       const vRoot = root[v];
       blockGraph.setNode(vRoot);
       if (u) {
-        const uRoot = root[u],
-          prevMax = blockGraph.edge(uRoot, vRoot);
+        const uRoot = root[u];
+        const prevMax = blockGraph.edge(uRoot, vRoot);
         blockGraph.setEdge(uRoot, vRoot, Math.max(sepFn(g, v, u), prevMax || 0));
       }
       u = v;
@@ -278,7 +281,7 @@ const buildBlockGraph = (g: IGraph, layering: any, root: string, reverseSep: boo
   });
 
   return blockGraph;
-}
+};
 /*
  * Returns the alignment that has the smallest width of the given alignments.
  */
@@ -297,7 +300,7 @@ const findSmallestWidthAlignment = (g: IGraph, xss: any) => {
 
     return max - min;
   });
-}
+};
 
 /*
  * Align the coordinates of each of the layout alignments such that
@@ -307,14 +310,14 @@ const findSmallestWidthAlignment = (g: IGraph, xss: any) => {
  * coordinate of the smallest width alignment.
  */
 function alignCoordinates(xss: any, alignTo: any) {
-  const alignToVals = Object.values(alignTo) as number[],
-    alignToMin = Math.min(...alignToVals),
-    alignToMax = Math.max(...alignToVals);
+  const alignToVals = Object.values(alignTo) as number[];
+  const alignToMin = Math.min(...alignToVals);
+  const alignToMax = Math.max(...alignToVals);
 
-    ["u", "d"].forEach((vert) => {
+  ["u", "d"].forEach((vert) => {
     ["l", "r"].forEach((horiz) => {
-      const alignment = vert + horiz,
-        xs = xss[alignment];
+      const alignment = vert + horiz;
+      const xs = xss[alignment];
       let delta: number;
       if (xs === alignTo) return;
 
@@ -323,10 +326,9 @@ function alignCoordinates(xss: any, alignTo: any) {
 
       if (delta) {
         xss[alignment] = {};
-        Object.keys(xs).forEach(key => {
+        Object.keys(xs).forEach((key) => {
           xss[alignment][key] = xs[key] + delta;
-        })
-        // xss[alignment] = _.mapValues(xs, function(x) { return x + delta; });
+        });
       }
     });
   });
@@ -334,7 +336,7 @@ function alignCoordinates(xss: any, alignTo: any) {
 
 const balance = (xss: any, align: string) => {
   const result: any = {};
-  Object.keys(xss.ul).forEach(key => {
+  Object.keys(xss.ul).forEach((key) => {
     if (align) {
       result[key] = xss[align.toLowerCase()][key];
     } else {
@@ -353,7 +355,7 @@ const balance = (xss: any, align: string) => {
   //     return (xs[1] + xs[2]) / 2;
   //   }
   // });
-}
+};
 
 const positionX = (g: IGraph) => {
   const layering = util.buildLayerMatrix(g);
@@ -385,7 +387,7 @@ const positionX = (g: IGraph) => {
   const smallestWidth = findSmallestWidthAlignment(g, xss);
   alignCoordinates(xss, smallestWidth);
   return balance(xss, g.graph().align as string);
-}
+};
 
 const sep = (nodeSep: number, edgeSep: number, reverseSep: boolean) => {
   return (g: IGraph, v: string, w: string) => {
@@ -423,7 +425,7 @@ const sep = (nodeSep: number, edgeSep: number, reverseSep: boolean) => {
 
     return sum;
   };
-}
+};
 
 const width = (g: IGraph, v: string) => g.node(v)?.width || 0;
 

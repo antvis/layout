@@ -40,9 +40,9 @@ import version from './src/version';
 export default {
   graphlib,
   layout,
+  version,
   util: {
     time,
     notime
   },
-  version
 };

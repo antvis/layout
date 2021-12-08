@@ -51,8 +51,8 @@ const sortSubgraph = (g: Graph, v: string, cg: Graph, biasRight: any, usePrev?: 
     result.vs = [bl, result.vs, br].flat();
     // result.vs = _.flatten([bl, result.vs, br], true);
     if (g.predecessors(bl)?.length) {
-      const blPred = g.node(g.predecessors(bl)?.[0] || {}),
-        brPred = g.node(g.predecessors(br)?.[0] || {});
+      const blPred = g.node(g.predecessors(bl)?.[0] || {});
+      const brPred = g.node(g.predecessors(br)?.[0] || {});
       if (!result.hasOwnProperty("barycenter")) {
         result.barycenter = 0;
         result.weight = 0;
@@ -64,7 +64,7 @@ const sortSubgraph = (g: Graph, v: string, cg: Graph, biasRight: any, usePrev?: 
   }
 
   return result;
-}
+};
 
 const expandSubgraphs = (entries: any, subgraphs: any) => {
   entries.forEach((entry: any) => {
@@ -76,7 +76,7 @@ const expandSubgraphs = (entries: any, subgraphs: any) => {
     });
     entry.vs = vss.flat();
   });
-}
+};
 
 const mergeBarycenters = (target: any, other: any) => {
   if (target.barycenter !== undefined) {
@@ -88,6 +88,6 @@ const mergeBarycenters = (target: any, other: any) => {
     target.barycenter = other.barycenter;
     target.weight = other.weight;
   }
-}
+};
 
 export default sortSubgraph;

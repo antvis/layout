@@ -83,7 +83,7 @@ export class DagreLayout extends Base {
   public layoutNode = (nodeId: string) => {
     const self = this;
     const { nodes } = self;
-    const node = nodes.find(node => node.id === nodeId);
+    const node = nodes.find((node) => node.id === nodeId);
     if (node) {
       const layout = node.layout !== false;
       return layout;

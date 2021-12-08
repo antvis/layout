@@ -8,12 +8,12 @@ const sort = (entries: any, biasRight: any, usePrev: any) => {
     // NOTE: 有fixorder的也可以排
     return (entry.hasOwnProperty("fixorder") && !isNaN(entry.fixorder)) || entry.hasOwnProperty("barycenter");
   });
-  let sortable = parts.lhs,
-    unsortable = parts.rhs.sort((a: any, b: any) => -a.i - (-b.i)),
-    vs: any = [],
-    sum = 0,
-    weight = 0,
-    vsIndex = 0;
+  const sortable = parts.lhs;
+  const unsortable = parts.rhs.sort((a: any, b: any) => -a.i - (-b.i));
+  const vs: any = [];
+  let sum = 0;
+  let weight = 0;
+  let vsIndex = 0;
 
   sortable.sort(compareWithBias(!!biasRight, !!usePrev));
 
@@ -33,17 +33,18 @@ const sort = (entries: any, biasRight: any, usePrev: any) => {
     result.weight = weight;
   }
   return result;
-}
+};
 
 const consumeUnsortable = (vs: any, unsortable: any, index: number) => {
+  let iindex = index;
   let last;
-  while (unsortable.length && (last = unsortable[unsortable.length - 1]).i <= index) {
+  while (unsortable.length && (last = unsortable[unsortable.length - 1]).i <= iindex) {
     unsortable.pop();
     vs.push(last.vs);
-    index++;
+    iindex++;
   }
-  return index;
-}
+  return iindex;
+};
 
 /**
  * 配置是否考虑使用之前的布局结果
@@ -56,20 +57,22 @@ const compareWithBias = (bias: any, usePrev: any) => {
     }
     if (entryV.barycenter < entryW.barycenter) {
       return -1;
-    } else if (entryV.barycenter > entryW.barycenter) {
+    }
+    if (entryV.barycenter > entryW.barycenter) {
       return 1;
     }
     // 重心相同，考虑之前排好的顺序
     if (usePrev && entryV.order !== undefined && entryW.order !== undefined) {
       if (entryV.order < entryW.order) {
         return -1;
-      } else if (entryV.order > entryW.order) {
+      }
+      if (entryV.order > entryW.order) {
         return 1;
       }
     }
 
     return !bias ? entryV.i - entryW.i : entryW.i - entryV.i;
   };
-}
+};
 
 export default sort;

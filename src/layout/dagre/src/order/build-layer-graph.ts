@@ -37,13 +37,13 @@ const Graph = (graphlib as any).Graph;
  *       graph is not a multi-graph.
  */
 const buildLayerGraph = (g: IGraph, rank: number, relationship: string) => {
-  const root = createRootNode(g),
-    result = new Graph({ compound: true }).setGraph({ root: root })
+  const root = createRootNode(g);
+  const result = new Graph({ compound: true }).setGraph({ root })
       .setDefaultNodeLabel((v: string) => { return g.node(v); });
 
   g.nodes().forEach((v) => {
-    const node = g.node(v),
-      parent = g.parent(v);
+    const node = g.node(v);
+    const parent = g.parent(v);
 
     if (node.rank === rank || (node.minRank as number) <= rank && rank <= (node.maxRank as number)) {
       result.setNode(v);
@@ -51,9 +51,9 @@ const buildLayerGraph = (g: IGraph, rank: number, relationship: string) => {
 
       // This assumes we have only short edges!
       (g as any)[relationship](v).forEach((e: any) => {
-        const u = e.v === v ? e.w : e.v,
-          edge = result.edge(u, v),
-          weight = edge !== undefined ? edge.weight : 0;
+        const u = e.v === v ? e.w : e.v;
+        const edge = result.edge(u, v);
+        const weight = edge !== undefined ? edge.weight : 0;
         result.setEdge(u, v, { weight: g.edge(e).weight + weight });
       });
 
@@ -67,12 +67,12 @@ const buildLayerGraph = (g: IGraph, rank: number, relationship: string) => {
   });
 
   return result;
-}
+};
 
 const createRootNode = (g: IGraph) => {
   let v;
   while (g.hasNode((v = `_root${Math.random()}`)));
   return v;
-}
+};
 
 export default buildLayerGraph;

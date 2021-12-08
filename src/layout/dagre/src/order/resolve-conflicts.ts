@@ -33,11 +33,11 @@ const resolveConflicts = (entries: any, cg: Graph) => {
   const mappedEntries: any = {};
   entries.forEach((entry: any, i: number) => {
     const tmp: any = mappedEntries[entry.v] = {
+      i,
       indegree: 0,
       "in": [],
       out: [],
       vs: [entry.v],
-      i: i
     };
     if (entry.barycenter !== undefined) {
       tmp.barycenter = entry.barycenter;
@@ -57,7 +57,7 @@ const resolveConflicts = (entries: any, cg: Graph) => {
   const sourceSet = Object.values(mappedEntries).filter?.((entry: any) => !entry.indegree);
 
   return doResolveConflicts(sourceSet);
-}
+};
 
 const doResolveConflicts = (sourceSet: any) => {
   const entries = [];
@@ -71,7 +71,7 @@ const doResolveConflicts = (sourceSet: any) => {
         mergeEntries(vEntry, uEntry);
       }
     };
-  }
+  };
 
   const handleOut = (vEntry: any) => {
     return (wEntry: any) => {
@@ -80,7 +80,7 @@ const doResolveConflicts = (sourceSet: any) => {
         sourceSet.push(wEntry);
       }
     };
-  }
+  };
 
   while (sourceSet?.length) {
     const entry = sourceSet.pop();
@@ -93,7 +93,7 @@ const doResolveConflicts = (sourceSet: any) => {
   const keys = ["vs", "i", "barycenter", "weight"];
   return filtered.map((entry) => {
     const picked: any = {};
-    keys.forEach(key => {
+    keys.forEach((key) => {
       if (entry[key] === undefined) return;
       picked[key] = entry[key];
     });
@@ -101,7 +101,7 @@ const doResolveConflicts = (sourceSet: any) => {
     // return _.pick(entry, ["vs", "i", "barycenter", "weight"])
   });
 
-}
+};
 
 const mergeEntries = (target: any, source: any) => {
   let sum = 0;
@@ -122,7 +122,7 @@ const mergeEntries = (target: any, source: any) => {
   target.weight = weight;
   target.i = Math.min(source.i, target.i);
   source.merged = true;
-}
+};
 
 
 export default resolveConflicts;

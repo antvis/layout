@@ -50,7 +50,7 @@ const twoLayerCrossCount = (g: Graph, northLayer: string[], southLayer: string[]
   while (firstIndex < southLayer.length) firstIndex <<= 1;
   const treeSize = 2 * firstIndex - 1;
   firstIndex -= 1;
-  const tree = new Array(treeSize).fill(0, 0, treeSize);
+  const tree = Array(treeSize).fill(0, 0, treeSize);
 
   // Calculate the weighted crossings
   let cc = 0;
@@ -82,7 +82,7 @@ const twoLayerCrossCount = (g: Graph, northLayer: string[], southLayer: string[]
   // }));
 
   return cc;
-}
+};
 
 const crossCount = (g: Graph, layering: any) => {
   let cc = 0;
@@ -90,6 +90,6 @@ const crossCount = (g: Graph, layering: any) => {
     cc += twoLayerCrossCount(g, layering[i-1], layering[i]);
   }
   return cc;
-}
+};
 
 export default crossCount;

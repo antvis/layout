@@ -49,10 +49,10 @@ const longestPath = (g: Graph) => {
 
     label.rank = rank;
     return rank;
-  }
+  };
 
-  g.sources().forEach(source => dfs(source as any));
-}
+  g.sources().forEach((source) => dfs(source as any));
+};
 
 const longestPathWithLayer = (g: Graph) => {
   // 用longest path，找出最深的点
@@ -80,7 +80,7 @@ const longestPathWithLayer = (g: Graph) => {
     label.rank = rank;
     minRank = Math.min(label.rank, minRank);
     return label.rank;
-  }
+  };
 
   g.sources().forEach((source: any) => dfs(source));
 
@@ -101,7 +101,7 @@ const longestPathWithLayer = (g: Graph) => {
     g.outEdges(v)?.map((e) => {
       dfsForward(e.w, currRank + g.edge(e).minlen);
     });
-  }
+  };
 
   // 指定层级的，更新下游
   g.nodes().forEach((n) => {
@@ -112,38 +112,7 @@ const longestPathWithLayer = (g: Graph) => {
       (label.rank as number) -= minRank;
     }
   });
-
-  // g.sources().forEach(function (root) {
-  //   dfsForward(root, -1); // 默认的dummy root所在层的rank是-1
-  // });
-  
-  // 不这样做了，赋值的层级只影响下游
-  /*
-  // backward一遍，把父节点收紧
-  function dfsBackward(v) {
-    const label = g.node(v);
-
-    // 有指定layer，不改动
-    if (!isNaN(label.layer)) {
-      label.rank = label.layer;
-      return label.rank;
-    }
-
-    // 其它
-    const rank = _.min(_.map(g.outEdges(v), function(e) {
-      return dfsBackward(e.w) - g.edge(e).minlen;
-    }));
-
-    if (!isNaN(rank)) {
-      label.rank = rank;
-    }
-
-    return label.rank;
-  }
-
-  _.forEach(g.sources(), dfsBackward);
-  */
-}
+};
 
 /*
  * Returns the amount of slack for the given edge. The slack is defined as the
@@ -151,7 +120,7 @@ const longestPathWithLayer = (g: Graph) => {
  */
 const slack = (g: Graph, e: any) => {
   return (g.node(e.w).rank as number) - (g.node(e.v).rank as number) - (g.edge(e).minlen as number);
-}
+};
 
 export {
   longestPath,

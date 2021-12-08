@@ -53,18 +53,20 @@ const { preorder, postorder } = alg;
  * structure of the overall algorithm.
  */
 const networkSimplex = (g: IGraph) => {
+  // tslint:disable-next-line
   g = simplify(g) as any;
   initRank(g);
   const t = feasibleTree(g) as IGraph;
   initLowLimValues(t);
   initCutValues(t, g);
 
-  let e, f;
+  let e;
+  let f;
   while ((e = leaveEdge(t))) {
     f = enterEdge(t, g, e);
     exchangeEdges(t, g, e, f);
   }
-}
+};
 
 /*
  * Initializes cut values for all edges in the tree.
@@ -75,13 +77,13 @@ const initCutValues = (t: IGraph, g: IGraph) => {
   vs.forEach((v: string) => {
     assignCutValue(t, g, v);
   });
-}
+};
 
 const assignCutValue = (t: IGraph, g: IGraph, child: string) => {
   const childLab = t.node(child);
   const parent = (childLab as any).parent;
   t.edge(child, parent).cutvalue = calcCutValue(t, g, child);
-}
+};
 
 /*
  * Given the tight tree, its graph, and a child in the graph calculate and
@@ -105,12 +107,12 @@ const calcCutValue = (t: IGraph, g: IGraph, child: string) => {
   cutValue = graphEdge.weight;
 
   g.nodeEdges(child).forEach((e) => {
-    const isOutEdge = e.v === child,
-      other = isOutEdge ? e.w : e.v;
+    const isOutEdge = e.v === child;
+    const other = isOutEdge ? e.w : e.v;
 
     if (other !== parent) {
-      const pointsToHead = isOutEdge === childIsTail,
-        otherWeight = g.edge(e).weight;
+      const pointsToHead = isOutEdge === childIsTail;
+      const otherWeight = g.edge(e).weight;
 
       cutValue += pointsToHead ? otherWeight : -otherWeight;
       if (isTreeEdge(t, child, other)) {
@@ -121,28 +123,30 @@ const calcCutValue = (t: IGraph, g: IGraph, child: string) => {
   });
 
   return cutValue;
-}
+};
 
 const initLowLimValues = (tree: IGraph, root?: string) => {
   if (root !== undefined) {
+    // tslint:disable-next-line
     root = tree.nodes()[0];
   }
   dfsAssignLowLim(tree, {}, 1, root as string);
-}
+};
 
 const dfsAssignLowLim = (tree: IGraph, visited: any, nextLim: number, v: string, parent?: string) => {
   const low = nextLim;
+  let useNextLim = nextLim;
   const label = tree.node(v) as any;
 
   visited[v] = true;
   tree.neighbors(v)?.forEach((w: any) => {
     if (!visited.hasOwnProperty(w)) {
-      nextLim = dfsAssignLowLim(tree, visited, nextLim, w, v);
+      useNextLim = dfsAssignLowLim(tree, visited, useNextLim, w, v);
     }
   });
 
   label.low = low;
-  label.lim = nextLim++;
+  label.lim = useNextLim++;
   if (parent) {
     label.parent = parent;
   } else {
@@ -150,14 +154,14 @@ const dfsAssignLowLim = (tree: IGraph, visited: any, nextLim: number, v: string,
     delete label.parent;
   }
 
-  return nextLim;
-}
+  return useNextLim;
+};
 
 const leaveEdge = (tree: IGraph) => {
   return tree.edges().find((e) => {
     return tree.edge(e).cutvalue < 0;
   });
-}
+};
 
 const enterEdge = (t: IGraph, g: IGraph, edge: any) => {
   let v = edge.v;
@@ -188,8 +192,8 @@ const enterEdge = (t: IGraph, g: IGraph, edge: any) => {
            flip !== isDescendant(t, t.node(edge.w), tailLabel);
   });
 
-  return minBy(candidates, function(edge) { return slack(g, edge); });
-}
+  return minBy(candidates, (edge) => { return slack(g, edge); });
+};
 
 const exchangeEdges = (t: IGraph, g: IGraph, e: any, f: any) => {
   const v = e.v;
@@ -199,7 +203,7 @@ const exchangeEdges = (t: IGraph, g: IGraph, e: any, f: any) => {
   initLowLimValues(t);
   initCutValues(t, g);
   updateRanks(t, g);
-}
+};
 
 const updateRanks = (t: IGraph, g: IGraph) => {
   const root = t.nodes().find((v) =>{ return !g.node(v).parent; });
@@ -207,8 +211,8 @@ const updateRanks = (t: IGraph, g: IGraph) => {
   vs = vs.slice(1);
   vs.forEach((v: string) => {
     const parent = t.node(v).parent as string;
-    let edge = g.edge(v, parent),
-      flipped = false;
+    let edge = g.edge(v, parent);
+    let flipped = false;
 
     if (!edge) {
       edge = g.edge(parent, v);
@@ -217,14 +221,14 @@ const updateRanks = (t: IGraph, g: IGraph) => {
 
     g.node(v).rank = g.node(parent).rank + (flipped ? edge.minlen : -edge.minlen);
   });
-}
+};
 
 /*
  * Returns true if the edge is in the tree.
  */
 const isTreeEdge = (tree: IGraph, u: string, v: string) => {
   return tree.hasEdge(u, v);
-}
+};
 
 /*
  * Returns true if the specified node is descendant of the root node per the
@@ -232,7 +236,7 @@ const isTreeEdge = (tree: IGraph, u: string, v: string) => {
  */
 const isDescendant = (tree: IGraph, vLabel: any, rootLabel: any) => {
   return rootLabel.low <= vLabel.lim && vLabel.lim <= rootLabel.lim;
-}
+};
 
 
 // Expose some internals for testing purposes

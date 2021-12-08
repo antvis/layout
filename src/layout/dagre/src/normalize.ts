@@ -25,7 +25,7 @@ import { Graph, Edge } from '../types';
 const run = (g: Graph) => {
   g.graph().dummyChains = [];
   g.edges().forEach((edge) => normalizeEdge(g, edge));
-}
+};
 
 const normalizeEdge = (g: Graph, e: Edge) => {
   let v = e.v;
@@ -40,13 +40,15 @@ const normalizeEdge = (g: Graph, e: Edge) => {
 
   g.removeEdge(e);
 
-  let dummy, attrs: any, i;
+  let dummy;
+  let attrs: any;
+  let i;
   for (i = 0, ++vRank; vRank < wRank; ++i, ++vRank) {
     edgeLabel.points = [];
     attrs= {
+      edgeLabel,
       width: 0,
       height: 0,
-      edgeLabel: edgeLabel,
       edgeObj: e,
       rank: vRank
     };
@@ -66,7 +68,7 @@ const normalizeEdge = (g: Graph, e: Edge) => {
   }
 
   g.setEdge(v, w, { weight: edgeLabel.weight }, name);
-}
+};
 
 const undo = (g: Graph) => {
   g.graph().dummyChains?.forEach((v) => {
@@ -89,6 +91,6 @@ const undo = (g: Graph) => {
       node = g.node(currentV);
     }
   });
-}
+};
 
 export default { run, undo };

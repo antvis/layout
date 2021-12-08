@@ -51,7 +51,7 @@ const run = (g: Graph) => {
   // Save the multiplier for node layers for later removal of empty border
   // layers.
   g.graph().nodeRankFactor = nodeSep;
-}
+};
 
 const dfs = (g: Graph, root: string, nodeSep: number, weight: number, height: number, depths: any, v: string) => {
   const children = g.children(v);
@@ -81,14 +81,14 @@ const dfs = (g: Graph, root: string, nodeSep: number, weight: number, height: nu
     const minlen = childTop !== childBottom ? 1 : height - depths[v] + 1;
 
     g.setEdge(top, childTop, {
+      minlen,
       weight: thisWeight,
-      minlen: minlen,
       nestingEdge: true
     });
 
     g.setEdge(childBottom, bottom, {
+      minlen,
       weight: thisWeight,
-      minlen: minlen,
       nestingEdge: true
     });
   });
@@ -96,7 +96,7 @@ const dfs = (g: Graph, root: string, nodeSep: number, weight: number, height: nu
   if (!g.parent(v)) {
     g.setEdge(root, top, { weight: 0, minlen: height + depths[v] });
   }
-}
+};
 
 const treeDepths = (g: Graph): number[] => {
   const depths: any = {};
@@ -104,21 +104,21 @@ const treeDepths = (g: Graph): number[] => {
     const children = g.children(v);
     children?.forEach((child) => dfs(child, depth + 1));
     depths[v] = depth;
-  }
+  };
   g.children()?.forEach((v) => dfs(v, 1));
   return depths;
-}
+};
 
 const sumWeights = (g: Graph) => {
   let result = 0;
-  g.edges().forEach(e => {
+  g.edges().forEach((e) => {
     result += g.edge(e).weight;
   });
   return result;
   // return _.reduce(g.edges(), function(acc, e) {
   //   return acc + g.edge(e).weight;
   // }, 0);
-}
+};
 
 const cleanup = (g: Graph) => {
   const graphLabel = g.graph();
@@ -130,7 +130,7 @@ const cleanup = (g: Graph) => {
       g.removeEdge(e);
     }
   });
-}
+};
 
 
 

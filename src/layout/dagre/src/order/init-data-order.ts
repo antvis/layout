@@ -27,6 +27,6 @@ const initDataOrder = (g: Graph, nodeOrder: string[]) => {
     node.fixorder = layers[(node.rank as number)].length; // 设置fixorder为当层的顺序
     layers[node.rank as number].push(n);
   });
-}
+};
 
 export default initDataOrder;

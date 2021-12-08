@@ -38,27 +38,23 @@ const Graph = (graphlib as any).Graph;
  */
 const order = (g: IGraph) => {
   const maxRank = util.maxRank(g);
-  const range1 = [], range2 = [];
-  for (let i = 1; i < maxRank + 1; i ++) {
-    range1.push(i);
-  } // _.range(1, maxRank + 1)
-  for (let i = maxRank - 1; i > -1; i --) {
-    range2.push(i);
-  } // _.range(maxRank - 1, -1, -1)
-  const downLayerGraphs = buildLayerGraphs(g, range1, "inEdges"),
-    upLayerGraphs = buildLayerGraphs(g, range2, "outEdges");
+  const range1 = [];
+  const range2 = [];
+  for (let i = 1; i < maxRank + 1; i ++) range1.push(i);
+  for (let i = maxRank - 1; i > -1; i --) range2.push(i);
+  const downLayerGraphs = buildLayerGraphs(g, range1, "inEdges");
+  const upLayerGraphs = buildLayerGraphs(g, range2, "outEdges");
 
   let layering = initOrder(g);
   assignOrder(g, layering);
 
-  let bestCC = Number.POSITIVE_INFINITY,
-    best;
-
+  let bestCC = Number.POSITIVE_INFINITY;
+  let best;
   for (let i = 0, lastBest = 0; lastBest < 4; ++i, ++lastBest) {
     sweepLayerGraphs(i % 2 ? downLayerGraphs : upLayerGraphs, i % 4 >= 2);
 
     layering = util.buildLayerMatrix(g);
-    let cc = crossCount(g, layering);
+    const cc = crossCount(g, layering);
     if (cc < bestCC) {
       lastBest = 0;
       best = clone(layering);
@@ -73,7 +69,7 @@ const order = (g: IGraph) => {
     sweepLayerGraphs(i % 2 ? downLayerGraphs : upLayerGraphs, i % 4 >= 2, true);
 
     layering = util.buildLayerMatrix(g);
-    let cc = crossCount(g, layering);
+    const cc = crossCount(g, layering);
     if (cc < bestCC) {
       lastBest = 0;
       best = clone(layering);
@@ -81,13 +77,13 @@ const order = (g: IGraph) => {
     }
   }
   assignOrder(g, best);
-}
+};
 
 const buildLayerGraphs = (g: IGraph, ranks: number[], relationship: string): any => {
   return ranks.map((rank) => {
     return buildLayerGraph(g, rank, relationship);
   });
-}
+};
 
 const sweepLayerGraphs = (layerGraphs: IGraph[], biasRight: any, usePrev?: any) => {
   const cg = new Graph() as any;
@@ -99,7 +95,7 @@ const sweepLayerGraphs = (layerGraphs: IGraph[], biasRight: any, usePrev?: any) 
     });
     addSubgraphConstraints(lg, cg, sorted.vs);
   });
-}
+};
 
 const assignOrder = (g: IGraph, layering: any) => {
   layering?.forEach((layer: any) => {
@@ -107,6 +103,6 @@ const assignOrder = (g: IGraph, layering: any) => {
       g.node(v).order = i;
     });
   });
-}
+};
 
 export default order;

@@ -20,7 +20,7 @@ const initOrder = (g: Graph) => {
   const simpleNodes = g.nodes().filter((v) => {
     return !g.children(v)?.length;
   });
-  const nodeRanks = simpleNodes.map(v => (g.node(v).rank as number));
+  const nodeRanks = simpleNodes.map((v) => (g.node(v).rank as number));
   const maxRank = Math.max(...nodeRanks);
   const layers: any = [];
   for (let i = 0; i < maxRank + 1; i++) {
@@ -33,8 +33,8 @@ const initOrder = (g: Graph) => {
     visited[v] = true;
     const node = g.node(v);
     layers[node.rank as number].push(v);
-    g.successors(v)?.forEach(child => dfs(child as any));
-  }
+    g.successors(v)?.forEach((child) => dfs(child as any));
+  };
 
   const orderedVs = simpleNodes.sort((a, b) => (g.node(a).rank as number) - (g.node(b).rank as number));
   // const orderedVs = _.sortBy(simpleNodes, function(v) { return g.node(v).rank; });
@@ -58,6 +58,6 @@ const initOrder = (g: Graph) => {
   orderedVs.forEach(dfs);
 
   return layers;
-}
+};
 
 export default initOrder;

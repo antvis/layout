@@ -41,10 +41,11 @@ const parentDummyChains = (g: Graph) => {
       }
 
       g.setParent(v, pathV);
+      // tslint:disable-next-line
       v = g.successors(v)?.[0];
     }
   });
-}
+};
 
 // Find a path from v to w through the lowest common ancestor (LCA). Return the
 // full path and the LCA.
@@ -71,8 +72,8 @@ const findPath = (g: Graph, postorderNums: any, v: string, w: string) => {
     wPath.push(parent);
   }
 
-  return { path: vPath.concat(wPath.reverse()), lca: lca };
-}
+  return { lca, path: vPath.concat(wPath.reverse()) };
+};
 
 const postorder = (g: Graph) => {
   const result: any = {};
@@ -82,10 +83,10 @@ const postorder = (g: Graph) => {
     const low = lim;
     g.children(v)?.forEach(dfs);
     result[v] = { low, lim: lim++ };
-  }
+  };
   g.children()?.forEach(dfs);
 
   return result;
-}
+};
 
 export default parentDummyChains;

@@ -23,7 +23,7 @@ const addDummyNode = (g: IGraph, type: any, attrs: any, name: string) => {
   attrs.dummy = type;
   g.setNode(v, attrs);
   return v;
-}
+};
 
 /*
  * Returns a new graph with only simple edges. Handles aggregation of data
@@ -41,7 +41,7 @@ const simplify = (g: IGraph) => {
     });
   });
   return simplified;
-}
+};
 
 const asNonCompoundGraph = (g: IGraph): IGraph => {
   const simplified = new Graph({ multigraph: g.isMultigraph() }).setGraph(g.graph()) as any;
@@ -52,7 +52,7 @@ const asNonCompoundGraph = (g: IGraph): IGraph => {
   });
   g.edges().forEach((e) => simplified.setEdge(e, g.edge(e)));
   return simplified;
-}
+};
 
 const zipObject = (keys: string[], values: any) => {
   const result: any = {};
@@ -60,7 +60,7 @@ const zipObject = (keys: string[], values: any) => {
     result[key] = values[i];
   });
   return result;
-}
+};
 
 const successorWeights = (g: IGraph) => {
   const weightMap = g.nodes().map((v: string) => {
@@ -71,7 +71,7 @@ const successorWeights = (g: IGraph) => {
     return sucs;
   });
   return zipObject(g.nodes(), weightMap);
-}
+};
 
 const predecessorWeights = (g: IGraph) => {
   const weightMap = g.nodes().map((v) => {
@@ -82,7 +82,7 @@ const predecessorWeights = (g: IGraph) => {
     return preds;
   });
   return zipObject(g.nodes(), weightMap);
-}
+};
 
 /*
  * Finds where a line starting at point ({x, y}) would intersect a rectangle
@@ -105,7 +105,8 @@ const intersectRect = (rect: any, point: any) => {
     return { x: 0, y: 0 };
   }
 
-  let sx, sy;
+  let sx;
+  let sy;
   if (Math.abs(dy) * w > Math.abs(dx) * h) {
     // Intersection is top or bottom of rect.
     if (dy < 0) {
@@ -123,7 +124,7 @@ const intersectRect = (rect: any, point: any) => {
   }
 
   return { x: x + sx, y: y + sy };
-}
+};
 
 /*
  * Given a DAG with each node assigned "rank" and "order" properties, this
@@ -144,14 +145,14 @@ const buildLayerMatrix = (g: IGraph) => {
     }
   });
   return layering;
-}
+};
 
 /*
  * Adjusts the ranks for all nodes in the graph such that all nodes v have
  * rank(v) >= 0 and at least one node w has rank(w) = 0.
  */
 const normalizeRanks = (g: IGraph) => {
-  const nodeRanks = g.nodes().map(v => (g.node(v).rank as number));
+  const nodeRanks = g.nodes().map((v) => (g.node(v).rank as number));
   const min = Math.min(...nodeRanks);
   g.nodes().forEach((v) => {
     const node = g.node(v);
@@ -160,11 +161,11 @@ const normalizeRanks = (g: IGraph) => {
       node.rank -= min;
     }
   });
-}
+};
 
 const removeEmptyRanks = (g: IGraph) => {
   // Ranks may not start at 0, so we need to offset them
-  const nodeRanks = g.nodes().map(v => (g.node(v).rank as number));
+  const nodeRanks = g.nodes().map((v) => (g.node(v).rank as number));
   const offset = Math.min(...nodeRanks);
 
   const layers: any = [];
@@ -188,7 +189,7 @@ const removeEmptyRanks = (g: IGraph) => {
       });
     }
   });
-}
+};
 
 const addBorderNode = (g: IGraph, prefix: string, rank?: number, order?: number) => {
   const node: any = {
@@ -200,10 +201,10 @@ const addBorderNode = (g: IGraph, prefix: string, rank?: number, order?: number)
     node.order = order;
   }
   return addDummyNode(g, "border", node, prefix);
-}
+};
 
 const maxRank = (g: IGraph) => {
-  const nodeRanks = g.nodes().map(v => {
+  const nodeRanks = g.nodes().map((v) => {
     const rank = g.node(v).rank;
     if (rank !== undefined) {
       return rank;
@@ -211,7 +212,7 @@ const maxRank = (g: IGraph) => {
     return -Infinity;
   });
   return Math.max(...nodeRanks);
-}
+};
 
 /*
  * Partition a collection into two groups: `lhs` and `rhs`. If the supplied
@@ -228,7 +229,7 @@ const partition = (collection: any, fn: any) => {
     }
   });
   return result;
-}
+};
 
 /*
  * Returns a new const that wraps `fn` with a timer. The wrapper logs the
@@ -239,13 +240,13 @@ const time = (name: string, fn: () => unknown) => {
   try {
     return fn();
   } finally {
-    console.log(name + " time: " + (Date.now() - start) + "ms");
+    console.log(`${name} time: ${(Date.now() - start)}ms`);
   }
-}
+};
 
 const notime = (name: string, fn: () => unknown) => {
   return fn();
-}
+};
 
 
 const minBy = (array: any, func: (param: any) => number) => {
@@ -259,7 +260,7 @@ const minBy = (array: any, func: (param: any) => number) => {
     }
   });
   return minObject;
-}
+};
 
 export {
   addDummyNode,
@@ -278,7 +279,7 @@ export {
   notime,
   zipObject,
   minBy
-}
+};
 
 export default {
   addDummyNode,

@@ -15,7 +15,7 @@ const positionY = (g: Graph) => {
     });
     prevY += maxHeight + rankSep;
   });
-}
+};
 
 const positionX = (g: Graph) => {
   const layering = util.buildLayerMatrix(g);
@@ -34,10 +34,10 @@ const positionX = (g: Graph) => {
 
       const neighborFn = (vert === "u" ? g.predecessors : g.successors).bind(g);
       const align = verticalAlignment(g, adjustedLayering, conflicts, neighborFn);
-      let xs = horizontalCompaction(g, adjustedLayering,
+      const xs = horizontalCompaction(g, adjustedLayering,
         align.root, align.align, horiz === "r");
       if (horiz === "r") {
-        Object.keys(xs).forEach(xsKey =>  xs[xsKey] = -xs[xsKey])
+        Object.keys(xs).forEach((xsKey) =>  xs[xsKey] = -xs[xsKey]);
       }
       xss[vert + horiz] = xs;
     });
@@ -46,9 +46,10 @@ const positionX = (g: Graph) => {
   const smallestWidth = findSmallestWidthAlignment(g, xss);
   smallestWidth && alignCoordinates(xss, smallestWidth);
   return balance(xss, g.graph().align as string);
-}
+};
 
 const position = (g: Graph) => {
+  // tslint:disable-next-line
   g = util.asNonCompoundGraph(g);
 
   positionY(g);
@@ -56,6 +57,6 @@ const position = (g: Graph) => {
   Object.keys(xs)?.forEach((key: string) => {
     g.node(key).x = xs[key];
   });
-}
+};
 
 export default position;

@@ -27,7 +27,7 @@ const greedyFAS = (g: IGraph, weightFn: () => unknown) => {
 
   // Expand multi-edges
   return results.map((e: any) => g.outEdges(e.v, e.w)).flat();
-}
+};
 
 const doGreedyFAS = (g: IGraph, buckets: any, zeroIdx: number) => {
   let results: Node[] = [];
@@ -50,7 +50,7 @@ const doGreedyFAS = (g: IGraph, buckets: any, zeroIdx: number) => {
   }
 
   return results;
-}
+};
 
 const removeNode = (g: IGraph, buckets: any, zeroIdx: number, entry: any, collectPredecessors?: boolean) => {
   const results: any = collectPredecessors ? [] : undefined;
@@ -79,7 +79,7 @@ const removeNode = (g: IGraph, buckets: any, zeroIdx: number, entry: any, collec
   g.removeNode(entry.v);
 
   return results;
-}
+};
 
 const buildState = (g: IGraph, weightFn?: (param: any) => unknown) => {
   const fasGraph = new Graph();
@@ -87,7 +87,7 @@ const buildState = (g: IGraph, weightFn?: (param: any) => unknown) => {
   let maxOut = 0;
 
   g.nodes().forEach((v) => {
-    fasGraph.setNode(v, { v: v, "in": 0, out: 0 });
+    fasGraph.setNode(v, { v, "in": 0, out: 0 });
   });
 
   // Aggregate weights on nodes, but also sum the weights across multi-edges
@@ -112,8 +112,8 @@ const buildState = (g: IGraph, weightFn?: (param: any) => unknown) => {
     assignBucket(buckets, zeroIdx, fasGraph.node(v));
   });
 
-  return { graph: fasGraph, buckets: buckets, zeroIdx: zeroIdx };
-}
+  return { buckets, zeroIdx, graph: fasGraph };
+};
 
 const assignBucket = (buckets: any, zeroIdx: number, entry: any) => {
   if (!entry.out) {
@@ -123,7 +123,7 @@ const assignBucket = (buckets: any, zeroIdx: number, entry: any) => {
   } else {
     buckets[entry.out - entry["in"] + zeroIdx].enqueue(entry);
   }
-}
+};
 
 
 export default greedyFAS;

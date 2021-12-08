@@ -4,7 +4,7 @@
 
 import util from './util';
 import graphlib from './graphlib';
-import { Graph as IGraph } from '../types'
+import { Graph as IGraph } from '../types';
 
 const Graph = (graphlib as any).Graph;
 
@@ -16,15 +16,15 @@ const debugOrdering = (g: IGraph) => {
 
   g.nodes().forEach((v: string) => {
     h.setNode(v, { label: v });
-    h.setParent(v, "layer" + g.node(v).rank);
+    h.setParent(v, `layer${g.node(v).rank}`);
   });
 
-  g.edges().forEach(e => {
+  g.edges().forEach((e) => {
     h.setEdge(e.v, e.w, {}, e.name);
   });
 
   layerMatrix.forEach((layer: any, i: number) => {
-    const layerV = "layer" + i;
+    const layerV = `layer${i}`;
     h.setNode(layerV, { rank: "same" });
     layer.reduce((u: string, v: string) => {
       h.setEdge(u, v, { style: "invis" });
@@ -33,6 +33,6 @@ const debugOrdering = (g: IGraph) => {
   });
 
   return h;
-}
+};
 
 export default debugOrdering;

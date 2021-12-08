@@ -10,7 +10,7 @@ const addBorderSegments = (g: Graph) => {
     const children = g.children(v);
     const node: any = g.node(v);
     if (children?.length) {
-      children.forEach(child => dfs(child));
+      children.forEach((child) => dfs(child));
     }
 
     if (node.hasOwnProperty('minRank')) {
@@ -23,13 +23,13 @@ const addBorderSegments = (g: Graph) => {
         addBorderNode(g, "borderRight", "_br", v, node, rank);
       }
     }
-  }
+  };
 
-  g.children()?.forEach(child => dfs(child));
-}
+  g.children()?.forEach((child) => dfs(child));
+};
 
 const addBorderNode = (g: Graph, prop: string, prefix: string, sg: string, sgNode: any, rank: number) => {
-  const label = { width: 0, height: 0, rank: rank, borderType: prop };
+  const label = { rank, width: 0, height: 0, borderType: prop };
   const prev = sgNode[prop][rank - 1];
   const curr = util.addDummyNode(g, "border", label, prefix);
   sgNode[prop][rank] = curr;
@@ -37,6 +37,6 @@ const addBorderNode = (g: Graph, prop: string, prefix: string, sg: string, sgNod
   if (prev) {
     g.setEdge(prev, curr, { weight: 1 });
   }
-}
+};
 
 export default addBorderSegments;

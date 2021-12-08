@@ -22,29 +22,31 @@ export interface Graph<T = {}>  {
 
     children(parentName?: string): string[] | undefined;
     hasNode(name: string): boolean;
-    neighbors(name: string): Array<Node<T>> | undefined;
+    neighbors(name: string): Node<T>[] | undefined;
     node(id: string | Label): Node<T>;
     nodeCount(): number;
     nodes(): string[];
     parent(childName: string): string | undefined;
-    predecessors(name: string): Array<Node<T>> | undefined;
+    predecessors(name: string): Node<T>[] | undefined;
     removeNode(name: string): Graph<T>;
     filterNodes(callback: (nodeId: string) => boolean): Graph<T>;
     setDefaultNodeLabel(callback: string | ((nodeId: string) => string | Label)): Graph<T>;
     setNode(name: string, label: string | Label): Graph<T>;
     setParent(childName: string, parentName: string): void;
-    sinks(): Array<Node<T>>;
-    sources(): Array<Node<T>>;
-    successors(name: string): Array<Node<T>> | undefined;
+    sinks(): Node<T>[];
+    sources(): Node<T>[];
+    successors(name: string): Node<T>[] | undefined;
     nodeEdges(nodeName: string): Edge[];
 
     _nodes?: Node[];
 }
 
+// tslint:disable-next-line
 export interface json {
     read(graph: any): Graph;
     write(graph: Graph): any;
 }
+// tslint:disable-next-line
 export interface alg {
     components(graph: Graph): string[][];
     dijkstra(graph: Graph, source: string, weightFn?: WeightFn, edgeFn?: EdgeFn): any;
@@ -58,66 +60,6 @@ export interface alg {
     tarjam(graph: Graph): string[][];
     topsort(graph: Graph): string[];
 }
-
-// export namespace graphlib {
-//     class Graph<T = {}> {
-//         constructor(opt?: { directed?: boolean | undefined; multigraph?: boolean | undefined; compound?: boolean | undefined });
-
-//         graph(): GraphLabel;
-//         isDirected(): boolean;
-//         isMultiGraph(): boolean;
-//         setGraph(label: GraphLabel): Graph<T>;
-
-//         edge(edgeObj: Edge): GraphEdge;
-//         edge(outNodeName: string, inNodeName: string, name?: string): GraphEdge;
-//         edgeCount(): number;
-//         edges(): Edge[];
-//         hasEdge(edgeObj: Edge): boolean;
-//         hasEdge(outNodeName: string, inNodeName: string, name?: string): boolean;
-//         inEdges(inNodeName: string, outNodeName?: string): Edge[] | undefined;
-//         outEdges(outNodeName: string, inNodeName?: string): Edge[] | undefined;
-//         removeEdge(outNodeName: string, inNodeName: string): Graph<T>;
-//         setDefaultEdgeLabel(callback: string | ((v: string, w: string, name?: string) => string | Label)): Graph<T>;
-//         setEdge(params: Edge, value?: string | { [key: string]: any }): Graph<T>;
-//         setEdge(sourceId: string, targetId: string, value?: string | Label, name?: string): Graph<T>;
-
-//         children(parentName: string): string | undefined;
-//         hasNode(name: string): boolean;
-//         neighbors(name: string): Array<Node<T>> | undefined;
-//         node(id: string | Label): Node<T>;
-//         nodeCount(): number;
-//         nodes(): string[];
-//         parent(childName: string): string | undefined;
-//         predecessors(name: string): Array<Node<T>> | undefined;
-//         removeNode(name: string): Graph<T>;
-//         filterNodes(callback: (nodeId: string) => boolean): Graph<T>;
-//         setDefaultNodeLabel(callback: string | ((nodeId: string) => string | Label)): Graph<T>;
-//         setNode(name: string, label: string | Label): Graph<T>;
-//         setParent(childName: string, parentName: string): void;
-//         sinks(): Array<Node<T>>;
-//         sources(): Array<Node<T>>;
-//         successors(name: string): Array<Node<T>> | undefined;
-//     }
-
-//     namespace json {
-//         function read(graph: any): Graph;
-//         function write(graph: Graph): any;
-//     }
-
-//     namespace alg {
-//         function components(graph: Graph): string[][];
-//         function dijkstra(graph: Graph, source: string, weightFn?: WeightFn, edgeFn?: EdgeFn): any;
-//         function dijkstraAll(graph: Graph, weightFn?: WeightFn, edgeFn?: EdgeFn): any;
-//         function findCycles(graph: Graph): string[][];
-//         function floydWarchall(graph: Graph, weightFn?: WeightFn, edgeFn?: EdgeFn): any;
-//         function isAcyclic(graph: Graph): boolean;
-//         function postorder(graph: Graph, nodeNames: string | string[]): string[];
-//         function preorder(graph: Graph, nodeNames: string | string[]): string[];
-//         function prim<T>(graph: Graph<T>, weightFn?: WeightFn): Graph<T>;
-//         function tarjam(graph: Graph): string[][];
-//         function topsort(graph: Graph): string[];
-//     }
-// }
 
 export interface Label {
     [key: string]: any;
@@ -177,7 +119,7 @@ export interface Edge {
 }
 
 export interface GraphEdge {
-    points: Array<{ x: number; y: number }>;
+    points: { x: number; y: number }[];
     [key: string]: any;
 }
 

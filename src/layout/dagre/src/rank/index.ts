@@ -37,7 +37,7 @@ const rank = (g: IGraph) => {
   // default: networkSimplexRanker(g);
   default: tightTreeRanker(g);
   }
-}
+};
 
 // A fast and simple ranker, but results are far from optimal.
 const longestPathRanker = longestPath;
@@ -45,10 +45,10 @@ const longestPathRanker = longestPath;
 const tightTreeRanker = (g: IGraph) => {
   longestPathWithLayer(g);
   feasibleTree(g);
-}
+};
 
 const networkSimplexRanker = (g: IGraph) => {
   networkSimplex(g);
-}
+};
 
 export default rank;

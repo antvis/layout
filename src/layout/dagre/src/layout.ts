@@ -52,13 +52,13 @@ const layout = (g: IGraph, opts: any) => {
       if (e.message === "Not possible to find intersection inside of the rectangle") {
         console.error('The following error may be caused by improper layer setting, please make sure your manual layer setting does not violate the graph\'s structure:\n', e);
         return;
-      } else {
+      } 
         throw(e);
-      }
+      
     }
     time("  updateInputGraph", () => { updateInputGraph(g, layoutGraph); });
   });
-}
+};
 
 const runLayout = (g: IGraph, time: any, opts: any) => {
   time("    removeSelfEdges",        () => { removeSelfEdges(g); });
@@ -90,7 +90,7 @@ const runLayout = (g: IGraph, time: any, opts: any) => {
   time("    assignNodeIntersects",   () => { assignNodeIntersects(g); });
   time("    reversePoints",          () => { reversePointsForReversedEdges(g); });
   time("    acyclic.undo",           () => { acyclic.undo(g); });
-}
+};
 
 /**
  * 继承上一个布局中的order，防止翻转
@@ -107,7 +107,7 @@ const inheritOrder = (currG: IGraph, prevG: IGraph) => {
       delete node.fixorder;
     }
   });
-}
+};
 
 /*
  * Copies final layout information from the layout graph back to the input
@@ -146,7 +146,7 @@ const updateInputGraph = (inputGraph: IGraph, layoutGraph: IGraph) => {
 
   inputGraph.graph().width = layoutGraph.graph().width;
   inputGraph.graph().height = layoutGraph.graph().height;
-}
+};
 
 const graphNumAttrs = ["nodesep", "edgesep", "ranksep", "marginx", "marginy"];
 const graphDefaults = { ranksep: 50, edgesep: 20, nodesep: 50, rankdir: "tb" };
@@ -171,7 +171,7 @@ const buildLayoutGraph = (inputGraph: IGraph) => {
   const graph = canonicalize(inputGraph.graph());
 
   const pickedProperties: any = {};
-  graphAttrs.forEach(key => {
+  graphAttrs.forEach((key) => {
     if (graph[key] !== undefined) pickedProperties[key] = graph[key];
   });
 
@@ -184,11 +184,11 @@ const buildLayoutGraph = (inputGraph: IGraph) => {
   inputGraph.nodes().forEach((v) => {
     const node = canonicalize(inputGraph.node(v));
     const defaultAttrs = selectNumberAttrs(node, nodeNumAttrs);
-    Object.keys(nodeDefaults).forEach(key => {
+    Object.keys(nodeDefaults).forEach((key) => {
       if (defaultAttrs[key] === undefined) {
         defaultAttrs[key] = (nodeDefaults as any)[key];
       }
-    })
+    });
     g.setNode(v, defaultAttrs);
     g.setParent(v, inputGraph.parent(v));
   });
@@ -197,7 +197,7 @@ const buildLayoutGraph = (inputGraph: IGraph) => {
     const edge = canonicalize(inputGraph.edge(e));
     
     const pickedProperties: any = {};
-    edgeAttrs.forEach(key => {
+    edgeAttrs.forEach((key) => {
       if (edge[key] !== undefined) pickedProperties[key] = edge[key];
     });
 
@@ -208,7 +208,7 @@ const buildLayoutGraph = (inputGraph: IGraph) => {
   });
 
   return g;
-}
+};
 
 /*
  * This idea comes from the Gansner paper: to account for edge labels in our
@@ -240,7 +240,7 @@ const makeSpaceForEdgeLabels = (g: IGraph) => {
       }
     }
   });
-}
+};
 
 /*
  * Creates temporary dummy nodes that capture the rank in which each edge's
@@ -254,11 +254,11 @@ const injectEdgeLabelProxies = (g: IGraph) => {
     if (edge.width && edge.height) {
       const v = g.node(e.v);
       const w = g.node(e.w);
-      const label = { rank: ((w.rank as number) - (v.rank as number)) / 2 + (v.rank as number), e: e };
+      const label = { e, rank: ((w.rank as number) - (v.rank as number)) / 2 + (v.rank as number) };
       util.addDummyNode(g, "edge-proxy", label, "_ep");
     }
   });
-}
+};
 
 const assignRankMinMax = (g: IGraph) => {
   let maxRank = 0;
@@ -271,7 +271,7 @@ const assignRankMinMax = (g: IGraph) => {
     }
   });
   g.graph().maxRank = maxRank;
-}
+};
 
 const removeEdgeLabelProxies = (g: IGraph) => {
   g.nodes().forEach((v) => {
@@ -281,7 +281,7 @@ const removeEdgeLabelProxies = (g: IGraph) => {
       g.removeNode(v);
     }
   });
-}
+};
 
 const translateGraph = (g: IGraph) => {
   let minX = Number.POSITIVE_INFINITY;
@@ -301,7 +301,7 @@ const translateGraph = (g: IGraph) => {
     maxX = Math.max(maxX, x + w / 2);
     minY = Math.min(minY, y - h / 2);
     maxY = Math.max(maxY, y + h / 2);
-  }
+  };
 
   g.nodes().forEach((v) => { getExtremes(g.node(v)); });
   g.edges().forEach((e) => {
@@ -332,14 +332,15 @@ const translateGraph = (g: IGraph) => {
 
   graphLabel.width = maxX - minX + marginX;
   graphLabel.height = maxY - minY + marginY;
-}
+};
 
 const assignNodeIntersects = (g: IGraph) => {
   g.edges().forEach((e) => {
     const edge = g.edge(e);
     const nodeV = g.node(e.v);
     const nodeW = g.node(e.w);
-    let p1, p2;
+    let p1;
+    let p2;
     if (!edge.points) {
       edge.points = [];
       p1 = nodeW;
@@ -351,7 +352,7 @@ const assignNodeIntersects = (g: IGraph) => {
     edge.points.unshift(util.intersectRect(nodeV, p1));
     edge.points.push(util.intersectRect(nodeW, p2));
   });
-}
+};
 
 const fixupEdgeLabelCoords = (g: IGraph) => {
   g.edges().forEach((e) => {
@@ -366,7 +367,7 @@ const fixupEdgeLabelCoords = (g: IGraph) => {
       }
     }
   });
-}
+};
 
 const reversePointsForReversedEdges = (g: IGraph) => {
   g.edges().forEach((e) => {
@@ -375,7 +376,7 @@ const reversePointsForReversedEdges = (g: IGraph) => {
       edge.points.reverse();
     }
   });
-}
+};
 
 const removeBorderNodes = (g: IGraph) => {
   g.nodes().forEach((v) => {
@@ -398,7 +399,7 @@ const removeBorderNodes = (g: IGraph) => {
       g.removeNode(v);
     }
   });
-}
+};
 
 const removeSelfEdges = (g: IGraph) => {
   g.edges().forEach((e) => {
@@ -411,7 +412,7 @@ const removeSelfEdges = (g: IGraph) => {
       g.removeEdge(e);
     }
   });
-}
+};
 
 const insertSelfEdges = (g: IGraph) => {
   const layers = util.buildLayerMatrix(g);
@@ -433,7 +434,7 @@ const insertSelfEdges = (g: IGraph) => {
       delete node.selfEdges;
     });
   });
-}
+};
 
 const positionSelfEdges = (g: IGraph) => {
   g.nodes().forEach((v) => {
@@ -449,7 +450,7 @@ const positionSelfEdges = (g: IGraph) => {
       node.label.points = [
         { x: x + 2 * dx / 3, y: y - dy },
         { x: x + 5 * dx / 6, y: y - dy },
-        { x: x +     dx    , y: y },
+        { y, x: x + dx },
         { x: x + 5 * dx / 6, y: y + dy },
         { x: x + 2 * dx / 3, y: y + dy }
       ];
@@ -457,16 +458,16 @@ const positionSelfEdges = (g: IGraph) => {
       node.label.y = node.y;
     }
   });
-}
+};
 
 const selectNumberAttrs = (obj: any, attrs: any) => {
   const pickedProperties: any = {};
   attrs.forEach((key: string) => {
     if (obj[key] === undefined) return;
     pickedProperties[key] = (+obj[key]);
-  })
+  });
   return pickedProperties;
-}
+};
 
 const canonicalize = (attrs: any) => {
   const newAttrs: any = {};
@@ -475,6 +476,6 @@ const canonicalize = (attrs: any) => {
     newAttrs[k.toLowerCase()] = v;
   });
   return newAttrs;
-}
+};
 
 export default layout;
