@@ -11,12 +11,12 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 12.x
-      - name: yarn install
+      - name: npm install
         run: |
-          yarn install
+          npm install
       - name: lint
         run: |
-          yarn run lint
+          npm run lint
       - name: build
         run: |
-          yarn run build
+          npm run build
