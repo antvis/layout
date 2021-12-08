@@ -1,13 +1,8 @@
-// "use strict";
-
-// const _ = require("../lodash");
-// const Graph = require("../graphlib").Graph;
-// const util = require("../util");
-
 import graphlib from '../graphlib';
 import util from '../util';
-import { Graph as IGraph } from '../../types';
+import { graphlib as IGraphLib } from '../../graphlib';
 
+type IGraph = IGraphLib.Graph;
 const Graph = (graphlib as any).Graph;
 
 /*
@@ -253,6 +248,7 @@ const horizontalCompaction = (g: IGraph, layering: any, root: string, align: str
   iterate(pass2, blockG.successors.bind(blockG));
 
   // Assign x coordinates to all nodes
+  // @ts-ignore
   Object.values(align).forEach((v: any) => {
     xs[v] = xs[root[v]];
   });
@@ -286,6 +282,7 @@ const buildBlockGraph = (g: IGraph, layering: any, root: string, reverseSep: boo
  * Returns the alignment that has the smallest width of the given alignments.
  */
 const findSmallestWidthAlignment = (g: IGraph, xss: any) => {
+  // @ts-ignore
   return util.minBy(Object.values(xss), (xs) => {
     let max = Number.NEGATIVE_INFINITY;
     let min = Number.POSITIVE_INFINITY;
@@ -310,6 +307,7 @@ const findSmallestWidthAlignment = (g: IGraph, xss: any) => {
  * coordinate of the smallest width alignment.
  */
 function alignCoordinates(xss: any, alignTo: any) {
+  // @ts-ignore
   const alignToVals = Object.values(alignTo) as number[];
   const alignToMin = Math.min(...alignToVals);
   const alignToMax = Math.max(...alignToVals);
@@ -340,6 +338,7 @@ const balance = (xss: any, align: string) => {
     if (align) {
       result[key] = xss[align.toLowerCase()][key];
     } else {
+      // @ts-ignore
       const values = Object.values(xss).map((x: any) => x[key]);
       const xs = values.sort((a: number, b: number) => (a - b));
       result[key] = (xs[1] + xs[2]) / 2;
@@ -366,9 +365,11 @@ const positionX = (g: IGraph) => {
   const xss: any = {};
   let adjustedLayering: any;
   ["u", "d"].forEach((vert) => {
+    // @ts-ignore
     adjustedLayering = vert === "u" ? layering : Object.values(layering).reverse();
     ["l", "r"].forEach((horiz) => {
       if (horiz === "r") {
+        // @ts-ignore
         adjustedLayering = adjustedLayering.map((inner: any) => Object.values(inner).reverse());
       }
 
@@ -377,8 +378,8 @@ const positionX = (g: IGraph) => {
       let xs = horizontalCompaction(g, adjustedLayering,
         align.root, align.align, horiz === "r");
       if (horiz === "r") {
+        // @ts-ignore
         xs = Object.values(xs).map((x: number) => -x);
-        // xs = _.mapValues(xs, function(x) { return -x; });
       }
       xss[vert + horiz] = xs;
     });

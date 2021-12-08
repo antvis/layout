@@ -1,19 +1,10 @@
-// "use strict";
-
-// const _ = require("../lodash");
-// const feasibleTree = require("./feasible-tree").feasibleTree;
-// const slack = require("./util").slack;
-// const initRank = require("./util").longestPath;
-// const preorder = require("../graphlib").alg.preorder;
-// const postorder = require("../graphlib").alg.postorder;
-// const simplify = require("../util").simplify;
-
-import { Graph as IGraph } from '../../types';
+import { graphlib as IGraphLib } from '../../graphlib';
 import { feasibleTree } from './feasible-tree';
 import { slack, longestPath as initRank } from './util';
 import { minBy, simplify } from '../util';
 import graphlib from '../graphlib';
 
+type IGraph = IGraphLib.Graph;
 const alg = graphlib.alg;
 
 const { preorder, postorder } = alg;

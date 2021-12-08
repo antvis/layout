@@ -1,6 +1,3 @@
-// const _ = require("../lodash");
-// const util = require("../util");
-
 import util from '../util';
 
 const sort = (entries: any, biasRight: any, usePrev: any) => {

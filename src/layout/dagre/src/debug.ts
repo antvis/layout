@@ -1,11 +1,8 @@
-// var _ = require("./lodash");
-// var util = require("./util");
-// var Graph = require("./graphlib").Graph;
-
 import util from './util';
 import graphlib from './graphlib';
-import { Graph as IGraph } from '../types';
+import { graphlib as IGraphType } from '../graphlib';
 
+type IGraph = IGraphType.Graph;
 const Graph = (graphlib as any).Graph;
 
 /* istanbul ignore next */

@@ -137,7 +137,6 @@ export class FruchtermanLayout extends Base {
     const nodes = self.nodes;
     if (!nodes) return;
     const { edges, maxIteration, workerEnabled } = self;
-    const clustering = self.clustering;
     const clusterMap: {
       [key: string]: {
         name: string | number;

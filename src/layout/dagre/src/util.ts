@@ -1,14 +1,8 @@
-/* eslint "no-console": off */
-
-// "use strict";
-
-// const _ = require("./lodash");
-// const Graph = require("./graphlib").Graph;
-
 import { isNumber } from '../../../util';
-import { Graph as IGraph } from '../types';
+import { graphlib as IGraphLib } from '../graphlib';
 import graphlib from './graphlib';
 
+type IGraph = IGraphLib.Graph;
 const Graph = (graphlib as any).Graph;
 
 /*

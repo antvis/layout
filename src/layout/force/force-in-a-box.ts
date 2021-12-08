@@ -176,9 +176,10 @@ export default function forceInABox() {
       dClusterLinks[key] = count;
     });
 
+    // @ts-ignore
     const entries = Object.entries(dClusterLinks);
 
-    entries.forEach(([key, count]) => {
+    entries.forEach(([key, count]: any) => {
       const source = key.split('~')[0];
       const target = key.split('~')[1];
       if (source !== undefined && target !== undefined) {

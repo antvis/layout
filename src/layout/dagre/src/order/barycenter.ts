@@ -1,6 +1,6 @@
-// const _ = require("../lodash");
+import { graphlib as IGraphLib } from "../../graphlib";
 
-import { Graph } from "../../types";
+type Graph = IGraphLib.Graph;
 
 const barycenter = (g: Graph, movable: string[]) => {
   return movable.map((v) => {

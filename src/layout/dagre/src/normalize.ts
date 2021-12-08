@@ -1,10 +1,7 @@
-// "use strict";
-
-// const _ = require("./lodash");
-// const util = require("./util");
-
 import util from './util';
-import { Graph, Edge } from '../types';
+import { graphlib, Edge } from '../graphlib';
+
+type Graph = graphlib.Graph;
 
 /*
  * Breaks any long edges in the graph into short segments that span 1 layer

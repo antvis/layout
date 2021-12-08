@@ -1,10 +1,8 @@
-// const _ = require("../lodash");
-import { Graph as IGraph } from '../../types';
+import { graphlib as IGraphLib } from '../../graphlib';
 import graphlib from '../graphlib';
-const Graph = (graphlib as any).Graph;
-// const Graph = require("../graphlib").Graph;
 
-// module.exports = buildLayerGraph;
+type IGraph = IGraphLib.Graph;
+const Graph = (graphlib as any).Graph;
 
 /*
  * Constructs a graph that can be used to sort a layer of nodes. The graph will

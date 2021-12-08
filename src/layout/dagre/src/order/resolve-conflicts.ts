@@ -1,8 +1,6 @@
-// "use strict";
+import { graphlib as IGraphLib } from "../../graphlib";
 
-import { Graph } from "../../types";
-
-// const _ = require("../lodash");
+type Graph = IGraphLib.Graph;
 
 /*
  * Given a list of entries of the form {v, barycenter, weight} and a
@@ -54,6 +52,7 @@ const resolveConflicts = (entries: any, cg: Graph) => {
     }
   });
 
+  // @ts-ignore
   const sourceSet = Object.values(mappedEntries).filter?.((entry: any) => !entry.indegree);
 
   return doResolveConflicts(sourceSet);

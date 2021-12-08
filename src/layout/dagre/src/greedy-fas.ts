@@ -1,11 +1,8 @@
-// var _ = require("./lodash");
-// var Graph = require("./graphlib").Graph;
-// var List = require("./data/list");
-
 import graphlib from './graphlib';
 import List from './data/list';
-import { Graph as IGraph, Node } from '../types';
+import { graphlib as IGraphLib, Node } from '../graphlib';
 
+type IGraph = IGraphLib.Graph;
 const Graph = (graphlib as any).Graph;
 
 
@@ -26,7 +23,8 @@ const greedyFAS = (g: IGraph, weightFn: () => unknown) => {
   const results = doGreedyFAS(state.graph as any, state.buckets, state.zeroIdx);
 
   // Expand multi-edges
-  return results.map((e: any) => g.outEdges(e.v, e.w)).flat();
+  // @ts-ignore
+  return results.map((e: any) => g.outEdges(e.v, e.w))?.flat();
 };
 
 const doGreedyFAS = (g: IGraph, buckets: any, zeroIdx: number) => {

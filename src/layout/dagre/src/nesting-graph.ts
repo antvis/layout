@@ -1,9 +1,7 @@
-// const _ = require("./lodash");
-// const util = require("./util");
-
-import { Graph } from '../types';
+import { graphlib } from '../graphlib';
 import util from './util';
 
+type Graph = graphlib.Graph;
 
 /*
  * A nesting graph creates dummy nodes for the tops and bottoms of subgraphs,
@@ -32,6 +30,7 @@ const run = (g: Graph) => {
   const root = util.addDummyNode(g, "root", {}, "_root");
   const depths = treeDepths(g);
   
+  // @ts-ignore
   const height = Math.max(...Object.values(depths)) - 1; // Note: depths is an Object not an array
   const nodeSep = 2 * height + 1;
 

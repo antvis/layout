@@ -1,15 +1,7 @@
-import { Graph, Edge } from '../types';
+import { graphlib, Edge } from '../graphlib';
 import greedyFAS from './greedy-fas';
 
-// "use strict";
-
-// var _ = require("./lodash");
-// var greedyFAS = require("./greedy-fas");
-
-// module.exports = {
-//   run: run,
-//   undo: undo
-// };
+type Graph = graphlib.Graph;
 
 const run = (g: Graph) => {
   const weightFn = (g: Graph): any => {

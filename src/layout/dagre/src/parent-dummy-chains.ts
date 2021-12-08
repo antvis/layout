@@ -1,8 +1,6 @@
-// const _ = require("./lodash");
+import { graphlib } from '../graphlib';
 
-// module.exports = parentDummyChains;
-
-import { Graph } from '../types';
+type Graph = graphlib.Graph;
 
 const parentDummyChains = (g: Graph) => {
   const postorderNums = postorder(g);

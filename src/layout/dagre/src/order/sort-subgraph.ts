@@ -1,17 +1,13 @@
-// const _ = require("../lodash");
-// const barycenter = require("./barycenter");
-// const resolveConflicts = require("./resolve-conflicts");
-// const sort = require("./sort");
-
-import { Graph } from '../../types';
+import { graphlib as IGraphLib } from '../../graphlib';
 import barycenter from './barycenter';
 import resolveConflicts from './resolve-conflicts';
 import sort from './sort';
 
+type Graph = IGraphLib.Graph;
+
 const sortSubgraph = (g: Graph, v: string, cg: Graph, biasRight: any, usePrev?: any) => {
   let movable = g.children(v);
   // fixorder的点不参与排序（这个方案不合适，只排了新增节点，和原来的分离）
-  // const movable = _.filter(g.children(v), function(v) { return g.node(v).fixorder === undefined; });
   const node = g.node(v);
   const bl = node ? node.borderLeft : undefined;
   const br = node ? node.borderRight: undefined;
@@ -48,6 +44,7 @@ const sortSubgraph = (g: Graph, v: string, cg: Graph, biasRight: any, usePrev?: 
   const result = sort(entries, biasRight, usePrev);
 
   if (bl) {
+    // @ts-ignore
     result.vs = [bl, result.vs, br].flat();
     // result.vs = _.flatten([bl, result.vs, br], true);
     if (g.predecessors(bl)?.length) {

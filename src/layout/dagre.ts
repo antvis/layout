@@ -5,9 +5,11 @@
 
 import { Edge, OutNode, DagreLayoutOptions } from "./types";
 import dagre from "./dagre/index";
-import { Graph as DagreGraph } from './dagre/types';
+import { graphlib as IGraphLib } from './dagre/graphlib';
 import { isArray, isNumber, isObject, getEdgeTerminal } from "../util";
 import { Base } from "./base";
+
+type DagreGraph = IGraphLib.Graph;
 
 /**
  * 层次布局

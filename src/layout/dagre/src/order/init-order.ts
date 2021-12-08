@@ -1,9 +1,6 @@
-// "use strict";
+import { graphlib as IGraphLib } from "../../graphlib";
 
-import { Graph } from "../../types";
-
-// const _ = require("../lodash");
-
+type Graph = IGraphLib.Graph;
 /*
  * Assigns an initial order value for each node by performing a DFS search
  * starting from nodes in the first rank. Nodes are assigned an order in their

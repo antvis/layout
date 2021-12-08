@@ -1,10 +1,6 @@
-// "use strict";
+import { graphlib as IGraphLib } from "../../graphlib";
 
-import { Graph } from "../../types";
-
-// const _ = require("../lodash");
-
-
+type Graph = IGraphLib.Graph;
 
 /**
  * 按照数据中的结果设置fixorder
@@ -19,7 +15,6 @@ const initDataOrder = (g: Graph, nodeOrder: string[]) => {
   for (let i = 0; i < maxRank + 1; i ++) {
     layers.push([]);
   }
-  // const layers = _.map(_.range(maxRank + 1), function() { return []; });
   nodeOrder.forEach((n) => {
     const node = g.node(n);
     // 只考虑原有节点，dummy节点需要按照后续算法排出

@@ -1,21 +1,3 @@
-// "use strict";
-
-// const _ = require("./lodash");
-// const acyclic = require("./acyclic");
-// const normalize = require("./normalize");
-// const rank = require("./rank");
-// const normalizeRanks = require("./util").normalizeRanks;
-// const parentDummyChains = require("./parent-dummy-chains");
-// const removeEmptyRanks = require("./util").removeEmptyRanks;
-// const nestingGraph = require("./nesting-graph");
-// const addBorderSegments = require("./add-border-segments");
-// const coordinateSystem = require("./coordinate-system");
-// const order = require("./order");
-// const position = require("./position");
-// const util = require("./util");
-// const Graph = require("./graphlib").Graph;
-// const initDataOrder = require("./order/init-data-order");
-
 import acyclic from './acyclic';
 import normalize from './normalize';
 import rank from './rank';
@@ -28,8 +10,9 @@ import order from './order';
 import position from './position';
 import graphlib from './graphlib';
 import initDataOrder from './order/init-data-order';
-import { Graph as IGraph } from '../types';
+import { graphlib as IGraphLib } from '../graphlib';
 
+type IGraph = IGraphLib.Graph;
 const Graph = (graphlib as any).Graph;
 
 const layout = (g: IGraph, opts: any) => {

@@ -1,9 +1,6 @@
-// "use strict";
+import { graphlib } from "../../graphlib";
 
-import { Graph } from "../../types";
-
-// const _ = require("../lodash");
-
+type Graph = graphlib.Graph;
 
 /*
  * Initializes ranks for the input graph using the longest path algorithm. This

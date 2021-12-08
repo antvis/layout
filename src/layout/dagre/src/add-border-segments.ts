@@ -1,9 +1,7 @@
-// var _ = require("./lodash");
-// var util = require("./util");
-import { Graph } from '../types';
+import { graphlib } from '../graphlib';
 import util from './util';
 
-// module.exports = addBorderSegments;
+type Graph = graphlib.Graph;
 
 const addBorderSegments = (g: Graph) => {
   const dfs = (v: string) => {

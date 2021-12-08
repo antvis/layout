@@ -1,14 +1,3 @@
-// "use strict";
-
-// const _ = require("../lodash");
-// const initOrder = require("./init-order");
-// const crossCount = require("./cross-count");
-// const sortSubgraph = require("./sort-subgraph");
-// const buildLayerGraph = require("./build-layer-graph");
-// const addSubgraphConstraints = require("./add-subgraph-constraints");
-// const Graph = require("../graphlib").Graph;
-// const util = require("../util");
-
 import initOrder from './init-order';
 import crossCount from './cross-count';
 import buildLayerGraph from './build-layer-graph';
@@ -17,8 +6,9 @@ import sortSubgraph from './sort-subgraph';
 import graphlib from '../graphlib';
 import util from '../util';
 import { clone } from '../../../../util';
-import { Graph as IGraph } from '../../types';
+import { graphlib as IGraphLib } from '../../graphlib';
 
+type IGraph = IGraphLib.Graph;
 const Graph = (graphlib as any).Graph;
 
 /*

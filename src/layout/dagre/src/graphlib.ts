@@ -1,4 +1,4 @@
-
+// @ts-ignore
 import glib from '@dagrejs/graphlib';
 
 let graphlib = glib;

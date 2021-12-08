@@ -8,7 +8,9 @@
 import { longestPath, longestPathWithLayer } from './util';
 import { feasibleTreeWithLayer as feasibleTree } from './feasible-tree';
 import networkSimplex from './network-simplex';
-import { Graph as IGraph } from '../../types';
+import { graphlib } from '../../graphlib';
+
+type IGraph = graphlib.Graph;
 
 /*
  * Assigns a rank to each node in the input graph that respects the "minlen"

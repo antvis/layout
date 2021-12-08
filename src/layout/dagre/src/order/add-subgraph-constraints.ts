@@ -1,6 +1,6 @@
-// const _ = require("../lodash");
+import { graphlib as IGraphLib } from "../../graphlib";
 
-import { Graph } from "../../types";
+type Graph = IGraphLib.Graph;
 
 const addSubgraphConstraints = (g: Graph, cg: Graph, vs: string[]) => {
   const prev: any = {};

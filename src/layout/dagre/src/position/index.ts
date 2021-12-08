@@ -1,7 +1,8 @@
-import { Graph } from '../../types';
+import { graphlib as IGraphLib } from '../../graphlib';
 import util from '../util';
-import { alignCoordinates, balance, findSmallestWidthAlignment, findType1Conflicts, findType2Conflicts, horizontalCompaction, positionX, verticalAlignment } from './bk';
+import { alignCoordinates, balance, findSmallestWidthAlignment, findType1Conflicts, findType2Conflicts, horizontalCompaction, verticalAlignment } from './bk';
 
+type Graph = IGraphLib.Graph;
 
 const positionY = (g: Graph) => {
   const layering = util.buildLayerMatrix(g);
@@ -26,9 +27,11 @@ const positionX = (g: Graph) => {
   const xss: any = {};
   let adjustedLayering: any;
   ["u", "d"].forEach((vert) => {
+    // @ts-ignore
     adjustedLayering = vert === "u" ? layering : Object.values(layering).reverse();
     ["l", "r"].forEach((horiz) => {
       if (horiz === "r") {
+        // @ts-ignore
         adjustedLayering = adjustedLayering.map((inner: any) => Object.values(inner).reverse());
       }
 

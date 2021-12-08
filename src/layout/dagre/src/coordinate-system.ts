@@ -1,13 +1,6 @@
-// "use strict";
+import { graphlib } from "../graphlib";
 
-import { Graph } from "../types";
-
-// var _ = require("./lodash");
-
-// module.exports = {
-//   adjust: adjust,
-//   undo: undo
-// };
+type Graph = graphlib.Graph;
 
 const adjust = (g: Graph) => {
   const rankDir = g.graph().rankdir?.toLowerCase();

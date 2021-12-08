@@ -1,11 +1,7 @@
-// "use strict";
-
-// const _ = require("../lodash");
-
-// module.exports = crossCount;
-
-import { Graph } from '../../types';
+import { graphlib as IGraphLib } from '../../graphlib';
 import { zipObject } from '../util';
+
+type Graph = IGraphLib.Graph;
 
 /*
  * A function that takes a layering (an array of layers, each with an array of
@@ -36,6 +32,7 @@ const twoLayerCrossCount = (g: Graph, northLayer: string[], southLayer: string[]
     });
     return unsort?.sort((a, b) => a.pos - b.pos);
   });
+  // @ts-ignore
   const southEntries = unflat.flat();
 
   // const southEntries = _.flatten(northLayer.map((v) => {
