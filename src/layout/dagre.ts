@@ -3,12 +3,11 @@
  * @author shiwu.wyy@antfin.com
  */
 
-import { Edge, OutNode, DagreLayoutOptions } from "./types";
+import { Edge, OutNode, DagreLayoutOptions, PointTuple } from "./types";
 import dagre from "./dagre/index";
 import { graphlib as IGraphLib } from './dagre/graphlib';
 import { isArray, isNumber, isObject, getEdgeTerminal } from "../util";
 import { Base } from "./base";
-import { PointTuple } from "./types";
 
 type DagreGraph = IGraphLib.Graph;
 
