@@ -4,6 +4,7 @@
 
 - chore: migrate dagre from https://github.com/brickmaker/dagre to @antv/layout and re-write in es6 standard;
 - chore: fruchterman cluster re-computing problem;
+- feat: dagre supports begin position for the layout;
 
 #### 0.1.19
 
