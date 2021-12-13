@@ -35,13 +35,6 @@ const twoLayerCrossCount = (g: Graph, northLayer: string[], southLayer: string[]
   // @ts-ignore
   const southEntries = unflat.flat();
 
-  // const southEntries = _.flatten(northLayer.map((v) => {
-  //   const unsort = g.outEdges(v).map((e) => {
-  //     return { pos: southPos[e.w], weight: g.edge(e).weight };
-  //   });
-  //   return unsort.sort((a, b) => a.pos - b.pos);
-  // }), true);
-
   // Build the accumulator tree
   let firstIndex = 1;
   while (firstIndex < southLayer.length) firstIndex <<= 1;
@@ -64,19 +57,6 @@ const twoLayerCrossCount = (g: Graph, northLayer: string[], southLayer: string[]
     }
     cc += entry.weight * weightSum;
   });
-  // _.forEach(southEntries.forEach(function(entry) {
-  //   var index = entry.pos + firstIndex;
-  //   tree[index] += entry.weight;
-  //   var weightSum = 0;
-  //   while (index > 0) {
-  //     if (index % 2) {
-  //       weightSum += tree[index + 1];
-  //     }
-  //     index = (index - 1) >> 1;
-  //     tree[index] += entry.weight;
-  //   }
-  //   cc += entry.weight * weightSum;
-  // }));
 
   return cc;
 };

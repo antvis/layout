@@ -41,12 +41,6 @@ const initOrder = (g: Graph) => {
     return g.node(n).fixorder !== undefined;
   });
   const fixOrderNodes = beforeSort.sort((a, b) => (g.node(a).fixorder as number) - (g.node(b).fixorder as number));
-  // const fixOrderNodes = _.sortBy(orderedVs.filter((n) => {
-  //   return g.node(n).fixorder !== undefined;
-  // }), function(n) {
-  //   return g.node(n).fixorder;
-  // });
-
   fixOrderNodes.forEach((n) => {
     layers[g.node(n).rank as number].push(n);
     visited[n] = true;

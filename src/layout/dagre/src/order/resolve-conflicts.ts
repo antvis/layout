@@ -97,7 +97,6 @@ const doResolveConflicts = (sourceSet: any) => {
       picked[key] = entry[key];
     });
     return picked;
-    // return _.pick(entry, ["vs", "i", "barycenter", "weight"])
   });
 
 };

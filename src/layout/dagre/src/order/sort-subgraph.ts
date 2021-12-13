@@ -46,7 +46,6 @@ const sortSubgraph = (g: Graph, v: string, cg: Graph, biasRight: any, usePrev?: 
   if (bl) {
     // @ts-ignore
     result.vs = [bl, result.vs, br].flat();
-    // result.vs = _.flatten([bl, result.vs, br], true);
     if (g.predecessors(bl)?.length) {
       const blPred = g.node(g.predecessors(bl)?.[0] || {});
       const brPred = g.node(g.predecessors(br)?.[0] || {});

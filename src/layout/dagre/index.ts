@@ -22,25 +22,10 @@ THE SOFTWARE.
 import graphlib from './src/graphlib';
 import layout from './src/layout';
 import { time, notime } from './src/util';
-import version from './src/version';
-
-
-// module.exports = {
-//   graphlib: require("./src/graphlib"),
-
-//   layout: require("./src/layout"),
-//   debug: require("./src/debug"),
-//   util: {
-//     time: require("./src/util").time,
-//     notime: require("./src/util").notime
-//   },
-//   version: require("./src/version")
-// };
 
 export default {
   graphlib,
   layout,
-  version,
   util: {
     time,
     notime

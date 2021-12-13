@@ -114,9 +114,6 @@ const sumWeights = (g: Graph) => {
     result += g.edge(e).weight;
   });
   return result;
-  // return _.reduce(g.edges(), function(acc, e) {
-  //   return acc + g.edge(e).weight;
-  // }, 0);
 };
 
 const cleanup = (g: Graph) => {
