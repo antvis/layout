@@ -48,9 +48,6 @@ export class DagreLayout extends Base {
   /** 是否保留每条边上的dummy node */
   public edgeLabelSpace: boolean = true;
 
-  /** 是否按照给定的节点顺序排序 */
-  public keepNodeOrder: boolean = false;
-
   /** 给定的节点顺序，配合keepNodeOrder使用 */
   public nodeOrder: string[];
 
@@ -198,7 +195,7 @@ export class DagreLayout extends Base {
     dagre.layout(g as any, {
       prevGraph,
       edgeLabelSpace: self.edgeLabelSpace,
-      keepNodeOrder: self.keepNodeOrder,
+      keepNodeOrder: Boolean(!!self.nodeOrder),
       nodeOrder: self.nodeOrder,
     });
 

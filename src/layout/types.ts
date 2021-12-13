@@ -146,7 +146,6 @@ export interface DagreLayoutOptions {
   workerEnabled?: boolean;
   onLayoutEnd?: () => void;
   edgeLabelSpace?: boolean;
-  keepNodeOrder?: boolean;
   nodeOrder?: string[];
 }
 

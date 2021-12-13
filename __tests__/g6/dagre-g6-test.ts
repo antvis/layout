@@ -105,7 +105,7 @@ const data = {
 
 describe("dagre layout", () => {
   it("assign layer", () => {
-    const layout = new DagreLayout();
+    const layout = new DagreLayout({ edgeLabelSpace: true });
     console.log('layout', layout);
     layout.layout(data);
     console.log(JSON.stringify(data));
