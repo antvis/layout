@@ -135,6 +135,7 @@ export interface DagreLayoutOptions {
   type: "dagre";
   rankdir?: "TB" | "BT" | "LR" | "RL";
   align?: "UL" | "UR" | "DL" | "DR";
+  begin?: PointTuple;
   nodeSize?: number | number[] | undefined;
   nodesep?: number;
   ranksep?: number;
@@ -145,7 +146,6 @@ export interface DagreLayoutOptions {
   workerEnabled?: boolean;
   onLayoutEnd?: () => void;
   edgeLabelSpace?: boolean;
-  keepNodeOrder?: boolean;
   nodeOrder?: string[];
 }
 

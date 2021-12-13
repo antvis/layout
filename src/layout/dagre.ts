@@ -3,10 +3,13 @@
  * @author shiwu.wyy@antfin.com
  */
 
-import { Edge, OutNode, DagreLayoutOptions } from "./types";
-import dagre from "dagrejs";
+import { Edge, OutNode, DagreLayoutOptions, PointTuple } from "./types";
+import dagre from "./dagre/index";
+import { graphlib as IGraphLib } from './dagre/graphlib';
 import { isArray, isNumber, isObject, getEdgeTerminal } from "../util";
 import { Base } from "./base";
+
+type DagreGraph = IGraphLib.Graph;
 
 /**
  * 层次布局
@@ -17,6 +20,9 @@ export class DagreLayout extends Base {
 
   /** 节点对齐方式，可选 UL, UR, DL, DR */
   public align: undefined | "UL" | "UR" | "DL" | "DR";
+
+  /** 布局的起始（左上角）位置 */
+  public begin: PointTuple;
 
   /** 节点大小 */
   public nodeSize: number | number[] | undefined;
@@ -41,9 +47,6 @@ export class DagreLayout extends Base {
 
   /** 是否保留每条边上的dummy node */
   public edgeLabelSpace: boolean = true;
-
-  /** 是否按照给定的节点顺序排序 */
-  public keepNodeOrder: boolean = false;
 
   /** 给定的节点顺序，配合keepNodeOrder使用 */
   public nodeOrder: string[];
@@ -82,7 +85,7 @@ export class DagreLayout extends Base {
   public layoutNode = (nodeId: string) => {
     const self = this;
     const { nodes } = self;
-    const node = nodes.find(node => node.id === nodeId);
+    const node = nodes.find((node) => node.id === nodeId);
     if (node) {
       const layout = node.layout !== false;
       return layout;
@@ -95,7 +98,7 @@ export class DagreLayout extends Base {
    */
   public execute() {
     const self = this;
-    const { nodes, nodeSize, rankdir, combos } = self;
+    const { nodes, nodeSize, rankdir, combos, begin } = self;
     if (!nodes) return;
     const edges = (self.edges as any[]) || [];
     const g = new dagre.graphlib.Graph({
@@ -178,35 +181,55 @@ export class DagreLayout extends Base {
     });
 
     // 考虑增量图中的原始图
-    let prevGraph: dagre.graphlib.Graph | undefined = undefined;
+    let prevGraph: DagreGraph | undefined = undefined;
     if (self.preset) {
       prevGraph = new dagre.graphlib.Graph({
         multigraph: true,
         compound: true,
-      });
+      }) as any;
       self.preset.nodes.forEach((node) => {
         prevGraph?.setNode(node.id, node);
       });
     }
 
-    dagre.layout(g, {
+    dagre.layout(g as any, {
       prevGraph,
       edgeLabelSpace: self.edgeLabelSpace,
-      keepNodeOrder: self.keepNodeOrder,
+      keepNodeOrder: Boolean(!!self.nodeOrder),
       nodeOrder: self.nodeOrder,
     });
-    let coord;
+
+    const dBegin = [0, 0];
+    if (begin) {
+      let minX = Infinity;
+      let minY = Infinity;
+      g.nodes().forEach((node: any) => {
+        const coord = g.node(node);
+        if (minX > coord.x) minX = coord.x;
+        if (minY > coord.y) minY = coord.y;
+      });
+      g.edges().forEach((edge: any) => {
+        const coord = g.edge(edge);
+        coord.points.forEach((point: any) => {
+          if (minX > point.x) minX = point.x;
+          if (minY > point.y) minY = point.y;
+        })
+      });
+      dBegin[0] = begin[0] - minX;
+      dBegin[1] = begin[1] - minY;
+    }
+
     g.nodes().forEach((node: any) => {
-      coord = g.node(node);
+      const coord = g.node(node);
       const i = nodes.findIndex((it) => it.id === node);
       if (!nodes[i]) return;
-      nodes[i].x = coord.x;
-      nodes[i].y = coord.y;
+      nodes[i].x = coord.x + dBegin[0];
+      nodes[i].y = coord.y + dBegin[1];
       // @ts-ignore: pass layer order to data for increment layout use
       nodes[i]._order = coord._order;
     });
     g.edges().forEach((edge: any) => {
-      coord = g.edge(edge);
+      const coord = g.edge(edge);
       const i = edges.findIndex((it) => {
         const source = getEdgeTerminal(it, 'source');
         const target = getEdgeTerminal(it, 'target');
@@ -214,6 +237,10 @@ export class DagreLayout extends Base {
       });
       if ((self.edgeLabelSpace) && self.controlPoints && edges[i].type !== "loop") {
         edges[i].controlPoints = coord.points.slice(1, coord.points.length - 1);
+        edges[i].controlPoints.forEach((point: any) => {
+          point.x += dBegin[0];
+          point.y += dBegin[1];
+        })
       }
     });
 

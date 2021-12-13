@@ -42,7 +42,7 @@ describe('Grid Layout', () => {
   
     // fetch(complexDataUrl)
     //   .then((res) => res.json())
-    //   .then((data) => {
+    //   .then(async (data) => {
         const preGrid = new GridLayout({
           width: 500,
           height: 500,
@@ -82,17 +82,20 @@ describe('Grid Layout', () => {
         const layout = new FruchtermanGPULayout({ // FruchtermanGPULayout FruchtermanLayout
           maxIteration: 1000,
           speed: 5,
+          clustering: true,
+          clusterGravity: 10
           // clustering: true,
           // clusterField: 'cluster',
-          onLayoutEnd: () => {
-            graph.refreshPositions();
-          }
+          // onLayoutEnd: () => {
+          //   graph.refreshPositions();
+          // }
           // gravity: 100,
           // tick: () => {
           //   graph.refreshPositions();
           // }
         });
         await layout.layout(data);
+        console.log(JSON.stringify(data));
         // layout.layout(data);
 
         graph.data(data)
@@ -117,7 +120,7 @@ describe('Grid Layout', () => {
           layout.execute();
           graph.refreshPositions();
         });
-        // graph.destroy();
+        graph.destroy();
       // });
   });
 });

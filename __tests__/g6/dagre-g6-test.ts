@@ -1,5 +1,6 @@
 import { DagreLayout } from "../../src";
-import G6 from "@antv/g6";
+
+// import G6 from "@antv/g6";
 
 const div = document.createElement("div");
 div.id = "global-spec";
@@ -104,26 +105,27 @@ const data = {
 
 describe("dagre layout", () => {
   it("assign layer", () => {
-    const layout = new DagreLayout();
+    const layout = new DagreLayout({ edgeLabelSpace: true });
+    console.log('layout', layout);
     layout.layout(data);
-    console.log(data);
+    console.log(JSON.stringify(data));
 
-    const graph = new G6.Graph({
-      container: div,
-      width: 500,
-      height: 500,
-      modes: {
-        default: ["drag-node", "zoom-canvas", "drag-canvas"],
-      },
-      defaultEdge: {
-        style: {
-          endArrow: true,
-        },
-      },
-    });
+    // const graph = new G6.Graph({
+    //   container: div,
+    //   width: 500,
+    //   height: 500,
+    //   modes: {
+    //     default: ["drag-node", "zoom-canvas", "drag-canvas"],
+    //   },
+    //   defaultEdge: {
+    //     style: {
+    //       endArrow: true,
+    //     },
+    //   },
+    // });
 
-    graph.data(data);
-    graph.render();
+    // graph.data(data);
+    // graph.render();
   });
   it("keep data order", () => {
     const div = document.createElement("div");
@@ -194,24 +196,24 @@ describe("dagre layout", () => {
       nodeOrder: data.nodes.map((n) => n.id),
     });
     layout.layout(data);
-    console.log(data);
+    console.log(JSON.stringify(data));
 
-    const graph = new G6.Graph({
-      container: div,
-      width: 500,
-      height: 500,
-      modes: {
-        default: ["drag-node", "zoom-canvas", "drag-canvas"],
-      },
-      defaultEdge: {
-        style: {
-          endArrow: true,
-        },
-      },
-    });
+    // const graph = new G6.Graph({
+    //   container: div,
+    //   width: 500,
+    //   height: 500,
+    //   modes: {
+    //     default: ["drag-node", "zoom-canvas", "drag-canvas"],
+    //   },
+    //   defaultEdge: {
+    //     style: {
+    //       endArrow: true,
+    //     },
+    //   },
+    // });
 
-    graph.data(data);
-    graph.render();
+    // graph.data(data);
+    // graph.render();
   });
 
   it("increment layout", () => {
@@ -311,7 +313,7 @@ describe("dagre layout", () => {
     });
     const originGraph = JSON.parse(JSON.stringify(originGraphData));
     layout.layout(originGraph);
-    console.log(originGraph);
+    console.log(JSON.stringify(originGraph));
 
     // @ts-ignore: modified originGraph
     expect(originGraph.nodes.find((n) => n.id === "a")._order).toBe(0);
@@ -320,26 +322,26 @@ describe("dagre layout", () => {
     // @ts-ignore
     expect(originGraph.nodes.find((n) => n.id === "c")._order).toBe(1);
 
-    {
-      const div = document.createElement("div");
-      document.body.appendChild(div);
-      const graph = new G6.Graph({
-        container: div,
-        width: 500,
-        height: 500,
-        modes: {
-          default: ["drag-node", "zoom-canvas", "drag-canvas"],
-        },
-        defaultEdge: {
-          style: {
-            endArrow: true,
-          },
-        },
-      });
+    // {
+    //   const div = document.createElement("div");
+    //   document.body.appendChild(div);
+    //   const graph = new G6.Graph({
+    //     container: div,
+    //     width: 500,
+    //     height: 500,
+    //     modes: {
+    //       default: ["drag-node", "zoom-canvas", "drag-canvas"],
+    //     },
+    //     defaultEdge: {
+    //       style: {
+    //         endArrow: true,
+    //       },
+    //     },
+    //   });
 
-      graph.data(originGraph);
-      graph.render();
-    }
+    //   graph.data(originGraph);
+    //   graph.render();
+    // }
 
     const newGraph = {
       nodes: [...originGraphData.nodes, ...addGraphData.nodes],
@@ -350,27 +352,28 @@ describe("dagre layout", () => {
       preset: originGraph,
     });
     layout.layout(newGraph);
+    console.log(JSON.stringify(newGraph));
 
-    {
-      const div = document.createElement("div");
-      document.body.appendChild(div);
-      const graph = new G6.Graph({
-        container: div,
-        width: 500,
-        height: 500,
-        modes: {
-          default: ["drag-node", "zoom-canvas", "drag-canvas"],
-        },
-        defaultEdge: {
-          style: {
-            endArrow: true,
-          },
-        },
-      });
+    // {
+    //   const div = document.createElement("div");
+    //   document.body.appendChild(div);
+    //   const graph = new G6.Graph({
+    //     container: div,
+    //     width: 500,
+    //     height: 500,
+    //     modes: {
+    //       default: ["drag-node", "zoom-canvas", "drag-canvas"],
+    //     },
+    //     defaultEdge: {
+    //       style: {
+    //         endArrow: true,
+    //       },
+    //     },
+    //   });
 
-      graph.data(newGraph);
-      graph.render();
-    }
+    //   graph.data(newGraph);
+    //   graph.render();
+    // }
 
     // should keep origin order
     // @ts-ignore: modified newGraph
