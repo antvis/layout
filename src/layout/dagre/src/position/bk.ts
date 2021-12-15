@@ -28,7 +28,7 @@ const Graph = (graphlib as any).Graph;
  * This algorithm (safely) assumes that a dummy node will only be incident on a
  * single node in the layers being scanned.
  */
-const findType1Conflicts = (g: IGraph, layering: any) => {
+const findType1Conflicts = (g: IGraph, layering?: any) => {
   const conflicts = {};
 
   const visitLayer = (prevLayer: any, layer: any) => {
@@ -64,11 +64,13 @@ const findType1Conflicts = (g: IGraph, layering: any) => {
     return layer;
   };
 
-  layering.reduce(visitLayer);
+  if (layering?.length) {
+    layering.reduce(visitLayer);
+  }
   return conflicts;
 };
 
-const findType2Conflicts = (g: IGraph, layering: any) => {
+const findType2Conflicts = (g: IGraph, layering?: any) => {
   const conflicts = {};
 
   const scan = (south: string[], southPos: number, southEnd: number, prevNorthBorder: number, nextNorthBorder: number) => {
@@ -113,7 +115,9 @@ const findType2Conflicts = (g: IGraph, layering: any) => {
     return south;
   };
 
-  layering.reduce(visitLayer);
+  if (layering?.length) {
+    layering.reduce(visitLayer);
+  }
   return conflicts;
 };
 
@@ -360,7 +364,8 @@ const positionX = (g: IGraph) => {
   const layering = util.buildLayerMatrix(g);
   const conflicts = Object.assign(
     findType1Conflicts(g, layering),
-    findType2Conflicts(g, layering));
+    findType2Conflicts(g, layering)
+  );
 
   const xss: any = {};
   let adjustedLayering: any;

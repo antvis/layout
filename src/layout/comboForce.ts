@@ -483,7 +483,6 @@ export class ComboForceLayout extends Base {
   private getComboMap() {
     const self = this;
     const nodeMap = self.nodeMap;
-    const indexMap = self.indexMap;
     const comboTrees = self.comboTrees;
     const oriComboMap = self.oriComboMap;
     const comboMap: ComboMap = {};
@@ -516,25 +515,11 @@ export class ComboForceLayout extends Base {
         c.cx = 0;
         c.cy = 0;
 
-        // In order to layout the empty combo, add a virtual node to it
         if (treeChildren.length === 0) {
           c.empty = true;
           const oriCombo = oriComboMap[treeNode.id];
-          const idx = Object.keys(nodeMap).length;
-          const virtualNodeId = `${treeNode.id}-visual-child-${idx}`;
-          const vnode: any = {
-            id: virtualNodeId,
-            x: oriCombo.x as number,
-            y: oriCombo.y as number,
-            depth: (c.depth as number) + 1,
-            itemType: "node"
-          };
-          self.nodes.push(vnode);
-          nodeMap[virtualNodeId] = vnode;
-          indexMap[virtualNodeId] = idx;
           c.cx = oriCombo.x as number;
           c.cy = oriCombo.y as number;
-          treeChildren.push(vnode);
         }
 
         treeChildren.forEach((child: Combo | Node) => {
@@ -556,8 +541,8 @@ export class ComboForceLayout extends Base {
             c.cy += node.y;
           }
         });
-        c.cx /= c.count as number;
-        c.cy /= c.count as number;
+        c.cx /= (c.count || 1) as number;
+        c.cy /= (c.count || 1) as number;
 
         c.children = treeChildren as any;
 
@@ -613,8 +598,8 @@ export class ComboForceLayout extends Base {
           if (isNumber(node.x)) c.cx += node.x;
           if (isNumber(node.y)) c.cy += node.y;
         });
-        c.cx /= c.count as number;
-        c.cy /= c.count as number;
+        c.cx /= (c.count || 1) as number;
+        c.cy /= (c.count || 1) as number;
         return true;
       });
     });
