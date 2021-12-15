@@ -1,5 +1,10 @@
 # ChangeLog
 
+#### 0.1.21
+
+- fix: comboForce with unnecessary positions for combos;
+- fix: dagre bug;
+
 #### 0.1.20
 
 - chore: migrate dagre from https://github.com/brickmaker/dagre to @antv/layout and re-write in es6 standard;
