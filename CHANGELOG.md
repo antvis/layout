@@ -1,5 +1,9 @@
 # ChangeLog
 
+#### 0.1.22
+
+- fix: fruchterman without init clusterMap problem;
+
 #### 0.1.21
 
 - fix: comboForce with unnecessary positions for combos;

@@ -136,7 +136,7 @@ export class FruchtermanLayout extends Base {
     const self = this;
     const nodes = self.nodes;
     if (!nodes) return;
-    const { edges, maxIteration, workerEnabled } = self;
+    const { edges, maxIteration, workerEnabled, clustering } = self;
     const clusterMap: {
       [key: string]: {
         name: string | number;
@@ -145,6 +145,18 @@ export class FruchtermanLayout extends Base {
         count: number;
       };
     } = {};
+    if (clustering) {
+      nodes.forEach((n) => {
+        if (clusterMap[n.cluster] === undefined) {
+          clusterMap[n.cluster] = {
+            name: n.cluster,
+            cx: 0,
+            cy: 0,
+            count: 0
+          };
+        }
+      });
+    }
     if (workerEnabled) {
       for (let i = 0; i < maxIteration; i++) {
         self.runOneStep(clusterMap);
