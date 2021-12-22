@@ -9,8 +9,8 @@ if (!graphlib && typeof window !== "undefined") {
 }
 
 Object.defineProperty(Array.prototype, 'flat', {
-  value: function (depth = 1) {
-    return this.reduce((flat: Array<any>, toFlatten: Array<any>) => {
+  value (depth = 1) {
+    return this.reduce((flat: any, toFlatten: any) => {
       return flat.concat(
         Array.isArray(toFlatten) && depth > 1
           ? toFlatten.flat(depth - 1)
