@@ -213,7 +213,7 @@ export class DagreLayout extends Base {
         coord.points.forEach((point: any) => {
           if (minX > point.x) minX = point.x;
           if (minY > point.y) minY = point.y;
-        })
+        });
       });
       dBegin[0] = begin[0] - minX;
       dBegin[1] = begin[1] - minY;
@@ -240,7 +240,7 @@ export class DagreLayout extends Base {
         edges[i].controlPoints.forEach((point: any) => {
           point.x += dBegin[0];
           point.y += dBegin[1];
-        })
+        });
       }
     });
 

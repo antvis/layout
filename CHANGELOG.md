@@ -1,5 +1,9 @@
 # ChangeLog
 
+#### 0.1.23
+
+- fix: array flat compatibility;
+
 #### 0.1.22
 
 - fix: fruchterman without init clusterMap problem;
