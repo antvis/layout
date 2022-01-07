@@ -1,5 +1,12 @@
 # ChangeLog
 
+#### 0.1.25
+ 
+ - fix: array flat and Infinite param problem;
+ - fix: dagre with NaN node rank;
+ - chore: lint;
+
+
 #### 0.1.23
 
 - fix: array flat compatibility;

@@ -20,7 +20,7 @@ const initDataOrder = (g: Graph, nodeOrder: string[]) => {
     // 只考虑原有节点，dummy节点需要按照后续算法排出
     if (!node || node.dummy) return;
     node.fixorder = layers[(node.rank as number)].length; // 设置fixorder为当层的顺序
-    layers[node.rank as number].push(n);
+    layers[node.rank as number || 0].push(n);
   });
 };
 
