@@ -29,7 +29,7 @@ const initOrder = (g: Graph) => {
     if (visited.hasOwnProperty(v)) return;
     visited[v] = true;
     const node = g.node(v);
-    layers[node.rank as number].push(v);
+    layers[node.rank as number || 0].push(v);
     g.successors(v)?.forEach((child) => dfs(child as any));
   };
 
