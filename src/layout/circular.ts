@@ -11,7 +11,7 @@ import {
   CircularLayoutOptions
 } from "./types";
 import { Base } from "./base";
-import { getDegree, clone, getEdgeTerminal } from "../util";
+import { getDegree, clone, getEdgeTerminal, getFuncByUnknownType } from "../util";
 
 type INode = OutNode & {
   degree: number;
@@ -105,6 +105,12 @@ export class CircularLayout extends Base {
   /** 固定半径，若设置了 radius，则 startRadius 与 endRadius 不起效 */
   public radius: number | null = null;
 
+  /** 节点间距，若设置 nodeSpacing，则 radius 将被自动计算，即设置 radius 不生效 */
+  public nodeSpacing: ((d?: unknown) => number) | number | undefined;
+
+  /** 节点大小，配合 nodeSpacing，一起用于计算 radius。若不配置，节点大小默认为 30 */
+  public nodeSize: number | undefined = undefined;
+
   /** 起始半径 */
   public startRadius: number | null = null;
 
@@ -193,12 +199,8 @@ export class CircularLayout extends Base {
       return;
     }
 
-    let radius = self.radius;
-    let startRadius = self.startRadius;
-    let endRadius = self.endRadius;
-    const divisions = self.divisions;
-    const startAngle = self.startAngle;
-    const endAngle = self.endAngle;
+    let { radius, startRadius, endRadius } = self;
+    const { divisions, startAngle, endAngle, angleRatio, ordering, clockwise, nodeSpacing: paramNodeSpacing, nodeSize: paramNodeSize } = self;
     const angleStep = (endAngle - startAngle) / n;
     // layout
     const nodeMap: IndexMap = {};
@@ -208,17 +210,29 @@ export class CircularLayout extends Base {
     self.nodeMap = nodeMap;
     const degrees = getDegree(nodes.length, nodeMap, edges);
     self.degrees = degrees;
-    if (!radius && !startRadius && !endRadius) {
+    if (paramNodeSpacing) {
+      const nodeSpacing: Function = getFuncByUnknownType(10, paramNodeSpacing);
+      const nodeSize: Function = getFuncByUnknownType(10, paramNodeSize);
+      let maxNodeSize = -Infinity;
+      nodes.forEach(node => {
+        const nSize = nodeSize(node);
+        if (maxNodeSize < nSize) maxNodeSize = nSize;
+      });
+      let length = 0;
+      nodes.forEach((node, i) => {
+        if (i === 0) length += (maxNodeSize || 10);
+        else length += (nodeSpacing(node) || 0) + (maxNodeSize || 10);
+      });
+      radius = length / (2 * Math.PI);
+    } else if (!radius && !startRadius && !endRadius) {
       radius = self.height > self.width ? self.width / 2 : self.height / 2;
     } else if (!startRadius && endRadius) {
       startRadius = endRadius;
     } else if (startRadius && !endRadius) {
       endRadius = startRadius;
     }
-    const angleRatio = self.angleRatio;
     const astep = angleStep * angleRatio;
 
-    const ordering = self.ordering;
     let layoutNodes = [];
     if (ordering === "topology") {
       // layout according to the topology
@@ -234,7 +248,6 @@ export class CircularLayout extends Base {
       layoutNodes = nodes;
     }
 
-    const clockwise = self.clockwise;
     const divN = Math.ceil(n / divisions); // node number in each division
     for (let i = 0; i < n; ++i) {
       let r = radius;
@@ -259,7 +272,7 @@ export class CircularLayout extends Base {
       layoutNodes[i].weight = degrees[i];
     }
 
-    if (self.onLayoutEnd) self.onLayoutEnd();
+    self.onLayoutEnd?.();
 
     return {
       nodes: layoutNodes,

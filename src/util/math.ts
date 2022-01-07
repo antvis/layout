@@ -1,4 +1,4 @@
-import { Matrix, Model, IndexMap, Edge } from '../layout/types';
+import { Matrix, Model, IndexMap, Edge, OutNode } from '../layout/types';
 import { isObject } from './object';
 
 export const getEdgeTerminal = (edge: Edge, type: 'source' | 'target') => {
@@ -142,3 +142,17 @@ export const traverseTreeUp = <T extends { children?: T[] }>(
   }
   traverseUp(data, fn);
 };
+
+export const findMinMaxNodeXY = (nodes: OutNode[]) => {
+  let minX = Infinity;
+  let minY = Infinity;
+  let maxX = -Infinity;
+  let maxY = -Infinity;
+  nodes.forEach(node => {
+    if (minX > node.x) minX = node.x;
+    if (minY > node.y) minY = node.y;
+    if (maxX < node.x) maxX = node.x;
+    if (maxY < node.y) maxY = node.y;
+  });
+  return { minX, minY, maxX, maxY };
+}

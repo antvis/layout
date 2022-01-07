@@ -6,7 +6,7 @@
 import { Edge, OutNode, DagreLayoutOptions, PointTuple } from "./types";
 import dagre from "./dagre/index";
 import { graphlib as IGraphLib } from './dagre/graphlib';
-import { isArray, isNumber, isObject, getEdgeTerminal } from "../util";
+import { isArray, isNumber, isObject, getEdgeTerminal, getFunc } from "../util";
 import { Base } from "./base";
 
 type DagreGraph = IGraphLib.Graph;
@@ -124,12 +124,12 @@ export class DagreLayout extends Base {
     } else {
       nodeSizeFunc = () => [nodeSize, nodeSize];
     }
-    let horisep: Function = getFunc(self.nodesepFunc, self.nodesep, 50);
-    let vertisep: Function = getFunc(self.ranksepFunc, self.ranksep, 50);
+    let horisep: Function = getFunc(self.nodesep, 50, self.nodesepFunc);
+    let vertisep: Function = getFunc(self.ranksep, 50, self.ranksepFunc);
 
     if (rankdir === "LR" || rankdir === "RL") {
-      horisep = getFunc(self.ranksepFunc, self.ranksep, 50);
-      vertisep = getFunc(self.nodesepFunc, self.nodesep, 50);
+      horisep = getFunc(self.ranksep, 50, self.ranksepFunc);
+      vertisep = getFunc(self.nodesep, 50, self.nodesepFunc);
     }
     g.setDefaultEdgeLabel(() => ({}));
     g.setGraph(self);
@@ -255,20 +255,4 @@ export class DagreLayout extends Base {
   public getType() {
     return "dagre";
   }
-}
-
-function getFunc(
-  func: ((d?: any) => number) | undefined,
-  value: number,
-  defaultValue: number
-): Function {
-  let resultFunc;
-  if (func) {
-    resultFunc = func;
-  } else if (isNumber(value)) {
-    resultFunc = () => value;
-  } else {
-    resultFunc = () => defaultValue;
-  }
-  return resultFunc;
 }

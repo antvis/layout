@@ -1,3 +1,5 @@
+import { Base } from "./base";
+
 export interface Node {
   id: string;
 }
@@ -9,6 +11,7 @@ export interface OutNode extends Node {
   layer?: number; // dagre布局中指定的层级
   _order?: number; // dagre布局中层内排序结果，用于增量布局
   layout?: boolean;
+  size?: number | number[] | undefined;
 }
 
 export interface Edge {
@@ -19,6 +22,22 @@ export interface Edge {
 export interface Combo {
   id: string;
   parentId?: string;
+  x?: number;
+  y?: number;
+  name?: string | number;
+  cx?: number;
+  cy?: number;
+  count?: number;
+  depth?: number;
+  children?: any[];
+  empty?: boolean;
+  minX?: number;
+  maxX?: number;
+  minY?: number;
+  maxY?: number;
+  size?: number;
+  r?: number;
+  itemType?: string;
 }
 
 export interface Model {
@@ -111,6 +130,16 @@ export interface ComboForceLayoutOptions {
   depthRepulsiveForceScale?: number;
   velocityDecay?: number;
   workerEnabled?: boolean;
+}
+export interface ComboCombinedLayoutOptions {
+  type: "comboConcentricForce";
+  center?: PointTuple;
+  nodeSize?: number | number[] | ((d?: any) => number) | undefined;
+  spacing?: number | number[] | ((d?: any) => number) | undefined;
+  comboPadding?: ((d?: unknown) => number) | number | number[] | undefined;
+  comboTrees?: ComboTree[];
+  outerLayout?: Base;
+  innerLayout?: Base;
 }
 
 export interface ConcentricLayoutOptions {
@@ -323,7 +352,7 @@ export interface ForceAtlas2LayoutOptions {
   tao?: number;
   maxIteration?: number;
   mode?: 'normal' | 'linlog';
-  prevOverlapping?: boolean;
+  preventOverlap?: boolean;
   dissuadeHubs?: boolean;
   barnesHut?: boolean;
   prune?: boolean;
@@ -367,6 +396,7 @@ export namespace ILayout {
     | GForceLayoutOptions
     | GForceGPULayoutOptions
     | ComboForceLayoutOptions
+    | ComboCombinedLayoutOptions
     | ForceAtlas2LayoutOptions
     | ERLayoutOptions;
 }

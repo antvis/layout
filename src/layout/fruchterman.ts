@@ -67,6 +67,9 @@ export class FruchtermanLayout extends Base {
   /** 每次迭代结束的回调函数 */
   public tick: (() => void) | null = () => {};
 
+  /** 是否使用 window.setInterval 运行迭代 */
+  public animate: boolean = true;
+
   /** 迭代中的标识 */
   private timeInterval: number;
 
@@ -81,7 +84,8 @@ export class FruchtermanLayout extends Base {
       gravity: 10,
       speed: 1,
       clustering: false,
-      clusterGravity: 10
+      clusterGravity: 10,
+      animate: true
     };
   }
 
@@ -136,7 +140,7 @@ export class FruchtermanLayout extends Base {
     const self = this;
     const nodes = self.nodes;
     if (!nodes) return;
-    const { edges, maxIteration, workerEnabled, clustering } = self;
+    const { edges, maxIteration, workerEnabled, clustering, animate } = self;
     const clusterMap: {
       [key: string]: {
         name: string | number;
@@ -157,7 +161,7 @@ export class FruchtermanLayout extends Base {
         }
       });
     }
-    if (workerEnabled) {
+    if (workerEnabled || !animate) {
       for (let i = 0; i < maxIteration; i++) {
         self.runOneStep(clusterMap);
       }

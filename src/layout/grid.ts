@@ -4,7 +4,7 @@
  * this algorithm refers to <cytoscape.js> - https://github.com/cytoscape/cytoscape.js/
  */
 
-import { isString, isArray, isNumber, getDegree, isNaN, isObject } from "../util";
+import { isString, getDegree, isNaN, getFuncByUnknownType } from "../util";
 import { Base } from "./base";
 import {
   OutNode,
@@ -42,6 +42,9 @@ export class GridLayout extends Base {
   /** force num of columns in the grid */
   public cols: number | undefined;
 
+  /** the spacing between two nodes */
+  public nodeSpacing: ((d?: unknown) => number) | number | undefined;
+
   /** returns { row, col } for element */
   public position:
     | ((node: INode) => { row?: number; col?: number })
@@ -50,7 +53,7 @@ export class GridLayout extends Base {
   /** a sorting function to order the nodes; e.g. function(a, b){ return a.datapublic ('weight') - b.data('weight') } */
   public sortBy: string = "degree";
 
-  public nodeSize: number | number[] | { width: number, height: number } = 30;
+  public nodeSize: number | number[] | { width: number, height: number } | undefined;
 
   public nodes: INode[] = [];
 
@@ -112,10 +115,8 @@ export class GridLayout extends Base {
    */
   public execute() {
     const self = this;
-    const nodes = self.nodes;
-    const edges = self.edges;
+    const { nodes, edges, begin } = self;
     const n = nodes.length;
-    const begin = self.begin;
     if (n === 0) {
       if (self.onLayoutEnd) self.onLayoutEnd();
       return {
@@ -133,6 +134,8 @@ export class GridLayout extends Base {
       };
     }
 
+    let { sortBy, width, height, condense, preventOverlapPadding, preventOverlap, nodeSpacing: paramNodeSpacing, nodeSize: paramNodeSize } = self;
+
     
     const layoutNodes: INode[] = [];
     nodes.forEach((node) => {
@@ -143,11 +146,11 @@ export class GridLayout extends Base {
       nodeIdxMap[node.id] = i;
     });
     if (
-      self.sortBy === "degree" ||
-      !isString(self.sortBy) ||
-      (layoutNodes[0] as any)[self.sortBy] === undefined
+      sortBy === "degree" ||
+      !isString(sortBy) ||
+      (layoutNodes[0] as any)[sortBy] === undefined
     ) {
-      self.sortBy = "degree";
+      sortBy = "degree";
       if (isNaN(nodes[0].degree)) {
         const values = getDegree(layoutNodes.length, nodeIdxMap, edges);
         layoutNodes.forEach((node, i) => {
@@ -157,14 +160,14 @@ export class GridLayout extends Base {
     }
     // sort nodes by value
     layoutNodes.sort(
-      (n1, n2) => (n2 as any)[self.sortBy] - (n1 as any)[self.sortBy]
+      (n1, n2) => (n2 as any)[sortBy] - (n1 as any)[sortBy]
     );
 
-    if (!self.width && typeof window !== "undefined") {
-      self.width = window.innerWidth;
+    if (!width && typeof window !== "undefined") {
+      width = window.innerWidth;
     }
-    if (!self.height && typeof window !== "undefined") {
-      self.height = window.innerHeight;
+    if (!height && typeof window !== "undefined") {
+      height = window.innerHeight;
     }
 
     const oRows = self.rows;
@@ -215,15 +218,18 @@ export class GridLayout extends Base {
       }
     }
 
-    self.cellWidth = self.width / self.cols;
-    self.cellHeight = self.height / self.rows;
+    self.cellWidth = width / self.cols;
+    self.cellHeight = height / self.rows;
 
-    if (self.condense) {
+    if (condense) {
       self.cellWidth = 0;
       self.cellHeight = 0;
     }
 
-    if (self.preventOverlap) {
+
+    if (preventOverlap || paramNodeSpacing) {
+      const nodeSpacing: Function = getFuncByUnknownType(10, paramNodeSpacing);
+      const nodeSize: Function = getFuncByUnknownType(30, paramNodeSize, false)
       layoutNodes.forEach((node) => {
         if (!node.x || !node.y) {
           // for bb
@@ -231,32 +237,9 @@ export class GridLayout extends Base {
           node.y = 0;
         }
 
-        let nodew: number | undefined;
-        let nodeh: number | undefined;
-        if (isArray(node.size)) {
-          nodew = (node.size as PointTuple)[0];
-          nodeh = (node.size as PointTuple)[1];
-        } else if (isNumber(node.size)) {
-          nodew = node.size as number;
-          nodeh = node.size as number;
-        } else if (isObject(node.size)) {
-          nodew = node.size.width;
-          nodeh = node.size.height;
-        }
-        if (nodew === undefined || nodeh === undefined) {
-          if (isArray(self.nodeSize)) {
-            nodew = (self.nodeSize as number[])[0];
-            nodeh = (self.nodeSize as number[])[1];
-          } else if (isNumber(self.nodeSize)) {
-            nodew = self.nodeSize as number;
-            nodeh = self.nodeSize as number;
-          } else {
-            nodew = 30;
-            nodeh = 30;
-          }
-        }
+        const [nodew = 30, nodeh = 30] = nodeSize(node);
 
-        const p = self.preventOverlapPadding;
+        const p = nodeSpacing !== undefined ? nodeSpacing(node) : preventOverlapPadding;
 
         const w = nodew + p;
         const h = nodeh + p;
@@ -376,9 +359,7 @@ export class GridLayout extends Base {
 
   private getPos(node: INode) {
     const self = this;
-    const begin = self.begin;
-    const cellWidth = self.cellWidth;
-    const cellHeight = self.cellHeight;
+    const { begin, cellWidth, cellHeight } = self;
     let x: number;
     let y: number;
 

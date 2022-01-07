@@ -198,7 +198,8 @@ export class RadialLayout extends Base {
       self.focusNode = focusNode;
     }
     // the index of the focusNode in data
-    const focusIndex = getIndexById(nodes, focusNode.id);
+    let focusIndex = getIndexById(nodes, focusNode.id);
+    if (focusIndex < 0) focusIndex = 0;
     self.focusIndex = focusIndex;
 
     // the graph-theoretic distance (shortest path distance) matrix

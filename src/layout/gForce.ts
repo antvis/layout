@@ -49,7 +49,7 @@ export class GForceLayout extends Base {
   public center: PointTuple;
 
   /** 停止迭代的最大迭代数 */
-  public maxIteration: number = 1000;
+  public maxIteration: number = 500;
 
   /** 是否启动 worker */
   public workerEnabled: boolean = false;
@@ -96,6 +96,9 @@ export class GForceLayout extends Base {
   /** 防止重叠时的节点大小，默认从节点数据中取 size */
   public nodeSize: number | number[] | ((d?: any) => number) | undefined;
 
+  /** 防止重叠的力大小参数 */
+  public collideStrength: number = 1;
+
   /** 防止重叠时的节点之间最小间距 */
   public nodeSpacing: number | number[] | ((d?: any) => number) | undefined;
 
@@ -121,6 +124,9 @@ export class GForceLayout extends Base {
 
   public onLayoutEnd: () => void;
 
+  /** 是否使用 window.setInterval 运行迭代 */
+  public animate: Boolean = true;
+
   /** 存储节点度数 */
   private degrees: number[];
 
@@ -136,7 +142,8 @@ export class GForceLayout extends Base {
     return {
       maxIteration: 500,
       gravity: 10,
-      enableTick: true
+      enableTick: true,
+      animate: true,
     };
   }
 
@@ -241,11 +248,11 @@ export class GForceLayout extends Base {
 
   public run() {
     const self = this;
-    const { maxIteration, nodes, workerEnabled, minMovement } = self;
+    const { maxIteration, nodes, workerEnabled, minMovement, animate } = self;
 
     if (!nodes) return;
 
-    if (workerEnabled) {
+    if (workerEnabled || !animate) {
       for (let i = 0; i < maxIteration; i++) {
         const previousPos = self.runOneStep(i);
         if (self.reachMoveThreshold(nodes, previousPos, minMovement)) {
@@ -316,12 +323,8 @@ export class GForceLayout extends Base {
 
   public calRepulsive(accArray: number[], nodes: INode[]) {
     const self = this;
-    // const nodes = self.nodes;
-    const getMass = self.getMass;
+    const { getMass, factor, coulombDisScale, preventOverlap, collideStrength = 1 } = self;
     const nodeStrength = self.nodeStrength as Function;
-    const factor = self.factor;
-    const coulombDisScale = self.coulombDisScale;
-    const preventOverlap = self.preventOverlap;
     const nodeSize = self.nodeSize as Function;
     nodes.forEach((ni: INode, i) => {
       const massi = getMass ? getMass(ni) : 1;
@@ -330,21 +333,22 @@ export class GForceLayout extends Base {
         // if (!accArray[j]) accArray[j] = 0;
         const vecX = ni.x - nj.x;
         const vecY = ni.y - nj.y;
-        const vecLength = Math.sqrt(vecX * vecX + vecY * vecY) + 0.01;
+        const lengthSqr = vecX * vecX + vecY * vecY + 0.01;
+        const vecLength = Math.sqrt(lengthSqr);
         const nVecLength = (vecLength + 0.1) * coulombDisScale;
         const direX = vecX / vecLength;
         const direY = vecY / vecLength;
         const param =
-          (((nodeStrength(ni) + nodeStrength(nj)) / 2) * factor) /
+          (((nodeStrength(ni) + nodeStrength(nj)) * 0.5) * factor) /
           (nVecLength * nVecLength);
         const massj = getMass ? getMass(nj) : 1;
         accArray[2 * i] += (direX * param);
         accArray[2 * i + 1] += (direY * param);
         accArray[2 * j] -= (direX * param);
         accArray[2 * j + 1] -= (direY * param);
-        if (preventOverlap && vecLength < (nodeSize(ni) + nodeSize(nj)) / 2) {
+        if (preventOverlap && (nodeSize(ni) + nodeSize(nj)) / 2 > vecLength) {
           const paramOverlap =
-            (nodeStrength(ni) + nodeStrength(nj)) / 2 / (vecLength * vecLength);
+            collideStrength * (nodeStrength(ni) + nodeStrength(nj)) * 0.5 / lengthSqr;
           accArray[2 * i] += (direX * paramOverlap) / massi;
           accArray[2 * i + 1] += (direY * paramOverlap) / massi;
           accArray[2 * j] -= (direX * paramOverlap) / massj;
@@ -356,11 +360,8 @@ export class GForceLayout extends Base {
 
   public calAttractive(accArray: number[], edges: Edge[]) {
     const self = this;
-    // const edges = self.edges;
-    const nodeMap = self.nodeMap;
-    const nodeIdxMap = self.nodeIdxMap;
-    const linkDistance = self.linkDistance as Function;
-    const edgeStrength = self.edgeStrength as Function;
+    const { nodeMap, nodeIdxMap, linkDistance, edgeStrength } = self;
+    const nodeSize = self.nodeSize as Function;
     const getMass = self.getMass;
     edges.forEach((edge, i) => {
       const source = getEdgeTerminal(edge, 'source');
@@ -372,9 +373,9 @@ export class GForceLayout extends Base {
       const vecLength = Math.sqrt(vecX * vecX + vecY * vecY) + 0.01;
       const direX = vecX / vecLength;
       const direY = vecY / vecLength;
-      const length = linkDistance(edge) || 1;
+      const length = (linkDistance as Function)(edge) || 1 + ((nodeSize(sourceNode) + nodeSize(sourceNode)) || 0) / 2;
       const diff = length - vecLength;
-      const param = diff * edgeStrength(edge);
+      const param = diff * (edgeStrength as Function)(edge);
       const sourceIdx = nodeIdxMap[source];
       const targetIdx = nodeIdxMap[target];
       const massSource = getMass ? getMass(sourceNode) : 1;

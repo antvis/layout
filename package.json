@@ -31,7 +31,7 @@
     "release": "release-it",
     "test": "jest",
     "coverage": "jest --coverage",
-    "test-live": "DEBUG_MODE=1 jest --watch __tests__/g6/dagre-g6-test.ts"
+    "test-live": "DEBUG_MODE=1 jest --watch __tests__/g6/combo-concentric-test.ts"
   },
   "lint-staged": {
     "*.js": [
