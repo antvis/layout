@@ -20,7 +20,7 @@ const debugOrdering = (g: IGraph) => {
     h.setEdge(e.v, e.w, {}, e.name);
   });
 
-  layerMatrix.forEach((layer: any, i: number) => {
+  layerMatrix?.forEach((layer: any, i: number) => {
     const layerV = `layer${i}`;
     h.setNode(layerV, { rank: "same" });
     layer?.reduce((u: string, v: string) => {

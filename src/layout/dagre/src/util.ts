@@ -50,7 +50,7 @@ const asNonCompoundGraph = (g: IGraph): IGraph => {
 
 const zipObject = (keys: string[], values: any) => {
   const result: any = {};
-  keys.forEach((key, i) => {
+  keys?.forEach((key, i) => {
     result[key] = values[i];
   });
   return result;
@@ -134,7 +134,7 @@ const buildLayerMatrix = (g: IGraph) => {
   g.nodes().forEach((v: string) => {
     const node = g.node(v);
     const rank = node.rank;
-    if (rank !== undefined) {
+    if (rank !== undefined && layering[rank]) {
       layering[rank][node.order || 0] = v;
     }
   });
@@ -173,11 +173,11 @@ const removeEmptyRanks = (g: IGraph) => {
 
   let delta = 0;
   const nodeRankFactor = g.graph().nodeRankFactor || 0;
-  layers.forEach((vs: any, i: number) => {
+  layers?.forEach((vs: any, i: number) => {
     if (vs === undefined && i % nodeRankFactor !== 0) {
       --delta;
     } else if (delta) {
-      vs.forEach((v: string) => {
+      vs?.forEach((v: string) => {
         if (!g.node(v).rank) g.node(v).rank = 0;
         (g.node(v).rank as any) += delta;
       });
@@ -215,7 +215,7 @@ const maxRank = (g: IGraph) => {
  */
 const partition = (collection: any, fn: any) => {
   const result = { lhs: [] as any, rhs: [] as any };
-  collection.forEach((value: any) => {
+  collection?.forEach((value: any) => {
     if (fn(value)) {
       result.lhs.push(value);
     } else {
@@ -246,7 +246,7 @@ const notime = (name: string, fn: () => unknown) => {
 const minBy = (array: any, func: (param: any) => number) => {
   let min = Infinity;
   let minObject;
-  array.forEach((item: any) => {
+  array?.forEach((item: any) => {
     const value = func(item);
     if (min > value) {
       min = value;

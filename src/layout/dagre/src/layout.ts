@@ -154,7 +154,7 @@ const buildLayoutGraph = (inputGraph: IGraph) => {
   const graph = canonicalize(inputGraph.graph());
 
   const pickedProperties: any = {};
-  graphAttrs.forEach((key) => {
+  graphAttrs?.forEach((key) => {
     if (graph[key] !== undefined) pickedProperties[key] = graph[key];
   });
 
@@ -180,7 +180,7 @@ const buildLayoutGraph = (inputGraph: IGraph) => {
     const edge = canonicalize(inputGraph.edge(e));
     
     const pickedProperties: any = {};
-    edgeAttrs.forEach((key) => {
+    edgeAttrs?.forEach((key) => {
       if (edge[key] !== undefined) pickedProperties[key] = edge[key];
     });
 
@@ -399,9 +399,9 @@ const removeSelfEdges = (g: IGraph) => {
 
 const insertSelfEdges = (g: IGraph) => {
   const layers = util.buildLayerMatrix(g);
-  layers.forEach((layer: string[]) => {
+  layers?.forEach((layer: string[]) => {
     let orderShift = 0;
-    layer.forEach((v: string, i: number) => {
+    layer?.forEach((v: string, i: number) => {
       const node = g.node(v);
       node.order = i + orderShift;
       node.selfEdges?.forEach((selfEdge: any) => {
@@ -445,7 +445,7 @@ const positionSelfEdges = (g: IGraph) => {
 
 const selectNumberAttrs = (obj: any, attrs: any) => {
   const pickedProperties: any = {};
-  attrs.forEach((key: string) => {
+  attrs?.forEach((key: string) => {
     if (obj[key] === undefined) return;
     pickedProperties[key] = (+obj[key]);
   });

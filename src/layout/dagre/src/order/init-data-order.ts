@@ -15,7 +15,7 @@ const initDataOrder = (g: Graph, nodeOrder: string[]) => {
   for (let i = 0; i < maxRank + 1; i ++) {
     layers.push([]);
   }
-  nodeOrder.forEach((n) => {
+  nodeOrder?.forEach((n) => {
     const node = g.node(n);
     // 只考虑原有节点，dummy节点需要按照后续算法排出
     if (!node || node.dummy) return;

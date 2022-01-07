@@ -8,7 +8,7 @@ const run = (g: Graph) => {
     return (e: Edge) => g.edge(e).weight;
   };
   const fas = (g.graph().acyclicer === "greedy" ? greedyFAS(g, weightFn(g)) : dfsFAS(g));
-  fas.forEach((e: Edge) => {
+  fas?.forEach((e: Edge) => {
     const label = g.edge(e);
     g.removeEdge(e);
     label.forwardName = e.name;

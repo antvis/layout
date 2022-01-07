@@ -20,7 +20,7 @@ const sortSubgraph = (g: Graph, v: string, cg: Graph, biasRight: any, usePrev?: 
   }
 
   const barycenters = barycenter(g, movable || []);
-  barycenters.forEach((entry) => {
+  barycenters?.forEach((entry) => {
     if (g.children(entry.v)?.length) {
       const subgraphResult = sortSubgraph(g, entry.v, cg, biasRight);
       subgraphs[entry.v] = subgraphResult;
@@ -35,7 +35,7 @@ const sortSubgraph = (g: Graph, v: string, cg: Graph, biasRight: any, usePrev?: 
 
   // 添加fixorder信息到entries里边
   // TODO: 不考虑复合情况，只用第一个点的fixorder信息，后续考虑更完备的实现
-  entries.filter(e => !!e.vs || e.vs?.length > 0).forEach((e) => {
+  entries.filter(e => !!e.vs || e.vs?.length > 0)?.forEach((e) => {
     const node = g.node(e.vs[0]);
     e.fixorder = node.fixorder;
     e.order = node.order;
@@ -63,8 +63,8 @@ const sortSubgraph = (g: Graph, v: string, cg: Graph, biasRight: any, usePrev?: 
 };
 
 const expandSubgraphs = (entries: any, subgraphs: any) => {
-  entries.forEach((entry: any) => {
-    const vss = entry.vs.map((v: string) => {
+  entries?.forEach((entry: any) => {
+    const vss = entry.vs?.map((v: string) => {
       if (subgraphs[v]) {
         return subgraphs[v].vs;
       }

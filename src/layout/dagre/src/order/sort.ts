@@ -12,12 +12,12 @@ const sort = (entries: any, biasRight: any, usePrev: any) => {
   let weight = 0;
   let vsIndex = 0;
 
-  sortable.sort(compareWithBias(!!biasRight, !!usePrev));
+  sortable?.sort(compareWithBias(!!biasRight, !!usePrev));
 
   vsIndex = consumeUnsortable(vs, unsortable, vsIndex);
 
-  sortable.forEach((entry: any) => {
-    vsIndex += entry.vs.length;
+  sortable?.forEach((entry: any) => {
+    vsIndex += entry.vs?.length;
     vs.push(entry.vs);
     sum += entry.barycenter * entry.weight;
     weight += entry.weight;
@@ -37,7 +37,7 @@ const consumeUnsortable = (vs: any, unsortable: any, index: number) => {
   let last;
   while (unsortable.length && (last = unsortable[unsortable.length - 1]).i <= iindex) {
     unsortable.pop();
-    vs.push(last.vs);
+    vs?.push(last.vs);
     iindex++;
   }
   return iindex;
