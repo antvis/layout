@@ -28,12 +28,12 @@ const twoLayerCrossCount = (g: Graph, northLayer: string[], southLayer: string[]
     southLayer.map((v, i) => i));
   const unflat = northLayer.map((v) => {
     const unsort = g.outEdges(v)?.map((e) => {
-      return { pos: southPos[e.w], weight: g.edge(e).weight };
+      return { pos: southPos[e.w] || 0, weight: g.edge(e).weight };
     });
     return unsort?.sort((a, b) => a.pos - b.pos);
   });
   // @ts-ignore
-  const southEntries = unflat.flat();
+  const southEntries = unflat.flat().filter(entry => entry !== undefined);
 
   // Build the accumulator tree
   let firstIndex = 1;

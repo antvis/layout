@@ -1,5 +1,9 @@
 # ChangeLog
 
+#### 0.1.31
+
+- fix: dagre with sortByCombo error;
+
 #### 0.1.30
 
 - fix: flat problem;

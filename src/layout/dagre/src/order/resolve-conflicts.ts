@@ -64,8 +64,8 @@ const doResolveConflicts = (sourceSet: any) => {
   const handleIn = (vEntry: any) => {
     return (uEntry: any) => {
       if (uEntry.merged) return;
-      if (uEntry.barycenter !== undefined ||
-          vEntry.barycenter !== undefined ||
+      if (uEntry.barycenter === undefined ||
+          vEntry.barycenter === undefined ||
           uEntry.barycenter >= vEntry.barycenter) {
         mergeEntries(vEntry, uEntry);
       }
@@ -84,8 +84,8 @@ const doResolveConflicts = (sourceSet: any) => {
   while (sourceSet?.length) {
     const entry = sourceSet.pop();
     entries.push(entry);
-    entry["in"].reverse()?.forEach((e: any) => handleIn(entry));
-    entry.out?.forEach((e: any) => handleOut(entry));
+    entry["in"].reverse()?.forEach((e: any) => handleIn(entry)(e));
+    entry.out?.forEach((e: any) => handleOut(entry)(e));
   }
 
   const filtered = entries.filter((entry) => !entry.merged);
