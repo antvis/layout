@@ -1,5 +1,9 @@
 # ChangeLog
 
+#### 0.1.26
+
+- fix: dagre error;
+
 #### 0.1.25
  
  - fix: array flat and Infinite param problem;
