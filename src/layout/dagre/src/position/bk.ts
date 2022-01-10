@@ -39,14 +39,14 @@ const findType1Conflicts = (g: IGraph, layering?: any) => {
       // segment.
     let scanPos = 0;
     const prevLayerLength = prevLayer.length;
-    const lastNode = layer[layer?.length - 1];
+    const lastNode = layer?.[layer?.length - 1];
 
-      layer.forEach((v: string, i: number) => {
+      layer?.forEach((v: string, i: number) => {
       const w = findOtherInnerSegmentNode(g, v);
       const k1 = w ? g.node(w).order : prevLayerLength;
 
       if (w || v === lastNode) {
-        layer.slice(scanPos, i +1).forEach((scanNode: any) => {
+        layer.slice(scanPos, i +1)?.forEach((scanNode: any) => {
           g.predecessors(scanNode)?.forEach((u: any) => {
             const uLabel = g.node(u);
             const uPos = uLabel.order as number;
@@ -99,7 +99,7 @@ const findType2Conflicts = (g: IGraph, layering?: any) => {
     let nextNorthPos: number;
     let southPos = 0;
 
-      south.forEach((v: string, southLookahead: number) => {
+      south?.forEach((v: string, southLookahead: number) => {
       if (g.node(v).dummy === "border") {
         const predecessors = g.predecessors(v) || [];
         if (predecessors.length) {
@@ -170,17 +170,17 @@ const verticalAlignment = (g: IGraph, layering: any, conflicts: any, neighborFn:
   // We cache the position here based on the layering because the graph and
   // layering may be out of sync. The layering matrix is manipulated to
   // generate different extreme alignments.
-  layering.forEach((layer: any) => {
-    layer.forEach((v: string, order: number) => {
+  layering?.forEach((layer: any) => {
+    layer?.forEach((v: string, order: number) => {
       root[v] = v;
       align[v] = v;
       pos[v] = order;
     });
   });
 
-  layering.forEach((layer: any) => {
+  layering?.forEach((layer: any) => {
     let prevIdx = -1;
-    layer.forEach((v: any) => {
+    layer?.forEach((v: any) => {
       let ws = neighborFn(v) as any;
       if (ws.length) {
         ws = ws.sort((a: string, b: string) => pos[a] - pos[b]);
@@ -253,7 +253,7 @@ const horizontalCompaction = (g: IGraph, layering: any, root: string, align: str
 
   // Assign x coordinates to all nodes
   // @ts-ignore
-  Object.values(align).forEach((v: any) => {
+  Object.values(align)?.forEach((v: any) => {
     xs[v] = xs[root[v]];
   });
 
@@ -266,9 +266,9 @@ const buildBlockGraph = (g: IGraph, layering: any, root: string, reverseSep: boo
   const graphLabel = g.graph();
   const sepFn = sep(graphLabel.nodesep as number, graphLabel.edgesep as number, reverseSep as boolean);
 
-  layering.forEach((layer: any) => {
+  layering?.forEach((layer: any) => {
     let u: any;
-    layer.forEach((v: any) => {
+    layer?.forEach((v: any) => {
       const vRoot = root[v];
       blockGraph.setNode(vRoot);
       if (u) {
@@ -291,7 +291,7 @@ const findSmallestWidthAlignment = (g: IGraph, xss: any) => {
     let max = Number.NEGATIVE_INFINITY;
     let min = Number.POSITIVE_INFINITY;
 
-    Object.keys(xs).forEach((v: string) => {
+    Object.keys(xs)?.forEach((v: string) => {
       const x = xs[v];
       const halfWidth = width(g, v) / 2;
 

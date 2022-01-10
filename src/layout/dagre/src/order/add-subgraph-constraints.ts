@@ -6,7 +6,7 @@ const addSubgraphConstraints = (g: Graph, cg: Graph, vs: string[]) => {
   const prev: any = {};
   let rootPrev: any;
 
-  vs.forEach((v) => {
+  vs?.forEach((v) => {
   let child = g.parent(v);
   let parent;
   let prevChild;

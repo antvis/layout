@@ -64,8 +64,8 @@ const networkSimplex = (g: IGraph) => {
  */
 const initCutValues = (t: IGraph, g: IGraph) => {
   let vs = postorder(t as any, t.nodes());
-  vs = vs.slice(0, vs.length - 1);
-  vs.forEach((v: string) => {
+  vs = vs?.slice(0, vs?.length - 1);
+  vs?.forEach((v: string) => {
     assignCutValue(t, g, v);
   });
 };
@@ -97,7 +97,7 @@ const calcCutValue = (t: IGraph, g: IGraph, child: string) => {
 
   cutValue = graphEdge.weight;
 
-  g.nodeEdges(child).forEach((e) => {
+  g.nodeEdges(child)?.forEach((e) => {
     const isOutEdge = e.v === child;
     const other = isOutEdge ? e.w : e.v;
 
@@ -199,8 +199,8 @@ const exchangeEdges = (t: IGraph, g: IGraph, e: any, f: any) => {
 const updateRanks = (t: IGraph, g: IGraph) => {
   const root = t.nodes().find((v) =>{ return !g.node(v).parent; });
   let vs = preorder(t as any, root as any);
-  vs = vs.slice(1);
-  vs.forEach((v: string) => {
+  vs = vs?.slice(1);
+  vs?.forEach((v: string) => {
     const parent = t.node(v).parent as string;
     let edge = g.edge(v, parent);
     let flipped = false;

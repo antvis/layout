@@ -8,10 +8,10 @@ const positionY = (g: Graph) => {
   const layering = util.buildLayerMatrix(g);
   const rankSep = g.graph().ranksep as number;
   let prevY = 0;
-  layering.forEach((layer: any) => {
+  layering?.forEach((layer: any) => {
     const heights = layer.map((v: string) => g.node(v).height);
     const maxHeight = Math.max(...heights);
-    layer.forEach((v: string) => {
+    layer?.forEach((v: string) => {
       g.node(v).y = prevY + maxHeight / 2;
     });
     prevY += maxHeight + rankSep;

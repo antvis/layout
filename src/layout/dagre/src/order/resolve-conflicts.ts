@@ -29,7 +29,7 @@ type Graph = IGraphLib.Graph;
  */
 const resolveConflicts = (entries: any, cg: Graph) => {
   const mappedEntries: any = {};
-  entries.forEach((entry: any, i: number) => {
+  entries?.forEach((entry: any, i: number) => {
     const tmp: any = mappedEntries[entry.v] = {
       i,
       indegree: 0,
@@ -43,7 +43,7 @@ const resolveConflicts = (entries: any, cg: Graph) => {
     }
   });
 
-  cg.edges().forEach((e) => { 
+  cg.edges()?.forEach((e) => { 
     const entryV = mappedEntries[e.v];
     const entryW = mappedEntries[e.w];
     if (entryV !== undefined && entryW !== undefined) {
@@ -64,8 +64,8 @@ const doResolveConflicts = (sourceSet: any) => {
   const handleIn = (vEntry: any) => {
     return (uEntry: any) => {
       if (uEntry.merged) return;
-      if (uEntry.barycenter !== undefined ||
-          vEntry.barycenter !== undefined ||
+      if (uEntry.barycenter === undefined ||
+          vEntry.barycenter === undefined ||
           uEntry.barycenter >= vEntry.barycenter) {
         mergeEntries(vEntry, uEntry);
       }
@@ -84,15 +84,15 @@ const doResolveConflicts = (sourceSet: any) => {
   while (sourceSet?.length) {
     const entry = sourceSet.pop();
     entries.push(entry);
-    entry["in"].reverse().forEach((e: any) => handleIn(entry));
-    entry.out.forEach((e: any) => handleOut(entry));
+    entry["in"].reverse()?.forEach((e: any) => handleIn(entry)(e));
+    entry.out?.forEach((e: any) => handleOut(entry)(e));
   }
 
   const filtered = entries.filter((entry) => !entry.merged);
   const keys = ["vs", "i", "barycenter", "weight"];
   return filtered.map((entry) => {
     const picked: any = {};
-    keys.forEach((key) => {
+    keys?.forEach((key) => {
       if (entry[key] === undefined) return;
       picked[key] = entry[key];
     });
@@ -115,7 +115,7 @@ const mergeEntries = (target: any, source: any) => {
     weight += source.weight;
   }
 
-  target.vs = source.vs.concat(target.vs);
+  target.vs = source.vs?.concat(target.vs);
   target.barycenter = sum / weight;
   target.weight = weight;
   target.i = Math.min(source.i, target.i);

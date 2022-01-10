@@ -50,7 +50,7 @@ const asNonCompoundGraph = (g: IGraph): IGraph => {
 
 const zipObject = (keys: string[], values: any) => {
   const result: any = {};
-  keys.forEach((key, i) => {
+  keys?.forEach((key, i) => {
     result[key] = values[i];
   });
   return result;
@@ -126,17 +126,25 @@ const intersectRect = (rect: any, point: any) => {
  */
 const buildLayerMatrix = (g: IGraph) => {
   const layering: any = [];
+  const layeringNodes: any = [];
   const rankMax = maxRank(g) + 1;
   for (let i = 0; i < rankMax; i++) {
     layering.push([]);
+    layeringNodes.push([]);
   }
   // const layering = _.map(_.range(maxRank(g) + 1), function() { return []; });
   g.nodes().forEach((v: string) => {
     const node = g.node(v);
     const rank = node.rank;
-    if (rank !== undefined) {
-      layering[rank][node.order || 0] = v;
+    if (rank !== undefined && layering[rank]) {
+      layeringNodes[rank].push(v);
     }
+  });
+  layeringNodes?.forEach((layer: any, rank: number) => {
+    layer?.sort((va: string, vb: string) => (g.node(va) as any)?.order - (g.node(vb) as any)?.order);
+    layer.forEach((v: string) => {
+      layering[rank].push(v)
+    })
   });
   return layering;
 };
@@ -146,7 +154,7 @@ const buildLayerMatrix = (g: IGraph) => {
  * rank(v) >= 0 and at least one node w has rank(w) = 0.
  */
 const normalizeRanks = (g: IGraph) => {
-  const nodeRanks = g.nodes().map((v) => (g.node(v).rank as number));
+  const nodeRanks = g.nodes().filter(v => g.node(v).rank !== undefined).map((v) => (g.node(v).rank as number));
   const min = Math.min(...nodeRanks);
   g.nodes().forEach((v) => {
     const node = g.node(v);
@@ -159,7 +167,7 @@ const normalizeRanks = (g: IGraph) => {
 
 const removeEmptyRanks = (g: IGraph) => {
   // Ranks may not start at 0, so we need to offset them
-  const nodeRanks = g.nodes().map((v) => (g.node(v).rank as number));
+  const nodeRanks = g.nodes().filter(v => g.node(v).rank !== undefined).map((v) => (g.node(v).rank as number));
   const offset = Math.min(...nodeRanks);
 
   const layers: any = [];
@@ -173,16 +181,17 @@ const removeEmptyRanks = (g: IGraph) => {
 
   let delta = 0;
   const nodeRankFactor = g.graph().nodeRankFactor || 0;
-  layers.forEach((vs: any, i: number) => {
+  for (let i = 0; i < layers.length; i++) {
+    const vs = layers[i];
     if (vs === undefined && i % nodeRankFactor !== 0) {
       --delta;
     } else if (delta) {
-      vs.forEach((v: string) => {
+      vs?.forEach((v: string) => {
         if (!g.node(v).rank) g.node(v).rank = 0;
         (g.node(v).rank as any) += delta;
       });
     }
-  });
+  }
 };
 
 const addBorderNode = (g: IGraph, prefix: string, rank?: number, order?: number) => {
@@ -215,7 +224,7 @@ const maxRank = (g: IGraph) => {
  */
 const partition = (collection: any, fn: any) => {
   const result = { lhs: [] as any, rhs: [] as any };
-  collection.forEach((value: any) => {
+  collection?.forEach((value: any) => {
     if (fn(value)) {
       result.lhs.push(value);
     } else {
@@ -246,7 +255,7 @@ const notime = (name: string, fn: () => unknown) => {
 const minBy = (array: any, func: (param: any) => number) => {
   let min = Infinity;
   let minObject;
-  array.forEach((item: any) => {
+  array?.forEach((item: any) => {
     const value = func(item);
     if (min > value) {
       min = value;

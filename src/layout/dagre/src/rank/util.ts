@@ -48,7 +48,7 @@ const longestPath = (g: Graph) => {
     return rank;
   };
 
-  g.sources().forEach((source) => dfs(source as any));
+  g.sources()?.forEach((source) => dfs(source as any));
 };
 
 const longestPathWithLayer = (g: Graph) => {
@@ -79,7 +79,7 @@ const longestPathWithLayer = (g: Graph) => {
     return label.rank;
   };
 
-  g.sources().forEach((source: any) => dfs(source));
+  g.sources()?.forEach((source: any) => dfs(source));
 
   minRank += 1; // NOTE: 最小的层级是dummy root，+1
 

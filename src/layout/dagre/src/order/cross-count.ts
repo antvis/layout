@@ -28,12 +28,12 @@ const twoLayerCrossCount = (g: Graph, northLayer: string[], southLayer: string[]
     southLayer.map((v, i) => i));
   const unflat = northLayer.map((v) => {
     const unsort = g.outEdges(v)?.map((e) => {
-      return { pos: southPos[e.w], weight: g.edge(e).weight };
+      return { pos: southPos[e.w] || 0, weight: g.edge(e).weight };
     });
     return unsort?.sort((a, b) => a.pos - b.pos);
   });
   // @ts-ignore
-  const southEntries = unflat.flat();
+  const southEntries = unflat.flat().filter(entry => entry !== undefined);
 
   // Build the accumulator tree
   let firstIndex = 1;
@@ -44,7 +44,7 @@ const twoLayerCrossCount = (g: Graph, northLayer: string[], southLayer: string[]
 
   // Calculate the weighted crossings
   let cc = 0;
-  southEntries.forEach((entry: any) => {
+  southEntries?.forEach((entry: any) => {
     let index = entry.pos + firstIndex;
     tree[index] += entry.weight;
     let weightSum = 0;
@@ -63,7 +63,7 @@ const twoLayerCrossCount = (g: Graph, northLayer: string[], southLayer: string[]
 
 const crossCount = (g: Graph, layering: any) => {
   let cc = 0;
-  for (let i = 1; i < layering.length; ++i) {
+  for (let i = 1; i < layering?.length; ++i) {
     cc += twoLayerCrossCount(g, layering[i-1], layering[i]);
   }
   return cc;

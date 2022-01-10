@@ -37,7 +37,7 @@ const reverseY = (g: Graph) => {
 
   g.edges().forEach((e) => {
     const edge = g.edge(e);
-    edge.points.forEach((point) => reverseYOne(point));
+    edge.points?.forEach((point) => reverseYOne(point));
     if (edge.hasOwnProperty("y")) {
       reverseYOne(edge);
     }
@@ -53,7 +53,7 @@ const swapXY = (g: Graph) => {
 
   g.edges().forEach((e) => {
     const edge = g.edge(e);
-    edge.points.forEach((point) => swapXYOne(point));
+    edge.points?.forEach((point) => swapXYOne(point));
     if (edge.hasOwnProperty("x")) {
       swapXYOne(edge);
     }

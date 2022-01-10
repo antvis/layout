@@ -154,7 +154,7 @@ const buildLayoutGraph = (inputGraph: IGraph) => {
   const graph = canonicalize(inputGraph.graph());
 
   const pickedProperties: any = {};
-  graphAttrs.forEach((key) => {
+  graphAttrs?.forEach((key) => {
     if (graph[key] !== undefined) pickedProperties[key] = graph[key];
   });
 
@@ -180,7 +180,7 @@ const buildLayoutGraph = (inputGraph: IGraph) => {
     const edge = canonicalize(inputGraph.edge(e));
     
     const pickedProperties: any = {};
-    edgeAttrs.forEach((key) => {
+    edgeAttrs?.forEach((key) => {
       if (edge[key] !== undefined) pickedProperties[key] = edge[key];
     });
 
@@ -276,14 +276,19 @@ const translateGraph = (g: IGraph) => {
   const marginY = graphLabel.marginy || 0;
 
   const getExtremes = (attrs: any) => {
+    if (!attrs) return;
     const x = attrs.x;
     const y = attrs.y;
     const w = attrs.width;
     const h = attrs.height;
-    minX = Math.min(minX, x - w / 2);
-    maxX = Math.max(maxX, x + w / 2);
-    minY = Math.min(minY, y - h / 2);
-    maxY = Math.max(maxY, y + h / 2);
+    if (!isNaN(x) && !isNaN(w)) {
+      minX = Math.min(minX, x - w / 2);
+      maxX = Math.max(maxX, x + w / 2);
+    }
+    if (!isNaN(y) && !isNaN(h)) {
+      minY = Math.min(minY, y - h / 2);
+      maxY = Math.max(maxY, y + h / 2);
+    }
   };
 
   g.nodes().forEach((v) => { getExtremes(g.node(v)); });
@@ -370,10 +375,10 @@ const removeBorderNodes = (g: IGraph) => {
       const l = g.node(node.borderLeft[node.borderLeft?.length - 1]);
       const r = g.node(node.borderRight[node.borderRight?.length - 1]);
 
-      node.width = Math.abs(r.x - l.x);
-      node.height = Math.abs(b.y - t.y);
-      node.x = l.x + node.width / 2;
-      node.y = t.y + node.height / 2;
+      node.width = Math.abs(r?.x - l?.x) || 10;
+      node.height = Math.abs(b?.y - t?.y) || 10;
+      node.x = (l?.x || 0) + node.width / 2;
+      node.y = (t?.y || 0) + node.height / 2;
     }
   });
 
@@ -399,9 +404,9 @@ const removeSelfEdges = (g: IGraph) => {
 
 const insertSelfEdges = (g: IGraph) => {
   const layers = util.buildLayerMatrix(g);
-  layers.forEach((layer: string[]) => {
+  layers?.forEach((layer: string[]) => {
     let orderShift = 0;
-    layer.forEach((v: string, i: number) => {
+    layer?.forEach((v: string, i: number) => {
       const node = g.node(v);
       node.order = i + orderShift;
       node.selfEdges?.forEach((selfEdge: any) => {
@@ -445,7 +450,7 @@ const positionSelfEdges = (g: IGraph) => {
 
 const selectNumberAttrs = (obj: any, attrs: any) => {
   const pickedProperties: any = {};
-  attrs.forEach((key: string) => {
+  attrs?.forEach((key: string) => {
     if (obj[key] === undefined) return;
     pickedProperties[key] = (+obj[key]);
   });
