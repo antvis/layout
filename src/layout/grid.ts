@@ -134,8 +134,8 @@ export class GridLayout extends Base {
       };
     }
 
-    let { sortBy, width, height, condense, preventOverlapPadding, preventOverlap, nodeSpacing: paramNodeSpacing, nodeSize: paramNodeSize } = self;
-
+    let { sortBy, width, height } = self;
+    const { condense, preventOverlapPadding, preventOverlap, nodeSpacing: paramNodeSpacing, nodeSize: paramNodeSize } = self;
     
     const layoutNodes: INode[] = [];
     nodes.forEach((node) => {
@@ -229,7 +229,7 @@ export class GridLayout extends Base {
 
     if (preventOverlap || paramNodeSpacing) {
       const nodeSpacing: Function = getFuncByUnknownType(10, paramNodeSpacing);
-      const nodeSize: Function = getFuncByUnknownType(30, paramNodeSize, false)
+      const nodeSize: Function = getFuncByUnknownType(30, paramNodeSize, false);
       layoutNodes.forEach((node) => {
         if (!node.x || !node.y) {
           // for bb

@@ -214,7 +214,7 @@ export class CircularLayout extends Base {
       const nodeSpacing: Function = getFuncByUnknownType(10, paramNodeSpacing);
       const nodeSize: Function = getFuncByUnknownType(10, paramNodeSize);
       let maxNodeSize = -Infinity;
-      nodes.forEach(node => {
+      nodes.forEach((node) => {
         const nSize = nodeSize(node);
         if (maxNodeSize < nSize) maxNodeSize = nSize;
       });

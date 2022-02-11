@@ -11,7 +11,7 @@
   ComboTree,
   ComboCombinedLayoutOptions
 } from "./types";
-import { ForceLayoutTypeMap } from '../constants';
+import { FORCE_LAYOUT_TYPE_MAP } from './constants';
 import { Base } from "./base";
 import { isArray, isNumber, isFunction, traverseTreeUp, isObject, findMinMaxNodeXY } from "../util";
 import { CircularLayout, ConcentricLayout, GridLayout, RadialLayout, MDSLayout } from ".";
@@ -105,20 +105,20 @@ export class ComboCombinedLayout extends Base {
     const innerGraphs: any = self.getInnerGraphs();
     
     const nodeMap: any = {};
-    nodes.forEach(node => {
+    nodes.forEach((node) => {
       nodeMap[node.id] = node;
     });
     const comboMap: any = {};
-    combos.forEach(combo => {
+    combos.forEach((combo) => {
       comboMap[combo.id] = combo;
     });
 
     // 每个 innerGraph 作为一个节点，带有大小，参与 force 计算
     const outerNodeIds: string[] = [];
     const outerNodes: Node[] = [];
-    const nodeAncestorIdMap: { [key: string]: string } = {}
+    const nodeAncestorIdMap: { [key: string]: string } = {};
     let allHaveNoPosition = true;
-    this.comboTrees.forEach(cTree => {
+    this.comboTrees.forEach((cTree) => {
       const innerNode = innerGraphs[cTree.id];
       // 代表 combo 的节点
       const oNode: Node = {
@@ -129,7 +129,7 @@ export class ComboCombinedLayout extends Base {
         fy: innerNode.fy || comboMap[cTree.id].fy,
         mass: innerNode.mass || comboMap[cTree.id].mass,
         size: innerNode.size
-      }
+      };
       outerNodes.push(oNode);
       if (!isNaN(oNode.x) && !isNaN(oNode.y)) {
         allHaveNoPosition = false;
@@ -138,7 +138,7 @@ export class ComboCombinedLayout extends Base {
         oNode.y = Math.random() * 100;
       }
       outerNodeIds.push(cTree.id);
-      traverseTreeUp<ComboTree>(cTree, child => {
+      traverseTreeUp<ComboTree>(cTree, (child) => {
         if (child.id !== cTree.id) nodeAncestorIdMap[child.id] = cTree.id;
         return true;
       });
@@ -164,8 +164,8 @@ export class ComboCombinedLayout extends Base {
       }
       outerNodeIds.push(node.id);
     });
-    const outerEdges: any = []
-    edges.concat(comboEdges).forEach(edge => {
+    const outerEdges: any = [];
+    edges.concat(comboEdges).forEach((edge) => {
       const sourceAncestorId = nodeAncestorIdMap[edge.source] || edge.source;
       const targetAncestorId = nodeAncestorIdMap[edge.target] || edge.target;
       // 若两个点的祖先都在力导图的节点中，且是不同的节点，创建一条链接两个祖先的边到力导图的边中
@@ -175,7 +175,7 @@ export class ComboCombinedLayout extends Base {
         outerEdges.push({
           source: sourceAncestorId,
           target: targetAncestorId
-        })
+        });
       }
     });
 
@@ -208,14 +208,14 @@ export class ComboCombinedLayout extends Base {
           ...params
         });
         // 若所有 outerNodes 都没有位置，且 outerLayout 是力导家族的布局，则先执行 preset mds 或 grid
-        if (allHaveNoPosition && ForceLayoutTypeMap[outerLayout.getType?.()]) {
+        if (allHaveNoPosition && FORCE_LAYOUT_TYPE_MAP[outerLayout.getType?.()]) {
           const outerLayoutPreset = outerNodes.length < 100 ? new MDSLayout() : new GridLayout();
           outerLayoutPreset.layout(outerData);
         }
         outerLayout.layout(outerData);
       }
       // 根据外部布局结果，平移 innerGraphs 中的节点（第一层）
-      outerNodes.forEach(oNode => {
+      outerNodes.forEach((oNode) => {
         const innerGraph = innerGraphs[oNode.id];
         if (!innerGraph) {
           const node = nodeMap[oNode.id];
@@ -256,7 +256,7 @@ export class ComboCombinedLayout extends Base {
         comboMap[id].y = innerGraph.y;
       }
     }
-    return { nodes, edges, combos, comboEdges }
+    return { nodes, edges, combos, comboEdges };
   }
 
   private getInnerGraphs() {
@@ -287,17 +287,17 @@ export class ComboCombinedLayout extends Base {
           }
         } else {
           // 非空 combo
-          const innerGraphNodes = treeNode.children.map(child => {
+          const innerGraphNodes = treeNode.children.map((child) => {
             if (child.itemType === 'combo') return innerGraphs[child.id];
             return {...child};
           });
-          const innerGraphNodeIds = innerGraphNodes.map(node => node.id);
+          const innerGraphNodeIds = innerGraphNodes.map((node) => node.id);
           const innerGraphData = {
             nodes: innerGraphNodes,
-            edges: edges.filter(edge => innerGraphNodeIds.includes(edge.source) && innerGraphNodeIds.includes(edge.target))
-          }
+            edges: edges.filter((edge) => innerGraphNodeIds.includes(edge.source) && innerGraphNodeIds.includes(edge.target))
+          };
           let minNodeSize = Infinity;
-          innerGraphNodes.forEach(node => {
+          innerGraphNodes.forEach((node) => {
             // @ts-ignore
             if (!node.size) node.size = innerGraphs[node.id]?.size || nodeSize?.(node) || [30, 30];
             if (isNumber(node.size)) node.size = [node.size, node.size];

@@ -11,3 +11,11 @@ export const LAYOUT_MESSAGE = {
   GPURUN: "GPU_LAYOUT_RUN",
   GPUEND: "GPU_LAYOUT_END"
 };
+
+export const FORCE_LAYOUT_TYPE_MAP: { [key: string]: boolean } = {
+  'gForce': true,
+  'fruchterman': true,
+  'forceAtlas2': true,
+  'force': true,
+  'graphin-force': true,
+};

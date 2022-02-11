@@ -19,7 +19,7 @@ export const getFunc = (
     resultFunc = () => defaultValue;
   }
   return resultFunc;
-}
+};
 
 export const getFuncByUnknownType = (
   defaultValue: number,
@@ -35,26 +35,30 @@ export const getFuncByUnknownType = (
       }
       return defaultValue;
     };
-  } else if (isFunction(value)) {
+  }
+  if (isFunction(value)) {
     return value;
-  } else if (isNumber(value)) {
+  }
+  if (isNumber(value)) {
     return () => value;
-  } else if (isArray(value)) {
+  }
+  if (isArray(value)) {
     return () => {
       if (resultIsNumber) {
-        const max = Math.max(...(value as Array<number>));
+        const max = Math.max(...(value as number[]));
         return isNaN(max) ? defaultValue : max;
-      };
+      }
       return value;
     };
-  } else if (isObject(value)) {
+  }
+  if (isObject(value)) {
     return () => {
       if (resultIsNumber) {
         const max = Math.max(value.width, value.height);
         return isNaN(max) ? defaultValue : max;
-      };
+      }
       return [value.width, value.height];
     };
   }
   return () => defaultValue;
-}
+};
