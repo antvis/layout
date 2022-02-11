@@ -85,7 +85,7 @@ export class GForceLayout extends Base {
   public getCenter: ((d?: any, degree?: number) => number[]) | undefined;
 
   /** 理想边长 */
-  public linkDistance: number | ((d?: any) => number) | undefined = 1;
+  public linkDistance: number | ((edge?: any, source?: any, target?: any) => number) | undefined = 1;
 
   /** 重力大小 */
   public gravity: number = 10;
@@ -212,11 +212,9 @@ export class GForceLayout extends Base {
         nodeSizeFunc = (d: INode) => {
           if (d.size) {
             if (isArray(d.size)) {
-              const res = d.size[0] > d.size[1] ? d.size[0] : d.size[1];
-              return res + nodeSpacingFunc(d);
+              return Math.max(d.size[0], d.size[1]) + nodeSpacingFunc(d);
             }  if(isObject(d.size)) {
-              const res = d.size.width > d.size.height ? d.size.width : d.size.height;
-              return res + nodeSpacingFunc(d);
+              return Math.max(d.size.width, d.size.height) + nodeSpacingFunc(d);
             }
             return (d.size as number) + nodeSpacingFunc(d);
           }
@@ -224,8 +222,7 @@ export class GForceLayout extends Base {
         };
       } else if (isArray(nodeSize)) {
         nodeSizeFunc = (d: INode) => {
-          const res = nodeSize[0] > nodeSize[1] ? nodeSize[0] : nodeSize[1];
-          return res + nodeSpacingFunc(d);
+          return Math.max(nodeSize[0], nodeSize[1]) + nodeSpacingFunc(d);
         };
       } else {
         nodeSizeFunc = (d: INode) => (nodeSize as number) + nodeSpacingFunc(d);
@@ -237,7 +234,7 @@ export class GForceLayout extends Base {
     self.degrees = getDegree(nodes.length, self.nodeIdxMap, edges);
     if (!self.getMass) {
       self.getMass = (d) => {
-        const mass = self.degrees[self.nodeIdxMap[d.id]] || 1;
+        const mass = d.mass || self.degrees[self.nodeIdxMap[d.id]] || 1;
         return mass;
       };
     }
@@ -373,7 +370,7 @@ export class GForceLayout extends Base {
       const vecLength = Math.sqrt(vecX * vecX + vecY * vecY) + 0.01;
       const direX = vecX / vecLength;
       const direY = vecY / vecLength;
-      const length = (linkDistance as Function)(edge) || 1 + ((nodeSize(sourceNode) + nodeSize(sourceNode)) || 0) / 2;
+      const length = (linkDistance as Function)(edge, sourceNode, targetNode) || 1 + ((nodeSize(sourceNode) + nodeSize(sourceNode)) || 0) / 2;
       const diff = length - vecLength;
       const param = diff * (edgeStrength as Function)(edge);
       const sourceIdx = nodeIdxMap[source];

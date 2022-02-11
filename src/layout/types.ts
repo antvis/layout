@@ -44,6 +44,10 @@ export interface Model {
   nodes?: Node[];
   edges?: Edge[];
   combos?: Combo[];
+  comboEdges?: Edge[];
+  hiddenNodes?: Node[];
+  hiddenEdges?: Edge[];
+  hiddenCombos?: Combo[];
 }
 
 export interface OutModel extends Model {

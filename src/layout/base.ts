@@ -4,6 +4,10 @@ export class Base {
   public nodes: Node[] | null = [];
   public edges: Edge[] | null = [];
   public combos: Combo[] | null = [];
+  public comboEdges: Edge[] | null = [];
+  public hiddenNodes: Node[] | null = [];
+  public hiddenEdges: Edge[] | null = [];
+  public hiddenCombos: Combo[] | null = [];
   public positions: PointTuple[] | null = [];
   public destroyed: boolean = false;
   public onLayoutEnd: () => void = () => { }; 
@@ -17,6 +21,10 @@ export class Base {
     this.nodes = data.nodes || [];
     this.edges = data.edges || [];
     this.combos = data.combos || [];
+    this.comboEdges = data.comboEdges || [];
+    this.hiddenNodes = data.hiddenNodes || [];
+    this.hiddenEdges = data.hiddenEdges || [];
+    this.hiddenCombos = data.hiddenCombos || [];
   }
 
   public execute(reloadData?: boolean): any {}

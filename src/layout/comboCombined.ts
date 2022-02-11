@@ -11,14 +11,18 @@
   ComboTree,
   ComboCombinedLayoutOptions
 } from "./types";
+import { ForceLayoutTypeMap } from '../constants';
 import { Base } from "./base";
 import { isArray, isNumber, isFunction, traverseTreeUp, isObject, findMinMaxNodeXY } from "../util";
-import { CircularLayout, ConcentricLayout, ForceAtlas2Layout, GridLayout, RadialLayout } from ".";
+import { CircularLayout, ConcentricLayout, GridLayout, RadialLayout, MDSLayout } from ".";
 
 type Node = OutNode & {
-  depth: number;
+  depth?: number;
   itemType?: string;
   comboId?: string;
+  fx?: number;
+  fy?: number;
+  mass?: number;
 };
 
 /**
@@ -35,6 +39,8 @@ export class ComboCombinedLayout extends Base {
   public edges: Edge[] = [];
 
   public combos: Combo[] = [];
+
+  public comboEdges: Edge[] = [];
 
   /** 节点大小，用于防止节点之间的重叠 */
   public nodeSize: number | number[] | ((d?: unknown) => number) | undefined;
@@ -94,7 +100,7 @@ export class ComboCombinedLayout extends Base {
 
   public run() {
     const self = this;
-    const { nodes, edges, combos, center } = self;
+    const { nodes, edges, combos, comboEdges, center } = self;
 
     const innerGraphs: any = self.getInnerGraphs();
     
@@ -109,19 +115,23 @@ export class ComboCombinedLayout extends Base {
 
     // 每个 innerGraph 作为一个节点，带有大小，参与 force 计算
     const outerNodeIds: string[] = [];
-    const outerNodes: OutNode[] = [];
+    const outerNodes: Node[] = [];
     const nodeAncestorIdMap: { [key: string]: string } = {}
     let allHaveNoPosition = true;
     this.comboTrees.forEach(cTree => {
       const innerNode = innerGraphs[cTree.id];
-      const oNode = {
+      // 代表 combo 的节点
+      const oNode: Node = {
         id: cTree.id,
         x: innerNode.x || comboMap[cTree.id].x,
         y: innerNode.y || comboMap[cTree.id].y,
+        fx: innerNode.fx || comboMap[cTree.id].fx,
+        fy: innerNode.fy || comboMap[cTree.id].fy,
+        mass: innerNode.mass || comboMap[cTree.id].mass,
         size: innerNode.size
       }
       outerNodes.push(oNode);
-      if (!isNaN(oNode.x) && isNaN(oNode.y)) {
+      if (!isNaN(oNode.x) && !isNaN(oNode.y)) {
         allHaveNoPosition = false;
       } else {
         oNode.x = Math.random() * 100;
@@ -135,14 +145,18 @@ export class ComboCombinedLayout extends Base {
     });
     nodes.forEach((node) => {
       if (node.comboId) return;
-      const oNode = {
+      // 代表节点的节点
+      const oNode: Node = {
         id: node.id,
         x: node.x,
         y: node.y,
+        fx: node.fx,
+        fy: node.fy,
+        mass: node.mass,
         size: node.size
       };
       outerNodes.push(oNode);
-      if (!isNaN(oNode.x) && isNaN(oNode.y)) {
+      if (!isNaN(oNode.x) && !isNaN(oNode.y)) {
         allHaveNoPosition = false;
       } else {
         oNode.x = Math.random() * 100;
@@ -150,17 +164,8 @@ export class ComboCombinedLayout extends Base {
       }
       outerNodeIds.push(node.id);
     });
-    // 若所有 outerNodes 都没有位置，则使用 grid 初始化布局
-    if (allHaveNoPosition) {
-      const gridInitial = new GridLayout();
-      gridInitial.layout({ nodes: outerNodes });
-    }
-    const outerEdges = edges.filter(edge => outerNodeIds.includes(edge.source) && outerNodeIds.includes(edge.target))
-      .map(edge => ({
-        source: edge.source,
-        target: edge.target
-      }));
-    edges.forEach(edge => {
+    const outerEdges: any = []
+    edges.concat(comboEdges).forEach(edge => {
       const sourceAncestorId = nodeAncestorIdMap[edge.source] || edge.source;
       const targetAncestorId = nodeAncestorIdMap[edge.target] || edge.target;
       // 若两个点的祖先都在力导图的节点中，且是不同的节点，创建一条链接两个祖先的边到力导图的边中
@@ -187,12 +192,26 @@ export class ComboCombinedLayout extends Base {
 
         // 需要使用一个同步的布局
         // @ts-ignore
-        const outerLayout = this.outerLayout || new ForceAtlas2Layout();
+        const outerLayout = this.outerLayout || new GForce();
+        const params = outerLayout.getType() === 'gForce' ? {
+          gravity: 1,
+          factor: 2,
+          linkDistance: (edge: any, source: any, target: any) => {
+            const nodeSize = ((source.size?.[0] || 30) + (target.size?.[0] || 30)) / 2;
+            return Math.min(nodeSize * 1.5, 700);
+          }
+        } : {};
         outerLayout.updateCfg({
           center,
           preventOverlap: true,
           kg: 5,
+          ...params
         });
+        // 若所有 outerNodes 都没有位置，且 outerLayout 是力导家族的布局，则先执行 preset mds 或 grid
+        if (allHaveNoPosition && ForceLayoutTypeMap[outerLayout.getType?.()]) {
+          const outerLayoutPreset = outerNodes.length < 100 ? new MDSLayout() : new GridLayout();
+          outerLayoutPreset.layout(outerData);
+        }
         outerLayout.layout(outerData);
       }
       // 根据外部布局结果，平移 innerGraphs 中的节点（第一层）
@@ -237,7 +256,7 @@ export class ComboCombinedLayout extends Base {
         comboMap[id].y = innerGraph.y;
       }
     }
-    return { nodes, edges, combos }
+    return { nodes, edges, combos, comboEdges }
   }
 
   private getInnerGraphs() {

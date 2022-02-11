@@ -1,5 +1,11 @@
 # ChangeLog
 
+#### 0.2.0-beta.0
+
+- feat: comboCombined layout;
+- feat: add source and target node to the parameters of gForce linkDistance;
+- feat: add hiddenNodes hiddenEdges hiddenCombos to the data of layout instance;
+
 #### 0.1.31
 
 - fix: dagre with sortByCombo error;
@@ -29,7 +35,6 @@
  - fix: array flat and Infinite param problem;
  - fix: dagre with NaN node rank;
  - chore: lint;
-
 
 #### 0.1.23
 
