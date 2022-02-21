@@ -182,6 +182,20 @@ export interface DagreLayoutOptions {
   nodeOrder?: string[];
 }
 
+export interface DagreCompoundLayoutOptions {
+  type?: "dagreCompound";
+  rankdir?: "TB" | "BT" | "LR" | "RL";
+  align?: "UL" | "UR" | "DL" | "DR";
+  begin?: PointTuple;
+  nodeSize?: number | number[] | undefined;
+  nodesep?: number;
+  ranksep?: number;
+  controlPoints?: boolean;
+  anchorPoint?: boolean;
+  settings?: any;
+  onLayoutEnd?: () => void;
+}
+
 export interface FruchtermanLayoutOptions {
   type: "fruchterman";
   center?: PointTuple;

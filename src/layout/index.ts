@@ -4,6 +4,7 @@ import { GForceLayout } from "./gForce";
 import { ForceLayout } from "./force";
 import { CircularLayout } from "./circular";
 import { DagreLayout } from "./dagre";
+import { DagreCompoundLayout } from "./dagre-compound";
 import { RadialLayout } from "./radial";
 import { ConcentricLayout } from "./concentric";
 import { MDSLayout } from "./mds";
@@ -27,6 +28,7 @@ export {
   ForceLayout,
   CircularLayout,
   DagreLayout,
+  DagreCompoundLayout,
   RadialLayout,
   ConcentricLayout,
   MDSLayout,

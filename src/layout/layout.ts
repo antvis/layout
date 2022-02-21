@@ -17,6 +17,7 @@ import { ComboForceLayout } from "./comboForce";
 import { ComboCombinedLayout } from "./comboCombined";
 import { ForceAtlas2Layout } from "./forceAtlas2";
 import { ERLayout } from "./er";
+import { DagreCompoundLayout } from "./dagre-compound";
 export class Layout {
   public readonly layoutInstance: Base;
 
@@ -59,6 +60,7 @@ export const Layouts: { [key: string]: any } = {
   forceAtlas2: ForceAtlas2Layout,
   gForce: GForceLayout,
   dagre: DagreLayout,
+  dagreCompound: DagreCompoundLayout,
   circular: CircularLayout,
   radial: RadialLayout,
   concentric: ConcentricLayout,
