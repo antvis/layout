@@ -202,7 +202,7 @@ export interface GForceLayoutOptions {
   center?: PointTuple;
   width?: number;
   height?: number;
-  linkDistance?: number | ((d?: any) => number) | undefined;
+  linkDistance?: number | ((edge?: any, source?: any, target?: any) => number) | undefined;
   nodeStrength?: number | ((d?: any) => number) | undefined;
   edgeStrength?: number | ((d?: any) => number) | undefined;
   preventOverlap?: boolean;
@@ -216,6 +216,7 @@ export interface GForceLayoutOptions {
   getMass?: ((d?: any) => number) | undefined;
   getCenter?: ((d?: any, degree?: number) => number[]) | undefined;
   gravity?: number;
+  factor?: number;
   tick?: () => void;
   onLayoutEnd?: () => void;
   workerEnabled?: boolean;

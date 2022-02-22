@@ -14,7 +14,7 @@
 import { FORCE_LAYOUT_TYPE_MAP } from './constants';
 import { Base } from "./base";
 import { isArray, isNumber, isFunction, traverseTreeUp, isObject, findMinMaxNodeXY } from "../util";
-import { CircularLayout, ConcentricLayout, GridLayout, RadialLayout, MDSLayout } from ".";
+import { CircularLayout, ConcentricLayout, GridLayout, RadialLayout, GForceLayout, MDSLayout } from ".";
 
 type Node = OutNode & {
   depth?: number;
@@ -49,7 +49,7 @@ export class ComboCombinedLayout extends Base {
   public spacing: ((d?: unknown) => number) | number | undefined;
 
   /** 最外层的布局算法，需要使用同步的布局算法，默认为 forceAtlas2 */
-  public outerLayout: Base;
+  public outerLayout: any;
 
   /** combo 内部的布局算法，默认为 concentric */
   public innerLayout: ConcentricLayout | CircularLayout | GridLayout | RadialLayout;
@@ -131,7 +131,7 @@ export class ComboCombinedLayout extends Base {
         size: innerNode.size
       };
       outerNodes.push(oNode);
-      if (!isNaN(oNode.x) && !isNaN(oNode.y)) {
+      if (!isNaN(oNode.x) && oNode.x !== 0 && !isNaN(oNode.y) && oNode.y !== 0) {
         allHaveNoPosition = false;
       } else {
         oNode.x = Math.random() * 100;
@@ -156,7 +156,7 @@ export class ComboCombinedLayout extends Base {
         size: node.size
       };
       outerNodes.push(oNode);
-      if (!isNaN(oNode.x) && !isNaN(oNode.y)) {
+      if (!isNaN(oNode.x) && oNode.x !== 0 && !isNaN(oNode.y) && oNode.y !== 0) {
         allHaveNoPosition = false;
       } else {
         oNode.x = Math.random() * 100;
@@ -192,23 +192,23 @@ export class ComboCombinedLayout extends Base {
 
         // 需要使用一个同步的布局
         // @ts-ignore
-        const outerLayout = this.outerLayout || new GForce();
-        const params = outerLayout.getType() === 'gForce' ? {
+        let outerLayout = this.outerLayout || new GForceLayout({
           gravity: 1,
           factor: 2,
           linkDistance: (edge: any, source: any, target: any) => {
             const nodeSize = ((source.size?.[0] || 30) + (target.size?.[0] || 30)) / 2;
             return Math.min(nodeSize * 1.5, 700);
           }
-        } : {};
+        });
+        const outerLayoutType = outerLayout.getType?.();
         outerLayout.updateCfg({
           center,
-          preventOverlap: true,
           kg: 5,
-          ...params
+          preventOverlap: true,
+          animate: false,
         });
         // 若所有 outerNodes 都没有位置，且 outerLayout 是力导家族的布局，则先执行 preset mds 或 grid
-        if (allHaveNoPosition && FORCE_LAYOUT_TYPE_MAP[outerLayout.getType?.()]) {
+        if (allHaveNoPosition && FORCE_LAYOUT_TYPE_MAP[outerLayoutType]) {
           const outerLayoutPreset = outerNodes.length < 100 ? new MDSLayout() : new GridLayout();
           outerLayoutPreset.layout(outerData);
         }
