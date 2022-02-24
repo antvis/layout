@@ -1,5 +1,9 @@
 # ChangeLog
 
+#### 0.2.0-beta.3
+
+- feat: dagreCompoud layout;
+
 #### 0.2.0-beta.0
 
 - feat: comboCombined layout;
