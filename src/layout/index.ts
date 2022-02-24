@@ -4,7 +4,7 @@ import { GForceLayout } from "./gForce";
 import { ForceLayout } from "./force";
 import { CircularLayout } from "./circular";
 import { DagreLayout } from "./dagre";
-import { DagreCompoundLayout } from "./dagre-compound";
+import { DagreCompoundLayout } from "./dagreCompound";
 import { RadialLayout } from "./radial";
 import { ConcentricLayout } from "./concentric";
 import { MDSLayout } from "./mds";

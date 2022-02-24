@@ -17,7 +17,7 @@ import { ComboForceLayout } from "./comboForce";
 import { ComboCombinedLayout } from "./comboCombined";
 import { ForceAtlas2Layout } from "./forceAtlas2";
 import { ERLayout } from "./er";
-import { DagreCompoundLayout } from "./dagre-compound";
+import { DagreCompoundLayout } from "./dagreCompound";
 export class Layout {
   public readonly layoutInstance: Base;
 
