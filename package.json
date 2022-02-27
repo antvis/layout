@@ -19,26 +19,24 @@
   ],
   "scripts": {
     "clean": "rimraf es lib dist",
-    "lint:es": "eslint --ext .js --fix",
-    "lint:ts": "tslint -c tslint.json -p tsconfig.json --fix",
-    "lint": "npm run lint:ts && npm run lint:es",
+    "lint": "eslint --cache . --ext .ts",
+    "lint:fix": "eslint --fix --cache . --ext .ts",
     "build:esm": "tsc --module esnext --target es2015 --outDir ./es",
     "build:cjs": "tsc --module commonjs --target es5 --outDir ./lib",
     "build:umd": "webpack --config webpack.config.js --mode production",
     "build": "npm run clean && npm run build:cjs && npm run build:esm && npm run build:umd",
     "build:watch": "npm build:esm --w",
-    "precommit": "lint-staged",
+    "format": "prettier --config .prettierrc.js --list-different \"src/**/*.ts\"",
+    "pre-commit": "tsc -p ./tsconfig.json --noEmit && lint-staged",
     "release": "release-it",
     "test": "jest",
     "coverage": "jest --coverage",
-    "test-live": "DEBUG_MODE=1 jest --watch __tests__/g6/combo-concentric-test.ts"
+    "test-live": "DEBUG_MODE=1 jest --watch __tests__/g6/combo-concentric-test.ts",
+    "prepare": "husky install"
   },
   "lint-staged": {
-    "*.js": [
-      "eslint --fix"
-    ],
     "src/**/*.ts": [
-      "tslint -c tslint.json -p ./tsconfig.json --fix"
+      "eslint --fix"
     ]
   },
   "dependencies": {
@@ -55,19 +53,26 @@
     "@babel/polyfill": "^7.12.1",
     "@babel/preset-env": "*",
     "@babel/preset-typescript": "*",
+    "@commitlint/cli": "^16.2.1",
+    "@commitlint/config-conventional": "^16.2.1",
     "@types/d3-force": "^2.1.0",
     "@types/graphlib": "^2.1.8",
     "@types/jest": "^25.2.1",
+    "@typescript-eslint/eslint-plugin": "^5.12.1",
+    "@typescript-eslint/parser": "^5.12.1",
     "babel-jest": "*",
     "babel-loader": "^8.2.2",
     "eslint": "^7.11.0",
     "eslint-config-airbnb-base": "^14.0.0",
-    "eslint-config-prettier": "^6.7.0",
-    "eslint-plugin-import": "^2.18.2",
+    "eslint-config-prettier": "^6.15.0",
+    "eslint-plugin-import": "^2.25.4",
+    "eslint-plugin-prettier": "~4.0.0",
+    "husky": "^7.0.4",
     "jest": "^26.0.1",
     "jest-electron": "^0.1.7",
     "jest-extended": "^0.11.2",
     "lint-staged": "^10.2.2",
+    "prettier": "2.5.1",
     "release-it": "^14.0.1",
     "rimraf": "^3.0.0",
     "ts-jest": "^24.1.0",
