@@ -1,5 +1,5 @@
-import {Base} from './base';
-import {Combo, DagreCompoundLayoutOptions, OutNode, Point, PointTuple} from './types';
+import { Base } from './base';
+import { Combo, DagreCompoundLayoutOptions, OutNode, Point, PointTuple } from './types';
 import {
     buildGraph,
     DeepPartial,
@@ -8,6 +8,7 @@ import {
     HierarchyBaseEdgeInfo,
     HierarchyBaseNodeInfo,
     HierarchyFlattenedGraphInfo,
+    HierarchyGraphCompoundDef,
     HierarchyGraphDef,
     HierarchyGraphNodeInfo,
     HierarchyGraphOption,
@@ -18,13 +19,25 @@ import {
     NodeType,
     ROOT_NAME
 } from 'dagre-compound';
-import { isArray, isObject} from '../util';
+import { isArray, isObject } from '../util';
 
 interface IPoint {
     x: number;
     y: number;
     anchorIndex?: number;
     [key: string]: number | undefined;
+}
+
+interface Edge {
+    source: string;
+    target: string;
+    type?: string;
+    startPoint?: IPoint;
+    endPoint?: IPoint;
+    controlPoints?: IPoint[];
+    sourceAnchor?: number;
+    targetAnchor?: number;
+    [key: string]: unknown;
 }
 
 type ComboType = Combo & {
@@ -51,21 +64,7 @@ type Node = OutNode & {
     width?: number;
     height?: number;
     type?: string;
-    style?: any;
-    labelCfg?: any;
     anchorPoints?: [number, number][];
-};
-
-type Edge = {
-    source: string;
-    target: string;
-    type?: string;
-    startPoint?: IPoint;
-    endPoint?: IPoint;
-    controlPoints?: IPoint[];
-    sourceAnchor?: number;
-    targetAnchor?: number;
-    [key: string]: unknown;
 };
 
 type ModelType = {
@@ -145,7 +144,6 @@ export class DagreCompoundLayout extends Base {
             const lastIndex = this.nodes.findIndex((n) => n.id === hNode.id);
             initNodes.splice(lastIndex, 0, hNode); // 隐藏的元素添加到原始位置，确保节点展开收起位置不变
         });
-        // https://github.com/antvis/G6/issues/3508
         this.nodes = initNodes;
         this.edges = (data.edges || []).concat(hiddenEdges);
         this.combos = (data.combos || []).concat(hiddenCombos.map((hc) => ({ ...hc, collapsed: true })));
@@ -174,11 +172,11 @@ export class DagreCompoundLayout extends Base {
      * @param nodeId
      * @private
      */
-    private getNodePath(nodeId: any): any[] {
+    private getNodePath(nodeId: string): string[] {
         const self = this;
         const { nodes, combos } = self;
         const targetNode = nodes.find((n) => n.id === nodeId);
-        const findPath = (comboId: string, fullPath: any[] = []): any[] => {
+        const findPath = (comboId: string, fullPath: string[] = []): string[] => {
             const combo = combos.find((c) => c.id === comboId);
             if (combo) {
                 fullPath.unshift(comboId);
@@ -199,7 +197,7 @@ export class DagreCompoundLayout extends Base {
     private getLayoutConfig(): { graphDef: HierarchyGraphDef; graphOption: HierarchyGraphOption; graphSettings: DeepPartial<LayoutConfig> } {
         const self = this;
         const { nodes, edges, combos, nodeSize, rankdir, align, edgesep, nodesep, ranksep, settings } = self;
-        const compound = (combos || []).reduce((pre: any, cur) => {
+        const compound = (combos || []).reduce((pre: HierarchyGraphCompoundDef, cur) => {
             const matchedNodes = nodes.filter((n) => n.comboId === cur.id).map((n) => n.id);
             const matchedCombos = (combos || []).filter((n) => n.parentId === cur.id).map((n) => n.id);
             if (matchedNodes.length || matchedCombos.length) {
@@ -209,9 +207,9 @@ export class DagreCompoundLayout extends Base {
         }, {});
 
         /** 计算 nodeSize */
-        let nodeSizeFunc: (d?: any) => number[];
+        let nodeSizeFunc: (d?: Node) => number[];
         if (!nodeSize) {
-            nodeSizeFunc = (d?: any) => {
+            nodeSizeFunc = (d?: Node) => {
                 if (d && d.size) {
                     if (isArray(d.size)) {
                         return d.size;
