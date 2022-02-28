@@ -3,20 +3,14 @@
  * @author shiwu.wyy@antfin.com
  */
 
-import {
-  OutNode,
-  Edge,
-  PointTuple,
-  IndexMap,
-  Point,
-  FruchtermanLayoutOptions
-} from "./types";
-import { Base } from "./base";
-import { getEdgeTerminal, isNumber } from "../util";
+import { OutNode, Edge, PointTuple, IndexMap, Point, FruchtermanLayoutOptions } from './types';
+import { Base } from './base';
+import { getEdgeTerminal, isNumber } from '../util';
+import { SafeAny } from './any';
 
-type NodeMap = {
+interface NodeMap {
   [key: string]: INode;
-};
+}
 
 type INode = OutNode & {
   cluster: string;
@@ -78,8 +72,9 @@ export class FruchtermanLayout extends Base {
     this.updateCfg(options);
   }
 
-  public getDefaultCfg() {
+  public getDefaultCfg(): FruchtermanLayoutOptions {
     return {
+      type: 'fruchterman',
       maxIteration: 1000,
       gravity: 10,
       speed: 1,
@@ -92,23 +87,26 @@ export class FruchtermanLayout extends Base {
   /**
    * 执行布局
    */
-  public execute() {
+  public execute(): { nodes: INode[] | null; edges: Edge[] | null } {
     const self = this;
-    const nodes = self.nodes;
+    const { nodes, edges } = self;
 
-    if (self.timeInterval !== undefined && typeof window !== "undefined") {
+    if (self.timeInterval !== undefined && typeof window !== 'undefined') {
       window.clearInterval(self.timeInterval);
     }
 
     if (!nodes || nodes.length === 0) {
       self.onLayoutEnd?.();
-      return;
+      return {
+        nodes: [],
+        edges
+      };
     }
 
-    if (!self.width && typeof window !== "undefined") {
+    if (!self.width && typeof window !== 'undefined') {
       self.width = window.innerWidth;
     }
-    if (!self.height && typeof window !== "undefined") {
+    if (!self.height && typeof window !== 'undefined') {
       self.height = window.innerHeight;
     }
     if (!self.center) {
@@ -120,7 +118,10 @@ export class FruchtermanLayout extends Base {
       nodes[0].x = center[0];
       nodes[0].y = center[1];
       self.onLayoutEnd?.();
-      return;
+      return {
+        nodes,
+        edges
+      };
     }
     const nodeMap: NodeMap = {};
     const nodeIdxMap: IndexMap = {};
@@ -136,10 +137,14 @@ export class FruchtermanLayout extends Base {
     return self.run();
   }
 
-  public run() {
+  public run(): { nodes: INode[] | null; edges: Edge[] | null } {
     const self = this;
     const nodes = self.nodes;
-    if (!nodes) return;
+    if (!nodes)
+      return {
+        nodes: [],
+        edges: []
+      };
     const { edges, maxIteration, workerEnabled, clustering, animate } = self;
     const clusterMap: {
       [key: string]: {
@@ -150,7 +155,7 @@ export class FruchtermanLayout extends Base {
       };
     } = {};
     if (clustering) {
-      nodes.forEach((n) => {
+      nodes.forEach(n => {
         if (clusterMap[n.cluster] === undefined) {
           clusterMap[n.cluster] = {
             name: n.cluster,
@@ -167,7 +172,7 @@ export class FruchtermanLayout extends Base {
       }
       self.onLayoutEnd?.();
     } else {
-      if (typeof window === "undefined") return;
+      if (typeof window === 'undefined') return { nodes, edges };
       let iter = 0;
       // interval for render the result after each iteration
       this.timeInterval = window.setInterval(() => {
@@ -185,7 +190,7 @@ export class FruchtermanLayout extends Base {
     };
   }
 
-  private runOneStep(clusterMap: any) {
+  private runOneStep(clusterMap: SafeAny): void {
     const self = this;
     const nodes = self.nodes;
     if (!nodes) return;
@@ -208,7 +213,7 @@ export class FruchtermanLayout extends Base {
         clusterMap[key].cy = 0;
         clusterMap[key].count = 0;
       }
-      nodes.forEach((n) => {
+      nodes.forEach(n => {
         const c = clusterMap[n.cluster];
         if (isNumber(n.x)) {
           c.cx += n.x;
@@ -228,9 +233,7 @@ export class FruchtermanLayout extends Base {
       nodes.forEach((n, j) => {
         if (!isNumber(n.x) || !isNumber(n.y)) return;
         const c = clusterMap[n.cluster];
-        const distLength = Math.sqrt(
-          (n.x - c.cx) * (n.x - c.cx) + (n.y - c.cy) * (n.y - c.cy)
-        );
+        const distLength = Math.sqrt((n.x - c.cx) * (n.x - c.cx) + (n.y - c.cy) * (n.y - c.cy));
         const gravityForce = k * clusterGravity;
         displacements[j].x -= (gravityForce * (n.x - c.cx)) / distLength;
         displacements[j].y -= (gravityForce * (n.y - c.cy)) / distLength;
@@ -246,23 +249,17 @@ export class FruchtermanLayout extends Base {
     });
 
     // move
-    nodes.forEach((n: any, j) => {
+    nodes.forEach((n: SafeAny, j) => {
       if (isNumber(n.fx) && isNumber(n.fy)) {
         n.x = n.fx;
         n.y = n.fy;
         return;
       }
-      if (!isNumber(n.x) || !isNumber(n.y)) return;  
-      const distLength = Math.sqrt(
-        displacements[j].x * displacements[j].x +
-          displacements[j].y * displacements[j].y
-      );
+      if (!isNumber(n.x) || !isNumber(n.y)) return;
+      const distLength = Math.sqrt(displacements[j].x * displacements[j].x + displacements[j].y * displacements[j].y);
       if (distLength > 0) {
         // && !n.isFixed()
-        const limitedDist = Math.min(
-          maxDisplace * (speed / SPEED_DIVISOR),
-          distLength
-        );
+        const limitedDist = Math.min(maxDisplace * (speed / SPEED_DIVISOR), distLength);
         n.x += (displacements[j].x / distLength) * limitedDist;
         n.y += (displacements[j].y / distLength) * limitedDist;
       }
@@ -271,31 +268,20 @@ export class FruchtermanLayout extends Base {
     self.tick?.();
   }
 
-  private applyCalculate(
-    nodes: INode[],
-    edges: Edge[] | null,
-    displacements: Point[],
-    k: number,
-    k2: number
-  ) {
+  private applyCalculate(nodes: INode[], edges: Edge[] | null, displacements: Point[], k: number, k2: number): void {
     const self = this;
     self.calRepulsive(nodes, displacements, k2);
     if (edges) self.calAttractive(edges, displacements, k);
   }
 
-  private calRepulsive(nodes: INode[], displacements: Point[], k2: number) {
+  private calRepulsive(nodes: INode[], displacements: Point[], k2: number): void {
     nodes.forEach((v, i) => {
       displacements[i] = { x: 0, y: 0 };
       nodes.forEach((u, j) => {
         if (i === j) {
           return;
         }
-        if (
-          !isNumber(v.x) ||
-          !isNumber(u.x) ||
-          !isNumber(v.y) ||
-          !isNumber(u.y)
-        ) {
+        if (!isNumber(v.x) || !isNumber(u.x) || !isNumber(v.y) || !isNumber(u.y)) {
           return;
         }
         let vecX = v.x - u.x;
@@ -314,8 +300,8 @@ export class FruchtermanLayout extends Base {
     });
   }
 
-  private calAttractive(edges: Edge[], displacements: Point[], k: number) {
-    edges.forEach((e) => {
+  private calAttractive(edges: Edge[], displacements: Point[], k: number): void {
+    edges.forEach(e => {
       const source = getEdgeTerminal(e, 'source');
       const target = getEdgeTerminal(e, 'target');
       if (!source || !target) return;
@@ -340,13 +326,13 @@ export class FruchtermanLayout extends Base {
     });
   }
 
-  public stop() {
-    if (this.timeInterval && typeof window !== "undefined") {
+  public stop(): void {
+    if (this.timeInterval && typeof window !== 'undefined') {
       window.clearInterval(this.timeInterval);
     }
   }
 
-  public destroy() {
+  public destroy(): void {
     const self = this;
     self.stop();
     self.tick = null;
@@ -355,7 +341,7 @@ export class FruchtermanLayout extends Base {
     self.destroyed = true;
   }
 
-  public getType() {
-    return "fruchterman";
+  public getType(): string {
+    return 'fruchterman';
   }
 }

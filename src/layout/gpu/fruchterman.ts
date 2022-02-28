@@ -1,36 +1,30 @@
-// @ts-nocheck
 /**
  * @fileOverview fruchterman layout
  * @author shiwu.wyy@antfin.com
  */
 
-import {
-  OutNode,
-  Edge,
-  PointTuple,
-  IndexMap,
-  FruchtermanGPULayoutOptions
-} from "../types";
-import { Base } from "../base";
-import { isNumber } from "../../util";
-// @ts-ignore
-import { World } from "@antv/g-webgpu";
+import { OutNode, Edge, PointTuple, IndexMap, FruchtermanGPULayoutOptions } from '../types';
+import { Base } from '../base';
+import { isNumber } from '../../util';
+import { World } from '@antv/g-webgpu';
 // compile at runtime in dev mode
-import { buildTextureData, attributesToTextureData } from "../../util/gpu";
+import { buildTextureData, attributesToTextureData } from '../../util/gpu';
 // use compiled bundle in prod mode
-import { fruchtermanBundle, clusterBundle } from "./fruchtermanShader";
-import { LAYOUT_MESSAGE } from "../constants";
-// @ts-ignore
+import { fruchtermanBundle, clusterBundle } from './fruchtermanShader';
+import { LAYOUT_MESSAGE } from '../constants';
+import { SafeAny } from '../any';
 // import { Compiler } from '@antv/g-webgpu-compiler'
 // import { fruchtermanCode, clusterCode } from './fruchtermanShader'
 
 type INode = OutNode & {
   cluster: string | number;
+  fx?: number;
+  fy?: number;
 };
 
-type NodeMap = {
+interface NodeMap {
   [key: string]: INode;
-};
+}
 
 /**
  * fruchterman 布局
@@ -52,7 +46,7 @@ export class FruchtermanGPULayout extends Base {
   public clustering: boolean = false;
 
   /** 根据哪个字段聚类 */
-  public clusterField: string = "cluster";
+  public clusterField: string = 'cluster';
 
   /** 聚类力大小 */
   public clusterGravity: number = 10;
@@ -81,8 +75,9 @@ export class FruchtermanGPULayout extends Base {
     this.updateCfg(options);
   }
 
-  public getDefaultCfg() {
+  public getDefaultCfg(): FruchtermanGPULayoutOptions {
     return {
+      type: 'fruchterman-gpu',
       maxIteration: 1000,
       gravity: 10,
       speed: 1,
@@ -94,7 +89,7 @@ export class FruchtermanGPULayout extends Base {
   /**
    * 执行布局
    */
-  public async execute() {
+  public async execute(): Promise<void> {
     const self = this;
     const nodes = self.nodes;
 
@@ -102,10 +97,10 @@ export class FruchtermanGPULayout extends Base {
       if (self.onLayoutEnd) self.onLayoutEnd();
       return;
     }
-    if (!self.width && typeof window !== "undefined") {
+    if (!self.width && typeof window !== 'undefined') {
       self.width = window.innerWidth;
     }
-    if (!self.height && typeof window !== "undefined") {
+    if (!self.height && typeof window !== 'undefined') {
       self.height = window.innerHeight;
     }
     if (!self.center) {
@@ -132,7 +127,7 @@ export class FruchtermanGPULayout extends Base {
     await self.run();
   }
 
-  public async executeWithWorker(canvas?: HTMLCanvasElement, ctx?: any) {
+  public async executeWithWorker(canvas?: HTMLCanvasElement, ctx?: SafeAny): Promise<void> {
     const self = this;
     const nodes = self.nodes;
     const center = self.center;
@@ -159,7 +154,7 @@ export class FruchtermanGPULayout extends Base {
     await self.run(canvas, ctx);
   }
 
-  public async run(canvas?: HTMLCanvasElement, ctx?: any) {
+  public async run(canvas?: HTMLCanvasElement, ctx?: SafeAny): Promise<void> {
     const self = this;
     const nodes = self.nodes;
     const edges = self.edges;
@@ -172,10 +167,7 @@ export class FruchtermanGPULayout extends Base {
     const speed = self.speed;
     const clustering = self.clustering;
 
-    const {
-      array: attributeArray,
-      count: clusterCount
-    } = attributesToTextureData([self.clusterField], nodes);
+    const { array: attributeArray, count: clusterCount } = attributesToTextureData([self.clusterField], nodes);
 
     // pushing the fx and fy
     nodes.forEach((node, i) => {
@@ -189,12 +181,8 @@ export class FruchtermanGPULayout extends Base {
       attributeArray[4 * i + 2] = fy;
     });
 
-
     const numParticles = nodes.length;
-    const { maxEdgePerVetex, array: nodesEdgesArray } = buildTextureData(
-      nodes,
-      edges
-    );
+    const { maxEdgePerVetex, array: nodesEdgesArray } = buildTextureData(nodes, edges);
 
     const workerEnabled = self.workerEnabled;
 
@@ -250,20 +238,18 @@ export class FruchtermanGPULayout extends Base {
         VERTEX_COUNT: numParticles
       });
 
-    let kernelCluster: any;
+    let kernelCluster: SafeAny;
     if (clustering) {
-      kernelCluster = world
-        .createKernel(clusterBundle)
-        .setDispatch([clusterCount, 1, 1])
-        .setBinding({
-          u_Data: nodesEdgesArray,
-          u_NodeAttributes: attributeArray,
-          u_ClusterCenters: clusterCenters,
-          VERTEX_COUNT: numParticles,
-          CLUSTER_COUNT: clusterCount
-        });
+      kernelCluster = world.createKernel(clusterBundle).setDispatch([clusterCount, 1, 1]).setBinding({
+        u_Data: nodesEdgesArray,
+        u_NodeAttributes: attributeArray,
+        u_ClusterCenters: clusterCenters,
+        VERTEX_COUNT: numParticles,
+        CLUSTER_COUNT: clusterCount
+      });
     }
 
+    // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
     const execute = async () => {
       for (let i = 0; i < maxIteration; i++) {
         // eslint-disable-next-line no-await-in-loop
@@ -281,7 +267,7 @@ export class FruchtermanGPULayout extends Base {
         }
 
         kernelFruchterman.setBinding({
-          u_MaxDisplace: maxDisplace *= 0.99
+          u_MaxDisplace: (maxDisplace *= 0.99)
         });
       }
 
@@ -308,7 +294,7 @@ export class FruchtermanGPULayout extends Base {
     await execute();
   }
 
-  public getType() {
-    return "fruchterman-gpu";
+  public getType(): string {
+    return 'fruchterman-gpu';
   }
 }

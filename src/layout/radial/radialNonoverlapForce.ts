@@ -1,8 +1,9 @@
 import { Matrix, PointTuple, Point } from '../types';
+import { SafeAny } from '../any';
 
 const SPEED_DIVISOR = 800;
 
-export type RadialNonoverlapForceParam = {
+export interface RadialNonoverlapForceParam {
   positions: PointTuple[];
   adjMatrix: Matrix[];
   focusID: number;
@@ -12,11 +13,11 @@ export type RadialNonoverlapForceParam = {
   width?: number;
   speed?: number;
   gravity?: number;
-  nodeSizeFunc: (node: any) => number;
+  nodeSizeFunc: (node: SafeAny) => number;
   k: number;
   strictRadial: boolean;
-  nodes: any[];
-};
+  nodes: SafeAny[];
+}
 
 export default class RadialNonoverlapForce {
   /** node positions */
@@ -47,7 +48,7 @@ export default class RadialNonoverlapForce {
   public gravity: number;
 
   /** the node size */
-  public nodeSizeFunc: (node: any) => number;
+  public nodeSizeFunc: (node: SafeAny) => number;
 
   /** the strength of forces */
   public k: number;
@@ -56,7 +57,7 @@ export default class RadialNonoverlapForce {
   public strictRadial: boolean;
 
   /** the nodes data */
-  public nodes: any[];
+  public nodes: SafeAny[];
 
   private maxDisplace: number | undefined;
 
@@ -97,7 +98,7 @@ export default class RadialNonoverlapForce {
     return positions;
   }
 
-  private getRepulsion() {
+  private getRepulsion(): void {
     const self = this;
     const positions = self.positions;
     const nodes = self.nodes;
@@ -134,7 +135,7 @@ export default class RadialNonoverlapForce {
     });
   }
 
-  private updatePositions() {
+  private updatePositions(): void {
     const self = this;
     const positions = self.positions;
     const disp = self.disp;

@@ -1,6 +1,6 @@
-import { Layouts } from '../../src'
+import { Layouts } from '../../src';
 import { mathEqual } from '../util';
-import dataset from '../data';
+import dataset, { TestNode } from '../data';
 const data = dataset.data;
 import G6 from '@antv/g6';
 
@@ -16,34 +16,34 @@ const graph = new G6.Graph({
   }
 });
 data.nodes.forEach(node => {
-  node.label = node.id
-})
+  node.label = node.id;
+});
 graph.data(data);
-graph.render()
-
+graph.render();
 
 describe('#ConcentricLayout', () => {
   it('return correct default config', () => {
     const concentric = new Layouts['concentric']();
     expect(concentric.getDefaultCfg()).toEqual({
-      center: undefined,
+      type: 'concentric',
       nodeSize: 30,
       minNodeSpacing: 10,
+      nodeSpacing: 10,
       preventOverlap: false,
       sweep: undefined,
       equidistant: false,
       startAngle: (3 / 2) * Math.PI,
       clockwise: true,
       maxLevelDiff: undefined,
-      sortBy: 'degree',
+      sortBy: 'degree'
     });
     concentric.layout(data);
-    expect((data.nodes[0] as any).x).not.toBe(undefined);
-    expect((data.nodes[0] as any).y).not.toBe(undefined);
+    expect((data.nodes[0] as TestNode).x).not.toBe(undefined);
+    expect((data.nodes[0] as TestNode).y).not.toBe(undefined);
   });
   it('concentric with no node', () => {
     const concentric = new Layouts['concentric']();
-    concentric.layout({nodes:[]})
+    concentric.layout({ nodes: [] });
   });
 
   it('concentric with one node', () => {
@@ -55,11 +55,11 @@ describe('#ConcentricLayout', () => {
         {
           id: 'node',
           x: 100,
-          y: 100,
-        },
-      ],
+          y: 100
+        }
+      ]
     };
-    concentric.layout(data1)
+    concentric.layout(data1);
     expect(data1.nodes[0].x).toEqual(150);
     expect(data1.nodes[0].y).toEqual(50);
   });
@@ -72,7 +72,7 @@ describe('#ConcentricLayout', () => {
       width,
       height
     });
-    concentric.layout(data)
+    concentric.layout(data);
     const node = data.nodes[2];
     expect(mathEqual(node.x, width / 2)).toEqual(true);
     expect(mathEqual(node.y, height / 2)).toEqual(true);
@@ -81,20 +81,20 @@ describe('#ConcentricLayout', () => {
   it('concentric with array size in node data, sortBy in data undefined', () => {
     const width = 500;
     const height = 500;
-    data.nodes.forEach((node) => {
+    data.nodes.forEach(node => {
       node.size = [10, 20];
       node.labelCfg = {
         style: {
           fontSize: 5
         }
-      }
+      };
     });
     const concentric = new Layouts['concentric']({
       sortBy: 'ttt',
       width,
       height
     });
-    concentric.layout(data)
+    concentric.layout(data);
     const node = data.nodes[2];
     expect(mathEqual(node.x, width / 2)).toEqual(true);
     expect(mathEqual(node.y, height / 2)).toEqual(true);
@@ -106,9 +106,9 @@ describe('#ConcentricLayout', () => {
     const concentric = new Layouts['concentric']({
       width,
       height,
-      preventOverlap: true,
+      preventOverlap: true
     });
-    concentric.layout(data)
+    concentric.layout(data);
     const node = data.nodes[2];
     expect(mathEqual(node.x, width / 2)).toEqual(true);
     expect(mathEqual(node.y, height / 2)).not.toEqual(true);
@@ -120,9 +120,9 @@ describe('#ConcentricLayout', () => {
     const concentric = new Layouts['concentric']({
       width,
       height,
-      equidistant: true,
+      equidistant: true
     });
-    concentric.layout(data)
+    concentric.layout(data);
     const node = data.nodes[2];
     expect(mathEqual(node.x, width / 2)).toEqual(true);
     expect(mathEqual(node.y, height / 2)).toEqual(true);
@@ -133,11 +133,11 @@ describe('#ConcentricLayout', () => {
       center: [250, 250],
       sweep: 1
     });
-    concentric.layout(data)
+    concentric.layout(data);
 
     expect(data.nodes[0].x).not.toEqual(undefined);
     expect(data.nodes[0].y).not.toEqual(undefined);
     expect(data.nodes[1].x).not.toEqual(undefined);
     expect(data.nodes[1].y).not.toEqual(undefined);
   });
-})
+});

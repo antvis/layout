@@ -2,132 +2,132 @@ export default {
   nodes: [
     {
       id: 'Argentina',
-      name: 'Argentina',
+      name: 'Argentina'
     },
     {
       id: 'Australia',
-      name: 'Australia',
+      name: 'Australia'
     },
     {
       id: 'Belgium',
-      name: 'Belgium',
+      name: 'Belgium'
     },
     {
       id: 'Brazil',
-      name: 'Brazil',
+      name: 'Brazil'
     },
     {
       id: 'Colombia',
-      name: 'Colombia',
+      name: 'Colombia'
     },
     {
       id: 'Costa Rica',
-      name: 'Costa Rica',
+      name: 'Costa Rica'
     },
     {
       id: 'Croatia',
-      name: 'Croatia',
+      name: 'Croatia'
     },
     {
       id: 'Denmark',
-      name: 'Denmark',
+      name: 'Denmark'
     },
     {
       id: 'Egypt',
-      name: 'Egypt',
+      name: 'Egypt'
     },
     {
       id: 'England',
-      name: 'England',
+      name: 'England'
     },
     {
       id: 'France',
-      name: 'France',
+      name: 'France'
     },
     {
       id: 'Germany',
-      name: 'Germany',
+      name: 'Germany'
     },
     {
       id: 'Iceland',
-      name: 'Iceland',
+      name: 'Iceland'
     },
     {
       id: 'IR Iran',
-      name: 'IR Iran',
+      name: 'IR Iran'
     },
     {
       id: 'Japan',
-      name: 'Japan',
+      name: 'Japan'
     },
     {
       id: 'Korea Republic',
-      name: 'Korea Republic',
+      name: 'Korea Republic'
     },
     {
       id: 'Mexico',
-      name: 'Mexico',
+      name: 'Mexico'
     },
     {
       id: 'Morocco',
-      name: 'Morocco',
+      name: 'Morocco'
     },
     {
       id: 'Nigeria',
-      name: 'Nigeria',
+      name: 'Nigeria'
     },
     {
       id: 'Panama',
-      name: 'Panama',
+      name: 'Panama'
     },
     {
       id: 'Peru',
-      name: 'Peru',
+      name: 'Peru'
     },
     {
       id: 'Poland',
-      name: 'Poland',
+      name: 'Poland'
     },
     {
       id: 'Portugal',
-      name: 'Portugal',
+      name: 'Portugal'
     },
     {
       id: 'Russia',
-      name: 'Russia',
+      name: 'Russia'
     },
     {
       id: 'Saudi Arabia',
-      name: 'Saudi Arabia',
+      name: 'Saudi Arabia'
     },
     {
       id: 'Senegal',
-      name: 'Senegal',
+      name: 'Senegal'
     },
     {
       id: 'Serbia',
-      name: 'Serbia',
+      name: 'Serbia'
     },
     {
       id: 'Spain',
-      name: 'Spain',
+      name: 'Spain'
     },
     {
       id: 'Sweden',
-      name: 'Sweden',
+      name: 'Sweden'
     },
     {
       id: 'Switzerland',
-      name: 'Switzerland',
+      name: 'Switzerland'
     },
     {
       id: 'Tunisia',
-      name: 'Tunisia',
+      name: 'Tunisia'
     },
     {
       id: 'Uruguay',
-      name: 'Uruguay',
-    },
+      name: 'Uruguay'
+    }
   ],
   edges: [
     {
@@ -136,7 +136,7 @@ export default {
       source: 'Saudi Arabia',
       target_score: 5,
       source_score: 0,
-      directed: true,
+      directed: true
     },
     {
       id: '1',
@@ -144,7 +144,7 @@ export default {
       source: 'Egypt',
       target_score: 1,
       source_score: 0,
-      directed: true,
+      directed: true
     },
     {
       id: '2',
@@ -152,7 +152,7 @@ export default {
       source: 'Egypt',
       target_score: 3,
       source_score: 1,
-      directed: true,
+      directed: true
     },
     {
       id: '3',
@@ -160,7 +160,7 @@ export default {
       source: 'Saudi Arabia',
       target_score: 1,
       source_score: 0,
-      directed: true,
+      directed: true
     },
     {
       id: '4',
@@ -168,7 +168,7 @@ export default {
       source: 'Russia',
       target_score: 3,
       source_score: 0,
-      directed: true,
+      directed: true
     },
     {
       id: '5',
@@ -176,7 +176,7 @@ export default {
       source: 'Egypt',
       target_score: 2,
       source_score: 1,
-      directed: true,
+      directed: true
     },
     {
       id: '6',
@@ -184,7 +184,7 @@ export default {
       source: 'Morocco',
       target_score: 1,
       source_score: 0,
-      directed: true,
+      directed: true
     },
     {
       id: '7',
@@ -192,7 +192,7 @@ export default {
       source: 'Spain',
       target_score: 3,
       source_score: 3,
-      directed: false,
+      directed: false
     },
     {
       id: '8',
@@ -200,7 +200,7 @@ export default {
       source: 'Morocco',
       target_score: 1,
       source_score: 0,
-      directed: true,
+      directed: true
     },
     {
       id: '9',
@@ -208,7 +208,7 @@ export default {
       source: 'IR Iran',
       target_score: 1,
       source_score: 0,
-      directed: true,
+      directed: true
     },
     {
       id: '10',
@@ -216,7 +216,7 @@ export default {
       source: 'Portugal',
       target_score: 1,
       source_score: 1,
-      directed: false,
+      directed: false
     },
     {
       id: '11',
@@ -224,7 +224,7 @@ export default {
       source: 'Morocco',
       target_score: 2,
       source_score: 2,
-      directed: false,
+      directed: false
     },
     {
       id: '12',
@@ -232,7 +232,7 @@ export default {
       source: 'Australia',
       target_score: 2,
       source_score: 1,
-      directed: true,
+      directed: true
     },
     {
       id: '13',
@@ -240,7 +240,7 @@ export default {
       source: 'Peru',
       target_score: 1,
       source_score: 0,
-      directed: true,
+      directed: true
     },
     {
       id: '14',
@@ -248,7 +248,7 @@ export default {
       source: 'Australia',
       target_score: 1,
       source_score: 1,
-      directed: false,
+      directed: false
     },
     {
       id: '15',
@@ -256,7 +256,7 @@ export default {
       source: 'Peru',
       target_score: 1,
       source_score: 0,
-      directed: true,
+      directed: true
     },
     {
       id: '16',
@@ -264,7 +264,7 @@ export default {
       source: 'France',
       target_score: 0,
       source_score: 0,
-      directed: false,
+      directed: false
     },
     {
       id: '17',
@@ -272,14 +272,14 @@ export default {
       source: 'Australia',
       target_score: 2,
       source_score: 0,
-      directed: true,
+      directed: true
     },
     {
       id: '18',
       target: 'Argentina',
       source: 'Iceland',
       target_score: 1,
-      source_score: 1,
+      source_score: 1
     },
     {
       id: '19',
@@ -287,7 +287,7 @@ export default {
       source: 'Nigeria',
       target_score: 2,
       source_score: 0,
-      directed: true,
+      directed: true
     },
     {
       id: '20',
@@ -295,7 +295,7 @@ export default {
       source: 'Argentina',
       target_score: 3,
       source_score: 0,
-      directed: true,
+      directed: true
     },
     {
       id: '21',
@@ -303,7 +303,7 @@ export default {
       source: 'Iceland',
       target_score: 2,
       source_score: 0,
-      directed: true,
+      directed: true
     },
     {
       id: '22',
@@ -311,7 +311,7 @@ export default {
       source: 'Nigeria',
       target_score: 2,
       source_score: 1,
-      directed: true,
+      directed: true
     },
     {
       id: '23',
@@ -319,7 +319,7 @@ export default {
       source: 'Iceland',
       target_score: 2,
       source_score: 1,
-      directed: true,
+      directed: true
     },
     {
       id: '24',
@@ -327,7 +327,7 @@ export default {
       source: 'Costa Rica',
       target_score: 1,
       source_score: 0,
-      directed: true,
+      directed: true
     },
     {
       id: '25',
@@ -335,7 +335,7 @@ export default {
       source: 'Switzerland',
       target_score: 1,
       source_score: 1,
-      directed: false,
+      directed: false
     },
     {
       id: '26',
@@ -343,7 +343,7 @@ export default {
       source: 'Costa Rica',
       target_score: 2,
       source_score: 0,
-      directed: true,
+      directed: true
     },
     {
       id: '27',
@@ -351,7 +351,7 @@ export default {
       source: 'Serbia',
       target_score: 2,
       source_score: 1,
-      directed: true,
+      directed: true
     },
     {
       id: '28',
@@ -359,7 +359,7 @@ export default {
       source: 'Serbia',
       target_score: 2,
       source_score: 0,
-      directed: true,
+      directed: true
     },
     {
       id: '29',
@@ -367,7 +367,7 @@ export default {
       source: 'Costa Rica',
       target_score: 2,
       source_score: 2,
-      directed: false,
+      directed: false
     },
     {
       id: '30',
@@ -375,7 +375,7 @@ export default {
       source: 'Germany',
       target_score: 1,
       source_score: 0,
-      directed: true,
+      directed: true
     },
     {
       id: '31',
@@ -383,7 +383,7 @@ export default {
       source: 'Korea Republic',
       target_score: 1,
       source_score: 0,
-      directed: true,
+      directed: true
     },
     {
       id: '32',
@@ -391,7 +391,7 @@ export default {
       source: 'Korea Republic',
       target_score: 1,
       source_score: 0,
-      directed: true,
+      directed: true
     },
     {
       id: '33',
@@ -399,7 +399,7 @@ export default {
       source: 'Sweden',
       target_score: 2,
       source_score: 1,
-      directed: true,
+      directed: true
     },
     {
       id: '34',
@@ -407,7 +407,7 @@ export default {
       source: 'Germany',
       target_score: 2,
       source_score: 0,
-      directed: true,
+      directed: true
     },
     {
       id: '35',
@@ -415,7 +415,7 @@ export default {
       source: 'Mexico',
       target_score: 3,
       source_score: 0,
-      directed: true,
+      directed: true
     },
     {
       id: '36',
@@ -423,7 +423,7 @@ export default {
       source: 'Panama',
       target_score: 3,
       source_score: 0,
-      directed: true,
+      directed: true
     },
     {
       id: '37',
@@ -431,7 +431,7 @@ export default {
       source: 'Tunisia',
       target_score: 2,
       source_score: 1,
-      directed: true,
+      directed: true
     },
     {
       id: '38',
@@ -439,7 +439,7 @@ export default {
       source: 'Tunisia',
       target_score: 5,
       source_score: 2,
-      directed: true,
+      directed: true
     },
     {
       id: '39',
@@ -447,7 +447,7 @@ export default {
       source: 'Panama',
       target_score: 6,
       source_score: 1,
-      directed: true,
+      directed: true
     },
     {
       id: '40',
@@ -455,7 +455,7 @@ export default {
       source: 'England',
       target_score: 1,
       source_score: 0,
-      directed: true,
+      directed: true
     },
     {
       id: '41',
@@ -463,7 +463,7 @@ export default {
       source: 'Panama',
       target_score: 2,
       source_score: 1,
-      directed: true,
+      directed: true
     },
     {
       id: '42',
@@ -471,7 +471,7 @@ export default {
       source: 'Colombia',
       target_score: 2,
       source_score: 1,
-      directed: true,
+      directed: true
     },
     {
       id: '43',
@@ -479,7 +479,7 @@ export default {
       source: 'Poland',
       target_score: 2,
       source_score: 1,
-      directed: true,
+      directed: true
     },
     {
       id: '44',
@@ -487,7 +487,7 @@ export default {
       source: 'Senegal',
       target_score: 2,
       source_score: 2,
-      directed: false,
+      directed: false
     },
     {
       id: '45',
@@ -495,7 +495,7 @@ export default {
       source: 'Poland',
       target_score: 3,
       source_score: 0,
-      directed: true,
+      directed: true
     },
     {
       id: '46',
@@ -503,7 +503,7 @@ export default {
       source: 'Japan',
       target_score: 1,
       source_score: 0,
-      directed: true,
+      directed: true
     },
     {
       id: '47',
@@ -511,7 +511,7 @@ export default {
       source: 'Senegal',
       target_score: 1,
       source_score: 0,
-      directed: true,
+      directed: true
     },
     {
       id: '48',
@@ -519,7 +519,7 @@ export default {
       source: 'Portugal',
       target_score: 2,
       source_score: 1,
-      directed: true,
+      directed: true
     },
     {
       id: '49',
@@ -527,7 +527,7 @@ export default {
       source: 'Argentina',
       target_score: 4,
       source_score: 3,
-      directed: true,
+      directed: true
     },
     {
       id: '50',
@@ -535,7 +535,7 @@ export default {
       source: 'Spain',
       target_score: 5,
       source_score: 4,
-      directed: true,
+      directed: true
     },
     {
       id: '51',
@@ -543,7 +543,7 @@ export default {
       source: 'Denmark',
       target_score: 4,
       source_score: 3,
-      directed: true,
+      directed: true
     },
     {
       id: '52',
@@ -551,7 +551,7 @@ export default {
       source: 'Mexico',
       target_score: 2,
       source_score: 0,
-      directed: true,
+      directed: true
     },
     {
       id: '53',
@@ -559,7 +559,7 @@ export default {
       source: 'Japan',
       target_score: 3,
       source_score: 2,
-      directed: true,
+      directed: true
     },
     {
       id: '54',
@@ -567,7 +567,7 @@ export default {
       source: 'Switzerland',
       target_score: 1,
       source_score: 0,
-      directed: true,
+      directed: true
     },
     {
       id: '55',
@@ -575,7 +575,7 @@ export default {
       source: 'Colombia',
       target_score: 4,
       source_score: 3,
-      directed: true,
+      directed: true
     },
     {
       id: '56',
@@ -583,7 +583,7 @@ export default {
       source: 'Uruguay',
       target_score: 2,
       source_score: 0,
-      directed: true,
+      directed: true
     },
     {
       id: '57',
@@ -591,7 +591,7 @@ export default {
       source: 'Brazil',
       target_score: 2,
       source_score: 1,
-      directed: true,
+      directed: true
     },
     {
       id: '58',
@@ -599,7 +599,7 @@ export default {
       source: 'Russia',
       target_score: 6,
       source_score: 5,
-      directed: true,
+      directed: true
     },
     {
       id: '59',
@@ -607,7 +607,7 @@ export default {
       source: 'Sweden',
       target_score: 2,
       source_score: 0,
-      directed: true,
+      directed: true
     },
     {
       id: '60',
@@ -615,7 +615,7 @@ export default {
       source: 'Belgium',
       target_score: 1,
       source_score: 0,
-      directed: true,
+      directed: true
     },
     {
       id: '61',
@@ -623,7 +623,7 @@ export default {
       source: 'England',
       target_score: 2,
       source_score: 1,
-      directed: true,
+      directed: true
     },
     {
       id: '62',
@@ -631,7 +631,7 @@ export default {
       source: 'England',
       target_score: 2,
       source_score: 0,
-      directed: true,
+      directed: true
     },
     {
       id: '63',
@@ -639,7 +639,7 @@ export default {
       source: 'Croatia',
       target_score: 4,
       source_score: 2,
-      directed: true,
-    },
-  ],
+      directed: true
+    }
+  ]
 };

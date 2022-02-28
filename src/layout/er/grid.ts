@@ -1,10 +1,11 @@
 import { ICell, INode } from './type';
+import { SafeAny } from '../any';
 
 export default class Grid {
   public cells: ICell[][] = [];
-  public columnNum:number = 0;
+  public columnNum: number = 0;
   public rowNum: number = 0;
-  
+
   public additionColumn: number[] = [];
   public additionRow: number[] = [];
   private static MIN_DIST = 50;
@@ -13,10 +14,14 @@ export default class Grid {
   private CELL_W: number;
   private CELL_H: number;
 
-  public init(width: number, height: number, gridSize: {
-    CELL_W: number,
-    CELL_H: number,
-  }) {
+  public init(
+    width: number,
+    height: number,
+    gridSize: {
+      CELL_W: number;
+      CELL_H: number;
+    }
+  ): void {
     this.cells = [];
     this.CELL_W = gridSize.CELL_W || Grid.DEFAULT_CELL_W;
     this.CELL_H = gridSize.CELL_H || Grid.DEFAULT_CELL_H;
@@ -24,15 +29,15 @@ export default class Grid {
     this.rowNum = Math.ceil(height / this.CELL_H);
     Grid.MIN_DIST = Math.pow(width, 2) + Math.pow(height, 2);
 
-    for(let i = 0; i < this.columnNum; i++) {
+    for (let i = 0; i < this.columnNum; i++) {
       const tmp = [];
-      for(let j = 0; j < this.rowNum; j++) {
+      for (let j = 0; j < this.rowNum; j++) {
         const cell = {
           dx: i,
           dy: j,
-          x : i * this.CELL_W,
-          y : j * this.CELL_H,
-          occupied : false
+          x: i * this.CELL_W,
+          y: j * this.CELL_H,
+          occupied: false
         };
         tmp.push(cell);
       }
@@ -40,70 +45,70 @@ export default class Grid {
     }
   }
 
-  public findGridByNodeId(nodeId: string){
-    for(let i = 0; i < this.columnNum; i++) {
-      for(let j = 0; j < this.rowNum; j++) {
-        if(this.cells[i][j].node) {
+  public findGridByNodeId(nodeId: string): { column: number; row: number } | null {
+    for (let i = 0; i < this.columnNum; i++) {
+      for (let j = 0; j < this.rowNum; j++) {
+        if (this.cells[i][j].node) {
           if (this.cells[i][j]?.node?.id === nodeId) {
-            return {column: i, row: j};
+            return { column: i, row: j };
           }
         }
       }
     }
     return null;
   }
-    
-  public sqdist(a: any, b: any) {
+
+  public sqdist(a: SafeAny, b: SafeAny): number {
     return Math.pow(a.x - b.x, 2) + Math.pow(a.y - b.y, 2);
   }
 
-  public occupyNearest(p: INode) {
+  public occupyNearest(p: INode): ICell | null {
     let minDist = Grid.MIN_DIST;
     let d;
     let candidate = null;
-    for(let i = 0; i < this.columnNum; i++) {
-      for(let j = 0; j < this.rowNum; j++) {
-        if(!this.cells[i][j].occupied && ( d = this.sqdist(p, this.cells[i][j])) < minDist) {
+    for (let i = 0; i < this.columnNum; i++) {
+      for (let j = 0; j < this.rowNum; j++) {
+        if (!this.cells[i][j].occupied && (d = this.sqdist(p, this.cells[i][j])) < minDist) {
           minDist = d;
           candidate = this.cells[i][j];
         }
       }
     }
-    if(candidate) {
+    if (candidate) {
       candidate.occupied = true;
     }
     return candidate;
   }
 
-  public insertColumn(columnIndex: number, length: number) {
-    if (length <= 0) return ;
+  public insertColumn(columnIndex: number, length: number): void {
+    if (length <= 0) return;
     // 插入空列
     for (let i = 0; i < length; i++) {
       this.cells[i + this.columnNum] = [];
-      for(let j = 0; j < this.rowNum; j++) {
+      for (let j = 0; j < this.rowNum; j++) {
         this.cells[i + this.columnNum][j] = {
           dx: i,
           dy: j,
-          x : i * this.CELL_W,
-          y : j * this.CELL_H,
-          occupied : false,
-          node: null,
+          x: i * this.CELL_W,
+          y: j * this.CELL_H,
+          occupied: false,
+          node: null
         };
       }
     }
     // 交换数据
-    for(let i = (this.columnNum - 1); i > columnIndex; i--) {
+    for (let i = this.columnNum - 1; i > columnIndex; i--) {
       for (let j = 0; j < this.rowNum; j++) {
         this.cells[i + length][j] = {
           ...this.cells[i][j],
-          x: (i+length) * this.CELL_W,
-          y: j * this.CELL_H,
+          x: (i + length) * this.CELL_W,
+          y: j * this.CELL_H
         };
         this.cells[i][j] = {
-          x : i * this.CELL_W,
-          y : j * this.CELL_H,
-          occupied : true,
-          node: null,
+          x: i * this.CELL_W,
+          y: j * this.CELL_H,
+          occupied: true,
+          node: null
         };
       }
     }
@@ -120,44 +125,43 @@ export default class Grid {
     this.columnNum += length;
   }
 
-  public insertRow(rowIndex: number, length: number) {
-    if (length <= 0) return ;
+  public insertRow(rowIndex: number, length: number): void {
+    if (length <= 0) return;
     // 插入空行
     for (let j = 0; j < length; j++) {
-      for(let i = 0; i < this.columnNum; i++) {
+      for (let i = 0; i < this.columnNum; i++) {
         this.cells[i][j + this.rowNum] = {
           dx: i,
           dy: j,
-          x : i * this.CELL_W,
-          y : j * this.CELL_H,
-          occupied : false,
-          node: null,
+          x: i * this.CELL_W,
+          y: j * this.CELL_H,
+          occupied: false,
+          node: null
         };
       }
     }
 
     // 交换数据
-    for(let i = 0; i < this.columnNum; i++) {
-      for (let j = (this.rowNum - 1); j > rowIndex; j--) {
-        this.cells[i][j+length] = {
+    for (let i = 0; i < this.columnNum; i++) {
+      for (let j = this.rowNum - 1; j > rowIndex; j--) {
+        this.cells[i][j + length] = {
           ...this.cells[i][j],
           dx: i,
           dy: j + length,
           x: i * this.CELL_W,
-          y: (j+length) * this.CELL_H,
+          y: (j + length) * this.CELL_H
         };
         this.cells[i][j] = {
           dx: i,
           dy: j,
-          x : i * this.CELL_W,
-          y : j *this.CELL_H,
-          occupied : false,
-          node: null,
+          x: i * this.CELL_W,
+          y: j * this.CELL_H,
+          occupied: false,
+          node: null
         };
-        
       }
     }
-    
+
     // 已有行列的处理
     for (let j = 0; j < this.additionRow.length; j++) {
       if (this.additionRow[j] >= rowIndex) {
@@ -171,11 +175,11 @@ export default class Grid {
     this.rowNum += length;
   }
 
-  public getNodes() {
+  public getNodes(): ICell[] {
     const nodes = [];
-    for(let i = 0; i < this.columnNum; i++) {
-      for(let j = 0; j < this.rowNum; j++) {
-        if(this.cells[i][j].node) {
+    for (let i = 0; i < this.columnNum; i++) {
+      for (let j = 0; j < this.rowNum; j++) {
+        if (this.cells[i][j].node) {
           nodes.push(this.cells[i][j]);
         }
       }

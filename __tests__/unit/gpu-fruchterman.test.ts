@@ -1,4 +1,4 @@
-import { Layouts } from '../../src'
+import { Layouts } from '../../src';
 import dataset from '../data';
 const data = dataset.data;
 
@@ -28,11 +28,12 @@ describe('#FruchtermanGPULayout', () => {
   it('return correct default config', async () => {
     const fruchtermanGPU = new Layouts['fruchterman-gpu']();
     expect(fruchtermanGPU.getDefaultCfg()).toEqual({
+      type: 'fruchterman-gpu',
       maxIteration: 1000,
       gravity: 10,
       speed: 1,
       clustering: false,
-      clusterGravity: 10,
+      clusterGravity: 10
     });
     await fruchtermanGPU.layout(data);
     expect((data.nodes[0] as any).x).not.toBe(undefined);
@@ -67,10 +68,10 @@ describe('#FruchtermanGPULayout', () => {
     const data1 = {
       nodes: [
         {
-          id: 'node',
+          id: 'node'
         }
       ]
-    }
+    };
     await fruchtermanGPU.layout(data1);
     const nodeModel: any = data1.nodes[0];
     expect(nodeModel.x).toEqual(250);
@@ -78,21 +79,21 @@ describe('#FruchtermanGPULayout', () => {
   });
   it('fruchterman layout with clustering and no clusterGravity', async () => {
     const colors = ['#f00', '#0f0', '#00f', '#ff0'];
-    data.nodes.forEach((node) => {
+    data.nodes.forEach(node => {
       node.size = 10;
       node.cluster = Math.ceil((Math.random() / 3) * 10);
       node.style = {
-        fill: colors[node.cluster],
+        fill: colors[node.cluster]
       };
     });
 
     const fruchtermanGPU = new Layouts['fruchterman-gpu']({
       clustering: true,
       maxIteration: 3000,
-      clusterGravity: null,
+      clusterGravity: null
     });
     await fruchtermanGPU.layout(data);
-    
+
     const node0 = data.nodes[0];
     expect(node0.x).not.toEqual(NaN);
     expect(node0.y).not.toEqual(NaN);
@@ -101,32 +102,32 @@ describe('#FruchtermanGPULayout', () => {
     const fruchtermanGPU = new Layouts['fruchterman-gpu']({
       clustering: true,
       maxIteration: 5000,
-      clusterGravity: null,
+      clusterGravity: null
     });
     const tmpData = {
       nodes: [
         {
           id: 'node0',
           x: 100,
-          y: 100,
+          y: 100
         },
         {
           id: 'node1',
           x: 100,
-          y: 100,
+          y: 100
         },
         {
           id: 'node3',
           x: 150,
-          y: 120,
-        },
+          y: 120
+        }
       ],
       edges: [
         {
           source: 'node3',
-          target: 'node3',
-        },
-      ],
+          target: 'node3'
+        }
+      ]
     };
     await fruchtermanGPU.layout(tmpData);
     const node0 = tmpData.nodes[0];
@@ -137,14 +138,14 @@ describe('#FruchtermanGPULayout', () => {
   it('update fructherman layout configurations', async () => {
     const fruchtermanGPU = new Layouts['fruchterman-gpu']();
     await fruchtermanGPU.layout(data);
-    
+
     fruchtermanGPU.updateCfg({
       center: [100, 100],
-      gravity: 50,
+      gravity: 50
     });
     expect(data.nodes[0].x).not.toEqual(undefined);
     expect(data.nodes[0].y).not.toEqual(undefined);
     expect(data.nodes[1].x).not.toEqual(undefined);
     expect(data.nodes[1].y).not.toEqual(undefined);
   });
-})
+});

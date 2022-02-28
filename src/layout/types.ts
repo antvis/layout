@@ -1,4 +1,5 @@
-import { Base } from "./base";
+import { Base } from './base';
+import { SafeAny } from './any';
 
 export interface Node {
   id: string;
@@ -29,7 +30,7 @@ export interface Combo {
   cy?: number;
   count?: number;
   depth?: number;
-  children?: any[];
+  children?: SafeAny[];
   empty?: boolean;
   minX?: number;
   maxX?: number;
@@ -61,23 +62,23 @@ export interface Size {
   height: number;
 }
 
-export type IndexMap = {
+export interface IndexMap {
   [key: string]: number;
-};
+}
 
 export type Matrix = number[];
 
-export type Point = {
+export interface Point {
   x: number;
   y: number;
-};
+}
 
 export interface ComboTree {
   id: string;
   children?: ComboTree[];
   depth?: number;
   parentId?: string;
-  itemType?: "node" | "combo";
+  itemType?: 'node' | 'combo';
   [key: string]: unknown;
 }
 export interface ComboConfig {
@@ -88,7 +89,7 @@ export interface ComboConfig {
 }
 
 export interface CircularLayoutOptions {
-  type: "circular";
+  type?: 'circular';
   center?: PointTuple;
   width?: number;
   height?: number;
@@ -97,7 +98,7 @@ export interface CircularLayoutOptions {
   endRadius?: number | null;
   clockwise?: boolean;
   divisions?: number;
-  ordering?: "topology" | "topology-directed" | "degree" | null;
+  ordering?: 'topology' | 'topology-directed' | 'degree' | null;
   angleRatio?: number;
   workerEnabled?: boolean;
   startAngle?: number;
@@ -106,7 +107,7 @@ export interface CircularLayoutOptions {
 }
 
 export interface ComboForceLayoutOptions {
-  type: "comboForce";
+  type?: 'comboForce';
   center?: PointTuple;
   maxIteration?: number;
   linkDistance?: number | ((d?: unknown) => number);
@@ -128,6 +129,7 @@ export interface ComboForceLayoutOptions {
   onTick?: () => void;
   onLayoutEnd?: () => void;
   gravity?: number;
+  speed?: number;
   comboGravity?: number;
   optimizeRangeFactor?: number;
   depthAttractiveForceScale?: number;
@@ -136,10 +138,11 @@ export interface ComboForceLayoutOptions {
   workerEnabled?: boolean;
 }
 export interface ComboCombinedLayoutOptions {
-  type: "comboConcentricForce";
+  type?: 'comboConcentricForce';
+  animate?: boolean;
   center?: PointTuple;
-  nodeSize?: number | number[] | ((d?: any) => number) | undefined;
-  spacing?: number | number[] | ((d?: any) => number) | undefined;
+  nodeSize?: number | number[] | ((d?: SafeAny) => number) | undefined;
+  spacing?: number | number[] | ((d?: SafeAny) => number) | undefined;
   comboPadding?: ((d?: unknown) => number) | number | number[] | undefined;
   comboTrees?: ComboTree[];
   outerLayout?: Base;
@@ -147,10 +150,11 @@ export interface ComboCombinedLayoutOptions {
 }
 
 export interface ConcentricLayoutOptions {
-  type: "concentric";
+  type?: 'concentric';
   center?: PointTuple;
   preventOverlap?: boolean;
   nodeSize?: number | PointTuple;
+  nodeSpacing?: number | number[] | ((d?: unknown) => number);
   minNodeSpacing?: number;
   sweep?: number;
   equidistant?: boolean;
@@ -165,15 +169,15 @@ export interface ConcentricLayoutOptions {
 }
 
 export interface DagreLayoutOptions {
-  type: "dagre";
-  rankdir?: "TB" | "BT" | "LR" | "RL";
-  align?: "UL" | "UR" | "DL" | "DR";
+  type?: 'dagre';
+  rankdir?: 'TB' | 'BT' | 'LR' | 'RL';
+  align?: 'UL' | 'UR' | 'DL' | 'DR';
   begin?: PointTuple;
   nodeSize?: number | number[] | undefined;
   nodesep?: number;
   ranksep?: number;
-  nodesepFunc?: ((d?: any) => number) | undefined;
-  ranksepFunc?: ((d?: any) => number) | undefined;
+  nodesepFunc?: ((d?: SafeAny) => number) | undefined;
+  ranksepFunc?: ((d?: SafeAny) => number) | undefined;
   controlPoints?: boolean;
   sortByCombo?: boolean;
   workerEnabled?: boolean;
@@ -183,21 +187,22 @@ export interface DagreLayoutOptions {
 }
 
 export interface DagreCompoundLayoutOptions {
-  type?: "dagreCompound";
-  rankdir?: "TB" | "BT" | "LR" | "RL";
-  align?: "UL" | "UR" | "DL" | "DR";
+  type?: 'dagreCompound';
+  rankdir?: 'TB' | 'BT' | 'LR' | 'RL';
+  align?: 'UL' | 'UR' | 'DL' | 'DR';
   begin?: PointTuple;
   nodeSize?: number | number[] | undefined;
   nodesep?: number;
   ranksep?: number;
   controlPoints?: boolean;
   anchorPoint?: boolean;
-  settings?: any;
+  settings?: SafeAny;
   onLayoutEnd?: () => void;
 }
 
 export interface FruchtermanLayoutOptions {
-  type: "fruchterman";
+  type?: 'fruchterman';
+  animate?: boolean;
   center?: PointTuple;
   maxIteration?: number;
   width?: number;
@@ -212,25 +217,27 @@ export interface FruchtermanLayoutOptions {
 }
 
 export interface GForceLayoutOptions {
-  type?: "gForce";
+  type?: 'gForce';
+  animate?: boolean;
   center?: PointTuple;
   width?: number;
   height?: number;
-  linkDistance?: number | ((edge?: any, source?: any, target?: any) => number) | undefined;
-  nodeStrength?: number | ((d?: any) => number) | undefined;
-  edgeStrength?: number | ((d?: any) => number) | undefined;
+  linkDistance?: number | ((edge?: SafeAny, source?: SafeAny, target?: SafeAny) => number) | undefined;
+  nodeStrength?: number | ((d?: SafeAny) => number) | undefined;
+  edgeStrength?: number | ((d?: SafeAny) => number) | undefined;
   preventOverlap?: boolean;
-  nodeSize?: number | number[] | ((d?: any) => number) | undefined;
-  nodeSpacing?: number | number[] | ((d?: any) => number) | undefined;
+  nodeSize?: number | number[] | ((d?: SafeAny) => number) | undefined;
+  nodeSpacing?: number | number[] | ((d?: SafeAny) => number) | undefined;
   minMovement?: number;
   maxIteration?: number;
   damping?: number;
   maxSpeed?: number;
   coulombDisScale?: number;
-  getMass?: ((d?: any) => number) | undefined;
-  getCenter?: ((d?: any, degree?: number) => number[]) | undefined;
+  getMass?: ((d?: SafeAny) => number) | undefined;
+  getCenter?: ((d?: SafeAny, degree?: number) => number[]) | undefined;
   gravity?: number;
   factor?: number;
+  enableTick?: boolean;
   tick?: () => void;
   onLayoutEnd?: () => void;
   workerEnabled?: boolean;
@@ -243,12 +250,13 @@ type INode = OutNode & {
 };
 
 export interface GridLayoutOptions {
-  type: "grid";
+  type?: 'grid';
   width?: number;
   height?: number;
   begin?: PointTuple;
   preventOverlap?: boolean;
   nodeSize?: number | number[];
+  nodeStrength?: number | ((d?: SafeAny) => number) | undefined;
   preventOverlapPadding?: number;
   condense?: boolean;
   rows?: number;
@@ -260,7 +268,7 @@ export interface GridLayoutOptions {
 }
 
 export interface MDSLayoutOptions {
-  type: "mds";
+  type?: 'mds';
   center?: PointTuple;
   linkDistance?: number;
   workerEnabled?: boolean;
@@ -268,7 +276,7 @@ export interface MDSLayoutOptions {
 }
 
 export interface RandomLayoutOptions {
-  type: "random";
+  type?: 'random';
   center?: PointTuple;
   width?: number;
   height?: number;
@@ -277,15 +285,15 @@ export interface RandomLayoutOptions {
 }
 
 export interface ForceLayoutOptions {
-  type: "force";
+  type?: 'force';
   center?: PointTuple;
-  linkDistance?: number | ((d?: any) => number) | undefined;
-  edgeStrength?: number | ((d?: any) => number) | undefined;
-  nodeStrength?: number | ((d?: any) => number) | undefined;
+  linkDistance?: number | ((d?: SafeAny) => number) | undefined;
+  edgeStrength?: number | ((d?: SafeAny) => number) | undefined;
+  nodeStrength?: number | ((d?: SafeAny) => number) | undefined;
   preventOverlap?: boolean;
   collideStrength?: number;
-  nodeSize?: number | number[] | ((d?: any) => number) | undefined;
-  nodeSpacing?: number | number[] | ((d?: any) => number) | undefined;
+  nodeSize?: number | number[] | ((d?: SafeAny) => number) | undefined;
+  nodeSpacing?: number | number[] | ((d?: SafeAny) => number) | undefined;
   alpha?: number;
   alphaDecay?: number;
   alphaMin?: number;
@@ -295,14 +303,14 @@ export interface ForceLayoutOptions {
   clusterEdgeDistance?: number;
   clusterNodeSize?: number;
   clusterFociStrength?: number;
-  forceSimulation?: any;
+  forceSimulation?: SafeAny;
   tick?: () => void;
   onLayoutEnd?: () => void;
   workerEnabled?: boolean;
 }
 
 export interface RadialLayoutOptions {
-  type: "radial";
+  type?: 'radial';
   center?: PointTuple;
   width?: number;
   height?: number;
@@ -312,6 +320,7 @@ export interface RadialLayoutOptions {
   unitRadius?: number | null;
   preventOverlap?: boolean;
   nodeSize?: number | number[] | undefined;
+  // eslint-disable-next-line @typescript-eslint/ban-types
   nodeSpacing?: number | Function | undefined;
   maxPreventOverlapIteration?: number;
   strictRadial?: boolean;
@@ -322,7 +331,7 @@ export interface RadialLayoutOptions {
 }
 
 export interface FruchtermanGPULayoutOptions {
-  type: "fruchterman-gpu";
+  type?: 'fruchterman-gpu';
   center?: PointTuple;
   width?: number;
   height?: number;
@@ -337,27 +346,28 @@ export interface FruchtermanGPULayoutOptions {
 }
 
 export interface GForceGPULayoutOptions {
-  type: "gForce-gpu";
+  type?: 'gForce-gpu';
   center?: PointTuple;
-  linkDistance?: number | ((d?: any) => number) | undefined;
-  nodeStrength?: number | ((d?: any) => number) | undefined;
-  edgeStrength?: number | ((d?: any) => number) | undefined;
+  clustering?: boolean;
+  clusterGravity?: number;
+  linkDistance?: number | ((d?: SafeAny) => number) | undefined;
+  nodeStrength?: number | ((d?: SafeAny) => number) | undefined;
+  edgeStrength?: number | ((d?: SafeAny) => number) | undefined;
   minMovement?: number;
   maxIteration?: number;
   damping?: number;
   maxSpeed?: number;
   coulombDisScale?: number;
-  getMass?: ((d?: any) => number) | undefined;
-  getCenter?: ((d?: any, degree?: number) => number[]) | undefined;
+  getMass?: ((d?: SafeAny) => number) | undefined;
+  getCenter?: ((d?: SafeAny, degree?: number) => number[]) | undefined;
   gravity?: number;
   onLayoutEnd?: () => void;
   workerEnabled?: boolean;
   gpuEnabled?: boolean;
 }
 
-
 export interface ForceAtlas2LayoutOptions {
-  type: "forceAtlas2";
+  type?: 'forceAtlas2';
   center?: PointTuple;
   width?: number;
   height?: number;
@@ -378,28 +388,29 @@ export interface ForceAtlas2LayoutOptions {
 }
 
 export interface ERLayoutOptions {
-  type: "er";
+  type?: 'er';
   width?: number;
   height?: number;
   nodeMinGap?: number;
 }
+// eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace ILayout {
   export type LayoutTypes =
-    | "grid"
-    | "random"
-    | "force"
-    | "circular"
-    | "dagre"
-    | "radial"
-    | "concentric"
-    | "mds"
-    | "fruchterman"
-    | "fruchterman-gpu"
-    | "gForce"
-    | "gForce-gpu"
-    | "comboForce"
-    | "forceAtlas2"
-    | "er";
+    | 'grid'
+    | 'random'
+    | 'force'
+    | 'circular'
+    | 'dagre'
+    | 'radial'
+    | 'concentric'
+    | 'mds'
+    | 'fruchterman'
+    | 'fruchterman-gpu'
+    | 'gForce'
+    | 'gForce-gpu'
+    | 'comboForce'
+    | 'forceAtlas2'
+    | 'er';
 
   export type LayoutOptions =
     | GridLayoutOptions

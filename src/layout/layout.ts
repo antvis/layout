@@ -1,23 +1,24 @@
-import { Base } from "./base";
-import { Model, ILayout } from "./types";
-import { getLayoutByName } from "../registy";
-import { GridLayout } from "./grid";
-import { RandomLayout } from "./random";
-import { GForceLayout } from "./gForce";
-import { ForceLayout } from "./force";
-import { CircularLayout } from "./circular";
-import { DagreLayout } from "./dagre";
-import { RadialLayout } from "./radial";
-import { ConcentricLayout } from "./concentric";
-import { MDSLayout } from "./mds";
-import { FruchtermanLayout } from "./fruchterman";
-import { FruchtermanGPULayout } from "./gpu/fruchterman";
-import { GForceGPULayout } from "./gpu/gForce";
-import { ComboForceLayout } from "./comboForce";
-import { ComboCombinedLayout } from "./comboCombined";
-import { ForceAtlas2Layout } from "./forceAtlas2";
-import { ERLayout } from "./er";
-import { DagreCompoundLayout } from "./dagreCompound";
+import { Base } from './base';
+import { Model, ILayout } from './types';
+import { getLayoutByName } from '../registy';
+import { GridLayout } from './grid';
+import { RandomLayout } from './random';
+import { GForceLayout } from './gForce';
+import { ForceLayout } from './force';
+import { CircularLayout } from './circular';
+import { DagreLayout } from './dagre';
+import { RadialLayout } from './radial';
+import { ConcentricLayout } from './concentric';
+import { MDSLayout } from './mds';
+import { FruchtermanLayout } from './fruchterman';
+import { FruchtermanGPULayout } from './gpu/fruchterman';
+import { GForceGPULayout } from './gpu/gForce';
+import { ComboForceLayout } from './comboForce';
+import { ComboCombinedLayout } from './comboCombined';
+import { ForceAtlas2Layout } from './forceAtlas2';
+import { ERLayout } from './er';
+import { DagreCompoundLayout } from './dagreCompound';
+import { SafeAny } from './any';
 export class Layout {
   public readonly layoutInstance: Base;
 
@@ -26,27 +27,27 @@ export class Layout {
     this.layoutInstance = new layoutClass(options);
   }
 
-  layout(data: Model) {
+  layout(data: Model): Model {
     return this.layoutInstance.layout(data);
   }
 
-  updateCfg(cfg: ILayout.LayoutOptions) {
+  updateCfg(cfg: ILayout.LayoutOptions): void {
     this.layoutInstance.updateCfg(cfg);
   }
 
-  init(data: Model) {
+  init(data: Model): void {
     this.layoutInstance.init(data);
   }
 
-  execute() {
+  execute(): SafeAny {
     this.layoutInstance.execute();
   }
 
-  getDefaultCfg() {
+  getDefaultCfg(): SafeAny {
     return this.layoutInstance.getDefaultCfg();
   }
 
-  destroy() {
+  destroy(): void {
     return this.layoutInstance.destroy();
   }
 }
@@ -54,7 +55,7 @@ export class Layout {
 // FIXME
 // FOR G6
 // tslint:disable-next-line
-export const Layouts: { [key: string]: any } = {
+export const Layouts: { [key: string]: SafeAny } = {
   force: ForceLayout,
   fruchterman: FruchtermanLayout,
   forceAtlas2: ForceAtlas2Layout,
@@ -71,5 +72,5 @@ export const Layouts: { [key: string]: any } = {
   random: RandomLayout,
   'gForce-gpu': GForceGPULayout,
   'fruchterman-gpu': FruchtermanGPULayout,
-  er: ERLayout,
+  er: ERLayout
 };

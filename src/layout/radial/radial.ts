@@ -3,35 +3,18 @@
  * @author shiwu.wyy@antfin.com
  */
 
-import {
-  PointTuple,
-  Node,
-  OutNode,
-  Edge,
-  Matrix,
-  RadialLayoutOptions
-} from "../types";
-import {
-  isNaN,
-  isArray,
-  isFunction,
-  isNumber,
-  isString,
-  floydWarshall,
-  getAdjMatrix,
-  isObject
-} from "../../util";
-import { Base } from "../base";
-import MDS from "./mds";
-import RadialNonoverlapForce, {
-  RadialNonoverlapForceParam
-} from "./radialNonoverlapForce";
+import { PointTuple, Node, OutNode, Edge, Matrix, RadialLayoutOptions } from '../types';
+import { isNaN, isArray, isFunction, isNumber, isString, floydWarshall, getAdjMatrix, isObject } from '../../util';
+import { Base } from '../base';
+import MDS from './mds';
+import RadialNonoverlapForce, { RadialNonoverlapForceParam } from './radialNonoverlapForce';
+import { SafeAny } from '../any';
 
 type INode = OutNode & {
   size?: number | PointTuple;
 };
 
-function getWeightMatrix(M: Matrix[]) {
+function getWeightMatrix(M: Matrix[]): number[][] {
   const rows = M.length;
   const cols = M[0].length;
   const result = [];
@@ -49,7 +32,7 @@ function getWeightMatrix(M: Matrix[]) {
   return result;
 }
 
-function getIndexById(array: any[], id: string) {
+function getIndexById(array: SafeAny[], id: string): number {
   let index = -1;
   array.forEach((a, i) => {
     if (a.id === id) {
@@ -59,10 +42,8 @@ function getIndexById(array: any[], id: string) {
   return index;
 }
 
-function getEDistance(p1: PointTuple, p2: PointTuple) {
-  return Math.sqrt(
-    (p1[0] - p2[0]) * (p1[0] - p2[0]) + (p1[1] - p2[1]) * (p1[1] - p2[1])
-  );
+function getEDistance(p1: PointTuple, p2: PointTuple): number {
+  return Math.sqrt((p1[0] - p2[0]) * (p1[0] - p2[0]) + (p1[1] - p2[1]) * (p1[1] - p2[1]));
 }
 
 /**
@@ -91,6 +72,7 @@ export class RadialLayout extends Base {
   public nodeSize: number | number[] | undefined;
 
   /** 节点间距，防止节点重叠时节点之间的最小距离（两节点边缘最短距离） */
+  // eslint-disable-next-line @typescript-eslint/ban-types
   public nodeSpacing: number | Function | undefined;
 
   /** 是否必须是严格的 radial 布局，即每一层的节点严格布局在一个环上。preventOverlap 为 true 时生效 */
@@ -128,8 +110,9 @@ export class RadialLayout extends Base {
     this.updateCfg(options);
   }
 
-  public getDefaultCfg() {
+  public getDefaultCfg(): RadialLayoutOptions {
     return {
+      type: 'radial',
       maxIteration: 1000,
       focusNode: null,
       unitRadius: null,
@@ -147,19 +130,19 @@ export class RadialLayout extends Base {
   /**
    * 执行布局
    */
-  public execute() {
+  public execute(): { nodes: INode[]; edges: Edge[] } {
     const self = this;
     const nodes = self.nodes;
     const edges = self.edges || [];
     if (!nodes || nodes.length === 0) {
       if (self.onLayoutEnd) self.onLayoutEnd();
-      return;
+      return { nodes, edges };
     }
 
-    if (!self.width && typeof window !== "undefined") {
+    if (!self.width && typeof window !== 'undefined') {
       self.width = window.innerWidth;
     }
-    if (!self.height && typeof window !== "undefined") {
+    if (!self.height && typeof window !== 'undefined') {
       self.height = window.innerHeight;
     }
     if (!self.center) {
@@ -171,7 +154,7 @@ export class RadialLayout extends Base {
       nodes[0].x = center[0];
       nodes[0].y = center[1];
       if (self.onLayoutEnd) self.onLayoutEnd();
-      return;
+      return { nodes, edges };
     }
     const linkDistance = self.linkDistance;
     // layout
@@ -214,10 +197,8 @@ export class RadialLayout extends Base {
     const focusNodeD = D[focusIndex];
     const width = self.width || 500;
     const height = self.height || 500;
-    let semiWidth =
-      width - center[0] > center[0] ? center[0] : width - center[0];
-    let semiHeight =
-      height - center[1] > center[1] ? center[1] : height - center[1];
+    let semiWidth = width - center[0] > center[0] ? center[0] : width - center[0];
+    let semiHeight = height - center[1] > center[1] ? center[1] : height - center[1];
     if (semiWidth === 0) {
       semiWidth = width / 2;
     }
@@ -273,6 +254,7 @@ export class RadialLayout extends Base {
     // stagger the overlapped nodes
     if (preventOverlap) {
       const nodeSpacing = self.nodeSpacing;
+      // eslint-disable-next-line @typescript-eslint/ban-types
       let nodeSpacingFunc: Function;
       if (isNumber(nodeSpacing)) {
         nodeSpacingFunc = () => nodeSpacing;
@@ -287,9 +269,10 @@ export class RadialLayout extends Base {
             if (isArray(d.size)) {
               const res = d.size[0] > d.size[1] ? d.size[0] : d.size[1];
               return res + nodeSpacingFunc(d);
-            }  if (isObject(d.size)) {
+            }
+            if (isObject(d.size)) {
               const res = d.size.width > d.size.height ? d.size.width : d.size.height;
-              return res + nodeSpacingFunc(d);  
+              return res + nodeSpacingFunc(d);
             }
             return d.size + nodeSpacingFunc(d);
           }
@@ -333,7 +316,7 @@ export class RadialLayout extends Base {
     };
   }
 
-  public run() {
+  public run(): void {
     const self = this;
     const maxIteration = self.maxIteration;
     const positions = self.positions || [];
@@ -346,13 +329,7 @@ export class RadialLayout extends Base {
     }
   }
 
-  private oneIteration(
-    param: number,
-    positions: PointTuple[],
-    radii: number[],
-    D: Matrix[],
-    W: Matrix[]
-  ) {
+  private oneIteration(param: number, positions: PointTuple[], radii: number[], D: Matrix[], W: Matrix[]): void {
     const self = this;
     const vparam = 1 - param;
     const focusIndex = self.focusIndex;
@@ -413,28 +390,20 @@ export class RadialLayout extends Base {
             newRow.push(0);
           } else if (radii[i] === radii[j]) {
             // i and j are on the same circle
-            if (self.sortBy === "data") {
+            if (self.sortBy === 'data') {
               // sort the nodes on the same circle according to the ordering of the data
-              newRow.push(
-                (v * (Math.abs(i - j) * self.sortStrength)) /
-                  (radii[i] / unitRadius)
-              );
+              newRow.push((v * (Math.abs(i - j) * self.sortStrength)) / (radii[i] / unitRadius));
             } else if (self.sortBy) {
               // sort the nodes on the same circle according to the attributes
-              let iValue: number | string =
-                ((nodes[i] as any)[self.sortBy] as number | string) || 0;
-              let jValue: number | string =
-                ((nodes[j] as any)[self.sortBy] as number | string) || 0;
+              let iValue: number | string = ((nodes[i] as SafeAny)[self.sortBy] as number | string) || 0;
+              let jValue: number | string = ((nodes[j] as SafeAny)[self.sortBy] as number | string) || 0;
               if (isString(iValue)) {
                 iValue = iValue.charCodeAt(0);
               }
               if (isString(jValue)) {
                 jValue = jValue.charCodeAt(0);
               }
-              newRow.push(
-                (v * (Math.abs(iValue - jValue) * self.sortStrength)) /
-                  (radii[i] / unitRadius)
-              );
+              newRow.push((v * (Math.abs(iValue - jValue) * self.sortStrength)) / (radii[i] / unitRadius));
             } else {
               newRow.push((v * linkDis) / (radii[i] / unitRadius));
             }
@@ -451,7 +420,7 @@ export class RadialLayout extends Base {
     return result;
   }
 
-  private handleInfinity(matrix: Matrix[], focusIndex: number, step: number) {
+  private handleInfinity(matrix: Matrix[], focusIndex: number, step: number): void {
     const length = matrix.length;
     // 遍历 matrix 中遍历 focus 对应行
     for (let i = 0; i < length; i++) {
@@ -494,7 +463,7 @@ export class RadialLayout extends Base {
     return max;
   }
 
-  public getType() {
-    return "radial";
+  public getType(): string {
+    return 'radial';
   }
 }

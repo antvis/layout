@@ -1,6 +1,7 @@
-import { Layouts } from '../../src'
+import { Layouts } from '../../src';
 import { isFunction } from '../../src/util';
-import dataset from '../data';
+import dataset, { TestNode } from '../data';
+
 const data = dataset.comboData;
 // import G6 from '@antv/g6';
 
@@ -18,11 +19,11 @@ const data = dataset.comboData;
 // graph.data(data);
 // graph.render()
 
-
 describe('#ComboForceLayout', () => {
   it('return correct default config', () => {
     const comboForce = new Layouts['comboForce']();
     expect(comboForce.getDefaultCfg()).toEqual({
+      type: 'comboForce',
       maxIteration: 100,
       center: [0, 0],
       gravity: 10,
@@ -39,11 +40,11 @@ describe('#ComboForceLayout', () => {
       comboPadding: 10,
       edgeStrength: 0.6,
       nodeStrength: 30,
-      linkDistance: 10,
+      linkDistance: 10
     });
     comboForce.layout(data);
-    expect((data.nodes[0] as any).x).not.toBe(undefined);
-    expect((data.nodes[0] as any).y).not.toBe(undefined);
+    expect((data.nodes[0] as TestNode).x).not.toBe(undefined);
+    expect((data.nodes[0] as TestNode).y).not.toBe(undefined);
   });
   it('layout without node', () => {
     const testData = {};
@@ -56,9 +57,9 @@ describe('#ComboForceLayout', () => {
         {
           id: 'node',
           x: 0,
-          y: 0,
-        },
-      ],
+          y: 0
+        }
+      ]
     };
     const comboForce = new Layouts['comboForce']({
       center: [250, 250]
@@ -110,53 +111,47 @@ describe('combo force layout', () => {
       center: [250, 250],
       preventOverlap: true,
       nodeSpacing,
-      comboSpacing,
+      comboSpacing
     });
     comboForce.layout(data);
-    
+
     const node0 = data.nodes[0];
     const node1 = data.nodes[1];
-    const dist = Math.sqrt(
-      (node0.x - node1.x) * (node0.x - node1.x) + (node0.y - node1.y) * (node0.y - node1.y),
-    );
+    const dist = Math.sqrt((node0.x - node1.x) * (node0.x - node1.x) + (node0.y - node1.y) * (node0.y - node1.y));
     expect(dist >= nodeSize / 2 + nodeSpacing).toEqual(true);
   });
 
   it('preventOverlap with function nodeSpacing and array node size', () => {
-    const nodeSpacing = (d) => {
+    const nodeSpacing = (d: TestNode) => {
       return d.size[0] / 2;
     };
-    data.nodes.forEach((node) => {
+    data.nodes.forEach(node => {
       const randomWidth = 10 + Math.random() * 20;
       const randomHeight = 5 + Math.random() * 5;
       node.size = [randomWidth, randomHeight];
       node.type = 'rect';
     });
 
-
     const comboForce = new Layouts['comboForce']({
       center: [250, 250],
       preventOverlap: true,
       nodeSpacing,
-      maxIteration: 300,
+      maxIteration: 300
     });
     comboForce.layout(data);
 
     const node0 = data.nodes[0];
     const node1 = data.nodes[1];
-    const dist = Math.sqrt(
-      (node0.x - node1.x) * (node0.x - node1.x) + (node0.y - node1.y) * (node0.y - node1.y),
-    );
-    const mindist =
-      node0.size[0] / 2 + node1.size[1] / 2 + nodeSpacing(node0) + nodeSpacing(node1);
+    const dist = Math.sqrt((node0.x - node1.x) * (node0.x - node1.x) + (node0.y - node1.y) * (node0.y - node1.y));
+    const mindist = node0.size[0] / 2 + node1.size[1] / 2 + nodeSpacing(node0) + nodeSpacing(node1);
     expect(dist >= mindist).toEqual(true);
   });
 
   it('force re-execute, isTicking', () => {
     const comboForce = new Layouts['comboForce']({
-      center: [250, 250],
+      center: [250, 250]
     });
-    comboForce.layout(data)
+    comboForce.layout(data);
     const node0 = data.nodes[0];
     expect(node0.x).not.toEqual(NaN);
     expect(node0.y).not.toEqual(NaN);
@@ -166,10 +161,10 @@ describe('combo force layout', () => {
 describe('undefined configurations and update layout', () => {
   it('undefined configurations and update layout', () => {
     data.nodes.push({
-      id: 'newnode',
+      id: 'newnode'
     });
-    data.combos.push({
-      id: 'newcombo',
+    data.combos?.push({
+      id: 'newcombo'
     });
 
     const comboForce = new Layouts['comboForce']({
@@ -184,23 +179,23 @@ describe('undefined configurations and update layout', () => {
       linkDistance: null,
       edgeStrength: null,
       nodeStrength: null,
-      comboGravity: null,
+      comboGravity: null
     });
-    comboForce.layout(data)
+    comboForce.layout(data);
 
     expect(isFunction(comboForce.linkDistance)).toEqual(true);
-    expect((comboForce.linkDistance as ((d?: unknown) => number))()).toEqual(10);
+    expect((comboForce.linkDistance as (d?: unknown) => number)()).toEqual(10);
     expect(comboForce.preventOverlap).toEqual(false);
     comboForce.updateCfg({
       linkDistance: 100,
       preventOverlap: true,
       alphaDecay: 0.8,
       nodeSize: 10,
-      comboPadding: null,
-    })
-    comboForce.layout(data)
+      comboPadding: null
+    });
+    comboForce.layout(data);
     expect(isFunction(comboForce.linkDistance)).toEqual(true);
-    expect((comboForce.linkDistance as ((d?: unknown) => number))()).toEqual(100);
+    expect((comboForce.linkDistance as (d?: unknown) => number)()).toEqual(100);
     expect(comboForce.preventOverlap).toEqual(true);
   });
-})
+});

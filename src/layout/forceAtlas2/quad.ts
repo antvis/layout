@@ -1,17 +1,17 @@
-import { PointTuple } from "../types";
+import { PointTuple } from '../types';
 
 /**
  * @fileOverview quad
  * @author shiwu.wyy@antfin.com
  */
 
-type QuadProps = {
+interface QuadProps {
   xmid: number;
   ymid: number;
   length: number;
   massCenter?: PointTuple;
   mass?: number;
-};
+}
 
 export default class Quad {
   public xmid: number;
@@ -46,19 +46,16 @@ export default class Quad {
      */
     this.mass = params.mass || 1;
   }
-  getLength() {
+  getLength(): number {
     return this.length;
   }
-  contains(x: number, y: number) {
+  contains(x: number, y: number): boolean {
     const halfLen = this.length / 2;
-    return (x <= this.xmid + halfLen &&
-      x >= this.xmid - halfLen &&
-      y <= this.ymid + halfLen &&
-      y >= this.ymid - halfLen);
+    return x <= this.xmid + halfLen && x >= this.xmid - halfLen && y <= this.ymid + halfLen && y >= this.ymid - halfLen;
   }
   // northwest quadrant
   // tslint:disable-next-line
-  NW() {
+  NW(): Quad {
     const x = this.xmid - this.length / 4;
     const y = this.ymid + this.length / 4;
     const len = this.length / 2;
@@ -67,12 +64,11 @@ export default class Quad {
       ymid: y,
       length: len
     };
-    const NW = new Quad(params);
-    return NW;
+    return new Quad(params);
   }
   // northeast
   // tslint:disable-next-line
-  NE() {
+  NE(): Quad {
     const x = this.xmid + this.length / 4;
     const y = this.ymid + this.length / 4;
     const len = this.length / 2;
@@ -81,12 +77,11 @@ export default class Quad {
       ymid: y,
       length: len
     };
-    const NE = new Quad(params);
-    return NE;
+    return new Quad(params);
   }
   // southwest
   // tslint:disable-next-line
-  SW() {
+  SW(): Quad {
     const x = this.xmid - this.length / 4;
     const y = this.ymid - this.length / 4;
     const len = this.length / 2;
@@ -95,12 +90,11 @@ export default class Quad {
       ymid: y,
       length: len
     };
-    const SW = new Quad(params);
-    return SW;
+    return new Quad(params);
   }
   // southeast
   // tslint:disable-next-line
-  SE() {
+  SE(): Quad {
     const x = this.xmid + this.length / 4;
     const y = this.ymid - this.length / 4;
     const len = this.length / 2;
@@ -109,7 +103,6 @@ export default class Quad {
       ymid: y,
       length: len
     };
-    const SE = new Quad(params);
-    return SE;
+    return new Quad(params);
   }
 }

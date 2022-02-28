@@ -4,16 +4,10 @@
  * this algorithm refers to <cytoscape.js> - https://github.com/cytoscape/cytoscape.js/
  */
 
-import { isString, getDegree, isNaN, getFuncByUnknownType } from "../util";
-import { Base } from "./base";
-import {
-  OutNode,
-  Edge,
-  PointTuple,
-  Size,
-  IndexMap,
-  GridLayoutOptions
-} from "./types";
+import { isString, getDegree, isNaN, getFuncByUnknownType } from '../util';
+import { Base } from './base';
+import { OutNode, Edge, PointTuple, Size, IndexMap, GridLayoutOptions } from './types';
+import { SafeAny } from './any';
 
 type INode = OutNode & {
   degree: number;
@@ -46,14 +40,12 @@ export class GridLayout extends Base {
   public nodeSpacing: ((d?: unknown) => number) | number | undefined;
 
   /** returns { row, col } for element */
-  public position:
-    | ((node: INode) => { row?: number; col?: number })
-    | undefined;
+  public position: ((node: INode) => { row?: number; col?: number }) | undefined;
 
   /** a sorting function to order the nodes; e.g. function(a, b){ return a.datapublic ('weight') - b.data('weight') } */
-  public sortBy: string = "degree";
+  public sortBy: string = 'degree';
 
-  public nodeSize: number | number[] | { width: number, height: number } | undefined;
+  public nodeSize: number | number[] | { width: number; height: number } | undefined;
 
   public nodes: INode[] = [];
 
@@ -96,8 +88,9 @@ export class GridLayout extends Base {
     this.updateCfg(options);
   }
 
-  public getDefaultCfg() {
+  public getDefaultCfg(): GridLayoutOptions {
     return {
+      type: 'grid',
       begin: [0, 0],
       preventOverlap: true,
       preventOverlapPadding: 10,
@@ -105,7 +98,7 @@ export class GridLayout extends Base {
       rows: undefined,
       cols: undefined,
       position: undefined,
-      sortBy: "degree",
+      sortBy: 'degree',
       nodeSize: 30
     };
   }
@@ -113,7 +106,7 @@ export class GridLayout extends Base {
   /**
    * 执行布局
    */
-  public execute() {
+  public execute(): { nodes: INode[]; edges: Edge[] } {
     const self = this;
     const { nodes, edges, begin } = self;
     const n = nodes.length;
@@ -130,27 +123,29 @@ export class GridLayout extends Base {
       if (self.onLayoutEnd) self.onLayoutEnd();
       return {
         nodes,
-        edges,
+        edges
       };
     }
 
     let { sortBy, width, height } = self;
-    const { condense, preventOverlapPadding, preventOverlap, nodeSpacing: paramNodeSpacing, nodeSize: paramNodeSize } = self;
-    
+    const {
+      condense,
+      preventOverlapPadding,
+      preventOverlap,
+      nodeSpacing: paramNodeSpacing,
+      nodeSize: paramNodeSize
+    } = self;
+
     const layoutNodes: INode[] = [];
-    nodes.forEach((node) => {
+    nodes.forEach(node => {
       layoutNodes.push(node);
     });
     const nodeIdxMap: IndexMap = {};
     layoutNodes.forEach((node, i) => {
       nodeIdxMap[node.id] = i;
     });
-    if (
-      sortBy === "degree" ||
-      !isString(sortBy) ||
-      (layoutNodes[0] as any)[sortBy] === undefined
-    ) {
-      sortBy = "degree";
+    if (sortBy === 'degree' || !isString(sortBy) || (layoutNodes[0] as SafeAny)[sortBy] === undefined) {
+      sortBy = 'degree';
       if (isNaN(nodes[0].degree)) {
         const values = getDegree(layoutNodes.length, nodeIdxMap, edges);
         layoutNodes.forEach((node, i) => {
@@ -159,14 +154,12 @@ export class GridLayout extends Base {
       }
     }
     // sort nodes by value
-    layoutNodes.sort(
-      (n1, n2) => (n2 as any)[sortBy] - (n1 as any)[sortBy]
-    );
+    layoutNodes.sort((n1, n2) => (n2 as SafeAny)[sortBy] - (n1 as SafeAny)[sortBy]);
 
-    if (!width && typeof window !== "undefined") {
+    if (!width && typeof window !== 'undefined') {
       width = window.innerWidth;
     }
-    if (!height && typeof window !== "undefined") {
+    if (!height && typeof window !== 'undefined') {
       height = window.innerHeight;
     }
 
@@ -226,11 +219,10 @@ export class GridLayout extends Base {
       self.cellHeight = 0;
     }
 
-
     if (preventOverlap || paramNodeSpacing) {
-      const nodeSpacing: Function = getFuncByUnknownType(10, paramNodeSpacing);
-      const nodeSize: Function = getFuncByUnknownType(30, paramNodeSize, false);
-      layoutNodes.forEach((node) => {
+      const nodeSpacing = getFuncByUnknownType(10, paramNodeSpacing) as (d?: SafeAny) => number;
+      const nodeSize = getFuncByUnknownType(30, paramNodeSize, false) as (d?: SafeAny) => number[];
+      layoutNodes.forEach(node => {
         if (!node.x || !node.y) {
           // for bb
           node.x = 0;
@@ -337,17 +329,17 @@ export class GridLayout extends Base {
     return res;
   }
 
-  private used(row: number | undefined, col: number | undefined) {
+  private used(row: number | undefined, col: number | undefined): boolean {
     const self = this;
     return self.cellUsed[`c-${row}-${col}`] || false;
   }
 
-  private use(row: number | undefined, col: number | undefined) {
+  private use(row: number | undefined, col: number | undefined): void {
     const self = this;
     self.cellUsed[`c-${row}-${col}`] = true;
   }
 
-  private moveToNextCell() {
+  private moveToNextCell(): void {
     const self = this;
     const cols = self.cols || 5;
     self.col++;
@@ -357,7 +349,7 @@ export class GridLayout extends Base {
     }
   }
 
-  private getPos(node: INode) {
+  private getPos(node: INode): void {
     const self = this;
     const { begin, cellWidth, cellHeight } = self;
     let x: number;
@@ -385,7 +377,7 @@ export class GridLayout extends Base {
     node.y = y;
   }
 
-  public getType() {
-    return "grid";
+  public getType(): string {
+    return 'grid';
   }
 }

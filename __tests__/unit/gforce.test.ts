@@ -1,4 +1,4 @@
-import { Layouts } from '../../src'
+import { Layouts } from '../../src';
 import dataset from '../data';
 const data = dataset.data;
 
@@ -25,9 +25,11 @@ describe('#gForceLayout', () => {
   it('return correct default config', () => {
     const gForce = new Layouts['gForce']();
     expect(gForce.getDefaultCfg()).toEqual({
+      type: 'gForce',
       maxIteration: 500,
       gravity: 10,
       enableTick: true,
+      animate: true
     });
     gForce.layout(data);
     expect((data.nodes[0] as any).x).not.toBe(undefined);
@@ -35,7 +37,7 @@ describe('#gForceLayout', () => {
   });
   it('gforce layout with default configs, test emit afterlayout', () => {
     const gForce = new Layouts['gForce']({
-      minMovement: 0.2,
+      minMovement: 0.2
     });
     gForce.layout(data);
     const node = data.nodes[0];
@@ -43,15 +45,15 @@ describe('#gForceLayout', () => {
     expect(node.y).not.toEqual(undefined);
   });
 
-  it('force with fixed edgeStrength, nodeStrength', (done) => {
+  it('force with fixed edgeStrength, nodeStrength', done => {
     const node = data.nodes[0];
     const edge = data.edges[0];
-    let isEnd;
+    let isEnd: boolean;
 
     const smallData = {
-      nodes: [{id: 'a'}, {id: 'b'}],
-      edges: [{source: 'a', target: 'b'}]
-    }
+      nodes: [{ id: 'a' }, { id: 'b' }],
+      edges: [{ source: 'a', target: 'b' }]
+    };
 
     const gForce = new Layouts['gForce']({
       linkDistance: 140,
@@ -64,14 +66,14 @@ describe('#gForceLayout', () => {
         expect(node.y);
         expect(edge.x).toEqual(undefined);
         expect(edge.y).toEqual(undefined);
-      },
+      }
     });
     gForce.layout(smallData);
     setTimeout(e => {
       expect(isEnd === true).toEqual(true);
       expect(node.x).not.toEqual(undefined);
       expect(node.y).not.toEqual(undefined);
-      done()
-    }, 200)
+      done();
+    }, 500);
   });
-})
+});

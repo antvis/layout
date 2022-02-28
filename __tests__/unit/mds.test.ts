@@ -1,4 +1,4 @@
-import { Layouts } from '../../src'
+import { Layouts } from '../../src';
 import dataset from '../data';
 
 const data = dataset.data;
@@ -19,13 +19,13 @@ const data = dataset.data;
 // graph.data(data);
 // graph.render()
 
-
 describe('#MDSLayout', () => {
   it('return correct default config', () => {
     const mds = new Layouts['mds']();
     expect(mds.getDefaultCfg()).toEqual({
+      type: 'mds',
       center: [0, 0],
-      linkDistance: 50,
+      linkDistance: 50
     });
     mds.layout(data);
     expect((data.nodes[0] as any).x).not.toBe(undefined);
@@ -35,7 +35,7 @@ describe('#MDSLayout', () => {
   it('mds with fixed link length', () => {
     const mds = new Layouts['mds']({
       center: [250, 250],
-      linkDistance: 120,
+      linkDistance: 120
     });
     mds.layout(data);
     expect(data.nodes[0].x != null).toEqual(true);
@@ -44,10 +44,10 @@ describe('#MDSLayout', () => {
   it('mds layout with no node', () => {
     const mds = new Layouts['mds']({
       center: [250, 250],
-      linkDistance: 120,
+      linkDistance: 120
     });
     mds.layout({
-      nodes: [],
+      nodes: []
     });
   });
 
@@ -55,15 +55,15 @@ describe('#MDSLayout', () => {
     const data1: any = {
       nodes: [
         {
-          id: 'node',
-        },
-      ],
+          id: 'node'
+        }
+      ]
     };
     const mds = new Layouts['mds']({
       center: [250, 250],
-      linkDistance: 120,
+      linkDistance: 120
     });
-    mds.layout(data1)
+    mds.layout(data1);
     const nodeModel = data1.nodes[0];
     expect(nodeModel.x).toEqual(250);
     expect(nodeModel.y).toEqual(250);
@@ -71,30 +71,30 @@ describe('#MDSLayout', () => {
   it('mds layout with unconnected graph', () => {
     const mds = new Layouts['mds']({
       center: [250, 250],
-      linkDistance: 120,
+      linkDistance: 120
     });
     mds.layout({
       nodes: [
         {
-          id: 'node0',
+          id: 'node0'
         },
         {
-          id: 'node1',
+          id: 'node1'
         },
         {
-          id: 'node2',
-        },
+          id: 'node2'
+        }
       ],
       edges: [
         {
           source: 'node0',
-          target: 'node1',
-        },
-      ],
-    })
+          target: 'node1'
+        }
+      ]
+    });
     // const nodeModel = graph.getNodes()[0].getModel();
     // expect(nodeModel.x).toEqual(250);
     // expect(nodeModel.y).toEqual(250);
     // graph.destroy();
   });
-})
+});
