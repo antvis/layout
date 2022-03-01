@@ -1,5 +1,9 @@
 # ChangeLog
 
+#### 0.2.0-beta.4
+
+- feat: dagre layout support radial configuration;
+
 #### 0.2.0-beta.3
 
 - feat: dagreCompoud layout;
