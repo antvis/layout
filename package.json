@@ -31,7 +31,7 @@
     "release": "release-it",
     "test": "jest",
     "coverage": "jest --coverage",
-    "test-live": "DEBUG_MODE=1 jest --watch __tests__/g6/combo-concentric-test.ts"
+    "test-live": "DEBUG_MODE=1 jest --watch __tests__/g6/dagre-g6-test.ts"
   },
   "lint-staged": {
     "*.js": [
@@ -45,7 +45,7 @@
     "@antv/g-webgpu": "0.5.5",
     "@dagrejs/graphlib": "2.1.4",
     "d3-force": "^2.0.1",
-    "dagre-compound": "~0.0.11",
+    "dagre-compound": "^0.0.11",
     "ml-matrix": "^6.5.0"
   },
   "devDependencies": {

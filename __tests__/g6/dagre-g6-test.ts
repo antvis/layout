@@ -104,6 +104,170 @@ const data = {
 };
 
 describe("dagre layout", () => {
+  it('dagre radial', () => {
+    const tdata = {
+      nodes: [
+        {
+          id: '0',
+          label: '0',
+        },
+        {
+          id: '1',
+          label: '1',
+        },
+        {
+          id: '2',
+          label: '2',
+        },
+        {
+          id: '3',
+          label: '3',
+        },
+        {
+          id: '4',
+          label: '4',
+        },
+        {
+          id: '5',
+          label: '5',
+        },
+        {
+          id: '6',
+          label: '6',
+        },
+        {
+          id: '7',
+          label: '7',
+        },
+        {
+          id: '8',
+          label: '8',
+        },
+        {
+          id: '9',
+          label: '9',
+        },
+        {
+          id: '10',
+          label: '10',
+        },
+        {
+          id: '11',
+          label: '11',
+        },
+      ],
+      edges: [
+        {
+          source: '0',
+          target: '1',
+        },
+        {
+          source: '0',
+          target: '2',
+        },
+        {
+          source: '1',
+          target: '4',
+        },
+        {
+          source: '0',
+          target: '3',
+        },
+        {
+          source: '3',
+          target: '4',
+        },
+        {
+          source: '2',
+          target: '5',
+        },
+        {
+          source: '1',
+          target: '6',
+        },
+        {
+          source: '1',
+          target: '7',
+        },
+        {
+          source: '3',
+          target: '8',
+        },
+        {
+          source: '3',
+          target: '9',
+        },
+        {
+          source: '5',
+          target: '10',
+        },
+        {
+          source: '5',
+          target: '11',
+        },
+      ],
+    };
+    for (let i = 0; i < 20; i ++) {
+      tdata.nodes.push({
+        id: `new-${i}`
+      });
+      tdata.edges.push({
+        id: `edge-${i}`,
+        source: '0',
+        target: `new-${i}`
+      })
+      // tdata.edges.push({
+      //   // id: `edge-${i}`,
+      //   source: `${Math.ceil(Math.random() * 10)}`,
+      //   target: `new-${i}`
+      // })
+    }
+    tdata.nodes.forEach((node, i) => {
+      // if (!i) return;
+      // delete node.label
+      // node.size = [10 + i * 5, 20];
+      // node.size = [10 + Math.random() * 40, 20];
+    })
+    const layout = new DagreLayout({
+      radial: true,
+      nodesep: 5,
+      // focusNode: '1',
+      ranksep: 50,
+      begin: [250, 250]
+      // controlPoints: true
+    });
+    layout.layout(tdata);
+    const graph = new G6.Graph({
+      container: div,
+      width: 500,
+      height: 500,
+      modes: {
+        default: ["drag-node", "zoom-canvas", "drag-canvas"],
+      },
+      defaultEdge: {
+        // type: 'polyline',
+        style: {
+          endArrow: true,
+        },
+      },
+      // defaultNode: {
+      //   type: 'rect'
+      // }
+    });
+
+    graph.data(tdata);
+    graph.render();
+
+    // graph.getGroup().addShape('circle', {
+    //   attrs: {
+    //     r: 46.63239832592534,
+    //     x: 250,
+    //     y: 250,
+    //     fill: '#f00',
+    //     opacity: 0.1
+    //   }
+    // })
+  });
   it('dagre combo', () => {
     const comboData = {
       nodes: [

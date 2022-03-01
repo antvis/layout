@@ -144,7 +144,7 @@ export class ComboCombinedLayout extends Base {
       });
     });
     nodes.forEach((node) => {
-      if (node.comboId) return;
+      if (node.comboId && comboMap[node.comboId]) return;
       // 代表节点的节点
       const oNode: Node = {
         id: node.id,
