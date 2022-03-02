@@ -86,6 +86,8 @@ describe('#DagreCompoundLayout', () => {
             anchorPoint: true // 是否使用布局计算的锚点
         });
         dagreCompound.layout(data);
+        expect((data.nodes[1] as any).layoutOrder).toBe(1); // layoutOrder should be initialized
+        expect((data.nodes[2] as any).layoutOrder).toBe(2);
         expect((data.nodes[0] as any).x).not.toBe(undefined);
         expect((data.nodes[0] as any).y).not.toBe(undefined);
     });

@@ -37,6 +37,7 @@ interface Edge {
     controlPoints?: IPoint[];
     sourceAnchor?: number;
     targetAnchor?: number;
+    layoutOrder?: number; // 用于描述用户输入数据顺序，确保按照用户原始数据顺序排序
     [key: string]: unknown;
 }
 
@@ -65,6 +66,7 @@ type Node = OutNode & {
     height?: number;
     type?: string;
     anchorPoints?: [number, number][];
+    layoutOrder?: number; // 用于描述用户输入数据顺序，确保按照用户原始数据顺序排序
 };
 
 type ModelType = {
@@ -136,16 +138,12 @@ export class DagreCompoundLayout extends Base {
     }
 
     public init(data: ModelType) {
-        const initNodes: Node[] = data.nodes || [];
         const hiddenNodes = data.hiddenNodes || []; // 被隐藏的节点
         const hiddenEdges = data.hiddenEdges || []; // 被隐藏的边
         const hiddenCombos = data.hiddenCombos || []; // 赋值 hiddenCombos
-        hiddenNodes.forEach((hNode) => {
-            const lastIndex = this.nodes.findIndex((n) => n.id === hNode.id);
-            initNodes.splice(lastIndex, 0, hNode); // 隐藏的元素添加到原始位置，确保节点展开收起位置不变
-        });
-        this.nodes = initNodes;
-        this.edges = (data.edges || []).concat(hiddenEdges);
+        // 确保此次排序按照用户输入顺序
+        this.nodes = this.getDataByOrder((data.nodes || []).concat(hiddenNodes));
+        this.edges = this.getDataByOrder((data.edges || []).concat(hiddenEdges));
         this.combos = (data.combos || []).concat(hiddenCombos.map((hc) => ({ ...hc, collapsed: true })));
     }
 
@@ -497,5 +495,24 @@ export class DagreCompoundLayout extends Base {
 
     public getType() {
         return 'dagreCompound';
+    }
+
+    /**
+     * 确保布局使用的数据与用户输入数据顺序一致
+     * 通过 layoutOrder 排序 节点 与 边
+     * @param list
+     * @private
+     */
+    private getDataByOrder(list: any[]):  any[] {
+        if (list.every((n) => n.layoutOrder !== undefined)) {
+            // 所有数据均设置过索引，表示仅布局，数据未变化，无需处理
+        } else {
+            // 首次布局或动态添加删减节点时重新赋值
+            list.forEach((n, i) => {
+                n.layoutOrder = i;
+            });
+        }
+        // 按照 layoutOrder 排序
+        return list.sort((pre, cur) => pre.layoutOrder - cur.layoutOrder);
     }
 }
