@@ -457,7 +457,7 @@ const selectNumberAttrs = (obj: any, attrs: any) => {
   return pickedProperties;
 };
 
-const canonicalize = (attrs: any={}) => {
+const canonicalize = (attrs: any = {}) => {
   const newAttrs: any = {};
   Object.keys(attrs).forEach((k: string) => {
     const v = attrs[k];
