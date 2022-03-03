@@ -8,32 +8,13 @@ import {
   OutNode,
   PointTuple,
   IndexMap,
-  ComboConfig,
+  Combo,
   ComboTree,
   Point,
   ComboForceLayoutOptions
 } from "./types";
 import { Base } from "./base";
 import { isArray, isNumber, isFunction, traverseTreeUp, isObject, getEdgeTerminal } from "../util";
-
-type Combo = ComboConfig & {
-  x?: number;
-  y?: number;
-  name?: string | number;
-  cx: number;
-  cy: number;
-  count?: number;
-  depth?: number;
-  children?: any[];
-  empty?: boolean;
-  minX?: number;
-  maxX?: number;
-  minY?: number;
-  maxY?: number;
-  size?: number;
-  r?: number;
-  itemType?: string;
-};
 
 type Node = OutNode & {
   depth: number;
@@ -469,7 +450,7 @@ export class ComboForceLayout extends Base {
     const nodes = self.nodes;
     nodes.forEach((node, i) => {
       const comboId = (node as any).comboId;
-      const combo = comboMap[comboId];
+      const combo: any = comboMap[comboId];
       if (comboId && combo) {
         node.x = combo.cx + 100 / (i + 1);
         node.y = combo.cy + 100 / (i + 1);
@@ -511,7 +492,7 @@ export class ComboForceLayout extends Base {
             treeChildren.push(child);
           });
         }
-        const c = comboMap[treeNode.id];
+        const c: any = comboMap[treeNode.id];
         c.cx = 0;
         c.cy = 0;
 
@@ -569,7 +550,7 @@ export class ComboForceLayout extends Base {
         const combo = comboMap[treeNode.id];
         // means the combo is hidden, skip it
         if (!combo) return true;
-        const c = comboMap[treeNode.id];
+        const c: any = comboMap[treeNode.id];
 
         // higher depth the combo, larger the gravity
         const gravityScale = (((c.depth as number) + 1) / 10) * 0.5;
@@ -579,7 +560,7 @@ export class ComboForceLayout extends Base {
         const comboY = c.cy;
         c.cx = 0;
         c.cy = 0;
-        c.children!.forEach((child) => {
+        c.children!.forEach((child: any) => {
           if (child.itemType !== "node") {
             const childCombo = comboMap[child.id];
             if (childCombo && isNumber(childCombo.cx)) c.cx += childCombo.cx;
@@ -714,12 +695,12 @@ export class ComboForceLayout extends Base {
       if (children && children.length > 1) {
         children.forEach((v, i) => {
           if (v.itemType === "node") return false; // skip it
-          const cv = comboMap[v.id];
+          const cv: any = comboMap[v.id];
           if (!cv) return; // means it is hidden, skip it
           children.forEach((u, j) => {
             if (i <= j) return false;
             if (u.itemType === "node") return false; // skip it
-            const cu = comboMap[u.id];
+            const cu: any = comboMap[u.id];
             if (!cu) return false; // means it is hidden, skip it
             const vx = (cv.cx - cu.cx) || 0.005;
             const vy = (cv.cy - cu.cy) || 0.005;

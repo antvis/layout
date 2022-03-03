@@ -1,6 +1,6 @@
 {
   "name": "@antv/layout",
-  "version": "0.1.31",
+  "version": "0.2.0",
   "description": "graph layout algorithm",
   "main": "lib/index.js",
   "module": "es/index.js",
@@ -43,9 +43,10 @@
   },
   "dependencies": {
     "@antv/g-webgpu": "0.5.5",
+    "@dagrejs/graphlib": "2.1.4",
     "d3-force": "^2.0.1",
-    "ml-matrix": "^6.5.0",
-    "@dagrejs/graphlib": "2.1.4"
+    "dagre-compound": "^0.0.11",
+    "ml-matrix": "^6.5.0"
   },
   "devDependencies": {
     "@antv/g-webgpu-compiler": "0.5.5",

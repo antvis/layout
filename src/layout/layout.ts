@@ -14,8 +14,10 @@ import { FruchtermanLayout } from "./fruchterman";
 import { FruchtermanGPULayout } from "./gpu/fruchterman";
 import { GForceGPULayout } from "./gpu/gForce";
 import { ComboForceLayout } from "./comboForce";
+import { ComboCombinedLayout } from "./comboCombined";
 import { ForceAtlas2Layout } from "./forceAtlas2";
 import { ERLayout } from "./er";
+import { DagreCompoundLayout } from "./dagreCompound";
 export class Layout {
   public readonly layoutInstance: Base;
 
@@ -58,12 +60,14 @@ export const Layouts: { [key: string]: any } = {
   forceAtlas2: ForceAtlas2Layout,
   gForce: GForceLayout,
   dagre: DagreLayout,
+  dagreCompound: DagreCompoundLayout,
   circular: CircularLayout,
   radial: RadialLayout,
   concentric: ConcentricLayout,
   grid: GridLayout,
   mds: MDSLayout,
   comboForce: ComboForceLayout,
+  comboCombined: ComboCombinedLayout,
   random: RandomLayout,
   'gForce-gpu': GForceGPULayout,
   'fruchterman-gpu': FruchtermanGPULayout,

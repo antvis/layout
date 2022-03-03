@@ -12,7 +12,7 @@ import {
   IndexMap,
   ConcentricLayoutOptions
 } from "./types";
-import { isString, isArray, isNumber, getDegree, isObject } from "../util";
+import { isString, isArray, isNumber, getDegree, isObject, isFunction } from "../util";
 import { Base } from "./base";
 
 type INode = OutNode & {
@@ -35,6 +35,9 @@ export class ConcentricLayout extends Base {
 
   /** min spacing between outside of nodes (used for radius adjustment) */
   public minNodeSpacing: number = 10;
+
+  /** same as minNodeSpacing. min spacing between outside of nodes (used for radius adjustment) */
+  public nodeSpacing: number | number[] | ((d?: unknown) => number) | undefined = 10;
 
   /** prevents node overlap, may overflow boundingBox if not enough space */
   public preventOverlap: boolean = false;
@@ -81,6 +84,7 @@ export class ConcentricLayout extends Base {
     return {
       nodeSize: 30,
       minNodeSpacing: 10,
+      nodeSpacing: 10,
       preventOverlap: false,
       sweep: undefined,
       equidistant: false,
@@ -96,11 +100,10 @@ export class ConcentricLayout extends Base {
    */
   public execute() {
     const self = this;
-    const nodes = self.nodes;
-    const edges = self.edges;
+    const { nodes, edges } = self;
     const n = nodes.length;
     if (n === 0) {
-      if (self.onLayoutEnd) self.onLayoutEnd();
+      self.onLayoutEnd?.();
       return;
     }
 
@@ -118,16 +121,24 @@ export class ConcentricLayout extends Base {
     if (n === 1) {
       nodes[0].x = center[0];
       nodes[0].y = center[1];
-      if (self.onLayoutEnd) self.onLayoutEnd();
+      self.onLayoutEnd?.();
       return;
     }
 
+    const { nodeSize, nodeSpacing } = self;
+
     const layoutNodes: INode[] = [];
     let maxNodeSize: number;
-    if (isArray(self.nodeSize)) {
-      maxNodeSize = Math.max(self.nodeSize[0], self.nodeSize[1]);
+    let maxNodeSpacing: number = 0;
+    if (isArray(nodeSize)) {
+      maxNodeSize = Math.max(nodeSize[0], nodeSize[1]);
     } else {
-      maxNodeSize = self.nodeSize;
+      maxNodeSize = nodeSize;
+    }
+    if (isArray(nodeSpacing)) {
+      maxNodeSpacing = Math.max(nodeSpacing[0], nodeSpacing[1]);
+    } else if (isNumber(nodeSpacing)) {
+      maxNodeSpacing = nodeSpacing;
     }
     nodes.forEach((node) => {
       layoutNodes.push(node);
@@ -137,10 +148,15 @@ export class ConcentricLayout extends Base {
       } else if (isNumber(node.size)) {
         nodeSize = node.size;
       } else if (isObject(node.size)) {
-        nodeSize = Math.max(node.size.width, node.size.height);
+        nodeSize = Math.max((node.size as any).width, (node.size as any).height);
       }
       maxNodeSize = Math.max(maxNodeSize, nodeSize);
+
+      if (isFunction(nodeSpacing)) {
+        maxNodeSpacing = Math.max(nodeSpacing(node), maxNodeSpacing);
+      }
     });
+
     self.clockwise =
       self.counterclockwise !== undefined
         ? !self.counterclockwise
@@ -196,7 +212,7 @@ export class ConcentricLayout extends Base {
     });
 
     // create positions for levels
-    let minDist = maxNodeSize + self.minNodeSpacing; // min dist between nodes
+    let minDist = maxNodeSize + (maxNodeSpacing || self.minNodeSpacing); // min dist between nodes
     if (!self.preventOverlap) {
       // then strictly constrain to bb
       const firstLvlHasMulti = levels.length > 0 && levels[0].length > 1;

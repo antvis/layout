@@ -1,3 +1,5 @@
+import { Base } from "./base";
+
 export interface Node {
   id: string;
 }
@@ -9,6 +11,7 @@ export interface OutNode extends Node {
   layer?: number; // dagre布局中指定的层级
   _order?: number; // dagre布局中层内排序结果，用于增量布局
   layout?: boolean;
+  size?: number | number[] | undefined;
 }
 
 export interface Edge {
@@ -19,12 +22,32 @@ export interface Edge {
 export interface Combo {
   id: string;
   parentId?: string;
+  x?: number;
+  y?: number;
+  name?: string | number;
+  cx?: number;
+  cy?: number;
+  count?: number;
+  depth?: number;
+  children?: any[];
+  empty?: boolean;
+  minX?: number;
+  maxX?: number;
+  minY?: number;
+  maxY?: number;
+  size?: number;
+  r?: number;
+  itemType?: string;
 }
 
 export interface Model {
   nodes?: Node[];
   edges?: Edge[];
   combos?: Combo[];
+  comboEdges?: Edge[];
+  hiddenNodes?: Node[];
+  hiddenEdges?: Edge[];
+  hiddenCombos?: Combo[];
 }
 
 export interface OutModel extends Model {
@@ -112,6 +135,16 @@ export interface ComboForceLayoutOptions {
   velocityDecay?: number;
   workerEnabled?: boolean;
 }
+export interface ComboCombinedLayoutOptions {
+  type: "comboConcentricForce";
+  center?: PointTuple;
+  nodeSize?: number | number[] | ((d?: any) => number) | undefined;
+  spacing?: number | number[] | ((d?: any) => number) | undefined;
+  comboPadding?: ((d?: unknown) => number) | number | number[] | undefined;
+  comboTrees?: ComboTree[];
+  outerLayout?: Base;
+  innerLayout?: Base;
+}
 
 export interface ConcentricLayoutOptions {
   type: "concentric";
@@ -149,6 +182,20 @@ export interface DagreLayoutOptions {
   nodeOrder?: string[];
 }
 
+export interface DagreCompoundLayoutOptions {
+  type?: "dagreCompound";
+  rankdir?: "TB" | "BT" | "LR" | "RL";
+  align?: "UL" | "UR" | "DL" | "DR";
+  begin?: PointTuple;
+  nodeSize?: number | number[] | undefined;
+  nodesep?: number;
+  ranksep?: number;
+  controlPoints?: boolean;
+  anchorPoint?: boolean;
+  settings?: any;
+  onLayoutEnd?: () => void;
+}
+
 export interface FruchtermanLayoutOptions {
   type: "fruchterman";
   center?: PointTuple;
@@ -169,7 +216,7 @@ export interface GForceLayoutOptions {
   center?: PointTuple;
   width?: number;
   height?: number;
-  linkDistance?: number | ((d?: any) => number) | undefined;
+  linkDistance?: number | ((edge?: any, source?: any, target?: any) => number) | undefined;
   nodeStrength?: number | ((d?: any) => number) | undefined;
   edgeStrength?: number | ((d?: any) => number) | undefined;
   preventOverlap?: boolean;
@@ -183,6 +230,7 @@ export interface GForceLayoutOptions {
   getMass?: ((d?: any) => number) | undefined;
   getCenter?: ((d?: any, degree?: number) => number[]) | undefined;
   gravity?: number;
+  factor?: number;
   tick?: () => void;
   onLayoutEnd?: () => void;
   workerEnabled?: boolean;
@@ -323,7 +371,7 @@ export interface ForceAtlas2LayoutOptions {
   tao?: number;
   maxIteration?: number;
   mode?: 'normal' | 'linlog';
-  prevOverlapping?: boolean;
+  preventOverlap?: boolean;
   dissuadeHubs?: boolean;
   barnesHut?: boolean;
   prune?: boolean;
@@ -367,6 +415,7 @@ export namespace ILayout {
     | GForceLayoutOptions
     | GForceGPULayoutOptions
     | ComboForceLayoutOptions
+    | ComboCombinedLayoutOptions
     | ForceAtlas2LayoutOptions
     | ERLayoutOptions;
 }

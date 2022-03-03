@@ -33,7 +33,7 @@ const twoLayerCrossCount = (g: Graph, northLayer: string[], southLayer: string[]
     return unsort?.sort((a, b) => a.pos - b.pos);
   });
   // @ts-ignore
-  const southEntries = unflat.flat().filter(entry => entry !== undefined);
+  const southEntries = unflat.flat().filter((entry) => entry !== undefined);
 
   // Build the accumulator tree
   let firstIndex = 1;
