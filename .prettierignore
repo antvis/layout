@@ -1,0 +1,10 @@
+.cache
+package.json
+package-lock.json
+dist/
+es/
+lib/
+coverage/
+# dagre should be ignored now
+src/layout/dagre/
+
