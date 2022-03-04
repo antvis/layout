@@ -1,5 +1,4 @@
-import { Layouts } from '../../src'
-import { Node, Edge } from '../../src/layout/types'
+import { Layouts, Node, Edge } from '../../src';
 // import G6 from '@antv/g6';
 
 // const div = document.createElement('div');
@@ -16,17 +15,16 @@ import { Node, Edge } from '../../src/layout/types'
 // graph.data(data);
 // graph.render()
 
-
 const data: { nodes: Node[]; edges: Edge[] } = {
   nodes: [
     {
-      id: '0',
+      id: '0'
     },
     {
-      id: '1',
-    },
+      id: '1'
+    }
   ],
-  edges: [],
+  edges: []
 };
 
 describe('#RandomLayout', () => {
@@ -35,10 +33,10 @@ describe('#RandomLayout', () => {
     expect(random.getDefaultCfg()).toEqual({
       center: [0, 0],
       width: 300,
-      height: 300,
+      height: 300
     });
     random.layout(data);
     expect((data.nodes[0] as any).x).not.toBe(undefined);
     expect((data.nodes[0] as any).y).not.toBe(undefined);
   });
-})
+});

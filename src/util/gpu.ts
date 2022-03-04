@@ -1,28 +1,28 @@
-import { OutNode, Edge, IndexMap } from '../layout/types';
+import { OutNode, Edge, IndexMap, SafeAny } from '../layout';
 import { isNumber } from './';
 import { getEdgeTerminal } from './math';
-
 
 /**
  * 将 number | Function 类型的参数转换为 return number 的 Function
  * @param  {number | Function}  value 需要被转换的值
  * @param  {number}  defaultV 返回函数的默认返回值
- * @return {Function} 转换后的函数 
+ * @return {Function} 转换后的函数
  */
-export const proccessToFunc = (value: number | Function | undefined, defaultV?: number): ((d?: any) => number) => {
+// eslint-disable-next-line @typescript-eslint/ban-types
+export const proccessToFunc = (value: number | Function | undefined, defaultV?: number): ((d?: SafeAny) => number) => {
   let func;
   if (!value) {
-      func = () => {
-          return defaultV || 1;
-      };
+    func = () => {
+      return defaultV || 1;
+    };
   } else if (isNumber(value)) {
-      func = () => {
-          return value;
-      };
+    func = () => {
+      return value;
+    };
   } else {
-      func = value;
+    func = value;
   }
-  return func as ((d?: any) => number);
+  return func as (d?: SafeAny) => number;
 };
 
 /**
@@ -31,12 +31,15 @@ export const proccessToFunc = (value: number | Function | undefined, defaultV?: 
  * @param  {EdgeConfig[]}  edges 返回函数的默认返回值
  * @return {Object} 转换后的数组及 maxEdgePerVetex 组成的对象
  */
-export const buildTextureData = (nodes: OutNode[], edges: Edge[]): {
-  array: Float32Array,
-  maxEdgePerVetex: number
+export const buildTextureData = (
+  nodes: OutNode[],
+  edges: Edge[]
+): {
+  array: Float32Array;
+  maxEdgePerVetex: number;
 } => {
   const dataArray = [];
-  const nodeDict: any = [];
+  const nodeDict: SafeAny = [];
   const mapIdPos: IndexMap = {};
   let i = 0;
   for (i = 0; i < nodes.length; i++) {
@@ -65,27 +68,27 @@ export const buildTextureData = (nodes: OutNode[], edges: Edge[]): {
     dataArray[i * 4 + 3] = dests.length;
     maxEdgePerVetex = Math.max(maxEdgePerVetex, dests.length);
     for (let j = 0; j < len; ++j) {
-    const dest = dests[j];
-    dataArray.push(+dest);
+      const dest = dests[j];
+      dataArray.push(+dest);
     }
   }
 
   while (dataArray.length % 4 !== 0) {
-      dataArray.push(0);
+    dataArray.push(0);
   }
   return {
     maxEdgePerVetex,
-    array: new Float32Array(dataArray),
+    array: new Float32Array(dataArray)
   };
 };
 
 /**
-* 将节点和边数据转换为 GPU 可读的数组，每条边带有一个属性。并返回 maxEdgePerVetex，每个节点上最多的边数
-* @param  {NodeConfig[]}  nodes 节点数组
-* @param  {EdgeConfig[]}  edges 边数组
-* @param  {Function}  attrs 读取边属性的函数
-* @return {Object} 转换后的数组及 maxEdgePerVetex 组成的对象
-*/
+ * 将节点和边数据转换为 GPU 可读的数组，每条边带有一个属性。并返回 maxEdgePerVetex，每个节点上最多的边数
+ * @param  {NodeConfig[]}  nodes 节点数组
+ * @param  {EdgeConfig[]}  edges 边数组
+ * @param  {Function}  attrs 读取边属性的函数
+ * @return {Object} 转换后的数组及 maxEdgePerVetex 组成的对象
+ */
 // export const buildTextureDataWithOneEdgeAttr = (nodes: OutNode[], edges: Edge[], attrs: Function): {
 //   array: Float32Array,
 //   maxEdgePerVetex: number
@@ -136,18 +139,26 @@ export const buildTextureData = (nodes: OutNode[], edges: Edge[]): {
 // }
 
 /**
-* 将节点和边数据转换为 GPU 可读的数组，每条边带有一个以上属性。并返回 maxEdgePerVetex，每个节点上最多的边数
-* @param  {NodeConfig[]}  nodes 节点数组
-* @param  {EdgeConfig[]}  edges 边数组
-* @param  {Function}  attrs 读取边属性的函数
-* @return {Object} 转换后的数组及 maxEdgePerVetex 组成的对象
-*/
-export const buildTextureDataWithTwoEdgeAttr = (nodes: OutNode[], edges: Edge[], attrs1: Function, attrs2: Function): {
-  array: Float32Array,
-  maxEdgePerVetex: number
+ * 将节点和边数据转换为 GPU 可读的数组，每条边带有一个以上属性。并返回 maxEdgePerVetex，每个节点上最多的边数
+ * @param  {NodeConfig[]}  nodes 节点数组
+ * @param  {EdgeConfig[]}  edges 边数组
+ * @param attrs1
+ * @param attrs2
+ * @return {Object} 转换后的数组及 maxEdgePerVetex 组成的对象
+ */
+export const buildTextureDataWithTwoEdgeAttr = (
+  nodes: OutNode[],
+  edges: Edge[],
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  attrs1: Function,
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  attrs2: Function
+): {
+  array: Float32Array;
+  maxEdgePerVetex: number;
 } => {
   const dataArray = [];
-  const nodeDict: any = [];
+  const nodeDict: SafeAny = [];
   const mapIdPos: IndexMap = {};
   let i = 0;
   for (i = 0; i < nodes.length; i++) {
@@ -181,12 +192,12 @@ export const buildTextureDataWithTwoEdgeAttr = (nodes: OutNode[], edges: Edge[],
     // dataArray[i * 4 + 2] = offset;
     // dataArray[i * 4 + 3] = len / 4; // 第四位存储与该节点相关的所有节点个数
     // pack offset & length into float32: offset 20bit, length 12bit
-    dataArray[i * 4 + 2] = offset + 1048576 * len / 4;
+    dataArray[i * 4 + 2] = offset + (1048576 * len) / 4;
     dataArray[i * 4 + 3] = 0; // 第四位存储与上一次的距离差值
     maxEdgePerVetex = Math.max(maxEdgePerVetex, len / 4);
     for (let j = 0; j < len; ++j) {
-    const dest = dests[j];
-    dataArray.push(+dest);
+      const dest = dests[j];
+      dataArray.push(+dest);
     }
   }
 
@@ -196,58 +207,61 @@ export const buildTextureDataWithTwoEdgeAttr = (nodes: OutNode[], edges: Edge[],
   }
   return {
     maxEdgePerVetex,
-    array: new Float32Array(dataArray),
+    array: new Float32Array(dataArray)
   };
 };
 /**
-* transform the extended attributes of nodes or edges to a texture array
-* @param  {string[]}  attributeNames attributes' name to be read from items and put into output array
-* @param  {ModelConfig[]}  items the items to be read
-* @return {Float32Array} the attributes' value array to be read by GPU
-*/
-export const attributesToTextureData = (attributeNames: string[], items: any[]): { array: Float32Array, count: number } => {
-  const dataArray: any[] = [];
+ * transform the extended attributes of nodes or edges to a texture array
+ * @param  {string[]}  attributeNames attributes' name to be read from items and put into output array
+ * @param  {ModelConfig[]}  items the items to be read
+ * @return {Float32Array} the attributes' value array to be read by GPU
+ */
+export const attributesToTextureData = (
+  attributeNames: string[],
+  items: SafeAny[]
+): { array: Float32Array; count: number } => {
+  const dataArray: SafeAny[] = [];
   const attributeNum = attributeNames.length;
-  const attributteStringMap: any = {};
-  items.forEach((item: any) => {
+  const attributteStringMap: SafeAny = {};
+  items.forEach((item: SafeAny) => {
     attributeNames.forEach((name: string, i) => {
-        if (attributteStringMap[item[name]] === undefined) {
-            attributteStringMap[item[name]] = Object.keys(attributteStringMap).length;
+      if (attributteStringMap[item[name]] === undefined) {
+        attributteStringMap[item[name]] = Object.keys(attributteStringMap).length;
+      }
+      dataArray.push(attributteStringMap[item[name]]);
+      // insure each node's attributes take inter number of grids
+      if (i === attributeNum - 1) {
+        while (dataArray.length % 4 !== 0) {
+          dataArray.push(0);
         }
-        dataArray.push(attributteStringMap[item[name]]);
-        // insure each node's attributes take inter number of grids
-        if (i === attributeNum - 1) {
-            while (dataArray.length % 4 !== 0) {
-                dataArray.push(0);
-            }
-        }
+      }
     });
   });
   return {
-      array: new Float32Array(dataArray),
-      count: Object.keys(attributteStringMap).length
+    array: new Float32Array(dataArray),
+    count: Object.keys(attributteStringMap).length
   };
 };
 
 /**
-* transform the number array format of extended attributes of nodes or edges to a texture array
-* @param  {string[]}  attributeNames attributes' name to be read from items and put into output array
-* @return {Float32Array} the attributes' value array to be read by GPU
-*/
+ * transform the number array format of extended attributes of nodes or edges to a texture array
+ * @param  {string[]}  attributeNames attributes' name to be read from items and put into output array
+ * @return {Float32Array} the attributes' value array to be read by GPU
+ */
 export const arrayToTextureData = (valueArrays: number[][]): Float32Array => {
-  const dataArray: any[] = [];
+  const dataArray: SafeAny[] = [];
   const attributeNum = valueArrays.length;
   const itemNum = valueArrays[0].length;
   for (let j = 0; j < itemNum; j++) {
-      valueArrays.forEach((valueArray, i) => {
-          dataArray.push(valueArray[j]);
-          // insure each node's attributes take inter number of grids
-          if (i === attributeNum - 1) {
-              while (dataArray.length % 4 !== 0) {
-                  dataArray.push(0);
-              }
-          }
-      });
+    valueArrays.forEach((valueArray, i) => {
+      dataArray.push(valueArray[j]);
+      // insure each node's attributes take inter number of grids
+      if (i === attributeNum - 1) {
+        while (dataArray.length % 4 !== 0) {
+          dataArray.push(0);
+        }
+      }
+    });
   }
 
   return new Float32Array(dataArray);

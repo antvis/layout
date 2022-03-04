@@ -3,18 +3,10 @@
  * @author shiwu.wyy@antfin.com
  */
 
-import {
-  Edge,
-  OutNode,
-  PointTuple,
-  IndexMap,
-  Combo,
-  ComboTree,
-  Point,
-  ComboForceLayoutOptions
-} from "./types";
-import { Base } from "./base";
-import { isArray, isNumber, isFunction, traverseTreeUp, isObject, getEdgeTerminal } from "../util";
+import { Edge, OutNode, PointTuple, IndexMap, Combo, ComboTree, Point, ComboForceLayoutOptions } from './types';
+import { Base } from './base';
+import { isArray, isNumber, isFunction, traverseTreeUp, isObject, getEdgeTerminal } from '../util';
+import { SafeAny } from './any';
 
 type Node = OutNode & {
   depth: number;
@@ -22,13 +14,13 @@ type Node = OutNode & {
   comboId?: string;
 };
 
-type NodeMap = {
+interface NodeMap {
   [key: string]: Node;
-};
+}
 
-type ComboMap = {
+interface ComboMap {
   [key: string]: Combo;
-};
+}
 
 /**
  * force layout for graph with combos
@@ -54,7 +46,8 @@ export class ComboForceLayout extends Base {
 
   public alphaMin: number = 0.001;
 
-  public alphaDecay: number = 1 - this.alphaMin ** (1 / 300);
+  /** this.alphaMin: 0.001 */
+  public alphaDecay: number = 1 - 0.001 ** (1 / 300);
 
   public alphaTarget: number = 0;
 
@@ -95,11 +88,7 @@ export class ComboForceLayout extends Base {
   public comboSpacing: ((d?: unknown) => number) | number | undefined = 20;
 
   /** Combo 内部的 padding */
-  public comboPadding:
-    | ((d?: unknown) => number)
-    | number
-    | number[]
-    | undefined = 10;
+  public comboPadding: ((d?: unknown) => number) | number | number[] | undefined = 10;
 
   /** 优化计算斥力的速度，两节点间距超过 optimizeRangeFactor * width 则不再计算斥力和重叠斥力 */
   public optimizeRangeFactor: number = 1;
@@ -149,7 +138,7 @@ export class ComboForceLayout extends Base {
     this.updateCfg(options);
   }
 
-  public getDefaultCfg() {
+  public getDefaultCfg(): ComboForceLayoutOptions {
     return {
       maxIteration: 100,
       center: [0, 0],
@@ -174,12 +163,12 @@ export class ComboForceLayout extends Base {
   /**
    * 执行布局
    */
-  public execute() {
+  public execute(): void {
     const self = this;
     const nodes = self.nodes;
     const center = self.center;
     self.comboTree = {
-      id: "comboTreeRoot",
+      id: 'comboTreeRoot',
       depth: -1,
       children: self.comboTrees
     };
@@ -202,16 +191,14 @@ export class ComboForceLayout extends Base {
     if (self.onLayoutEnd) self.onLayoutEnd();
   }
 
-  public run() {
+  public run(): void {
     const self = this;
     const nodes = self.nodes;
-    const maxIteration = self.previousLayouted
-      ? self.maxIteration / 5
-      : self.maxIteration;
-    if (!self.width && typeof window !== "undefined") {
+    const maxIteration = self.previousLayouted ? self.maxIteration / 5 : self.maxIteration;
+    if (!self.width && typeof window !== 'undefined') {
       self.width = window.innerWidth;
     }
-    if (!self.height && typeof window !== "undefined") {
+    if (!self.height && typeof window !== 'undefined') {
       self.height = window.innerHeight;
     }
     const center = self.center;
@@ -244,7 +231,7 @@ export class ComboForceLayout extends Base {
 
     // move to center
     const meanCenter = [0, 0];
-    nodes.forEach((n) => {
+    nodes.forEach(n => {
       if (!isNumber(n.x) || !isNumber(n.y)) return;
       meanCenter[0] += n.x;
       meanCenter[1] += n.y;
@@ -252,14 +239,14 @@ export class ComboForceLayout extends Base {
     meanCenter[0] /= nodes.length;
     meanCenter[1] /= nodes.length;
     const centerOffset = [center[0] - meanCenter[0], center[1] - meanCenter[1]];
-    nodes.forEach((n, j) => {
+    nodes.forEach(n => {
       if (!isNumber(n.x) || !isNumber(n.y)) return;
       n.x += centerOffset[0];
       n.y += centerOffset[1];
     });
 
     // arrange the empty combo
-    self.combos.forEach((combo) => {
+    self.combos.forEach(combo => {
       const mapped = comboMap[combo.id];
       if (mapped && mapped.empty) {
         combo.x = mapped.cx || combo.x;
@@ -270,12 +257,12 @@ export class ComboForceLayout extends Base {
     self.previousLayouted = true;
   }
 
-  private initVals() {
+  private initVals(): void {
     const self = this;
     const edges = self.edges;
     const nodes = self.nodes;
     const combos = self.combos;
-    const count: any = {};
+    const count: { [key: string]: number } = {};
 
     const nodeMap: NodeMap = {};
     const indexMap: IndexMap = {};
@@ -287,7 +274,7 @@ export class ComboForceLayout extends Base {
     self.indexMap = indexMap;
 
     const oriComboMap: ComboMap = {};
-    combos.forEach((combo) => {
+    combos.forEach(combo => {
       oriComboMap[combo.id] = combo;
     });
     self.oriComboMap = oriComboMap;
@@ -302,12 +289,8 @@ export class ComboForceLayout extends Base {
       self.comboCollideStrength = collideStrength;
       self.nodeCollideStrength = collideStrength;
     }
-    self.comboCollideStrength = self.comboCollideStrength
-      ? self.comboCollideStrength
-      : 0;
-    self.nodeCollideStrength = self.nodeCollideStrength
-      ? self.nodeCollideStrength
-      : 0;
+    self.comboCollideStrength = self.comboCollideStrength ? self.comboCollideStrength : 0;
+    self.nodeCollideStrength = self.nodeCollideStrength ? self.nodeCollideStrength : 0;
 
     // get edge bias
     for (let i = 0; i < edges.length; ++i) {
@@ -328,12 +311,12 @@ export class ComboForceLayout extends Base {
 
     const nodeSize = self.nodeSize;
     const nodeSpacing = self.nodeSpacing;
-    let nodeSizeFunc: (d: any) => number;
-    let nodeSpacingFunc: (d: any) => number;
+    let nodeSizeFunc: (d: Node) => number;
+    let nodeSpacingFunc: (d: Node) => number;
 
     // nodeSpacing to function
     if (isNumber(nodeSpacing)) {
-      nodeSpacingFunc = () => nodeSpacing as any;
+      nodeSpacingFunc = () => nodeSpacing;
     } else if (isFunction(nodeSpacing)) {
       nodeSpacingFunc = nodeSpacing;
     } else {
@@ -343,12 +326,13 @@ export class ComboForceLayout extends Base {
 
     // nodeSize to function
     if (!nodeSize) {
-      nodeSizeFunc = (d) => {
+      nodeSizeFunc = d => {
         if (d.size) {
           if (isArray(d.size)) {
             const res = d.size[0] > d.size[1] ? d.size[0] : d.size[1];
             return res / 2;
-          }  if (isObject(d.size)) {
+          }
+          if (isObject(d.size)) {
             const res = d.size.width > d.size.height ? d.size.width : d.size.height;
             return res / 2;
           }
@@ -357,25 +341,25 @@ export class ComboForceLayout extends Base {
         return 10;
       };
     } else if (isFunction(nodeSize)) {
-      nodeSizeFunc = (d) => {
+      nodeSizeFunc = d => {
         return nodeSize(d);
       };
     } else if (isArray(nodeSize)) {
       const larger = nodeSize[0] > nodeSize[1] ? nodeSize[0] : nodeSize[1];
       const radius = larger / 2;
-      nodeSizeFunc = (d) => radius;
+      nodeSizeFunc = d => radius;
     } else {
       // number type
       const radius = nodeSize / 2;
-      nodeSizeFunc = (d) => radius;
+      nodeSizeFunc = d => radius;
     }
     this.nodeSize = nodeSizeFunc;
 
     // comboSpacing to function
     const comboSpacing = self.comboSpacing;
-    let comboSpacingFunc: (d: any) => number;
+    let comboSpacingFunc: (d: Combo) => number;
     if (isNumber(comboSpacing)) {
-      comboSpacingFunc = () => comboSpacing as any;
+      comboSpacingFunc = () => comboSpacing;
     } else if (isFunction(comboSpacing)) {
       comboSpacingFunc = comboSpacing;
     } else {
@@ -386,9 +370,9 @@ export class ComboForceLayout extends Base {
 
     // comboPadding to function
     const comboPadding = self.comboPadding;
-    let comboPaddingFunc: (d: any) => number;
+    let comboPaddingFunc: (d: Combo) => number;
     if (isNumber(comboPadding)) {
-      comboPaddingFunc = () => comboPadding as any;
+      comboPaddingFunc = () => comboPadding;
     } else if (isArray(comboPadding)) {
       comboPaddingFunc = () => Math.max.apply(null, comboPadding);
     } else if (isFunction(comboPadding)) {
@@ -406,13 +390,13 @@ export class ComboForceLayout extends Base {
       linkDistance = 10;
     }
     if (isNumber(linkDistance)) {
-      linkDistanceFunc = (d: any) => {
+      linkDistanceFunc = (d: SafeAny) => {
         return linkDistance;
       };
     } else {
       linkDistanceFunc = linkDistance;
     }
-    this.linkDistance = linkDistanceFunc as ((d?: unknown) => number);
+    this.linkDistance = linkDistanceFunc as (d?: unknown) => number;
 
     // linkStrength to function
     let edgeStrength = this.edgeStrength;
@@ -421,13 +405,13 @@ export class ComboForceLayout extends Base {
       edgeStrength = 1;
     }
     if (isNumber(edgeStrength)) {
-      edgeStrengthFunc = (d: any) => {
+      edgeStrengthFunc = (d: SafeAny) => {
         return edgeStrength;
       };
     } else {
       edgeStrengthFunc = edgeStrength;
     }
-    this.edgeStrength = edgeStrengthFunc as ((d?: unknown) => number);
+    this.edgeStrength = edgeStrengthFunc as (d?: unknown) => number;
 
     // nodeStrength to function
     let nodeStrength = this.nodeStrength;
@@ -436,24 +420,27 @@ export class ComboForceLayout extends Base {
       nodeStrength = 30;
     }
     if (isNumber(nodeStrength)) {
-      nodeStrengthFunc = (d: any) => {
+      nodeStrengthFunc = (d: SafeAny) => {
         return nodeStrength;
       };
     } else {
       nodeStrengthFunc = nodeStrength;
     }
-    this.nodeStrength = nodeStrengthFunc as ((d?: unknown) => number);
+    this.nodeStrength = nodeStrengthFunc as (d?: unknown) => number;
   }
 
-  private initPos(comboMap: ComboMap) {
+  private initPos(comboMap: ComboMap): void {
     const self = this;
     const nodes = self.nodes;
+    let combo: Combo;
     nodes.forEach((node, i) => {
-      const comboId = (node as any).comboId;
-      const combo: any = comboMap[comboId];
+      const comboId = node.comboId;
+      if (comboId) {
+        combo = comboMap[comboId];
+      }
       if (comboId && combo) {
-        node.x = combo.cx + 100 / (i + 1);
-        node.y = combo.cy + 100 / (i + 1);
+        node.x = (combo.cx || 0) + 100 / (i + 1);
+        node.y = (combo.cy || 0) + 100 / (i + 1);
       } else {
         node.x = 100 / (i + 1);
         node.y = 100 / (i + 1);
@@ -461,17 +448,17 @@ export class ComboForceLayout extends Base {
     });
   }
 
-  private getComboMap() {
+  private getComboMap(): ComboMap {
     const self = this;
     const nodeMap = self.nodeMap;
     const comboTrees = self.comboTrees;
     const oriComboMap = self.oriComboMap;
     const comboMap: ComboMap = {};
 
-    (comboTrees || []).forEach((ctree: any) => {
+    (comboTrees || []).forEach((ctree: ComboTree) => {
       const treeChildren: Combo[] | Node[] = [];
-      traverseTreeUp<ComboTree>(ctree, (treeNode) => {
-        if (treeNode.itemType === "node") return true; // skip it
+      traverseTreeUp<ComboTree>(ctree, treeNode => {
+        if (treeNode.itemType === 'node') return true; // skip it
         if (!oriComboMap[treeNode.id]) return true; // means it is hidden, skip it
         if (comboMap[treeNode.id] === undefined) {
           const combo = {
@@ -480,19 +467,20 @@ export class ComboForceLayout extends Base {
             cx: 0,
             cy: 0,
             count: 0,
-            depth: self.oriComboMap[treeNode.id].depth as number || 0,
-            children: [] as any
+            depth: (self.oriComboMap[treeNode.id].depth as number) || 0,
+            children: [] as SafeAny
           };
           comboMap[treeNode.id] = combo;
         }
         const children = treeNode.children;
         if (children) {
-          children.forEach((child: any) => {
-            if (!comboMap[child.id] && !nodeMap[child.id]) return true; // means it is hidden
+          // child: ComboTree -> Combo | Node
+          children.forEach((child: SafeAny) => {
+            if (!comboMap[child.id] && !nodeMap[child.id]) return; // means it is hidden
             treeChildren.push(child);
           });
         }
-        const c: any = comboMap[treeNode.id];
+        const c: SafeAny = comboMap[treeNode.id];
         c.cx = 0;
         c.cy = 0;
 
@@ -505,7 +493,7 @@ export class ComboForceLayout extends Base {
 
         treeChildren.forEach((child: Combo | Node) => {
           (c.count as number)++;
-          if (child.itemType !== "node") {
+          if (child.itemType !== 'node') {
             const childCombo = comboMap[child.id];
             if (isNumber(childCombo.cx)) c.cx += childCombo.cx;
             if (isNumber(childCombo.cy)) c.cy += childCombo.cy;
@@ -525,7 +513,7 @@ export class ComboForceLayout extends Base {
         c.cx /= (c.count || 1) as number;
         c.cy /= (c.count || 1) as number;
 
-        c.children = treeChildren as any;
+        c.children = treeChildren as SafeAny;
 
         return true;
       });
@@ -534,7 +522,7 @@ export class ComboForceLayout extends Base {
     return comboMap;
   }
 
-  private applyComboCenterForce(displacements: Point[]) {
+  private applyComboCenterForce(displacements: Point[]): void {
     const self = this;
     const gravity = self.gravity;
     const comboGravity = self.comboGravity || gravity;
@@ -544,32 +532,32 @@ export class ComboForceLayout extends Base {
     const nodeMap = self.nodeMap;
     const comboMap = self.comboMap;
 
-    (comboTrees || []).forEach((ctree) => {
-      traverseTreeUp<ComboTree>(ctree, (treeNode) => {
-        if (treeNode.itemType === "node") return true; // skip it
+    (comboTrees || []).forEach(ctree => {
+      traverseTreeUp<ComboTree>(ctree, treeNode => {
+        if (treeNode.itemType === 'node') return true; // skip it
         const combo = comboMap[treeNode.id];
         // means the combo is hidden, skip it
         if (!combo) return true;
-        const c: any = comboMap[treeNode.id];
+        const c: SafeAny = comboMap[treeNode.id];
 
         // higher depth the combo, larger the gravity
         const gravityScale = (((c.depth as number) + 1) / 10) * 0.5;
         // apply combo center force for all the descend nodes in this combo
         // and update the center position and count for this combo
-        const comboX = c.cx;
-        const comboY = c.cy;
+        const comboX = c.cx || 0;
+        const comboY = c.cy || 0;
         c.cx = 0;
         c.cy = 0;
-        c.children!.forEach((child: any) => {
-          if (child.itemType !== "node") {
+        c.children!.forEach((child: SafeAny) => {
+          if (child.itemType !== 'node') {
             const childCombo = comboMap[child.id];
             if (childCombo && isNumber(childCombo.cx)) c.cx += childCombo.cx;
             if (childCombo && isNumber(childCombo.cy)) c.cy += childCombo.cy;
             return;
           }
           const node = nodeMap[child.id];
-          const vecX = (node.x - comboX) || 0.005;
-          const vecY = (node.y - comboY) || 0.005;
+          const vecX = node.x - comboX || 0.005;
+          const vecY = node.y - comboY || 0.005;
           const l = Math.sqrt(vecX * vecX + vecY * vecY);
           const childIdx = indexMap[node.id];
           const params = ((comboGravity * alpha) / l) * gravityScale;
@@ -586,17 +574,17 @@ export class ComboForceLayout extends Base {
     });
   }
 
-  private applyCalculate(displacements: Point[]) {
+  private applyCalculate(displacements: Point[]): void {
     const self = this;
     const comboMap = self.comboMap;
     const nodes = self.nodes;
     // store the vx, vy, and distance to reduce dulplicate calculation
-    const vecMap: any = {};
+    const vecMap: SafeAny = {};
     nodes.forEach((v, i) => {
       nodes.forEach((u, j) => {
         if (i < j) return;
-        const vx = (v.x - u.x) || 0.005;
-        const vy = (v.y - u.y) || 0.005;
+        const vx = v.x - u.x || 0.005;
+        const vy = v.y - u.y || 0.005;
         let vl2 = vx * vx + vy * vy;
         const vl = Math.sqrt(vl2);
         if (vl2 < 1) vl2 = vl;
@@ -617,23 +605,23 @@ export class ComboForceLayout extends Base {
    * Update the sizes of the combos according to their children
    * Used for combos nonoverlap, but not re-render the combo shapes
    */
-  private updateComboSizes(comboMap: ComboMap) {
+  private updateComboSizes(comboMap: ComboMap): void {
     const self = this;
     const comboTrees = self.comboTrees;
     const nodeMap = self.nodeMap;
-    const nodeSize = self.nodeSize as ((d?: unknown) => number);
-    const comboSpacing = self.comboSpacing as ((d?: unknown) => number);
-    const comboPadding = self.comboPadding as ((d?: unknown) => number);
-    (comboTrees || []).forEach((ctree) => {
+    const nodeSize = self.nodeSize as (d?: unknown) => number;
+    const comboSpacing = self.comboSpacing as (d?: unknown) => number;
+    const comboPadding = self.comboPadding as (d?: unknown) => number;
+    (comboTrees || []).forEach(ctree => {
       const treeChildren: Combo[] | Node[] = [];
       traverseTreeUp<ComboTree>(ctree, (treeNode: ComboTree) => {
-        if (treeNode.itemType === "node") return true; // skip it
+        if (treeNode.itemType === 'node') return true; // skip it
         const c = comboMap[treeNode.id];
         // means the combo is hidden, skip it
         if (!c) return false;
         const children = treeNode.children;
         if (children) {
-          children.forEach((child: any) => {
+          children.forEach((child: SafeAny) => {
             // means the combo is hidden.
             if (!comboMap[child.id] && !nodeMap[child.id]) return;
             treeChildren.push(child);
@@ -644,8 +632,8 @@ export class ComboForceLayout extends Base {
         c.minY = Infinity;
         c.maxX = -Infinity;
         c.maxY = -Infinity;
-        treeChildren.forEach((child: any) => {
-          if (child.itemType !== "node") return true; // skip it
+        treeChildren.forEach((child: SafeAny) => {
+          if (child.itemType !== 'node') return true; // skip it
           const node = nodeMap[child.id];
           if (!node) return true; // means it is hidden
           const r = nodeSize(node);
@@ -660,11 +648,7 @@ export class ComboForceLayout extends Base {
         });
         let minSize = self.oriComboMap[treeNode.id].size || 10;
         if (isArray(minSize)) minSize = minSize[0];
-        const maxLength = Math.max(
-          c.maxX - c.minX,
-          c.maxY - c.minY,
-          minSize as number
-        );
+        const maxLength = Math.max(c.maxX - c.minX, c.maxY - c.minY, minSize as number);
         c.r = maxLength / 2 + comboSpacing(c) / 2 + comboPadding(c);
 
         return true;
@@ -675,38 +659,34 @@ export class ComboForceLayout extends Base {
   /**
    * prevent the overlappings among combos
    */
-  private comboNonOverlapping(displacements: Point[], comboMap: ComboMap) {
+  private comboNonOverlapping(displacements: Point[], comboMap: ComboMap): void {
     const self = this;
     const comboTree = self.comboTree;
     const comboCollideStrength = self.comboCollideStrength as number;
     const indexMap = self.indexMap;
     const nodeMap = self.nodeMap;
 
-    traverseTreeUp<ComboTree>(comboTree, (treeNode) => {
-      if (
-        !comboMap[treeNode.id] &&
-        !nodeMap[treeNode.id] &&
-        treeNode.id !== "comboTreeRoot"
-      ) {
+    traverseTreeUp<ComboTree>(comboTree, treeNode => {
+      if (!comboMap[treeNode.id] && !nodeMap[treeNode.id] && treeNode.id !== 'comboTreeRoot') {
         return false;
       } // means it is hidden
       const children = treeNode.children;
       // 同个子树下的子 combo 间两两对比
       if (children && children.length > 1) {
         children.forEach((v, i) => {
-          if (v.itemType === "node") return false; // skip it
-          const cv: any = comboMap[v.id];
+          if (v.itemType === 'node') return false; // skip it
+          const cv: SafeAny = comboMap[v.id];
           if (!cv) return; // means it is hidden, skip it
           children.forEach((u, j) => {
             if (i <= j) return false;
-            if (u.itemType === "node") return false; // skip it
-            const cu: any = comboMap[u.id];
+            if (u.itemType === 'node') return false; // skip it
+            const cu: SafeAny = comboMap[u.id];
             if (!cu) return false; // means it is hidden, skip it
-            const vx = (cv.cx - cu.cx) || 0.005;
-            const vy = (cv.cy - cu.cy) || 0.005;
+            const vx = cv.cx - cu.cx || 0.005;
+            const vy = cv.cy - cu.cy || 0.005;
             const l = vx * vx + vy * vy;
-            const rv = cv.r as number || 1;
-            const ru = cu.r as number || 1;
+            const rv = (cv.r as number) || 1;
+            const ru = (cu.r as number) || 1;
             const r = rv + ru;
             const ru2 = ru * ru;
             const rv2 = rv * rv;
@@ -723,12 +703,12 @@ export class ComboForceLayout extends Base {
               const rratio = ru2 / (rv2 + ru2);
               const irratio = 1 - rratio;
               // 两兄弟 combo 的子节点上施加斥力
-              vnodes.forEach((vn) => {
-                if (vn.itemType !== "node") return false; // skip it
+              vnodes.forEach(vn => {
+                if (vn.itemType !== 'node') return false; // skip it
                 if (!nodeMap[vn.id]) return; // means it is hidden, skip it
                 const vindex = indexMap[vn.id];
-                unodes.forEach((un) => {
-                  if (un.itemType !== "node") return false;
+                unodes.forEach(un => {
+                  if (un.itemType !== 'node') return false;
                   if (!nodeMap[un.id]) return false; // means it is hidden, skip it
                   const uindex = indexMap[un.id];
                   displacements[vindex].x += xl * rratio;
@@ -750,7 +730,7 @@ export class ComboForceLayout extends Base {
    * @param displacements The array stores the displacements for nodes
    * @param vecMap The map stores vector between each node pair
    */
-  private calRepulsive(displacements: Point[], vecMap: any) {
+  private calRepulsive(displacements: Point[], vecMap: SafeAny): void {
     const self = this;
     const nodes = self.nodes;
     const max = self.width * self.optimizeRangeFactor;
@@ -758,8 +738,8 @@ export class ComboForceLayout extends Base {
     const alpha = self.alpha;
     const nodeCollideStrength = self.nodeCollideStrength as number;
     const preventNodeOverlap = self.preventNodeOverlap;
-    const nodeSizeFunc = self.nodeSize as ((d?: unknown) => number);
-    const nodeSpacingFunc = self.nodeSpacing as ((d?: unknown) => number);
+    const nodeSizeFunc = self.nodeSize as (d?: unknown) => number;
+    const nodeSpacingFunc = self.nodeSpacing as (d?: unknown) => number;
     const scale = self.depthRepulsiveForceScale;
     const center = self.center;
     nodes.forEach((v, i) => {
@@ -768,8 +748,8 @@ export class ComboForceLayout extends Base {
       // center gravity
       if (center) {
         const gravity = self.gravity;
-        const vecX = (v.x - center[0]) || 0.005;
-        const vecY = (v.y - center[1]) || 0.005;
+        const vecX = v.x - center[0] || 0.005;
+        const vecY = v.y - center[1] || 0.005;
         const l = Math.sqrt(vecX * vecX + vecY * vecY);
         displacements[i].x -= (vecX * gravity * alpha) / l;
         displacements[i].y -= (vecY * gravity * alpha) / l;
@@ -796,8 +776,8 @@ export class ComboForceLayout extends Base {
 
         // prevent node overlappings
         if (i < j && preventNodeOverlap) {
-          const ri = (nodeSizeFunc(v) + nodeSpacingFunc(v)) || 1;
-          const rj = (nodeSizeFunc(u) + nodeSpacingFunc(u)) || 1;
+          const ri = nodeSizeFunc(v) + nodeSpacingFunc(v) || 1;
+          const rj = nodeSizeFunc(u) + nodeSpacingFunc(u) || 1;
           const r = ri + rj;
           if (vl2 < r * r) {
             const ll = ((r - vl) / vl) * nodeCollideStrength;
@@ -821,7 +801,7 @@ export class ComboForceLayout extends Base {
    * @param displacements The array stores the displacements for nodes
    * @param vecMap The map stores vector between each node pair
    */
-  private calAttractive(displacements: Point[], vecMap: any) {
+  private calAttractive(displacements: Point[], vecMap: SafeAny): void {
     const self = this;
     const edges = self.edges;
     const linkDistance = self.linkDistance as (d?: unknown) => number;
@@ -854,8 +834,7 @@ export class ComboForceLayout extends Base {
         return;
       }
       const { vl, vx, vy } = vecMap[`${target}-${source}`];
-      const l =
-        ((vl - linkDistance(e)) / vl) * alpha * edgeStrength(e) * depthParam;
+      const l = ((vl - linkDistance(e)) / vl) * alpha * edgeStrength(e) * depthParam;
       const vecX = vx * l;
       const vecY = vy * l;
 
@@ -867,7 +846,7 @@ export class ComboForceLayout extends Base {
     });
   }
 
-  public getType() {
-    return "comboForce";
+  public getType(): string {
+    return 'comboForce';
   }
 }

@@ -1,14 +1,15 @@
-import { isArray, isObject } from ".";
-import { isNumber } from "./number";
+import { isArray, isObject } from '.';
+import { isNumber } from './number';
+import { SafeAny } from '../layout';
 
-export const isFunction = (val: unknown): val is Function =>
-  typeof val === 'function';
-
+// eslint-disable-next-line @typescript-eslint/ban-types
+export const isFunction = (val: unknown): val is Function => typeof val === 'function';
 
 export const getFunc = (
   value: number,
   defaultValue: number,
-  func?: ((d?: any) => number) | undefined,
+  func?: ((d?: SafeAny) => number) | undefined
+  // eslint-disable-next-line @typescript-eslint/ban-types
 ): Function => {
   let resultFunc;
   if (func) {
@@ -23,11 +24,11 @@ export const getFunc = (
 
 export const getFuncByUnknownType = (
   defaultValue: number,
-  value?: number | number[] | { width: number, height: number } | ((d?: any) => number) | undefined,
+  value?: number | number[] | { width: number; height: number } | ((d?: SafeAny) => number) | undefined,
   resultIsNumber: boolean = true
-): (d?: any) => number | number[] => {
+): ((d?: SafeAny) => number | number[]) => {
   if (!value && value !== 0) {
-    return (d) => {
+    return d => {
       if (d.size) {
         if (isArray(d.size)) return d.size[0] > d.size[1] ? d.size[0] : d.size[1];
         if (isObject(d.size)) return d.size.width > d.size.height ? d.size.width : d.size.height;

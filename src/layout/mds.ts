@@ -3,10 +3,10 @@
  * @author shiwu.wyy@antfin.com
  */
 
-import { Matrix as MLMatrix, SingularValueDecomposition } from "ml-matrix";
-import { PointTuple, OutNode, Edge, Matrix, MDSLayoutOptions } from "./types";
-import { floydWarshall, getAdjMatrix, scaleMatrix } from "../util";
-import { Base } from "./base";
+import { Matrix as MLMatrix, SingularValueDecomposition } from 'ml-matrix';
+import { PointTuple, OutNode, Edge, Matrix, MDSLayoutOptions } from './types';
+import { floydWarshall, getAdjMatrix, scaleMatrix } from '../util';
+import { Base } from './base';
 
 /**
  * mds 布局
@@ -32,7 +32,7 @@ export class MDSLayout extends Base {
     this.updateCfg(options);
   }
 
-  public getDefaultCfg() {
+  public getDefaultCfg(): MDSLayoutOptions {
     return {
       center: [0, 0],
       linkDistance: 50
@@ -42,19 +42,22 @@ export class MDSLayout extends Base {
   /**
    * 执行布局
    */
-  public execute() {
+  public execute(): { nodes: OutNode[]; edges: Edge[] } {
     const self = this;
     const { nodes, edges = [] } = self;
     const center = self.center;
     if (!nodes || nodes.length === 0) {
       if (self.onLayoutEnd) self.onLayoutEnd();
-      return;
+      return {
+        nodes,
+        edges
+      };
     }
     if (nodes.length === 1) {
       nodes[0].x = center[0];
       nodes[0].y = center[1];
       if (self.onLayoutEnd) self.onLayoutEnd();
-      return;
+      return { nodes, edges };
     }
     const linkDistance = self.linkDistance;
     // the graph-theoretic distance (shortest path distance) matrix
@@ -95,28 +98,24 @@ export class MDSLayout extends Base {
     const M = MLMatrix.mul(MLMatrix.pow(distances, 2), -0.5);
 
     // double centre the rows/columns
-    const rowMeans = M.mean("row");
-    const colMeans = M.mean("column");
+    const rowMeans = M.mean('row');
+    const colMeans = M.mean('column');
     const totalMean = M.mean();
-    M.add(totalMean)
-      .subRowVector(rowMeans)
-      .subColumnVector(colMeans);
+    M.add(totalMean).subRowVector(rowMeans).subColumnVector(colMeans);
 
     // take the SVD of the double centred matrix, and return the
     // points from it
     const ret = new SingularValueDecomposition(M);
     const eigenValues = MLMatrix.sqrt(ret.diagonalMatrix).diagonal();
     return ret.leftSingularVectors.toJSON().map((row: number[]) => {
-      return MLMatrix.mul([row], [eigenValues])
-        .toJSON()[0]
-        .splice(0, dimension) as PointTuple;
+      return MLMatrix.mul([row], [eigenValues]).toJSON()[0].splice(0, dimension) as PointTuple;
     });
   }
 
-  public handleInfinity(distances: Matrix[]) {
+  public handleInfinity(distances: Matrix[]): void {
     let maxDistance = -999999;
-    distances.forEach((row) => {
-      row.forEach((value) => {
+    distances.forEach(row => {
+      row.forEach(value => {
         if (value === Infinity) {
           return;
         }
@@ -134,7 +133,7 @@ export class MDSLayout extends Base {
     });
   }
 
-  public getType() {
-    return "mds";
+  public getType(): string {
+    return 'mds';
   }
 }

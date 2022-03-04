@@ -1,4 +1,4 @@
-import { Layouts } from '../../src'
+import { Layouts } from '../../src';
 import dataset from '../data';
 import { mathEqual } from '../util';
 const data = dataset.data;
@@ -29,7 +29,7 @@ describe('#CircularLayout', () => {
       clockwise: true,
       divisions: 1,
       ordering: null,
-      angleRatio: 1,
+      angleRatio: 1
     });
     circular.layout(data);
     expect((data.nodes[0] as any).x).not.toBe(undefined);
@@ -45,7 +45,7 @@ describe('#CircularLayout', () => {
       center: [250, 250],
       radius: 200,
       startAngle: Math.PI / 4,
-      endAngle: Math.PI,
+      endAngle: Math.PI
     });
     circular.layout(data);
     const pos = (200 * Math.sqrt(2)) / 2;
@@ -56,7 +56,7 @@ describe('#CircularLayout', () => {
   it('circular with no node', () => {
     const circular = new Layouts['circular']();
     circular.layout({
-      nodes: [],
+      nodes: []
     });
   });
   it('circular with one node', () => {
@@ -67,10 +67,10 @@ describe('#CircularLayout', () => {
       nodes: [
         {
           id: 'node'
-        },
-      ],
+        }
+      ]
     };
-    circular.layout(oneNodeData)
+    circular.layout(oneNodeData);
     expect((oneNodeData.nodes[0] as any).x).toEqual(150);
     expect((oneNodeData.nodes[0] as any).y).toEqual(50);
   });
@@ -78,9 +78,9 @@ describe('#CircularLayout', () => {
     const circular = new Layouts['circular']({
       center: [150, 200],
       startRadius: 1,
-      endRadius: 100,
+      endRadius: 100
     });
-    circular.layout(data)
+    circular.layout(data);
     expect(data.nodes[0].x).toEqual(150 + 1);
     expect(data.nodes[0].y).toEqual(200);
     const nodeNumber = data.nodes.length;
@@ -91,9 +91,9 @@ describe('#CircularLayout', () => {
   it('circular with no radius and startRadius but endRadius', () => {
     const circular = new Layouts['circular']({
       center: [150, 200],
-      endRadius: 100,
+      endRadius: 100
     });
-    circular.layout(data)
+    circular.layout(data);
     const nodeModelFirst = data.nodes[0];
     expect(nodeModelFirst.x).toEqual(150 + 100);
     expect(nodeModelFirst.y).toEqual(200);
@@ -102,9 +102,9 @@ describe('#CircularLayout', () => {
   it('circular with no radius and endRadius but startRadius', () => {
     const circular = new Layouts['circular']({
       center: [150, 200],
-      startRadius: 100,
+      startRadius: 100
     });
-    circular.layout(data)
+    circular.layout(data);
     const nodeModelFirst = data.nodes[0];
     expect(nodeModelFirst.x).toEqual(150 + 100);
     expect(nodeModelFirst.y).toEqual(200);
@@ -114,9 +114,9 @@ describe('#CircularLayout', () => {
     const circular = new Layouts['circular']({
       center: [250, 250],
       ordering: 'topology',
-      radius: 200,
+      radius: 200
     });
-    circular.layout(data)
+    circular.layout(data);
 
     let node0, node1, node2, node3;
     data.nodes.forEach(node => {
@@ -124,18 +124,17 @@ describe('#CircularLayout', () => {
       else if (node.id === 'Saudi Arabia') node1 = node;
       else if (node.id === 'Switzerland') node2 = node;
       else if (node.id === 'Sweden') node3 = node;
-    })
+    });
 
-    const dist1 =
-      (node0.x - node1.x) * (node0.x - node1.x) + (node0.y - node1.y) * (node0.y - node1.y);
-
-    const dist2 =
-      (node2.x - node1.x) * (node2.x - node1.x) + (node2.y - node1.y) * (node2.y - node1.y);
+    // @ts-ignore
+    const dist1 = (node0.x - node1.x) * (node0.x - node1.x) + (node0.y - node1.y) * (node0.y - node1.y);
+    // @ts-ignore
+    const dist2 = (node2.x - node1.x) * (node2.x - node1.x) + (node2.y - node1.y) * (node2.y - node1.y);
 
     expect(mathEqual(dist1, dist2)).toEqual(true);
 
-    const dist3 =
-      (node2.x - node3.x) * (node2.x - node3.x) + (node2.y - node3.y) * (node2.y - node3.y);
+    // @ts-ignore
+    const dist3 = (node2.x - node3.x) * (node2.x - node3.x) + (node2.y - node3.y) * (node2.y - node3.y);
     expect(mathEqual(dist3, dist2)).toEqual(true);
   });
 
@@ -143,9 +142,9 @@ describe('#CircularLayout', () => {
     const circular = new Layouts['circular']({
       center: [250, 250],
       ordering: 'topology-directed',
-      radius: 200,
+      radius: 200
     });
-    circular.layout(data)
+    circular.layout(data);
 
     let node0, node1, node2, node3;
     data.nodes.forEach(node => {
@@ -153,17 +152,17 @@ describe('#CircularLayout', () => {
       else if (node.id === 'Tunisia') node1 = node;
       else if (node.id === 'Switzerland') node2 = node;
       else if (node.id === 'Sweden') node3 = node;
-    })
+    });
 
-    const dist1 =
-      (node0.x - node1.x) * (node0.x - node1.x) + (node0.y - node1.y) * (node0.y - node1.y);
+    // @ts-ignore
+    const dist1 = (node0.x - node1.x) * (node0.x - node1.x) + (node0.y - node1.y) * (node0.y - node1.y);
 
-    const dist2 =
-      (node2.x - node1.x) * (node2.x - node1.x) + (node2.y - node1.y) * (node2.y - node1.y);
+    // @ts-ignore
+    const dist2 = (node2.x - node1.x) * (node2.x - node1.x) + (node2.y - node1.y) * (node2.y - node1.y);
     expect(mathEqual(dist1, dist2)).toEqual(true);
 
-    const dist3 =
-      (node2.x - node3.x) * (node2.x - node3.x) + (node2.y - node3.y) * (node2.y - node3.y);
+    // @ts-ignore
+    const dist3 = (node2.x - node3.x) * (node2.x - node3.x) + (node2.y - node3.y) * (node2.y - node3.y);
     expect(mathEqual(dist3, dist2)).toEqual(true);
   });
 
@@ -172,9 +171,9 @@ describe('#CircularLayout', () => {
       center: [250, 250],
       ordering: 'degree',
       radius: 200,
-      clockwise: false,
+      clockwise: false
     });
-    circular.layout(data)
+    circular.layout(data);
 
     let node0, node1, node2, node3;
     data.nodes.forEach(node => {
@@ -182,16 +181,16 @@ describe('#CircularLayout', () => {
       else if (node.id === 'Croatia') node1 = node;
       else if (node.id === 'Belgium') node2 = node;
       else if (node.id === 'Uruguay') node3 = node;
-    })
-    const dist1 =
-      (node0.x - node1.x) * (node0.x - node1.x) + (node0.y - node1.y) * (node0.y - node1.y);
+    });
+    // @ts-ignore
+    const dist1 = (node0.x - node1.x) * (node0.x - node1.x) + (node0.y - node1.y) * (node0.y - node1.y);
 
-    const dist2 =
-      (node2.x - node1.x) * (node2.x - node1.x) + (node2.y - node1.y) * (node2.y - node1.y);
+    // @ts-ignore
+    const dist2 = (node2.x - node1.x) * (node2.x - node1.x) + (node2.y - node1.y) * (node2.y - node1.y);
     expect(mathEqual(dist1, dist2)).toEqual(true);
 
-    const dist3 =
-      (node2.x - node3.x) * (node2.x - node3.x) + (node2.y - node3.y) * (node2.y - node3.y);
+    // @ts-ignore
+    const dist3 = (node2.x - node3.x) * (node2.x - node3.x) + (node2.y - node3.y) * (node2.y - node3.y);
     expect(mathEqual(dist3, dist2)).toEqual(true);
   });
-})
+});

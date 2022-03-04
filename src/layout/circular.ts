@@ -3,15 +3,9 @@
  * @author shiwu.wyy@antfin.com
  */
 
-import {
-  OutNode,
-  Edge,
-  PointTuple,
-  IndexMap,
-  CircularLayoutOptions
-} from "./types";
-import { Base } from "./base";
-import { getDegree, clone, getEdgeTerminal, getFuncByUnknownType } from "../util";
+import { OutNode, Edge, PointTuple, IndexMap, CircularLayoutOptions } from './types';
+import { Base } from './base';
+import { getDegree, clone, getEdgeTerminal, getFuncByUnknownType } from '../util';
 
 type INode = OutNode & {
   degree: number;
@@ -21,18 +15,13 @@ type INode = OutNode & {
   parent: string[];
 };
 
-function initHierarchy(
-  nodes: INode[],
-  edges: Edge[],
-  nodeMap: IndexMap,
-  directed: boolean
-) {
+function initHierarchy(nodes: INode[], edges: Edge[], nodeMap: IndexMap, directed: boolean): void {
   nodes.forEach((_, i: number) => {
     nodes[i].children = [];
     nodes[i].parent = [];
   });
   if (directed) {
-    edges.forEach((e) => {
+    edges.forEach(e => {
       const source = getEdgeTerminal(e, 'source');
       const target = getEdgeTerminal(e, 'target');
       let sourceIdx = 0;
@@ -49,7 +38,7 @@ function initHierarchy(
       parent.push(nodes[sourceIdx].id);
     });
   } else {
-    edges.forEach((e) => {
+    edges.forEach(e => {
       const source = getEdgeTerminal(e, 'source');
       const target = getEdgeTerminal(e, 'target');
       let sourceIdx = 0;
@@ -68,22 +57,19 @@ function initHierarchy(
   }
 }
 
-function connect(a: INode, b: INode, edges: Edge[]) {
+function connect(a: INode, b: INode, edges: Edge[]): boolean {
   const m = edges.length;
   for (let i = 0; i < m; i++) {
     const source = getEdgeTerminal(edges[i], 'source');
     const target = getEdgeTerminal(edges[i], 'target');
-    if (
-      (a.id === source && b.id === target) ||
-      (b.id === source && a.id === target)
-    ) {
+    if ((a.id === source && b.id === target) || (b.id === source && a.id === target)) {
       return true;
     }
   }
   return false;
 }
 
-function compareDegree(a: INode, b: INode) {
+function compareDegree(a: INode, b: INode): number {
   const aDegree = a.degree!;
   const bDegree = b.degree!;
   if (aDegree < bDegree) {
@@ -130,7 +116,7 @@ export class CircularLayout extends Base {
   public divisions: number = 1;
 
   /** 节点在环上排序的依据，可选: 'topology', 'degree', 'null' */
-  public ordering: "topology" | "topology-directed" | "degree" | null = null;
+  public ordering: 'topology' | 'topology-directed' | 'degree' | null = null;
 
   /** how many 2*pi from first to last nodes */
   public angleRatio = 1;
@@ -154,7 +140,7 @@ export class CircularLayout extends Base {
     this.updateCfg(options);
   }
 
-  public getDefaultCfg() {
+  public getDefaultCfg(): CircularLayoutOptions {
     return {
       radius: null,
       startRadius: null,
@@ -171,20 +157,23 @@ export class CircularLayout extends Base {
   /**
    * 执行布局
    */
-  public execute() {
+  public execute(): { nodes: INode[]; edges: Edge[] } {
     const self = this;
     const nodes = self.nodes;
     const edges = self.edges;
     const n = nodes.length;
     if (n === 0) {
       if (self.onLayoutEnd) self.onLayoutEnd();
-      return;
+      return {
+        nodes,
+        edges
+      };
     }
 
-    if (!self.width && typeof window !== "undefined") {
+    if (!self.width && typeof window !== 'undefined') {
       self.width = window.innerWidth;
     }
-    if (!self.height && typeof window !== "undefined") {
+    if (!self.height && typeof window !== 'undefined') {
       self.height = window.innerHeight;
     }
     if (!self.center) {
@@ -196,11 +185,23 @@ export class CircularLayout extends Base {
       nodes[0].x = center[0];
       nodes[0].y = center[1];
       if (self.onLayoutEnd) self.onLayoutEnd();
-      return;
+      return {
+        nodes,
+        edges
+      };
     }
 
     let { radius, startRadius, endRadius } = self;
-    const { divisions, startAngle, endAngle, angleRatio, ordering, clockwise, nodeSpacing: paramNodeSpacing, nodeSize: paramNodeSize } = self;
+    const {
+      divisions,
+      startAngle,
+      endAngle,
+      angleRatio,
+      ordering,
+      clockwise,
+      nodeSpacing: paramNodeSpacing,
+      nodeSize: paramNodeSize
+    } = self;
     const angleStep = (endAngle - startAngle) / n;
     // layout
     const nodeMap: IndexMap = {};
@@ -211,16 +212,16 @@ export class CircularLayout extends Base {
     const degrees = getDegree(nodes.length, nodeMap, edges);
     self.degrees = degrees;
     if (paramNodeSpacing) {
-      const nodeSpacing: Function = getFuncByUnknownType(10, paramNodeSpacing);
-      const nodeSize: Function = getFuncByUnknownType(10, paramNodeSize);
+      const nodeSpacing = getFuncByUnknownType(10, paramNodeSpacing) as (d?: INode) => number;
+      const nodeSize = getFuncByUnknownType(10, paramNodeSize) as (d?: INode) => number;
       let maxNodeSize = -Infinity;
-      nodes.forEach((node) => {
+      nodes.forEach(node => {
         const nSize = nodeSize(node);
         if (maxNodeSize < nSize) maxNodeSize = nSize;
       });
       let length = 0;
       nodes.forEach((node, i) => {
-        if (i === 0) length += (maxNodeSize || 10);
+        if (i === 0) length += maxNodeSize || 10;
         else length += (nodeSpacing(node) || 0) + (maxNodeSize || 10);
       });
       radius = length / (2 * Math.PI);
@@ -234,13 +235,13 @@ export class CircularLayout extends Base {
     const astep = angleStep * angleRatio;
 
     let layoutNodes = [];
-    if (ordering === "topology") {
+    if (ordering === 'topology') {
       // layout according to the topology
       layoutNodes = self.topologyOrdering();
-    } else if (ordering === "topology-directed") {
+    } else if (ordering === 'topology-directed') {
       // layout according to the topology
       layoutNodes = self.topologyOrdering(true);
-    } else if (ordering === "degree") {
+    } else if (ordering === 'degree') {
       // layout according to the descent order of degrees
       layoutNodes = self.degreeOrdering();
     } else {
@@ -257,15 +258,9 @@ export class CircularLayout extends Base {
       if (!r) {
         r = 10 + (i * 100) / (n - 1);
       }
-      let angle =
-        startAngle +
-        (i % divN) * astep +
-        ((2 * Math.PI) / divisions) * Math.floor(i / divN);
+      let angle = startAngle + (i % divN) * astep + ((2 * Math.PI) / divisions) * Math.floor(i / divN);
       if (!clockwise) {
-        angle =
-          endAngle -
-          (i % divN) * astep -
-          ((2 * Math.PI) / divisions) * Math.floor(i / divN);
+        angle = endAngle - (i % divN) * astep - ((2 * Math.PI) / divisions) * Math.floor(i / divN);
       }
       layoutNodes[i].x = center[0] + Math.cos(angle) * r;
       layoutNodes[i].y = center[1] + Math.sin(angle) * r;
@@ -281,10 +276,11 @@ export class CircularLayout extends Base {
   }
 
   /**
-   * 根据节点的拓扑结构排序
+   根据节点的拓扑结构排序
+   * @param directed
    * @return {array} orderedNodes 排序后的结果
    */
-  public topologyOrdering(directed: boolean = false) {
+  public topologyOrdering(directed: boolean = false): INode[] {
     const self = this;
     const degrees = self.degrees;
     const edges = self.edges;
@@ -301,13 +297,7 @@ export class CircularLayout extends Base {
     cnodes.forEach((cnode, i) => {
       if (i !== 0) {
         if (
-          (i === n - 1 ||
-            degrees[i] !== degrees[i + 1] ||
-            connect(
-              orderedCNodes[k],
-              cnode,
-              edges
-            )) &&
+          (i === n - 1 || degrees[i] !== degrees[i + 1] || connect(orderedCNodes[k], cnode, edges)) &&
           !pickFlags[i]
         ) {
           orderedCNodes.push(cnode);
@@ -363,7 +353,7 @@ export class CircularLayout extends Base {
     return orderedNodes;
   }
 
-  public getType() {
-    return "circular";
+  public getType(): string {
+    return 'circular';
   }
 }

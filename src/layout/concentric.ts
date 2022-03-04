@@ -4,25 +4,19 @@
  * this algorithm refers to <cytoscape.js> - https://github.com/cytoscape/cytoscape.js/
  */
 
-import {
-  OutNode,
-  Edge,
-  PointTuple,
-  Size,
-  IndexMap,
-  ConcentricLayoutOptions
-} from "./types";
-import { isString, isArray, isNumber, getDegree, isObject, isFunction } from "../util";
-import { Base } from "./base";
+import { OutNode, Edge, PointTuple, Size, IndexMap, ConcentricLayoutOptions } from './types';
+import { isString, isArray, isNumber, getDegree, isObject, isFunction } from '../util';
+import { Base } from './base';
+import { SafeAny } from './any';
 
 type INode = OutNode & {
   degree: number;
   size: number | PointTuple | Size;
 };
 
-type NodeMap = {
+interface NodeMap {
   [key: string]: INode;
-};
+}
 
 /**
  * 同心圆布局
@@ -58,7 +52,7 @@ export class ConcentricLayout extends Base {
   public maxLevelDiff: undefined | number;
 
   /** 根据 sortBy 指定的属性进行排布，数值高的放在中心，如果是 sortBy 则会计算节点度数，度数最高的放在中心 */
-  public sortBy: string = "degree";
+  public sortBy: string = 'degree';
 
   public nodes: INode[] = [];
 
@@ -80,7 +74,7 @@ export class ConcentricLayout extends Base {
     this.updateCfg(options);
   }
 
-  public getDefaultCfg() {
+  public getDefaultCfg(): ConcentricLayoutOptions {
     return {
       nodeSize: 30,
       minNodeSpacing: 10,
@@ -91,26 +85,29 @@ export class ConcentricLayout extends Base {
       startAngle: (3 / 2) * Math.PI,
       clockwise: true,
       maxLevelDiff: undefined,
-      sortBy: "degree"
+      sortBy: 'degree'
     };
   }
 
   /**
    * 执行布局
    */
-  public execute() {
+  public execute(): { nodes: INode[]; edges: Edge[] } {
     const self = this;
     const { nodes, edges } = self;
     const n = nodes.length;
     if (n === 0) {
       self.onLayoutEnd?.();
-      return;
+      return {
+        nodes,
+        edges
+      };
     }
 
-    if (!self.width && typeof window !== "undefined") {
+    if (!self.width && typeof window !== 'undefined') {
       self.width = window.innerWidth;
     }
-    if (!self.height && typeof window !== "undefined") {
+    if (!self.height && typeof window !== 'undefined') {
       self.height = window.innerHeight;
     }
     if (!self.center) {
@@ -122,14 +119,17 @@ export class ConcentricLayout extends Base {
       nodes[0].x = center[0];
       nodes[0].y = center[1];
       self.onLayoutEnd?.();
-      return;
+      return {
+        nodes,
+        edges
+      };
     }
 
     const { nodeSize, nodeSpacing } = self;
 
     const layoutNodes: INode[] = [];
     let maxNodeSize: number;
-    let maxNodeSpacing: number = 0;
+    let maxNodeSpacing = 0;
     if (isArray(nodeSize)) {
       maxNodeSize = Math.max(nodeSize[0], nodeSize[1]);
     } else {
@@ -140,7 +140,7 @@ export class ConcentricLayout extends Base {
     } else if (isNumber(nodeSpacing)) {
       maxNodeSpacing = nodeSpacing;
     }
-    nodes.forEach((node) => {
+    nodes.forEach(node => {
       layoutNodes.push(node);
       let nodeSize: number = maxNodeSize;
       if (isArray(node.size)) {
@@ -148,7 +148,7 @@ export class ConcentricLayout extends Base {
       } else if (isNumber(node.size)) {
         nodeSize = node.size;
       } else if (isObject(node.size)) {
-        nodeSize = Math.max((node.size as any).width, (node.size as any).height);
+        nodeSize = Math.max((node.size as SafeAny).width, (node.size as SafeAny).height);
       }
       maxNodeSize = Math.max(maxNodeSize, nodeSize);
 
@@ -157,10 +157,7 @@ export class ConcentricLayout extends Base {
       }
     });
 
-    self.clockwise =
-      self.counterclockwise !== undefined
-        ? !self.counterclockwise
-        : self.clockwise;
+    self.clockwise = self.counterclockwise !== undefined ? !self.counterclockwise : self.clockwise;
 
     // layout
     const nodeMap: NodeMap = {};
@@ -171,12 +168,8 @@ export class ConcentricLayout extends Base {
     });
 
     // get the node degrees
-    if (
-      self.sortBy === "degree" ||
-      !isString(self.sortBy) ||
-      (layoutNodes[0] as any)[self.sortBy] === undefined
-    ) {
-      self.sortBy = "degree";
+    if (self.sortBy === 'degree' || !isString(self.sortBy) || (layoutNodes[0] as SafeAny)[self.sortBy] === undefined) {
+      self.sortBy = 'degree';
       if (!isNumber(nodes[0].degree)) {
         const values = getDegree(nodes.length, indexMap, edges);
         layoutNodes.forEach((node, i) => {
@@ -185,24 +178,18 @@ export class ConcentricLayout extends Base {
       }
     }
     // sort nodes by value
-    layoutNodes.sort(
-      (n1: INode, n2: INode) =>
-        (n2 as any)[self.sortBy] - (n1 as any)[self.sortBy]
-    );
+    layoutNodes.sort((n1: INode, n2: INode) => (n2 as SafeAny)[self.sortBy] - (n1 as SafeAny)[self.sortBy]);
 
     self.maxValueNode = layoutNodes[0];
 
-    self.maxLevelDiff =
-      self.maxLevelDiff || (self.maxValueNode as any)[self.sortBy] / 4;
+    self.maxLevelDiff = self.maxLevelDiff || (self.maxValueNode as SafeAny)[self.sortBy] / 4;
 
     // put the values into levels
-    const levels: any[] = [[]];
+    const levels: SafeAny[] = [[]];
     let currentLevel = levels[0];
-    layoutNodes.forEach((node) => {
+    layoutNodes.forEach(node => {
       if (currentLevel.length > 0) {
-        const diff = Math.abs(
-          currentLevel[0][self.sortBy] - (node as any)[self.sortBy]
-        );
+        const diff = Math.abs(currentLevel[0][self.sortBy] - (node as SafeAny)[self.sortBy]);
         if (self.maxLevelDiff && diff >= self.maxLevelDiff) {
           currentLevel = [];
           levels.push(currentLevel);
@@ -224,7 +211,7 @@ export class ConcentricLayout extends Base {
 
     // find the metrics for each level
     let r = 0;
-    levels.forEach((level) => {
+    levels.forEach(level => {
       let sweep = self.sweep;
       if (sweep === undefined) {
         sweep = 2 * Math.PI - (2 * Math.PI) / level.length;
@@ -236,9 +223,7 @@ export class ConcentricLayout extends Base {
         // but only if more than one node (can't overlap)
         const dcos = Math.cos(dTheta) - Math.cos(0);
         const dsin = Math.sin(dTheta) - Math.sin(0);
-        const rMin = Math.sqrt(
-          (minDist * minDist) / (dcos * dcos + dsin * dsin)
-        ); // s.t. no nodes overlapping
+        const rMin = Math.sqrt((minDist * minDist) / (dcos * dcos + dsin * dsin)); // s.t. no nodes overlapping
 
         r = Math.max(rMin, r);
       }
@@ -265,7 +250,7 @@ export class ConcentricLayout extends Base {
     }
 
     // calculate the node positions
-    levels.forEach((level) => {
+    levels.forEach(level => {
       const dTheta = level.dTheta;
       const rr = level.r;
       level.forEach((node: INode, j: number) => {
@@ -283,7 +268,7 @@ export class ConcentricLayout extends Base {
     };
   }
 
-  public getType() {
-    return "concentric";
+  public getType(): string {
+    return 'concentric';
   }
 }

@@ -6,16 +6,9 @@ div.id = 'global-spec';
 document.body.appendChild(div);
 
 const simpleData = {
-  nodes: [
-    {id: 'node1'},
-    {id: 'node2'},
-    {id: 'node3'},
-    {id: 'node4'},
-  ],
-  edges: [
-    {source: 'node1', target: 'node2'},
-  ]
-}
+  nodes: [{ id: 'node1' }, { id: 'node2' }, { id: 'node3' }, { id: 'node4' }],
+  edges: [{ source: 'node1', target: 'node2' }]
+};
 
 const complexDataUrl = 'https://gw.alipayobjects.com/os/antvdemo/assets/data/relations.json';
 
@@ -23,22 +16,22 @@ describe('force atlas2 Layout', () => {
   it('force atlas2 with small data', () => {
     const layout = new ForceAtlas2Layout();
     layout.layout(simpleData);
-  
+
     const graph = new G6.Graph({
       container: div,
       width: 500,
       height: 500,
       modes: {
-        default: [ 'drag-node' ]
+        default: ['drag-node']
       },
       defaultEdge: {
         style: {
-          endArrow: true,
-        },
-      },
+          endArrow: true
+        }
+      }
     });
-  
-    graph.data(simpleData)
+
+    graph.data(simpleData);
     graph.render();
     graph.destroy();
   });
@@ -49,10 +42,10 @@ describe('force atlas2 Layout', () => {
       height: 600,
       fitView: true
     });
-  
+
     fetch(complexDataUrl)
-      .then((res) => res.json())
-      .then((data) => {
+      .then(res => res.json())
+      .then(data => {
         const layout = new ForceAtlas2Layout({
           barnesHut: true,
           preventOverlap: true,
@@ -61,7 +54,7 @@ describe('force atlas2 Layout', () => {
           }
         } as any);
         layout.layout(data);
-        graph.data(data)
+        graph.data(data);
         graph.render();
         // graph.destroy();
       });
@@ -69,26 +62,26 @@ describe('force atlas2 Layout', () => {
   it('swtich data', () => {
     const layout = new ForceAtlas2Layout();
     layout.layout(simpleData);
-  
+
     const graph = new G6.Graph({
       container: div,
       width: 500,
       height: 500,
       defaultEdge: {
         style: {
-          endArrow: true,
-        },
-      },
+          endArrow: true
+        }
+      }
     });
-  
-    graph.data(simpleData)
+
+    graph.data(simpleData);
     graph.render();
     graph.on('canvas:click', e => {
       fetch(complexDataUrl)
-        .then((res) => res.json())
-        .then((data) => {
+        .then(res => res.json())
+        .then(data => {
           layout.layout(data);
-          graph.data(data)
+          graph.data(data);
           graph.render();
         });
     });
@@ -101,21 +94,21 @@ describe('force atlas2 Layout', () => {
       height: 500,
       defaultEdge: {
         style: {
-          endArrow: true,
-        },
-      },
+          endArrow: true
+        }
+      }
     });
-  
+
     const layout = new ForceAtlas2Layout();
 
     fetch(complexDataUrl)
-    .then((res) => res.json())
-    .then((data) => {
-      layout.layout(data);
-      graph.data(data)
-      graph.render();
-      graph.destroy();
-    });
+      .then(res => res.json())
+      .then(data => {
+        layout.layout(data);
+        graph.data(data);
+        graph.render();
+        graph.destroy();
+      });
 
     graph.on('canvas:click', e => {
       layout.updateCfg({

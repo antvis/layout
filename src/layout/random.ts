@@ -3,8 +3,8 @@
  * @author shiwu.wyy@antfin.com
  */
 
-import { PointTuple, OutNode, Edge, RandomLayoutOptions } from "./types";
-import { Base } from "./base";
+import { PointTuple, OutNode, Edge, RandomLayoutOptions } from './types';
+import { Base } from './base';
 
 /**
  * 随机布局
@@ -31,7 +31,7 @@ export class RandomLayout extends Base {
     this.updateCfg(options);
   }
 
-  public getDefaultCfg() {
+  public getDefaultCfg(): RandomLayoutOptions {
     return {
       center: [0, 0],
       width: 300,
@@ -42,20 +42,20 @@ export class RandomLayout extends Base {
   /**
    * 执行布局
    */
-  public execute() {
+  public execute(): { nodes: OutNode[]; edges: Edge[] } {
     const self = this;
     const nodes = self.nodes;
     const layoutScale = 0.9;
     const center = self.center;
-    if (!self.width && typeof window !== "undefined") {
+    if (!self.width && typeof window !== 'undefined') {
       self.width = window.innerWidth;
     }
-    if (!self.height && typeof window !== "undefined") {
+    if (!self.height && typeof window !== 'undefined') {
       self.height = window.innerHeight;
     }
 
     if (nodes) {
-      nodes.forEach((node) => {
+      nodes.forEach(node => {
         node.x = (Math.random() - 0.5) * layoutScale * self.width + center[0];
         node.y = (Math.random() - 0.5) * layoutScale * self.height + center[1];
       });
@@ -69,7 +69,7 @@ export class RandomLayout extends Base {
     };
   }
 
-  public getType() {
-    return "random";
+  public getType(): string {
+    return 'random';
   }
 }

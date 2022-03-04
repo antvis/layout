@@ -1,8 +1,10 @@
-export const isNumber = (val: unknown): val is Number => typeof val === 'number';
+import { SafeAny } from '../layout';
 
-export const isNaN = (num: unknown) => Number.isNaN(Number(num));
+export const isNumber = (val: unknown): val is number => typeof val === 'number';
 
-export const toNumber = (val: any): any => {
+export const isNaN = (num: unknown): boolean => Number.isNaN(Number(num));
+
+export const toNumber = (val: SafeAny): SafeAny => {
   const n = parseFloat(val);
   return isNaN(n) ? val : n;
 };

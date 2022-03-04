@@ -2,12 +2,13 @@
  * @fileOverview force atlas 2
  * @author shiwu.wyy@antfin.com
  */
-import { PointTuple, OutNode, Edge, ForceAtlas2LayoutOptions } from "../types";
-import { Base } from "../base";
-import { getEdgeTerminal, isArray, isNumber, isObject } from "../../util";
+import { PointTuple, OutNode, Edge, ForceAtlas2LayoutOptions } from '../types';
+import { Base } from '../base';
+import { getEdgeTerminal, isArray, isNumber, isObject } from '../../util';
 import Body from './body';
 import Quad from './quad';
 import QuadTree from './quadTree';
+import { SafeAny } from '../any';
 
 export class ForceAtlas2Layout extends Base {
   /** 布局中心 */
@@ -107,32 +108,28 @@ export class ForceAtlas2Layout extends Base {
    */
   public prune: boolean | undefined = undefined;
 
-  public getWidth: (node: any) => number;
-  public getHeight: (node: any) => number;
+  public getWidth: (node: SafeAny) => number;
+  public getHeight: (node: SafeAny) => number;
 
   constructor(options?: ForceAtlas2LayoutOptions) {
     super();
     this.updateCfg(options);
   }
 
-  public getDefaultCfg() {
+  public getDefaultCfg(): ForceAtlas2LayoutOptions {
     return {};
   }
 
   // execute the layout
-  public execute() {
+  public execute(): void {
     const self = this;
-    const {
-      nodes,
-      onLayoutEnd,
-      prune,
-    } = self;
+    const { nodes, onLayoutEnd, prune } = self;
     let maxIteration = self.maxIteration;
 
-    if (!self.width && typeof window !== "undefined") {
+    if (!self.width && typeof window !== 'undefined') {
       self.width = window.innerWidth;
     }
-    if (!self.height && typeof window !== "undefined") {
+    if (!self.height && typeof window !== 'undefined') {
       self.height = window.innerHeight;
     }
 
@@ -140,14 +137,14 @@ export class ForceAtlas2Layout extends Base {
     const sizes = [];
     const nodeNum = nodes.length;
     for (let i = 0; i < nodeNum; i += 1) {
-      const node = nodes[i] as any;
+      const node = nodes[i] as SafeAny;
       let nodeWidth = 10;
       let nodeHeight = 10;
       if (isNumber(node.size)) {
         nodeWidth = node.size;
         nodeHeight = node.size;
       }
-      if (isArray(node.size))  {
+      if (isArray(node.size)) {
         if (!isNaN(node.size[0])) nodeWidth = node.size[0];
         if (!isNaN(node.size[1])) nodeHeight = node.size[1];
       } else if (isObject(node.size)) {
@@ -189,13 +186,12 @@ export class ForceAtlas2Layout extends Base {
     onLayoutEnd();
   }
 
-
-  updateNodesByForces(sizes: number[]) {
+  updateNodesByForces(sizes: number[]): OutNode[] {
     const self = this;
     const { edges, maxIteration } = self;
     let nodes = self.nodes;
 
-    const nonLoopEdges = edges.filter((edge: any) => {
+    const nonLoopEdges = edges.filter((edge: SafeAny) => {
       const source = getEdgeTerminal(edge, 'source');
       const target = getEdgeTerminal(edge, 'target');
       return source !== target;
@@ -204,16 +200,20 @@ export class ForceAtlas2Layout extends Base {
     const esize = nonLoopEdges.length;
 
     const degrees = [];
-    const idMap: {[key: string]: number} = {};
-    const edgeEndsIdMap: {[key: number]: {sourceIdx: number, targetIdx: number}} = {};
+    const idMap: { [key: string]: number } = {};
+    const edgeEndsIdMap: { [key: number]: { sourceIdx: number; targetIdx: number } } = {};
 
     // tslint:disable-next-line
-    const Es = []
+    const Es = [];
     for (let i = 0; i < size; i += 1) {
       idMap[nodes[i].id] = i;
       degrees[i] = 0;
-      if (nodes[i].x === undefined || isNaN(nodes[i].x)) { nodes[i].x = Math.random() * 1000; }
-      if (nodes[i].y === undefined || isNaN(nodes[i].y)) { nodes[i].y = Math.random() * 1000; }
+      if (nodes[i].x === undefined || isNaN(nodes[i].x)) {
+        nodes[i].x = Math.random() * 1000;
+      }
+      if (nodes[i].y === undefined || isNaN(nodes[i].y)) {
+        nodes[i].y = Math.random() * 1000;
+      }
       Es.push({ x: nodes[i].x, y: nodes[i].y });
     }
     for (let i = 0; i < esize; i += 1) {
@@ -247,7 +247,6 @@ export class ForceAtlas2Layout extends Base {
         if (degrees[edgeEndsIdMap[j].sourceIdx] <= 1) {
           nodes[edgeEndsIdMap[j].sourceIdx].x = nodes[edgeEndsIdMap[j].targetIdx].x;
           nodes[edgeEndsIdMap[j].sourceIdx].y = nodes[edgeEndsIdMap[j].targetIdx].y;
-
         } else if (degrees[edgeEndsIdMap[j].targetIdx] <= 1) {
           nodes[edgeEndsIdMap[j].targetIdx].x = nodes[edgeEndsIdMap[j].sourceIdx].x;
           nodes[edgeEndsIdMap[j].targetIdx].y = nodes[edgeEndsIdMap[j].sourceIdx].y;
@@ -256,26 +255,18 @@ export class ForceAtlas2Layout extends Base {
       self.prune = false;
       self.barnesHut = false;
       iteration = 100;
-      nodes = this.iterate(
-        iteration,
-        idMap,
-        edgeEndsIdMap,
-        esize,
-        degrees,
-        sizes
-        );
+      nodes = this.iterate(iteration, idMap, edgeEndsIdMap, esize, degrees, sizes);
     }
     return nodes;
   }
   iterate(
     iteration: number,
-    idMap: {[key: string]: number},
-    edgeEndsIdMap: {[key: number]: {sourceIdx: number, targetIdx: number}},
+    idMap: { [key: string]: number },
+    edgeEndsIdMap: { [key: number]: { sourceIdx: number; targetIdx: number } },
     esize: number,
     degrees: number[],
-    sizes: number[],
-  ) {
-
+    sizes: number[]
+  ): OutNode[] {
     const self = this;
     let { nodes } = self;
     const { kr, preventOverlap } = self;
@@ -314,17 +305,8 @@ export class ForceAtlas2Layout extends Base {
         forces[2 * i] = 0;
         forces[2 * i + 1] = 0;
       }
-        // attractive forces, existing on every actual edge
-      forces = this.getAttrForces(
-        iter,
-        prevoIter,
-        esize, 
-        idMap,
-        edgeEndsIdMap,
-        degrees,
-        sizes,
-        forces
-      );
+      // attractive forces, existing on every actual edge
+      forces = this.getAttrForces(iter, prevoIter, esize, idMap, edgeEndsIdMap, degrees, sizes, forces);
 
       // repulsive forces and Gravity, existing on every node pair
       // if preventOverlap, using the no-optimized method in the last prevoIter instead.
@@ -337,7 +319,7 @@ export class ForceAtlas2Layout extends Base {
       const res = this.updatePos(forces, preForces, sg, degrees);
       nodes = res.nodes;
       sg = res.sg;
-      iter --;
+      iter--;
       if (self.tick) self.tick();
     }
 
@@ -346,12 +328,12 @@ export class ForceAtlas2Layout extends Base {
   getAttrForces(
     iter: number,
     prevoIter: number,
-    esize: number, 
-    idMap: {[key: string]: number},
-    edgeEndsIdMap: {[key: number]: {sourceIdx: number, targetIdx: number}},
+    esize: number,
+    idMap: { [key: string]: number },
+    edgeEndsIdMap: { [key: number]: { sourceIdx: number; targetIdx: number } },
     degrees: number[],
     sizes: number[],
-    forces: number[],
+    forces: number[]
   ): number[] {
     const self = this;
     const { nodes, preventOverlap, dissuadeHubs, mode, prune } = self;
@@ -363,15 +345,15 @@ export class ForceAtlas2Layout extends Base {
 
       if (prune && (degrees[sourceIdx] <= 1 || degrees[targetIdx] <= 1)) continue;
 
-      const dir = [ targetNode.x - sourceNode.x, targetNode.y - sourceNode.y ];
+      const dir = [targetNode.x - sourceNode.x, targetNode.y - sourceNode.y];
       let eucliDis = Math.hypot(dir[0], dir[1]);
       eucliDis = eucliDis < 0.0001 ? 0.0001 : eucliDis;
       dir[0] = dir[0] / eucliDis;
       dir[1] = dir[1] / eucliDis;
 
       if (preventOverlap && iter < prevoIter) eucliDis = eucliDis - sizes[sourceIdx] - sizes[targetIdx];
-      let Fa1 = eucliDis // tslint:disable-line
-      let Fa2 = Fa1 // tslint:disable-line
+      let Fa1 = eucliDis; // tslint:disable-line
+      let Fa2 = Fa1; // tslint:disable-line
       if (mode === 'linlog') {
         Fa1 = Math.log(1 + eucliDis);
         Fa2 = Fa1;
@@ -394,16 +376,22 @@ export class ForceAtlas2Layout extends Base {
     }
     return forces;
   }
-  getRepGraForces(iter: number, prevoIter: number, forces: number[], krPrime: number, sizes: number[], degrees: number[]) {
+  getRepGraForces(
+    iter: number,
+    prevoIter: number,
+    forces: number[],
+    krPrime: number,
+    sizes: number[],
+    degrees: number[]
+  ): number[] {
     const self = this;
     const { nodes, preventOverlap, kr, kg, center, prune } = self;
     const nodeNum = nodes.length;
     for (let i = 0; i < nodeNum; i += 1) {
       for (let j = i + 1; j < nodeNum; j += 1) {
-
         if (prune && (degrees[i] <= 1 || degrees[j] <= 1)) continue;
 
-        const dir = [ nodes[j].x - nodes[i].x, nodes[j].y - nodes[i].y ];
+        const dir = [nodes[j].x - nodes[i].x, nodes[j].y - nodes[i].y];
         let eucliDis = Math.hypot(dir[0], dir[1]);
         eucliDis = eucliDis < 0.0001 ? 0.0001 : eucliDis;
         dir[0] = dir[0] / eucliDis;
@@ -411,14 +399,14 @@ export class ForceAtlas2Layout extends Base {
 
         if (preventOverlap && iter < prevoIter) eucliDis = eucliDis - sizes[i] - sizes[j];
 
-        let Fr = kr * (degrees[i] + 1) * (degrees[j] + 1) / eucliDis // tslint:disable-line
+        let Fr = (kr * (degrees[i] + 1) * (degrees[j] + 1)) / eucliDis; // tslint:disable-line
 
         if (preventOverlap && iter < prevoIter && eucliDis < 0) {
           Fr = krPrime * (degrees[i] + 1) * (degrees[j] + 1);
         } else if (preventOverlap && iter < prevoIter && eucliDis === 0) {
           Fr = 0;
         } else if (preventOverlap && iter < prevoIter && eucliDis > 0) {
-          Fr = kr * (degrees[i] + 1) * (degrees[j] + 1) / eucliDis;
+          Fr = (kr * (degrees[i] + 1) * (degrees[j] + 1)) / eucliDis;
         }
         forces[2 * i] -= Fr * dir[0];
         forces[2 * j] += Fr * dir[0];
@@ -426,19 +414,19 @@ export class ForceAtlas2Layout extends Base {
         forces[2 * j + 1] += Fr * dir[1];
       }
 
-    // gravity
-      const dir = [ nodes[i].x - center[0], nodes[i].y - center[1] ];
+      // gravity
+      const dir = [nodes[i].x - center[0], nodes[i].y - center[1]];
       const eucliDis = Math.hypot(dir[0], dir[1]);
       dir[0] = dir[0] / eucliDis;
       dir[1] = dir[1] / eucliDis;
-      const Fg = kg * (degrees[i] + 1) // tslint:disable-line
+      const Fg = kg * (degrees[i] + 1); // tslint:disable-line
       forces[2 * i] -= Fg * dir[0];
       forces[2 * i + 1] -= Fg * dir[1];
     }
     return forces;
   }
 
-  getOptRepGraForces(forces: number[], bodies: any, degrees: number[]) {
+  getOptRepGraForces(forces: number[], bodies: SafeAny, degrees: number[]): number[] {
     const self = this;
     const { nodes, kg, center, prune } = self;
     const nodeNum = nodes.length;
@@ -447,7 +435,7 @@ export class ForceAtlas2Layout extends Base {
     let miny = 9e10;
     let maxy = -9e10;
     for (let i = 0; i < nodeNum; i += 1) {
-      if (prune && (degrees[i] <= 1)) continue;
+      if (prune && degrees[i] <= 1) continue;
       bodies[i].setPos(nodes[i].x, nodes[i].y);
       if (nodes[i].x >= maxx) maxx = nodes[i].x;
       if (nodes[i].x <= minx) minx = nodes[i].x;
@@ -467,61 +455,49 @@ export class ForceAtlas2Layout extends Base {
     const quad = new Quad(quadParams);
     const quadTree = new QuadTree(quad);
 
-  // build the tree, insert the nodes(quads) into the tree
+    // build the tree, insert the nodes(quads) into the tree
     for (let i = 0; i < nodeNum; i += 1) {
-
-      if (prune && (degrees[i] <= 1)) continue;
+      if (prune && degrees[i] <= 1) continue;
 
       if (bodies[i].in(quad)) quadTree.insert(bodies[i]);
     }
-  // update the repulsive forces and the gravity.
+    // update the repulsive forces and the gravity.
     for (let i = 0; i < nodeNum; i += 1) {
-
-      if (prune && (degrees[i] <= 1)) continue;
+      if (prune && degrees[i] <= 1) continue;
 
       bodies[i].resetForce();
       quadTree.updateForce(bodies[i]);
       forces[2 * i] -= bodies[i].fx;
       forces[2 * i + 1] -= bodies[i].fy;
 
-    // gravity
-      const dir = [ nodes[i].x - center[0], nodes[i].y - center[1] ];
+      // gravity
+      const dir = [nodes[i].x - center[0], nodes[i].y - center[1]];
       let eucliDis = Math.hypot(dir[0], dir[1]);
       eucliDis = eucliDis < 0.0001 ? 0.0001 : eucliDis;
       dir[0] = dir[0] / eucliDis;
       dir[1] = dir[1] / eucliDis;
-      const Fg = kg * (degrees[i] + 1) // tslint:disable-line
+      const Fg = kg * (degrees[i] + 1); // tslint:disable-line
       forces[2 * i] -= Fg * dir[0];
       forces[2 * i + 1] -= Fg * dir[1];
     }
     return forces;
   }
 
-  updatePos(
-    forces: number[],
-    preForces: number[],
-    sg: number,
-    degrees: number[]
-  ): { nodes: any, sg: number } {
+  updatePos(forces: number[], preForces: number[], sg: number, degrees: number[]): { nodes: SafeAny; sg: number } {
     const self = this;
     const { nodes, ks, tao, prune, ksmax } = self;
     const nodeNum = nodes.length;
     const swgns = [];
     const trans = [];
-  // swg(G) and tra(G)
+    // swg(G) and tra(G)
     let swgG = 0;
     let traG = 0;
     for (let i = 0; i < nodeNum; i += 1) {
+      if (prune && degrees[i] <= 1) continue;
 
-      if (prune && (degrees[i] <= 1)) continue;
-
-      const minus = [ forces[2 * i] - preForces[2 * i],
-        forces[2 * i + 1] - preForces[2 * i + 1]
-      ];
+      const minus = [forces[2 * i] - preForces[2 * i], forces[2 * i + 1] - preForces[2 * i + 1]];
       const minusNorm = Math.hypot(minus[0], minus[1]);
-      const add = [ forces[2 * i] + preForces[2 * i],
-        forces[2 * i + 1] + preForces[2 * i + 1]
-      ];
+      const add = [forces[2 * i] + preForces[2 * i], forces[2 * i + 1] + preForces[2 * i + 1]];
       const addNorm = Math.hypot(add[0], add[1]);
 
       swgns[i] = minusNorm;
@@ -532,16 +508,15 @@ export class ForceAtlas2Layout extends Base {
     }
 
     const preSG = sg;
-    sg = tao * traG / swgG // tslint:disable-line
+    sg = (tao * traG) / swgG; // tslint:disable-line
     if (preSG !== 0) {
-      sg = sg > (1.5 * preSG) ? (1.5 * preSG) : sg // tslint:disable-line
+      sg = sg > 1.5 * preSG ? 1.5 * preSG : sg; // tslint:disable-line
     }
     // update the node positions
     for (let i = 0; i < nodeNum; i += 1) {
+      if (prune && degrees[i] <= 1) continue;
 
-      if (prune && (degrees[i] <= 1)) continue;
-
-      let sn = ks * sg / (1 + sg * Math.sqrt(swgns[i]));
+      let sn = (ks * sg) / (1 + sg * Math.sqrt(swgns[i]));
       let absForce = Math.hypot(forces[2 * i], forces[2 * i + 1]);
       absForce = absForce < 0.0001 ? 0.0001 : absForce;
       const max = ksmax / absForce;

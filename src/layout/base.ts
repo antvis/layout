@@ -1,4 +1,5 @@
 import { Node, Edge, Combo, Model, PointTuple } from './types';
+import { SafeAny } from './any';
 
 export class Base {
   public nodes: Node[] | null = [];
@@ -10,14 +11,15 @@ export class Base {
   public hiddenCombos: Combo[] | null = [];
   public positions: PointTuple[] | null = [];
   public destroyed: boolean = false;
-  public onLayoutEnd: () => void = () => { }; 
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  public onLayoutEnd: () => void = () => {};
 
   public layout(data: Model): Model {
     this.init(data);
     return this.execute(true);
   }
 
-  public init(data: Model) {
+  public init(data: Model): void {
     this.nodes = data.nodes || [];
     this.edges = data.edges || [];
     this.combos = data.combos || [];
@@ -27,24 +29,24 @@ export class Base {
     this.hiddenCombos = data.hiddenCombos || [];
   }
 
-  public execute(reloadData?: boolean): any {}
-  public executeWithWorker() {}
+  public execute(reloadData?: boolean): SafeAny {}
+  public executeWithWorker(): Promise<void> | void {}
 
-  public getDefaultCfg() {
+  public getDefaultCfg(): SafeAny {
     return {};
   }
 
-  public updateCfg(cfg: any) {
+  public updateCfg(cfg: SafeAny): void {
     if (cfg) {
       Object.assign(this, cfg);
     }
   }
 
-  public getType() {
+  public getType(): string {
     return 'base';
   }
 
-  public destroy() {
+  public destroy(): void {
     this.nodes = null;
     this.edges = null;
     this.combos = null;

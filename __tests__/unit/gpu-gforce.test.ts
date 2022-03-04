@@ -1,4 +1,4 @@
-import { GridLayout, GForceGPULayout } from '../../src'
+import { GridLayout, GForceGPULayout } from '../../src';
 import dataset from '../data';
 
 const data = dataset.data;
@@ -32,7 +32,7 @@ describe('#gForceGPULayout', () => {
       maxIteration: 2000,
       gravity: 10,
       clustering: false,
-      clusterGravity: 10,
+      clusterGravity: 10
     });
     await gForceGPU.layout(data);
     expect((data.nodes[0] as any).x).not.toBe(undefined);
@@ -63,11 +63,11 @@ describe('#gForceGPULayout', () => {
         expect(node.y);
         expect(edge.x).toEqual(undefined);
         expect(edge.y).toEqual(undefined);
-      },
+      }
     });
     await gForceGPU.layout(data);
     expect(isEnd === true).toEqual(true);
     expect(node.x).not.toEqual(undefined);
     expect(node.y).not.toEqual(undefined);
   });
-})
+});

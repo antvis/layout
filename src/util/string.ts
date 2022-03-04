@@ -1,3 +1,5 @@
+import { SafeAny } from '../layout';
+
 export const isString = (val: unknown): val is string => typeof val === 'string';
 
 const cacheStringFunction = <T extends (str: string) => string>(fn: T): T => {
@@ -5,7 +7,7 @@ const cacheStringFunction = <T extends (str: string) => string>(fn: T): T => {
   return ((str: string) => {
     const hit = cache[str];
     return hit || (cache[str] = fn(str));
-  }) as any;
+  }) as SafeAny;
 };
 
 const camelizeRE = /-(\w)/g;

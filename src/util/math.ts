@@ -1,7 +1,7 @@
-import { Matrix, Model, IndexMap, Edge, OutNode } from '../layout/types';
+import { Matrix, Model, IndexMap, Edge, OutNode } from '../layout';
 import { isObject } from './object';
 
-export const getEdgeTerminal = (edge: Edge, type: 'source' | 'target') => {
+export const getEdgeTerminal = (edge: Edge, type: 'source' | 'target'): string => {
   const terminal = edge[type];
   if (isObject(terminal)) {
     return terminal.cell;
@@ -9,13 +9,13 @@ export const getEdgeTerminal = (edge: Edge, type: 'source' | 'target') => {
   return terminal;
 };
 
-export const getDegree = (n: number, nodeIdxMap: IndexMap, edges: Edge[] | null) => {
+export const getDegree = (n: number, nodeIdxMap: IndexMap, edges: Edge[] | null): number[] => {
   const degrees: number[] = [];
   for (let i = 0; i < n; i++) {
     degrees[i] = 0;
   }
   if (!edges) return degrees;
-  edges.forEach((e) => {
+  edges.forEach(e => {
     const source = getEdgeTerminal(e, 'source');
     const target = getEdgeTerminal(e, 'target');
     if (source) {
@@ -58,10 +58,7 @@ export const floydWarshall = (adjMatrix: Matrix[]): Matrix[] => {
 };
 
 export const getAdjMatrix = (data: Model, directed: boolean): Matrix[] => {
-  const {
-    nodes,
-    edges
-  } = data;
+  const { nodes, edges } = data;
   const matrix: Matrix[] = [];
   // map node with index in data.nodes
   const nodeMap: {
@@ -80,7 +77,7 @@ export const getAdjMatrix = (data: Model, directed: boolean): Matrix[] => {
   }
 
   if (edges) {
-    edges.forEach((e) => {
+    edges.forEach(e => {
       const source = getEdgeTerminal(e, 'source');
       const target = getEdgeTerminal(e, 'target');
       const sIndex = nodeMap[source as string];
@@ -100,11 +97,11 @@ export const getAdjMatrix = (data: Model, directed: boolean): Matrix[] => {
  * @param matrix [ [], [], [] ]
  * @param ratio
  */
-export const scaleMatrix = (matrix: Matrix[], ratio: number) => {
+export const scaleMatrix = (matrix: Matrix[], ratio: number): Matrix[] => {
   const result: Matrix[] = [];
-  matrix.forEach((row) => {
+  matrix.forEach(row => {
     const newRow: number[] = [];
-    row.forEach((v) => {
+    row.forEach(v => {
       newRow.push(v * ratio);
     });
     result.push(newRow);
@@ -116,10 +113,10 @@ export const scaleMatrix = (matrix: Matrix[], ratio: number) => {
  * depth first traverse, from leaves to root, children in inverse order
  *  if the fn returns false, terminate the traverse
  */
-const traverseUp = <T extends { children?: T[] }>(data: T, fn: (param: T) => boolean) => {
+const traverseUp = <T extends { children?: T[] }>(data: T, fn: (param: T) => boolean): boolean => {
   if (data && data.children) {
     for (let i = data.children.length - 1; i >= 0; i--) {
-      if (!traverseUp(data.children[i], fn)) return;
+      if (!traverseUp(data.children[i], fn)) return false;
     }
   }
 
@@ -133,22 +130,19 @@ const traverseUp = <T extends { children?: T[] }>(data: T, fn: (param: T) => boo
  * depth first traverse, from leaves to root, children in inverse order
  * if the fn returns false, terminate the traverse
  */
-export const traverseTreeUp = <T extends { children?: T[] }>(
-  data: T,
-  fn: (param: T) => boolean,
-) => {
+export const traverseTreeUp = <T extends { children?: T[] }>(data: T, fn: (param: T) => boolean): void => {
   if (typeof fn !== 'function') {
     return;
   }
   traverseUp(data, fn);
 };
 
-export const findMinMaxNodeXY = (nodes: OutNode[]) => {
+export const findMinMaxNodeXY = (nodes: OutNode[]): { minX: number; minY: number; maxX: number; maxY: number } => {
   let minX = Infinity;
   let minY = Infinity;
   let maxX = -Infinity;
   let maxY = -Infinity;
-  nodes.forEach((node) => {
+  nodes.forEach(node => {
     if (minX > node.x) minX = node.x;
     if (minY > node.y) minY = node.y;
     if (maxX < node.x) maxX = node.x;

@@ -1,4 +1,4 @@
-import { Layout } from '../../src';
+import { GridLayout } from '../../src';
 import G6 from '@antv/g6';
 
 const div = document.createElement('div');
@@ -6,87 +6,79 @@ div.id = 'global-spec';
 document.body.appendChild(div);
 
 const simpleData = {
-  nodes: [
-    {id: 'node1'},
-    {id: 'node2'},
-    {id: 'node3'},
-    {id: 'node4'},
-  ],
-  edges: [
-    {source: 'node1', target: 'node2'},
-  ]
-}
+  nodes: [{ id: 'node1' }, { id: 'node2' }, { id: 'node3' }, { id: 'node4' }],
+  edges: [{ source: 'node1', target: 'node2' }]
+};
 
 const complexDataUrl = 'https://gw.alipayobjects.com/os/antvdemo/assets/data/relations.json';
 
 describe('Grid Layout', () => {
   it('grid layout with small data', () => {
-    const layout = new Layout({
+    const layout = new GridLayout({
       type: 'grid'
     });
     layout.layout(simpleData);
-  
+
     const graph = new G6.Graph({
       container: div,
       width: 500,
       height: 500,
       defaultEdge: {
         style: {
-          endArrow: true,
-        },
-      },
+          endArrow: true
+        }
+      }
     });
-  
-    graph.data(simpleData)
+
+    graph.data(simpleData);
     graph.render();
     graph.destroy();
   });
   it('grid layout with complex data', () => {
-  
     const graph = new G6.Graph({
       container: div,
       width: 500,
-      height: 500,
+      height: 500
     });
-  
+
     fetch(complexDataUrl)
-      .then((res) => res.json())
-      .then((data) => {
-        const layout = new Layout({
+      .then(res => res.json())
+      .then(data => {
+        const layout = new GridLayout({
           type: 'grid',
           begin: [150, 200]
         });
         layout.layout(data);
-        graph.data(data)
+        graph.data(data);
         graph.render();
         graph.destroy();
       });
   });
   it('swtich data', () => {
-    const layout = new Layout({
+    const layout = new GridLayout({
       type: 'grid'
     });
     layout.layout(simpleData);
-  
+
     const graph = new G6.Graph({
       container: div,
       width: 500,
       height: 500,
       defaultEdge: {
         style: {
-          endArrow: true,
-        },
-      },
+          endArrow: true
+        }
+      }
     });
-  
-    graph.data(simpleData)
+
+    graph.data(simpleData);
     graph.render();
     graph.on('canvas:click', e => {
       fetch(complexDataUrl)
-        .then((res) => res.json())
-        .then((data) => {
+        .then(res => res.json())
+        .then(data => {
           layout.layout(data);
-          graph.data(data)
+          graph.data(data);
           graph.render();
         });
     });
@@ -99,24 +91,24 @@ describe('Grid Layout', () => {
       height: 500,
       defaultEdge: {
         style: {
-          endArrow: true,
-        },
-      },
+          endArrow: true
+        }
+      }
     });
-  
-    const layout = new Layout({
+
+    const layout = new GridLayout({
       type: 'grid',
       rows: 5
     });
 
     fetch(complexDataUrl)
-    .then((res) => res.json())
-    .then((data) => {
-      layout.layout(data);
-      graph.data(data)
-      graph.render();
-      graph.destroy();
-    });
+      .then(res => res.json())
+      .then(data => {
+        layout.layout(data);
+        graph.data(data);
+        graph.render();
+        graph.destroy();
+      });
 
     graph.on('canvas:click', e => {
       layout.updateCfg({

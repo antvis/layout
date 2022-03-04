@@ -33,7 +33,7 @@ export interface ICell {
   y: number;
   occupied: boolean;
   node?: {
-    id: string,
-    size: number[],
+    id: string;
+    size: number[];
   } | null;
 }

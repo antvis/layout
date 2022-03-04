@@ -1,7 +1,6 @@
-import { Layout, Layouts, registerLayout } from '../../src'
+import { Node, Edge, Layouts, registerLayout } from '../../src';
 // import * as Layout from '../../src'
 // import { Registy } from '../../es';
-import { Node, Edge } from '../../src/layout/types'
 import { mathEqual } from '../util';
 // import G6 from '@antv/g6';
 
@@ -19,17 +18,16 @@ import { mathEqual } from '../util';
 // graph.data(data);
 // graph.render()
 
-
 const data: { nodes: Node[]; edges: Edge[] } = {
   nodes: [
     {
-      id: '0',
+      id: '0'
     },
     {
-      id: '1',
-    },
+      id: '1'
+    }
   ],
-  edges: [],
+  edges: []
 };
 
 describe('#UseLayoutWithType', () => {
@@ -47,7 +45,7 @@ describe('#UseLayoutWithType', () => {
       clockwise: true,
       divisions: 1,
       ordering: null,
-      angleRatio: 1,
+      angleRatio: 1
     });
     circular.layout(data);
     expect((data.nodes[0] as any).x).not.toBe(undefined);
@@ -57,37 +55,35 @@ describe('#UseLayoutWithType', () => {
     expect(mathEqual((data.nodes[0] as any).x, 300)).toEqual(true);
     expect(mathEqual((data.nodes[0] as any).y, 150)).toEqual(true);
   });
-})
+});
 
 describe('#RegisterLayout', () => {
   it('register a layout', () => {
     // 可以传入带有复写函数的对象，也可以传入一个继承了 base 的 class
-    registerLayout('custom', {
+    const CustomLayout = registerLayout('custom', {
       getDefaultCfg() {
         return {
           attr1: 'a',
           attr2: 'b',
-          attr3: 'c',
-        }
+          attr3: 'c'
+        };
       },
       execute() {
         const { nodes } = this;
-        nodes.forEach((node, i) => {
+        nodes.forEach((node: any, i: number) => {
           node.x = i * 10;
-          node.y = i * 5
-        })
+          node.y = i * 5;
+        });
       }
-    })
+    });
 
     // 以下两种使用方式均可
-    // const custom = new Layout({
-    //   type: 'custom'
-    // });
-    const custom = new Layouts['custom']();
+    // 注: registerLayout 返回 GLayout 类，需要手动实例化
+    const custom = new CustomLayout();
     expect(custom.getDefaultCfg()).toEqual({
       attr1: 'a',
       attr2: 'b',
-      attr3: 'c',
+      attr3: 'c'
     });
     custom.layout(data);
     expect((data.nodes[0] as any).x).toBe(0);
@@ -95,4 +91,4 @@ describe('#RegisterLayout', () => {
     expect((data.nodes[1] as any).x).toBe(10);
     expect((data.nodes[1] as any).y).toBe(5);
   });
-})
+});

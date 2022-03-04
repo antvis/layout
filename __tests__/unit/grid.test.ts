@@ -1,5 +1,4 @@
-import { Layouts } from '../../src'
-import { OutNode } from '../../src/layout/types'
+import { Layouts, OutNode } from '../../src';
 // import G6 from '@antv/g6';
 
 // const div = document.createElement('div');
@@ -17,24 +16,15 @@ import { OutNode } from '../../src/layout/types'
 // graph.render()
 
 const data = {
-  nodes: [
-    { id: '0' },
-    { id: '1' },
-    { id: '2' },
-    { id: '3' },
-    { id: '4' },
-    { id: '5' },
-    { id: '6' },
-    { id: '7' },
-  ],
+  nodes: [{ id: '0' }, { id: '1' }, { id: '2' }, { id: '3' }, { id: '4' }, { id: '5' }, { id: '6' }, { id: '7' }],
   edges: [
     { source: '0', target: '1' },
     { source: '1', target: '2' },
     { source: '2', target: '3' },
     { source: '3', target: '4' },
     { source: '5', target: '6' },
-    { source: '6', target: '7' },
-  ],
+    { source: '6', target: '7' }
+  ]
 };
 
 describe('#GridLayout', () => {
@@ -42,27 +32,27 @@ describe('#GridLayout', () => {
     const grid = new Layouts['grid']();
     expect(grid.getDefaultCfg()).toEqual({
       begin: [0, 0],
-      cols: undefined,
-      condense: false,
-      nodeSize: 30,
-      position: undefined,
       preventOverlap: true,
       preventOverlapPadding: 10,
+      condense: false,
       rows: undefined,
-      sortBy: 'degree'
+      cols: undefined,
+      position: undefined,
+      sortBy: 'degree',
+      nodeSize: 30
     });
     grid.layout(data);
     expect((data.nodes[0] as any).x).not.toBe(undefined);
     expect((data.nodes[0] as any).y).not.toBe(undefined);
   });
   it('grid layout without node', () => {
-    const dataNoNode = {nodes: [], edges: []};
+    const dataNoNode = { nodes: [], edges: [] };
     const grid = new Layouts['grid']();
     grid.layout(dataNoNode);
     expect(dataNoNode.nodes).not.toBe(undefined);
   });
   it('grid layout without one node', () => {
-    const dataOneNode = {nodes: [{id: 'node'}], edges: []};
+    const dataOneNode = { nodes: [{ id: 'node' }], edges: [] };
     const grid = new Layouts['grid']({ begin: [10, 20] });
     grid.layout(dataOneNode);
     expect((dataOneNode.nodes[0] as OutNode).x).toBe(10);
@@ -84,7 +74,7 @@ describe('#GridLayout', () => {
     const grid = new Layouts['grid']({
       rows: 2,
       sortBy: 'id',
-      begin: [10 ,20]
+      begin: [10, 20]
     });
     grid.layout(data);
 
@@ -98,7 +88,7 @@ describe('#GridLayout', () => {
       rows: 2,
       cols: 6,
       sortBy: 'id',
-      begin: [10 ,20]
+      begin: [10, 20]
     });
     grid.layout(data);
     expect((data.nodes[2] as OutNode).x === (data.nodes[7] as OutNode).x).toEqual(true);
@@ -109,7 +99,7 @@ describe('#GridLayout', () => {
       rows: 3,
       cols: 4,
       sortBy: 'id',
-      begin: [10 ,20]
+      begin: [10, 20]
     });
     grid.layout(data);
     expect((data.nodes[3] as OutNode).x === (data.nodes[7] as OutNode).x).toEqual(true);
@@ -120,7 +110,7 @@ describe('#GridLayout', () => {
       rows: 2,
       cols: 2,
       sortBy: 'id',
-      begin: [10 ,20]
+      begin: [10, 20]
     });
     grid.layout(data);
     expect((data.nodes[3] as OutNode).x === (data.nodes[7] as OutNode).x).toEqual(true);
@@ -133,7 +123,7 @@ describe('#GridLayout', () => {
       rows: 2,
       cols: 3,
       sortBy: 'id',
-      begin: [10 ,20]
+      begin: [10, 20]
     });
     grid.layout(data);
     expect((data.nodes[3] as OutNode).x === (data.nodes[7] as OutNode).x).toEqual(true);
@@ -142,7 +132,7 @@ describe('#GridLayout', () => {
   it('grid layout with condense', () => {
     const grid = new Layouts['grid']({
       condense: true,
-      begin: [10 ,20]
+      begin: [10, 20]
     });
     grid.layout(data);
     expect((data.nodes[1] as OutNode).x === (data.nodes[6] as OutNode).x).toEqual(true);
@@ -151,7 +141,7 @@ describe('#GridLayout', () => {
   it('grid layout with preventOverlap', () => {
     const grid = new Layouts['grid']({
       preventOverlap: true,
-      begin: [10 ,20]
+      begin: [10, 20]
     });
     grid.layout(data);
     expect((data.nodes[0] as any).x).not.toBe(undefined);
@@ -161,7 +151,7 @@ describe('#GridLayout', () => {
     const grid = new Layouts['grid']({
       preventOverlap: true,
       nodeSize: [20, 10],
-      begin: [10 ,20]
+      begin: [10, 20]
     });
     grid.layout(data);
     expect((data.nodes[1] as OutNode).x === (data.nodes[6] as OutNode).x).toEqual(true);
@@ -171,7 +161,7 @@ describe('#GridLayout', () => {
     const grid = new Layouts['grid']({
       preventOverlap: true,
       nodeSize: null,
-      begin: [10 ,20]
+      begin: [10, 20]
     });
     grid.layout(data);
     expect((data.nodes[1] as OutNode).x === (data.nodes[6] as OutNode).x).toEqual(true);
@@ -179,19 +169,19 @@ describe('#GridLayout', () => {
   });
   it('grid layout with position function', () => {
     let rows = 0;
-    data.nodes.forEach((node, i) => {
+    data.nodes.forEach((node: any, i) => {
       node['col'] = i % 3;
       node['row'] = rows;
       if (node['col'] === 2) rows++;
     });
     const grid = new Layouts['grid']({
-      position: (d) => {
+      position: (d: any) => {
         return {
           row: d['row'],
-          col: d['col'],
+          col: d['col']
         };
       },
-      begin: [10 ,20]
+      begin: [10, 20]
     });
     grid.layout(data);
     expect((data.nodes[0] as OutNode).x === (data.nodes[3] as OutNode).x).toEqual(true);
@@ -201,9 +191,9 @@ describe('#GridLayout', () => {
   });
   it('grid layout with position function, col undefined', () => {
     const grid = new Layouts['grid']({
-      position: (d) => {
+      position: (d: any) => {
         return {
-          row: d['row'],
+          row: d['row']
         };
       }
     });
@@ -216,12 +206,12 @@ describe('#GridLayout', () => {
   });
   it('grid layout with position function, row undefined', () => {
     const grid = new Layouts['grid']({
-      position: (d) => {
+      position: (d: any) => {
         return {
-          col: d['col'],
+          col: d['col']
         };
       },
-      begin: [10 ,20]
+      begin: [10, 20]
     });
     grid.layout(data);
 
@@ -230,4 +220,4 @@ describe('#GridLayout', () => {
     expect((data.nodes[6] as OutNode).x === (data.nodes[0] as OutNode).x).toEqual(true);
     expect((data.nodes[6] as OutNode).y < (data.nodes[0] as OutNode).y).toEqual(true);
   });
-})
+});
