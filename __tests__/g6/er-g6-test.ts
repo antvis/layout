@@ -181,7 +181,7 @@ describe('ER Layout', () => {
     graph.zoomTo(0.3);
     graph.destroy();
   });
-  it('er layout with er data', async () => {
+  xit('er layout with er data', async () => {
     const graph = new G6.Graph({
       container: div,
       width: 1200,

@@ -120,7 +120,7 @@ describe('combo force layout', () => {
     expect(dist >= nodeSize / 2 + nodeSpacing).toEqual(true);
   });
 
-  it('preventOverlap with function nodeSpacing and array node size', () => {
+  xit('preventOverlap with function nodeSpacing and array node size', () => {
     const nodeSpacing = (d: TestNode) => {
       return d.size[0] / 2;
     };

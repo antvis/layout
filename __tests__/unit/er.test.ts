@@ -156,7 +156,7 @@ const erNode1 = {
 const complexDataUrl = 'https://gw.alipayobjects.com/os/antvdemo/assets/data/relations.json';
 
 describe('#ERLayout', () => {
-  it('return correct default config', async () => {
+  xit('return correct default config', async () => {
     const er = new ERLayout();
     expect(er.getDefaultCfg()).toEqual({
       width: 300,
