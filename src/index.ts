@@ -1,7 +1,7 @@
-import { registerLayout, unRegisterLayout, getLayoutByName } from './registy';
+import { getLayoutByName, registerLayout, unRegisterLayout } from './registy';
 
 // register layout
-export { registerLayout, unRegisterLayout, getLayoutByName };
+export { getLayoutByName, registerLayout, unRegisterLayout };
 
 // layout, layout types file, worker
 export * from './layout';

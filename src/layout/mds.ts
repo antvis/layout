@@ -4,9 +4,10 @@
  */
 
 import { Matrix as MLMatrix, SingularValueDecomposition } from 'ml-matrix';
-import { PointTuple, OutNode, Edge, Matrix, MDSLayoutOptions } from './types';
+
 import { floydWarshall, getAdjMatrix, scaleMatrix } from '../util';
 import { Base } from './base';
+import { Edge, Matrix, MDSLayoutOptions, OutNode, PointTuple } from './types';
 
 /**
  * mds 布局

@@ -1,5 +1,5 @@
-import { Matrix, PointTuple, Point } from '../types';
 import { SafeAny } from '../any';
+import { Matrix, Point, PointTuple } from '../types';
 
 const SPEED_DIVISOR = 800;
 

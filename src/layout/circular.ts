@@ -3,9 +3,9 @@
  * @author shiwu.wyy@antfin.com
  */
 
-import { OutNode, Edge, PointTuple, IndexMap, CircularLayoutOptions } from './types';
+import { clone, getDegree, getEdgeTerminal, getFuncByUnknownType } from '../util';
 import { Base } from './base';
-import { getDegree, clone, getEdgeTerminal, getFuncByUnknownType } from '../util';
+import { CircularLayoutOptions, Edge, IndexMap, OutNode, PointTuple } from './types';
 
 type INode = OutNode & {
   degree: number;

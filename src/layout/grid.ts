@@ -4,10 +4,10 @@
  * this algorithm refers to <cytoscape.js> - https://github.com/cytoscape/cytoscape.js/
  */
 
-import { isString, getDegree, isNaN, getFuncByUnknownType } from '../util';
-import { Base } from './base';
-import { OutNode, Edge, PointTuple, Size, IndexMap, GridLayoutOptions } from './types';
+import { getDegree, getFuncByUnknownType, isNaN, isString } from '../util';
 import { SafeAny } from './any';
+import { Base } from './base';
+import { Edge, GridLayoutOptions, IndexMap, OutNode, PointTuple, Size } from './types';
 
 type INode = OutNode & {
   degree: number;

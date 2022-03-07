@@ -3,10 +3,10 @@
  * @author shiwu.wyy@antfin.com
  */
 
-import { OutNode, Edge, PointTuple, IndexMap, Point, FruchtermanLayoutOptions } from './types';
-import { Base } from './base';
 import { getEdgeTerminal, isNumber } from '../util';
 import { SafeAny } from './any';
+import { Base } from './base';
+import { Edge, FruchtermanLayoutOptions, IndexMap, OutNode, Point, PointTuple } from './types';
 
 interface NodeMap {
   [key: string]: INode;

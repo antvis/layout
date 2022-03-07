@@ -1,6 +1,6 @@
+import { SafeAny } from '../layout';
 import { Base } from '../layout/base';
 import { isObject } from '../util';
-import { SafeAny } from '../layout';
 
 const map: Map<string, SafeAny> = new Map();
 

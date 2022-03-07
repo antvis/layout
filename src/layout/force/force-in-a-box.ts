@@ -1,4 +1,5 @@
 import * as d3Force from 'd3-force';
+
 import { getEdgeTerminal } from '../../util';
 import { SafeAny } from '../any';
 

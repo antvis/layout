@@ -1,6 +1,6 @@
+import { SafeAny } from '../layout';
 import { isArray, isObject } from '.';
 import { isNumber } from './number';
-import { SafeAny } from '../layout';
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 export const isFunction = (val: unknown): val is Function => typeof val === 'function';

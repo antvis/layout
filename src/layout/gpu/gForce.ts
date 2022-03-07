@@ -3,14 +3,15 @@
  * @author shiwu.wyy@antfin.com
  */
 
-import { IndexMap, OutNode, PointTuple, Edge, GForceGPULayoutOptions } from '../types';
-import { Base } from '../base';
-import { getDegree, isNumber } from '../../util';
 import { World } from '@antv/g-webgpu';
-import { proccessToFunc, buildTextureDataWithTwoEdgeAttr, arrayToTextureData } from '../../util/gpu';
-import { gForceBundle, aveMovementBundle } from './gForceShader';
-import { LAYOUT_MESSAGE } from '../constants';
+
+import { getDegree, isNumber } from '../../util';
+import { arrayToTextureData, buildTextureDataWithTwoEdgeAttr, proccessToFunc } from '../../util/gpu';
 import { SafeAny } from '../any';
+import { Base } from '../base';
+import { LAYOUT_MESSAGE } from '../constants';
+import { Edge, GForceGPULayoutOptions, IndexMap, OutNode, PointTuple } from '../types';
+import { aveMovementBundle, gForceBundle } from './gForceShader';
 // import { Compiler } from '@antv/g-webgpu-compiler';
 // import { gForceCode, aveMovementCode } from './gForceShader';
 

@@ -2,13 +2,13 @@
  * @fileOverview force atlas 2
  * @author shiwu.wyy@antfin.com
  */
-import { PointTuple, OutNode, Edge, ForceAtlas2LayoutOptions } from '../types';
-import { Base } from '../base';
 import { getEdgeTerminal, isArray, isNumber, isObject } from '../../util';
+import { SafeAny } from '../any';
+import { Base } from '../base';
+import { Edge, ForceAtlas2LayoutOptions, OutNode, PointTuple } from '../types';
 import Body from './body';
 import Quad from './quad';
 import QuadTree from './quadTree';
-import { SafeAny } from '../any';
 
 export class ForceAtlas2Layout extends Base {
   /** 布局中心 */

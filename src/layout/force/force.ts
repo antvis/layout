@@ -3,13 +3,14 @@
  * @author shiwu.wyy@antfin.com
  */
 
-import { Edge, ForceLayoutOptions, Model, PointTuple } from '../types';
 import * as d3Force from 'd3-force';
-import forceInABox from './force-in-a-box';
+
 import { isArray, isFunction, isNumber, isObject } from '../../util';
+import { SafeAny } from '../any';
 import { Base } from '../base';
 import { LAYOUT_MESSAGE } from '../constants';
-import { SafeAny } from '../any';
+import { Edge, ForceLayoutOptions, Model, PointTuple } from '../types';
+import forceInABox from './force-in-a-box';
 
 /**
  * 经典力导布局 force-directed

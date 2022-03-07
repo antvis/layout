@@ -1,5 +1,6 @@
-import { PointTuple, Matrix } from '../types';
 import { Matrix as MLMatrix, SingularValueDecomposition } from 'ml-matrix';
+
+import { Matrix, PointTuple } from '../types';
 
 export default class MDS {
   /** distance matrix */

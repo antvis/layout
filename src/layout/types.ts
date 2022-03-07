@@ -1,5 +1,5 @@
-import { Base } from './base';
 import { SafeAny } from './any';
+import { Base } from './base';
 
 export interface Node {
   id: string;

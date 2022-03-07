@@ -1,5 +1,5 @@
-import { ICell, INode } from './type';
 import { SafeAny } from '../any';
+import { ICell, INode } from './type';
 
 export default class Grid {
   public cells: ICell[][] = [];

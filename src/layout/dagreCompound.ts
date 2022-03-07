@@ -1,5 +1,3 @@
-import { Base } from './base';
-import { Combo, DagreCompoundLayoutOptions, OutNode, PointTuple } from './types';
 import {
   buildGraph,
   DeepPartial,
@@ -19,8 +17,11 @@ import {
   NodeType,
   ROOT_NAME
 } from 'dagre-compound';
+
 import { isArray, isObject } from '../util';
 import { SafeAny } from './any';
+import { Base } from './base';
+import { Combo, DagreCompoundLayoutOptions, OutNode, PointTuple } from './types';
 
 interface IPoint {
   x: number;

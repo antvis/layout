@@ -1,5 +1,5 @@
-import { Node, Edge, Combo, Model, PointTuple } from './types';
 import { SafeAny } from './any';
+import { Combo, Edge, Model, Node, PointTuple } from './types';
 
 export class Base {
   public nodes: Node[] | null = [];

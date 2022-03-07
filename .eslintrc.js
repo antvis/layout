@@ -1,15 +1,14 @@
 // https://eslint.org/docs/rules/
 module.exports = {
-  extends: ['eslint:recommended', 'plugin:@typescript-eslint/recommended'],
+  extends: ['eslint:recommended', 'plugin:@typescript-eslint/recommended', 'plugin:prettier/recommended'],
   parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaVersion: 12,
     sourceType: 'module',
     project: ['./tsconfig.json']
   },
-  plugins: ['@typescript-eslint', 'prettier'],
+  plugins: ['@typescript-eslint', 'simple-import-sort'],
   rules: {
-    'prettier/prettier': 'error',
     '@typescript-eslint/array-type': [
       'error',
       {
@@ -93,6 +92,8 @@ module.exports = {
     // 'no-underscore-dangle': 'error',
     'no-template-curly-in-string': 'error',
     'prefer-object-spread': 'error',
-    'prefer-template': 'error'
+    'prefer-template': 'error',
+    'simple-import-sort/imports': 'error',
+    'simple-import-sort/exports': 'error'
   }
 };

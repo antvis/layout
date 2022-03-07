@@ -1,6 +1,6 @@
-import Grid from './grid';
-import { INode, IEdgeInfo } from './type';
 import { SafeAny } from '../any';
+import Grid from './grid';
+import { IEdgeInfo, INode } from './type';
 
 export default function layout(
   data: {

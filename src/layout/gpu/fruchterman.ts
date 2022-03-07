@@ -3,16 +3,17 @@
  * @author shiwu.wyy@antfin.com
  */
 
-import { OutNode, Edge, PointTuple, IndexMap, FruchtermanGPULayoutOptions } from '../types';
-import { Base } from '../base';
-import { isNumber } from '../../util';
 import { World } from '@antv/g-webgpu';
+
+import { isNumber } from '../../util';
 // compile at runtime in dev mode
-import { buildTextureData, attributesToTextureData } from '../../util/gpu';
-// use compiled bundle in prod mode
-import { fruchtermanBundle, clusterBundle } from './fruchtermanShader';
-import { LAYOUT_MESSAGE } from '../constants';
+import { attributesToTextureData, buildTextureData } from '../../util/gpu';
 import { SafeAny } from '../any';
+import { Base } from '../base';
+import { LAYOUT_MESSAGE } from '../constants';
+import { Edge, FruchtermanGPULayoutOptions, IndexMap, OutNode, PointTuple } from '../types';
+// use compiled bundle in prod mode
+import { clusterBundle, fruchtermanBundle } from './fruchtermanShader';
 // import { Compiler } from '@antv/g-webgpu-compiler'
 // import { fruchtermanCode, clusterCode } from './fruchtermanShader'
 

@@ -3,10 +3,10 @@
  * @author shiwu.wyy@antfin.com
  */
 
-import { OutNode, Edge, PointTuple, IndexMap, Point, GForceLayoutOptions } from './types';
-import { Base } from './base';
-import { isNumber, isFunction, isArray, getDegree, isObject, getEdgeTerminal } from '../util';
+import { getDegree, getEdgeTerminal, isArray, isFunction, isNumber, isObject } from '../util';
 import { SafeAny } from './any';
+import { Base } from './base';
+import { Edge, GForceLayoutOptions, IndexMap, OutNode, Point, PointTuple } from './types';
 
 type INode = OutNode & {
   size: number | PointTuple;

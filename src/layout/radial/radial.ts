@@ -3,12 +3,12 @@
  * @author shiwu.wyy@antfin.com
  */
 
-import { PointTuple, Node, OutNode, Edge, Matrix, RadialLayoutOptions } from '../types';
-import { isNaN, isArray, isFunction, isNumber, isString, floydWarshall, getAdjMatrix, isObject } from '../../util';
+import { floydWarshall, getAdjMatrix, isArray, isFunction, isNaN, isNumber, isObject, isString } from '../../util';
+import { SafeAny } from '../any';
 import { Base } from '../base';
+import { Edge, Matrix, Node, OutNode, PointTuple, RadialLayoutOptions } from '../types';
 import MDS from './mds';
 import RadialNonoverlapForce, { RadialNonoverlapForceParam } from './radialNonoverlapForce';
-import { SafeAny } from '../any';
 
 type INode = OutNode & {
   size?: number | PointTuple;

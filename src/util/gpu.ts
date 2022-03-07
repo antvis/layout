@@ -1,4 +1,4 @@
-import { OutNode, Edge, IndexMap, SafeAny } from '../layout';
+import { Edge, IndexMap, OutNode, SafeAny } from '../layout';
 import { isNumber } from './';
 import { getEdgeTerminal } from './math';
 

@@ -1,4 +1,4 @@
-import { Matrix, Model, IndexMap, Edge, OutNode } from '../layout';
+import { Edge, IndexMap, Matrix, Model, OutNode } from '../layout';
 import { isObject } from './object';
 
 export const getEdgeTerminal = (edge: Edge, type: 'source' | 'target'): string => {

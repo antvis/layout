@@ -1,9 +1,10 @@
 import * as d3Force from 'd3-force';
+
+import { SafeAny } from '../any';
+import { DagreLayout } from '../dagre';
 import forceGrid from './forceGrid';
 import mysqlWorkbench from './mysqlWorkbench';
-import { DagreLayout } from '../dagre';
-import { INode, IEdge } from './type';
-import { SafeAny } from '../any';
+import { IEdge, INode } from './type';
 
 export default function layout(data: SafeAny, options: SafeAny): Promise<void> {
   const { nodes, edges } = data;

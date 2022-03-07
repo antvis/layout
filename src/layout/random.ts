@@ -3,8 +3,8 @@
  * @author shiwu.wyy@antfin.com
  */
 
-import { PointTuple, OutNode, Edge, RandomLayoutOptions } from './types';
 import { Base } from './base';
+import { Edge, OutNode, PointTuple, RandomLayoutOptions } from './types';
 
 /**
  * 随机布局

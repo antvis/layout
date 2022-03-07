@@ -3,12 +3,12 @@
  * @author shiwu.wyy@antfin.com
  */
 
-import { Edge, Combo, OutNode, PointTuple, ComboTree, ComboCombinedLayoutOptions } from './types';
-import { FORCE_LAYOUT_TYPE_MAP } from './constants';
-import { Base } from './base';
-import { isArray, isNumber, isFunction, traverseTreeUp, isObject, findMinMaxNodeXY } from '../util';
-import { CircularLayout, ConcentricLayout, GridLayout, RadialLayout, GForceLayout, MDSLayout } from '.';
+import { findMinMaxNodeXY, isArray, isFunction, isNumber, isObject, traverseTreeUp } from '../util';
+import { CircularLayout, ConcentricLayout, GForceLayout, GridLayout, MDSLayout, RadialLayout } from '.';
 import { SafeAny } from './any';
+import { Base } from './base';
+import { FORCE_LAYOUT_TYPE_MAP } from './constants';
+import { Combo, ComboCombinedLayoutOptions, ComboTree, Edge, OutNode, PointTuple } from './types';
 
 type Node = OutNode & {
   depth?: number;

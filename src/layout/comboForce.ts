@@ -3,10 +3,10 @@
  * @author shiwu.wyy@antfin.com
  */
 
-import { Edge, OutNode, PointTuple, IndexMap, Combo, ComboTree, Point, ComboForceLayoutOptions } from './types';
-import { Base } from './base';
-import { isArray, isNumber, isFunction, traverseTreeUp, isObject, getEdgeTerminal } from '../util';
+import { getEdgeTerminal, isArray, isFunction, isNumber, isObject, traverseTreeUp } from '../util';
 import { SafeAny } from './any';
+import { Base } from './base';
+import { Combo, ComboForceLayoutOptions, ComboTree, Edge, IndexMap, OutNode, Point, PointTuple } from './types';
 
 type Node = OutNode & {
   depth: number;

@@ -1,5 +1,5 @@
-import { IEdge, IMysqlNode } from './type';
 import { SafeAny } from '../any';
+import { IEdge, IMysqlNode } from './type';
 
 const graphWidth = 1200;
 const graphHeight = 800;
