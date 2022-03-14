@@ -1,5 +1,9 @@
 # ChangeLog
 
+#### 0.2.1
+
+- fix: gForce with same node positions;
+
 #### 0.2.0
 
 - chore: the beta features;
