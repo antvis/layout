@@ -37,7 +37,6 @@ describe('#CircularLayout', () => {
 
     // 默认 height width 是 300，未配置 radius 时，radius 为 150, center 是 [0, 0]
     expect(mathEqual(data.nodes[0].x, 300)).toEqual(true);
-    expect(data.nodes[0].x).toBe(300);
     expect(mathEqual(data.nodes[0].y, 150)).toEqual(true);
   });
 
