@@ -6,7 +6,7 @@ type Graph = graphlib.Graph;
 const addBorderSegments = (g: Graph) => {
   const dfs = (v: string) => {
     const children = g.children(v);
-    const node: any = g.node(v);
+    const node: any = g.node(v)!;
     if (children?.length) {
       children.forEach((child) => dfs(child));
     }

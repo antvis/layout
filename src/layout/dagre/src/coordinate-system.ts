@@ -22,7 +22,7 @@ const undo = (g: Graph) => {
 };
 
 const swapWidthHeight = (g: Graph) => {
-  g.nodes().forEach((v) => { swapWidthHeightOne(g.node(v)); });
+  g.nodes().forEach((v) => { swapWidthHeightOne(g.node(v)!) });
   g.edges().forEach((e) => { swapWidthHeightOne(g.edge(e)); });
 };
 
@@ -33,10 +33,10 @@ const swapWidthHeightOne = (attrs: any) => {
 };
 
 const reverseY = (g: Graph) => {
-  g.nodes().forEach((v) => { reverseYOne(g.node(v)); });
+  g.nodes().forEach((v) => { reverseYOne(g.node(v)) });
 
   g.edges().forEach((e) => {
-    const edge = g.edge(e);
+    const edge = g.edge(e)!;
     edge.points?.forEach((point) => reverseYOne(point));
     if (edge.hasOwnProperty("y")) {
       reverseYOne(edge);
@@ -49,10 +49,10 @@ const reverseYOne = (attrs: any) => {
 };
 
 const swapXY = (g: Graph) => {
-  g.nodes().forEach((v) => { swapXYOne(g.node(v)); });
+  g.nodes().forEach((v) => { swapXYOne(g.node(v)) });
 
   g.edges().forEach((e) => {
-    const edge = g.edge(e);
+    const edge = g.edge(e)!;
     edge.points?.forEach((point) => swapXYOne(point));
     if (edge.hasOwnProperty("x")) {
       swapXYOne(edge);

@@ -81,7 +81,7 @@ const sweepLayerGraphs = (layerGraphs: IGraph[], biasRight: any, usePrev?: any) 
     const root = lg.graph().root as string;
     const sorted = sortSubgraph(lg, root, cg, biasRight, usePrev);
     for (let i = 0; i < sorted.vs?.length || 0; i ++) {
-      lg.node(sorted.vs[i]).order = i;
+      lg.node(sorted.vs[i])!.order = i;
     }
     addSubgraphConstraints(lg, cg, sorted.vs);
   });
@@ -90,7 +90,7 @@ const sweepLayerGraphs = (layerGraphs: IGraph[], biasRight: any, usePrev?: any) 
 const assignOrder = (g: IGraph, layering: any) => {
   layering?.forEach((layer: any) => {
     layer?.forEach((v: string, i: number) => {
-      g.node(v).order = i;
+      g.node(v)!.order = i;
     });
   });
 };

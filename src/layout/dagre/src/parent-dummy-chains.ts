@@ -6,7 +6,7 @@ const parentDummyChains = (g: Graph) => {
   const postorderNums = postorder(g);
 
   g.graph().dummyChains?.forEach((v: any) => {
-    let node = g.node(v);
+    let node = g.node(v)!;
     const edgeObj = node.edgeObj;
     if (!edgeObj) return;
     const pathData = findPath(g, postorderNums, edgeObj.v, edgeObj.w);
@@ -17,11 +17,11 @@ const parentDummyChains = (g: Graph) => {
     let ascending = true;
 
     while (v !== edgeObj.w) {
-      node = g.node(v);
+      node = g.node(v)!;
 
       if (ascending) {
         while ((pathV = path[pathIdx]) !== lca &&
-               (g.node(pathV).maxRank as number) < (node.rank as number)) {
+               (g.node(pathV)!.maxRank as number) < (node.rank as number)) {
           pathIdx++;
         }
 

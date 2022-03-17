@@ -25,13 +25,13 @@ const addDummyNode = (g: IGraph, type: any, attrs: any, name: string) => {
  */
 const simplify = (g: IGraph) => {
   const simplified = new Graph().setGraph(g.graph());
-  g.nodes().forEach((v) => { simplified.setNode(v, g.node(v)); });
+  g.nodes().forEach((v) => { simplified.setNode(v, g.node(v)) });
   g.edges().forEach((e) => {
     const simpleLabel = simplified.edge(e.v, e.w) || { weight: 0, minlen: 1 };
-    const label = g.edge(e);
+    const label = g.edge(e)!;
     simplified.setEdge(e.v, e.w, {
       weight: simpleLabel.weight + label.weight,
-      minlen: Math.max(simpleLabel.minlen, label.minlen)
+      minlen: Math.max(simpleLabel.minlen, label.minlen!)
     });
   });
   return simplified;
@@ -44,7 +44,7 @@ const asNonCompoundGraph = (g: IGraph): IGraph => {
       simplified.setNode(v, g.node(v));
     }
   });
-  g.edges().forEach((e) => simplified.setEdge(e, g.edge(e)));
+  g.edges().forEach((e) => simplified.setEdgeObj(e, g.edge(e)));
   return simplified;
 };
 
@@ -60,7 +60,7 @@ const successorWeights = (g: IGraph) => {
   const weightMap = g.nodes().map((v: string) => {
     const sucs: any = {};
     g.outEdges(v)?.forEach((e) => {
-      sucs[e.w] = (sucs[e.w] || 0) + g.edge(e).weight;
+      sucs[e.w] = (sucs[e.w] || 0) + g.edge(e)?.weight;
     });
     return sucs;
   });
@@ -71,7 +71,7 @@ const predecessorWeights = (g: IGraph) => {
   const weightMap = g.nodes().map((v) => {
     const preds: any = {};
     g.inEdges(v)?.forEach((e) => {
-      preds[e.v] = (preds[e.v] || 0) + g.edge(e).weight;
+      preds[e.v] = (preds[e.v] || 0) + g.edge(e)?.weight;
     });
     return preds;
   });
@@ -134,14 +134,14 @@ const buildLayerMatrix = (g: IGraph) => {
   }
   // const layering = _.map(_.range(maxRank(g) + 1), function() { return []; });
   g.nodes().forEach((v: string) => {
-    const node = g.node(v);
+    const node = g.node(v)!;
     const rank = node.rank;
     if (rank !== undefined && layering[rank]) {
       layeringNodes[rank].push(v);
     }
   });
   layeringNodes?.forEach((layer: any, rank: number) => {
-    layer?.sort((va: string, vb: string) => (g.node(va) as any)?.order - (g.node(vb) as any)?.order);
+    layer?.sort((va: string, vb: string) => (g.node(va))!.order! - (g.node(vb))?.order!);
     layer.forEach((v: string) => {
       layering[rank].push(v);
     });
@@ -154,10 +154,10 @@ const buildLayerMatrix = (g: IGraph) => {
  * rank(v) >= 0 and at least one node w has rank(w) = 0.
  */
 const normalizeRanks = (g: IGraph) => {
-  const nodeRanks = g.nodes().filter((v) => g.node(v).rank !== undefined).map((v) => (g.node(v).rank as number));
+  const nodeRanks = g.nodes().filter((v) => g.node(v)!.rank !== undefined).map((v) => (g.node(v)!.rank as number));
   const min = Math.min(...nodeRanks);
   g.nodes().forEach((v) => {
-    const node = g.node(v);
+    const node = g.node(v)!;
     if (node.hasOwnProperty("rank")) {
       if (!node.rank) node.rank = 0;
       node.rank -= min;
@@ -167,12 +167,12 @@ const normalizeRanks = (g: IGraph) => {
 
 const removeEmptyRanks = (g: IGraph) => {
   // Ranks may not start at 0, so we need to offset them
-  const nodeRanks = g.nodes().filter((v) => g.node(v).rank !== undefined).map((v) => (g.node(v).rank as number));
+  const nodeRanks = g.nodes().filter((v) => g.node(v)!.rank !== undefined).map((v) => (g.node(v)!.rank as number));
   const offset = Math.min(...nodeRanks);
 
   const layers: any = [];
   g.nodes().forEach((v) => {
-    const rank = (g.node(v)?.rank || 0) - offset;
+    const rank = (g.node(v)!.rank || 0) - offset;
     if (!layers[rank]) {
       layers[rank] = [];
     }
@@ -187,8 +187,8 @@ const removeEmptyRanks = (g: IGraph) => {
       --delta;
     } else if (delta) {
       vs?.forEach((v: string) => {
-        if (!g.node(v).rank) g.node(v).rank = 0;
-        (g.node(v).rank as any) += delta;
+        if (!g.node(v)!.rank) g.node(v)!.rank = 0;
+        (g.node(v)!.rank as any) += delta;
       });
     }
   }
@@ -208,7 +208,7 @@ const addBorderNode = (g: IGraph, prefix: string, rank?: number, order?: number)
 
 const maxRank = (g: IGraph) => {
   const nodeRanks = g.nodes().map((v) => {
-    const rank = g.node(v).rank;
+    const rank = g.node(v)!.rank;
     if (rank !== undefined) {
       return rank;
     }

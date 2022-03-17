@@ -80,12 +80,12 @@ const runLayout = (g: IGraph, time: any, opts: any) => {
  * TODO: 暂时没有考虑涉及层级变动的布局，只保证原来布局层级和相对顺序不变
  */
 const inheritOrder = (currG: IGraph, prevG: IGraph) => {
-  const prevNodeMap: any = prevG._nodes || {};
   currG.nodes().forEach((n: string) => {
-    const node = currG.node(n);
-    if (prevNodeMap[n] !== undefined) {
-      node.fixorder = prevNodeMap[n]._order;
-      delete prevNodeMap[n]._order;
+    const node = currG.node(n)!;
+    const prevNode = prevG.node(n)!;
+    if (prevNode !== undefined) {
+      node.fixorder = prevNode._order;
+      delete prevNode._order;
     } else {
       delete node.fixorder;
     }
@@ -101,9 +101,9 @@ const inheritOrder = (currG: IGraph, prevG: IGraph) => {
 const updateInputGraph = (inputGraph: IGraph, layoutGraph: IGraph) => {
   inputGraph.nodes().forEach((v) => {
     const inputLabel = inputGraph.node(v);
-    const layoutLabel = layoutGraph.node(v);
 
     if (inputLabel) {
+      const layoutLabel = layoutGraph.node(v)!;
       inputLabel.x = layoutLabel.x;
       inputLabel.y = layoutLabel.y;
       inputLabel._order = layoutLabel.order;
@@ -117,8 +117,8 @@ const updateInputGraph = (inputGraph: IGraph, layoutGraph: IGraph) => {
   });
 
   inputGraph.edges().forEach((e) => {
-    const inputLabel = inputGraph.edge(e);
-    const layoutLabel = layoutGraph.edge(e);
+    const inputLabel = inputGraph.edge(e)!;
+    const layoutLabel = layoutGraph.edge(e)!;
 
     inputLabel.points = layoutLabel.points;
     if (layoutLabel.hasOwnProperty("x")) {
@@ -184,7 +184,7 @@ const buildLayoutGraph = (inputGraph: IGraph) => {
       if (edge[key] !== undefined) pickedProperties[key] = edge[key];
     });
 
-    g.setEdge(e, Object.assign({},
+    g.setEdgeObj(e, Object.assign({},
       edgeDefaults,
       selectNumberAttrs(edge, edgeNumAttrs),
       pickedProperties));
@@ -206,15 +206,15 @@ const makeSpaceForEdgeLabels = (g: IGraph) => {
   if (!graph.ranksep) graph.ranksep = 0;
   graph.ranksep /= 2;
   g.nodes().forEach((n) => {
-    const node = g.node(n);
+    const node = g.node(n)!;
     if (!isNaN(node.layer as any)) {
       if (!node.layer) node.layer = 0;
       else node.layer *= 2; // TODO: 因为默认的rank变为两倍，设定的layer也*2
     }
   });
   g.edges().forEach((e) => {
-    const edge = g.edge(e);
-    edge.minlen *= 2;
+    const edge = g.edge(e)!;
+    edge.minlen! *= 2;
     if (edge.labelpos?.toLowerCase() !== "c") {
       if (graph.rankdir === "TB" || graph.rankdir === "BT") {
         edge.width += edge.labeloffset;
@@ -233,10 +233,10 @@ const makeSpaceForEdgeLabels = (g: IGraph) => {
  */
 const injectEdgeLabelProxies = (g: IGraph) => {
   g.edges().forEach((e) => {
-    const edge = g.edge(e);
+    const edge = g.edge(e)!;
     if (edge.width && edge.height) {
-      const v = g.node(e.v);
-      const w = g.node(e.w);
+      const v = g.node(e.v)!;
+      const w = g.node(e.w)!;
       const label = { e, rank: ((w.rank as number) - (v.rank as number)) / 2 + (v.rank as number) };
       util.addDummyNode(g, "edge-proxy", label, "_ep");
     }
@@ -246,10 +246,10 @@ const injectEdgeLabelProxies = (g: IGraph) => {
 const assignRankMinMax = (g: IGraph) => {
   let maxRank = 0;
   g.nodes().forEach((v) => {
-    const node = g.node(v);
+    const node = g.node(v)!;
     if (node.borderTop) {
-      node.minRank = g.node(node.borderTop).rank;
-      node.maxRank = g.node(node.borderBottom).rank;
+      node.minRank = g.node(node.borderTop)?.rank;
+      node.maxRank = g.node(node.borderBottom)?.rank;
       maxRank = Math.max(maxRank, node.maxRank || -Infinity);
     }
   });
@@ -258,9 +258,9 @@ const assignRankMinMax = (g: IGraph) => {
 
 const removeEdgeLabelProxies = (g: IGraph) => {
   g.nodes().forEach((v) => {
-    const node = g.node(v);
+    const node = g.node(v)!;
     if (node.dummy === "edge-proxy") {
-      g.edge((node as any).e).labelRank = node.rank;
+      g.edge((node as any).e)!.labelRank = node.rank;
       g.removeNode(v);
     }
   });
@@ -291,9 +291,9 @@ const translateGraph = (g: IGraph) => {
     }
   };
 
-  g.nodes().forEach((v) => { getExtremes(g.node(v)); });
+  g.nodes().forEach((v) => { getExtremes(g.node(v)) });
   g.edges().forEach((e) => {
-    const edge = g.edge(e);
+    const edge = g.edge(e)!;
     if (edge.hasOwnProperty("x")) {
       getExtremes(edge);
     }
@@ -303,13 +303,13 @@ const translateGraph = (g: IGraph) => {
   minY -= marginY;
 
   g.nodes().forEach((v) => {
-    const node = g.node(v);
-    node.x -= minX;
-    node.y -= minY;
+    const node = g.node(v)!;
+      node.x! -= minX;
+      node.y! -= minY;    
   });
 
   g.edges().forEach((e) => {
-    const edge = g.edge(e);
+    const edge = g.edge(e)!;
     edge.points?.forEach((p) => {
       p.x -= minX;
       p.y -= minY;
@@ -324,7 +324,7 @@ const translateGraph = (g: IGraph) => {
 
 const assignNodeIntersects = (g: IGraph) => {
   g.edges().forEach((e) => {
-    const edge = g.edge(e);
+    const edge = g.edge(e)!;
     const nodeV = g.node(e.v);
     const nodeW = g.node(e.w);
     let p1;
@@ -344,14 +344,14 @@ const assignNodeIntersects = (g: IGraph) => {
 
 const fixupEdgeLabelCoords = (g: IGraph) => {
   g.edges().forEach((e) => {
-    const edge = g.edge(e);
+    const edge = g.edge(e)!;
     if (edge.hasOwnProperty("x")) {
       if (edge.labelpos === "l" || edge.labelpos === "r") {
-        edge.width -= edge.labeloffset;
+        edge.width! -= edge.labeloffset;
       }
       switch (edge.labelpos) {
-      case "l": edge.x -= edge.width / 2 + edge.labeloffset; break;
-      case "r": edge.x += edge.width / 2 + edge.labeloffset; break;
+      case "l": edge.x -= edge.width! / 2 + edge.labeloffset; break;
+      case "r": edge.x += edge.width! / 2 + edge.labeloffset; break;
       }
     }
   });
@@ -359,9 +359,9 @@ const fixupEdgeLabelCoords = (g: IGraph) => {
 
 const reversePointsForReversedEdges = (g: IGraph) => {
   g.edges().forEach((e) => {
-    const edge = g.edge(e);
+    const edge = g.edge(e)!;
     if (edge.reversed) {
-      edge.points.reverse();
+      edge.points?.reverse();
     }
   });
 };
@@ -369,21 +369,21 @@ const reversePointsForReversedEdges = (g: IGraph) => {
 const removeBorderNodes = (g: IGraph) => {
   g.nodes().forEach((v) => {
     if (g.children(v)?.length) {
-      const node = g.node(v);
+      const node = g.node(v)!;
       const t = g.node(node.borderTop);
       const b = g.node(node.borderBottom);
       const l = g.node(node.borderLeft[node.borderLeft?.length - 1]);
       const r = g.node(node.borderRight[node.borderRight?.length - 1]);
 
-      node.width = Math.abs(r?.x - l?.x) || 10;
-      node.height = Math.abs(b?.y - t?.y) || 10;
+      node.width = Math.abs(r?.x! - l?.x!) || 10;
+      node.height = Math.abs(b?.y! - t?.y!) || 10;
       node.x = (l?.x || 0) + node.width / 2;
       node.y = (t?.y || 0) + node.height / 2;
     }
   });
 
   g.nodes().forEach((v) => {
-    if (g.node(v).dummy === "border") {
+    if (g.node(v)!.dummy === "border") {
       g.removeNode(v);
     }
   });
@@ -392,22 +392,22 @@ const removeBorderNodes = (g: IGraph) => {
 const removeSelfEdges = (g: IGraph) => {
   g.edges().forEach((e) => {
     if (e.v === e.w) {
-      const node = g.node(e.v);
+      const node = g.node(e.v)!;
       if (!node.selfEdges) {
         node.selfEdges = [];
       }
       node.selfEdges.push({ e, label: g.edge(e) });
-      g.removeEdge(e);
+      g.removeEdgeObj(e);
     }
   });
 };
 
 const insertSelfEdges = (g: IGraph) => {
-  const layers = util.buildLayerMatrix(g);
+  const layers = util.buildLayerMatrix(g) as unknown as any[];
   layers?.forEach((layer: string[]) => {
     let orderShift = 0;
     layer?.forEach((v: string, i: number) => {
-      const node = g.node(v);
+      const node = g.node(v)!;
       node.order = i + orderShift;
       node.selfEdges?.forEach((selfEdge: any) => {
         util.addDummyNode(g, "selfedge", {
@@ -426,13 +426,13 @@ const insertSelfEdges = (g: IGraph) => {
 
 const positionSelfEdges = (g: IGraph) => {
   g.nodes().forEach((v) => {
-    const node = g.node(v);
+    const node = g.node(v)!;
     if (node.dummy === "selfedge") {
-      const selfNode = g.node((node as any).e.v);
-      const x = selfNode.x + selfNode.width / 2;
-      const y = selfNode.y;
-      const dx = node.x - x;
-      const dy = selfNode.height / 2;
+      const selfNode = g.node((node as any).e.v)!;
+      const x = selfNode.x! + selfNode.width! / 2;
+      const y = selfNode.y!;
+      const dx = node.x! - x;
+      const dy = selfNode.height! / 2;
       g.setEdge((node as any).e, node.label);
       g.removeNode(v);
       node.label.points = [

@@ -27,14 +27,14 @@ const longestPath = (g: Graph) => {
   const visited: any = {};
 
   const dfs = (v: string) => {
-    const label = g.node(v);
+    const label = g.node(v)!;
     if (visited.hasOwnProperty(v)) {
       return label.rank;
     }
     visited[v] = true;
 
     const lengths = g.outEdges(v)?.map((e: any) => {
-      return ((dfs(e.w as string) as number) - g.edge(e).minlen) || Infinity;
+      return ((dfs(e.w as string) as number) - g.edge(e)!.minlen!) || Infinity;
     }) as number[];
     let rank = Math.min(...lengths);
 
@@ -57,14 +57,14 @@ const longestPathWithLayer = (g: Graph) => {
   let minRank = 0;
 
   const dfs = (v: string) => {
-    const label = g.node(v);
+    const label = g.node(v)!;
     if (visited.hasOwnProperty(v)) {
       return label.rank;
     }
     visited[v] = true;
 
     const lengths = g.outEdges(v)?.map((e) => {
-      return ((dfs(e.w) as number) - g.edge(e).minlen) || Infinity;
+      return ((dfs(e.w) as number) - g.edge(e)!.minlen!) || Infinity;
     }) as number[];
     let rank = Math.min(...lengths);
 
@@ -85,7 +85,7 @@ const longestPathWithLayer = (g: Graph) => {
 
   // forward一遍，赋值层级
   const dfsForward = (v: string, nextRank: number) => {
-    const label = g.node(v);
+    const label = g.node(v)!;
 
     const currRank = (!isNaN(label.layer as number) ? label.layer : nextRank) as number;
 
@@ -96,13 +96,13 @@ const longestPathWithLayer = (g: Graph) => {
 
     // DFS遍历子节点
     g.outEdges(v)?.map((e) => {
-      dfsForward(e.w, currRank + g.edge(e).minlen);
+      dfsForward(e.w, currRank + g.edge(e)!.minlen!);
     });
   };
 
   // 指定层级的，更新下游
   g.nodes().forEach((n) => {
-    const label = g.node(n);
+    const label = g.node(n)!;
     if (!isNaN(label.layer as number)) {
       dfsForward(n, (label.layer as number)); // 默认的dummy root所在层的rank是-1
     } else {
@@ -116,7 +116,7 @@ const longestPathWithLayer = (g: Graph) => {
  * difference between the length of the edge and its minimum length.
  */
 const slack = (g: Graph, e: any) => {
-  return (g.node(e.w).rank as number) - (g.node(e.v).rank as number) - (g.edge(e).minlen as number);
+  return (g.node(e.w)!.rank as number) - (g.node(e.v)!.rank as number) - (g.edge(e)!.minlen as number);
 };
 
 export {

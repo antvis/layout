@@ -26,16 +26,16 @@ const run = (g: Graph) => {
 
 const normalizeEdge = (g: Graph, e: Edge) => {
   let v = e.v;
-  let vRank = g.node(v).rank as number;
+  let vRank = g.node(v)!.rank as number;
   const w = e.w;
-  const wRank = g.node(w).rank as number;
+  const wRank = g.node(w)!.rank as number;
   const name = e.name;
-  const edgeLabel = g.edge(e);
+  const edgeLabel = g.edge(e)!;
   const labelRank = edgeLabel.labelRank;
 
   if (wRank === vRank + 1) return;
 
-  g.removeEdge(e);
+  g.removeEdgeObj(e);
 
   let dummy;
   let attrs: any;
@@ -69,10 +69,10 @@ const normalizeEdge = (g: Graph, e: Edge) => {
 
 const undo = (g: Graph) => {
   g.graph().dummyChains?.forEach((v) => {
-    let node = g.node(v);
+    let node = g.node(v)!;
     const origLabel = node.edgeLabel;
     let w;
-    node.edgeObj && g.setEdge(node.edgeObj, origLabel);
+    node.edgeObj && g.setEdgeObj(node.edgeObj, origLabel);
     let currentV: any = v;
     while (node.dummy) {
       w = g.successors(currentV)?.[0];
@@ -85,7 +85,7 @@ const undo = (g: Graph) => {
         origLabel.height = node.height;
       }
       currentV = w;
-      node = g.node(currentV);
+      node = g.node(currentV)!;
     }
   });
 };

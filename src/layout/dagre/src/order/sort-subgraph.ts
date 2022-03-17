@@ -8,7 +8,7 @@ type Graph = IGraphLib.Graph;
 const sortSubgraph = (g: Graph, v: string, cg: Graph, biasRight: any, usePrev?: any) => {
   let movable = g.children(v);
   // fixorder的点不参与排序（这个方案不合适，只排了新增节点，和原来的分离）
-  const node = g.node(v);
+  const node = g.node(v)!;
   const bl = node ? node.borderLeft : undefined;
   const br = node ? node.borderRight: undefined;
   const subgraphs: any = {};
@@ -36,7 +36,7 @@ const sortSubgraph = (g: Graph, v: string, cg: Graph, biasRight: any, usePrev?: 
   // 添加fixorder信息到entries里边
   // TODO: 不考虑复合情况，只用第一个点的fixorder信息，后续考虑更完备的实现
   entries.filter((e) => !!e.vs || e.vs?.length > 0)?.forEach((e) => {
-    const node = g.node(e.vs[0]);
+    const node = g.node(e.vs[0])!;
     e.fixorder = node.fixorder;
     e.order = node.order;
   });
@@ -47,8 +47,8 @@ const sortSubgraph = (g: Graph, v: string, cg: Graph, biasRight: any, usePrev?: 
     // @ts-ignore
     result.vs = [bl, result.vs, br].flat();
     if (g.predecessors(bl)?.length) {
-      const blPred = g.node(g.predecessors(bl)?.[0] || {});
-      const brPred = g.node(g.predecessors(br)?.[0] || {});
+      const blPred = g.node(g.predecessors(bl)?.[0] || '')!;
+      const brPred = g.node(g.predecessors(br)?.[0] || '')!;
       if (!result.hasOwnProperty("barycenter")) {
         result.barycenter = 0;
         result.weight = 0;

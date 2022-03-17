@@ -1,7 +1,9 @@
 // @ts-ignore
-import glib from '@dagrejs/graphlib';
+import {Graph, algorithm} from '@antv/graphlib';
 
-let graphlib = glib;
+let graphlib = {
+  Graph, alg: algorithm
+};
 
 
 if (!graphlib && typeof window !== "undefined") {

@@ -37,10 +37,10 @@ const Graph = (graphlib as any).Graph;
 const buildLayerGraph = (g: IGraph, rank: number, relationship: string) => {
   const root = createRootNode(g);
   const result = new Graph({ compound: true }).setGraph({ root })
-      .setDefaultNodeLabel((v: string) => { return g.node(v); });
+      .setDefaultNodeLabel((v: string) => { return g.node(v)!; });
 
   g.nodes().forEach((v) => {
-    const node = g.node(v);
+    const node = g.node(v)!;
     const parent = g.parent(v);
 
     if (node.rank === rank || (node.minRank as number) <= rank && rank <= (node.maxRank as number)) {
@@ -52,7 +52,7 @@ const buildLayerGraph = (g: IGraph, rank: number, relationship: string) => {
         const u = e.v === v ? e.w : e.v;
         const edge = result.edge(u, v);
         const weight = edge !== undefined ? edge.weight : 0;
-        result.setEdge(u, v, { weight: g.edge(e).weight + weight });
+        result.setEdge(u, v, { weight: g.edge(e)!.weight + weight });
       });
 
       if (node.hasOwnProperty("minRank")) {

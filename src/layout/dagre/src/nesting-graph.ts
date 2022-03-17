@@ -37,7 +37,7 @@ const run = (g: Graph) => {
   g.graph().nestingRoot = root;
 
   // Multiply minlen by nodeSep to align nodes on non-border ranks.
-  g.edges().forEach((e) =>  { g.edge(e).minlen *= nodeSep; });
+  g.edges().forEach((e) =>  { g.edge(e)!.minlen! *= nodeSep; });
 
   // Calculate a weight that is sufficient to keep subgraphs vertically compact
   const weight = sumWeights(g) + 1;
@@ -63,7 +63,7 @@ const dfs = (g: Graph, root: string, nodeSep: number, weight: number, height: nu
 
   const top = util.addBorderNode(g, "_bt");
   const bottom = util.addBorderNode(g, "_bb");
-  const label = g.node(v);
+  const label = g.node(v)!;
 
   g.setParent(top, v);
   label.borderTop = top;
@@ -73,7 +73,7 @@ const dfs = (g: Graph, root: string, nodeSep: number, weight: number, height: nu
   children?.forEach((child) => {
     dfs(g, root, nodeSep, weight, height, depths, child);
 
-    const childNode = g.node(child);
+    const childNode = g.node(child)!;
     const childTop = childNode.borderTop ? childNode.borderTop : child;
     const childBottom = childNode.borderBottom ? childNode.borderBottom : child;
     const thisWeight = childNode.borderTop ? weight : 2 * weight;
@@ -111,7 +111,7 @@ const treeDepths = (g: Graph): number[] => {
 const sumWeights = (g: Graph) => {
   let result = 0;
   g.edges().forEach((e) => {
-    result += g.edge(e).weight;
+    result += g.edge(e)!.weight!;
   });
   return result;
 };
@@ -121,9 +121,9 @@ const cleanup = (g: Graph) => {
   graphLabel.nestingRoot && g.removeNode(graphLabel.nestingRoot);
   delete graphLabel.nestingRoot;
   g.edges().forEach((e: any) =>  {
-    const edge = g.edge(e);
+    const edge = g.edge(e)!;
     if (edge.nestingEdge) {
-      g.removeEdge(e);
+      g.removeEdgeObj(e);
     }
   });
 };

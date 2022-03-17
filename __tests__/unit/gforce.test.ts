@@ -28,6 +28,7 @@ describe('#gForceLayout', () => {
       maxIteration: 500,
       gravity: 10,
       enableTick: true,
+      animate: true
     });
     gForce.layout(data);
     expect((data.nodes[0] as any).x).not.toBe(undefined);

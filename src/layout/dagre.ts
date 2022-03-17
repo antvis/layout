@@ -5,7 +5,7 @@
 
 import { Edge, OutNode, DagreLayoutOptions, PointTuple, Point, Node } from "./types";
 import dagre from "./dagre/index";
-import { graphlib as IGraphLib } from './dagre/graphlib';
+import { graphlib, graphlib as IGraphLib } from './dagre/graphlib';
 import { isArray, isNumber, isObject, getEdgeTerminal, getFunc, isString } from "../util";
 import { Base } from "./base";
 
@@ -112,7 +112,7 @@ export class DagreLayout extends Base {
     const g = new dagre.graphlib.Graph({
       multigraph: true,
       compound: true,
-    });
+    }) as graphlib.Graph;
 
     let nodeSizeFunc: (d?: any) => number[];
     if (!nodeSize) {
@@ -214,13 +214,13 @@ export class DagreLayout extends Base {
       let minX = Infinity;
       let minY = Infinity;
       g.nodes().forEach((node: any) => {
-        const coord = g.node(node);
-        if (minX > coord.x) minX = coord.x;
-        if (minY > coord.y) minY = coord.y;
+        const coord = g.node(node)!;
+        if (minX > coord.x!) minX = coord.x!;
+        if (minY > coord.y!) minY = coord.y!;
       });
-      g.edges().forEach((edge: any) => {
-        const coord = g.edge(edge);
-        coord.points.forEach((point: any) => {
+      g.edges().forEach((edge) => {
+        const coord = g.edge(edge)!;
+        coord.points?.forEach((point: any) => {
           if (minX > point.x) minX = point.x;
           if (minY > point.y) minY = point.y;
         });
@@ -233,7 +233,7 @@ export class DagreLayout extends Base {
     if (radial) {
       const { focusNode, ranksep, getRadialPos } = this;
       const focusId = isString(focusNode) ? focusNode: focusNode?.id;
-      const focusLayer = focusId ? g.node(focusId)._rank : 0;
+      const focusLayer = focusId ? g.node(focusId)?._rank : 0;
       const layers: any[] = [];
       const isHorizontal = rankdir === 'LR' || rankdir === 'RL';
       const dim = isHorizontal ? 'y' : 'x';
@@ -242,7 +242,7 @@ export class DagreLayout extends Base {
       let min = Infinity;
       let max = -Infinity;
       g.nodes().forEach((node: any) => {
-        const coord = g.node(node);
+        const coord = g.node(node)! as any;
         const i = nodes.findIndex((it) => it.id === node);
         if (!nodes[i]) return;
         const currentNodesep = nodesepfunc(nodes[i]);
@@ -253,7 +253,7 @@ export class DagreLayout extends Base {
           layers[coord._rank].totalWidth += currentNodesep * 2 + coord[sizeDim];
           if (layers[coord._rank].maxSize < Math.max(coord.width, coord.height)) layers[coord._rank].maxSize = Math.max(coord.width, coord.height);
         } else {
-          const diffLayer = coord._rank - focusLayer;
+          const diffLayer = coord._rank - focusLayer!;
           if (diffLayer === 0) {
             if (!layers[diffLayer]) layers[diffLayer] = { nodes: [], totalWidth: 0, maxSize: -Infinity };
             layers[diffLayer].nodes.push(node);
@@ -292,7 +292,7 @@ export class DagreLayout extends Base {
           const coord = g.node(node);
           radiusMap[node] = radius;
           // 获取变形为 radial 后的直角坐标系坐标
-          const { x: newX, y: newY } = getRadialPos(coord[dim], range, rangeLength, radius, arcRange);
+          const { x: newX, y: newY } = getRadialPos(coord![dim]!, range, rangeLength, radius, arcRange);
           // 将新坐标写入源数据
           const i = nodes.findIndex((it) => it.id === node);
           if (!nodes[i]) return;
@@ -348,13 +348,13 @@ export class DagreLayout extends Base {
         });
         if ((self.edgeLabelSpace) && self.controlPoints && edges[i].type !== "loop") {
           const otherDim = dim === 'x' ? 'y' : 'x';
-          const controlPoints = coord.points.slice(1, coord.points.length - 1);
+          const controlPoints = coord?.points?.slice(1, coord.points.length - 1);
           const newControlPoints: Point[] = [];
-          const sourceOtherDimValue = g.node(edge.v)?.[otherDim];
-          const otherDimDist = sourceOtherDimValue - g.node(edge.w)?.[otherDim];
+          const sourceOtherDimValue = g.node(edge.v)?.[otherDim]!;
+          const otherDimDist = sourceOtherDimValue - g.node(edge.w)?.[otherDim]!;
           const sourceRadius = radiusMap[edge.v];
           const radiusDist = sourceRadius - radiusMap[edge.w];
-          controlPoints.forEach((point: any) => {
+          controlPoints?.forEach((point: any) => {
             // 根据该边的起点、终点半径，及起点、终点、控制点位置关系，确定该控制点的半径
             const cRadius = (point[otherDim] - sourceOtherDimValue) / otherDimDist * radiusDist + sourceRadius;
             // 获取变形为 radial 后的直角坐标系坐标
@@ -369,11 +369,11 @@ export class DagreLayout extends Base {
       });
     } else {
       g.nodes().forEach((node: any) => {
-        const coord = g.node(node);
+        const coord = g.node(node)!;
         const i = nodes.findIndex((it) => it.id === node);
         if (!nodes[i]) return;
-        nodes[i].x = coord.x + dBegin[0];
-        nodes[i].y = coord.y + dBegin[1];
+        nodes[i].x = coord.x! + dBegin[0];
+        nodes[i].y = coord.y! + dBegin[1];
         // @ts-ignore: pass layer order to data for increment layout use
         nodes[i]._order = coord._order;
       });
@@ -385,7 +385,7 @@ export class DagreLayout extends Base {
           return source === edge.v && target === edge.w;
         });
         if ((self.edgeLabelSpace) && self.controlPoints && edges[i].type !== "loop") {
-          edges[i].controlPoints = coord.points.slice(1, coord.points.length - 1); // 去掉头尾
+          edges[i].controlPoints = coord?.points?.slice(1, coord.points.length - 1); // 去掉头尾
           edges[i].controlPoints.forEach((point: any) => {
             point.x += dBegin[0];
             point.y += dBegin[1];

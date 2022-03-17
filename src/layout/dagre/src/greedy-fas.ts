@@ -55,7 +55,7 @@ const removeNode = (g: IGraph, buckets: any, zeroIdx: number, entry: any, collec
 
   g.inEdges(entry.v)?.forEach((edge) => {
     const weight: any = g.edge(edge);
-    const uEntry: Node = g.node(edge.v);
+    const uEntry: Node = g.node(edge.v) as Node;
 
     if (collectPredecessors) {
       results.push({ v: edge.v, w: edge.w });
@@ -68,7 +68,7 @@ const removeNode = (g: IGraph, buckets: any, zeroIdx: number, entry: any, collec
   g.outEdges(entry.v)?.forEach((edge) => {
     const weight: any = g.edge(edge);
     const w = edge.w;
-    const wEntry = g.node(w);
+    const wEntry = g.node(w)!;
     if (wEntry.in === undefined) wEntry.in = 0;
     wEntry.in -= weight;
     assignBucket(buckets, zeroIdx, wEntry);
@@ -91,7 +91,7 @@ const buildState = (g: IGraph, weightFn?: (param: any) => unknown) => {
   // Aggregate weights on nodes, but also sum the weights across multi-edges
   // into a single edge for the fasGraph.
   g.edges().forEach((e) => {
-    const prevWeight = fasGraph.edge(e.v, e.w) || 0;
+    const prevWeight = fasGraph.edge(e) || 0;
     const weight = weightFn?.(e);
     const edgeWeight = prevWeight + weight;
     fasGraph.setEdge(e.v, e.w, edgeWeight);

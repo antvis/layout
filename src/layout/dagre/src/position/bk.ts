@@ -43,15 +43,15 @@ const findType1Conflicts = (g: IGraph, layering?: any) => {
 
       layer?.forEach((v: string, i: number) => {
       const w = findOtherInnerSegmentNode(g, v);
-      const k1 = w ? g.node(w).order : prevLayerLength;
+      const k1 = w ? g.node(w)!.order : prevLayerLength;
 
       if (w || v === lastNode) {
         layer.slice(scanPos, i +1)?.forEach((scanNode: any) => {
           g.predecessors(scanNode)?.forEach((u: any) => {
-            const uLabel = g.node(u);
+            const uLabel = g.node(u)!;
             const uPos = uLabel.order as number;
             if ((uPos < k0 || k1 < uPos) &&
-                !(uLabel.dummy && g.node(scanNode).dummy)) {
+                !(uLabel.dummy && g.node(scanNode)!.dummy)) {
               addConflict(conflicts, u, scanNode);
             }
           });
@@ -81,9 +81,9 @@ const findType2Conflicts = (g: IGraph, layering?: any) => {
     }
     range.forEach((i) => {
       v = south[i];
-      if (g.node(v).dummy) {
+      if (g.node(v)!.dummy) {
         g.predecessors(v)?.forEach((u: any) => {
-          const uNode = g.node(u);
+          const uNode = g.node(u)!;
           if (uNode.dummy &&
               ((uNode.order as number) < prevNorthBorder || (uNode.order as number) > nextNorthBorder)) {
             addConflict(conflicts, u, v);
@@ -100,10 +100,10 @@ const findType2Conflicts = (g: IGraph, layering?: any) => {
     let southPos = 0;
 
       south?.forEach((v: string, southLookahead: number) => {
-      if (g.node(v).dummy === "border") {
+      if (g.node(v)!.dummy === "border") {
         const predecessors = g.predecessors(v) || [];
         if (predecessors.length) {
-          nextNorthPos = g.node(predecessors[0]).order as number;
+          nextNorthPos = g.node(predecessors[0]!)!.order as number;
           scan(south, southPos, southLookahead, prevNorthPos, nextNorthPos);
           southPos = southLookahead;
           prevNorthPos = nextNorthPos;
@@ -122,8 +122,8 @@ const findType2Conflicts = (g: IGraph, layering?: any) => {
 };
 
 const findOtherInnerSegmentNode = (g: IGraph, v: string) => {
-  if (g.node(v).dummy) {
-    return g.predecessors(v)?.find((u) => g.node(u).dummy);
+  if (g.node(v)!.dummy) {
+    return g.predecessors(v)?.find((u) => g.node(u)!.dummy);
   }
 };
 
@@ -242,7 +242,7 @@ const horizontalCompaction = (g: IGraph, layering: any, root: string, align: str
       return Math.min(acc, (xs[e.w] || 0) - blockG.edge(e));
     }, Number.POSITIVE_INFINITY);
 
-    const node = g.node(elem);
+    const node = g.node(elem)!;
     if (min !== Number.POSITIVE_INFINITY && node.borderType !== borderType) {
       xs[elem] = Math.max(xs[elem], min);
     }
@@ -273,7 +273,7 @@ const buildBlockGraph = (g: IGraph, layering: any, root: string, reverseSep: boo
       blockGraph.setNode(vRoot);
       if (u) {
         const uRoot = root[u];
-        const prevMax = blockGraph.edge(uRoot, vRoot);
+        const prevMax = blockGraph.edgeFromArgs(uRoot, vRoot);
         blockGraph.setEdge(uRoot, vRoot, Math.max(sepFn(g, v, u), prevMax || 0));
       }
       u = v;
@@ -397,16 +397,16 @@ const positionX = (g: IGraph) => {
 
 const sep = (nodeSep: number, edgeSep: number, reverseSep: boolean) => {
   return (g: IGraph, v: string, w: string) => {
-    const vLabel = g.node(v);
-    const wLabel = g.node(w);
+    const vLabel = g.node(v)!;
+    const wLabel = g.node(w)!;
     let sum = 0;
     let delta;
 
-    sum += vLabel.width / 2;
+    sum += vLabel.width! / 2;
     if (vLabel.hasOwnProperty("labelpos")) {
       switch ((vLabel.labelpos || '').toLowerCase()) {
-      case "l": delta = -vLabel.width / 2; break;
-      case "r": delta = vLabel.width / 2; break;
+      case "l": delta = -vLabel.width! / 2; break;
+      case "r": delta = vLabel.width! / 2; break;
       }
     }
     if (delta) {
@@ -417,11 +417,11 @@ const sep = (nodeSep: number, edgeSep: number, reverseSep: boolean) => {
     sum += (vLabel.dummy ? edgeSep : nodeSep) / 2;
     sum += (wLabel.dummy ? edgeSep : nodeSep) / 2;
 
-    sum += wLabel.width / 2;
+    sum += wLabel.width! / 2;
     if (wLabel.hasOwnProperty("labelpos")) {
       switch ((wLabel.labelpos || '').toLowerCase()) {
-      case "l": delta = wLabel.width / 2; break;
-      case "r": delta = -wLabel.width / 2; break;
+      case "l": delta = wLabel.width! / 2; break;
+      case "r": delta = -wLabel.width! / 2; break;
       }
     }
     if (delta) {
@@ -433,7 +433,7 @@ const sep = (nodeSep: number, edgeSep: number, reverseSep: boolean) => {
   };
 };
 
-const width = (g: IGraph, v: string) => g.node(v)?.width || 0;
+const width = (g: IGraph, v: string) => g.node(v)!.width || 0;
 
 export {
   positionX,

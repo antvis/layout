@@ -9,10 +9,10 @@ const positionY = (g: Graph) => {
   const rankSep = g.graph().ranksep as number;
   let prevY = 0;
   layering?.forEach((layer: any) => {
-    const heights = layer.map((v: string) => g.node(v).height);
+    const heights = layer.map((v: string) => g.node(v)!.height);
     const maxHeight = Math.max(...heights);
     layer?.forEach((v: string) => {
-      g.node(v).y = prevY + maxHeight / 2;
+      g.node(v)!.y = prevY + maxHeight / 2;
     });
     prevY += maxHeight + rankSep;
   });
@@ -58,7 +58,7 @@ const position = (g: Graph) => {
   positionY(g);
   const xs = positionX(g);
   Object.keys(xs)?.forEach((key: string) => {
-    g.node(key).x = xs[key];
+    g.node(key)!.x = xs[key];
   });
 };
 

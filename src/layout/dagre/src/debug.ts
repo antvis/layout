@@ -13,7 +13,7 @@ const debugOrdering = (g: IGraph) => {
 
   g.nodes().forEach((v: string) => {
     h.setNode(v, { label: v });
-    h.setParent(v, `layer${g.node(v).rank}`);
+    h.setParent(v, `layer${g.node(v)!.rank}`);
   });
 
   g.edges().forEach((e) => {

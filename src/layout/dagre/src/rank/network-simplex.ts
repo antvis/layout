@@ -73,7 +73,7 @@ const initCutValues = (t: IGraph, g: IGraph) => {
 const assignCutValue = (t: IGraph, g: IGraph, child: string) => {
   const childLab = t.node(child);
   const parent = (childLab as any).parent;
-  t.edge(child, parent).cutvalue = calcCutValue(t, g, child);
+  t.edgeFromArgs(child, parent)!.cutvalue = calcCutValue(t, g, child);
 };
 
 /*
@@ -81,21 +81,21 @@ const assignCutValue = (t: IGraph, g: IGraph, child: string) => {
  * return the cut value for the edge between the child and its parent.
  */
 const calcCutValue = (t: IGraph, g: IGraph, child: string) => {
-  const childLab = t.node(child);
+  const childLab = t.node(child)!;
   const parent = childLab.parent as string;
   // True if the child is on the tail end of the edge in the directed graph
   let childIsTail = true;
   // The graph's view of the tree edge we're inspecting
-  let graphEdge = g.edge(child, parent);
+  let graphEdge = g.edgeFromArgs(child, parent)!;
   // The accumulated cut value for the edge between this node and its parent
   let cutValue = 0;
 
   if (!graphEdge) {
     childIsTail = false;
-    graphEdge = g.edge(parent, child);
+    graphEdge = g.edgeFromArgs(parent, child)!;
   }
 
-  cutValue = graphEdge.weight;
+  cutValue = graphEdge.weight!;
 
   g.nodeEdges(child)?.forEach((e) => {
     const isOutEdge = e.v === child;
@@ -103,11 +103,11 @@ const calcCutValue = (t: IGraph, g: IGraph, child: string) => {
 
     if (other !== parent) {
       const pointsToHead = isOutEdge === childIsTail;
-      const otherWeight = g.edge(e).weight;
+      const otherWeight = g.edge(e)!.weight!;
 
       cutValue += pointsToHead ? otherWeight : -otherWeight;
       if (isTreeEdge(t, child, other)) {
-        const otherCutValue = t.edge(child, other).cutvalue;
+        const otherCutValue = t.edgeFromArgs(child, other)!.cutvalue;
         cutValue += pointsToHead ? -otherCutValue : otherCutValue;
       }
     }
@@ -150,7 +150,7 @@ const dfsAssignLowLim = (tree: IGraph, visited: any, nextLim: number, v: string,
 
 const leaveEdge = (tree: IGraph) => {
   return tree.edges().find((e) => {
-    return tree.edge(e).cutvalue < 0;
+    return tree.edge(e)!.cutvalue < 0;
   });
 };
 
@@ -166,8 +166,8 @@ const enterEdge = (t: IGraph, g: IGraph, edge: any) => {
     w = edge.v;
   }
 
-  const vLabel = t.node(v);
-  const wLabel = t.node(w);
+  const vLabel = t.node(v)!;
+  const wLabel = t.node(w)!;
   let tailLabel = vLabel;
   let flip = false;
 
@@ -197,20 +197,20 @@ const exchangeEdges = (t: IGraph, g: IGraph, e: any, f: any) => {
 };
 
 const updateRanks = (t: IGraph, g: IGraph) => {
-  const root = t.nodes().find((v) =>{ return !g.node(v).parent; });
+  const root = t.nodes().find((v) =>{ return !g.node(v)!.parent; });
   let vs = preorder(t as any, root as any);
   vs = vs?.slice(1);
   vs?.forEach((v: string) => {
-    const parent = t.node(v).parent as string;
-    let edge = g.edge(v, parent);
+    const parent = t.node(v)!.parent as string;
+    let edge = g.edgeFromArgs(v, parent);
     let flipped = false;
 
     if (!edge) {
-      edge = g.edge(parent, v);
+      edge = g.edgeFromArgs(parent, v)!;
       flipped = true;
     }
 
-    g.node(v).rank = g.node(parent).rank + (flipped ? edge.minlen : -edge.minlen);
+    g.node(v)!.rank = g.node(parent)!.rank! + (flipped ? edge.minlen! : -edge.minlen!);
   });
 };
 

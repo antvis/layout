@@ -28,7 +28,7 @@ const twoLayerCrossCount = (g: Graph, northLayer: string[], southLayer: string[]
     southLayer.map((v, i) => i));
   const unflat = northLayer.map((v) => {
     const unsort = g.outEdges(v)?.map((e) => {
-      return { pos: southPos[e.w] || 0, weight: g.edge(e).weight };
+      return { pos: southPos[e.w] || 0, weight: g.edge(e)!.weight };
     });
     return unsort?.sort((a, b) => a.pos - b.pos);
   });

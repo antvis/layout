@@ -57,7 +57,7 @@ const feasibleTree = (g: IGraph): IGraph => {
  */
 const tightTree = (t: IGraph, g: IGraph) => {
   const dfs = (v: string) => {
-    g.nodeEdges(v).forEach((e) => {
+    g.nodeEdges(v)!.forEach((e) => {
       const edgeV = e.v;
       const w = (v === edgeV) ? e.w : edgeV;
       if (!t.hasNode(w) && !slack(g, e)) {
@@ -107,7 +107,7 @@ const feasibleTreeWithLayer = (g: IGraph) => {
 
   let edge: any;
   let delta: number;
-  while (tightTreeWithLayer(t, g) < size) {
+  while (tightTreeWithLayer(t, g)! < size) {
     edge = findMinSlackEdge(t, g);
     delta = t.hasNode(edge.v) ? slack(g, edge) : -slack(g, edge);
     shiftRanks(t, g, delta);
@@ -127,7 +127,7 @@ const tightTreeWithLayer = (t: IGraph, g: IGraph) => {
       const edgeV = e.v;
       const w = (v === edgeV) ? e.w : edgeV;
       // 对于指定layer的，直接加入tight-tree，不参与调整
-      if (!t.hasNode(w) && (g.node(w).layer !== undefined || !slack(g, e))) {
+      if (!t.hasNode(w) && (g.node(w)!.layer !== undefined || !slack(g, e))) {
         t.setNode(w, {});
         t.setEdge(v, w, {});
         dfs(w);
@@ -154,8 +154,8 @@ const findMinSlackEdge = (t: IGraph, g: IGraph) => {
 
 const shiftRanks = (t: IGraph, g: IGraph, delta: number) => {
   t.nodes().forEach((v: string) => {
-    if (!g.node(v).rank) g.node(v).rank = 0;
-    (g.node(v).rank as number) += delta;
+    if (!g.node(v)!.rank) g.node(v)!.rank = 0;
+    (g.node(v)!.rank as number) += delta;
   });
 };
 

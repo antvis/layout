@@ -237,6 +237,8 @@ describe('#DagreLayout', () => {
       nodesep: 50, // 节点水平间距(px)
       ranksep: 50, // 每一层节点之间间距
       controlPoints: false, // 是否保留布局连线的控制点
+      radial: false, // 是否基于 dagre 进行辐射布局
+      focusNode: null, // radial 为 true 时生效，关注的节点
     });
     dagre.layout(data);
     expect((data.nodes[0] as any).x).not.toBe(undefined);
@@ -363,8 +365,8 @@ describe('#DagreLayout', () => {
     const node = data.nodes[0];
     const edge = data.edges[0];
 
-    expect(mathEqual(node.x, 100)).toEqual(true);
-    expect(mathEqual(node.y, 305)).toEqual(true);
+    expect(mathEqual(node.x, 425)).toEqual(true);
+    expect(mathEqual(node.y, 330)).toEqual(true);
     expect(edge.controlPoints).toEqual(undefined);
   });
 })
