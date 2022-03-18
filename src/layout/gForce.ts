@@ -328,9 +328,13 @@ export class GForceLayout extends Base {
       nodes.forEach((nj, j) => {
         if (i >= j) return;
         // if (!accArray[j]) accArray[j] = 0;
-        const vecX = ni.x - nj.x;
-        const vecY = ni.y - nj.y;
-        const lengthSqr = vecX * vecX + vecY * vecY + 0.01;
+        let vecX = ni.x - nj.x;
+        let vecY = ni.y - nj.y;
+        if (vecX === 0 && vecY === 0) {
+          vecX = Math.random() * 0.01;
+          vecY = Math.random() * 0.01;
+        }
+        const lengthSqr = vecX * vecX + vecY * vecY;
         const vecLength = Math.sqrt(lengthSqr);
         const nVecLength = (vecLength + 0.1) * coulombDisScale;
         const direX = vecX / vecLength;
@@ -365,9 +369,13 @@ export class GForceLayout extends Base {
       const target = getEdgeTerminal(edge, 'target');
       const sourceNode = nodeMap[source];
       const targetNode = nodeMap[target];
-      const vecX = targetNode.x - sourceNode.x;
-      const vecY = targetNode.y - sourceNode.y;
-      const vecLength = Math.sqrt(vecX * vecX + vecY * vecY) + 0.01;
+      let vecX = targetNode.x - sourceNode.x;
+      let vecY = targetNode.y - sourceNode.y;
+      if (vecX === 0 && vecY === 0) {
+        vecX = Math.random() * 0.01;
+        vecY = Math.random() * 0.01;
+      }
+      const vecLength = Math.sqrt(vecX * vecX + vecY * vecY);
       const direX = vecX / vecLength;
       const direY = vecY / vecLength;
       const length = (linkDistance as Function)(edge, sourceNode, targetNode) || 1 + ((nodeSize(sourceNode) + nodeSize(sourceNode)) || 0) / 2;
