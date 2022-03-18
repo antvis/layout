@@ -1,5 +1,9 @@
 # ChangeLog
 
+#### 0.2.2
+
+- feat: replace @dagrejs/graphlib with @antv/graphlib
+- chore: dagre type and some test fix
 #### 0.2.1
 
 - fix: gForce with same node positions;
