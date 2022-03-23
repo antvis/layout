@@ -1,7 +1,5 @@
-import { graphlib } from '../graphlib';
-import util from './util';
-
-type Graph = graphlib.Graph;
+import { Graph } from "../graph";
+import { addBorderNode, addDummyNode } from "./util";
 
 /*
  * A nesting graph creates dummy nodes for the tops and bottoms of subgraphs,
@@ -27,17 +25,23 @@ type Graph = graphlib.Graph;
  * Graphs."
  */
 const run = (g: Graph) => {
-  const root = util.addDummyNode(g, "root", {}, "_root");
+  const root = addDummyNode(g, "root", {}, "_root");
   const depths = treeDepths(g);
+  let maxDepth = Math.max(...Object.values(depths));
   
-  // @ts-ignore
-  const height = Math.max(...Object.values(depths)) - 1; // Note: depths is an Object not an array
+  if (Math.abs(maxDepth) === Infinity) {
+    maxDepth = 1
+  }
+
+  const height = maxDepth - 1; // Note: depths is an Object not an array
   const nodeSep = 2 * height + 1;
 
   g.graph().nestingRoot = root;
 
   // Multiply minlen by nodeSep to align nodes on non-border ranks.
-  g.edges().forEach((e) =>  { g.edge(e)!.minlen! *= nodeSep; });
+  g.edges().forEach((e) => {
+    g.edge(e)!.minlen! *= nodeSep;
+  });
 
   // Calculate a weight that is sufficient to keep subgraphs vertically compact
   const weight = sumWeights(g) + 1;
@@ -52,7 +56,15 @@ const run = (g: Graph) => {
   g.graph().nodeRankFactor = nodeSep;
 };
 
-const dfs = (g: Graph, root: string, nodeSep: number, weight: number, height: number, depths: any, v: string) => {
+const dfs = (
+  g: Graph,
+  root: string,
+  nodeSep: number,
+  weight: number,
+  height: number,
+  depths:Record<string, number>,
+  v: string
+) => {
   const children = g.children(v);
   if (!children?.length) {
     if (v !== root) {
@@ -61,8 +73,8 @@ const dfs = (g: Graph, root: string, nodeSep: number, weight: number, height: nu
     return;
   }
 
-  const top = util.addBorderNode(g, "_bt");
-  const bottom = util.addBorderNode(g, "_bb");
+  const top = addBorderNode(g, "_bt");
+  const bottom = addBorderNode(g, "_bb");
   const label = g.node(v)!;
 
   g.setParent(top, v);
@@ -82,13 +94,13 @@ const dfs = (g: Graph, root: string, nodeSep: number, weight: number, height: nu
     g.setEdge(top, childTop, {
       minlen,
       weight: thisWeight,
-      nestingEdge: true
+      nestingEdge: true,
     });
 
     g.setEdge(childBottom, bottom, {
       minlen,
       weight: thisWeight,
-      nestingEdge: true
+      nestingEdge: true,
     });
   });
 
@@ -97,8 +109,8 @@ const dfs = (g: Graph, root: string, nodeSep: number, weight: number, height: nu
   }
 };
 
-const treeDepths = (g: Graph): number[] => {
-  const depths: any = {};
+const treeDepths = (g: Graph) => {
+  const depths: Record<string, number> = {};
   const dfs = (v: string, depth: number) => {
     const children = g.children(v);
     children?.forEach((child) => dfs(child, depth + 1));
@@ -120,14 +132,12 @@ const cleanup = (g: Graph) => {
   const graphLabel = g.graph();
   graphLabel.nestingRoot && g.removeNode(graphLabel.nestingRoot);
   delete graphLabel.nestingRoot;
-  g.edges().forEach((e: any) =>  {
+  g.edges().forEach((e: any) => {
     const edge = g.edge(e)!;
     if (edge.nestingEdge) {
       g.removeEdgeObj(e);
     }
   });
 };
-
-
 
 export default { run, cleanup };

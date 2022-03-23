@@ -1,11 +1,9 @@
-import { graphlib, Edge } from '../graphlib';
+import { Edge, Graph } from '../graph';
 import greedyFAS from './greedy-fas';
 
-type Graph = graphlib.Graph;
-
 const run = (g: Graph) => {
-  const weightFn = (g: Graph): any => {
-    return (e: Edge) => g.edge(e)?.weight;
+  const weightFn = (g: Graph) => {
+    return ((e: Edge) => (g.edge(e)?.weight || 0));
   };
   const fas = (g.graph().acyclicer === "greedy" ? greedyFAS(g, weightFn(g)) : dfsFAS(g));
   fas?.forEach((e: Edge) => {
@@ -19,17 +17,17 @@ const run = (g: Graph) => {
 
 const dfsFAS = (g: Graph) => {
   const fas: Edge[] = [];
-  const stack: any = {};
-  const visited: any = {};
+  const stack: Record<string, boolean> = {};
+  const visited: Record<string, boolean> = {};
 
-  const dfs = (v: any) => {
-    if (visited.hasOwnProperty(v)) {
+  const dfs = (v: string) => {
+    if (visited[v]) {
       return;
     }
     visited[v] = true;
     stack[v] = true;
     g.outEdges(v)?.forEach((e) => {
-      if (stack.hasOwnProperty(e.w)) {
+      if (stack[e.w]) {
         fas.push(e);
       } else {
         dfs(e.w);

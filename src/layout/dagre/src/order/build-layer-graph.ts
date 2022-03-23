@@ -1,8 +1,4 @@
-import { graphlib as IGraphLib } from '../../graphlib';
-import graphlib from '../graphlib';
-
-type IGraph = IGraphLib.Graph;
-const Graph = (graphlib as any).Graph;
+import { Graph } from "../../graph";
 
 /*
  * Constructs a graph that can be used to sort a layer of nodes. The graph will
@@ -34,7 +30,7 @@ const Graph = (graphlib as any).Graph;
  *    5. The weights for copied edges are aggregated as need, since the output
  *       graph is not a multi-graph.
  */
-const buildLayerGraph = (g: IGraph, rank: number, relationship: string) => {
+const buildLayerGraph = (g: Graph, rank: number, relationship:  'inEdges' | 'outEdges') => {
   const root = createRootNode(g);
   const result = new Graph({ compound: true }).setGraph({ root })
       .setDefaultNodeLabel((v: string) => { return g.node(v)!; });
@@ -48,17 +44,18 @@ const buildLayerGraph = (g: IGraph, rank: number, relationship: string) => {
       result.setParent(v, parent || root);
 
       // This assumes we have only short edges!
-      (g as any)[relationship](v).forEach((e: any) => {
+      (g)[relationship](v)?.forEach((e) => {
         const u = e.v === v ? e.w : e.v;
-        const edge = result.edge(u, v);
+        const edge = result.edgeFromArgs(u, v);
         const weight = edge !== undefined ? edge.weight : 0;
-        result.setEdge(u, v, { weight: g.edge(e)!.weight + weight });
-      });
+        result.setEdge(u, v, { weight: g.edge(e)!.weight! + weight! });
+      })
 
       if (node.hasOwnProperty("minRank")) {
         result.setNode(v, {
           borderLeft: node.borderLeft[rank],
-          borderRight: node.borderRight[rank]
+          borderRight: node.borderRight[rank],
+          ...node
         });
       }
     }
@@ -67,7 +64,7 @@ const buildLayerGraph = (g: IGraph, rank: number, relationship: string) => {
   return result;
 };
 
-const createRootNode = (g: IGraph) => {
+const createRootNode = (g: Graph) => {
   let v;
   while (g.hasNode((v = `_root${Math.random()}`)));
   return v;

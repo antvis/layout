@@ -1,10 +1,18 @@
-import graphlib from './graphlib';
-import List from './data/list';
-import { graphlib as IGraphLib, Node } from '../graphlib';
+import RawList from "./data/list";
+import { Edge, Graph } from "../graph";
+import { Graph as RawGraph } from "@antv/graphlib";
 
-type IGraph = IGraphLib.Graph;
-const Graph = (graphlib as any).Graph;
+type StateNode = {
+  v: string;
+  w?: string;
+  in: number;
+  out: number;
+  prev?: StateNode;
+  next?: StateNode;
+};
+class List extends RawList<StateNode> {}
 
+class StateGraph extends RawGraph<string, StateNode, number> {}
 
 /*
  * A greedy heuristic for finding a feedback arc set for a graph. A feedback
@@ -13,34 +21,37 @@ const Graph = (graphlib as any).Graph;
  * effective heuristic for the feedback arc set problem." This implementation
  * adjusts that from the paper to allow for weighted edges.
  */
-// module.exports = greedyFAS;
 
 const DEFAULT_WEIGHT_FN = () => 1;
 
-const greedyFAS = (g: IGraph, weightFn: () => unknown) => {
+const greedyFAS = (g: Graph, weightFn?: (e: Edge) => number) => {
   if (g.nodeCount() <= 1) return [];
   const state = buildState(g, weightFn || DEFAULT_WEIGHT_FN);
-  const results = doGreedyFAS(state.graph as any, state.buckets, state.zeroIdx);
+  const results = doGreedyFAS(state.graph, state.buckets, state.zeroIdx);
 
-  // Expand multi-edges
-  // @ts-ignore
-  return results.map((e: any) => g.outEdges(e.v, e.w))?.flat();
+  return results.map((e) => g.outEdges(e.v, e.w))?.flat();
 };
 
-const doGreedyFAS = (g: IGraph, buckets: any, zeroIdx: number) => {
-  let results: Node[] = [];
+const doGreedyFAS = (g: StateGraph, buckets: List[], zeroIdx: number) => {
+  let results: StateNode[] = [];
   const sources = buckets[buckets.length - 1];
   const sinks = buckets[0];
 
   let entry;
   while (g.nodeCount()) {
-    while ((entry = sinks.dequeue()))   { removeNode(g, buckets, zeroIdx, entry); }
-    while ((entry = sources.dequeue())) { removeNode(g, buckets, zeroIdx, entry); }
+    while ((entry = sinks.dequeue())) {
+      removeNode(g, buckets, zeroIdx, entry);
+    }
+    while ((entry = sources.dequeue())) {
+      removeNode(g, buckets, zeroIdx, entry);
+    }
     if (g.nodeCount()) {
       for (let i = buckets.length - 2; i > 0; --i) {
         entry = buckets[i].dequeue();
         if (entry) {
-          results = results.concat(removeNode(g, buckets, zeroIdx, entry, true));
+          results = results.concat(
+            removeNode(g, buckets, zeroIdx, entry, true)!
+          );
           break;
         }
       }
@@ -50,15 +61,22 @@ const doGreedyFAS = (g: IGraph, buckets: any, zeroIdx: number) => {
   return results;
 };
 
-const removeNode = (g: IGraph, buckets: any, zeroIdx: number, entry: any, collectPredecessors?: boolean) => {
-  const results: any = collectPredecessors ? [] : undefined;
+const removeNode = (
+  g: StateGraph,
+  buckets: List[],
+  zeroIdx: number,
+  entry: StateNode,
+  collectPredecessors?: boolean
+) => {
+  const results: StateNode[] = [];
 
   g.inEdges(entry.v)?.forEach((edge) => {
-    const weight: any = g.edge(edge);
-    const uEntry: Node = g.node(edge.v) as Node;
+    const weight = g.edge(edge)!;
+    const uEntry = g.node(edge.v)!;
 
     if (collectPredecessors) {
-      results.push({ v: edge.v, w: edge.w });
+      // this result not really care about in or out
+      results.push({ v: edge.v, w: edge.w, in: 0, out: 0 });
     }
     if (uEntry.out === undefined) uEntry.out = 0;
     uEntry.out -= weight;
@@ -66,7 +84,7 @@ const removeNode = (g: IGraph, buckets: any, zeroIdx: number, entry: any, collec
   });
 
   g.outEdges(entry.v)?.forEach((edge) => {
-    const weight: any = g.edge(edge);
+    const weight = g.edge(edge)!;
     const w = edge.w;
     const wEntry = g.node(w)!;
     if (wEntry.in === undefined) wEntry.in = 0;
@@ -76,44 +94,44 @@ const removeNode = (g: IGraph, buckets: any, zeroIdx: number, entry: any, collec
 
   g.removeNode(entry.v);
 
-  return results;
+  return collectPredecessors ? results : undefined;
 };
 
-const buildState = (g: IGraph, weightFn?: (param: any) => unknown) => {
-  const fasGraph = new Graph();
+const buildState = (g: Graph, weightFn?: (param: any) => number) => {
+  const fasGraph = new StateGraph();
   let maxIn = 0;
   let maxOut = 0;
 
   g.nodes().forEach((v) => {
-    fasGraph.setNode(v, { v, "in": 0, out: 0 });
+    fasGraph.setNode(v, { v, in: 0, out: 0 });
   });
 
   // Aggregate weights on nodes, but also sum the weights across multi-edges
   // into a single edge for the fasGraph.
   g.edges().forEach((e) => {
     const prevWeight = fasGraph.edge(e) || 0;
-    const weight = weightFn?.(e);
+    const weight = weightFn?.(e) || 0;
     const edgeWeight = prevWeight + weight;
     fasGraph.setEdge(e.v, e.w, edgeWeight);
-    maxOut = Math.max(maxOut, fasGraph.node(e.v).out += weight);
-    maxIn  = Math.max(maxIn,  fasGraph.node(e.w)["in"]  += weight);
+    maxOut = Math.max(maxOut, (fasGraph.node(e.v)!.out += weight));
+    maxIn = Math.max(maxIn, (fasGraph.node(e.w)!.in += weight));
   });
 
-  const buckets: any = [];
+  const buckets: List[] = [];
   const rangeMax = maxOut + maxIn + 3;
-  for (let i = 0; i < rangeMax; i ++) {
+  for (let i = 0; i < rangeMax; i++) {
     buckets.push(new List());
   }
   const zeroIdx = maxIn + 1;
 
   fasGraph.nodes().forEach((v: string) => {
-    assignBucket(buckets, zeroIdx, fasGraph.node(v));
+    assignBucket(buckets, zeroIdx, fasGraph.node(v)!);
   });
 
   return { buckets, zeroIdx, graph: fasGraph };
 };
 
-const assignBucket = (buckets: any, zeroIdx: number, entry: any) => {
+const assignBucket = (buckets: List[], zeroIdx: number, entry: StateNode) => {
   if (!entry.out) {
     buckets[0].enqueue(entry);
   } else if (!entry["in"]) {
@@ -122,6 +140,5 @@ const assignBucket = (buckets: any, zeroIdx: number, entry: any) => {
     buckets[entry.out - entry["in"] + zeroIdx].enqueue(entry);
   }
 };
-
 
 export default greedyFAS;
