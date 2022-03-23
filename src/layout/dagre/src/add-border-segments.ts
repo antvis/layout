@@ -1,22 +1,22 @@
-import { graphlib } from '../graphlib';
-import util from './util';
-
-type Graph = graphlib.Graph;
+import { Graph, Node } from "../graph";
+import { addDummyNode } from "./util";
 
 const addBorderSegments = (g: Graph) => {
   const dfs = (v: string) => {
     const children = g.children(v);
-    const node: any = g.node(v)!;
+    const node = g.node(v)!;
     if (children?.length) {
       children.forEach((child) => dfs(child));
     }
 
-    if (node.hasOwnProperty('minRank')) {
+    if (node.hasOwnProperty("minRank")) {
       node.borderLeft = [];
       node.borderRight = [];
-      for (let rank = node.minRank, maxRank = node.maxRank + 1;
+      for (
+        let rank = node.minRank!, maxRank = node.maxRank! + 1;
         rank < maxRank;
-        ++rank) {
+        rank += 1
+      ) {
         addBorderNode(g, "borderLeft", "_bl", v, node, rank);
         addBorderNode(g, "borderRight", "_br", v, node, rank);
       }
@@ -26,10 +26,17 @@ const addBorderSegments = (g: Graph) => {
   g.children()?.forEach((child) => dfs(child));
 };
 
-const addBorderNode = (g: Graph, prop: string, prefix: string, sg: string, sgNode: any, rank: number) => {
-  const label = { rank, width: 0, height: 0, borderType: prop };
+const addBorderNode = (
+  g: Graph,
+  prop: string,
+  prefix: string,
+  sg: string,
+  sgNode: Node<Record<string, any>>,
+  rank: number
+) => {
+  const label = { rank, borderType: prop, width: 0, height: 0 };
   const prev = sgNode[prop][rank - 1];
-  const curr = util.addDummyNode(g, "border", label, prefix);
+  const curr = addDummyNode(g, "border", label, prefix);
   sgNode[prop][rank] = curr;
   g.setParent(curr, sg);
   if (prev) {

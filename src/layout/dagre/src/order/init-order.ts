@@ -1,6 +1,5 @@
-import { graphlib as IGraphLib } from "../../graphlib";
+import { Graph } from "../../graph";
 
-type Graph = IGraphLib.Graph;
 /*
  * Assigns an initial order value for each node by performing a DFS search
  * starting from nodes in the first rank. Nodes are assigned an order in their
@@ -13,17 +12,16 @@ type Graph = IGraphLib.Graph;
  * the order of its nodes.
  */
 const initOrder = (g: Graph) => {
-  const visited: any = {};
+  const visited: Record<string, boolean> = {};
   const simpleNodes = g.nodes().filter((v) => {
     return !g.children(v)?.length;
   });
   const nodeRanks = simpleNodes.map((v) => (g.node(v)!.rank as number));
   const maxRank = Math.max(...nodeRanks);
-  const layers: any = [];
+  const layers: string[][] = [];
   for (let i = 0; i < maxRank + 1; i++) {
     layers.push([]);
   }
-  // const layers = _.map(_.range(maxRank + 1), function() { return []; });
 
   const dfs = (v: string) => {
     if (visited.hasOwnProperty(v)) return;

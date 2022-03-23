@@ -1,7 +1,5 @@
-import util from './util';
-import { graphlib, Edge } from '../graphlib';
-
-type Graph = graphlib.Graph;
+import { Edge, Graph, Node } from "../graph";
+import { addDummyNode } from "./util";
 
 /*
  * Breaks any long edges in the graph into short segments that span 1 layer
@@ -37,29 +35,31 @@ const normalizeEdge = (g: Graph, e: Edge) => {
 
   g.removeEdgeObj(e);
 
-  let dummy;
-  let attrs: any;
+  const graph = g.graph();
+
+  let dummy: string;
+  let attrs: Node<Record<string, any>>;
   let i;
   for (i = 0, ++vRank; vRank < wRank; ++i, ++vRank) {
     edgeLabel.points = [];
-    attrs= {
+    attrs = {
       edgeLabel,
       width: 0,
       height: 0,
       edgeObj: e,
-      rank: vRank
+      rank: vRank,
     };
-    dummy = util.addDummyNode(g, "edge", attrs, "_d");
+    dummy = addDummyNode(g, "edge", attrs, "_d");
     if (vRank === labelRank) {
-      attrs.width = edgeLabel.width;
-      attrs.height = edgeLabel.height;
+      attrs.width = edgeLabel.width!;
+      attrs.height = edgeLabel.height!;
       attrs.dummy = "edge-label";
       attrs.labelpos = edgeLabel.labelpos;
     }
     g.setEdge(v, dummy, { weight: edgeLabel.weight }, name);
     if (i === 0) {
-      if (!g.graph().dummyChains) g.graph().dummyChains = [];
-      g.graph()?.dummyChains?.push(dummy);
+      if (!graph.dummyChains) graph.dummyChains = [];
+      graph.dummyChains!.push(dummy);
     }
     v = dummy;
   }
@@ -72,10 +72,13 @@ const undo = (g: Graph) => {
     let node = g.node(v)!;
     const origLabel = node.edgeLabel;
     let w;
-    node.edgeObj && g.setEdgeObj(node.edgeObj, origLabel);
-    let currentV: any = v;
+    if (node.edgeObj) {
+      g.setEdgeObj(node.edgeObj, origLabel);
+    }
+
+    let currentV  = v;
     while (node.dummy) {
-      w = g.successors(currentV)?.[0];
+      w = g.successors(currentV)![0];
       g.removeNode(currentV);
       origLabel.points.push({ x: node.x, y: node.y });
       if (node.dummy === "edge-label") {

@@ -1,8 +1,12 @@
 import { Graph as RawGraph } from "@antv/graphlib";
 
-export namespace graphlib {
-  class Graph<T = {}> extends RawGraph<string, Partial<Node & NodeConfig>, Partial<EdgeConfig&Edge&GraphEdge>, Partial<GraphLabel>> {}
-}
+export class Graph extends RawGraph<
+  string,
+  Node<Record<string, any>> & NodeConfig,
+  Partial<EdgeConfig & Edge & GraphEdge>,
+  Partial<GraphLabel>
+> {}
+
 export interface GraphLabel {
   width?: number | undefined;
   height?: number | undefined;
@@ -33,7 +37,7 @@ export interface EdgeConfig {
   weight?: number | undefined;
   width?: number | undefined;
   height?: number | undefined;
-  lablepos?: 'l' | 'c' | 'r' | undefined;
+  lablepos?: "l" | "c" | "r" | undefined;
   labeloffest?: number | undefined;
 }
 
@@ -44,7 +48,10 @@ export interface CustomConfig {
   prevGraph?: Graph | undefined;
 }
 
-export type layout = (graph: Graph, layout?: GraphLabel & NodeConfig & EdgeConfig & CustomConfig) => void;
+export type layout = (
+  graph: Graph,
+  layout?: GraphLabel & NodeConfig & EdgeConfig & CustomConfig
+) => void;
 
 export interface Edge {
   v: string;
@@ -60,10 +67,10 @@ export interface GraphEdge {
 }
 
 export type Node<T = {}> = T & {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
+  x?: number;
+  y?: number;
+  width?: number;
+  height?: number;
   class?: string | undefined;
   label?: any;
   padding?: number | undefined;

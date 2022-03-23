@@ -1,6 +1,4 @@
-import { graphlib as IGraphLib } from "../../graphlib";
-
-type Graph = IGraphLib.Graph;
+import { Graph } from "../../graph";
 
 const barycenter = (g: Graph, movable: string[]) => {
   return movable.map((v) => {

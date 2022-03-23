@@ -1,11 +1,6 @@
-import { graphlib as IGraphLib } from '../../graphlib';
-import graphlib from '../graphlib';
 import { slack } from './util';
 import { minBy } from '../util';
-
-type IGraph = IGraphLib.Graph;
-const Graph = (graphlib as any).Graph;
-
+import { Graph } from '../../graph';
 
 /*
  * Constructs a spanning tree with tight edges and adjusted the input node's
@@ -32,8 +27,8 @@ const Graph = (graphlib as any).Graph;
  * Returns a tree (undirected graph) that is constructed using only "tight"
  * edges.
  */
-const feasibleTree = (g: IGraph): IGraph => {
-  const t = new Graph({ directed: false }) as any;
+const feasibleTree = (g: Graph) => {
+  const t = new Graph({ directed: false });
 
   // Choose arbitrary node from which to start our tree
   const start = g.nodes()[0];
@@ -55,7 +50,7 @@ const feasibleTree = (g: IGraph): IGraph => {
  * Finds a maximal tree of tight edges and returns the number of nodes in the
  * tree.
  */
-const tightTree = (t: IGraph, g: IGraph) => {
+const tightTree = (t: Graph, g: Graph) => {
   const dfs = (v: string) => {
     g.nodeEdges(v)!.forEach((e) => {
       const edgeV = e.v;
@@ -97,7 +92,7 @@ const tightTree = (t: IGraph, g: IGraph) => {
  * Returns a tree (undirected graph) that is constructed using only "tight"
  * edges.
  */
-const feasibleTreeWithLayer = (g: IGraph) => {
+const feasibleTreeWithLayer = (g: Graph) => {
   const t = new Graph({ directed: false }) as any;
 
   // Choose arbitrary node from which to start our tree
@@ -121,7 +116,7 @@ const feasibleTreeWithLayer = (g: IGraph) => {
  * Finds a maximal tree of tight edges and returns the number of nodes in the
  * tree.
  */
-const tightTreeWithLayer = (t: IGraph, g: IGraph) => {
+const tightTreeWithLayer = (t: Graph, g: Graph) => {
   const dfs = (v: string) => {
     g.nodeEdges(v)?.forEach((e) => {
       const edgeV = e.v;
@@ -143,7 +138,7 @@ const tightTreeWithLayer = (t: IGraph, g: IGraph) => {
  * Finds the edge with the smallest slack that is incident on tree and returns
  * it.
  */
-const findMinSlackEdge = (t: IGraph, g: IGraph) => {
+const findMinSlackEdge = (t: Graph, g: Graph) => {
   return minBy(g.edges(), (e: any) => {
     if (t.hasNode(e.v) !== t.hasNode(e.w)) {
       return slack(g, e);
@@ -152,7 +147,7 @@ const findMinSlackEdge = (t: IGraph, g: IGraph) => {
   });
 };
 
-const shiftRanks = (t: IGraph, g: IGraph, delta: number) => {
+const shiftRanks = (t: Graph, g: Graph, delta: number) => {
   t.nodes().forEach((v: string) => {
     if (!g.node(v)!.rank) g.node(v)!.rank = 0;
     (g.node(v)!.rank as number) += delta;

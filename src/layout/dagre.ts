@@ -1,15 +1,13 @@
 /**
- * @fileOverview random layout
+ * @fileOverview dagre layout
  * @author shiwu.wyy@antfin.com
  */
 
 import { Edge, OutNode, DagreLayoutOptions, PointTuple, Point, Node } from "./types";
 import dagre from "./dagre/index";
-import { graphlib, graphlib as IGraphLib } from './dagre/graphlib';
 import { isArray, isNumber, isObject, getEdgeTerminal, getFunc, isString } from "../util";
 import { Base } from "./base";
-
-type DagreGraph = IGraphLib.Graph;
+import { Graph as DagreGraph } from './dagre/graph';
 
 /**
  * 层次布局
@@ -109,10 +107,10 @@ export class DagreLayout extends Base {
     const { nodes, nodeSize, rankdir, combos, begin, radial } = self;
     if (!nodes) return;
     const edges = (self.edges as any[]) || [];
-    const g = new dagre.graphlib.Graph({
+    const g = new DagreGraph({
       multigraph: true,
       compound: true,
-    }) as graphlib.Graph;
+    });
 
     let nodeSizeFunc: (d?: any) => number[];
     if (!nodeSize) {
@@ -145,6 +143,18 @@ export class DagreLayout extends Base {
     g.setGraph(self);
 
     const comboMap: { [key: string]: boolean } = {};
+
+    if (this.sortByCombo && combos) {
+      combos.forEach((combo) => {
+        if (!combo.parentId) return;
+        if (!comboMap[combo.parentId]) {
+          comboMap[combo.parentId] = true;
+          g.setNode(combo.parentId, {});
+        }
+        g.setParent(combo.id, combo.parentId);
+      });
+    }
+
     nodes.filter((node) => node.layout !== false).forEach((node) => {
       const size = nodeSizeFunc(node);
       const verti = vertisep(node);
@@ -168,16 +178,7 @@ export class DagreLayout extends Base {
       }
     });
     
-    if (this.sortByCombo && combos) {
-      combos.forEach((combo) => {
-        if (!combo.parentId) return;
-        if (!comboMap[combo.parentId]) {
-          comboMap[combo.parentId] = true;
-          g.setNode(combo.parentId, {});
-        }
-        g.setParent(combo.id, combo.parentId);
-      });
-    }
+
 
     edges.forEach((edge) => {
       // dagrejs Wiki https://github.com/dagrejs/dagre/wiki#configuring-the-layout
@@ -193,16 +194,16 @@ export class DagreLayout extends Base {
     // 考虑增量图中的原始图
     let prevGraph: DagreGraph | undefined = undefined;
     if (self.preset) {
-      prevGraph = new dagre.graphlib.Graph({
+      prevGraph = new DagreGraph({
         multigraph: true,
         compound: true,
-      }) as any;
+      });
       self.preset.nodes.forEach((node) => {
         prevGraph?.setNode(node.id, node);
       });
     }
 
-    dagre.layout(g as any, {
+    dagre.layout(g, {
       prevGraph,
       edgeLabelSpace: self.edgeLabelSpace,
       keepNodeOrder: Boolean(!!self.nodeOrder),
@@ -213,7 +214,7 @@ export class DagreLayout extends Base {
     if (begin) {
       let minX = Infinity;
       let minY = Infinity;
-      g.nodes().forEach((node: any) => {
+      g.nodes().forEach((node) => {
         const coord = g.node(node)!;
         if (minX > coord.x!) minX = coord.x!;
         if (minY > coord.y!) minY = coord.y!;

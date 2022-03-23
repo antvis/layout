@@ -19,12 +19,10 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
-import graphlib from './src/graphlib';
 import layout from './src/layout';
 import { time, notime } from './src/util';
 
 export default {
-  graphlib,
   layout,
   util: {
     time,

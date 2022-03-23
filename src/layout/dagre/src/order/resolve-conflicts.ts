@@ -1,6 +1,4 @@
-import { graphlib as IGraphLib } from "../../graphlib";
-
-type Graph = IGraphLib.Graph;
+import { Graph } from "../../graph";
 
 /*
  * Given a list of entries of the form {v, barycenter, weight} and a
@@ -27,91 +25,120 @@ type Graph = IGraphLib.Graph;
  *    graph. The property `i` is the lowest original index of any of the
  *    elements in `vs`.
  */
-const resolveConflicts = (entries: any, cg: Graph) => {
-  const mappedEntries: any = {};
-  entries?.forEach((entry: any, i: number) => {
-    const tmp: any = mappedEntries[entry.v] = {
+
+export type ConflictEntry = {
+  i: number;
+  indegree?: number;
+  in?: ConflictEntry[];
+  out?: ConflictEntry[];
+  vs: string[];
+  barycenter?: number;
+  weight?: number;
+  merged?: boolean;
+  fixorder?: number;
+  order?: number;
+};
+
+const resolveConflicts = (
+  entries: {
+    v: string;
+    barycenter?: number;
+    weight?: number;
+  }[],
+  cg: Graph
+) => {
+  const mappedEntries: Record<string, ConflictEntry> = {};
+  entries?.forEach((entry, i: number) => {
+    mappedEntries[entry.v] = {
       i,
       indegree: 0,
-      "in": [],
+      in: [],
       out: [],
       vs: [entry.v],
     };
+    const tmp = mappedEntries[entry.v];
     if (entry.barycenter !== undefined) {
       tmp.barycenter = entry.barycenter;
       tmp.weight = entry.weight;
     }
   });
 
-  cg.edges()?.forEach((e) => { 
+  cg.edges()?.forEach((e) => {
     const entryV = mappedEntries[e.v];
     const entryW = mappedEntries[e.w];
     if (entryV !== undefined && entryW !== undefined) {
-      entryW.indegree++;
-      entryV.out.push(mappedEntries[e.w]);
+      entryW.indegree!++;
+      entryV.out!.push(mappedEntries[e.w]);
     }
   });
 
-  // @ts-ignore
-  const sourceSet = Object.values(mappedEntries).filter?.((entry: any) => !entry.indegree);
+  const sourceSet = Object.values(mappedEntries).filter?.(
+    (entry: ConflictEntry) => !entry.indegree
+  );
 
   return doResolveConflicts(sourceSet);
 };
 
-const doResolveConflicts = (sourceSet: any) => {
+const doResolveConflicts = (sourceSet: ConflictEntry[]) => {
   const entries = [];
 
-  const handleIn = (vEntry: any) => {
-    return (uEntry: any) => {
+  const handleIn = (vEntry: ConflictEntry) => {
+    return (uEntry: ConflictEntry) => {
       if (uEntry.merged) return;
-      if (uEntry.barycenter === undefined ||
-          vEntry.barycenter === undefined ||
-          uEntry.barycenter >= vEntry.barycenter) {
+      if (
+        uEntry.barycenter === undefined ||
+        vEntry.barycenter === undefined ||
+        uEntry.barycenter >= vEntry.barycenter
+      ) {
         mergeEntries(vEntry, uEntry);
       }
     };
   };
 
-  const handleOut = (vEntry: any) => {
-    return (wEntry: any) => {
-      wEntry["in"].push(vEntry);
-      if (--wEntry.indegree === 0) {
+  const handleOut = (vEntry: ConflictEntry) => {
+    return (wEntry: ConflictEntry) => {
+      wEntry["in"]!.push(vEntry);
+      if (--wEntry.indegree! === 0) {
         sourceSet.push(wEntry);
       }
     };
   };
 
   while (sourceSet?.length) {
-    const entry = sourceSet.pop();
+    const entry = sourceSet.pop()!;
     entries.push(entry);
-    entry["in"].reverse()?.forEach((e: any) => handleIn(entry)(e));
-    entry.out?.forEach((e: any) => handleOut(entry)(e));
+    entry["in"]!.reverse()?.forEach((e: ConflictEntry) => handleIn(entry)(e));
+    entry.out?.forEach((e: ConflictEntry) => handleOut(entry)(e));
   }
 
   const filtered = entries.filter((entry) => !entry.merged);
-  const keys = ["vs", "i", "barycenter", "weight"];
+  const keys: ("vs" | "i" | "barycenter" | "weight")[] = [
+    "vs",
+    "i",
+    "barycenter",
+    "weight",
+  ];
   return filtered.map((entry) => {
-    const picked: any = {};
+    const picked: Record<string, any> = {};
     keys?.forEach((key) => {
       if (entry[key] === undefined) return;
       picked[key] = entry[key];
     });
-    return picked;
+    return picked as ConflictEntry;
   });
-
 };
 
-const mergeEntries = (target: any, source: any) => {
+const mergeEntries = (target: ConflictEntry, source: ConflictEntry) => {
   let sum = 0;
   let weight = 0;
 
   if (target.weight) {
-    sum += target.barycenter * target.weight;
+    sum += target.barycenter! * target.weight;
     weight += target.weight;
   }
 
   if (source.weight) {
-    sum += source.barycenter * source.weight;
+    sum += source.barycenter! * source.weight;
     weight += source.weight;
   }
 
@@ -121,6 +148,5 @@ const mergeEntries = (target: any, source: any) => {
   target.i = Math.min(source.i, target.i);
   source.merged = true;
 };
-
 
 export default resolveConflicts;
