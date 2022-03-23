@@ -424,7 +424,7 @@ export const positionX = (g: Graph) => {
         conflicts,
         neighborFn
       );
-      let xs = horizontalCompaction(
+      const xs = horizontalCompaction(
         g,
         adjustedLayering,
         align.root,

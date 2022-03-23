@@ -34,17 +34,17 @@ const longestPath = (g: Graph) => {
     let rank: number;
 
     g.outEdges(v)?.forEach(
-      edgeObj => {
+      (edgeObj) => {
         const wRank = dfs(edgeObj.w);
         const minLen = g.edge(edgeObj)!.minlen!;
         const r = wRank - minLen;
         if (r) {
           if (rank === undefined || r < rank) {
-            rank = r
+            rank = r;
           }
         }
       }
-    )
+    );
 
 
     if (!rank!) {
@@ -73,17 +73,17 @@ const longestPathWithLayer = (g: Graph) => {
     let rank: number;
 
     g.outEdges(v)?.forEach(
-      edgeObj => {
+      (edgeObj) => {
         const wRank = dfs(edgeObj.w);
         const minLen = g.edge(edgeObj)!.minlen!;
         const r = wRank - minLen;
         if (r) {
           if (rank === undefined || r < rank) {
-            rank = r
+            rank = r;
           }
         }
       }
-    )
+    );
 
 
     if (!rank!) {
@@ -91,7 +91,7 @@ const longestPathWithLayer = (g: Graph) => {
     }
 
     if (minRank === undefined || rank < minRank) {
-      minRank = rank
+      minRank = rank;
     }
 
     label.rank = rank;

@@ -30,7 +30,7 @@ const run = (g: Graph) => {
   let maxDepth = Math.max(...Object.values(depths));
   
   if (Math.abs(maxDepth) === Infinity) {
-    maxDepth = 1
+    maxDepth = 1;
   }
 
   const height = maxDepth - 1; // Note: depths is an Object not an array

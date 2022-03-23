@@ -136,7 +136,7 @@ export class DagreLayout extends Base {
     let vertisep: Function = ranksepfunc;
 
     if (rankdir === "LR" || rankdir === "RL") {
-      horisep = ranksepfunc
+      horisep = ranksepfunc;
       vertisep = nodesepfunc;
     }
     g.setDefaultEdgeLabel(() => ({}));
@@ -307,11 +307,11 @@ export class DagreLayout extends Base {
           if (maxRanksep < currentNodeRanksep) maxRanksep = currentNodeRanksep;
         });
         return maxRanksep;
-      }
+      };
 
       let isFirstLevel = true;
-      let lastLayerMaxNodeSize = 0;
-      layers.forEach(layerNodes => {
+      const lastLayerMaxNodeSize = 0;
+      layers.forEach((layerNodes) => {
         if (!layerNodes?.nodes?.length && !layerNodes?.left?.length && !layerNodes?.right?.length) return;
         // 第一层只有一个节点，直接放在圆心，初始半径设定为 0
         if (isFirstLevel && layerNodes.nodes.length === 1) {
@@ -326,7 +326,7 @@ export class DagreLayout extends Base {
         }
 
         // 为接缝留出空隙，半径也需要扩大
-        radius = Math.max(radius, layerNodes.totalWidth / (2 * Math.PI)) // / 0.9;
+        radius = Math.max(radius, layerNodes.totalWidth / (2 * Math.PI)); // / 0.9;
         
         let maxRanksep = -Infinity;
         if (focusLayer === 0 || layerNodes.nodes?.length) {

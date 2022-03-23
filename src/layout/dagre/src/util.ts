@@ -31,7 +31,7 @@ export const addDummyNode = (
  */
 export const simplify = (g: Graph) => {
   const simplified = new Graph().setGraph(g.graph());
-  g.nodes().forEach((v) => { simplified.setNode(v, g.node(v)) });
+  g.nodes().forEach((v) => { simplified.setNode(v, g.node(v)); });
   g.edges().forEach((e) => {
     const simpleLabel = simplified.edgeFromArgs(e.v, e.w) || { weight: 0, minlen: 1 };
     const label = g.edge(e)!;
@@ -151,6 +151,7 @@ export const buildLayerMatrix = (g: Graph) => {
   for (let i = 0; i < rankMax; i++) {
     layeringNodes.push([]);
   }
+  
   // const layering = _.map(_.range(maxRank(g) + 1), function() { return []; });
   g.nodes().forEach((v: string) => {
     const node = g.node(v)!;
@@ -256,7 +257,7 @@ export const maxRank = (g: Graph) => {
   });
 
   if (!maxRank!) {
-    maxRank = 0
+    maxRank = 0;
   }
   return maxRank;
 };

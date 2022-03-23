@@ -56,7 +56,8 @@ const findPath = (
 const parentDummyChains = (g: Graph) => {
   const postorderNums = dfsBothOrder(g);
 
-  g.graph().dummyChains?.forEach((v) => {
+  g.graph().dummyChains?.forEach((startV) => {
+    let v = startV; 
     let node = g.node(v)!;
     const edgeObj = node.edgeObj;
     if (!edgeObj) return;

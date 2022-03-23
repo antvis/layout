@@ -70,12 +70,12 @@ const positionX = (g: Graph) => {
 };
 
 const position = (g: Graph) => {
-  g = asNonCompoundGraph(g);
+  const ng = asNonCompoundGraph(g);
 
-  positionY(g);
-  const xs = positionX(g);
+  positionY(ng);
+  const xs = positionX(ng);
   Object.keys(xs)?.forEach((key: string) => {
-    g.node(key)!.x = xs[key];
+    ng.node(key)!.x = xs[key];
   });
 };
 

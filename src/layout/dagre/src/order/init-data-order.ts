@@ -9,10 +9,8 @@ const initDataOrder = (g: Graph, nodeOrder: string[]) => {
   });
   const ranks = simpleNodes.map((v) => g.node(v)!.rank as number);
   const maxRank = Math.max(...ranks);
-  const layers: string[][] = [];
-  for (let i = 0; i < maxRank + 1; i++) {
-    layers.push([]);
-  }
+  const layers: string[][] = Array(maxRank + 1).fill([]);
+
   nodeOrder?.forEach((n) => {
     const node = g.node(n);
     // 只考虑原有节点，dummy节点需要按照后续算法排出

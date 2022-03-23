@@ -41,8 +41,8 @@ const { preorder, postorder } = algorithm;
  * for Drawing Directed Graphs." The structure of the file roughly follows the
  * structure of the overall algorithm.
  */
-const networkSimplex = (g: Graph) => {
-  g = simplify(g);
+const networkSimplex = (og: Graph) => {
+  const g = simplify(og);
   initRank(g);
   const t = feasibleTree(g);
   initLowLimValues(t);

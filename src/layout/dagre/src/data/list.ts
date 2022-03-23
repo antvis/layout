@@ -37,7 +37,7 @@ export default class List<T> {
   }
 
   public enqueue(entry: LinkedNode<T>) {
-    var shortcut = this.shortcut;
+    const shortcut = this.shortcut;
     if (entry.prev && entry.next) {
       unlink(entry);
     }
