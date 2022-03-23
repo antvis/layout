@@ -75,7 +75,7 @@ const undo = (g: Graph) => {
     if (node.edgeObj) {
       g.setEdgeObj(node.edgeObj, origLabel);
     }
-    
+
     let currentV  = v;
     while (node.dummy) {
       w = g.successors(currentV)![0];

@@ -104,7 +104,7 @@ const longestPathWithLayer = (g: Graph) => {
     minRank = 0;
   }
 
-  minRank += 1; // NOTE: 最小的层级是dummy root，+1
+  // minRank += 1; // NOTE: 最小的层级是dummy root，+1
 
   // forward一遍，赋值层级
   const dfsForward = (v: string, nextRank: number) => {

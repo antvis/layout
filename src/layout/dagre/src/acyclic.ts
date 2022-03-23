@@ -1,11 +1,12 @@
-import { Edge, Graph } from '../graph';
-import greedyFAS from './greedy-fas';
+import { Edge, Graph } from "../graph";
+import greedyFAS from "./greedy-fas";
 
 const run = (g: Graph) => {
   const weightFn = (g: Graph) => {
-    return ((e: Edge) => (g.edge(e)?.weight || 0));
+    return (e: Edge) => g.edge(e)?.weight || 0;
   };
-  const fas = (g.graph().acyclicer === "greedy" ? greedyFAS(g, weightFn(g)) : dfsFAS(g));
+  const fas =
+    g.graph().acyclicer === "greedy" ? greedyFAS(g, weightFn(g)) : dfsFAS(g);
   fas?.forEach((e: Edge) => {
     const label = g.edge(e)!;
     g.removeEdgeObj(e);
