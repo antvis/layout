@@ -30,32 +30,41 @@ import { Graph } from "../../graph";
  *    5. The weights for copied edges are aggregated as need, since the output
  *       graph is not a multi-graph.
  */
-const buildLayerGraph = (g: Graph, rank: number, relationship:  'inEdges' | 'outEdges') => {
+const buildLayerGraph = (
+  g: Graph,
+  rank: number,
+  relationship: "inEdges" | "outEdges"
+) => {
   const root = createRootNode(g);
-  const result = new Graph({ compound: true }).setGraph({ root })
-      .setDefaultNodeLabel((v: string) => { return g.node(v)!; });
+  const result = new Graph({ compound: true })
+    .setGraph({ root })
+    .setDefaultNodeLabel((v: string) => {
+      return g.node(v)!;
+    });
 
   g.nodes().forEach((v) => {
     const node = g.node(v)!;
     const parent = g.parent(v);
 
-    if (node.rank === rank || (node.minRank as number) <= rank && rank <= (node.maxRank as number)) {
+    if (
+      node.rank === rank ||
+      ((node.minRank as number) <= rank && rank <= (node.maxRank as number))
+    ) {
       result.setNode(v);
       result.setParent(v, parent || root);
 
       // This assumes we have only short edges!
-      (g)[relationship](v)?.forEach((e) => {
+      g[relationship](v)?.forEach((e) => {
         const u = e.v === v ? e.w : e.v;
         const edge = result.edgeFromArgs(u, v);
         const weight = edge !== undefined ? edge.weight : 0;
         result.setEdge(u, v, { weight: g.edge(e)!.weight! + weight! });
-      })
+      });
 
       if (node.hasOwnProperty("minRank")) {
         result.setNode(v, {
           borderLeft: node.borderLeft[rank],
           borderRight: node.borderRight[rank],
-          ...node
         });
       }
     }
