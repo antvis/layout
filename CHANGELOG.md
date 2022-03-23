@@ -3,7 +3,9 @@
 #### 0.2.2
 
 - feat: replace @dagrejs/graphlib with @antv/graphlib
+- types: reduce ant usage as much as possible
 - chore: dagre type and some test fix
+
 #### 0.2.1
 
 - fix: gForce with same node positions;
