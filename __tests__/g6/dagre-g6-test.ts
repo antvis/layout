@@ -411,6 +411,7 @@ describe("dagre layout", () => {
       nodesep: 10,
     });
     layout.layout(comboData);
+    console.log(comboData)
     expect(comboData.nodes[9].x < comboData.nodes[7].x).toBe(true);
     expect(comboData.nodes[8].x < comboData.nodes[5].x).toBe(true);
   });

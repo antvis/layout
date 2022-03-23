@@ -365,7 +365,7 @@ describe('#DagreLayout', () => {
     const node = data.nodes[0];
     const edge = data.edges[0];
 
-    expect(mathEqual(node.x, 425)).toEqual(true);
+    expect(mathEqual(node.x, 135)).toEqual(true);
     expect(mathEqual(node.y, 330)).toEqual(true);
     expect(edge.controlPoints).toEqual(undefined);
   });
