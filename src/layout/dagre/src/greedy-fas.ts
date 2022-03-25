@@ -110,7 +110,7 @@ const buildState = (g: Graph, weightFn?: (param: any) => number) => {
   // into a single edge for the fasGraph.
   g.edges().forEach((e) => {
     const prevWeight = fasGraph.edge(e) || 0;
-    const weight = weightFn?.(e) || 0;
+    const weight = weightFn?.(e) || 1;
     const edgeWeight = prevWeight + weight;
     fasGraph.setEdge(e.v, e.w, edgeWeight);
     maxOut = Math.max(maxOut, (fasGraph.node(e.v)!.out += weight));

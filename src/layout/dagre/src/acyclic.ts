@@ -3,7 +3,7 @@ import greedyFAS from "./greedy-fas";
 
 const run = (g: Graph) => {
   const weightFn = (g: Graph) => {
-    return (e: Edge) => g.edge(e)?.weight || 0;
+    return (e: Edge) => g.edge(e)?.weight || 1;
   };
   const fas =
     g.graph().acyclicer === "greedy" ? greedyFAS(g, weightFn(g)) : dfsFAS(g);
