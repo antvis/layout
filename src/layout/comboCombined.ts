@@ -192,7 +192,7 @@ export class ComboCombinedLayout extends Base {
 
         // 需要使用一个同步的布局
         // @ts-ignore
-        let outerLayout = this.outerLayout || new GForceLayout({
+        const outerLayout = this.outerLayout || new GForceLayout({
           gravity: 1,
           factor: 2,
           linkDistance: (edge: any, source: any, target: any) => {

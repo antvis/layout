@@ -1,28 +1,23 @@
-import util from './util';
-import graphlib from './graphlib';
-import { graphlib as IGraphType } from '../graphlib';
+import { Graph } from "../graph";
+import { buildLayerMatrix } from "./util";
 
-type IGraph = IGraphType.Graph;
-const Graph = (graphlib as any).Graph;
-
-/* istanbul ignore next */
-const debugOrdering = (g: IGraph) => {
-  const layerMatrix = util.buildLayerMatrix(g);
+const debugOrdering = (g: Graph) => {
+  const layerMatrix = buildLayerMatrix(g);
 
   const h = new Graph({ compound: true, multigraph: true }).setGraph({});
 
   g.nodes().forEach((v: string) => {
     h.setNode(v, { label: v });
-    h.setParent(v, `layer${g.node(v).rank}`);
+    h.setParent(v, `layer${g.node(v)!.rank}`);
   });
 
   g.edges().forEach((e) => {
     h.setEdge(e.v, e.w, {}, e.name);
   });
 
-  layerMatrix?.forEach((layer: any, i: number) => {
+  layerMatrix?.forEach((layer, i: number) => {
     const layerV = `layer${i}`;
-    h.setNode(layerV, { rank: "same" });
+    h.setNode(layerV, { rank: "same" as unknown as number });
     layer?.reduce((u: string, v: string) => {
       h.setEdge(u, v, { style: "invis" });
       return v;

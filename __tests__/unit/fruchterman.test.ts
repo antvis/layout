@@ -28,6 +28,7 @@ describe('#FruchtermanLayout', () => {
   it('return correct default config', () => {
     const fruchterman = new Layouts['fruchterman']();
     expect(fruchterman.getDefaultCfg()).toEqual({
+      animate: true,
       maxIteration: 1000,
       gravity: 10,
       speed: 1,

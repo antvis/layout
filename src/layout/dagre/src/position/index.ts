@@ -1,46 +1,64 @@
-import { graphlib as IGraphLib } from '../../graphlib';
-import util from '../util';
-import { alignCoordinates, balance, findSmallestWidthAlignment, findType1Conflicts, findType2Conflicts, horizontalCompaction, verticalAlignment } from './bk';
-
-type Graph = IGraphLib.Graph;
+import { Graph } from "../../graph";
+import { asNonCompoundGraph, buildLayerMatrix } from "../util";
+import {
+  alignCoordinates,
+  balance,
+  findSmallestWidthAlignment,
+  findType1Conflicts,
+  findType2Conflicts,
+  horizontalCompaction,
+  verticalAlignment,
+} from "./bk";
 
 const positionY = (g: Graph) => {
-  const layering = util.buildLayerMatrix(g);
+  const layering = buildLayerMatrix(g);
   const rankSep = g.graph().ranksep as number;
   let prevY = 0;
-  layering?.forEach((layer: any) => {
-    const heights = layer.map((v: string) => g.node(v).height);
+  layering?.forEach((layer) => {
+    const heights = layer.map((v) => g.node(v)!.height!);
     const maxHeight = Math.max(...heights);
     layer?.forEach((v: string) => {
-      g.node(v).y = prevY + maxHeight / 2;
+      g.node(v)!.y = prevY + maxHeight / 2;
     });
     prevY += maxHeight + rankSep;
   });
 };
 
 const positionX = (g: Graph) => {
-  const layering = util.buildLayerMatrix(g);
+  const layering = buildLayerMatrix(g);
   const conflicts = Object.assign(
     findType1Conflicts(g, layering),
-    findType2Conflicts(g, layering));
+    findType2Conflicts(g, layering)
+  );
 
-  const xss: any = {};
-  let adjustedLayering: any;
+  const xss: Record<string, Record<string, number>> = {};
+  let adjustedLayering: string[][] = [];
   ["u", "d"].forEach((vert) => {
-    // @ts-ignore
-    adjustedLayering = vert === "u" ? layering : Object.values(layering).reverse();
+    adjustedLayering =
+      vert === "u" ? layering : Object.values(layering).reverse();
     ["l", "r"].forEach((horiz) => {
       if (horiz === "r") {
-        // @ts-ignore
-        adjustedLayering = adjustedLayering.map((inner: any) => Object.values(inner).reverse());
+        adjustedLayering = adjustedLayering.map((inner) =>
+          Object.values(inner).reverse()
+        );
       }
 
       const neighborFn = (vert === "u" ? g.predecessors : g.successors).bind(g);
-      const align = verticalAlignment(g, adjustedLayering, conflicts, neighborFn);
-      const xs = horizontalCompaction(g, adjustedLayering,
-        align.root, align.align, horiz === "r");
+      const align = verticalAlignment(
+        g,
+        adjustedLayering,
+        conflicts,
+        neighborFn
+      );
+      const xs = horizontalCompaction(
+        g,
+        adjustedLayering,
+        align.root,
+        align.align,
+        horiz === "r"
+      );
       if (horiz === "r") {
-        Object.keys(xs).forEach((xsKey) =>  xs[xsKey] = -xs[xsKey]);
+        Object.keys(xs).forEach((xsKey) => (xs[xsKey] = -xs[xsKey]));
       }
       xss[vert + horiz] = xs;
     });
@@ -52,13 +70,12 @@ const positionX = (g: Graph) => {
 };
 
 const position = (g: Graph) => {
-  // tslint:disable-next-line
-  g = util.asNonCompoundGraph(g);
+  const ng = asNonCompoundGraph(g);
 
-  positionY(g);
-  const xs = positionX(g);
+  positionY(ng);
+  const xs = positionX(ng);
   Object.keys(xs)?.forEach((key: string) => {
-    g.node(key).x = xs[key];
+    ng.node(key)!.x = xs[key];
   });
 };
 

@@ -1,4 +1,4 @@
-import { Layout, Layouts, registerLayout } from '../../src'
+import { getLayoutByName, Layout, Layouts, registerLayout } from '../../src'
 // import * as Layout from '../../src'
 // import { Registy } from '../../es';
 import { Node, Edge } from '../../src/layout/types'
@@ -79,11 +79,8 @@ describe('#RegisterLayout', () => {
       }
     })
 
-    // 以下两种使用方式均可
-    // const custom = new Layout({
-    //   type: 'custom'
-    // });
-    const custom = new Layouts['custom']();
+    const CustomLayut =  getLayoutByName('custom');
+     const custom = new CustomLayut();
     expect(custom.getDefaultCfg()).toEqual({
       attr1: 'a',
       attr2: 'b',

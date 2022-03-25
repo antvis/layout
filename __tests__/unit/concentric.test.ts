@@ -26,7 +26,6 @@ describe('#ConcentricLayout', () => {
   it('return correct default config', () => {
     const concentric = new Layouts['concentric']();
     expect(concentric.getDefaultCfg()).toEqual({
-      center: undefined,
       nodeSize: 30,
       minNodeSpacing: 10,
       preventOverlap: false,
@@ -36,6 +35,7 @@ describe('#ConcentricLayout', () => {
       clockwise: true,
       maxLevelDiff: undefined,
       sortBy: 'degree',
+      nodeSpacing: 10,
     });
     concentric.layout(data);
     expect((data.nodes[0] as any).x).not.toBe(undefined);

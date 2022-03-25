@@ -1,8 +1,3 @@
-import { graphlib as IGraphLib } from '../../graphlib';
-import { zipObject } from '../util';
-
-type Graph = IGraphLib.Graph;
-
 /*
  * A function that takes a layering (an array of layers, each with an array of
  * ordererd nodes) and a graph and returns a weighted crossing count.
@@ -20,19 +15,27 @@ type Graph = IGraphLib.Graph;
  * This algorithm is derived from Barth, et al., "Bilayer Cross Counting."
  */
 
-const twoLayerCrossCount = (g: Graph, northLayer: string[], southLayer: string[]) => {
+import { Graph } from "../../graph";
+import { zipObject } from "../util";
+
+const twoLayerCrossCount = (
+  g: Graph,
+  northLayer: string[],
+  southLayer: string[]
+) => {
   // Sort all of the edges between the north and south layers by their position
   // in the north layer and then the south. Map these edges to the position of
   // their head in the south layer.
-  const southPos = zipObject(southLayer,
-    southLayer.map((v, i) => i));
+  const southPos = zipObject(
+    southLayer,
+    southLayer.map((v, i) => i)
+  );
   const unflat = northLayer.map((v) => {
     const unsort = g.outEdges(v)?.map((e) => {
-      return { pos: southPos[e.w] || 0, weight: g.edge(e).weight };
+      return { pos: southPos[e.w] || 0, weight: g.edge(e)!.weight };
     });
     return unsort?.sort((a, b) => a.pos - b.pos);
   });
-  // @ts-ignore
   const southEntries = unflat.flat().filter((entry) => entry !== undefined);
 
   // Build the accumulator tree
@@ -44,27 +47,29 @@ const twoLayerCrossCount = (g: Graph, northLayer: string[], southLayer: string[]
 
   // Calculate the weighted crossings
   let cc = 0;
-  southEntries?.forEach((entry: any) => {
-    let index = entry.pos + firstIndex;
-    tree[index] += entry.weight;
-    let weightSum = 0;
-    while (index > 0) {
-      if (index % 2) {
-        weightSum += tree[index + 1];
-      }
-      index = (index - 1) >> 1;
+  southEntries?.forEach((entry) => {
+    if (entry) {
+      let index = entry.pos + firstIndex;
       tree[index] += entry.weight;
+      let weightSum = 0;
+      while (index > 0) {
+        if (index % 2) {
+          weightSum += tree[index + 1];
+        }
+        index = (index - 1) >> 1;
+        tree[index] += entry.weight;
+      }
+      cc += entry.weight! * weightSum;
     }
-    cc += entry.weight * weightSum;
   });
 
   return cc;
 };
 
-const crossCount = (g: Graph, layering: any) => {
+const crossCount = (g: Graph, layering: string[][]) => {
   let cc = 0;
-  for (let i = 1; i < layering?.length; ++i) {
-    cc += twoLayerCrossCount(g, layering[i-1], layering[i]);
+  for (let i = 1; i < layering?.length; i += 1) {
+    cc += twoLayerCrossCount(g, layering[i - 1], layering[i]);
   }
   return cc;
 };

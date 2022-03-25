@@ -1,6 +1,4 @@
-import { graphlib as IGraphLib } from "../../graphlib";
-
-type Graph = IGraphLib.Graph;
+import { Graph } from "../../graph";
 
 const barycenter = (g: Graph, movable: string[]) => {
   return movable.map((v) => {
@@ -10,10 +8,10 @@ const barycenter = (g: Graph, movable: string[]) => {
     }  {
       const result = { sum: 0, weight: 0 };
       inV?.forEach((e) => {
-        const edge = g.edge(e);
-        const nodeU = g.node(e.v);
-        result.sum += (edge.weight * (nodeU.order as number));
-        result.weight += edge.weight;
+        const edge = g.edge(e)!;
+        const nodeU = g.node(e.v)!;
+        result.sum += (edge.weight! * (nodeU.order as number));
+        result.weight += edge.weight!;
       });
       return {
         v,
