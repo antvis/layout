@@ -1,5 +1,9 @@
 # ChangeLog
 
+#### 0.2.3
+
+- perf: combo and node info should be transfered to outerLayout in comboCombined;
+
 #### 0.2.2
 
 - feat: replace @dagrejs/graphlib with @antv/graphlib
