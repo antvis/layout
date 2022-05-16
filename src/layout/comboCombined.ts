@@ -122,7 +122,7 @@ export class ComboCombinedLayout extends Base {
       const innerNode = innerGraphs[cTree.id];
       // 代表 combo 的节点
       const oNode: Node = {
-        id: cTree.id,
+        ...cTree,
         x: innerNode.x || comboMap[cTree.id].x,
         y: innerNode.y || comboMap[cTree.id].y,
         fx: innerNode.fx || comboMap[cTree.id].fx,
@@ -146,15 +146,7 @@ export class ComboCombinedLayout extends Base {
     nodes.forEach((node) => {
       if (node.comboId && comboMap[node.comboId]) return;
       // 代表节点的节点
-      const oNode: Node = {
-        id: node.id,
-        x: node.x,
-        y: node.y,
-        fx: node.fx,
-        fy: node.fy,
-        mass: node.mass,
-        size: node.size
-      };
+      const oNode: Node = { ...node };
       outerNodes.push(oNode);
       if (!isNaN(oNode.x) && oNode.x !== 0 && !isNaN(oNode.y) && oNode.y !== 0) {
         allHaveNoPosition = false;
