@@ -1,5 +1,9 @@
 # ChangeLog
 
+#### 0.2.4
+
+- fix: small width and height values for grid lead to 0 rows or cols;
+
 #### 0.2.3
 
 - perf: combo and node info should be transfered to outerLayout in comboCombined;
