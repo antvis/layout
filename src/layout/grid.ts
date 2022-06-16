@@ -191,6 +191,8 @@ export class GridLayout extends Base {
       self.rows = Math.round(self.splits);
       self.cols = Math.round((self.width / self.height) * self.splits);
     }
+    self.rows = Math.max(self.rows, 1);
+    self.cols = Math.max(self.cols, 1);
     if (self.cols * self.rows > self.cells) {
       // otherwise use the automatic values and adjust accordingly
       // if rounding was up, see if we can reduce rows or columns
