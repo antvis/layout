@@ -101,8 +101,6 @@ export class ComboCombinedLayout extends Base {
   public run() {
     const self = this;
     const { nodes, edges, combos, comboEdges, center } = self;
-
-    const innerGraphs: any = self.getInnerGraphs();
     
     const nodeMap: any = {};
     nodes.forEach((node) => {
@@ -112,6 +110,8 @@ export class ComboCombinedLayout extends Base {
     combos.forEach((combo) => {
       comboMap[combo.id] = combo;
     });
+
+    const innerGraphs: any = self.getInnerGraphs(nodeMap);
 
     // 每个 innerGraph 作为一个节点，带有大小，参与 force 计算
     const outerNodeIds: string[] = [];
@@ -251,7 +251,7 @@ export class ComboCombinedLayout extends Base {
     return { nodes, edges, combos, comboEdges };
   }
 
-  private getInnerGraphs() {
+  private getInnerGraphs(nodeMap: any) {
     const self = this;
     const { comboTrees, nodeSize, edges, comboPadding, spacing } = self;
     const innerGraphs: any = {};
@@ -281,7 +281,8 @@ export class ComboCombinedLayout extends Base {
           // 非空 combo
           const innerGraphNodes = treeNode.children.map((child) => {
             if (child.itemType === 'combo') return innerGraphs[child.id];
-            return {...child};
+            const oriNode = nodeMap[child.id] || {};
+            return { ...oriNode, ...child };
           });
           const innerGraphNodeIds = innerGraphNodes.map((node) => node.id);
           const innerGraphData = {

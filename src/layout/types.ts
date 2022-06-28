@@ -172,14 +172,18 @@ export interface DagreLayoutOptions {
   nodeSize?: number | number[] | undefined;
   nodesep?: number;
   ranksep?: number;
-  nodesepFunc?: ((d?: any) => number) | undefined;
-  ranksepFunc?: ((d?: any) => number) | undefined;
   controlPoints?: boolean;
   sortByCombo?: boolean;
   workerEnabled?: boolean;
-  onLayoutEnd?: () => void;
   edgeLabelSpace?: boolean;
   nodeOrder?: string[];
+  preset?: {
+    nodes: OutNode[],
+    edges: any[],
+  };
+  onLayoutEnd?: () => void;
+  nodesepFunc?: ((d?: any) => number) | undefined;
+  ranksepFunc?: ((d?: any) => number) | undefined;
 }
 
 export interface DagreCompoundLayoutOptions {
