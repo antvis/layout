@@ -1,5 +1,10 @@
 # ChangeLog
 
+#### 0.2.5
+
+- fix: comboCombined innerLayout with original node infos;
+- fix: DagreLayoutOptions with preset field;
+
 #### 0.2.4
 
 - fix: small width and height values for grid lead to 0 rows or cols;
