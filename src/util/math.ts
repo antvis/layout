@@ -1,4 +1,4 @@
-import { Matrix, Model, IndexMap, Edge, OutNode } from '../layout/types';
+import { Matrix, Model, IndexMap, Edge, Node, OutNode, Degree, NodeMap } from '../layout/types';
 import { isObject } from './object';
 
 export const getEdgeTerminal = (edge: Edge, type: 'source' | 'target') => {
@@ -10,22 +10,54 @@ export const getEdgeTerminal = (edge: Edge, type: 'source' | 'target') => {
 };
 
 export const getDegree = (n: number, nodeIdxMap: IndexMap, edges: Edge[] | null) => {
-  const degrees: number[] = [];
+  const degrees: Degree[] = [];
   for (let i = 0; i < n; i++) {
-    degrees[i] = 0;
+    degrees[i] = {
+      in: 0,
+      out: 0,
+      all: 0
+    };
   }
   if (!edges) return degrees;
   edges.forEach((e) => {
     const source = getEdgeTerminal(e, 'source');
     const target = getEdgeTerminal(e, 'target');
-    if (source) {
-      degrees[nodeIdxMap[source]] += 1;
+    if (source && degrees[nodeIdxMap[source]]) {
+      degrees[nodeIdxMap[source]].out += 1;
+      degrees[nodeIdxMap[source]].all += 1;
     }
-    if (target) {
-      degrees[nodeIdxMap[target]] += 1;
+    if (target && degrees[nodeIdxMap[target]]) {
+      degrees[nodeIdxMap[target]].in += 1;
+      degrees[nodeIdxMap[target]].all += 1;
     }
   });
   return degrees;
+};
+
+export const getDegreeMap = (nodes: Node[], edges: Edge[] | null) => {
+  const degreesMap: { [id: string]: Degree } = {}
+  nodes.forEach(node => {
+    degreesMap[node.id] = {
+      in: 0,
+      out: 0,
+      all: 0
+    }
+  })
+
+  if (!edges) return degreesMap;
+  edges.forEach((e) => {
+    const source = getEdgeTerminal(e, 'source');
+    const target = getEdgeTerminal(e, 'target');
+    if (source) {
+      degreesMap[source].out += 1;
+      degreesMap[source].all += 1;
+    }
+    if (target) {
+      degreesMap[target].in += 1;
+      degreesMap[target].all += 1;
+    }
+  });
+  return degreesMap;
 };
 
 export const floydWarshall = (adjMatrix: Matrix[]): Matrix[] => {
@@ -155,4 +187,88 @@ export const findMinMaxNodeXY = (nodes: OutNode[]) => {
     if (maxY < node.y) maxY = node.y;
   });
   return { minX, minY, maxX, maxY };
+};
+
+/**
+ * 获取节点集合的平均位置信息
+ * @param nodes 节点集合
+ * @returns 平局内置
+ */
+export const getAvgNodePosition = (nodes: OutNode[]) => {
+  let totalNodes = { x: 0, y: 0 };
+  nodes.forEach(node => {
+    totalNodes.x += node.x || 0;
+    totalNodes.y += node.y || 0;
+  });
+  // 获取均值向量
+  const length = nodes.length || 1;
+  return {
+    x: totalNodes.x / length,
+    y: totalNodes.y / length,
+  };
+};
+
+// 找出指定节点关联的边的起点或终点
+const getCoreNode = (type: 'source' | 'target', node: Node, edges: Edge[]) => {
+  if (type === 'source') {
+    return (edges?.find(edge => edge.target === node.id)?.source || {}) as Node;
+  }
+  return (edges?.find(edge => edge.source === node.id)?.target || {}) as Node;
+};
+
+// 找出指定节点为起点或终点的所有一度叶子节点
+const getRelativeNodeIds = (type: 'source' | 'target' | 'both', coreNode: Node, edges: Edge[]) => {
+  let relativeNodes: string[] = []
+  switch (type) {
+    case 'source':
+      relativeNodes = edges?.filter(edge => edge.source === coreNode.id).map(edge => edge.target);
+      break;
+    case 'target':
+      relativeNodes = edges?.filter(edge => edge.target === coreNode.id).map(edge => edge.source);
+      break;
+    case 'both':
+      relativeNodes = edges
+        ?.filter(edge => edge.source === coreNode.id)
+        .map(edge => edge.target)
+        .concat(edges?.filter(edge => edge.target === coreNode.id).map(edge => edge.source));
+      break;
+    default:
+      break;
+  }
+  // 去重
+  const set = new Set(relativeNodes);
+  return Array.from(set);
+};
+// 找出同类型的节点
+const getSameTypeNodes = (type: 'leaf' | 'all', nodeClusterBy: string, node: Node, relativeNodes: Node[], degreesMap: { [id: string]: Degree }) => {
+  // @ts-ignore
+  const typeName = node[nodeClusterBy] || '';
+  // @ts-ignore
+  let sameTypeNodes = relativeNodes?.filter(item => item[nodeClusterBy] === typeName) || [];
+  if (type === 'leaf') {
+    sameTypeNodes = sameTypeNodes.filter(node => degreesMap[node.id]?.in === 0 ||degreesMap[node.id]?.out === 0);
+  }
+  return sameTypeNodes;
+};
+
+
+// 找出与指定节点关联的边的起点或终点出发的所有一度叶子节点
+export const getCoreNodeAndRelativeLeafNodes = (type: 'leaf' | 'all', node: Node, edges: Edge[], nodeClusterBy: string, degreesMap: { [id: string]: Degree }, nodeMap: NodeMap) => {
+  const { in: inDegree, out: outDegree } = degreesMap[node.id];
+  let coreNode: Node = node;
+  let relativeLeafNodes: Node[] = [];
+  if (inDegree === 0) {
+    // 如果为没有出边的叶子节点，则找出与它关联的边的起点出发的所有一度节点
+    coreNode = getCoreNode('source', node, edges);
+    relativeLeafNodes = getRelativeNodeIds('both', coreNode, edges).map(nodeId => nodeMap[nodeId]);
+  } else if (outDegree === 0) {
+    // 如果为没有入边边的叶子节点，则找出与它关联的边的起点出发的所有一度节点
+    coreNode = getCoreNode('target', node, edges);
+    relativeLeafNodes = getRelativeNodeIds('both', coreNode, edges).map(nodeId => nodeMap[nodeId]);
+  }
+  relativeLeafNodes = relativeLeafNodes.filter(
+    node => degreesMap[node.id] && (degreesMap[node.id].in === 0 || degreesMap[node.id].out === 0),
+  );
+  const sameTypeLeafNodes = getSameTypeNodes(type, nodeClusterBy, node, relativeLeafNodes, degreesMap);
+  return { coreNode, relativeLeafNodes, sameTypeLeafNodes };
 };

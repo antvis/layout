@@ -1,6 +1,7 @@
 import { GridLayout } from "./grid";
 import { RandomLayout } from "./random";
 import { GForceLayout } from "./gForce";
+import { Force2Layout } from "./force2";
 import { ForceLayout } from "./force";
 import { CircularLayout } from "./circular";
 import { DagreLayout } from "./dagre";
@@ -25,6 +26,7 @@ export {
   GridLayout,
   RandomLayout,
   GForceLayout,
+  Force2Layout,
   ForceLayout,
   CircularLayout,
   DagreLayout,

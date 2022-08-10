@@ -180,7 +180,7 @@ export class ConcentricLayout extends Base {
       if (!isNumber(nodes[0].degree)) {
         const values = getDegree(nodes.length, indexMap, edges);
         layoutNodes.forEach((node, i) => {
-          node.degree = values[i];
+          node.degree = values[i].all;
         });
       }
     }

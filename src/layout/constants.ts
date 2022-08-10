@@ -14,6 +14,7 @@ export const LAYOUT_MESSAGE = {
 
 export const FORCE_LAYOUT_TYPE_MAP: { [key: string]: boolean } = {
   'gForce': true,
+  'force2': true,
   'fruchterman': true,
   'forceAtlas2': true,
   'force': true,

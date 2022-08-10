@@ -154,7 +154,7 @@ export class GridLayout extends Base {
       if (isNaN(nodes[0].degree)) {
         const values = getDegree(layoutNodes.length, nodeIdxMap, edges);
         layoutNodes.forEach((node, i) => {
-          node.degree = values[i];
+          node.degree = values[i].all;
         });
       }
     }

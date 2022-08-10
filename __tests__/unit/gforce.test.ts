@@ -55,6 +55,7 @@ describe('#gForceLayout', () => {
     }
 
     const gForce = new Layouts['gForce']({
+      animate: false,
       linkDistance: 140,
       edgeStrength: 0.5,
       nodeStrength: -30,

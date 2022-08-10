@@ -193,7 +193,7 @@ export class DagreLayout extends Base {
 
     // 考虑增量图中的原始图
     let prevGraph: DagreGraph | undefined = undefined;
-    if (self.preset) {
+    if (self.preset?.nodes) {
       prevGraph = new DagreGraph({
         multigraph: true,
         compound: true,

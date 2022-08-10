@@ -9,7 +9,8 @@ import {
   OutNode,
   PointTuple,
   Edge,
-  GForceGPULayoutOptions
+  GForceGPULayoutOptions,
+  Degree
 } from "../types";
 import { Base } from "../base";
 import { isNumber } from "../../util";
@@ -95,7 +96,7 @@ export class GForceGPULayout extends Base {
   public onLayoutEnd: () => void;
 
   /** 存储节点度数 */
-  private degrees: number[];
+  private degrees: Degree[];
 
   constructor(options?: GForceGPULayoutOptions) {
     super();
@@ -220,7 +221,7 @@ export class GForceGPULayout extends Base {
     );
 
     // init degree for mass
-    self.degrees = getDegree(nodes.length, self.nodeIdxMap, edges);
+    self.degrees = getDegree(nodes.length, self.nodeIdxMap, edges).map(degree => degree.all);
     const masses: number[] = [];
     const nodeStrengths: number[] = [];
     const centerXs: number[] = [];
