@@ -100,6 +100,7 @@ describe('#FruchtermanLayout', () => {
   });
   it('fruchterman layout with overlapped nodes and loop edge', () => {
     const fruchterman = new Layouts['fruchterman']({
+      animate: false,
       clustering: true,
       maxIteration: 5000,
       clusterGravity: null,

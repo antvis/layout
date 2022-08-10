@@ -3,13 +3,14 @@
  * @author shiwu.wyy@antfin.com
  */
 
-import {
+ import {
   OutNode,
   Edge,
   PointTuple,
   IndexMap,
   Point,
-  GForceLayoutOptions
+  GForceLayoutOptions,
+  Degree
 } from "./types";
 import { Base } from "./base";
 import { isNumber, isFunction, isArray, getDegree, isObject, getEdgeTerminal } from "../util";
@@ -128,7 +129,7 @@ export class GForceLayout extends Base {
   public animate: Boolean = true;
 
   /** 存储节点度数 */
-  private degrees: number[];
+  private degrees: Degree[];
 
   /** 迭代中的标识 */
   private timeInterval: number;
@@ -234,7 +235,7 @@ export class GForceLayout extends Base {
     self.degrees = getDegree(nodes.length, self.nodeIdxMap, edges);
     if (!self.getMass) {
       self.getMass = (d) => {
-        const mass = d.mass || self.degrees[self.nodeIdxMap[d.id]] || 1;
+        const mass = d.mass || self.degrees[self.nodeIdxMap[d.id]].all || 1;
         return mass;
       };
     }
@@ -406,7 +407,7 @@ export class GForceLayout extends Base {
       let gravity = defaultGravity;
 
       if (self.getCenter) {
-        const customCenterOpt = self.getCenter(node, degrees[i]);
+        const customCenterOpt = self.getCenter(node, degrees[i].all);
         if (
           customCenterOpt &&
           isNumber(customCenterOpt[0]) &&

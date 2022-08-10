@@ -1,5 +1,10 @@
 # ChangeLog
 
+#### 0.3.0-beta
+
+- feat: force2 from graphin-force and better performance;
+- chore: use Degree including int, out, all, instead of degree number in layouts;
+
 #### 0.2.5
 
 - fix: comboCombined innerLayout with original node infos;
