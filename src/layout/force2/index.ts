@@ -307,7 +307,7 @@ export class Force2Layout extends Base {
     self.judgingDistance = 0;
 
     if (!nodes || nodes.length === 0) {
-      self.onLayoutEnd();
+      self.onLayoutEnd([]);
       return;
     }
 
@@ -325,7 +325,7 @@ export class Force2Layout extends Base {
     if (nodes.length === 1) {
       nodes[0].x = center[0];
       nodes[0].y = center[1];
-      self.onLayoutEnd();
+      self.onLayoutEnd([{ ...node[0] }]);
       return;
     }
     self.degreesMap = getDegreeMap(nodes, edges);
@@ -432,18 +432,14 @@ export class Force2Layout extends Base {
 
     this.getCentripetalOptions();
 
-    const { done, onLayoutEnd } = self;
-    self.onLayoutEnd = () => {
-      onLayoutEnd?.();
-      done?.();
-    }
+    self.onLayoutEnd = self.onLayoutEnd || (() => {});
 
     self.run();
   }
 
   public run() {
     const self = this;
-    const { maxIteration, maxIterations, nodes, workerEnabled, minMovement, animate, minMovement } = self;
+    const { maxIteration, maxIterations, nodes, workerEnabled, minMovement, animate, minMovement, nodeMap } = self;
 
     if (!nodes) return;
 
@@ -461,7 +457,7 @@ export class Force2Layout extends Base {
         usedIter = i;
         self.runOneStep(i, velArray);
       }
-      self.onLayoutEnd();
+      self.onLayoutEnd(Object.values(nodeMap));
     } else {
       if (typeof window === "undefined") return;
       let iter = 0;
@@ -471,7 +467,7 @@ export class Force2Layout extends Base {
         self.runOneStep(iter, velArray);
         iter++;
         if (iter >= maxIter || self.judgingDistance < minMovement) {
-          self.onLayoutEnd();
+          self.onLayoutEnd(Object.values(nodeMap));
           window.clearInterval(self.timeInterval);
         }
       }, 0);
