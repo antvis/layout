@@ -176,7 +176,7 @@ export class Force2Layout extends Base {
       single: 2,
       others: 1,
       // eslint-disable-next-line
-      center: (_node: any) => {
+      center: (n: any) => {
         return {
           x: this.width / 2,
           y: this.height / 2,

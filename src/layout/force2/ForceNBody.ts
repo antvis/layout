@@ -33,12 +33,12 @@ export function forceNBody(
     const { data: nodeData, x, y, size } = mappedNode;
     const { nodeStrength } = nodeData.layout.force;
     return {
-      index: i,
       x,
       y,
+      size,
+      index: i,
       vx: 0,
       vy: 0,
-      size,
       weight: weightParam * nodeStrength,
     }
   });
