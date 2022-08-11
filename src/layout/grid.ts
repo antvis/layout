@@ -4,7 +4,7 @@
  * this algorithm refers to <cytoscape.js> - https://github.com/cytoscape/cytoscape.js/
  */
 
-import { isString, getDegree, isNaN, getFuncByUnknownType } from "../util";
+import { isString, getDegree, isNaN, getFuncByUnknownType, isArray } from "../util";
 import { Base } from "./base";
 import {
   OutNode,
@@ -239,12 +239,23 @@ export class GridLayout extends Base {
           node.y = 0;
         }
 
-        const [nodew = 30, nodeh = 30] = nodeSize(node);
+        const res = nodeSize(node) || 30;
+     
+        let nodeW;
+        let nodeH;
+     
+        if (isArray(res)) {
+          nodeW = res[0];
+          nodeH = res[1];
+        } else {
+          nodeW = res;
+          nodeH = res;
+        }
 
         const p = nodeSpacing !== undefined ? nodeSpacing(node) : preventOverlapPadding;
 
-        const w = nodew + p;
-        const h = nodeh + p;
+        const w = nodeW + p;
+        const h = nodeH + p;
 
         self.cellWidth = Math.max(self.cellWidth, w);
         self.cellHeight = Math.max(self.cellHeight, h);
