@@ -51,9 +51,7 @@ export class Force2Layout extends Base {
   public center: PointTuple;
 
   /** 停止迭代的最大迭代数 */
-  public maxIteration: number = 500;
-  /** 停止迭代的最大迭代数，兼容 graphin-force */
-  public maxIterations: number = 500;
+  public maxIteration: number = 1000;
 
   /** 是否启动 worker */
   public workerEnabled: boolean = false;
@@ -98,7 +96,7 @@ export class Force2Layout extends Base {
   public defSpringLen: number | ((edge?: any, source?: any, target?: any) => number) | undefined
 
   /** 重力大小 */
-  public gravity: number = 10;
+  public gravity: number = 0;
 
   /** 向心力 */
   public centripetalOptions: CentripetalOptions;
@@ -120,9 +118,6 @@ export class Force2Layout extends Base {
 
   /** 防止重叠时的节点大小，默认从节点数据中取 size */
   public nodeSize: number | number[] | ((d?: any) => number) | undefined;
-
-  /** 防止重叠的力大小参数 */
-  public collideStrength: number = 1;
 
   /** 防止重叠时的节点之间最小间距 */
   public nodeSpacing: number | number[] | ((d?: any) => number) | undefined;
@@ -439,7 +434,7 @@ export class Force2Layout extends Base {
 
   public run() {
     const self = this;
-    const { maxIteration, maxIterations, nodes, workerEnabled, minMovement, animate, minMovement, nodeMap } = self;
+    const { maxIteration, nodes, workerEnabled, minMovement, animate, minMovement, nodeMap } = self;
 
     if (!nodes) return;
 
@@ -449,7 +444,7 @@ export class Force2Layout extends Base {
       velArray[2 * i + 1] = 0;
     });
 
-    const maxIter = maxIterations || maxIteration;
+    const maxIter = maxIteration;
     const silence = !animate;
     if (workerEnabled || silence) {
       let usedIter = 0;

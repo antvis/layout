@@ -1,6 +1,6 @@
 # ChangeLog
 
-#### 0.3.0-beta.2
+#### 0.3.0-beta.3
 
 - feat: force2 from graphin-force and better performance;
 - chore: use Degree including int, out, all, instead of degree number in layouts;
