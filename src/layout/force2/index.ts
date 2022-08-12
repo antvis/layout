@@ -320,7 +320,7 @@ export class Force2Layout extends Base {
     if (nodes.length === 1) {
       nodes[0].x = center[0];
       nodes[0].y = center[1];
-      self.onLayoutEnd([{ ...node[0] }]);
+      self.onLayoutEnd([{ ...nodes[0] }]);
       return;
     }
     self.degreesMap = getDegreeMap(nodes, edges);
