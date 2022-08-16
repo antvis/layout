@@ -434,7 +434,7 @@ export class Force2Layout extends Base {
 
   public run() {
     const self = this;
-    const { maxIteration, nodes, workerEnabled, minMovement, animate, minMovement, nodeMap } = self;
+    const { maxIteration, nodes, workerEnabled, minMovement, animate, nodeMap } = self;
 
     if (!nodes) return;
 
