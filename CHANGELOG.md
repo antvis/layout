@@ -1,5 +1,10 @@
 # ChangeLog
 
+#### 0.3.0
+
+- feat: forceAtlas2 supports fx and fy to fix position for a node;
+- fix: node overlaps in dagre with layer configs and default align;
+
 #### 0.3.0-beta.5
 
 - feat: force2 from graphin-force and better performance;

@@ -538,8 +538,8 @@ export class ForceAtlas2Layout extends Base {
     }
     // update the node positions
     for (let i = 0; i < nodeNum; i += 1) {
-
       if (prune && (degrees[i] <= 1)) continue;
+      if (isNumber(nodes[i].fx) && isNumber(nodes[i].fy)) continue;
 
       let sn = ks * sg / (1 + sg * Math.sqrt(swgns[i]));
       let absForce = Math.hypot(forces[2 * i], forces[2 * i + 1]);
