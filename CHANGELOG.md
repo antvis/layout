@@ -8,7 +8,7 @@
 #### 0.3.0-beta.5
 
 - feat: force2 from graphin-force and better performance;
-- chore: use Degree including int, out, all, instead of degree number in layouts;
+- chore: use Degree including in, out, all, instead of degree number in layouts;
 
 #### 0.2.5
 
