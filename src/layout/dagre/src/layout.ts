@@ -294,7 +294,6 @@ const makeSpaceForEdgeLabels = (g: Graph) => {
     const node = g.node(n)!;
     if (!isNaN(node.layer as any)) {
       if (!node.layer) node.layer = 0;
-      else node.layer *= 2; // TODO: 因为默认的rank变为两倍，设定的layer也*2
     }
   });
   g.edges().forEach((e) => {

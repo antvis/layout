@@ -559,7 +559,7 @@ describe("position/bk", function() {
   });
 
   describe("balance", function() {
-    it("aligns a single node to the shared median value", function() {
+    it("aligns a single node to the shared (ul + ur) / 2", function() {
       let xss = {
         ul: { a:   0 },
         ur: { a: 100 },
@@ -567,10 +567,10 @@ describe("position/bk", function() {
         dr: { a: 200 }
       };
 
-      expect(balance(xss)).toEqual({ a: 100 });
+      expect(balance(xss)).toEqual({ a: 50 });
     });
 
-    it("aligns a single node to the average of different median values", function() {
+    it("aligns a single node to the average of (ur + ul) / 2", function() {
       let xss = {
         ul: { a:   0 },
         ur: { a:  75 },
@@ -578,7 +578,7 @@ describe("position/bk", function() {
         dr: { a: 200 }
       };
 
-      expect(balance(xss)).toEqual({ a: 100 });
+      expect(balance(xss)).toEqual({ a: 37.5 });
     });
 
     it("balances multiple nodes", function() {
@@ -589,7 +589,7 @@ describe("position/bk", function() {
         dr: { a: 200, b: 75 }
       };
 
-      expect(balance(xss)).toEqual({ a: 100, b: 55 });
+      expect(balance(xss)).toEqual({ a: 37.5, b: 25 });
     });
   });
 

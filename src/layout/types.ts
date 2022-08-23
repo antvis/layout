@@ -7,6 +7,8 @@ export interface Node {
 export interface OutNode extends Node {
   x: number;
   y: number;
+  fx?: number;
+  fy?: number;
   comboId?: string;
   layer?: number; // dagre布局中指定的层级
   _order?: number; // dagre布局中层内排序结果，用于增量布局
@@ -65,11 +67,22 @@ export type IndexMap = {
   [key: string]: number;
 };
 
+export type NodeMap = {
+  [key: string]: INode;
+};
+
+
 export type Matrix = number[];
 
 export type Point = {
   x: number;
   y: number;
+};
+
+export type Degree = {
+  in: number;
+  out: number;
+  all: number;
 };
 
 export interface ComboTree {
@@ -213,6 +226,62 @@ export interface FruchtermanLayoutOptions {
   workerEnabled?: boolean;
   gpuEnabled?: boolean;
   onLayoutEnd?: () => void;
+}
+
+export interface CentripetalOptions {
+  /** 叶子节点的施加力的因子 */
+  leaf?: number | ((node: INode, nodes: INode[], edges: Edge[]) => number);
+  /** 孤立节点的施加力的因子 */
+  single?: number | ((node: INode) => number);
+  /** 其他节点的施加力的因子 */
+  others?: number | ((node: INode) => number);
+  /** 向心力的中心点，默认为画布的中心 */
+  center?: (
+    node: INode,
+    nodes: INode[],
+    edges: Edge[],
+    width: number,
+    height: number,
+  ) => {
+    x: number;
+    y: number;
+    centerStrength?: number;
+  };
+}
+export interface Force2LayoutOptions {
+  type?: "force2";
+  center?: PointTuple;
+  width?: number;
+  height?: number;
+  linkDistance?: number | ((edge?: any, source?: any, target?: any) => number) | undefined;
+  defSpringLen: number | ((edge?: any, source?: any, target?: any) => number) | undefined;
+  nodeStrength?: number | ((d?: any) => number) | undefined;
+  edgeStrength?: number | ((d?: any) => number) | undefined;
+  preventOverlap?: boolean;
+  nodeSize?: number | number[] | ((d?: any) => number) | undefined;
+  nodeSpacing?: number | number[] | ((d?: any) => number) | undefined;
+  minMovement?: number;
+  maxIteration?: number;
+  damping?: number;
+  maxSpeed?: number;
+  coulombDisScale?: number;
+  gravity?: number;
+  factor?: number;
+  workerEnabled?: boolean;
+  centripetalOptions?: CentripetalOptions
+  leafCluster?: boolean;
+  clustering?: boolean;
+  nodeClusterBy?: string;
+  clusterNodeStrength?: number | ((node: Node) => number);
+  collideStrength?: number;
+  distanceThresholdMode?: 'mean' | 'max' | 'min';
+  animate?: boolean;
+  tick?: () => void;
+  onLayoutEnd?: () => void;
+  getMass?: ((d?: any) => number) | undefined;
+  getCenter?: ((d?: any, degree?: number) => number[]) | undefined;
+  monitor?: (params: { energy: number, nodes: INode[], edge: Edge[], iterations: number }) => void;
+
 }
 
 export interface GForceLayoutOptions {

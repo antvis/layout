@@ -391,8 +391,7 @@ export const balance = (
       result[key] = xss[align.toLowerCase()][key];
     } else {
       const values = Object.values(xss).map((x) => x[key]);
-      const xs = values.sort((a: number, b: number) => a - b);
-      result[key] = (xs[1] + xs[2]) / 2;
+      result[key] = (values[0] + values[1]) / 2; // (ur + ul) / 2
     }
   });
   return result;

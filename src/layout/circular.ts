@@ -8,7 +8,8 @@ import {
   Edge,
   PointTuple,
   IndexMap,
-  CircularLayoutOptions
+  CircularLayoutOptions,
+  Degree
 } from "./types";
 import { Base } from "./base";
 import { getDegree, clone, getEdgeTerminal, getFuncByUnknownType } from "../util";
@@ -141,7 +142,7 @@ export class CircularLayout extends Base {
 
   private nodeMap: IndexMap = {};
 
-  private degrees: number[] = [];
+  private degrees: Degree[] = [];
 
   public width: number = 300;
 
@@ -269,7 +270,7 @@ export class CircularLayout extends Base {
       }
       layoutNodes[i].x = center[0] + Math.cos(angle) * r;
       layoutNodes[i].y = center[1] + Math.sin(angle) * r;
-      layoutNodes[i].weight = degrees[i];
+      layoutNodes[i].weight = degrees[i].all;
     }
 
     self.onLayoutEnd?.();
@@ -302,7 +303,7 @@ export class CircularLayout extends Base {
       if (i !== 0) {
         if (
           (i === n - 1 ||
-            degrees[i] !== degrees[i + 1] ||
+            degrees[i].all !== degrees[i + 1].all ||
             connect(
               orderedCNodes[k],
               cnode,
@@ -319,7 +320,7 @@ export class CircularLayout extends Base {
           let foundChild = false;
           for (let j = 0; j < children.length; j++) {
             const childIdx = nodeMap[children[j]];
-            if (degrees[childIdx] === degrees[i] && !pickFlags[childIdx]) {
+            if (degrees[childIdx].all === degrees[i].all && !pickFlags[childIdx]) {
               orderedCNodes.push(cnodes[childIdx]);
               resNodes.push(nodes[nodeMap[cnodes[childIdx].id]]);
               pickFlags[childIdx] = true;
@@ -356,7 +357,7 @@ export class CircularLayout extends Base {
     const orderedNodes: INode[] = [];
     const degrees = self.degrees;
     nodes.forEach((node, i) => {
-      node.degree = degrees[i];
+      node.degree = degrees[i].all;
       orderedNodes.push(node);
     });
     orderedNodes.sort(compareDegree);

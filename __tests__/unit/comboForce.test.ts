@@ -138,7 +138,7 @@ describe('combo force layout', () => {
       center: [250, 250],
       preventOverlap: true,
       nodeSpacing,
-      maxIteration: 300,
+      maxIteration: 400,
     });
     comboForce.layout(data);
 

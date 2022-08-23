@@ -3,6 +3,7 @@ import { Model, ILayout } from "./types";
 import { getLayoutByName } from "../registy";
 import { GridLayout } from "./grid";
 import { RandomLayout } from "./random";
+import { Force2Layout } from "./force2";
 import { GForceLayout } from "./gForce";
 import { ForceLayout } from "./force";
 import { CircularLayout } from "./circular";
@@ -59,6 +60,7 @@ export const Layouts: { [key: string]: any } = {
   fruchterman: FruchtermanLayout,
   forceAtlas2: ForceAtlas2Layout,
   gForce: GForceLayout,
+  force2: Force2Layout,
   dagre: DagreLayout,
   dagreCompound: DagreCompoundLayout,
   circular: CircularLayout,
