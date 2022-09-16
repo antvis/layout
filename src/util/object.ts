@@ -15,7 +15,7 @@ export const clone = <T>(target: T): T => {
     });
     return cp.map((n: any) => clone<any>(n)) as any;
   }
-  if (typeof target === 'object' && target !== {}) {
+  if (typeof target === 'object' && Object.keys(target).length) {
     const cp = { ...(target as { [key: string]: any }) } as {
       [key: string]: any
     };
