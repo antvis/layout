@@ -1,5 +1,9 @@
 # ChangeLog
 
+#### 0.3.1
+
+- perf: force2 with updated node mass;
+
 #### 0.3.0
 
 - feat: forceAtlas2 supports fx and fy to fix position for a node;

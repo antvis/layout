@@ -126,7 +126,7 @@ export class Force2Layout extends Base {
   public distanceThresholdMode: 'mean' | 'max' | 'min' = 'mean';
 
   /** 每次迭代结束的回调函数 */
-  public tick: (() => void) | null = () => {};
+  public tick: (() => void) | null = () => { };
 
   /** 是否允许每次迭代结束调用回调函数 */
   public enableTick: boolean;
@@ -158,7 +158,7 @@ export class Force2Layout extends Base {
 
   /** 迭代中的标识 */
   private timeInterval: number;
-  
+
   /** 与 minMovement 进行对比的判断停止迭代节点移动距离 */
   private judgingDistance: number;
 
@@ -178,7 +178,8 @@ export class Force2Layout extends Base {
         };
       },
     };
-
+    const { getMass } = options;
+    this.propsGetMass = getMass;
     this.updateCfg(options);
   }
 
@@ -193,7 +194,7 @@ export class Force2Layout extends Base {
     // 如果传入了需要叶子节点聚类
     if (leafCluster) {
       sameTypeLeafMap = this.getSameTypeLeafMap() || {};
-      const relativeNodesType = Array.from(new Set(nodes?.map(node => node[nodeClusterBy])))|| [];
+      const relativeNodesType = Array.from(new Set(nodes?.map(node => node[nodeClusterBy]))) || [];
       centripetalOptions = {
         single: 100,
         leaf: (node, nodes, edges) => {
@@ -298,7 +299,7 @@ export class Force2Layout extends Base {
     const self = this;
     self.stop();
     const { nodes, edges, defSpringLen } = self;
-    
+
     self.judgingDistance = 0;
 
     if (!nodes || nodes.length === 0) {
@@ -324,7 +325,9 @@ export class Force2Layout extends Base {
       return;
     }
     self.degreesMap = getDegreeMap(nodes, edges);
-    if (!self.getMass) {
+    if (self.propsGetMass) {
+      self.getMass = self.propsGetMass;
+    } else {
       self.getMass = (d) => {
         let massWeight = 1;
         if (isNumber(d.mass)) massWeight = d.mass;
@@ -352,7 +355,7 @@ export class Force2Layout extends Base {
           if (d.size) {
             if (isArray(d.size)) {
               return Math.max(d.size[0], d.size[1]) + nodeSpacingFunc(d);
-            }  if(isObject(d.size)) {
+            } if (isObject(d.size)) {
               return Math.max(d.size.width, d.size.height) + nodeSpacingFunc(d);
             }
             return (d.size as number) + nodeSpacingFunc(d);
@@ -418,7 +421,7 @@ export class Force2Layout extends Base {
               source: sourceNode,
               target: targetNode
             },
-            sourceNode, 
+            sourceNode,
             targetNode
           ) : self.linkDistance(edge, sourceNode, targetNode) || 1 + ((nodeSize(sourceNode) + nodeSize(sourceNode)) || 0) / 2
         })
@@ -427,7 +430,7 @@ export class Force2Layout extends Base {
 
     this.getCentripetalOptions();
 
-    self.onLayoutEnd = self.onLayoutEnd || (() => {});
+    self.onLayoutEnd = self.onLayoutEnd || (() => { });
 
     self.run();
   }
@@ -448,7 +451,7 @@ export class Force2Layout extends Base {
     const silence = !animate;
     if (workerEnabled || silence) {
       let usedIter = 0;
-      for (let i = 0; (self.judgingDistance > minMovement || i < 1) &&  i < maxIter; i++) {
+      for (let i = 0; (self.judgingDistance > minMovement || i < 1) && i < maxIter; i++) {
         usedIter = i;
         self.runOneStep(i, velArray);
       }
@@ -498,7 +501,7 @@ export class Force2Layout extends Base {
       const vx = accArray[2 * i];
       const vy = accArray[2 * i + 1];
       const speed2 = vx * vx + vy * vy;
-      const { mass = 1} = nodeMap[node.id].data.layout.force;
+      const { mass = 1 } = nodeMap[node.id].data.layout.force;
       energy += mass * speed2 * 0.5; // p = 1/2*(mv^2)
     });
 
@@ -586,7 +589,7 @@ export class Force2Layout extends Base {
 
       if (centripetalOptions) {
         const { leaf, single, others, center: centriCenter } = centripetalOptions;
-        const { x: centriX, y: centriY, centerStrength } = centriCenter?.(node, nodes, edges, width, height) || { x: 0, y: 0, centerStrength: 0};
+        const { x: centriX, y: centriY, centerStrength } = centriCenter?.(node, nodes, edges, width, height) || { x: 0, y: 0, centerStrength: 0 };
         if (!isNumber(centriX) || !isNumber(centriY)) continue;
         const vx = (node.x - centriX) / mass;
         const vy = (node.y - centriY) / mass;
@@ -603,7 +606,7 @@ export class Force2Layout extends Base {
           accArray[idx + 1] -= singleStrength * vy;
           continue;
         }
-  
+
         // 没有出度或没有入度，都认为是叶子节点
         if (inDegree === 0 || outDegree === 0) {
           const leafStrength = leaf(node, nodes, edges);
@@ -677,7 +680,7 @@ export class Force2Layout extends Base {
         node.x = node.fx;
         node.y = node.fy;
         mappedNode.x = node.x;
-        mappedNode.y = node.y; 
+        mappedNode.y = node.y;
         return;
       }
       const distX = velArray[2 * i] * stepInterval;
@@ -685,7 +688,7 @@ export class Force2Layout extends Base {
       node.x += distX;
       node.y += distY;
       mappedNode.x = node.x;
-      mappedNode.y = node.y; 
+      mappedNode.y = node.y;
 
       const distanceMagnitude = Math.sqrt(distX * distX + distY * distY);
       switch (distanceThresholdMode) {
