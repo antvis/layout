@@ -16,6 +16,7 @@ $ yarn add @antv/layout
 
 ```ts
 import { GridLayout } from '@antv/layout'
+import { DagreLayout } from '@antv/layout'
 
 const model = {
   nodes: [
@@ -37,6 +38,7 @@ const model = {
   ],
 }
 
+// simple grid layout
 const gridLayout = new GridLayout({
   type: 'grid',
   width: 600,
@@ -45,9 +47,25 @@ const gridLayout = new GridLayout({
   cols: 4,
 })
 
-const newModel = gridLayout.layout(model)
+const gridModel = gridLayout.layout(model)
+
+// dagre layout
+const dagreLayout = new DagreLayout({
+  type: 'dagre',
+  rankdir: 'TB',
+  align: 'UL',
+  width: 1200,
+  height: 1000,
+  nodesep: 50,
+  ranksep: 50
+})
+
+const dagreModel = dagreLayout.layout(model)
+
+// more layout at documentation ...
 
 ```
+
 
 ## Documentation
 
