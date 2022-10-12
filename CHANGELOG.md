@@ -1,5 +1,9 @@
 # ChangeLog
 
+#### 0.3.2
+
+- fix: getAdjMatrix with inexistent source or target of edge;
+
 #### 0.3.1
 
 - perf: force2 with updated node mass;

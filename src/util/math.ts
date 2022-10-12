@@ -111,19 +111,17 @@ export const getAdjMatrix = (data: Model, directed: boolean): Matrix[] => {
     });
   }
 
-  if (edges) {
-    edges.forEach((e) => {
-      const source = getEdgeTerminal(e, 'source');
-      const target = getEdgeTerminal(e, 'target');
-      const sIndex = nodeMap[source as string];
-      const tIndex = nodeMap[target as string];
-      matrix[sIndex][tIndex] = 1;
-      if (!directed) {
-        matrix[tIndex][sIndex] = 1;
-      }
-    });
-  }
-
+  edges?.forEach((e) => {
+    const source = getEdgeTerminal(e, 'source');
+    const target = getEdgeTerminal(e, 'target');
+    const sIndex = nodeMap[source as string];
+    const tIndex = nodeMap[target as string];
+    if (sIndex === undefined || tIndex === undefined) return;
+    matrix[sIndex][tIndex] = 1;
+    if (!directed) {
+      matrix[tIndex][sIndex] = 1;
+    }
+  });
   return matrix;
 };
 
