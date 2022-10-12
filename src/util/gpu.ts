@@ -63,7 +63,6 @@ export const buildTextureData = (nodes: OutNode[], edges: Edge[]): {
     const offset: number = dataArray.length;
     const dests = nodeDict[i];
     const len = dests.length;
-    console.log('dests', dests, len)
     dataArray[i * 4 + 2] = offset;
     dataArray[i * 4 + 3] = len;
     maxEdgePerVetex = Math.max(maxEdgePerVetex, len);
