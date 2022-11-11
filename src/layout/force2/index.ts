@@ -69,7 +69,7 @@ export class Force2Layout extends Base {
   public damping: number = 0.9;
 
   /** 最大速度 */
-  public maxSpeed: number = 1000;
+  public maxSpeed: number = 100;
 
   /** 一次迭代的平均移动距离小于该值时停止迭代 */
   public minMovement: number = 0.4;
@@ -93,7 +93,7 @@ export class Force2Layout extends Base {
   public linkDistance: number | ((edge?: any, source?: any, target?: any) => number) | undefined = 200;
 
   /** 理想边长，兼容 graphin-force */
-  public defSpringLen: number | ((edge?: any, source?: any, target?: any) => number) | undefined
+  public defSpringLen: number | ((edge?: any, source?: any, target?: any) => number) | undefined;
 
   /** 重力大小 */
   public gravity: number = 0;
@@ -194,7 +194,7 @@ export class Force2Layout extends Base {
     // 如果传入了需要叶子节点聚类
     if (leafCluster) {
       sameTypeLeafMap = this.getSameTypeLeafMap() || {};
-      const relativeNodesType = Array.from(new Set(nodes?.map(node => node[nodeClusterBy]))) || [];
+      const relativeNodesType = Array.from(new Set(nodes?.map((node) => node[nodeClusterBy]))) || [];
       centripetalOptions = {
         single: 100,
         leaf: (node, nodes, edges) => {
@@ -245,18 +245,18 @@ export class Force2Layout extends Base {
       const clusters: string[] = Array.from(new Set(nodes.map((node, i) => {
         return node[nodeClusterBy];
       }))).filter(
-        item => item !== undefined,
+        (item) => item !== undefined,
       );
       const centerNodeInfo: { [key: string]: { x: number; y: number } } = {};
-      clusters.forEach(cluster => {
-        const sameTypeNodes = nodes.filter(item => item[nodeClusterBy] === cluster).map(node => nodeMap[node.id]);
+      clusters.forEach((cluster) => {
+        const sameTypeNodes = nodes.filter((item) => item[nodeClusterBy] === cluster).map((node) => nodeMap[node.id]);
         // 找出同类型节点平均位置节点的距离最近的节点作为中心节点
         centerNodeInfo[cluster] = getAvgNodePosition(sameTypeNodes);
       });
       centripetalOptions = {
-        single: node => getClusterNodeStrength(node),
-        leaf: node => getClusterNodeStrength(node),
-        others: node => getClusterNodeStrength(node),
+        single: (node) => getClusterNodeStrength(node),
+        leaf: (node) => getClusterNodeStrength(node),
+        others: (node) => getClusterNodeStrength(node),
         center: (node, nodes, edges) => {
           // 找出同类型节点平均位置节点的距离最近的节点作为中心节点
           const centerNode = centerNodeInfo[node[nodeClusterBy]];
@@ -407,7 +407,7 @@ export class Force2Layout extends Base {
 
 
     self.edgeInfos = [];
-    edges?.forEach(edge => {
+    edges?.forEach((edge) => {
       const sourceNode = nodeMap[edge.source];
       const targetNode = nodeMap[edge.target];
       if (!sourceNode || !targetNode) {
@@ -424,9 +424,9 @@ export class Force2Layout extends Base {
             sourceNode,
             targetNode
           ) : self.linkDistance(edge, sourceNode, targetNode) || 1 + ((nodeSize(sourceNode) + nodeSize(sourceNode)) || 0) / 2
-        })
+        });
       }
-    })
+    });
 
     this.getCentripetalOptions();
 
@@ -506,7 +506,7 @@ export class Force2Layout extends Base {
     });
 
     return energy;
-  };
+  }
 
   // coulombs law
   public calRepulsive(accArray: number[]) {
@@ -617,7 +617,7 @@ export class Force2Layout extends Base {
         }
 
         /** others */
-        const othersStrength = others(node)
+        const othersStrength = others(node);
         if (!othersStrength) continue;
         accArray[idx] -= othersStrength * vx;
         accArray[idx + 1] -= othersStrength * vy;
@@ -731,11 +731,11 @@ export class Force2Layout extends Base {
     // eslint-disable-next-line
     const sameTypeLeafMap: { [nodeId: string]: any } = {};
     nodes.forEach((node, i) => {
-      const degree = degreesMap[node.id].all
+      const degree = degreesMap[node.id].all;
       if (degree === 1) {
         sameTypeLeafMap[node.id] = getCoreNodeAndRelativeLeafNodes('leaf', node, edges, nodeClusterBy, degreesMap, nodeMap);
       }
     });
     return sameTypeLeafMap;
-  };
+  }
 }

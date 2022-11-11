@@ -16,7 +16,7 @@ const positionY = (g: Graph) => {
   let prevY = 0;
   layering?.forEach((layer) => {
     const heights = layer.map((v) => g.node(v)!.height!);
-    const maxHeight = Math.max(...heights);
+    const maxHeight = Math.max(...heights, 0);
     layer?.forEach((v: string) => {
       g.node(v)!.y = prevY + maxHeight / 2;
     });

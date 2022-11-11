@@ -40,7 +40,7 @@ export function forceNBody(
       vx: 0,
       vy: 0,
       weight: weightParam * nodeStrength,
-    }
+    };
   });
 
   const tree = quadtree(
@@ -49,7 +49,7 @@ export function forceNBody(
     (d: any) => d.y,
   ).visitAfter(accumulate); // init internal node
 
-  data.forEach(n => {
+  data.forEach((n) => {
     // @ts-ignore
     computeForce(n, tree);
   });

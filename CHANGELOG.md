@@ -1,5 +1,11 @@
 # ChangeLog
 
+### 0.3.3
+
+- fix: dagre layer failed when the layer number begin with 0;
+- fix: dagre with combo failed with some specified datasets;
+- perf: reduce the maxSpeed of force2 to improve the swing problem;
+
 #### 0.3.2
 
 - fix: getAdjMatrix with inexistent source or target of edge;

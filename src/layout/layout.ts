@@ -1,5 +1,5 @@
 import { Base } from "./base";
-import { Model, ILayout } from "./types";
+import { Model, ILayout, Node } from "./types";
 import { getLayoutByName } from "../registy";
 import { GridLayout } from "./grid";
 import { RandomLayout } from "./random";
@@ -19,6 +19,12 @@ import { ComboCombinedLayout } from "./comboCombined";
 import { ForceAtlas2Layout } from "./forceAtlas2";
 import { ERLayout } from "./er";
 import { DagreCompoundLayout } from "./dagreCompound";
+import { isString } from "../util";
+
+interface DagreNodeData extends Node {
+  layer?: number;
+}
+
 export class Layout {
   public readonly layoutInstance: Base;
 
@@ -36,7 +42,34 @@ export class Layout {
   }
 
   init(data: Model) {
+    this.correctLayers(data.nodes);
     this.layoutInstance.init(data);
+  }
+
+  /**
+   * correcting the layers on the node data
+   * if min(layer) <= 0, layers should begin from abs(min(layer)) + 1
+   * @param nodes 
+   * @returns 
+   */
+   correctLayers(nodes: DagreNodeData[] | undefined) {
+    if (!nodes?.length) return;
+    let minLayer = Infinity;
+    const hasLayerNodes: DagreNodeData[] = [];
+    nodes.forEach((node) => {
+      if (isString(node.layer)) {
+        node.layer = parseInt(node.layer, 10);
+      }
+      // keep node.layer === undefined for TS problem
+      if (node.layer === undefined || isNaN(node.layer)) return;
+      hasLayerNodes.push(node);
+      if (node.layer < minLayer) minLayer = node.layer;
+    });
+    if (minLayer <= 0) {
+      const layerOffset = Math.abs(minLayer) + 1;
+      // @ts-ignore
+      hasLayerNodes.forEach((node) => node.layer += layerOffset);
+    }
   }
 
   execute() {

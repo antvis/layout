@@ -35,14 +35,14 @@ export const getDegree = (n: number, nodeIdxMap: IndexMap, edges: Edge[] | null)
 };
 
 export const getDegreeMap = (nodes: Node[], edges: Edge[] | null) => {
-  const degreesMap: { [id: string]: Degree } = {}
-  nodes.forEach(node => {
+  const degreesMap: { [id: string]: Degree } = {};
+  nodes.forEach((node) => {
     degreesMap[node.id] = {
       in: 0,
       out: 0,
       all: 0
-    }
-  })
+    };
+  });
 
   if (!edges) return degreesMap;
   edges.forEach((e) => {
@@ -193,8 +193,8 @@ export const findMinMaxNodeXY = (nodes: OutNode[]) => {
  * @returns 平局内置
  */
 export const getAvgNodePosition = (nodes: OutNode[]) => {
-  let totalNodes = { x: 0, y: 0 };
-  nodes.forEach(node => {
+  const totalNodes = { x: 0, y: 0 };
+  nodes.forEach((node) => {
     totalNodes.x += node.x || 0;
     totalNodes.y += node.y || 0;
   });
@@ -209,26 +209,26 @@ export const getAvgNodePosition = (nodes: OutNode[]) => {
 // 找出指定节点关联的边的起点或终点
 const getCoreNode = (type: 'source' | 'target', node: Node, edges: Edge[]) => {
   if (type === 'source') {
-    return (edges?.find(edge => edge.target === node.id)?.source || {}) as Node;
+    return (edges?.find((edge) => edge.target === node.id)?.source || {}) as Node;
   }
-  return (edges?.find(edge => edge.source === node.id)?.target || {}) as Node;
+  return (edges?.find((edge) => edge.source === node.id)?.target || {}) as Node;
 };
 
 // 找出指定节点为起点或终点的所有一度叶子节点
 const getRelativeNodeIds = (type: 'source' | 'target' | 'both', coreNode: Node, edges: Edge[]) => {
-  let relativeNodes: string[] = []
+  let relativeNodes: string[] = [];
   switch (type) {
     case 'source':
-      relativeNodes = edges?.filter(edge => edge.source === coreNode.id).map(edge => edge.target);
+      relativeNodes = edges?.filter((edge) => edge.source === coreNode.id).map((edge) => edge.target);
       break;
     case 'target':
-      relativeNodes = edges?.filter(edge => edge.target === coreNode.id).map(edge => edge.source);
+      relativeNodes = edges?.filter((edge) => edge.target === coreNode.id).map((edge) => edge.source);
       break;
     case 'both':
       relativeNodes = edges
-        ?.filter(edge => edge.source === coreNode.id)
-        .map(edge => edge.target)
-        .concat(edges?.filter(edge => edge.target === coreNode.id).map(edge => edge.source));
+        ?.filter((edge) => edge.source === coreNode.id)
+        .map((edge) => edge.target)
+        .concat(edges?.filter((edge) => edge.target === coreNode.id).map((edge) => edge.source));
       break;
     default:
       break;
@@ -242,9 +242,9 @@ const getSameTypeNodes = (type: 'leaf' | 'all', nodeClusterBy: string, node: Nod
   // @ts-ignore
   const typeName = node[nodeClusterBy] || '';
   // @ts-ignore
-  let sameTypeNodes = relativeNodes?.filter(item => item[nodeClusterBy] === typeName) || [];
+  let sameTypeNodes = relativeNodes?.filter((item) => item[nodeClusterBy] === typeName) || [];
   if (type === 'leaf') {
-    sameTypeNodes = sameTypeNodes.filter(node => degreesMap[node.id]?.in === 0 ||degreesMap[node.id]?.out === 0);
+    sameTypeNodes = sameTypeNodes.filter((node) => degreesMap[node.id]?.in === 0 ||degreesMap[node.id]?.out === 0);
   }
   return sameTypeNodes;
 };
@@ -258,14 +258,14 @@ export const getCoreNodeAndRelativeLeafNodes = (type: 'leaf' | 'all', node: Node
   if (inDegree === 0) {
     // 如果为没有出边的叶子节点，则找出与它关联的边的起点出发的所有一度节点
     coreNode = getCoreNode('source', node, edges);
-    relativeLeafNodes = getRelativeNodeIds('both', coreNode, edges).map(nodeId => nodeMap[nodeId]);
+    relativeLeafNodes = getRelativeNodeIds('both', coreNode, edges).map((nodeId) => nodeMap[nodeId]);
   } else if (outDegree === 0) {
     // 如果为没有入边边的叶子节点，则找出与它关联的边的起点出发的所有一度节点
     coreNode = getCoreNode('target', node, edges);
-    relativeLeafNodes = getRelativeNodeIds('both', coreNode, edges).map(nodeId => nodeMap[nodeId]);
+    relativeLeafNodes = getRelativeNodeIds('both', coreNode, edges).map((nodeId) => nodeMap[nodeId]);
   }
   relativeLeafNodes = relativeLeafNodes.filter(
-    node => degreesMap[node.id] && (degreesMap[node.id].in === 0 || degreesMap[node.id].out === 0),
+    (node) => degreesMap[node.id] && (degreesMap[node.id].in === 0 || degreesMap[node.id].out === 0),
   );
   const sameTypeLeafNodes = getSameTypeNodes(type, nodeClusterBy, node, relativeLeafNodes, degreesMap);
   return { coreNode, relativeLeafNodes, sameTypeLeafNodes };
