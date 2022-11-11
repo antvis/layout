@@ -379,7 +379,7 @@ export class GForceLayout extends Base {
       const vecLength = Math.sqrt(vecX * vecX + vecY * vecY);
       const direX = vecX / vecLength;
       const direY = vecY / vecLength;
-      const length = (linkDistance as Function)(edge, sourceNode, targetNode) || 1 + ((nodeSize(sourceNode) + nodeSize(sourceNode)) || 0) / 2;
+      const length = (linkDistance as Function)(edge, sourceNode, targetNode) || 1 + ((nodeSize(sourceNode) + nodeSize(targetNode)) || 0) / 2;
       const diff = length - vecLength;
       const param = diff * (edgeStrength as Function)(edge);
       const sourceIdx = nodeIdxMap[source];
