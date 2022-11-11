@@ -56,19 +56,19 @@ export class Layout {
     if (!nodes?.length) return;
     let minLayer = Infinity;
     const hasLayerNodes: DagreNodeData[] = [];
-    nodes.forEach(node => {
+    nodes.forEach((node) => {
       if (isString(node.layer)) {
-        node.layer = parseInt(node.layer);
+        node.layer = parseInt(node.layer, 10);
       }
       // keep node.layer === undefined for TS problem
       if (node.layer === undefined || isNaN(node.layer)) return;
       hasLayerNodes.push(node);
       if (node.layer < minLayer) minLayer = node.layer;
-    })
+    });
     if (minLayer <= 0) {
       const layerOffset = Math.abs(minLayer) + 1;
       // @ts-ignore
-      hasLayerNodes.forEach(node => node.layer += layerOffset);
+      hasLayerNodes.forEach((node) => node.layer += layerOffset);
     }
   }
 

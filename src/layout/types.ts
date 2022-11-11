@@ -268,7 +268,7 @@ export interface Force2LayoutOptions {
   gravity?: number;
   factor?: number;
   workerEnabled?: boolean;
-  centripetalOptions?: CentripetalOptions
+  centripetalOptions?: CentripetalOptions;
   leafCluster?: boolean;
   clustering?: boolean;
   nodeClusterBy?: string;

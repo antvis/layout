@@ -221,7 +221,7 @@ export class GForceGPULayout extends Base {
     );
 
     // init degree for mass
-    self.degrees = getDegree(nodes.length, self.nodeIdxMap, edges).map(degree => degree.all);
+    self.degrees = getDegree(nodes.length, self.nodeIdxMap, edges).map((degree) => degree.all);
     const masses: number[] = [];
     const nodeStrengths: number[] = [];
     const centerXs: number[] = [];
