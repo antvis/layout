@@ -1,6 +1,6 @@
 {
   "name": "@antv/layout",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "description": "graph layout algorithm",
   "main": "lib/index.js",
   "module": "es/index.js",

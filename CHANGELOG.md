@@ -1,5 +1,9 @@
 # ChangeLog
 
+### 0.3.4
+
+- perf: improve the performance of dagre with layers;
+
 ### 0.3.3
 
 - fix: dagre layer failed when the layer number begin with 0;
