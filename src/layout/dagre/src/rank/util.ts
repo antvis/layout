@@ -107,6 +107,7 @@ const longestPathWithLayer = (g: Graph) => {
   // minRank += 1; // NOTE: 最小的层级是dummy root，+1
 
   // forward一遍，赋值层级
+  const forwardVisited: Record<string, boolean> = {};
   const dfsForward = (v: string, nextRank: number) => {
     const label = g.node(v)!;
 
@@ -118,6 +119,9 @@ const longestPathWithLayer = (g: Graph) => {
     if (label.rank === undefined || label.rank < currRank) {
       label.rank = currRank;
     }
+
+    if (forwardVisited[v]) return;
+    forwardVisited[v] = true;
 
     // DFS遍历子节点
     g.outEdges(v)?.map((e) => {
