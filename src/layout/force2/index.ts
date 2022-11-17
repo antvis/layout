@@ -69,7 +69,7 @@ export class Force2Layout extends Base {
   public damping: number = 0.9;
 
   /** 最大速度 */
-  public maxSpeed: number = 100;
+  public maxSpeed: number = 500;
 
   /** 一次迭代的平均移动距离小于该值时停止迭代 */
   public minMovement: number = 0.4;

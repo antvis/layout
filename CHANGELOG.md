@@ -1,5 +1,9 @@
 # ChangeLog
 
+### 0.3.5
+
+- perf: adjust maxSpeed for force2;
+
 ### 0.3.4
 
 - perf: improve the performance of dagre with layers;
