@@ -1,5 +1,9 @@
 # ChangeLog
 
+### 0.3.6
+
+- fix: add virtual edges for comboEdges in dagre to make combos be placed in correct layers;
+
 ### 0.3.5
 
 - perf: adjust maxSpeed for force2;
