@@ -1,5 +1,9 @@
 # ChangeLog
 
+### 0.3.7
+
+- fix: dagre layout for collapsed combos;
+
 ### 0.3.6
 
 - fix: add virtual edges for comboEdges in dagre to make combos be placed in correct layers;
