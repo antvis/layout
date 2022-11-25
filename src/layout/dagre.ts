@@ -104,13 +104,21 @@ export class DagreLayout extends Base {
    */
   public execute() {
     const self = this;
-    const { nodes, nodeSize, rankdir, combos, begin, radial } = self;
+    const { nodes, nodeSize, rankdir, combos, begin, radial, comboEdges = [] } = self;
     if (!nodes) return;
     const edges = (self.edges as any[]) || [];
     const g = new DagreGraph({
       multigraph: true,
       compound: true,
     });
+
+    // collect the nodes in their combo, to create virtual edges for comboEdges
+    const nodeComboMap = {} as any;
+    nodes.forEach(node => {
+      if (!node.comboId) return;
+      nodeComboMap[node.comboId] = nodeComboMap[node.comboId] || [];
+      nodeComboMap[node.comboId].push(node.id);
+    })
 
     let nodeSizeFunc: (d?: any) => number[];
     if (!nodeSize) {
@@ -190,6 +198,20 @@ export class DagreLayout extends Base {
         });
       }
     });
+
+    // create virtual edges from node to node for comboEdges
+    comboEdges?.forEach((comboEdge: any) => {
+      const { source, target } = comboEdge;
+      const sources = nodeComboMap[source] || [source];
+      const targets = nodeComboMap[target] || [source];
+      sources.forEach((s: string) => {
+        targets.forEach((t: string) => {
+          g.setEdge(s, t, {
+            weight: comboEdge.weight || 1,
+          });
+        })
+      })
+    })
 
     // 考虑增量图中的原始图
     let prevGraph: DagreGraph | undefined = undefined;
@@ -396,7 +418,6 @@ export class DagreLayout extends Base {
     }
 
     if (self.onLayoutEnd) self.onLayoutEnd();
-
     return {
       nodes,
       edges,
