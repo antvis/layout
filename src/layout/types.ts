@@ -40,6 +40,7 @@ export interface Combo {
   size?: number;
   r?: number;
   itemType?: string;
+  collapsed?: boolean;
 }
 
 export interface Model {
@@ -50,6 +51,7 @@ export interface Model {
   hiddenNodes?: Node[];
   hiddenEdges?: Edge[];
   hiddenCombos?: Combo[];
+  vedges?: Edge[]; // temp edges e.g. the edge generated for releated collapsed combo
 }
 
 export interface OutModel extends Model {

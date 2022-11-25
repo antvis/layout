@@ -8,6 +8,8 @@ export class Base {
   public hiddenNodes: Node[] | null = [];
   public hiddenEdges: Edge[] | null = [];
   public hiddenCombos: Combo[] | null = [];
+  // temp edges e.g. the edge generated for releated collapsed combo
+  public vedges: Edge[] | null = [];
   public positions: PointTuple[] | null = [];
   public destroyed: boolean = false;
   public onLayoutEnd: () => void = () => { }; 
@@ -25,6 +27,7 @@ export class Base {
     this.hiddenNodes = data.hiddenNodes || [];
     this.hiddenEdges = data.hiddenEdges || [];
     this.hiddenCombos = data.hiddenCombos || [];
+    this.vedges = data.vedges || [];
   }
 
   public execute(reloadData?: boolean): any {}

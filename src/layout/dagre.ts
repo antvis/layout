@@ -104,7 +104,7 @@ export class DagreLayout extends Base {
    */
   public execute() {
     const self = this;
-    const { nodes, nodeSize, rankdir, combos, begin, radial, comboEdges = [] } = self;
+    const { nodes, nodeSize, rankdir, combos, begin, radial, comboEdges = [], vedges = [] } = self;
     if (!nodes) return;
     const edges = (self.edges as any[]) || [];
     const g = new DagreGraph({
@@ -150,13 +150,22 @@ export class DagreLayout extends Base {
     g.setDefaultEdgeLabel(() => ({}));
     g.setGraph(self);
 
-    const comboMap: { [key: string]: boolean } = {};
+    const comboMap: { [key: string]: any } = {};
 
     if (this.sortByCombo && combos) {
       combos.forEach((combo) => {
+        comboMap[combo.id] = combo;
+        // regard the collapsed combo as a node
+        if (combo.collapsed) {
+          const size = nodeSizeFunc(combo);
+          const verti = vertisep(combo);
+          const hori = horisep(combo);
+          const width = size[0] + 2 * hori;
+          const height = size[1] + 2 * verti;
+          g.setNode(combo.id, { width, height });
+        }
         if (!combo.parentId) return;
         if (!comboMap[combo.parentId]) {
-          comboMap[combo.parentId] = true;
           g.setNode(combo.parentId, {});
         }
         g.setParent(combo.id, combo.parentId);
@@ -179,7 +188,7 @@ export class DagreLayout extends Base {
 
       if (this.sortByCombo && node.comboId) {
         if (!comboMap[node.comboId]) {
-          comboMap[node.comboId] = true;
+          comboMap[node.comboId] = { id: node.comboId };
           g.setNode(node.comboId, {});
         }
         g.setParent(node.id, node.comboId);
@@ -200,10 +209,10 @@ export class DagreLayout extends Base {
     });
 
     // create virtual edges from node to node for comboEdges
-    comboEdges?.forEach((comboEdge: any) => {
+    (comboEdges?.concat(vedges || []))?.forEach((comboEdge: any) => {
       const { source, target } = comboEdge;
-      const sources = nodeComboMap[source] || [source];
-      const targets = nodeComboMap[target] || [source];
+      const sources = comboMap[source]?.collapsed ? [source] : nodeComboMap[source] || [source];
+      const targets =  comboMap[target]?.collapsed ? [target] : nodeComboMap[target] || [target];
       sources.forEach((s: string) => {
         targets.forEach((t: string) => {
           g.setEdge(s, t, {
@@ -339,6 +348,7 @@ export class DagreLayout extends Base {
         if (isFirstLevel && layerNodes.nodes.length === 1) {
           // 将新坐标写入源数据
           const i = nodes.findIndex((it) => it.id === layerNodes.nodes[0]);
+          if (i <= -1) return;
           nodes[i].x = dBegin[0];
           nodes[i].y = dBegin[1];
           radiusMap[layerNodes.nodes[0]] = 0;
@@ -369,6 +379,7 @@ export class DagreLayout extends Base {
           const target = getEdgeTerminal(it, 'target');
           return source === edge.v && target === edge.w;
         });
+        if (i <= -1) return;
         if ((self.edgeLabelSpace) && self.controlPoints && edges[i].type !== "loop") {
           const otherDim = dim === 'x' ? 'y' : 'x';
           const controlPoints = coord?.points?.slice(1, coord.points.length - 1);
@@ -393,12 +404,16 @@ export class DagreLayout extends Base {
     } else {
       g.nodes().forEach((node: any) => {
         const coord = g.node(node)!;
-        const i = nodes.findIndex((it) => it.id === node);
-        if (!nodes[i]) return;
-        nodes[i].x = coord.x! + dBegin[0];
-        nodes[i].y = coord.y! + dBegin[1];
+        if (!coord) return;
+        let ndata: any = nodes.find((it) => it.id === node);
+        if (!ndata) {
+          ndata = combos?.find((it) => it.id === node);
+        }
+        if (!ndata) return;
+        ndata.x = coord.x! + dBegin[0];
+        ndata.y = coord.y! + dBegin[1];
         // @ts-ignore: pass layer order to data for increment layout use
-        nodes[i]._order = coord._order;
+        ndata._order = coord._order;
       });
       g.edges().forEach((edge: any) => {
         const coord = g.edge(edge);
@@ -407,6 +422,7 @@ export class DagreLayout extends Base {
           const target = getEdgeTerminal(it, 'target');
           return source === edge.v && target === edge.w;
         });
+        if (i <= -1) return;
         if ((self.edgeLabelSpace) && self.controlPoints && edges[i].type !== "loop") {
           edges[i].controlPoints = coord?.points?.slice(1, coord.points.length - 1); // 去掉头尾
           edges[i].controlPoints.forEach((point: any) => {
