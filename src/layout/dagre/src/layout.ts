@@ -193,8 +193,8 @@ const updateInputGraph = (inputGraph: Graph, layoutGraph: Graph) => {
     const inputLabel = inputGraph.edge(e)!;
     const layoutLabel = layoutGraph.edge(e)!;
 
-    inputLabel.points = layoutLabel.points;
-    if (layoutLabel.hasOwnProperty("x")) {
+    inputLabel.points = layoutLabel ? layoutLabel.points : [];
+    if (layoutLabel && layoutLabel.hasOwnProperty("x")) {
       inputLabel.x = layoutLabel.x;
       inputLabel.y = layoutLabel.y;
     }
