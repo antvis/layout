@@ -1,5 +1,9 @@
 # ChangeLog
 
+### 0.3.8
+
+- chore: upgrade g-webgpu and regenerate shader code for gpu layouts, closes: #43;
+
 ### 0.3.7
 
 - fix: dagre layout for collapsed combos;
