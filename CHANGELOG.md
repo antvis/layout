@@ -1,5 +1,10 @@
 # ChangeLog
 
+
+### 0.3.9
+
+- chore: upgrade g-webgpu-core;
+
 ### 0.3.8
 
 - chore: upgrade g-webgpu and regenerate shader code for gpu layouts, closes: #43;
