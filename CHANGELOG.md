@@ -2,7 +2,7 @@
 
 ### 0.3.8
 
-- chore: upgrade webgpu and regenerate shader code for gpu layouts, closes: #43;
+- chore: upgrade g-webgpu and regenerate shader code for gpu layouts, closes: #43;
 
 ### 0.3.7
 
