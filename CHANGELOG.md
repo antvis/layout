@@ -1,6 +1,10 @@
 # ChangeLog
 
 
+### 0.4.10
+
+- chore: upgrade g-webgpu-core;
+
 ### 0.3.9
 
 - chore: upgrade g-webgpu-core;
