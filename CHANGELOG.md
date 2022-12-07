@@ -1,7 +1,10 @@
 # ChangeLog
 
+### 0.3.11
 
-### 0.4.10
+- fix: dagre with complex combos;
+
+### 0.3.10
 
 - chore: upgrade g-webgpu-core;
 

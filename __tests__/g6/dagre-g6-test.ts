@@ -257,7 +257,7 @@ describe("dagre layout", () => {
 
     graph.data(tdata);
     graph.render();
-
+    
     // graph.getGroup().addShape('circle', {
     //   attrs: {
     //     r: 46.63239832592534,
