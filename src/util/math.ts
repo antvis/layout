@@ -1,4 +1,6 @@
 import { Matrix, Model, IndexMap, Edge, Node, OutNode, Degree, NodeMap } from '../layout/types';
+import { isArray } from './array';
+import { isNumber } from './number';
 import { isObject } from './object';
 
 export const getEdgeTerminal = (edge: Edge, type: 'source' | 'target') => {
@@ -173,16 +175,36 @@ export const traverseTreeUp = <T extends { children?: T[] }>(
   traverseUp(data, fn);
 };
 
-export const findMinMaxNodeXY = (nodes: OutNode[]) => {
+/**
+ * calculate the bounding box for the nodes according to their x, y, and size
+ * @param nodes nodes in the layout
+ * @returns 
+ */
+export const getLayoutBBox = (nodes: OutNode[]) => {
   let minX = Infinity;
   let minY = Infinity;
   let maxX = -Infinity;
   let maxY = -Infinity;
   nodes.forEach((node) => {
-    if (minX > node.x) minX = node.x;
-    if (minY > node.y) minY = node.y;
-    if (maxX < node.x) maxX = node.x;
-    if (maxY < node.y) maxY = node.y;
+    let size = node.size;
+    if (isArray(size)) {
+      if (size.length === 1) size = [size[0], size[0]];
+    }  else if (isNumber(size)) {
+      size = [size, size];
+    } else if (size === undefined || isNaN(size as any)) {
+      size = [30, 30];
+    }
+
+    const halfSize = [size[0] / 2, size[1] / 2];
+    const left = node.x - halfSize[0];
+    const right = node.x + halfSize[0];
+    const top = node.y - halfSize[1];
+    const bottom = node.y + halfSize[1];
+
+    if (minX > left) minX = left;
+    if (minY > top) minY = top;
+    if (maxX < right) maxX = right;
+    if (maxY < bottom) maxY = bottom;
   });
   return { minX, minY, maxX, maxY };
 };

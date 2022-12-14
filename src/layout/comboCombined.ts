@@ -13,7 +13,7 @@
 } from "./types";
 import { FORCE_LAYOUT_TYPE_MAP } from './constants';
 import { Base } from "./base";
-import { isArray, isNumber, isFunction, traverseTreeUp, isObject, findMinMaxNodeXY } from "../util";
+import { isArray, isNumber, isFunction, traverseTreeUp, isObject, getLayoutBBox } from "../util";
 import { CircularLayout, ConcentricLayout, GridLayout, RadialLayout, GForceLayout, MDSLayout } from ".";
 
 type Node = OutNode & {
@@ -207,24 +207,24 @@ export class ComboCombinedLayout extends Base {
         outerLayout.layout(outerData);
       }
       // 根据外部布局结果，平移 innerGraphs 中的节点（第一层）
-      outerNodes.forEach((oNode) => {
-        const innerGraph = innerGraphs[oNode.id];
+      outerNodes.forEach((outerNode) => {
+        const innerGraph = innerGraphs[outerNode.id];
         if (!innerGraph) {
-          const node = nodeMap[oNode.id];
+          const node = nodeMap[outerNode.id];
           if (node) {
-            node.x = oNode.x;
-            node.y = oNode.y;
+            node.x = outerNode.x;
+            node.y = outerNode.y;
           }
           return;
         }
         innerGraph.visited = true;
-        innerGraph.x = oNode.x;
-        innerGraph.y = oNode.y;
+        innerGraph.x = outerNode.x;
+        innerGraph.y = outerNode.y;
         innerGraph.nodes.forEach((node: OutNode) => {
-          node.x += oNode.x;
-          node.y += oNode.y;
+          node.x += outerNode.x;
+          node.y += outerNode.y;
         });
-      });  
+      });
     }
 
     // 至上而下遍历树处理下面各层节点位置
@@ -301,7 +301,13 @@ export class ComboCombinedLayout extends Base {
           // 根据节点数量、spacing，调整布局参数
           
           innerGraphLayout.layout(innerGraphData);
-          const { minX, minY, maxX, maxY } = findMinMaxNodeXY(innerGraphNodes);
+          const { minX, minY, maxX, maxY } = getLayoutBBox(innerGraphNodes);
+          // move the innerGraph to [0, 0],for later controled by parent layout
+          const center = { x: (maxX + minX) / 2, y: (maxY + minY) / 2 };
+          innerGraphData.nodes.forEach(node => {
+            node.x -= center.x;
+            node.y -= center.y;
+          })
           const innerGraphSize = Math.max(maxX - minX, maxY - minY, minNodeSize) + padding * 2;
           innerGraphs[treeNode.id] = {
             id: treeNode.id,
