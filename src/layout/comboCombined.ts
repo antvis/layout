@@ -186,7 +186,7 @@ export class ComboCombinedLayout extends Base {
         // @ts-ignore
         const outerLayout = this.outerLayout || new GForceLayout({
           gravity: 1,
-          factor: 2,
+          factor: 4,
           linkDistance: (edge: any, source: any, target: any) => {
             const nodeSize = ((source.size?.[0] || 30) + (target.size?.[0] || 30)) / 2;
             return Math.min(nodeSize * 1.5, 700);
