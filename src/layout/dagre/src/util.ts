@@ -155,6 +155,7 @@ export const buildLayerMatrix = (g: Graph) => {
   // const layering = _.map(_.range(maxRank(g) + 1), function() { return []; });
   g.nodes().forEach((v: string) => {
     const node = g.node(v)!;
+    if (!node) return;
     const rank = node.rank;
     if (rank !== undefined && layeringNodes[rank]) {
       layeringNodes[rank].push(v);

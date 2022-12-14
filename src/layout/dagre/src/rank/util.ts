@@ -26,6 +26,7 @@ const longestPath = (g: Graph) => {
 
   const dfs = (v: string) => {
     const label = g.node(v)!;
+    if (!label) return 0;
     if (visited[v]) {
       return label.rank!;
     }
@@ -65,6 +66,7 @@ const longestPathWithLayer = (g: Graph) => {
 
   const dfs = (v: string) => {
     const label = g.node(v)!;
+    if (!label) return 0;
     if (visited[v]) {
       return label.rank!;
     }
@@ -98,7 +100,9 @@ const longestPathWithLayer = (g: Graph) => {
     return rank;
   };
 
-  g.sources()?.forEach((source) => dfs(source));
+  g.sources()?.forEach((source) => {
+    if (g.node(source)) dfs(source)
+  });
 
   if (minRank! === undefined) {
     minRank = 0;
@@ -132,6 +136,7 @@ const longestPathWithLayer = (g: Graph) => {
   // 指定层级的，更新下游
   g.nodes().forEach((n) => {
     const label = g.node(n)!;
+    if(!label) return;
     if (!isNaN(label.layer as number)) {
       dfsForward(n, label.layer as number); // 默认的dummy root所在层的rank是-1
     } else {

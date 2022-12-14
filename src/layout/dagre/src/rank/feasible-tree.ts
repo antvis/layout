@@ -97,7 +97,7 @@ const feasibleTreeWithLayer = (g: Graph) => {
 
   // Choose arbitrary node from which to start our tree
   const start = g.nodes()[0];
-  const size = g.nodeCount();
+  const size = g.nodes().filter(n => !!g.node(n)).length;
   t.setNode(start, {});
 
   let edge: any;
