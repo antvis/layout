@@ -1,5 +1,9 @@
 # ChangeLog
 
+### 0.3.12
+
+- perf: comboCombined with more accurate combined layout;
+
 ### 0.3.11
 
 - fix: dagre with complex combos;
