@@ -3,6 +3,7 @@
 .idea
 npm-debug.log
 yarn-error.log
+yarn.lock
 lerna-debug.log
 node_modules
 package-lock.json

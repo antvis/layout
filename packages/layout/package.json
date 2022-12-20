@@ -1,0 +1,24 @@
+{
+  "name": "@antv/layout",
+  "version": "0.3.12",
+  "description": "graph layout algorithm",
+  "main": "lib/index.js",
+  "module": "es/index.js",
+  "types": "lib/index.d.ts",
+  "unpkg": "dist/layout.min.js",
+  "files": [
+    "src",
+    "es",
+    "lib",
+    "dist"
+  ],
+  "keywords": [
+    "graph",
+    "layout",
+    "algorithm",
+    "antv"
+  ],
+  "dependencies": {
+    "@antv/graphlib": "^1.0.0"
+  }
+}
