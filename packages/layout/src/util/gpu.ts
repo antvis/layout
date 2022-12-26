@@ -1,6 +1,5 @@
 import { OutNode, Edge, IndexMap } from "../types";
 import { isNumber } from "./";
-import { getEdgeTerminal } from "./math";
 
 /**
  * 将 number | Function 类型的参数转换为 return number 的 Function
@@ -54,9 +53,7 @@ export const buildTextureData = (
     nodeDict.push([]);
   }
   for (i = 0; i < edges.length; i++) {
-    const e = edges[i];
-    const source = getEdgeTerminal(e, "source");
-    const target = getEdgeTerminal(e, "target");
+    const { source, target } = edges[i];
     if (!isNaN(mapIdPos[source]) && !isNaN(mapIdPos[target])) {
       nodeDict[mapIdPos[source]].push(mapIdPos[target]);
       nodeDict[mapIdPos[target]].push(mapIdPos[source]);
@@ -173,8 +170,7 @@ export const buildTextureDataWithTwoEdgeAttr = (
   }
   for (i = 0; i < edges.length; i++) {
     const e = edges[i];
-    const source = getEdgeTerminal(e, "source");
-    const target = getEdgeTerminal(e, "target");
+    const { source, target } = e;
     nodeDict[mapIdPos[source]].push(mapIdPos[target]);
     nodeDict[mapIdPos[source]].push(attrs1(e));
     nodeDict[mapIdPos[source]].push(attrs2(e));
