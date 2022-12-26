@@ -1,4 +1,4 @@
-import type { Graph, Node as INode, Edge as IEdge, TreeData } from "@antv/graphlib";
+import type { Graph, Node as INode, Edge as IEdge } from "@antv/graphlib";
 
 /**
  * input node
@@ -21,9 +21,7 @@ export interface OutNode extends Node {
 /**
  * input edge
  */
-export interface Edge {
-  source: string;
-  target: string;
+export interface Edge extends IEdge {
   data?: {
     visible?: boolean;
     // temp edges e.g. the edge generated for releated collapsed combo
