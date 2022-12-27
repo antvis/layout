@@ -10,7 +10,6 @@ import {
 } from "../types";
 import { isArray } from "./array";
 import { isNumber } from "./number";
-import { isObject } from "./object";
 
 export const getDegree = (
   n: number,

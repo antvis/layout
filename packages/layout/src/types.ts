@@ -41,6 +41,7 @@ export type Degree = {
 export interface OutEdge extends Edge {}
 
 export type PointTuple = [number, number];
+export type Matrix = number[];
 export type LayoutMapping = { nodes: OutNode[]; edges: Edge[] };
 
 export interface SyncLayout<LayoutOptions> {
@@ -101,6 +102,13 @@ export interface RandomLayoutOptions {
   center?: PointTuple;
   width?: number;
   height?: number;
+  workerEnabled?: boolean;
+  onLayoutEnd?: () => void;
+}
+
+export interface MDSLayoutOptions {
+  center?: PointTuple;
+  linkDistance?: number;
   workerEnabled?: boolean;
   onLayoutEnd?: () => void;
 }
