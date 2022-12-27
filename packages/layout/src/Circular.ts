@@ -2,13 +2,15 @@ import type { Graph } from "@antv/graphlib";
 import type { CircularLayoutOptions, SyncLayout, LayoutMapping, PointTuple, IndexMap, OutNode, Edge, Degree } from "./types";
 import { getDegree, getEdgeTerminal, getFuncByUnknownType, clone } from "./util";
 
-type INode = OutNode & {
+type INodeData = OutNode & {
   degree: number;
   size: number | PointTuple;
   weight: number;
   children: string[];
   parent: string[];
 };
+
+type IEdgeData = {};
 
 const DEFAULTS_LAYOUT_OPTIONS: Partial<CircularLayoutOptions> = {
   radius: null,
@@ -45,23 +47,25 @@ export class CircularLayout implements SyncLayout<CircularLayoutOptions> {
   /**
    * Return the positions of nodes and edges(if needed).
    */
-  execute(graph: Graph<INode, EdgeData>, options?: CircularLayoutOptions): LayoutMapping {
+  execute(graph: Graph<INodeData, IEdgeData>, options?: CircularLayoutOptions): LayoutMapping {
     return this.genericCircularLayout(false, graph, options) as LayoutMapping;
   }
 
   /**
    * To directly assign the positions to the nodes.
    */
-  assign(graph: Graph<INode, EdgeData>, options?: CircularLayoutOptions) {
-    this.genericCircularLayout(true, graph, options);
+  assign(graph: Graph<INodeData, IEdgeData>, options?: CircularLayoutOptions) {
+    graph.batch(() => {
+      this.genericCircularLayout(true, graph, options);
+    });
   }
 
-  private genericCircularLayout(assign: boolean, graph: Graph<INode, EdgeData>, options?: CircularLayoutOptions): LayoutMapping | void {
+  private genericCircularLayout(assign: boolean, graph: Graph<INodeData, IEdgeData>, options?: CircularLayoutOptions): LayoutMapping | void {
     const mergedOptions = { ...this.options, ...options };
     const { width, height, center, divisions, startAngle = 0, endAngle = 2 * Math.PI, angleRatio, ordering, clockwise, nodeSpacing: paramNodeSpacing, nodeSize: paramNodeSize, onLayoutEnd } = mergedOptions;
 
     const nodes = graph.getAllNodes();
-    const edges = graph.getAllEdges();
+    const edges = graph.getAllEdges() as Edge[];
     const n = nodes.length;
 
     // Need no layout if there is no node.
@@ -105,7 +109,7 @@ export class CircularLayout implements SyncLayout<CircularLayoutOptions> {
     nodes.forEach((node, i) => {
       nodeMap[node.id] = i;
     });
-    const degrees = getDegree(nodes.length, nodeMap, edges);
+    const degrees = getDegree(nodes.length, nodeMap, edges as Edge[]);
 
     let { radius, startRadius, endRadius } = mergedOptions;
     if (paramNodeSpacing) {
@@ -132,15 +136,16 @@ export class CircularLayout implements SyncLayout<CircularLayoutOptions> {
     const astep = angleStep * angleRatio!;
 
     let layoutNodes: any[] = [];
+    let nodesData = nodes.map((node) => node.data);
     if (ordering === "topology") {
       // layout according to the topology
-      layoutNodes = topologyOrdering(degrees, nodes, edges, nodeMap);
+      layoutNodes = topologyOrdering(degrees, nodesData, edges, nodeMap);
     } else if (ordering === "topology-directed") {
       // layout according to the topology
-      layoutNodes = topologyOrdering(degrees, nodes, edges, nodeMap, true);
+      layoutNodes = topologyOrdering(degrees, nodesData, edges, nodeMap, true);
     } else if (ordering === "degree") {
       // layout according to the descent order of degrees
-      layoutNodes = degreeOrdering(degrees, nodes);
+      layoutNodes = degreeOrdering(degrees, nodesData);
     } else {
       // layout according to the original order in the data.nodes
       layoutNodes = nodes;
@@ -172,9 +177,11 @@ export class CircularLayout implements SyncLayout<CircularLayoutOptions> {
 
     if (assign) {
       layoutNodes.forEach((node) => {
-        graph.updateNodeProperty(node.id, "x", node.x);
-        graph.updateNodeProperty(node.id, "y", node.y);
-        graph.updateNodeProperty(node.id, "weight", node.weight);
+        graph.mergeNodeData(node.id, {
+          x: node.x,
+          y: node.y,
+          weight: node.weight,
+        });
       });
     }
 
@@ -190,7 +197,7 @@ export class CircularLayout implements SyncLayout<CircularLayoutOptions> {
 }
 
 function initHierarchy(
-  nodes: INode[],
+  nodes: INodeData[],
   edges: Edge[],
   nodeMap: IndexMap,
   directed: boolean
@@ -236,7 +243,7 @@ function initHierarchy(
   }
 }
 
-function connect(a: INode, b: INode, edges: Edge[]) {
+function connect(a: INodeData, b: INodeData, edges: Edge[]) {
   const m = edges.length;
   for (let i = 0; i < m; i++) {
     const source = getEdgeTerminal(edges[i], 'source');
@@ -251,7 +258,7 @@ function connect(a: INode, b: INode, edges: Edge[]) {
   return false;
 }
 
-function compareDegree(a: INode, b: INode) {
+function compareDegree(a: INodeData, b: INodeData) {
   const aDegree = a.degree!;
   const bDegree = b.degree!;
   if (aDegree < bDegree) {
@@ -265,7 +272,7 @@ function compareDegree(a: INode, b: INode) {
 
 function topologyOrdering(
   degrees: Degree[],
-  nodes: INode[],
+  nodes: INodeData[],
   edges: Edge[],
   nodeMap: IndexMap, 
   directed: boolean = false
@@ -328,9 +335,9 @@ function topologyOrdering(
 
 function degreeOrdering(
   degrees: Degree[],
-  nodes: INode[],
-): INode[] {
-  const orderedNodes: INode[] = [];
+  nodes: INodeData[],
+): INodeData[] {
+  const orderedNodes: INodeData[] = [];
   nodes.forEach((node, i) => {
     node.degree = degrees[i].all;
     orderedNodes.push(node);

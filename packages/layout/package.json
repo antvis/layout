@@ -1,15 +1,13 @@
 {
   "name": "@antv/layout",
-  "version": "0.3.12",
+  "version": "1.0.0-alpha.0",
   "description": "graph layout algorithm",
-  "main": "lib/index.js",
-  "module": "es/index.js",
-  "types": "lib/index.d.ts",
-  "unpkg": "dist/layout.min.js",
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
+  "types": "dist/index.d.ts",
+  "unpkg": "dist/index.umd.min.js",
   "files": [
     "src",
-    "es",
-    "lib",
     "dist"
   ],
   "keywords": [
