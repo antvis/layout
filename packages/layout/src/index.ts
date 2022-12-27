@@ -6,3 +6,4 @@ export * from "@antv/graphlib";
 export * from "./grid";
 export * from './random';
 export * from './mds';
+export * from './concentric';

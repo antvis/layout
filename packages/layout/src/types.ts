@@ -93,9 +93,9 @@ export interface GridLayoutOptions {
   sortBy?: string;
   workerEnabled?: boolean;
   columns?: number | undefined;
-  position?: ((node: Node) => { row?: number; col?: number }) | undefined;
+  position?: ((node?: Node) => { row?: number; col?: number }) | undefined;
   onLayoutEnd?: () => void;
-  nodeSpacing?: ((node: Node) => number) | number | undefined;
+  nodeSpacing?: ((node?: Node) => number) | number | undefined;
 }
 
 export interface RandomLayoutOptions {
@@ -110,5 +110,23 @@ export interface MDSLayoutOptions {
   center?: PointTuple;
   linkDistance?: number;
   workerEnabled?: boolean;
+  onLayoutEnd?: () => void;
+}
+
+export interface ConcentricLayoutOptions {
+  center?: PointTuple;
+  preventOverlap?: boolean;
+  nodeSize?: number | PointTuple;
+  minNodeSpacing?: number;
+  sweep?: number;
+  equidistant?: boolean;
+  startAngle?: number;
+  clockwise?: boolean;
+  maxLevelDiff?: number;
+  sortBy?: string;
+  workerEnabled?: boolean;
+  width?: number;
+  height?: number;
+  nodeSpacing: number | number[] | ((node?: Node) => number) | undefined;
   onLayoutEnd?: () => void;
 }
