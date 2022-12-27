@@ -55,11 +55,11 @@ const DEFAULTS_LAYOUT_OPTIONS: Partial<GridLayoutOptions> = {
  * const positions = layout.execute(graph); // { nodes: [], edges: [] }
  * 
  * // Or use different options later.
- * const layout = new GridLayout({ radius: 10 });
+ * const layout = new GridLayout({ rows: 10 });
  * const positions = layout.execute(graph, { rows: 20 }); // { nodes: [], edges: [] }
  * 
  * // If you want to assign the positions directly to the nodes, use assign method.
- * layout.assign(graph, { radius: 20 });
+ * layout.assign(graph, { rows: 20 });
  */
 export class GridLayout implements SyncLayout<GridLayoutOptions> {
   constructor(private options: GridLayoutOptions = {} as GridLayoutOptions) {

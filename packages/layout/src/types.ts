@@ -11,10 +11,10 @@ export interface Node extends INode {
 
 /** output node */
 export interface OutNode extends Node {
+  x?: number;
+  y?: number;
   data?: {
     visible?: boolean;
-    x?: number;
-    y?: number;
   }
 }
 
@@ -95,4 +95,12 @@ export interface GridLayoutOptions {
   position?: ((node: Node) => { row?: number; col?: number }) | undefined;
   onLayoutEnd?: () => void;
   nodeSpacing?: ((node: Node) => number) | number | undefined;
+}
+
+export interface RandomLayoutOptions {
+  center?: PointTuple;
+  width?: number;
+  height?: number;
+  workerEnabled?: boolean;
+  onLayoutEnd?: () => void;
 }
