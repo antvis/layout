@@ -78,3 +78,21 @@ export interface CircularLayoutOptions {
   nodeSize?: number | number[];
   onLayoutEnd?: () => void;
 }
+
+export interface GridLayoutOptions {
+  width?: number;
+  height?: number;
+  begin?: PointTuple;
+  preventOverlap?: boolean;
+  nodeSize?: number | number[];
+  preventOverlapPadding?: number;
+  condense?: boolean;
+  rows?: number;
+  cols?: number;
+  sortBy?: string;
+  workerEnabled?: boolean;
+  columns?: number | undefined;
+  position?: ((node: Node) => { row?: number; col?: number }) | undefined;
+  onLayoutEnd?: () => void;
+  nodeSpacing?: ((node: Node) => number) | number | undefined;
+}

@@ -96,17 +96,13 @@ export class CircularLayout implements SyncLayout<CircularLayoutOptions> {
         });
       }
 
-      if (onLayoutEnd) {
-        onLayoutEnd();
-      }
+      onLayoutEnd?.();
       return {
         nodes: [
           {
-            id: `${nodes[0].id}`,
-            data: {
-              x: calculatedCenter[0],
-              y: calculatedCenter[1],
-            }
+            ...nodes[0],
+            x: calculatedCenter[0],
+            y: calculatedCenter[1],
           }
         ],
         edges: [],
