@@ -1,5 +1,5 @@
 import { Graph } from "@antv/graphlib";
-import { Edge, LayoutMapping, OutNode, PointTuple, RandomLayoutOptions, SyncLayout } from "./types";
+import { Node, Edge, LayoutMapping, OutNode, PointTuple, RandomLayoutOptions, SyncLayout } from "./types";
 
 const DEFAULTS_LAYOUT_OPTIONS: Partial<RandomLayoutOptions> = {
   center: [0, 0],
@@ -17,7 +17,7 @@ const DEFAULTS_LAYOUT_OPTIONS: Partial<RandomLayoutOptions> = {
  * 
  * // Or use different options later.
  * const layout = new RandomLayout({ center: [100, 100] });
- * const positions = layout.execute(graph, { rows: 20 }); // { nodes: [], edges: [] }
+ * const positions = layout.execute(graph, { center: [100, 100] }); // { nodes: [], edges: [] }
  * 
  * // If you want to assign the positions directly to the nodes, use assign method.
  * layout.assign(graph, { center: [100, 100] });

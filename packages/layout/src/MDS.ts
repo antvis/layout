@@ -1,6 +1,6 @@
 import { Graph } from "@antv/graphlib";
 import { Matrix as MLMatrix, SingularValueDecomposition } from "ml-matrix";
-import { Edge, LayoutMapping, OutNode, PointTuple, MDSLayoutOptions, SyncLayout, Matrix } from "./types";
+import { Node, Edge, LayoutMapping, OutNode, PointTuple, MDSLayoutOptions, SyncLayout, Matrix } from "./types";
 import { clone, floydWarshall, getAdjMatrix, scaleMatrix } from "./util";
 
 const DEFAULTS_LAYOUT_OPTIONS: Partial<MDSLayoutOptions> = {

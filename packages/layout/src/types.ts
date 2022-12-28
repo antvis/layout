@@ -4,29 +4,25 @@ import type { Graph, Node as INode, Edge as IEdge } from "@antv/graphlib";
  * input node
  */
 export interface Node extends INode {
-  data?: {
-    visible?: boolean;
-  };
+  visible?: boolean;
+  size?: number | number[],
+  bboxSize?: number[],
 }
 
 /** output node */
 export interface OutNode extends Node {
-  x?: number;
-  y?: number;
-  data?: {
-    visible?: boolean;
-  }
+  x: number;
+  y: number;
+  visible?: boolean;
 }
 
 /**
  * input edge
  */
 export interface Edge extends IEdge {
-  data?: {
-    visible?: boolean;
-    // temp edges e.g. the edge generated for releated collapsed combo
-    virtual?: boolean;
-  };
+  visible?: boolean;
+  // temp edges e.g. the edge generated for releated collapsed combo
+  virtual?: boolean;
 }
 
 export type Degree = {
@@ -41,6 +37,7 @@ export type Degree = {
 export interface OutEdge extends Edge {}
 
 export type PointTuple = [number, number];
+export type Point = { x: number, y: number };
 export type Matrix = number[];
 export type LayoutMapping = { nodes: OutNode[]; edges: Edge[] };
 
@@ -128,5 +125,24 @@ export interface ConcentricLayoutOptions {
   width?: number;
   height?: number;
   nodeSpacing: number | number[] | ((node?: Node) => number) | undefined;
+  onLayoutEnd?: () => void;
+}
+
+export interface RadialLayoutOptions {
+  center?: PointTuple;
+  width?: number;
+  height?: number;
+  linkDistance?: number;
+  maxIteration?: number;
+  focusNode?: string | Node | null;
+  unitRadius?: number | null;
+  preventOverlap?: boolean;
+  nodeSize?: number | number[] | undefined;
+  nodeSpacing?: number | Function | undefined;
+  maxPreventOverlapIteration?: number;
+  strictRadial?: boolean;
+  sortBy?: string | undefined;
+  sortStrength?: number;
+  workerEnabled?: boolean;
   onLayoutEnd?: () => void;
 }

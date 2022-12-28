@@ -1,6 +1,6 @@
 import { Graph } from "@antv/graphlib";
 import { isString, getDegree, isNaN, getFuncByUnknownType, isArray } from "./util";
-import { Edge, GridLayoutOptions, LayoutMapping, PointTuple, SyncLayout, OutNode } from "./types";
+import { Node, Edge, GridLayoutOptions, LayoutMapping, PointTuple, SyncLayout, OutNode } from "./types";
 import { clone } from "./util";
 
 interface CalcNode extends OutNode {

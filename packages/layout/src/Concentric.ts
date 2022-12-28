@@ -1,5 +1,5 @@
 import { Graph } from "@antv/graphlib";
-import { Edge, LayoutMapping, OutNode, PointTuple, ConcentricLayoutOptions, SyncLayout } from "./types";
+import { Node, Edge, LayoutMapping, OutNode, PointTuple, ConcentricLayoutOptions, SyncLayout } from "./types";
 import { clone, getDegree, isArray, isFunction, isNumber, isObject, isString } from "./util";
 
 // maps node's id and its index in the nodes array
@@ -21,19 +21,19 @@ const DEFAULTS_LAYOUT_OPTIONS: Partial<ConcentricLayoutOptions> = {
 }
 
 /**
- * Layout randomizing the nodes' position
+ * Layout arranging the nodes in concentrics
  * 
  * @example
  * // Assign layout options when initialization.
- * const layout = new RandomLayout({ center: [100, 100] });
+ * const layout = new ConcentricLayout({ nodeSpacing: 10 });
  * const positions = layout.execute(graph); // { nodes: [], edges: [] }
  * 
  * // Or use different options later.
- * const layout = new RandomLayout({ center: [100, 100] });
- * const positions = layout.execute(graph, { rows: 20 }); // { nodes: [], edges: [] }
+ * const layout = new ConcentricLayout({ nodeSpacing: 10});
+ * const positions = layout.execute(graph, { nodeSpacing: 10 }); // { nodes: [], edges: [] }
  * 
  * // If you want to assign the positions directly to the nodes, use assign method.
- * layout.assign(graph, { center: [100, 100] });
+ * layout.assign(graph, { nodeSpacing: 10 });
  */
 export class ConcentricLayout implements SyncLayout<ConcentricLayoutOptions> {
   constructor(private options: ConcentricLayoutOptions = {} as ConcentricLayoutOptions) {
