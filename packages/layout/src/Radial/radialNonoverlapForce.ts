@@ -6,16 +6,16 @@ const SPEED_DIVISOR = 800;
 
 export type RadialNonoverlapForceOptions = {
   positions: OutNode[];
-  focusID: number;
+  focusId: number;
   radii: number[];
-  iterations?: number;
-  height?: number;
-  width?: number;
-  speed?: number;
-  gravity?: number;
+  iterations: number;
+  height: number;
+  width: number;
   k: number;
   strictRadial: boolean;
-  nodes: any[];
+  nodes: Node[];
+  speed?: number;
+  gravity?: number;
   nodeSizeFunc: (node: Node) => number;
 };
 

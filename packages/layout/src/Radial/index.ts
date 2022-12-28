@@ -90,7 +90,7 @@ export class RadialLayout implements SyncLayout<RadialLayoutOptions> {
       return;
     }
     // layout
-    let focusNode: Node;
+    let focusNode: Node = nodes[0];
     if (isString(propsFocusNode)) {
       for (let i = 0; i < nodes.length; i++) {
         if (nodes[i].id === propsFocusNode) {
@@ -101,25 +101,19 @@ export class RadialLayout implements SyncLayout<RadialLayoutOptions> {
     } else {
       focusNode = propsFocusNode as Node;
     }
-    // default focus node
-    if (!focusNode) {
-      focusNode = nodes[0];
-    }
     
     // the index of the focusNode in data
-    let focusIndex = getIndexById(nodes, focusNode.id);
-    if (focusIndex < 0) focusIndex = 0;
+    const focusIndex = getIndexById(nodes, focusNode.id);
 
     // the graph-theoretic distance (shortest path distance) matrix
     const adjMatrix = getAdjMatrix({ nodes, edges }, false);
-    const D = floydWarshall(adjMatrix);
-    const maxDistance = maxToFocus(D, focusIndex);
+    const distances = floydWarshall(adjMatrix);
+    const maxDistance = maxToFocus(distances, focusIndex);
     // replace first node in unconnected component to the circle at (maxDistance + 1)
-    handleInfinity(D, focusIndex, maxDistance + 1);
-    const distances = D;
+    handleInfinity(distances, focusIndex, maxDistance + 1);
 
     // the shortest path distance from each node to focusNode
-    const focusNodeD = D[focusIndex];
+    const focusNodeD = distances[focusIndex];
     let semiWidth =
       width - center[0] > center[0] ? center[0] : width - center[0];
     let semiHeight =
@@ -131,7 +125,7 @@ export class RadialLayout implements SyncLayout<RadialLayoutOptions> {
       semiHeight = height / 2;
     }
     // the maxRadius of the graph
-    const maxRadius = semiHeight > semiWidth ? semiWidth : semiHeight;
+    const maxRadius = Math.min(semiWidth, semiHeight);
     const maxD = Math.max(...focusNodeD);
     // the radius for each nodes away from focusNode
     const radii: number[] = [];
@@ -144,25 +138,11 @@ export class RadialLayout implements SyncLayout<RadialLayoutOptions> {
     // the weight matrix, Wij = 1 / dij^(-2)
     const weights = getWeightMatrix(idealDistances);
 
-    // the initial positions from mds
-    let positions = mds(linkDistance, idealDistances, linkDistance).map(([x, y]) => ({ x, y }));
-    positions.forEach((p: OutNode) => {
-      if (isNaN(p.x)) {
-        p.x = Math.random() * linkDistance;
-      }
-      if (isNaN(p.y)) {
-        p.y = Math.random() * linkDistance;
-      }
-    });
-    positions.forEach((p: OutNode, i: number) => {
-      nodes[i].x = p.x + center[0];
-      nodes[i].y = p.y + center[1];
-    });
-    // move the graph to origin, centered at focusNode
-    positions.forEach((p: OutNode) => {
-      p.x -= positions[focusIndex].x;
-      p.y -= positions[focusIndex].y;
-    });
+    // the initial positions from mds, move the graph to origin, centered at focusNode
+    let positions: OutNode[] = mds(linkDistance, idealDistances, linkDistance).map(([x, y]) => ({
+      x: (isNaN(x) ? Math.random() * linkDistance : x) - positions[focusIndex].x,
+      y: (isNaN(y) ? Math.random() * linkDistance : y) - positions[focusIndex].y,
+    }));
 
     this.run(maxIteration, positions, weights, idealDistances, radii, focusIndex);
     let nodeSizeFunc;
@@ -177,9 +157,9 @@ export class RadialLayout implements SyncLayout<RadialLayoutOptions> {
         height,
         width,
         strictRadial: Boolean(strictRadial),
-        focusID: focusIndex,
+        focusId: focusIndex,
         iterations: maxPreventOverlapIteration || 200,
-        k: positions.length / 4.5
+        k: positions.length / 4.5,
       };
       positions = radialNonoverlapForce(graph, nonoverlapForceParams)
     }
@@ -188,8 +168,8 @@ export class RadialLayout implements SyncLayout<RadialLayoutOptions> {
     positions.forEach((p: OutNode, i: number) => {
       layoutNodes.push({
         ...nodes[i],
-        x: p.x,
-        y: p.y
+        x: p.x + center[0],
+        y: p.y + center[1]
       })
     });
 
@@ -224,8 +204,8 @@ export class RadialLayout implements SyncLayout<RadialLayoutOptions> {
     param: number,
     positions: OutNode[],
     radii: number[],
-    D: Matrix[],
-    W: Matrix[],
+    distances: Matrix[],
+    weights: Matrix[],
     focusIndex: number
   ) {
     const vparam = 1 - param;
@@ -247,13 +227,13 @@ export class RadialLayout implements SyncLayout<RadialLayoutOptions> {
         // the euclidean distance between v and u
         const edis = getEDistance(v, u);
         const reciEdis = edis === 0 ? 0 : 1 / edis;
-        const idealDis = D[j][i];
+        const idealDis = distances[j][i];
         // same for x and y
-        denominator += W[i][j];
+        denominator += weights[i][j];
         // x
-        xMolecule += W[i][j] * (u.x + idealDis * (v.x - u.x) * reciEdis);
+        xMolecule += weights[i][j] * (u.x + idealDis * (v.x - u.x) * reciEdis);
         // y
-        yMolecule += W[i][j] * (u.y + idealDis * (v.y - u.y) * reciEdis);
+        yMolecule += weights[i][j] * (u.y + idealDis * (v.y - u.y) * reciEdis);
       });
       const reciR = radii[i] === 0 ? 0 : 1 / radii[i];
       denominator *= vparam;
@@ -315,8 +295,7 @@ const eIdealDisMatrix = (
             newRow.push((v * linkDistance) / (radii[i] / unitRadius));
           }
         } else {
-          // i and j are on different circle
-          // i and j are on different circle
+          // i and j are on different circles
           const link = (linkDistance + unitRadius) / 2;
           newRow.push(v * link);
         }
@@ -327,15 +306,15 @@ const eIdealDisMatrix = (
   return result;
 }
 
-const getWeightMatrix = (M: Matrix[]) => {
-  const rows = M.length;
-  const cols = M[0].length;
+const getWeightMatrix = (idealDistances: Matrix[]) => {
+  const rows = idealDistances.length;
+  const cols = idealDistances[0].length;
   const result = [];
   for (let i = 0; i < rows; i++) {
     const row = [];
     for (let j = 0; j < cols; j++) {
-      if (M[i][j] !== 0) {
-        row.push(1 / (M[i][j] * M[i][j]));
+      if (idealDistances[i][j] !== 0) {
+        row.push(1 / (idealDistances[i][j] * idealDistances[i][j]));
       } else {
         row.push(0);
       }
@@ -345,11 +324,16 @@ const getWeightMatrix = (M: Matrix[]) => {
   return result;
 }
 
-const getEDistance = (p1: OutNode, p2: OutNode) => {
-  return Math.sqrt(
-    (p1.x - p2.x) * (p1.x - p2.x) + (p1.y - p2.y) * (p1.y - p2.y)
-  );
-}
+/**
+ * calculate the euclidean distance form p1 to p2
+ * @param p1 
+ * @param p2 
+ * @returns 
+ */
+const getEDistance = (p1: OutNode, p2: OutNode) => Math.sqrt(
+  (p1.x - p2.x) * (p1.x - p2.x) + (p1.y - p2.y) * (p1.y - p2.y)
+);
+
 const getIndexById = (array: any[], id: string) => {
   let index = -1;
   array.forEach((a, i) => {
@@ -357,7 +341,7 @@ const getIndexById = (array: any[], id: string) => {
       index = i;
     }
   });
-  return index;
+  return Math.max(index, 0);
 }
 
 const handleInfinity = (matrix: Matrix[], focusIndex: number, step: number) => {
@@ -403,6 +387,12 @@ const maxToFocus = (matrix: Matrix[], focusIndex: number): number => {
   return max;
 }
 
+/**
+ * format the props nodeSize and nodeSpacing to a function
+ * @param nodeSize 
+ * @param nodeSpacing 
+ * @returns 
+ */
 const formatNodeSize = (
   nodeSize: number | number[] | undefined,
   nodeSpacing: number | Function | undefined
