@@ -84,13 +84,26 @@ export class RadialLayout implements SyncLayout<RadialLayoutOptions> {
     const center = !propsCenter ? [width / 2, height / 2] : propsCenter as PointTuple;
 
     if (nodes.length === 1) {
-      nodes[0].x = center[0];
-      nodes[0].y = center[1];
+      if (assign) {
+        graph.mergeNodeData(nodes[0].id, {
+          x: center[0],
+          y: center[1],
+        });
+      }
       onLayoutEnd?.();
-      return;
+      return {
+        nodes: [
+          {
+            ...nodes[0],
+            x: center[0],
+            y: center[1],
+          }
+        ],
+        edges,
+      };
     }
     // layout
-    let focusNode: Node = nodes[0];
+    let focusNode: Node = propsFocusNode || nodes[0];
     if (isString(propsFocusNode)) {
       for (let i = 0; i < nodes.length; i++) {
         if (nodes[i].id === propsFocusNode) {
@@ -98,8 +111,6 @@ export class RadialLayout implements SyncLayout<RadialLayoutOptions> {
           break;
         }
       }
-    } else {
-      focusNode = propsFocusNode as Node;
     }
     
     // the index of the focusNode in data
