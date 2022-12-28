@@ -21,7 +21,8 @@
     "precommit": "lint-staged",
     "release": "release-it",
     "test": "jest",
-    "coverage": "jest --coverage"
+    "coverage": "jest --coverage",
+    "wasm": "wasm-pack build ./packages/layout-wasm --target web"
   },
   "lint-staged": {
     "**/*.{js,ts,md}": [
