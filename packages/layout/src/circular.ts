@@ -69,10 +69,15 @@ export class CircularLayout implements SyncLayout<CircularLayoutOptions> {
 
   private genericCircularLayout(assign: boolean, graph: Graph<Node, Edge>, options?: CircularLayoutOptions): LayoutMapping | void {
     const mergedOptions = { ...this.options, ...options };
-    const { width, height, center, divisions, startAngle = 0, endAngle = 2 * Math.PI, angleRatio, ordering, clockwise, nodeSpacing: paramNodeSpacing, nodeSize: paramNodeSize, onLayoutEnd } = mergedOptions;
+    const { width, height, center, divisions, startAngle = 0, endAngle = 2 * Math.PI, angleRatio, ordering, clockwise, nodeSpacing: paramNodeSpacing, nodeSize: paramNodeSize, layoutInvisibles, onLayoutEnd } = mergedOptions;
 
-    const nodes = graph.getAllNodes();
-    const edges = graph.getAllEdges() as Edge[];
+    let nodes = graph.getAllNodes();
+    let edges = graph.getAllEdges();
+
+    if (!layoutInvisibles) {
+      nodes = nodes.filter(node => node.visible || node.visible === undefined);
+      edges = edges.filter(edge => edge.visible || edge.visible === undefined);
+    }
     const n = nodes.length;
 
     // Need no layout if there is no node.
@@ -146,13 +151,13 @@ export class CircularLayout implements SyncLayout<CircularLayoutOptions> {
     let layoutNodes: CalcNode[] = [];
     if (ordering === "topology") {
       // layout according to the topology
-      layoutNodes = topologyOrdering(graph, degrees, nodeIdxMap);
+      layoutNodes = topologyOrdering(nodes, edges, degrees, nodeIdxMap);
     } else if (ordering === "topology-directed") {
       // layout according to the topology
-      layoutNodes = topologyOrdering(graph, degrees, nodeIdxMap, true);
+      layoutNodes = topologyOrdering(nodes, edges, degrees, nodeIdxMap, true);
     } else if (ordering === "degree") {
       // layout according to the descent order of degrees
-      layoutNodes = degreeOrdering(graph, degrees);
+      layoutNodes = degreeOrdering(nodes, degrees);
     } else {
       // layout according to the original order in the data.nodes
       layoutNodes = nodes.map(node => clone(node));
@@ -283,13 +288,12 @@ const connect = (a: CalcNode, b: CalcNode, edges: Edge[]): boolean => {
  * @returns 
  */
 const topologyOrdering = (
-  graph: Graph<Node, Edge>,
+  nodes: Node[],
+  edges: Edge[],
   degrees: Degree[],
   nodeIdxMap: IndexMap,
   directed: boolean = false
 ) => {
-  const nodes = graph.getAllNodes();
-  const edges = graph.getAllEdges();
   // temporary result with extra properties in data field
   const cnodes: CalcNode[] = nodes.map(node => clone(node));
   // const cnodes: CalcNode[] = clone(nodes) as CalcNode[];
@@ -352,10 +356,9 @@ const topologyOrdering = (
  * @returns 
  */
 function degreeOrdering(
-  graph: Graph<Node, Edge>,
+  nodes: Node[],
   degrees: Degree[],
 ): CalcNode[] {
-  const nodes = graph.getAllNodes();
   const orderedNodes: CalcNode[] = [];
   const weightMap: { [id: string]: number } = {};
   nodes.forEach((node, i) => {

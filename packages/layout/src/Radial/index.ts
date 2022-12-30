@@ -68,11 +68,17 @@ export class RadialLayout implements SyncLayout<RadialLayoutOptions> {
       linkDistance = 50,
       sortStrength = 10,
       maxIteration = 1000,
+      layoutInvisibles,
       onLayoutEnd
     } = mergedOptions;
 
-    const nodes = graph.getAllNodes();
-    const edges = graph.getAllEdges();
+    let nodes = graph.getAllNodes();
+    let edges = graph.getAllEdges();
+
+    if (!layoutInvisibles) {
+      nodes = nodes.filter(node => node.visible || node.visible === undefined);
+      edges = edges.filter(edge => edge.visible || edge.visible === undefined);
+    }
 
     if (!nodes || nodes.length === 0) {
       onLayoutEnd?.();

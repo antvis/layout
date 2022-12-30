@@ -13,7 +13,6 @@ export interface Node extends INode {
 export interface OutNode extends Node {
   x: number;
   y: number;
-  visible?: boolean;
 }
 
 /**
@@ -58,7 +57,13 @@ export interface LayoutSupervisor {
   kill(): void;
 }
 
-export interface CircularLayoutOptions {
+// most layout options extends CommonOptions
+interface CommonOptions {
+  // whether take the invisible nodes and edges into calculation, false by default
+  layoutInvisibles?: boolean;
+}
+
+export interface CircularLayoutOptions extends CommonOptions {
   center?: PointTuple;
   width?: number;
   height?: number;
@@ -77,7 +82,7 @@ export interface CircularLayoutOptions {
   onLayoutEnd?: () => void;
 }
 
-export interface GridLayoutOptions {
+export interface GridLayoutOptions extends CommonOptions {
   width?: number;
   height?: number;
   begin?: PointTuple;
@@ -95,7 +100,7 @@ export interface GridLayoutOptions {
   nodeSpacing?: ((node?: Node) => number) | number | undefined;
 }
 
-export interface RandomLayoutOptions {
+export interface RandomLayoutOptions extends CommonOptions {
   center?: PointTuple;
   width?: number;
   height?: number;
@@ -103,14 +108,14 @@ export interface RandomLayoutOptions {
   onLayoutEnd?: () => void;
 }
 
-export interface MDSLayoutOptions {
+export interface MDSLayoutOptions extends CommonOptions {
   center?: PointTuple;
   linkDistance?: number;
   workerEnabled?: boolean;
   onLayoutEnd?: () => void;
 }
 
-export interface ConcentricLayoutOptions {
+export interface ConcentricLayoutOptions extends CommonOptions {
   center?: PointTuple;
   preventOverlap?: boolean;
   nodeSize?: number | PointTuple;
@@ -128,7 +133,7 @@ export interface ConcentricLayoutOptions {
   onLayoutEnd?: () => void;
 }
 
-export interface RadialLayoutOptions {
+export interface RadialLayoutOptions extends CommonOptions {
   center?: PointTuple;
   width?: number;
   height?: number;
@@ -145,4 +150,27 @@ export interface RadialLayoutOptions {
   sortStrength?: number;
   workerEnabled?: boolean;
   onLayoutEnd?: () => void;
+}
+
+export interface DagreLayoutOptions extends CommonOptions {
+  rankdir?: "TB" | "BT" | "LR" | "RL";
+  align?: "UL" | "UR" | "DL" | "DR";
+  begin?: PointTuple;
+  nodeSize?: number | number[] | undefined;
+  nodesep?: number;
+  ranksep?: number;
+  controlPoints?: boolean;
+  sortByCombo?: boolean;
+  workerEnabled?: boolean;
+  edgeLabelSpace?: boolean;
+  nodeOrder?: string[];
+  radial?: boolean; // 是否基于 dagre 进行辐射布局
+  focusNode: string | Node | null; // radial 为 true 时生效，关注的节点
+  preset?: {
+    nodes: OutNode[],
+    edges: Edge[],
+  };
+  onLayoutEnd?: () => void;
+  nodesepFunc?: ((d?: Node) => number) | undefined;
+  ranksepFunc?: ((d?: Node) => number) | undefined;
 }

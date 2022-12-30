@@ -42,9 +42,10 @@ export class RandomLayout implements SyncLayout<RandomLayoutOptions> {
 
   private genericRandomLayout(assign: boolean, graph: Graph<Node, Edge>, options?: RandomLayoutOptions): LayoutMapping | void {
     const mergedOptions = { ...this.options, ...options };
-    const { center: propsCenter, width: propsWidth, height: propsHeight } = mergedOptions;
+    const { center: propsCenter, width: propsWidth, height: propsHeight, layoutInvisibles } = mergedOptions;
 
-    const nodes = graph.getAllNodes();
+    let nodes = graph.getAllNodes();
+    if (!layoutInvisibles) nodes = nodes.filter(node => node.visible || node.visible === undefined);
     const layoutScale = 0.9;
     const width = !propsWidth && typeof window !== "undefined" ? window.innerWidth : propsWidth as number;
     const height = !propsHeight && typeof window !== "undefined" ? window.innerHeight : propsHeight as number;

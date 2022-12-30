@@ -94,10 +94,16 @@ export class GridLayout implements SyncLayout<GridLayoutOptions> {
       onLayoutEnd,
       position
     } = mergedOptions;
-    let { sortBy, width: propsWidth, height: propsHeight } = mergedOptions;
+    let { sortBy, width: propsWidth, height: propsHeight, layoutInvisibles } = mergedOptions;
 
-    const nodes = graph.getAllNodes();
-    const edges = graph.getAllEdges();
+    let nodes = graph.getAllNodes();
+    let edges = graph.getAllEdges();
+
+    if (!layoutInvisibles) {
+      nodes = nodes.filter(node => node.visible || node.visible === undefined);
+      edges = edges.filter(edge => edge.visible || edge.visible === undefined);
+    }
+
     const n = nodes.length;
 
     // Need no layout if there is no node.

@@ -43,11 +43,17 @@ export class MDSLayout implements SyncLayout<MDSLayoutOptions> {
 
   private genericMDSLayout(assign: boolean, graph: Graph<Node, Edge>, options?: MDSLayoutOptions): LayoutMapping | void {
     const mergedOptions = { ...this.options, ...options };
-    const { center = [0, 0], linkDistance = 50, onLayoutEnd } = mergedOptions;
+    const { center = [0, 0], linkDistance = 50, layoutInvisibles, onLayoutEnd } = mergedOptions;
     
-    const nodes = graph.getAllNodes();
-    const edges = graph.getAllEdges();
-\    if (!nodes || nodes.length === 0) {
+    let nodes = graph.getAllNodes();
+    let edges = graph.getAllEdges();
+
+    if (!layoutInvisibles) {
+      nodes = nodes.filter(node => node.visible || node.visible === undefined);
+      edges = edges.filter(edge => edge.visible || edge.visible === undefined);
+    }
+
+    if (!nodes || nodes.length === 0) {
       onLayoutEnd?.();
       return { nodes: [], edges };
     }

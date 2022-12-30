@@ -68,11 +68,17 @@ export class ConcentricLayout implements SyncLayout<ConcentricLayoutOptions> {
       preventOverlap,
       startAngle = (3 / 2) * Math.PI,
       nodeSize,
-      nodeSpacing
+      nodeSpacing,
+      layoutInvisibles
     } = mergedOptions;
 
-    const nodes = graph.getAllNodes();
-    const edges = graph.getAllEdges();
+    let nodes = graph.getAllNodes();
+    let edges = graph.getAllEdges();
+
+    if (!layoutInvisibles) {
+      nodes = nodes.filter(node => node.visible || node.visible === undefined);
+      edges = edges.filter(edge => edge.visible || edge.visible === undefined);
+    }
     
     const n = nodes.length;
     if (n === 0) {
