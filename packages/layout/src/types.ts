@@ -4,24 +4,33 @@ import type { Graph, Node as INode, Edge as IEdge } from "@antv/graphlib";
  * input node
  */
 export interface Node extends INode {
-  visible?: boolean;
-  size?: number | number[],
-  bboxSize?: number[],
+  data?: {
+    visible?: boolean;
+    size?: number | number[];
+    bboxSize?: number[];
+  }
 }
 
 /** output node */
 export interface OutNode extends Node {
-  x: number;
-  y: number;
+  data: {
+    visible?: boolean;
+    size?: number | number[];
+    bboxSize?: number[];
+    x: number;
+    y: number;
+  }
 }
 
 /**
  * input edge
  */
 export interface Edge extends IEdge {
-  visible?: boolean;
-  // temp edges e.g. the edge generated for releated collapsed combo
-  virtual?: boolean;
+  data?: {
+    visible?: boolean;
+    // temp edges e.g. the edge generated for releated collapsed combo
+    virtual?: boolean;
+  }
 }
 
 export type Degree = {

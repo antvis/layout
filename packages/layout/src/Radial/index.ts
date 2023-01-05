@@ -1,5 +1,5 @@
 import { Graph } from "@antv/graphlib";
-import { Node, Edge, LayoutMapping, Matrix, OutNode, PointTuple, RadialLayoutOptions, SyncLayout } from "../types";
+import { Node, Edge, LayoutMapping, Matrix, OutNode, PointTuple, RadialLayoutOptions, SyncLayout, Point } from "../types";
 import { floydWarshall, getAdjMatrix, isArray, isFunction, isNumber, isObject, isString } from "../util";
 import { mds } from "./mds";
 import { radialNonoverlapForce, RadialNonoverlapForceOptions } from "./RadialNonoverlapForce";
@@ -76,8 +76,8 @@ export class RadialLayout implements SyncLayout<RadialLayoutOptions> {
     let edges = graph.getAllEdges();
 
     if (!layoutInvisibles) {
-      nodes = nodes.filter(node => node.visible || node.visible === undefined);
-      edges = edges.filter(edge => edge.visible || edge.visible === undefined);
+      nodes = nodes.filter(node => node.data.visible || node.data.visible === undefined);
+      edges = edges.filter(edge => edge.data.visible || edge.data.visible === undefined);
     }
 
     if (!nodes || nodes.length === 0) {
@@ -101,8 +101,11 @@ export class RadialLayout implements SyncLayout<RadialLayoutOptions> {
         nodes: [
           {
             ...nodes[0],
-            x: center[0],
-            y: center[1],
+            data: {
+              ...nodes[0].data,
+              x: center[0],
+              y: center[1],
+            }
           }
         ],
         edges,
@@ -156,7 +159,7 @@ export class RadialLayout implements SyncLayout<RadialLayoutOptions> {
     const weights = getWeightMatrix(idealDistances);
 
     // the initial positions from mds, move the graph to origin, centered at focusNode
-    let positions: OutNode[] = mds(linkDistance, idealDistances, linkDistance).map(([x, y]) => ({
+    let positions: Point[] = mds(linkDistance, idealDistances, linkDistance).map(([x, y]) => ({
       x: (isNaN(x) ? Math.random() * linkDistance : x) - positions[focusIndex].x,
       y: (isNaN(y) ? Math.random() * linkDistance : y) - positions[focusIndex].y,
     }));
@@ -174,7 +177,7 @@ export class RadialLayout implements SyncLayout<RadialLayoutOptions> {
         height,
         width,
         strictRadial: Boolean(strictRadial),
-        focusId: focusIndex,
+        focusIdx: focusIndex,
         iterations: maxPreventOverlapIteration || 200,
         k: positions.length / 4.5,
       };
@@ -182,18 +185,21 @@ export class RadialLayout implements SyncLayout<RadialLayoutOptions> {
     }
     // move the graph to center
     const layoutNodes: OutNode[] = [];
-    positions.forEach((p: OutNode, i: number) => {
+    positions.forEach((p: Point, i: number) => {
       layoutNodes.push({
         ...nodes[i],
-        x: p.x + center[0],
-        y: p.y + center[1]
+        data: {
+          ...nodes[0].data,
+          x: p.x + center[0],
+          y: p.y + center[1]
+        }
       })
     });
 
     if (assign) {
       layoutNodes.forEach(node => graph.mergeNodeData(node.id, {
-        x: node.x,
-        y: node.y
+        x: node.data.x,
+        y: node.data.y
       }));
     }
 
@@ -206,7 +212,7 @@ export class RadialLayout implements SyncLayout<RadialLayoutOptions> {
   }
   private run(
     maxIteration: number,
-    positions: OutNode[],
+    positions: Point[],
     weights: Matrix[],
     idealDistances: Matrix[],
     radii: number[],
@@ -219,14 +225,14 @@ export class RadialLayout implements SyncLayout<RadialLayoutOptions> {
   }
   private oneIteration(
     param: number,
-    positions: OutNode[],
+    positions: Point[],
     radii: number[],
     distances: Matrix[],
     weights: Matrix[],
     focusIndex: number
   ) {
     const vparam = 1 - param;
-    positions.forEach((v: OutNode, i: number) => {
+    positions.forEach((v: Point, i: number) => {
       // v
       const originDis = getEDistance(v, { x: 0, y: 0 });
       const reciODis = originDis === 0 ? 0 : 1 / originDis;
@@ -347,7 +353,7 @@ const getWeightMatrix = (idealDistances: Matrix[]) => {
  * @param p2 
  * @returns 
  */
-const getEDistance = (p1: OutNode, p2: OutNode) => Math.sqrt(
+const getEDistance = (p1: Point, p2: Point) => Math.sqrt(
   (p1.x - p2.x) * (p1.x - p2.x) + (p1.y - p2.y) * (p1.y - p2.y)
 );
 

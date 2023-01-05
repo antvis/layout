@@ -1,6 +1,6 @@
 import { Graph } from "@antv/graphlib";
 import { Node, Edge, LayoutMapping, OutNode, PointTuple, ConcentricLayoutOptions, SyncLayout } from "./types";
-import { clone, getDegree, isArray, isFunction, isNumber, isObject, isString } from "./util";
+import { clone, isArray, isFunction, isNumber, isObject, isString } from "./util";
 
 // maps node's id and its index in the nodes array
 type IndexMap = {
@@ -76,8 +76,8 @@ export class ConcentricLayout implements SyncLayout<ConcentricLayoutOptions> {
     let edges = graph.getAllEdges();
 
     if (!layoutInvisibles) {
-      nodes = nodes.filter(node => node.visible || node.visible === undefined);
-      edges = edges.filter(edge => edge.visible || edge.visible === undefined);
+      nodes = nodes.filter(node => node.data.visible || node.data.visible === undefined);
+      edges = edges.filter(edge => edge.data.visible || edge.data.visible === undefined);
     }
     
     const n = nodes.length;
@@ -101,8 +101,11 @@ export class ConcentricLayout implements SyncLayout<ConcentricLayoutOptions> {
       return {
         nodes: [{
           ...nodes[0],
-          x: center[0],
-          y: center[1]
+         data: {
+           ...nodes[0].data,
+           x: center[0],
+           y: center[1]
+         }
         }],
         edges
       };
@@ -148,47 +151,49 @@ export class ConcentricLayout implements SyncLayout<ConcentricLayoutOptions> {
     let sortBy = propsSortBy;
     if (
       !isString(sortBy) ||
-      (layoutNodes[0] as any)[sortBy] === undefined
+      (layoutNodes[0] as any).data[sortBy] === undefined
     ) {
       sortBy = "degree";
-      if (!isNumber(nodes[0].degree)) {
-        const values = getDegree(nodes.length, nodeIdxMap, edges);
-        layoutNodes.forEach((node, i) => {
-          node.degree = values[i].all;
-        });
-      }
     }
-    // sort nodes by value
-    layoutNodes.sort(
-      (n1: Node, n2: Node) =>
-        (n2 as any)[sortBy] - (n1 as any)[sortBy]
-    );
+    if (sortBy === 'degree') {
+      layoutNodes.sort( (n1: Node, n2: Node) => graph.getDegree(n2.id, 'both') - graph.getDegree(n1.id, 'both'));
+    } else {
+      // sort nodes by value
+      layoutNodes.sort(
+        (n1: Node, n2: Node) =>
+          (n2 as any).data[sortBy] - (n1 as any).data[sortBy]
+      );
+    }
 
     const maxValueNode = layoutNodes[0];
 
-    const maxLevelDiff = propsMaxLevelDiff || (maxValueNode as any)[sortBy] / 4;
+    const maxLevelDiff = propsMaxLevelDiff || (maxValueNode as any).data[sortBy] / 4;
 
     // put the values into levels
-    const levels: any[] = [[]];
+    const levels: {
+      nodes: OutNode[],
+      r?: number,
+      dTheta?: number
+    }[] = [{ nodes: [] }];
     let currentLevel = levels[0];
     layoutNodes.forEach((node) => {
-      if (currentLevel.length > 0) {
+      if (currentLevel.nodes.length > 0) {
         const diff = Math.abs(
-          currentLevel[0][sortBy] - (node as any)[sortBy]
+          currentLevel.nodes[0].data[sortBy] - (node as any).data[sortBy]
         );
         if (maxLevelDiff && diff >= maxLevelDiff) {
-          currentLevel = [];
+          currentLevel = { nodes: [] };
           levels.push(currentLevel);
         }
       }
-      currentLevel.push(node);
+      currentLevel.nodes.push(node);
     });
 
     // create positions for levels
     let minDist = maxNodeSize + (maxNodeSpacing || minNodeSpacing); // min dist between nodes
     if (!preventOverlap) {
       // then strictly constrain to bb
-      const firstLvlHasMulti = levels.length > 0 && levels[0].length > 1;
+      const firstLvlHasMulti = levels.length > 0 && levels[0].nodes.length > 1;
       const maxR = Math.min(width, height) / 2 - minDist;
       const rStep = maxR / (levels.length + (firstLvlHasMulti ? 1 : 0));
 
@@ -198,14 +203,14 @@ export class ConcentricLayout implements SyncLayout<ConcentricLayoutOptions> {
     // find the metrics for each level
     let r = 0;
     levels.forEach((level) => {
-      const sweep = propsSweep === undefined ? 2 * Math.PI - (2 * Math.PI) / level.length : propsSweep;
-      const dTheta = (level.dTheta = sweep / Math.max(1, level.length - 1));
+      const sweep = propsSweep === undefined ? 2 * Math.PI - (2 * Math.PI) / level.nodes.length : propsSweep;
+      level.dTheta = sweep / Math.max(1, level.nodes.length - 1);
 
       // calculate the radius
-      if (level.length > 1 && preventOverlap) {
+      if (level.nodes.length > 1 && preventOverlap) {
         // but only if more than one node (can't overlap)
-        const dcos = Math.cos(dTheta) - Math.cos(0);
-        const dsin = Math.sin(dTheta) - Math.sin(0);
+        const dcos = Math.cos(level.dTheta) - Math.cos(0);
+        const dsin = Math.sin(level.dTheta) - Math.sin(0);
         const rMin = Math.sqrt(
           (minDist * minDist) / (dcos * dcos + dsin * dsin)
         ); // s.t. no nodes overlapping
@@ -221,13 +226,13 @@ export class ConcentricLayout implements SyncLayout<ConcentricLayoutOptions> {
       let rr = 0;
       for (let i = 0; i < levels.length; i++) {
         const level = levels[i];
-        const rDelta = level.r - rr;
+        const rDelta = (level.r || 0) - rr;
         rDeltaMax = Math.max(rDeltaMax, rDelta);
       }
       rr = 0;
       levels.forEach((level, i) => {
         if (i === 0) {
-          rr = level.r;
+          rr = level.r || 0;
         }
         level.r = rr;
         rr += rDeltaMax;
@@ -236,19 +241,19 @@ export class ConcentricLayout implements SyncLayout<ConcentricLayoutOptions> {
 
     // calculate the node positions
     levels.forEach((level) => {
-      const dTheta = level.dTheta;
-      const rr = level.r;
-      level.forEach((node: Node, j: number) => {
+      const dTheta = level.dTheta || 0;
+      const rr = level.r || 0;
+      level.nodes.forEach((node: OutNode, j: number) => {
         const theta = startAngle + (clockwise ? 1 : -1) * dTheta * j;
-        node.x = center[0] + rr * Math.cos(theta);
-        node.y = center[1] + rr * Math.sin(theta);
+        node.data.x = center[0] + rr * Math.cos(theta);
+        node.data.y = center[1] + rr * Math.sin(theta);
       });
     });
 
     if (assign) {
       layoutNodes.forEach(node => graph.mergeNodeData(node.id, {
-        x: node.x,
-        y: node.y
+        x: node.data.x,
+        y: node.data.y
       }))
     }
 

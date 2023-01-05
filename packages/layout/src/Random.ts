@@ -45,7 +45,7 @@ export class RandomLayout implements SyncLayout<RandomLayoutOptions> {
     const { center: propsCenter, width: propsWidth, height: propsHeight, layoutInvisibles } = mergedOptions;
 
     let nodes = graph.getAllNodes();
-    if (!layoutInvisibles) nodes = nodes.filter(node => node.visible || node.visible === undefined);
+    if (!layoutInvisibles) nodes = nodes.filter(node => node.data.visible || node.data.visible === undefined);
     const layoutScale = 0.9;
     const width = !propsWidth && typeof window !== "undefined" ? window.innerWidth : propsWidth as number;
     const height = !propsHeight && typeof window !== "undefined" ? window.innerHeight : propsHeight as number;
@@ -56,16 +56,18 @@ export class RandomLayout implements SyncLayout<RandomLayoutOptions> {
       nodes.forEach((node) => {
         layoutNodes.push({
           id: node.id,
-          x: (Math.random() - 0.5) * layoutScale * width + center[0],
-          y: (Math.random() - 0.5) * layoutScale * height + center[1],
+          data: {
+            x: (Math.random() - 0.5) * layoutScale * width + center[0],
+            y: (Math.random() - 0.5) * layoutScale * height + center[1],
+          }
         });
       });
     }
 
     if (assign) {
       layoutNodes.forEach(node => graph.mergeNodeData(node.id, {
-        x: node.x,
-        y: node.y
+        x: node.data.x,
+        y: node.data.y
       }))
     }
 

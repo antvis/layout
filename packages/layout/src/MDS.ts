@@ -49,8 +49,8 @@ export class MDSLayout implements SyncLayout<MDSLayoutOptions> {
     let edges = graph.getAllEdges();
 
     if (!layoutInvisibles) {
-      nodes = nodes.filter(node => node.visible || node.visible === undefined);
-      edges = edges.filter(edge => edge.visible || edge.visible === undefined);
+      nodes = nodes.filter(node => node.data.visible || node.data.visible === undefined);
+      edges = edges.filter(edge => edge.data.visible || edge.data.visible === undefined);
     }
 
     if (!nodes || nodes.length === 0) {
@@ -68,8 +68,11 @@ export class MDSLayout implements SyncLayout<MDSLayoutOptions> {
       return {
         nodes: [{
           ...nodes[0],
-          x: center[0],
-          y: center[1]
+          data: {
+            ...nodes[0].data,
+            x: center[0],
+            y: center[1]
+          }
         }],
         edges
       };
@@ -88,15 +91,15 @@ export class MDSLayout implements SyncLayout<MDSLayoutOptions> {
     const layoutNodes: OutNode[] = [];
     positions.forEach((p: number[], i: number) => {
       const cnode = clone(nodes[i]);
-      cnode.x = p[0] + center[0];
-      cnode.y = p[1] + center[1];
+      cnode.data.x = p[0] + center[0];
+      cnode.data.y = p[1] + center[1];
       layoutNodes.push(cnode);
     });
 
     if (assign) {
       layoutNodes.forEach(node => graph.mergeNodeData(node.id, {
-        x: node.x,
-        y: node.y
+        x: node.data.x,
+        y: node.data.y
       }))
     }
 

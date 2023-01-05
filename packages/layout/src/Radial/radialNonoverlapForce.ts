@@ -1,12 +1,12 @@
 import { Graph } from "@antv/graphlib";
 import { Point } from "../types";
-import { Node, Edge, OutNode } from "../types";
+import { Node, Edge } from "../types";
 
 const SPEED_DIVISOR = 800;
 
 export type RadialNonoverlapForceOptions = {
-  positions: OutNode[];
-  focusId: number;
+  positions: Point[];
+  focusIdx: number;
   radii: number[];
   iterations: number;
   height: number;
@@ -28,9 +28,9 @@ const DEFAULTS_LAYOUT_OPTIONS: Partial<RadialNonoverlapForceOptions> = {
   k: 5
 }
 
-export const radialNonoverlapForce = (graph: Graph<Node, Edge>, options: RadialNonoverlapForceOptions): OutNode[] => {
+export const radialNonoverlapForce = (graph: Graph<Node, Edge>, options: RadialNonoverlapForceOptions): Point[] => {
   const mergedOptions = { ...DEFAULTS_LAYOUT_OPTIONS, ...options };
-  const { positions, iterations, width, k, speed, strictRadial, focusId, radii = [], nodeSizeFunc } = mergedOptions;
+  const { positions, iterations, width, k, speed = 100, strictRadial, focusIdx, radii = [], nodeSizeFunc } = mergedOptions;
 
   const nodes = graph.getAllNodes();
 
@@ -38,20 +38,20 @@ export const radialNonoverlapForce = (graph: Graph<Node, Edge>, options: RadialN
   const maxDisplace = width / 10;
 
   for (let i = 0; i < iterations; i++) {
-    positions.forEach((_: OutNode, k: number) => {
+    positions.forEach((_: Point, k: number) => {
       disp[k] = { x: 0, y: 0 };
     });
     // 给重叠的节点增加斥力
     getRepulsion(nodes, positions, disp, k, radii, nodeSizeFunc);
-    updatePositions(positions, disp, speed, strictRadial, focusId, maxDisplace, width, radii);
+    updatePositions(positions, disp, speed, strictRadial, focusIdx, maxDisplace, width, radii);
   }
   return positions;
 }
 
-const getRepulsion = (nodes: Node[], positions: OutNode[], disp: Point[], k: number, radii: number[], nodeSizeFunc: (node: Node) => number) => {
-  positions.forEach((v: OutNode, i: number) => {
+const getRepulsion = (nodes: Node[], positions: Point[], disp: Point[], k: number, radii: number[], nodeSizeFunc: (node: Node) => number) => {
+  positions.forEach((v: Point, i: number) => {
     disp[i] = { x: 0, y: 0 };
-    positions.forEach((u: OutNode, j: number) => {
+    positions.forEach((u: Point, j: number) => {
       if (i === j) {
         return;
       }
@@ -78,12 +78,12 @@ const getRepulsion = (nodes: Node[], positions: OutNode[], disp: Point[], k: num
   });
 }
 
-const updatePositions = (positions: OutNode[], disp: Point[], speed: number, strictRadial: boolean, focusId: number, maxDisplace: number, width: number, radii: number[]) => {
+const updatePositions = (positions: Point[], disp: Point[], speed: number, strictRadial: boolean, focusIdx: number, maxDisplace: number, width: number, radii: number[]) => {
   const maxDisp = maxDisplace || width / 10;
   if (strictRadial) {
     disp.forEach((di, i) => {
-      const vx = positions[i].x - positions[focusId].x;
-      const vy = positions[i].y - positions[focusId].y;
+      const vx = positions[i].x - positions[focusIdx].x;
+      const vy = positions[i].y - positions[focusIdx].y;
       const vLength = Math.sqrt(vx * vx + vy * vy);
       let vpx = vy / vLength;
       let vpy = -vx / vLength;
@@ -102,22 +102,22 @@ const updatePositions = (positions: OutNode[], disp: Point[], speed: number, str
 
   // move
   positions.forEach((n, i) => {
-    if (i === focusId) {
+    if (i === focusIdx) {
       return;
     }
     const distLength = Math.sqrt(disp[i].x * disp[i].x + disp[i].y * disp[i].y);
-    if (distLength > 0 && i !== focusId) {
+    if (distLength > 0 && i !== focusIdx) {
       const limitedDist = Math.min(maxDisp * (speed / SPEED_DIVISOR), distLength);
       n.x += (disp[i].x / distLength) * limitedDist;
       n.y += (disp[i].y / distLength) * limitedDist;
       if (strictRadial) {
-        let vx = n.x - positions[focusId].x;
-        let vy = n.y - positions[focusId].y;
+        let vx = n.x - positions[focusIdx].x;
+        let vy = n.y - positions[focusIdx].y;
         const nfDis = Math.sqrt(vx * vx + vy * vy);
         vx = (vx / nfDis) * radii[i];
         vy = (vy / nfDis) * radii[i];
-        n.x = positions[focusId].x + vx;
-        n.y = positions[focusId].y + vy;
+        n.x = positions[focusIdx].x + vx;
+        n.y = positions[focusIdx].y + vy;
       }
     }
   });

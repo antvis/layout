@@ -1,13 +1,7 @@
 import { Graph } from "@antv/graphlib";
-import { isString, getDegree, isNaN, getFuncByUnknownType, isArray } from "./util";
+import { isString, getFuncByUnknownType, isArray } from "./util";
 import { Node, Edge, GridLayoutOptions, LayoutMapping, PointTuple, SyncLayout, OutNode } from "./types";
 import { clone } from "./util";
-
-interface CalcNode extends OutNode {
-  x: number,
-  y: number,
-  degree?: number,
-};
 
 // maps node's id and its index in the nodes array
 type IndexMap = {
@@ -100,8 +94,8 @@ export class GridLayout implements SyncLayout<GridLayoutOptions> {
     let edges = graph.getAllEdges();
 
     if (!layoutInvisibles) {
-      nodes = nodes.filter(node => node.visible || node.visible === undefined);
-      edges = edges.filter(edge => edge.visible || edge.visible === undefined);
+      nodes = nodes.filter(node => node.data.visible || node.data.visible === undefined);
+      edges = edges.filter(edge => edge.data.visible || edge.data.visible === undefined);
     }
 
     const n = nodes.length;
@@ -126,36 +120,35 @@ export class GridLayout implements SyncLayout<GridLayoutOptions> {
         nodes: [
           {
             ...nodes[0],
-            x: begin[0],
-            y: begin[1],
+            data: {
+              ...nodes[0].data,
+              x: begin[0],
+              y: begin[1],
+            }
           }
         ],
         edges,
       };
     }
 
-    const layoutNodes: CalcNode[] = nodes.map(node => clone(node));
-    const nodeIdxMap: IndexMap = {};
-    layoutNodes.forEach((node, i) => nodeIdxMap[node.id] = i);
+    const layoutNodes: OutNode[] = nodes.map(node => clone(node));
     
     if (
       !isString(sortBy) ||
-      (layoutNodes[0] as any)[sortBy] === undefined
+      (layoutNodes[0] as any).data[sortBy] === undefined
     ) {
       sortBy = "degree";
-      if (isNaN(nodes[0].degree)) {
-        // TODO: use graphlib api instead if it has
-        const values = getDegree(layoutNodes.length, nodeIdxMap, edges);
-        layoutNodes.forEach((node, i) => {
-          node.degree = values[i].all;
-        });
-      }
     }
-    // sort nodes by value
-    layoutNodes.sort(
-      (n1, n2) => (n2 as any)[sortBy] - (n1 as any)[sortBy]
-    );
-
+    if (sortBy === 'degree') {
+      layoutNodes.sort(
+        (n1, n2) => graph.getDegree(n2.id, 'both') - graph.getDegree(n1.id, 'both')
+      );
+    } else {
+      // sort nodes by value
+      layoutNodes.sort(
+        (n1, n2) => (n2 as any).data[sortBy] - (n1 as any).data[sortBy]
+      );  
+    }
     const width = !propsWidth && typeof window !== "undefined" ? window.innerWidth : propsWidth as number;
     const height = !propsHeight && typeof window !== "undefined" ? window.innerHeight : propsHeight as number;
 
@@ -215,13 +208,12 @@ export class GridLayout implements SyncLayout<GridLayoutOptions> {
       const nodeSpacing: Function = getFuncByUnknownType(10, paramNodeSpacing);
       const nodeSize: Function = getFuncByUnknownType(30, paramNodeSize, false);
       layoutNodes.forEach((node) => {
-        if (!node.x || !node.y) {
+        if (!node.data.x || !node.data.y) {
           // for bb
-          node.x = 0;
-          node.y = 0;
+          node.data.x = 0;
+          node.data.y = 0;
         }
 
-        // TODO: not sure the api name
         const oNode = graph.getNode(node.id);
         const res = nodeSize(oNode) || 30;
      
@@ -295,8 +287,8 @@ export class GridLayout implements SyncLayout<GridLayoutOptions> {
     if (assign) {
       layoutNodes.forEach((node) => {
         graph.mergeNodeData(node.id, {
-          x: node.x,
-          y: node.y,
+          x: node.data.x,
+          y: node.data.y,
         });
       });
     }
@@ -356,7 +348,7 @@ const moveToNextCell = (rcs: RowsAndCols, rc: RowAndCol) => {
   }
 }
 
-const getPos = (node: CalcNode, begin: PointTuple, cellWidth: number, cellHeight: number, id2manPos: IdMapRowAndCol, rcs: RowsAndCols, rc: RowAndCol, cellUsed: VisitMap) => {
+const getPos = (node: OutNode, begin: PointTuple, cellWidth: number, cellHeight: number, id2manPos: IdMapRowAndCol, rcs: RowsAndCols, rc: RowAndCol, cellUsed: VisitMap) => {
   let x: number;
   let y: number;
 
@@ -378,6 +370,6 @@ const getPos = (node: CalcNode, begin: PointTuple, cellWidth: number, cellHeight
 
     moveToNextCell(rcs, rc);
   }
-  node.x = x;
-  node.y = y;
+  node.data.x = x;
+  node.data.y = y;
 }
