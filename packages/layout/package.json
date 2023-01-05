@@ -1,0 +1,41 @@
+{
+  "name": "@antv/layout",
+  "version": "1.0.0-alpha.0",
+  "description": "graph layout algorithm",
+  "main": "dist/index.min.js",
+  "module": "dist/index.min.js",
+  "types": "lib/index.d.ts",
+  "unpkg": "dist/index.min.js",
+  "files": [
+    "package.json",
+    "dist",
+    "lib",
+    "LICENSE",
+    "README.md"
+  ],
+  "keywords": [
+    "graph",
+    "layout",
+    "algorithm",
+    "antv"
+  ],
+  "dependencies": {
+    "@antv/graphlib": "^2.0.0-alpha.0",
+    "@naoak/workerize-transferable": "^0.1.0",
+    "eventemitter3": "^4.0.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.7.7",
+    "@babel/plugin-proposal-class-properties": "^7.1.0",
+    "@babel/preset-react": "^7.7.4",
+    "babel-loader": "^8.0.6",
+    "ts-loader": "^7.0.3",
+    "typescript": "^4.0.3",
+    "webpack": "^5.38.1",
+    "webpack-cli": "^4.7.2",
+    "workerize-loader": "^2.0.2"
+  },
+  "scripts": {
+    "build:umd": "webpack --config webpack.config.js --mode production"
+  }
+}
