@@ -111,6 +111,12 @@ export type LayoutMapping = { nodes: OutNode[]; edges: Edge[] };
 export interface SyncLayout<LayoutOptions> {
   assign(graph: Graph<any, any>, options?: LayoutOptions): void;
   execute(graph: Graph<any, any>, options?: LayoutOptions): LayoutMapping;
+  options: LayoutOptions;
+  id: string;
+}
+
+export interface SyncLayoutConstructor<LayoutOptions> {
+  new (options?: LayoutOptions): SyncLayout<LayoutOptions>;
 }
 
 export interface LayoutSupervisor {

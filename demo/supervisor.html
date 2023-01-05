@@ -6,7 +6,7 @@
       name="viewport"
       content="width=device-width,initial-scale=1,shrink-to-fit=no"
     />
-    <title>Circular</title>
+    <title>Supervisor</title>
     <style>
       * {
         box-sizing: border-box;
@@ -41,12 +41,12 @@
       type="application/javascript"
     ></script>
     <script
-      src="../packages/layout/dist/index.umd.js"
+      src="../packages/layout/dist/index.min.js"
       type="application/javascript"
     ></script>
     <script>
       const { Graph } = window.graphlib;
-      const { CircularLayout } = window.Layout;
+      const { CircularLayout, Supervisor } = window.Layout;
 
       const data = {
         nodes: [
@@ -706,40 +706,42 @@
         endAngle: Math.PI,
       });
 
-      const positions = circular.execute(graph);
-      console.log(positions);
+      const supervisor = new Supervisor(graph, circular);
+      supervisor.on("layoutend", (positions) => {
+        const { Circle, Canvas } = window.G;
 
-      const { Circle, Canvas } = window.G;
+        // create a renderer
+        const canvasRenderer = new window.G.Canvas2D.Renderer();
 
-      // create a renderer
-      const canvasRenderer = new window.G.Canvas2D.Renderer();
-
-      // create a canvas
-      const canvas = new Canvas({
-        container: "container",
-        width: 500,
-        height: 500,
-        renderer: canvasRenderer,
-      });
-
-      canvas.addEventListener("ready", () => {
-        positions.nodes.forEach((node) => {
-          const circle = new Circle({
-            style: {
-              cx: node.x,
-              cy: node.y,
-              r: 10,
-              fill: "#1890FF",
-              stroke: "#F04864",
-              lineWidth: 4,
-            },
-          });
-          canvas.appendChild(circle);
+        // create a canvas
+        const canvas = new Canvas({
+          container: "container",
+          width: 500,
+          height: 500,
+          renderer: canvasRenderer,
         });
 
-        canvas.document.documentElement.style.transform =
-          "scale(0.4) translate(100, 100)";
+        canvas.addEventListener("ready", () => {
+          positions.nodes.forEach((node) => {
+            const circle = new Circle({
+              style: {
+                cx: node.x,
+                cy: node.y,
+                r: 10,
+                fill: "#1890FF",
+                stroke: "#F04864",
+                lineWidth: 4,
+              },
+            });
+            canvas.appendChild(circle);
+          });
+
+          canvas.document.documentElement.style.transform =
+            "scale(0.4) translate(100, 100)";
+        });
       });
+
+      supervisor.start();
     </script>
   </body>
 </html>

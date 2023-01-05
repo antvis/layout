@@ -56,6 +56,16 @@ Arguments
   - `ordering` **null | 'topology' | 'degree'** The ordering method for nodes. `null` by default, which means the nodes are arranged in data order. `'topology'` means in topology order; `'degree'` means in degree order.
   - `angleRatio` **number** How many `2*PI`s Between the first node and the last node. The default value is `1`.
 
+### Supervisor
+
+```js
+const graph = new Graph();
+const layout = new CircularLayout();
+
+const supervisor = new Supervisor(graph, layout, { auto: true });
+supervisor.start();
+```
+
 ## License
 
 The scripts and documentation in this project are released under the [MIT License](LICENSE).

@@ -40,7 +40,9 @@ const DEFAULTS_LAYOUT_OPTIONS: Partial<CircularLayoutOptions> = {
  * layout.assign(graph, { radius: 20 });
  */
 export class CircularLayout implements SyncLayout<CircularLayoutOptions> {
-  constructor(private options: CircularLayoutOptions = {} as CircularLayoutOptions) {
+  id = 'circular';
+
+  constructor(public options: CircularLayoutOptions = {} as CircularLayoutOptions) {
     Object.assign(this.options, DEFAULTS_LAYOUT_OPTIONS, options);
   }
 
