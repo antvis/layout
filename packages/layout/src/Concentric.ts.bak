@@ -1,10 +1,22 @@
-import { Graph, Node, Edge, LayoutMapping, OutNode, PointTuple, ConcentricLayoutOptions, SyncLayout } from "./types";
-import { clone, isArray, isFunction, isNumber, isObject, isString } from "./util";
-
-// maps node's id and its index in the nodes array
-type IndexMap = {
-  [nodeId: string]: number
-}
+import type {
+  Graph,
+  Node,
+  Edge,
+  LayoutMapping,
+  OutNode,
+  PointTuple,
+  ConcentricLayoutOptions,
+  SyncLayout,
+  IndexMap,
+} from "./types";
+import {
+  clone,
+  isArray,
+  isFunction,
+  isNumber,
+  isObject,
+  isString,
+} from "./util";
 
 const DEFAULTS_LAYOUT_OPTIONS: Partial<ConcentricLayoutOptions> = {
   nodeSize: 30,
@@ -16,28 +28,30 @@ const DEFAULTS_LAYOUT_OPTIONS: Partial<ConcentricLayoutOptions> = {
   startAngle: (3 / 2) * Math.PI,
   clockwise: true,
   maxLevelDiff: undefined,
-  sortBy: "degree"
-}
+  sortBy: "degree",
+};
 
 /**
  * Layout arranging the nodes in concentrics
- * 
+ *
  * @example
  * // Assign layout options when initialization.
  * const layout = new ConcentricLayout({ nodeSpacing: 10 });
  * const positions = layout.execute(graph); // { nodes: [], edges: [] }
- * 
+ *
  * // Or use different options later.
  * const layout = new ConcentricLayout({ nodeSpacing: 10});
  * const positions = layout.execute(graph, { nodeSpacing: 10 }); // { nodes: [], edges: [] }
- * 
+ *
  * // If you want to assign the positions directly to the nodes, use assign method.
  * layout.assign(graph, { nodeSpacing: 10 });
  */
 export class ConcentricLayout implements SyncLayout<ConcentricLayoutOptions> {
-  id = 'concentric'
+  id = "concentric";
 
-  constructor(public options: ConcentricLayoutOptions = {} as ConcentricLayoutOptions) {
+  constructor(
+    public options: ConcentricLayoutOptions = {} as ConcentricLayoutOptions
+  ) {
     Object.assign(this.options, DEFAULTS_LAYOUT_OPTIONS, options);
   }
 
@@ -54,7 +68,11 @@ export class ConcentricLayout implements SyncLayout<ConcentricLayoutOptions> {
     this.genericConcentricLayout(true, graph, options);
   }
 
-  private genericConcentricLayout(assign: boolean, graph: Graph, options?: ConcentricLayoutOptions): LayoutMapping | void {
+  private genericConcentricLayout(
+    assign: boolean,
+    graph: Graph,
+    options?: ConcentricLayoutOptions
+  ): LayoutMapping | void {
     const mergedOptions = { ...this.options, ...options };
     const {
       center: propsCenter,
@@ -71,45 +89,59 @@ export class ConcentricLayout implements SyncLayout<ConcentricLayoutOptions> {
       nodeSize,
       nodeSpacing,
       layoutInvisibles,
-      onLayoutEnd
+      onLayoutEnd,
     } = mergedOptions;
 
     let nodes = graph.getAllNodes();
     let edges = graph.getAllEdges();
 
     if (!layoutInvisibles) {
-      nodes = nodes.filter(node => node.data.visible || node.data.visible === undefined);
-      edges = edges.filter(edge => edge.data.visible || edge.data.visible === undefined);
+      nodes = nodes.filter(
+        (node) => node.data.visible || node.data.visible === undefined
+      );
+      edges = edges.filter(
+        (edge) => edge.data.visible || edge.data.visible === undefined
+      );
     }
-    
+
     const n = nodes.length;
     if (n === 0) {
       const result = { nodes: [], edges };
       onLayoutEnd?.(result);
-      return result
+      return result;
     }
 
-    const width = !propsWidth && typeof window !== "undefined" ? window.innerWidth : propsWidth as number;
-    const height = !propsHeight && typeof window !== "undefined" ? window.innerHeight : propsHeight as number;
-    const center = !propsCenter ? [width / 2, height / 2] : propsCenter as PointTuple;
+    const width =
+      !propsWidth && typeof window !== "undefined"
+        ? window.innerWidth
+        : (propsWidth as number);
+    const height =
+      !propsHeight && typeof window !== "undefined"
+        ? window.innerHeight
+        : (propsHeight as number);
+    const center = !propsCenter
+      ? [width / 2, height / 2]
+      : (propsCenter as PointTuple);
 
     if (n === 1) {
       if (assign) {
         graph.mergeNodeData(nodes[0].id, {
           x: center[0],
-          y: center[1]
+          y: center[1],
         });
       }
       const result = {
-        nodes: [{
-          ...nodes[0],
-         data: {
-           ...nodes[0].data,
-           x: center[0],
-           y: center[1]
-         }
-        }],
-        edges
+        nodes: [
+          {
+            ...nodes[0],
+            data: {
+              ...nodes[0].data,
+              x: center[0],
+              y: center[1],
+            },
+          },
+        ],
+        edges,
       };
       onLayoutEnd?.(result);
       return result;
@@ -136,7 +168,10 @@ export class ConcentricLayout implements SyncLayout<ConcentricLayoutOptions> {
       } else if (isNumber(node.data.size)) {
         nodeSize = node.data.size;
       } else if (isObject(node.data.size)) {
-        nodeSize = Math.max((node.data.size as any).width, (node.data.size as any).height);
+        nodeSize = Math.max(
+          (node.data.size as any).width,
+          (node.data.size as any).height
+        );
       }
       maxNodeSize = Math.max(maxNodeSize, nodeSize);
 
@@ -159,8 +194,11 @@ export class ConcentricLayout implements SyncLayout<ConcentricLayoutOptions> {
     ) {
       sortBy = "degree";
     }
-    if (sortBy === 'degree') {
-      layoutNodes.sort( (n1: Node, n2: Node) => graph.getDegree(n2.id, 'both') - graph.getDegree(n1.id, 'both'));
+    if (sortBy === "degree") {
+      layoutNodes.sort(
+        (n1: Node, n2: Node) =>
+          graph.getDegree(n2.id, "both") - graph.getDegree(n1.id, "both")
+      );
     } else {
       // sort nodes by value
       layoutNodes.sort(
@@ -171,13 +209,14 @@ export class ConcentricLayout implements SyncLayout<ConcentricLayoutOptions> {
 
     const maxValueNode = layoutNodes[0];
 
-    const maxLevelDiff = propsMaxLevelDiff || (maxValueNode as any).data[sortBy] / 4;
+    const maxLevelDiff =
+      propsMaxLevelDiff || (maxValueNode as any).data[sortBy] / 4;
 
     // put the values into levels
     const levels: {
-      nodes: OutNode[],
-      r?: number,
-      dTheta?: number
+      nodes: OutNode[];
+      r?: number;
+      dTheta?: number;
     }[] = [{ nodes: [] }];
     let currentLevel = levels[0];
     layoutNodes.forEach((node) => {
@@ -207,7 +246,10 @@ export class ConcentricLayout implements SyncLayout<ConcentricLayoutOptions> {
     // find the metrics for each level
     let r = 0;
     levels.forEach((level) => {
-      const sweep = propsSweep === undefined ? 2 * Math.PI - (2 * Math.PI) / level.nodes.length : propsSweep;
+      const sweep =
+        propsSweep === undefined
+          ? 2 * Math.PI - (2 * Math.PI) / level.nodes.length
+          : propsSweep;
       level.dTheta = sweep / Math.max(1, level.nodes.length - 1);
 
       // calculate the radius
@@ -255,15 +297,17 @@ export class ConcentricLayout implements SyncLayout<ConcentricLayoutOptions> {
     });
 
     if (assign) {
-      layoutNodes.forEach(node => graph.mergeNodeData(node.id, {
-        x: node.data.x,
-        y: node.data.y
-      }))
+      layoutNodes.forEach((node) =>
+        graph.mergeNodeData(node.id, {
+          x: node.data.x,
+          y: node.data.y,
+        })
+      );
     }
 
-    const result =  {
+    const result = {
       nodes: layoutNodes,
-      edges
+      edges,
     };
 
     onLayoutEnd?.(result);

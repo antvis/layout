@@ -69,7 +69,10 @@ export class CircularLayout implements SyncLayout<CircularLayoutOptions> {
 
     // Need no layout if there is no node.
     if (n === 0) {
-      onLayoutEnd?.();
+      onLayoutEnd?.({
+        nodes: [],
+        edges: [],
+      });
       return {
         nodes: [],
         edges: [],

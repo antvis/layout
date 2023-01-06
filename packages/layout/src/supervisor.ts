@@ -1,6 +1,6 @@
 import EventEmitter from 'eventemitter3';
 import { Graph, Node, Edge } from "@antv/graphlib";
-import type { LayoutMapping, SyncLayout } from "./types";
+import type { LayoutMapping, SyncLayout, LayoutSupervisor } from "./types";
 // @ts-ignore
 // Inline the worker as a Blob. @see https://github.com/developit/workerize-loader#inline
 import worker from "workerize-loader?inline!./worker";
@@ -51,7 +51,7 @@ export const SupervisorEvent = {
  * 
  * // TODO: Custom layout.
  */
-export class Supervisor extends EventEmitter {
+export class Supervisor extends EventEmitter implements LayoutSupervisor {
 
   /**
    * Internal worker.

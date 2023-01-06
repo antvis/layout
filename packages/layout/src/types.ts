@@ -1,4 +1,9 @@
-import { Graph as IGraph, Node as INode, Edge as IEdge, PlainObject } from "@antv/graphlib";
+import {
+  Graph as IGraph,
+  Node as INode,
+  Edge as IEdge,
+  PlainObject,
+} from "@antv/graphlib";
 
 export interface NodeData extends PlainObject {
   visible?: boolean;
@@ -24,10 +29,21 @@ export type OutNode = INode<OutNodeData>;
 /** input and output edge */
 export type Edge = IEdge<EdgeData>;
 
+export type Degree = {
+  in: number;
+  out: number;
+  all: number;
+};
+
+// maps node's id and its index in the nodes array
+export type IndexMap = {
+  [nodeId: string]: number;
+};
+
 export type Graph = IGraph<NodeData, EdgeData>;
 
 export type PointTuple = [number, number];
-export type Point = { x: number, y: number };
+export type Point = { x: number; y: number };
 export type Matrix = number[];
 export type LayoutMapping = { nodes: OutNode[]; edges: Edge[] };
 
@@ -46,6 +62,7 @@ export interface LayoutSupervisor {
   start(): void;
   stop(): void;
   kill(): void;
+  isRunning(): boolean;
 }
 
 // most layout options extends CommonOptions
@@ -146,8 +163,8 @@ export interface DagreLayoutOptions extends CommonOptions {
   radial?: boolean; // 是否基于 dagre 进行辐射布局
   focusNode: string | Node | null; // radial 为 true 时生效，关注的节点
   preset?: {
-    nodes: OutNode[],
-    edges: Edge[],
+    nodes: OutNode[];
+    edges: Edge[];
   };
   nodesepFunc?: ((d?: Node) => number) | undefined;
   ranksepFunc?: ((d?: Node) => number) | undefined;
@@ -188,7 +205,7 @@ export interface CentripetalOptions {
     nodes: Node[],
     edges: Edge[],
     width: number,
-    height: number,
+    height: number
   ) => {
     x: number;
     y: number;
@@ -199,7 +216,10 @@ export interface ForceLayoutOptions extends CommonOptions {
   center?: PointTuple;
   width?: number;
   height?: number;
-  linkDistance?: number | ((edge?: Edge, source?: any, target?: any) => number) | undefined;
+  linkDistance?:
+    | number
+    | ((edge?: Edge, source?: any, target?: any) => number)
+    | undefined;
   nodeStrength?: number | ((d?: Node) => number) | undefined;
   edgeStrength?: number | ((d?: Edge) => number) | undefined;
   preventOverlap?: boolean;
@@ -218,10 +238,15 @@ export interface ForceLayoutOptions extends CommonOptions {
   nodeClusterBy?: string;
   clusterNodeStrength?: number | ((node: Node) => number);
   collideStrength?: number;
-  distanceThresholdMode?: 'mean' | 'max' | 'min';
+  distanceThresholdMode?: "mean" | "max" | "min";
   animate?: boolean; // TODO: comfirm the tick way with worker
   onTick?: (data: LayoutMapping) => void;
   getMass?: ((d?: Node) => number) | undefined;
   getCenter?: ((d?: Node, degree?: number) => number[]) | undefined;
-  monitor?: (params: { energy: number, nodes: Node[], edge: Edge[], iterations: number }) => void;
+  monitor?: (params: {
+    energy: number;
+    nodes: Node[];
+    edge: Edge[];
+    iterations: number;
+  }) => void;
 }
