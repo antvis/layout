@@ -10,15 +10,6 @@ import {
 } from "../types";
 import { isArray } from "./array";
 import { isNumber } from "./number";
-import { isObject } from "./object";
-
-export const getEdgeTerminal = (edge: Edge, type: "source" | "target") => {
-  const terminal = edge[type];
-  if (isObject(terminal)) {
-    return terminal.cell;
-  }
-  return terminal;
-};
 
 export const getDegree = (
   n: number,
@@ -35,8 +26,7 @@ export const getDegree = (
   }
   if (!edges) return degrees;
   edges.forEach((e) => {
-    const source = getEdgeTerminal(e, "source");
-    const target = getEdgeTerminal(e, "target");
+    const { source, target } = e;
     if (source && degrees[nodeIdxMap[source]]) {
       degrees[nodeIdxMap[source]].out += 1;
       degrees[nodeIdxMap[source]].all += 1;
@@ -61,8 +51,7 @@ export const getDegreeMap = (nodes: Node[], edges: Edge[] | null) => {
 
   if (!edges) return degreesMap;
   edges.forEach((e) => {
-    const source = getEdgeTerminal(e, "source");
-    const target = getEdgeTerminal(e, "target");
+    const { source, target } = e;
     if (source) {
       degreesMap[source].out += 1;
       degreesMap[source].all += 1;
@@ -124,8 +113,7 @@ export const getAdjMatrix = (data: Model, directed: boolean): Matrix[] => {
   }
 
   edges?.forEach((e) => {
-    const source = getEdgeTerminal(e, "source");
-    const target = getEdgeTerminal(e, "target");
+    const { source, target } = e;
     const sIndex = nodeMap[source as string];
     const tIndex = nodeMap[target as string];
     if (sIndex === undefined || tIndex === undefined) return;

@@ -1,16 +1,8 @@
-import type { Graph } from "@antv/graphlib";
-import type { CircularLayoutOptions, SyncLayout, LayoutMapping, PointTuple, IndexMap, OutNode, Edge, Degree } from "./types";
-import { getDegree, getEdgeTerminal, getFuncByUnknownType, clone } from "./util";
+import type { Graph, CircularLayoutOptions, SyncLayout, LayoutMapping, PointTuple, OutNode, Node, Edge } from "./types";
+import { getFuncByUnknownType, clone } from "./util";
 
-type INodeData = OutNode & {
-  degree: number;
-  size: number | PointTuple;
-  weight: number;
-  children: string[];
-  parent: string[];
-};
+// TODO: graph getDegree, getNeighbors, getSuccessors considering the hidden nodes according to layoutInvisible
 
-type IEdgeData = {};
 
 const DEFAULTS_LAYOUT_OPTIONS: Partial<CircularLayoutOptions> = {
   radius: null,
@@ -49,32 +41,35 @@ export class CircularLayout implements SyncLayout<CircularLayoutOptions> {
   /**
    * Return the positions of nodes and edges(if needed).
    */
-  execute(graph: Graph<INodeData, IEdgeData>, options?: CircularLayoutOptions): LayoutMapping {
+  execute(graph: Graph, options?: CircularLayoutOptions): LayoutMapping {
     return this.genericCircularLayout(false, graph, options) as LayoutMapping;
   }
 
   /**
    * To directly assign the positions to the nodes.
    */
-  assign(graph: Graph<INodeData, IEdgeData>, options?: CircularLayoutOptions) {
+  assign(graph: Graph, options?: CircularLayoutOptions) {
     graph.batch(() => {
       this.genericCircularLayout(true, graph, options);
     });
   }
 
-  private genericCircularLayout(assign: boolean, graph: Graph<INodeData, IEdgeData>, options?: CircularLayoutOptions): LayoutMapping | void {
+  private genericCircularLayout(assign: boolean, graph: Graph, options?: CircularLayoutOptions): LayoutMapping | void {
     const mergedOptions = { ...this.options, ...options };
-    const { width, height, center, divisions, startAngle = 0, endAngle = 2 * Math.PI, angleRatio, ordering, clockwise, nodeSpacing: paramNodeSpacing, nodeSize: paramNodeSize, onLayoutEnd } = mergedOptions;
+    const { width, height, center, divisions, startAngle = 0, endAngle = 2 * Math.PI, angleRatio, ordering, clockwise, nodeSpacing: paramNodeSpacing, nodeSize: paramNodeSize, layoutInvisibles, onLayoutEnd } = mergedOptions;
 
-    const nodes = graph.getAllNodes();
-    const edges = graph.getAllEdges() as Edge[];
+    let nodes = graph.getAllNodes();
+    let edges = graph.getAllEdges();
+
+    if (!layoutInvisibles) {
+      nodes = nodes.filter(node => node.data.visible || node.data.visible === undefined);
+      edges = edges.filter(edge => edge.data.visible || edge.data.visible === undefined);
+    }
     const n = nodes.length;
 
     // Need no layout if there is no node.
     if (n === 0) {
-      if (onLayoutEnd) {
-        onLayoutEnd();
-      }
+      onLayoutEnd?.();
       return {
         nodes: [],
         edges: [],
@@ -87,31 +82,29 @@ export class CircularLayout implements SyncLayout<CircularLayoutOptions> {
     // Layout easily if there is only one node.
     if (n === 1) {
       if (assign) {
-        graph.updateNodeData(nodes[0].id, "x", calculatedCenter[0]);
-        graph.updateNodeData(nodes[0].id, "y", calculatedCenter[1]);
-      }
-      
-      if (onLayoutEnd) {
-        onLayoutEnd();
-      }
-      return {
-        nodes: [
-          {
-            id: `${nodes[0].id}`,
+        graph.mergeNodeData(nodes[0].id, {
             x: calculatedCenter[0],
             y: calculatedCenter[1],
+        });
+      }
+      const result = {
+        nodes: [
+          {
+            ...nodes[0],
+            data: {
+              ...nodes[0].data,
+              x: calculatedCenter[0],
+              y: calculatedCenter[1],
+            }
           }
         ],
-        edges: [],
-      };
+        edges,
+      }
+      onLayoutEnd?.(result);
+      return result;
     }
 
     const angleStep = (endAngle - startAngle) / n;
-    const nodeMap: IndexMap = {};
-    nodes.forEach((node, i) => {
-      nodeMap[node.id] = i;
-    });
-    const degrees = getDegree(nodes.length, nodeMap, edges as Edge[]);
 
     let { radius, startRadius, endRadius } = mergedOptions;
     if (paramNodeSpacing) {
@@ -122,14 +115,14 @@ export class CircularLayout implements SyncLayout<CircularLayoutOptions> {
         const nSize = nodeSize(node);
         if (maxNodeSize < nSize) maxNodeSize = nSize;
       });
-      let length = 0;
+      let perimeter = 0;
       nodes.forEach((node, i) => {
-        if (i === 0) length += (maxNodeSize || 10);
-        else length += (nodeSpacing(node) || 0) + (maxNodeSize || 10);
+        if (i === 0) perimeter += (maxNodeSize || 10);
+        else perimeter += (nodeSpacing(node) || 0) + (maxNodeSize || 10);
       });
-      radius = length / (2 * Math.PI);
+      radius = perimeter / (2 * Math.PI);
     } else if (!radius && !startRadius && !endRadius) {
-      radius = calculatedHeight > calculatedWidth ? calculatedWidth / 2 : calculatedHeight / 2;
+      radius = Math.min(calculatedHeight, calculatedWidth) / 2;
     } else if (!startRadius && endRadius) {
       startRadius = endRadius;
     } else if (startRadius && !endRadius) {
@@ -137,20 +130,20 @@ export class CircularLayout implements SyncLayout<CircularLayoutOptions> {
     }
     const astep = angleStep * angleRatio!;
 
-    let layoutNodes: any[] = [];
-    let nodesData = nodes.map((node) => node.data);
+    // calculated nodes as temporary result
+    let layoutNodes: OutNode[] = [];
     if (ordering === "topology") {
       // layout according to the topology
-      layoutNodes = topologyOrdering(degrees, nodesData, edges, nodeMap);
+      layoutNodes = topologyOrdering(graph, nodes);
     } else if (ordering === "topology-directed") {
       // layout according to the topology
-      layoutNodes = topologyOrdering(degrees, nodesData, edges, nodeMap, true);
+      layoutNodes = topologyOrdering(graph, nodes, true);
     } else if (ordering === "degree") {
       // layout according to the descent order of degrees
-      layoutNodes = degreeOrdering(degrees, nodesData);
+      layoutNodes = degreeOrdering(graph, nodes);
     } else {
       // layout according to the original order in the data.nodes
-      layoutNodes = nodes;
+      layoutNodes = nodes.map(node => clone(node) as OutNode);
     }
 
     const divN = Math.ceil(n / divisions!); // node number in each division
@@ -172,156 +165,76 @@ export class CircularLayout implements SyncLayout<CircularLayoutOptions> {
           (i % divN) * astep -
           ((2 * Math.PI) / divisions!) * Math.floor(i / divN);
       }
-      layoutNodes[i].x = calculatedCenter[0] + Math.cos(angle) * r;
-      layoutNodes[i].y = calculatedCenter[1] + Math.sin(angle) * r;
-      layoutNodes[i].weight = degrees[i].all;
+      layoutNodes[i].data.x = calculatedCenter[0] + Math.cos(angle) * r;
+      layoutNodes[i].data.y = calculatedCenter[1] + Math.sin(angle) * r;
     }
 
     if (assign) {
       layoutNodes.forEach((node) => {
         graph.mergeNodeData(node.id, {
-          x: node.x,
-          y: node.y,
-          weight: node.weight,
+          x: node.data.x,
+          y: node.data.y,
         });
       });
     }
 
-    if (onLayoutEnd) {
-      onLayoutEnd();
-    };
-
-    return {
+    const result = {
       nodes: layoutNodes,
       edges
-    };
-  }
-}
-
-function initHierarchy(
-  nodes: INodeData[],
-  edges: Edge[],
-  nodeMap: IndexMap,
-  directed: boolean
-) {
-  nodes.forEach((_, i: number) => {
-    nodes[i].children = [];
-    nodes[i].parent = [];
-  });
-  if (directed) {
-    edges.forEach((e) => {
-      const source = getEdgeTerminal(e, 'source');
-      const target = getEdgeTerminal(e, 'target');
-      let sourceIdx = 0;
-      if (source) {
-        sourceIdx = nodeMap[source];
-      }
-      let targetIdx = 0;
-      if (target) {
-        targetIdx = nodeMap[target];
-      }
-      const child = nodes[sourceIdx].children!;
-      const parent = nodes[targetIdx].parent!;
-      child.push(nodes[targetIdx].id);
-      parent.push(nodes[sourceIdx].id);
-    });
-  } else {
-    edges.forEach((e) => {
-      const source = getEdgeTerminal(e, 'source');
-      const target = getEdgeTerminal(e, 'target');
-      let sourceIdx = 0;
-      if (source) {
-        sourceIdx = nodeMap[source];
-      }
-      let targetIdx = 0;
-      if (target) {
-        targetIdx = nodeMap[target];
-      }
-      const sourceChildren = nodes[sourceIdx].children!;
-      const targetChildren = nodes[targetIdx].children!;
-      sourceChildren.push(nodes[targetIdx].id);
-      targetChildren.push(nodes[sourceIdx].id);
-    });
-  }
-}
-
-function connect(a: INodeData, b: INodeData, edges: Edge[]) {
-  const m = edges.length;
-  for (let i = 0; i < m; i++) {
-    const source = getEdgeTerminal(edges[i], 'source');
-    const target = getEdgeTerminal(edges[i], 'target');
-    if (
-      (a.id === source && b.id === target) ||
-      (b.id === source && a.id === target)
-    ) {
-      return true;
     }
+    onLayoutEnd?.(result);
+
+    return result;
   }
-  return false;
 }
 
-function compareDegree(a: INodeData, b: INodeData) {
-  const aDegree = a.degree!;
-  const bDegree = b.degree!;
-  if (aDegree < bDegree) {
-    return -1;
-  }
-  if (aDegree > bDegree) {
-    return 1;
-  }
-  return 0;
-}
-
-function topologyOrdering(
-  degrees: Degree[],
-  nodes: INodeData[],
-  edges: Edge[],
-  nodeMap: IndexMap, 
+/**
+ * order the nodes acoording to the graph topology
+ * @param graph 
+ * @param nodes 
+ * @param directed 
+ * @returns 
+ */
+const topologyOrdering = (
+  graph: Graph,
+  nodes: Node[],
   directed: boolean = false
-) {
-  const cnodes = clone(nodes);
-  const orderedCNodes = [cnodes[0]];
-  const resNodes = [nodes[0]];
-  const pickFlags: boolean[] = [];
+) => {
+  const orderedCNodes: OutNode[] = [clone(nodes[0]) as OutNode];
+  const pickFlags: { [id: string]: boolean } = {};
   const n = nodes.length;
-  pickFlags[0] = true;
-  initHierarchy(cnodes, edges, nodeMap, directed);
+  pickFlags[nodes[0].id] = true;
+  // write children into cnodes
   let k = 0;
-  cnodes.forEach((cnode, i) => {
+  nodes.forEach((node, i) => {
     if (i !== 0) {
       if (
         (i === n - 1 ||
-          degrees[i].all !== degrees[i + 1].all ||
-          connect(
-            orderedCNodes[k],
-            cnode,
-            edges
-          )) &&
-        !pickFlags[i]
+          graph.getDegree(node.id, 'both') !== graph.getDegree(nodes[i + 1].id, 'both') ||
+          graph.areNeighbors(orderedCNodes[k].id, node.id)
+        ) &&
+        !pickFlags[node.id]
       ) {
-        orderedCNodes.push(cnode);
-        resNodes.push(nodes[nodeMap[cnode.id]]);
-        pickFlags[i] = true;
+        orderedCNodes.push(clone(node) as OutNode);
+        pickFlags[node.id] = true;
         k++;
       } else {
-        const children = orderedCNodes[k].children!;
+        const children = directed ? graph.getSuccessors(orderedCNodes[k].id) : graph.getNeighbors(orderedCNodes[k].id);
         let foundChild = false;
         for (let j = 0; j < children.length; j++) {
-          const childIdx = nodeMap[children[j]];
-          if (degrees[childIdx].all === degrees[i].all && !pickFlags[childIdx]) {
-            orderedCNodes.push(cnodes[childIdx]);
-            resNodes.push(nodes[nodeMap[cnodes[childIdx].id]]);
-            pickFlags[childIdx] = true;
+          const child = children[j];
+          if (graph.getDegree(child.id) === graph.getDegree(node.id) && !pickFlags[child.id]) {
+            orderedCNodes.push(clone(child) as OutNode);
+            pickFlags[child.id] = true;
             foundChild = true;
             break;
           }
         }
         let ii = 0;
         while (!foundChild) {
-          if (!pickFlags[ii]) {
-            orderedCNodes.push(cnodes[ii]);
-            resNodes.push(nodes[nodeMap[cnodes[ii].id]]);
-            pickFlags[ii] = true;
+          if (!pickFlags[nodes[ii].id]) {
+            orderedCNodes.push(clone(nodes[ii]) as OutNode);
+            pickFlags[nodes[ii].id] = true;
             foundChild = true;
           }
           ii++;
@@ -332,23 +245,39 @@ function topologyOrdering(
       }
     }
   });
-  return resNodes;
+  return orderedCNodes;
 }
 
+/**
+ * order the nodes according to their degree
+ * @param graph 
+ * @param nodes 
+ * @returns 
+ */
 function degreeOrdering(
-  degrees: Degree[],
-  nodes: INodeData[],
-): INodeData[] {
-  const orderedNodes: INodeData[] = [];
+  graph: Graph,
+  nodes: Node[],
+): OutNode[] {
+  const orderedNodes: OutNode[] = [];
   nodes.forEach((node, i) => {
-    node.degree = degrees[i].all;
-    orderedNodes.push(node);
+    orderedNodes.push(clone(node) as OutNode);
   });
-  orderedNodes.sort(compareDegree);
+  orderedNodes.sort((nodeA: Node, nodeB: Node) => (graph.getDegree(nodeA.id, 'both') - graph.getDegree(nodeB.id, 'both')));
   return orderedNodes;
 }
 
-function calculateCenter(width: number | undefined, height: number | undefined, center: PointTuple | undefined): [number, number, PointTuple] {
+/**
+ * format the invalide width and height, and get the center position 
+ * @param width 
+ * @param height 
+ * @param center 
+ * @returns 
+ */
+const calculateCenter = (
+  width: number | undefined,
+  height: number | undefined,
+  center: PointTuple | undefined
+): [number, number, PointTuple] => {
   let calculatedWidth = width;
   let calculatedHeight = height;
   let calculatedCenter = center;
