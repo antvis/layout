@@ -1,48 +1,30 @@
-import type { Graph, Node as INode, Edge as IEdge } from "@antv/graphlib";
+import { Graph as IGraph, Node as INode, Edge as IEdge, PlainObject } from "@antv/graphlib";
 
-/**
- * input node
- */
-export interface Node extends INode {
-  data?: {
-    visible?: boolean;
-    size?: number | number[];
-    bboxSize?: number[];
-  }
+export interface NodeData extends PlainObject {
+  visible?: boolean;
+  size?: number | number[];
+  bboxSize?: number[];
 }
 
+export interface OutNodeData extends NodeData {
+  x: number;
+  y: number;
+}
+
+export interface EdgeData extends PlainObject {
+  visible?: boolean;
+  // temp edges e.g. the edge generated for releated collapsed combo
+  virtual?: boolean;
+}
+
+/** input node */
+export type Node = INode<NodeData>;
 /** output node */
-export interface OutNode extends Node {
-  data: {
-    visible?: boolean;
-    size?: number | number[];
-    bboxSize?: number[];
-    x: number;
-    y: number;
-  }
-}
+export type OutNode = INode<OutNodeData>;
+/** input and output edge */
+export type Edge = IEdge<EdgeData>;
 
-/**
- * input edge
- */
-export interface Edge extends IEdge {
-  data?: {
-    visible?: boolean;
-    // temp edges e.g. the edge generated for releated collapsed combo
-    virtual?: boolean;
-  }
-}
-
-export type Degree = {
-  in: number;
-  out: number;
-  all: number;
-};
-
-/**
- * output edge
- */
-export interface OutEdge extends Edge {}
+export type Graph = IGraph<NodeData, EdgeData>;
 
 export type PointTuple = [number, number];
 export type Point = { x: number, y: number };
@@ -50,8 +32,8 @@ export type Matrix = number[];
 export type LayoutMapping = { nodes: OutNode[]; edges: Edge[] };
 
 export interface SyncLayout<LayoutOptions> {
-  assign(graph: Graph<any, any>, options?: LayoutOptions): void;
-  execute(graph: Graph<any, any>, options?: LayoutOptions): LayoutMapping;
+  assign(graph: Graph, options?: LayoutOptions): void;
+  execute(graph: Graph, options?: LayoutOptions): LayoutMapping;
   options: LayoutOptions;
   id: string;
 }
@@ -70,6 +52,7 @@ export interface LayoutSupervisor {
 interface CommonOptions {
   // whether take the invisible nodes and edges into calculation, false by default
   layoutInvisibles?: boolean;
+  onLayoutEnd?: (data: LayoutMapping) => void;
 }
 
 export interface CircularLayoutOptions extends CommonOptions {
@@ -83,12 +66,10 @@ export interface CircularLayoutOptions extends CommonOptions {
   divisions?: number;
   ordering?: "topology" | "topology-directed" | "degree" | null;
   angleRatio?: number;
-  workerEnabled?: boolean;
   startAngle?: number;
   endAngle?: number;
   nodeSpacing?: ((node?: Node) => number) | number;
   nodeSize?: number | number[];
-  onLayoutEnd?: () => void;
 }
 
 export interface GridLayoutOptions extends CommonOptions {
@@ -102,10 +83,8 @@ export interface GridLayoutOptions extends CommonOptions {
   rows?: number;
   cols?: number;
   sortBy?: string;
-  workerEnabled?: boolean;
   columns?: number | undefined;
   position?: ((node?: Node) => { row?: number; col?: number }) | undefined;
-  onLayoutEnd?: () => void;
   nodeSpacing?: ((node?: Node) => number) | number | undefined;
 }
 
@@ -113,15 +92,11 @@ export interface RandomLayoutOptions extends CommonOptions {
   center?: PointTuple;
   width?: number;
   height?: number;
-  workerEnabled?: boolean;
-  onLayoutEnd?: () => void;
 }
 
 export interface MDSLayoutOptions extends CommonOptions {
   center?: PointTuple;
   linkDistance?: number;
-  workerEnabled?: boolean;
-  onLayoutEnd?: () => void;
 }
 
 export interface ConcentricLayoutOptions extends CommonOptions {
@@ -135,11 +110,9 @@ export interface ConcentricLayoutOptions extends CommonOptions {
   clockwise?: boolean;
   maxLevelDiff?: number;
   sortBy?: string;
-  workerEnabled?: boolean;
   width?: number;
   height?: number;
   nodeSpacing: number | number[] | ((node?: Node) => number) | undefined;
-  onLayoutEnd?: () => void;
 }
 
 export interface RadialLayoutOptions extends CommonOptions {
@@ -157,8 +130,6 @@ export interface RadialLayoutOptions extends CommonOptions {
   strictRadial?: boolean;
   sortBy?: string | undefined;
   sortStrength?: number;
-  workerEnabled?: boolean;
-  onLayoutEnd?: () => void;
 }
 
 export interface DagreLayoutOptions extends CommonOptions {
@@ -170,7 +141,6 @@ export interface DagreLayoutOptions extends CommonOptions {
   ranksep?: number;
   controlPoints?: boolean;
   sortByCombo?: boolean;
-  workerEnabled?: boolean;
   edgeLabelSpace?: boolean;
   nodeOrder?: string[];
   radial?: boolean; // 是否基于 dagre 进行辐射布局
@@ -179,7 +149,79 @@ export interface DagreLayoutOptions extends CommonOptions {
     nodes: OutNode[],
     edges: Edge[],
   };
-  onLayoutEnd?: () => void;
   nodesepFunc?: ((d?: Node) => number) | undefined;
   ranksepFunc?: ((d?: Node) => number) | undefined;
+}
+
+export interface D3ForceLayoutOptions extends CommonOptions {
+  center?: PointTuple;
+  linkDistance?: number | ((d?: Edge) => number) | undefined;
+  edgeStrength?: number | ((d?: Edge) => number) | undefined;
+  nodeStrength?: number | ((d?: Node) => number) | undefined;
+  preventOverlap?: boolean;
+  collideStrength?: number;
+  nodeSize?: number | number[] | ((d?: Node) => number) | undefined;
+  nodeSpacing?: number | number[] | ((d?: Node) => number) | undefined;
+  alpha?: number;
+  alphaDecay?: number;
+  alphaMin?: number;
+  clustering?: boolean;
+  clusterNodeStrength?: number;
+  clusterEdgeStrength?: number;
+  clusterEdgeDistance?: number;
+  clusterNodeSize?: number;
+  clusterFociStrength?: number;
+  forceSimulation?: any;
+  onTick?: (data: LayoutMapping) => void;
+}
+
+export interface CentripetalOptions {
+  /** Force strength for leaf nodes. */
+  leaf?: number | ((node: Node, nodes: Node[], edges: Edge[]) => number);
+  /** Force strength for single nodes. */
+  single?: number | ((node: Node) => number);
+  /** Force strength for other nodes. */
+  others?: number | ((node: Node) => number);
+  /** Centri force's position and sterngth, points to the canvas center by default */
+  center?: (
+    node: Node,
+    nodes: Node[],
+    edges: Edge[],
+    width: number,
+    height: number,
+  ) => {
+    x: number;
+    y: number;
+    centerStrength?: number;
+  };
+}
+export interface ForceLayoutOptions extends CommonOptions {
+  center?: PointTuple;
+  width?: number;
+  height?: number;
+  linkDistance?: number | ((edge?: Edge, source?: any, target?: any) => number) | undefined;
+  nodeStrength?: number | ((d?: Node) => number) | undefined;
+  edgeStrength?: number | ((d?: Edge) => number) | undefined;
+  preventOverlap?: boolean;
+  nodeSize?: number | number[] | ((d?: Node) => number) | undefined;
+  nodeSpacing?: number | number[] | ((d?: Node) => number) | undefined;
+  minMovement?: number;
+  maxIteration?: number;
+  damping?: number;
+  maxSpeed?: number;
+  coulombDisScale?: number;
+  gravity?: number;
+  factor?: number;
+  centripetalOptions?: CentripetalOptions;
+  leafCluster?: boolean;
+  clustering?: boolean;
+  nodeClusterBy?: string;
+  clusterNodeStrength?: number | ((node: Node) => number);
+  collideStrength?: number;
+  distanceThresholdMode?: 'mean' | 'max' | 'min';
+  animate?: boolean; // TODO: comfirm the tick way with worker
+  onTick?: (data: LayoutMapping) => void;
+  getMass?: ((d?: Node) => number) | undefined;
+  getCenter?: ((d?: Node, degree?: number) => number[]) | undefined;
+  monitor?: (params: { energy: number, nodes: Node[], edge: Edge[], iterations: number }) => void;
 }

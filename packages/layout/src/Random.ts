@@ -1,5 +1,4 @@
-import { Graph } from "@antv/graphlib";
-import { Node, Edge, LayoutMapping, OutNode, PointTuple, RandomLayoutOptions, SyncLayout } from "./types";
+import { Graph, Node, Edge, LayoutMapping, OutNode, PointTuple, RandomLayoutOptions, SyncLayout } from "./types";
 
 const DEFAULTS_LAYOUT_OPTIONS: Partial<RandomLayoutOptions> = {
   center: [0, 0],
@@ -23,26 +22,28 @@ const DEFAULTS_LAYOUT_OPTIONS: Partial<RandomLayoutOptions> = {
  * layout.assign(graph, { center: [100, 100] });
  */
 export class RandomLayout implements SyncLayout<RandomLayoutOptions> {
-  constructor(private options: RandomLayoutOptions = {} as RandomLayoutOptions) {
+  id = 'random'
+
+  constructor(public options: RandomLayoutOptions = {} as RandomLayoutOptions) {
     Object.assign(this.options, DEFAULTS_LAYOUT_OPTIONS, options);
   }
 
   /**
    * Return the positions of nodes and edges(if needed).
    */
-  execute(graph: Graph<Node, Edge>, options?: RandomLayoutOptions): LayoutMapping {
+  execute(graph: Graph, options?: RandomLayoutOptions): LayoutMapping {
     return this.genericRandomLayout(false, graph, options) as LayoutMapping;
   }
   /**
    * To directly assign the positions to the nodes.
    */
-  assign(graph: Graph<Node, Edge>, options?: RandomLayoutOptions) {
+  assign(graph: Graph, options?: RandomLayoutOptions) {
     this.genericRandomLayout(true, graph, options);
   }
 
-  private genericRandomLayout(assign: boolean, graph: Graph<Node, Edge>, options?: RandomLayoutOptions): LayoutMapping | void {
+  private genericRandomLayout(assign: boolean, graph: Graph, options?: RandomLayoutOptions): LayoutMapping | void {
     const mergedOptions = { ...this.options, ...options };
-    const { center: propsCenter, width: propsWidth, height: propsHeight, layoutInvisibles } = mergedOptions;
+    const { center: propsCenter, width: propsWidth, height: propsHeight, layoutInvisibles, onLayoutEnd } = mergedOptions;
 
     let nodes = graph.getAllNodes();
     if (!layoutInvisibles) nodes = nodes.filter(node => node.data.visible || node.data.visible === undefined);
@@ -71,11 +72,13 @@ export class RandomLayout implements SyncLayout<RandomLayoutOptions> {
       }))
     }
 
-    onLayoutEnd?.();
-
-    return {
-      nodes,
+    const result = {
+      nodes: layoutNodes,
       edges: graph.getAllEdges()
     };
+
+    onLayoutEnd?.(result);
+
+    return result;
   }
 }

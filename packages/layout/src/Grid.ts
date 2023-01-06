@@ -1,12 +1,6 @@
-import { Graph } from "@antv/graphlib";
 import { isString, getFuncByUnknownType, isArray } from "./util";
-import { Node, Edge, GridLayoutOptions, LayoutMapping, PointTuple, SyncLayout, OutNode } from "./types";
+import { Graph, Node, Edge, GridLayoutOptions, LayoutMapping, PointTuple, SyncLayout, OutNode } from "./types";
 import { clone } from "./util";
-
-// maps node's id and its index in the nodes array
-type IndexMap = {
-  [nodeId: string]: number
-}
 
 type RowsAndCols = {
   rows: number,
@@ -56,24 +50,26 @@ const DEFAULTS_LAYOUT_OPTIONS: Partial<GridLayoutOptions> = {
  * layout.assign(graph, { rows: 20 });
  */
 export class GridLayout implements SyncLayout<GridLayoutOptions> {
-  constructor(private options: GridLayoutOptions = {} as GridLayoutOptions) {
+  id = 'grid'
+
+  constructor(public options: GridLayoutOptions = {} as GridLayoutOptions) {
     Object.assign(this.options, DEFAULTS_LAYOUT_OPTIONS, options);
   }
 
   /**
    * Return the positions of nodes and edges(if needed).
    */
-  execute(graph: Graph<Node, Edge>, options?: GridLayoutOptions): LayoutMapping {
+  execute(graph: Graph, options?: GridLayoutOptions): LayoutMapping {
     return this.genericGridLayout(false, graph, options) as LayoutMapping;
   }
   /**
    * To directly assign the positions to the nodes.
    */
-  assign(graph: Graph<Node, Edge>, options?: GridLayoutOptions) {
+  assign(graph: Graph, options?: GridLayoutOptions) {
     this.genericGridLayout(true, graph, options);
   }
 
-  private genericGridLayout(assign: boolean, graph: Graph<Node, Edge>, options?: GridLayoutOptions): LayoutMapping | void {
+  private genericGridLayout(assign: boolean, graph: Graph, options?: GridLayoutOptions): LayoutMapping | void {
     const mergedOptions = { ...this.options, ...options };
     const {
       begin = [0, 0],
@@ -102,11 +98,12 @@ export class GridLayout implements SyncLayout<GridLayoutOptions> {
 
     // Need no layout if there is no node.
     if (n === 0) {
-      onLayoutEnd?.();
-      return {
+      const result = {
         nodes: [],
-        edges: [],
+        edges,
       };
+      onLayoutEnd?.(result);
+      return result;
     }
     if (n === 1) {
       if (assign) {
@@ -115,8 +112,7 @@ export class GridLayout implements SyncLayout<GridLayoutOptions> {
           y: begin[1],
         });
       }
-      onLayoutEnd?.();
-      return {
+      const result = {
         nodes: [
           {
             ...nodes[0],
@@ -128,10 +124,12 @@ export class GridLayout implements SyncLayout<GridLayoutOptions> {
           }
         ],
         edges,
-      };
+      }
+      onLayoutEnd?.(result);
+      return result;
     }
 
-    const layoutNodes: OutNode[] = nodes.map(node => clone(node));
+    const layoutNodes: OutNode[] = nodes.map(node => clone(node) as OutNode);
     
     if (
       !isString(sortBy) ||
@@ -281,8 +279,12 @@ export class GridLayout implements SyncLayout<GridLayoutOptions> {
       }
       getPos(node, begin, cellWidth, cellHeight, id2manPos, rcs, rc, cellUsed);
     }
+    const result = {
+      nodes: layoutNodes,
+      edges,
+    }
 
-    onLayoutEnd?.();
+    onLayoutEnd?.(result);
 
     if (assign) {
       layoutNodes.forEach((node) => {
@@ -292,10 +294,7 @@ export class GridLayout implements SyncLayout<GridLayoutOptions> {
         });
       });
     }
-    return {
-      nodes: layoutNodes,
-      edges,
-    };
+    return result;
 
   }
 }

@@ -1,5 +1,4 @@
-import { Graph } from "@antv/graphlib";
-import { Node, Edge, LayoutMapping, OutNode, PointTuple, ConcentricLayoutOptions, SyncLayout } from "./types";
+import { Graph, Node, Edge, LayoutMapping, OutNode, PointTuple, ConcentricLayoutOptions, SyncLayout } from "./types";
 import { clone, isArray, isFunction, isNumber, isObject, isString } from "./util";
 
 // maps node's id and its index in the nodes array
@@ -36,24 +35,26 @@ const DEFAULTS_LAYOUT_OPTIONS: Partial<ConcentricLayoutOptions> = {
  * layout.assign(graph, { nodeSpacing: 10 });
  */
 export class ConcentricLayout implements SyncLayout<ConcentricLayoutOptions> {
-  constructor(private options: ConcentricLayoutOptions = {} as ConcentricLayoutOptions) {
+  id = 'concentric'
+
+  constructor(public options: ConcentricLayoutOptions = {} as ConcentricLayoutOptions) {
     Object.assign(this.options, DEFAULTS_LAYOUT_OPTIONS, options);
   }
 
   /**
    * Return the positions of nodes and edges(if needed).
    */
-  execute(graph: Graph<Node, Edge>, options?: ConcentricLayoutOptions): LayoutMapping {
+  execute(graph: Graph, options?: ConcentricLayoutOptions): LayoutMapping {
     return this.genericConcentricLayout(false, graph, options) as LayoutMapping;
   }
   /**
    * To directly assign the positions to the nodes.
    */
-  assign(graph: Graph<Node, Edge>, options?: ConcentricLayoutOptions) {
+  assign(graph: Graph, options?: ConcentricLayoutOptions) {
     this.genericConcentricLayout(true, graph, options);
   }
 
-  private genericConcentricLayout(assign: boolean, graph: Graph<Node, Edge>, options?: ConcentricLayoutOptions): LayoutMapping | void {
+  private genericConcentricLayout(assign: boolean, graph: Graph, options?: ConcentricLayoutOptions): LayoutMapping | void {
     const mergedOptions = { ...this.options, ...options };
     const {
       center: propsCenter,
@@ -69,7 +70,8 @@ export class ConcentricLayout implements SyncLayout<ConcentricLayoutOptions> {
       startAngle = (3 / 2) * Math.PI,
       nodeSize,
       nodeSpacing,
-      layoutInvisibles
+      layoutInvisibles,
+      onLayoutEnd
     } = mergedOptions;
 
     let nodes = graph.getAllNodes();
@@ -82,8 +84,9 @@ export class ConcentricLayout implements SyncLayout<ConcentricLayoutOptions> {
     
     const n = nodes.length;
     if (n === 0) {
-      onLayoutEnd?.();
-      return { nodes: [], edges };
+      const result = { nodes: [], edges };
+      onLayoutEnd?.(result);
+      return result
     }
 
     const width = !propsWidth && typeof window !== "undefined" ? window.innerWidth : propsWidth as number;
@@ -97,8 +100,7 @@ export class ConcentricLayout implements SyncLayout<ConcentricLayoutOptions> {
           y: center[1]
         });
       }
-      onLayoutEnd?.();
-      return {
+      const result = {
         nodes: [{
           ...nodes[0],
          data: {
@@ -109,6 +111,8 @@ export class ConcentricLayout implements SyncLayout<ConcentricLayoutOptions> {
         }],
         edges
       };
+      onLayoutEnd?.(result);
+      return result;
     }
 
     const layoutNodes: OutNode[] = [];
@@ -125,14 +129,14 @@ export class ConcentricLayout implements SyncLayout<ConcentricLayoutOptions> {
       maxNodeSpacing = nodeSpacing;
     }
     nodes.forEach((node) => {
-      layoutNodes.push(clone(node));
+      layoutNodes.push(clone(node) as OutNode);
       let nodeSize: number = maxNodeSize;
-      if (isArray(node.size)) {
-        nodeSize = Math.max(node.size[0], node.size[1]);
-      } else if (isNumber(node.size)) {
-        nodeSize = node.size;
-      } else if (isObject(node.size)) {
-        nodeSize = Math.max((node.size as any).width, (node.size as any).height);
+      if (isArray(node.data.size)) {
+        nodeSize = Math.max(node.data.size[0], node.data.size[1]);
+      } else if (isNumber(node.data.size)) {
+        nodeSize = node.data.size;
+      } else if (isObject(node.data.size)) {
+        nodeSize = Math.max((node.data.size as any).width, (node.data.size as any).height);
       }
       maxNodeSize = Math.max(maxNodeSize, nodeSize);
 
@@ -257,11 +261,13 @@ export class ConcentricLayout implements SyncLayout<ConcentricLayoutOptions> {
       }))
     }
 
-    onLayoutEnd?.();
-
-    return {
+    const result =  {
       nodes: layoutNodes,
       edges
     };
+
+    onLayoutEnd?.(result);
+
+    return result;
   }
 }

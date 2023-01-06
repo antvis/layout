@@ -1,6 +1,5 @@
-import { Graph } from "@antv/graphlib";
 import { Point } from "../types";
-import { Node, Edge } from "../types";
+import { Graph, Node } from "../types";
 
 const SPEED_DIVISOR = 800;
 
@@ -28,7 +27,7 @@ const DEFAULTS_LAYOUT_OPTIONS: Partial<RadialNonoverlapForceOptions> = {
   k: 5
 }
 
-export const radialNonoverlapForce = (graph: Graph<Node, Edge>, options: RadialNonoverlapForceOptions): Point[] => {
+export const radialNonoverlapForce = (graph: Graph, options: RadialNonoverlapForceOptions): Point[] => {
   const mergedOptions = { ...DEFAULTS_LAYOUT_OPTIONS, ...options };
   const { positions, iterations, width, k, speed = 100, strictRadial, focusIdx, radii = [], nodeSizeFunc } = mergedOptions;
 

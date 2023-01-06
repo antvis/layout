@@ -1,6 +1,5 @@
-import { Graph } from "@antv/graphlib";
 import { Matrix as MLMatrix, SingularValueDecomposition } from "ml-matrix";
-import { Node, Edge, LayoutMapping, OutNode, PointTuple, MDSLayoutOptions, SyncLayout, Matrix } from "./types";
+import { Graph, Node, Edge, LayoutMapping, OutNode, PointTuple, MDSLayoutOptions, SyncLayout, Matrix } from "./types";
 import { clone, floydWarshall, getAdjMatrix, scaleMatrix } from "./util";
 
 const DEFAULTS_LAYOUT_OPTIONS: Partial<MDSLayoutOptions> = {
@@ -24,24 +23,26 @@ const DEFAULTS_LAYOUT_OPTIONS: Partial<MDSLayoutOptions> = {
  * layout.assign(graph, { center: [100, 100] });
  */
 export class MDSLayout implements SyncLayout<MDSLayoutOptions> {
-  constructor(private options: MDSLayoutOptions = {} as MDSLayoutOptions) {
+  id = 'mds'
+
+  constructor(public options: MDSLayoutOptions = {} as MDSLayoutOptions) {
     Object.assign(this.options, DEFAULTS_LAYOUT_OPTIONS, options);
   }
 
   /**
    * Return the positions of nodes and edges(if needed).
    */
-  execute(graph: Graph<Node, Edge>, options?: MDSLayoutOptions): LayoutMapping {
+  execute(graph: Graph, options?: MDSLayoutOptions): LayoutMapping {
     return this.genericMDSLayout(false, graph, options) as LayoutMapping;
   }
   /**
    * To directly assign the positions to the nodes.
    */
-  assign(graph: Graph<Node, Edge>, options?: MDSLayoutOptions) {
+  assign(graph: Graph, options?: MDSLayoutOptions) {
     this.genericMDSLayout(true, graph, options);
   }
 
-  private genericMDSLayout(assign: boolean, graph: Graph<Node, Edge>, options?: MDSLayoutOptions): LayoutMapping | void {
+  private genericMDSLayout(assign: boolean, graph: Graph, options?: MDSLayoutOptions): LayoutMapping | void {
     const mergedOptions = { ...this.options, ...options };
     const { center = [0, 0], linkDistance = 50, layoutInvisibles, onLayoutEnd } = mergedOptions;
     
@@ -54,8 +55,9 @@ export class MDSLayout implements SyncLayout<MDSLayoutOptions> {
     }
 
     if (!nodes || nodes.length === 0) {
-      onLayoutEnd?.();
-      return { nodes: [], edges };
+      const result = { nodes: [], edges };
+      onLayoutEnd?.(result);
+      return result;
     }
     if (nodes.length === 1) {
       if (assign) {
@@ -64,8 +66,7 @@ export class MDSLayout implements SyncLayout<MDSLayoutOptions> {
           y: center[1]
         });
       }
-      onLayoutEnd?.();
-      return {
+      const result = {
         nodes: [{
           ...nodes[0],
           data: {
@@ -75,7 +76,9 @@ export class MDSLayout implements SyncLayout<MDSLayoutOptions> {
           }
         }],
         edges
-      };
+      }
+      onLayoutEnd?.(result);
+      return result;
     }
 
     // the graph-theoretic distance (shortest path distance) matrix
@@ -90,7 +93,7 @@ export class MDSLayout implements SyncLayout<MDSLayoutOptions> {
     const positions = runMDS(scaledD);
     const layoutNodes: OutNode[] = [];
     positions.forEach((p: number[], i: number) => {
-      const cnode = clone(nodes[i]);
+      const cnode = clone(nodes[i]) as OutNode;
       cnode.data.x = p[0] + center[0];
       cnode.data.y = p[1] + center[1];
       layoutNodes.push(cnode);
@@ -103,12 +106,13 @@ export class MDSLayout implements SyncLayout<MDSLayoutOptions> {
       }))
     }
 
-    onLayoutEnd?.();
-
-    return {
+    const result = {
       nodes: layoutNodes,
       edges
     };
+    onLayoutEnd?.(result);
+
+    return result;
   }
 }
 
