@@ -7,10 +7,12 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v1
-      - name: Use Node.js 12
-        uses: actions/setup-node@v1
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v2.1.5
         with:
-          node-version: 12.x
+          node-version: "14"
+
       - name: yarn install
         run: |
           yarn install
