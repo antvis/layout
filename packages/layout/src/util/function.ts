@@ -4,17 +4,29 @@ import { isNumber } from "./number";
 export const isFunction = (val: unknown): val is Function =>
   typeof val === "function";
 
+/**
+ * format number | Function type value into (d) => number type
+ * @param  {number | Function}  value to be formatted
+ * @param  {number}  defaultValue default value
+ * @return {Function} result function
+ */
 export const getFunc = (
-  value: number,
+  value: number | Function | undefined,
   defaultValue: number,
-  func?: ((d?: any) => number) | undefined
+  func?: ((d?: unknown) => number)
 ): Function => {
   let resultFunc;
   if (func) {
+    // has function definition
     resultFunc = func;
+  } else if (isFunction(value)) {
+    // value is a function
+    resultFunc = value;
   } else if (isNumber(value)) {
+    // value is number
     resultFunc = () => value;
   } else {
+    // value is not number and function
     resultFunc = () => defaultValue;
   }
   return resultFunc;

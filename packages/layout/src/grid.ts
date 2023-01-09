@@ -115,10 +115,10 @@ export class GridLayout implements SyncLayout<GridLayoutOptions> {
 
     // Need no layout if there is no node.
     if (n === 0) {
-      const result = {
+      const result: LayoutMapping = {
         nodes: [],
         edges,
-      };
+      }
       onLayoutEnd?.(result);
       return result;
     }
