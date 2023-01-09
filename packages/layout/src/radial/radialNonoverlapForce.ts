@@ -1,5 +1,4 @@
-import { Point } from "../types";
-import { Graph, Node } from "../types";
+import type { Graph, Node, Point } from "../types";
 
 const SPEED_DIVISOR = 800;
 

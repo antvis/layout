@@ -10,7 +10,7 @@
     "url": "https://github.com/antvis/layout.git"
   },
   "license": "MIT",
-  "author": "xiaoiver",
+  "author": "antv",
   "workspaces": [
     "packages/*"
   ],
@@ -21,8 +21,7 @@
     "precommit": "lint-staged",
     "release": "release-it",
     "test": "jest",
-    "coverage": "jest --coverage",
-    "wasm": "wasm-pack build ./packages/layout-wasm --target web"
+    "coverage": "jest --coverage"
   },
   "lint-staged": {
     "**/*.{js,ts,md}": [
@@ -44,7 +43,6 @@
     "eslint-config-airbnb-base": "^14.0.0",
     "eslint-config-prettier": "^6.7.0",
     "eslint-plugin-import": "^2.18.2",
-    "father": "^2.30.13",
     "jest": "^26.0.1",
     "jest-electron": "^0.1.7",
     "jest-extended": "^0.11.2",

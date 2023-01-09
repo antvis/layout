@@ -2,6 +2,8 @@
 
 Collection of basic layout algorithms to be used with [@antv/graphlib]().
 
+[Living Demo](https://observablehq.com/d/2db6b0cc5e97d8d6)
+
 ## Installation
 
 ```shell

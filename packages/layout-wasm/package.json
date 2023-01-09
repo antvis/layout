@@ -1,15 +1,14 @@
 {
-  "name": "@antv/layout",
-  "version": "1.0.0-alpha.3",
-  "description": "graph layout algorithm",
+  "name": "@antv/layout-wasm",
+  "version": "1.0.0-alpha.0",
+  "description": "graph layout algorithm implemented with WASM",
   "main": "dist/index.min.js",
-  "module": "esm/index.esm.js",
+  "module": "dist/index.min.js",
   "types": "lib/index.d.ts",
   "unpkg": "dist/index.min.js",
   "files": [
     "package.json",
     "dist",
-    "esm",
     "lib",
     "LICENSE",
     "README.md"
@@ -21,10 +20,7 @@
     "antv"
   ],
   "dependencies": {
-    "@antv/graphlib": "^2.0.0-alpha.1",
-    "@naoak/workerize-transferable": "^0.1.0",
-    "eventemitter3": "^4.0.0",
-    "ml-matrix": "^6.10.4"
+    "@antv/graphlib": "^2.0.0-alpha.1"
   },
   "devDependencies": {
     "@babel/core": "^7.7.7",
@@ -34,14 +30,13 @@
     "ts-loader": "^7.0.3",
     "typescript": "^4.0.3",
     "webpack": "^5.38.1",
-    "webpack-cli": "^4.7.2",
-    "workerize-loader": "^2.0.2"
+    "webpack-cli": "^4.7.2"
   },
   "scripts": {
     "dev": "webpack --config webpack.dev.config.js --mode development",
-    "build": "npm run build:esm && npm run build:umd",
-    "build:esm": "webpack --config webpack.esm.config.js --mode production",
     "build:umd": "webpack --config webpack.config.js --mode production",
-    "publish:alpha": "npm publish --tag alpha"
+    "publish:alpha": "npm publish --tag alpha",
+    "test": "jest",
+    "wasm": "wasm-pack build ./ --target web"
   }
 }

@@ -1,4 +1,4 @@
-import type { Graph, CircularLayoutOptions, SyncLayout, LayoutMapping, PointTuple, OutNode, Node, Edge } from "./types";
+import type { Graph, CircularLayoutOptions, SyncLayout, LayoutMapping, PointTuple, OutNode, Node } from "./types";
 import { getFuncByUnknownType, clone } from "./util";
 
 // TODO: graph getDegree, getNeighbors, getSuccessors considering the hidden nodes according to layoutInvisible
@@ -35,7 +35,10 @@ export class CircularLayout implements SyncLayout<CircularLayoutOptions> {
   id = 'circular';
 
   constructor(public options: CircularLayoutOptions = {} as CircularLayoutOptions) {
-    Object.assign(this.options, DEFAULTS_LAYOUT_OPTIONS, options);
+    this.options = {
+      ...DEFAULTS_LAYOUT_OPTIONS,
+      ...options
+    };
   }
 
   /**

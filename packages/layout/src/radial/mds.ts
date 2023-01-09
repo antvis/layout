@@ -1,5 +1,5 @@
 import { Matrix as MLMatrix, SingularValueDecomposition } from 'ml-matrix';
-import { PointTuple, Matrix } from '../types';
+import type { PointTuple, Matrix } from '../types';
 
 export const mds = (dimension: number, distances: Matrix[], linkDistance: number) => {
   try {

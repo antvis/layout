@@ -279,11 +279,9 @@ const getSameTypeNodes = (
   relativeNodes: Node[],
   degreesMap: { [id: string]: Degree }
 ) => {
-  // @ts-ignore
-  const typeName = node[nodeClusterBy] || "";
-  // @ts-ignore
+  const typeName = node[nodeClusterBy as keyof Node] || "";
   let sameTypeNodes =
-    relativeNodes?.filter((item) => item[nodeClusterBy] === typeName) || [];
+    relativeNodes?.filter((item) => item[nodeClusterBy as keyof Node] === typeName) || [];
   if (type === "leaf") {
     sameTypeNodes = sameTypeNodes.filter(
       (node) => degreesMap[node.id]?.in === 0 || degreesMap[node.id]?.out === 0

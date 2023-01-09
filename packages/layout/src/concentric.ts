@@ -1,7 +1,6 @@
 import type {
   Graph,
   Node,
-  Edge,
   LayoutMapping,
   OutNode,
   PointTuple,
@@ -187,7 +186,7 @@ export class ConcentricLayout implements SyncLayout<ConcentricLayoutOptions> {
     });
 
     // get the node degrees
-    let sortBy = propsSortBy;
+    let sortBy = propsSortBy!;
     if (
       !isString(sortBy) ||
       (layoutNodes[0] as any).data[sortBy] === undefined
@@ -222,7 +221,7 @@ export class ConcentricLayout implements SyncLayout<ConcentricLayoutOptions> {
     layoutNodes.forEach((node) => {
       if (currentLevel.nodes.length > 0) {
         const diff = Math.abs(
-          currentLevel.nodes[0].data[sortBy] - (node as any).data[sortBy]
+          currentLevel.nodes[0].data[sortBy] as number - (node as any).data[sortBy]
         );
         if (maxLevelDiff && diff >= maxLevelDiff) {
           currentLevel = { nodes: [] };

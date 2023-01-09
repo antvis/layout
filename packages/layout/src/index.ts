@@ -6,3 +6,6 @@ export * from "./random";
 export * from "./mds";
 export * from "./concentric";
 export * from "./radial";
+
+// FIXME: external graphlib
+export * from "@antv/graphlib";

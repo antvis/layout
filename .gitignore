@@ -10,6 +10,7 @@ package-lock.json
 coverage
 lib
 es
+esm
 dist
 *.pem
 !mock-cert.pem

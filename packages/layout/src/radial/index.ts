@@ -1,4 +1,4 @@
-import { Graph, Node, Edge, LayoutMapping, Matrix, OutNode, PointTuple, RadialLayoutOptions, SyncLayout, Point } from "../types";
+import type { Graph, Node, LayoutMapping, Matrix, OutNode, PointTuple, RadialLayoutOptions, SyncLayout, Point } from "../types";
 import { floydWarshall, getAdjMatrix, isArray, isFunction, isNumber, isObject, isString } from "../util";
 import { mds } from "./mds";
 import { radialNonoverlapForce, RadialNonoverlapForceOptions } from "./RadialNonoverlapForce";
@@ -33,7 +33,7 @@ const DEFAULTS_LAYOUT_OPTIONS: Partial<RadialLayoutOptions> = {
  * layout.assign(graph, { focusNode: 'node0' });
  */
 export class RadialLayout implements SyncLayout<RadialLayoutOptions> {
-  id = 'radial'
+  id = 'radial';
 
   constructor(public options: RadialLayoutOptions = {} as RadialLayoutOptions) {
     Object.assign(this.options, DEFAULTS_LAYOUT_OPTIONS, options);
@@ -338,9 +338,9 @@ const eIdealDisMatrix = (
 const getWeightMatrix = (idealDistances: Matrix[]) => {
   const rows = idealDistances.length;
   const cols = idealDistances[0].length;
-  const result = [];
+  const result: number[][] = [];
   for (let i = 0; i < rows; i++) {
-    const row = [];
+    const row: number[] = [];
     for (let j = 0; j < cols; j++) {
       if (idealDistances[i][j] !== 0) {
         row.push(1 / (idealDistances[i][j] * idealDistances[i][j]));
