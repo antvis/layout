@@ -1,4 +1,4 @@
-import type { Graph, CircularLayoutOptions, SyncLayout, LayoutMapping, PointTuple, OutNode, Node, Edge } from "./types";
+import type { Graph, CircularLayoutOptions, SyncLayout, LayoutMapping, PointTuple, OutNode, Node } from "./types";
 import { getFuncByUnknownType, clone } from "./util";
 
 // TODO: graph getDegree, getNeighbors, getSuccessors considering the hidden nodes according to layoutInvisible
@@ -14,7 +14,7 @@ const DEFAULTS_LAYOUT_OPTIONS: Partial<CircularLayoutOptions> = {
   divisions: 1,
   ordering: null,
   angleRatio: 1
-}
+};
 
 /**
  * Layout arranging the nodes in a circle.
@@ -35,7 +35,10 @@ export class CircularLayout implements SyncLayout<CircularLayoutOptions> {
   id = 'circular';
 
   constructor(public options: CircularLayoutOptions = {} as CircularLayoutOptions) {
-    Object.assign(this.options, DEFAULTS_LAYOUT_OPTIONS, options);
+    this.options = {
+      ...DEFAULTS_LAYOUT_OPTIONS,
+      ...options
+    };
   }
 
   /**
@@ -62,14 +65,17 @@ export class CircularLayout implements SyncLayout<CircularLayoutOptions> {
     let edges = graph.getAllEdges();
 
     if (!layoutInvisibles) {
-      nodes = nodes.filter(node => node.data.visible || node.data.visible === undefined);
-      edges = edges.filter(edge => edge.data.visible || edge.data.visible === undefined);
+      nodes = nodes.filter((node) => node.data.visible || node.data.visible === undefined);
+      edges = edges.filter((edge) => edge.data.visible || edge.data.visible === undefined);
     }
     const n = nodes.length;
 
     // Need no layout if there is no node.
     if (n === 0) {
-      onLayoutEnd?.();
+      onLayoutEnd?.({
+        nodes: [],
+        edges: [],
+      });
       return {
         nodes: [],
         edges: [],
@@ -99,7 +105,7 @@ export class CircularLayout implements SyncLayout<CircularLayoutOptions> {
           }
         ],
         edges,
-      }
+      };
       onLayoutEnd?.(result);
       return result;
     }
@@ -143,7 +149,7 @@ export class CircularLayout implements SyncLayout<CircularLayoutOptions> {
       layoutNodes = degreeOrdering(graph, nodes);
     } else {
       // layout according to the original order in the data.nodes
-      layoutNodes = nodes.map(node => clone(node) as OutNode);
+      layoutNodes = nodes.map((node) => clone(node) as OutNode);
     }
 
     const divN = Math.ceil(n / divisions!); // node number in each division
@@ -181,7 +187,7 @@ export class CircularLayout implements SyncLayout<CircularLayoutOptions> {
     const result = {
       nodes: layoutNodes,
       edges
-    }
+    };
     onLayoutEnd?.(result);
 
     return result;
@@ -246,7 +252,7 @@ const topologyOrdering = (
     }
   });
   return orderedCNodes;
-}
+};
 
 /**
  * order the nodes according to their degree
@@ -291,4 +297,4 @@ const calculateCenter = (
     calculatedCenter = [calculatedWidth! / 2, calculatedHeight! / 2];
   }
   return [calculatedWidth!, calculatedHeight!, calculatedCenter];
-}
+};

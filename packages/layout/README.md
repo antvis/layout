@@ -2,7 +2,13 @@
 
 Collection of basic layout algorithms to be used with [@antv/graphlib]().
 
-## Installation
+[Living Demo](https://observablehq.com/d/2db6b0cc5e97d8d6)
+
+## Usage
+
+### NPM
+
+Install `@antv/layout` first.
 
 ```shell
 # npm
@@ -12,7 +18,7 @@ $ npm install @antv/layout --save
 $ yarn add @antv/layout
 ```
 
-## Usage
+Choose a layout algorithm from `@antv/layout` then.
 
 ```ts
 import { Graph } from "@antv/graphlib";
@@ -27,6 +33,28 @@ const positions = circularLayout.execute(graph);
 
 // 2. To directly assign the positions to the nodes:
 circularLayout.assign(graph);
+```
+
+### UMD
+
+Import scripts in UMD version of `@antv/graphlib` and `@antv/layout`.
+
+```html
+<script
+  src="https://unpkg.com/@antv/graphlib"
+  type="application/javascript"
+></script>
+<script
+  src="https://unpkg.com/@antv/layout"
+  type="application/javascript"
+></script>
+```
+
+Use layouts under `Layout` namespace.
+
+```js
+const { Graph } = window.GraphLib;
+const { CircularLayout } = window.Layout;
 ```
 
 ## Documentation

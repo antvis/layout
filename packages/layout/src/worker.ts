@@ -23,8 +23,8 @@ export function calculateLayout(payload: Payload, transferables: Float32Array[])
   // in which case we don't need the whole graph.
   // @see https://github.com/graphology/graphology/blob/master/src/layout-noverlap/webworker.tpl.js#L32
   const graph = new Graph({
-    nodes: nodes,
-    edges: edges,
+    nodes,
+    edges,
   });
 
   /**
@@ -36,7 +36,7 @@ export function calculateLayout(payload: Payload, transferables: Float32Array[])
   if (layoutCtor) {
     layout = new layoutCtor(options);
   } else {
-    throw new Error('Unknown layout id: ' + id);
+    throw new Error(`Unknown layout id: ${id}`);
   }
 
   // Do calculation.

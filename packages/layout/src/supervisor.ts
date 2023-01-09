@@ -1,6 +1,6 @@
 import EventEmitter from 'eventemitter3';
 import { Graph, Node, Edge } from "@antv/graphlib";
-import type { LayoutMapping, SyncLayout } from "./types";
+import type { LayoutMapping, SyncLayout, LayoutSupervisor } from "./types";
 // @ts-ignore
 // Inline the worker as a Blob. @see https://github.com/developit/workerize-loader#inline
 import worker from "workerize-loader?inline!./worker";
@@ -18,6 +18,7 @@ export interface Payload {
   edges: Edge<any>[];
 }
 
+// tslint:disable-next-line: variable-name
 export const SupervisorEvent = {
   /**
    * Get triggerred when each iteration finished.
@@ -51,7 +52,7 @@ export const SupervisorEvent = {
  * 
  * // TODO: Custom layout.
  */
-export class Supervisor extends EventEmitter {
+export class Supervisor extends EventEmitter implements LayoutSupervisor {
 
   /**
    * Internal worker.

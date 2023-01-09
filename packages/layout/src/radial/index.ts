@@ -1,4 +1,4 @@
-import { Graph, Node, Edge, LayoutMapping, Matrix, OutNode, PointTuple, RadialLayoutOptions, SyncLayout, Point } from "../types";
+import type { Graph, Node, LayoutMapping, Matrix, OutNode, PointTuple, RadialLayoutOptions, SyncLayout, Point } from "../types";
 import { floydWarshall, getAdjMatrix, isArray, isFunction, isNumber, isObject, isString } from "../util";
 import { mds } from "./mds";
 import { radialNonoverlapForce, RadialNonoverlapForceOptions } from "./RadialNonoverlapForce";
@@ -15,7 +15,7 @@ const DEFAULTS_LAYOUT_OPTIONS: Partial<RadialLayoutOptions> = {
   maxPreventOverlapIteration: 200,
   sortBy: undefined,
   sortStrength: 10
-}
+};
 
 /**
  * Layout arranging the nodes' on a radial shape
@@ -33,7 +33,7 @@ const DEFAULTS_LAYOUT_OPTIONS: Partial<RadialLayoutOptions> = {
  * layout.assign(graph, { focusNode: 'node0' });
  */
 export class RadialLayout implements SyncLayout<RadialLayoutOptions> {
-  id = 'radial'
+  id = 'radial';
 
   constructor(public options: RadialLayoutOptions = {} as RadialLayoutOptions) {
     Object.assign(this.options, DEFAULTS_LAYOUT_OPTIONS, options);
@@ -77,12 +77,12 @@ export class RadialLayout implements SyncLayout<RadialLayoutOptions> {
     let edges = graph.getAllEdges();
 
     if (!layoutInvisibles) {
-      nodes = nodes.filter(node => node.data.visible || node.data.visible === undefined);
-      edges = edges.filter(edge => edge.data.visible || edge.data.visible === undefined);
+      nodes = nodes.filter((node) => node.data.visible || node.data.visible === undefined);
+      edges = edges.filter((edge) => edge.data.visible || edge.data.visible === undefined);
     }
 
     if (!nodes || nodes.length === 0) {
-      const result = { nodes: [], edges }
+      const result = { nodes: [], edges };
       onLayoutEnd?.(result);
       return result;
     }
@@ -186,7 +186,7 @@ export class RadialLayout implements SyncLayout<RadialLayoutOptions> {
         iterations: maxPreventOverlapIteration || 200,
         k: positions.length / 4.5,
       };
-      positions = radialNonoverlapForce(graph, nonoverlapForceParams)
+      positions = radialNonoverlapForce(graph, nonoverlapForceParams);
     }
     // move the graph to center
     const layoutNodes: OutNode[] = [];
@@ -198,11 +198,11 @@ export class RadialLayout implements SyncLayout<RadialLayoutOptions> {
           x: p.x + center[0],
           y: p.y + center[1]
         }
-      })
+      });
     });
 
     if (assign) {
-      layoutNodes.forEach(node => graph.mergeNodeData(node.id, {
+      layoutNodes.forEach((node) => graph.mergeNodeData(node.id, {
         x: node.data.x,
         y: node.data.y
       }));
@@ -211,7 +211,7 @@ export class RadialLayout implements SyncLayout<RadialLayoutOptions> {
     const result = {
       nodes: layoutNodes,
       edges
-    }
+    };
     onLayoutEnd?.(result);
 
     return result;
@@ -333,14 +333,14 @@ const eIdealDisMatrix = (
     });
   }
   return result;
-}
+};
 
 const getWeightMatrix = (idealDistances: Matrix[]) => {
   const rows = idealDistances.length;
   const cols = idealDistances[0].length;
-  const result = [];
+  const result: number[][] = [];
   for (let i = 0; i < rows; i++) {
-    const row = [];
+    const row: number[] = [];
     for (let j = 0; j < cols; j++) {
       if (idealDistances[i][j] !== 0) {
         row.push(1 / (idealDistances[i][j] * idealDistances[i][j]));
@@ -351,7 +351,7 @@ const getWeightMatrix = (idealDistances: Matrix[]) => {
     result.push(row);
   }
   return result;
-}
+};
 
 /**
  * calculate the euclidean distance form p1 to p2
@@ -371,7 +371,7 @@ const getIndexById = (array: any[], id: string | number) => {
     }
   });
   return Math.max(index, 0);
-}
+};
 
 const handleInfinity = (matrix: Matrix[], focusIndex: number, step: number) => {
   const length = matrix.length;
@@ -403,7 +403,7 @@ const handleInfinity = (matrix: Matrix[], focusIndex: number, step: number) => {
       }
     }
   }
-}
+};
 
 const maxToFocus = (matrix: Matrix[], focusIndex: number): number => {
   let max = 0;
@@ -414,7 +414,7 @@ const maxToFocus = (matrix: Matrix[], focusIndex: number): number => {
     max = matrix[focusIndex][i] > max ? matrix[focusIndex][i] : max;
   }
   return max;
-}
+};
 
 /**
  * format the props nodeSize and nodeSpacing to a function
@@ -461,4 +461,4 @@ const formatNodeSize = (
     nodeSizeFunc = (d: Node) => nodeSize + nodeSpacingFunc(d);
   }
   return nodeSizeFunc;
-}
+};

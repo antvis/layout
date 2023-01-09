@@ -1,29 +1,37 @@
 import { Matrix as MLMatrix, SingularValueDecomposition } from "ml-matrix";
-import { Graph, Node, Edge, LayoutMapping, OutNode, PointTuple, MDSLayoutOptions, SyncLayout, Matrix } from "./types";
+import type {
+  Graph,
+  LayoutMapping,
+  OutNode,
+  PointTuple,
+  MDSLayoutOptions,
+  SyncLayout,
+  Matrix,
+} from "./types";
 import { clone, floydWarshall, getAdjMatrix, scaleMatrix } from "./util";
 
 const DEFAULTS_LAYOUT_OPTIONS: Partial<MDSLayoutOptions> = {
   center: [0, 0],
-  linkDistance: 50
-}
+  linkDistance: 50,
+};
 
 /**
  * Layout arranging the nodes with multiple dimensional scaling algorithm
- * 
+ *
  * @example
  * // Assign layout options when initialization.
  * const layout = new MDSLayout({ center: [100, 100] });
  * const positions = layout.execute(graph); // { nodes: [], edges: [] }
- * 
+ *
  * // Or use different options later.
  * const layout = new MDSLayout({ center: [100, 100] });
  * const positions = layout.execute(graph, { rows: 20 }); // { nodes: [], edges: [] }
- * 
+ *
  * // If you want to assign the positions directly to the nodes, use assign method.
  * layout.assign(graph, { center: [100, 100] });
  */
 export class MDSLayout implements SyncLayout<MDSLayoutOptions> {
-  id = 'mds'
+  id = "mds";
 
   constructor(public options: MDSLayoutOptions = {} as MDSLayoutOptions) {
     Object.assign(this.options, DEFAULTS_LAYOUT_OPTIONS, options);
@@ -42,16 +50,29 @@ export class MDSLayout implements SyncLayout<MDSLayoutOptions> {
     this.genericMDSLayout(true, graph, options);
   }
 
-  private genericMDSLayout(assign: boolean, graph: Graph, options?: MDSLayoutOptions): LayoutMapping | void {
+  private genericMDSLayout(
+    assign: boolean,
+    graph: Graph,
+    options?: MDSLayoutOptions
+  ): LayoutMapping | void {
     const mergedOptions = { ...this.options, ...options };
-    const { center = [0, 0], linkDistance = 50, layoutInvisibles, onLayoutEnd } = mergedOptions;
-    
+    const {
+      center = [0, 0],
+      linkDistance = 50,
+      layoutInvisibles,
+      onLayoutEnd,
+    } = mergedOptions;
+
     let nodes = graph.getAllNodes();
     let edges = graph.getAllEdges();
 
     if (!layoutInvisibles) {
-      nodes = nodes.filter(node => node.data.visible || node.data.visible === undefined);
-      edges = edges.filter(edge => edge.data.visible || edge.data.visible === undefined);
+      nodes = nodes.filter(
+        (node) => node.data.visible || node.data.visible === undefined
+      );
+      edges = edges.filter(
+        (edge) => edge.data.visible || edge.data.visible === undefined
+      );
     }
 
     if (!nodes || nodes.length === 0) {
@@ -63,20 +84,22 @@ export class MDSLayout implements SyncLayout<MDSLayoutOptions> {
       if (assign) {
         graph.mergeNodeData(nodes[0].id, {
           x: center[0],
-          y: center[1]
+          y: center[1],
         });
       }
       const result = {
-        nodes: [{
-          ...nodes[0],
-          data: {
-            ...nodes[0].data,
-            x: center[0],
-            y: center[1]
-          }
-        }],
-        edges
-      }
+        nodes: [
+          {
+            ...nodes[0],
+            data: {
+              ...nodes[0].data,
+              x: center[0],
+              y: center[1],
+            },
+          },
+        ],
+        edges,
+      };
       onLayoutEnd?.(result);
       return result;
     }
@@ -100,15 +123,17 @@ export class MDSLayout implements SyncLayout<MDSLayoutOptions> {
     });
 
     if (assign) {
-      layoutNodes.forEach(node => graph.mergeNodeData(node.id, {
-        x: node.data.x,
-        y: node.data.y
-      }))
+      layoutNodes.forEach((node) =>
+        graph.mergeNodeData(node.id, {
+          x: node.data.x,
+          y: node.data.y,
+        })
+      );
     }
 
     const result = {
       nodes: layoutNodes,
-      edges
+      edges,
     };
     onLayoutEnd?.(result);
 
@@ -135,7 +160,7 @@ const handleInfinity = (distances: Matrix[]) => {
       }
     });
   });
-}
+};
 
 /**
  * mds 算法
@@ -164,4 +189,4 @@ const runMDS = (distances: Matrix[]): PointTuple[] => {
       .toJSON()[0]
       .splice(0, dimension) as PointTuple;
   });
-}
+};

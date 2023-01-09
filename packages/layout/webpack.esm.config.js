@@ -2,11 +2,15 @@ const path = require("path");
 
 module.exports = {
   entry: "./src/index.ts",
+  experiments: {
+    outputModule: true,
+  },
   output: {
-    filename: "index.min.js",
-    path: path.resolve(__dirname, "dist"),
-    library: "Layout",
-    libraryTarget: "umd",
+    library: {
+      type: "module",
+    },
+    path: path.resolve(__dirname, "esm"),
+    filename: "index.esm.js",
     clean: true,
   },
   resolve: {

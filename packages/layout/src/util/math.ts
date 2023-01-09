@@ -1,12 +1,10 @@
-import {
+import type {
   Matrix,
-  Model,
   IndexMap,
   Edge,
   Node,
   OutNode,
   Degree,
-  NodeMap,
 } from "../types";
 import { isArray } from "./array";
 import { isNumber } from "./number";
@@ -93,7 +91,7 @@ export const floydWarshall = (adjMatrix: Matrix[]): Matrix[] => {
   return dist;
 };
 
-export const getAdjMatrix = (data: Model, directed: boolean): Matrix[] => {
+export const getAdjMatrix = (data: { nodes: Node[]; edges: Edge[] }, directed: boolean): Matrix[] => {
   const { nodes, edges } = data;
   const matrix: Matrix[] = [];
   // map node with index in data.nodes
@@ -187,7 +185,7 @@ export const getLayoutBBox = (nodes: OutNode[]) => {
   let maxX = -Infinity;
   let maxY = -Infinity;
   nodes.forEach((node) => {
-    let size = node.size;
+    let size = node.data.size;
     if (isArray(size)) {
       if (size.length === 1) size = [size[0], size[0]];
     } else if (isNumber(size)) {
@@ -197,10 +195,10 @@ export const getLayoutBBox = (nodes: OutNode[]) => {
     }
 
     const halfSize = [size[0] / 2, size[1] / 2];
-    const left = node.x - halfSize[0];
-    const right = node.x + halfSize[0];
-    const top = node.y - halfSize[1];
-    const bottom = node.y + halfSize[1];
+    const left = node.data.x - halfSize[0];
+    const right = node.data.x + halfSize[0];
+    const top = node.data.y - halfSize[1];
+    const bottom = node.data.y + halfSize[1];
 
     if (minX > left) minX = left;
     if (minY > top) minY = top;
@@ -218,8 +216,8 @@ export const getLayoutBBox = (nodes: OutNode[]) => {
 export const getAvgNodePosition = (nodes: OutNode[]) => {
   const totalNodes = { x: 0, y: 0 };
   nodes.forEach((node) => {
-    totalNodes.x += node.x || 0;
-    totalNodes.y += node.y || 0;
+    totalNodes.x += node.data.x || 0;
+    totalNodes.y += node.data.y || 0;
   });
   // 获取均值向量
   const length = nodes.length || 1;
@@ -244,7 +242,7 @@ const getRelativeNodeIds = (
   coreNode: Node,
   edges: Edge[]
 ) => {
-  let relativeNodes: string[] = [];
+  let relativeNodes: (string | number)[] = [];
   switch (type) {
     case "source":
       relativeNodes = edges
@@ -281,11 +279,9 @@ const getSameTypeNodes = (
   relativeNodes: Node[],
   degreesMap: { [id: string]: Degree }
 ) => {
-  // @ts-ignore
-  const typeName = node[nodeClusterBy] || "";
-  // @ts-ignore
+  const typeName = node[nodeClusterBy as keyof Node] || "";
   let sameTypeNodes =
-    relativeNodes?.filter((item) => item[nodeClusterBy] === typeName) || [];
+    relativeNodes?.filter((item) => item[nodeClusterBy as keyof Node] === typeName) || [];
   if (type === "leaf") {
     sameTypeNodes = sameTypeNodes.filter(
       (node) => degreesMap[node.id]?.in === 0 || degreesMap[node.id]?.out === 0
@@ -301,7 +297,7 @@ export const getCoreNodeAndRelativeLeafNodes = (
   edges: Edge[],
   nodeClusterBy: string,
   degreesMap: { [id: string]: Degree },
-  nodeMap: NodeMap
+  nodeMap: { [id: string]: Node }
 ) => {
   const { in: inDegree, out: outDegree } = degreesMap[node.id];
   let coreNode: Node = node;

@@ -1,24 +1,30 @@
-import { isString, getFuncByUnknownType, isArray } from "./util";
-import { Graph, Node, Edge, GridLayoutOptions, LayoutMapping, PointTuple, SyncLayout, OutNode } from "./types";
-import { clone } from "./util";
+import { isString, getFuncByUnknownType, isArray, clone } from "./util";
+import type {
+  Graph,
+  GridLayoutOptions,
+  LayoutMapping,
+  PointTuple,
+  SyncLayout,
+  OutNode,
+} from "./types";
 
 type RowsAndCols = {
-  rows: number,
-  cols: number
-}
+  rows: number;
+  cols: number;
+};
 
 type RowAndCol = {
-  row: number,
-  col: number
-}
+  row: number;
+  col: number;
+};
 
 type IdMapRowAndCol = {
-  [id: string]: RowAndCol
-}
+  [id: string]: RowAndCol;
+};
 
 type VisitMap = {
-  [id: string]: boolean
-}
+  [id: string]: boolean;
+};
 
 const DEFAULTS_LAYOUT_OPTIONS: Partial<GridLayoutOptions> = {
   begin: [0, 0],
@@ -31,26 +37,26 @@ const DEFAULTS_LAYOUT_OPTIONS: Partial<GridLayoutOptions> = {
   sortBy: "degree",
   nodeSize: 30,
   width: 300,
-  height: 300
-}
+  height: 300,
+};
 
 /**
  * Layout arranging the nodes in a grid.
- * 
+ *
  * @example
  * // Assign layout options when initialization.
  * const layout = new GridLayout({ rows: 10 });
  * const positions = layout.execute(graph); // { nodes: [], edges: [] }
- * 
+ *
  * // Or use different options later.
  * const layout = new GridLayout({ rows: 10 });
  * const positions = layout.execute(graph, { rows: 20 }); // { nodes: [], edges: [] }
- * 
+ *
  * // If you want to assign the positions directly to the nodes, use assign method.
  * layout.assign(graph, { rows: 20 });
  */
 export class GridLayout implements SyncLayout<GridLayoutOptions> {
-  id = 'grid'
+  id = "grid";
 
   constructor(public options: GridLayoutOptions = {} as GridLayoutOptions) {
     Object.assign(this.options, DEFAULTS_LAYOUT_OPTIONS, options);
@@ -69,7 +75,11 @@ export class GridLayout implements SyncLayout<GridLayoutOptions> {
     this.genericGridLayout(true, graph, options);
   }
 
-  private genericGridLayout(assign: boolean, graph: Graph, options?: GridLayoutOptions): LayoutMapping | void {
+  private genericGridLayout(
+    assign: boolean,
+    graph: Graph,
+    options?: GridLayoutOptions
+  ): LayoutMapping | void {
     const mergedOptions = { ...this.options, ...options };
     const {
       begin = [0, 0],
@@ -81,17 +91,24 @@ export class GridLayout implements SyncLayout<GridLayoutOptions> {
       cols: propsCols = columns,
       nodeSpacing: paramNodeSpacing,
       nodeSize: paramNodeSize,
+      width: propsWidth,
+      height: propsHeight,
+      layoutInvisibles,
       onLayoutEnd,
-      position
+      position,
     } = mergedOptions;
-    let { sortBy, width: propsWidth, height: propsHeight, layoutInvisibles } = mergedOptions;
+    let { sortBy } = mergedOptions;
 
     let nodes = graph.getAllNodes();
     let edges = graph.getAllEdges();
 
     if (!layoutInvisibles) {
-      nodes = nodes.filter(node => node.data.visible || node.data.visible === undefined);
-      edges = edges.filter(edge => edge.data.visible || edge.data.visible === undefined);
+      nodes = nodes.filter(
+        (node) => node.data.visible || node.data.visible === undefined
+      );
+      edges = edges.filter(
+        (edge) => edge.data.visible || edge.data.visible === undefined
+      );
     }
 
     const n = nodes.length;
@@ -120,35 +137,42 @@ export class GridLayout implements SyncLayout<GridLayoutOptions> {
               ...nodes[0].data,
               x: begin[0],
               y: begin[1],
-            }
-          }
+            },
+          },
         ],
         edges,
-      }
+      };
       onLayoutEnd?.(result);
       return result;
     }
 
-    const layoutNodes: OutNode[] = nodes.map(node => clone(node) as OutNode);
-    
+    const layoutNodes: OutNode[] = nodes.map((node) => clone(node) as OutNode);
+
     if (
       !isString(sortBy) ||
       (layoutNodes[0] as any).data[sortBy] === undefined
     ) {
       sortBy = "degree";
     }
-    if (sortBy === 'degree') {
+    if (sortBy === "degree") {
       layoutNodes.sort(
-        (n1, n2) => graph.getDegree(n2.id, 'both') - graph.getDegree(n1.id, 'both')
+        (n1, n2) =>
+          graph.getDegree(n2.id, "both") - graph.getDegree(n1.id, "both")
       );
     } else {
       // sort nodes by value
       layoutNodes.sort(
-        (n1, n2) => (n2 as any).data[sortBy] - (n1 as any).data[sortBy]
-      );  
+        (n1, n2) => (n2 as any).data[sortBy!] - (n1 as any).data[sortBy!]
+      );
     }
-    const width = !propsWidth && typeof window !== "undefined" ? window.innerWidth : propsWidth as number;
-    const height = !propsHeight && typeof window !== "undefined" ? window.innerHeight : propsHeight as number;
+    const width =
+      !propsWidth && typeof window !== "undefined"
+        ? window.innerWidth
+        : (propsWidth as number);
+    const height =
+      !propsHeight && typeof window !== "undefined"
+        ? window.innerHeight
+        : (propsHeight as number);
 
     const cells = n;
     const rcs = { rows: propsRows, cols: propsCols } as RowsAndCols;
@@ -214,10 +238,10 @@ export class GridLayout implements SyncLayout<GridLayoutOptions> {
 
         const oNode = graph.getNode(node.id);
         const res = nodeSize(oNode) || 30;
-     
+
         let nodeW;
         let nodeH;
-     
+
         if (isArray(res)) {
           nodeW = res[0];
           nodeH = res[1];
@@ -226,7 +250,8 @@ export class GridLayout implements SyncLayout<GridLayoutOptions> {
           nodeH = res;
         }
 
-        const p = nodeSpacing !== undefined ? nodeSpacing(node) : preventOverlapPadding;
+        const p =
+          nodeSpacing !== undefined ? nodeSpacing(node) : preventOverlapPadding;
 
         const w = nodeW + p;
         const h = nodeH + p;
@@ -255,7 +280,7 @@ export class GridLayout implements SyncLayout<GridLayoutOptions> {
         // must have at least row or col def'd
         const pos = {
           row: rcPos.row,
-          col: rcPos.col
+          col: rcPos.col,
         } as RowAndCol;
 
         if (pos.col === undefined) {
@@ -282,7 +307,7 @@ export class GridLayout implements SyncLayout<GridLayoutOptions> {
     const result = {
       nodes: layoutNodes,
       edges,
-    }
+    };
 
     onLayoutEnd?.(result);
 
@@ -295,11 +320,13 @@ export class GridLayout implements SyncLayout<GridLayoutOptions> {
       });
     }
     return result;
-
   }
 }
 
-const small = (rcs: { rows: number, cols: number }, val?: number): number | undefined => {
+const small = (
+  rcs: { rows: number; cols: number },
+  val?: number
+): number | undefined => {
   let res: number | undefined;
   const rows = rcs.rows || 5;
   const cols = rcs.cols || 5;
@@ -314,7 +341,7 @@ const small = (rcs: { rows: number, cols: number }, val?: number): number | unde
     }
   }
   return res;
-}
+};
 
 const large = (rcs: RowsAndCols, val?: number): number | undefined => {
   let result: number | undefined;
@@ -331,12 +358,13 @@ const large = (rcs: RowsAndCols, val?: number): number | undefined => {
     }
   }
   return result;
-}
+};
 
+const used = (cellUsed: VisitMap, rc: RowAndCol) =>
+  cellUsed[`c-${rc.row}-${rc.col}`] || false;
 
-const used = (cellUsed: VisitMap, rc: RowAndCol) => cellUsed[`c-${rc.row}-${rc.col}`] || false;
-
-const use = (cellUsed: VisitMap, rc: RowAndCol) => cellUsed[`c-${rc.row}-${rc.col}`] = true;
+const use = (cellUsed: VisitMap, rc: RowAndCol) =>
+  (cellUsed[`c-${rc.row}-${rc.col}`] = true);
 
 const moveToNextCell = (rcs: RowsAndCols, rc: RowAndCol) => {
   const cols = rcs.cols || 5;
@@ -345,9 +373,18 @@ const moveToNextCell = (rcs: RowsAndCols, rc: RowAndCol) => {
     rc.col = 0;
     rc.row++;
   }
-}
+};
 
-const getPos = (node: OutNode, begin: PointTuple, cellWidth: number, cellHeight: number, id2manPos: IdMapRowAndCol, rcs: RowsAndCols, rc: RowAndCol, cellUsed: VisitMap) => {
+const getPos = (
+  node: OutNode,
+  begin: PointTuple,
+  cellWidth: number,
+  cellHeight: number,
+  id2manPos: IdMapRowAndCol,
+  rcs: RowsAndCols,
+  rc: RowAndCol,
+  cellUsed: VisitMap
+) => {
   let x: number;
   let y: number;
 
@@ -371,4 +408,4 @@ const getPos = (node: OutNode, begin: PointTuple, cellWidth: number, cellHeight:
   }
   node.data.x = x;
   node.data.y = y;
-}
+};
