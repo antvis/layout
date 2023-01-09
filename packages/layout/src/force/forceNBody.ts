@@ -1,6 +1,6 @@
 import { quadtree } from 'd3-quadtree';
-import { Point, Graph } from '../types';
-import { CalcNode, CalcEdge } from './types';
+import { Point } from '../types';
+import { CalcGraph } from './types';
 
 const theta2 = 0.81; // Barnes-Hut approximation threshold
 const epsilon = 0.1; // 为了防止出现除0的情况，加一个epsilon
@@ -15,7 +15,7 @@ interface InternalNode {
 }
 
 export function forceNBody(
-  calcGraph: Graph<CalcNode, CalcEdge>,
+  calcGraph: CalcGraph,
   factor: number,
   coulombDisScale2: number,
   accMap: { [id: string]: Point }
@@ -47,7 +47,8 @@ export function forceNBody(
   });
 
   data.map((n, i) => {
-    const { id, mass = 1 } = calcNodes[i];
+    const { id, data } = calcNodes[i];
+    const { mass = 1 } = data;
     // 从 0 开始，= 初始化 + 加斥力
     accMap[id] = {
       x: n.vx / mass,

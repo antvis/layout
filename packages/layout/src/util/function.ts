@@ -10,11 +10,11 @@ export const isFunction = (val: unknown): val is Function =>
  * @param  {number}  defaultValue default value
  * @return {Function} result function
  */
-export const getFunc = (
-  value: number | Function | undefined,
+export function getFunc<T extends Function>(
+  value: number | T | undefined,
   defaultValue: number,
-  func?: ((d?: unknown) => number)
-): Function => {
+  func?: T
+): T | (() => number) {
   let resultFunc;
   if (func) {
     // has function definition

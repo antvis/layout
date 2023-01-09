@@ -1,6 +1,5 @@
-import { Graph } from "@antv/graphlib";
 import * as d3Force from 'd3-force';
-import { Node, Edge, LayoutMapping, OutNode, D3ForceLayoutOptions, SyncLayout } from "../types";
+import { Graph, Node, Edge, LayoutMapping, OutNode, D3ForceLayoutOptions, SyncLayout } from "../types";
 import { isArray, isFunction, isNumber, isObject } from "../util";
 import forceInBox from './forceInBox';
 
@@ -47,7 +46,8 @@ const DEFAULTS_LAYOUT_OPTIONS: Partial<D3ForceLayoutOptions> = {
  * layout.assign(graph, { center: [100, 100] });
  */
 export class D3ForceLayout implements SyncLayout<D3ForceLayoutOptions> {
-  id = 'd3force'
+  id = "d3force";
+  
   constructor(public options: D3ForceLayoutOptions = {} as D3ForceLayoutOptions) {
     Object.assign(this.options, DEFAULTS_LAYOUT_OPTIONS, options);
   }
@@ -55,19 +55,20 @@ export class D3ForceLayout implements SyncLayout<D3ForceLayoutOptions> {
   /**
    * Return the positions of nodes and edges(if needed).
    */
-  execute(graph: Graph<Node, Edge>, options?: D3ForceLayoutOptions): LayoutMapping {
+  execute(graph: Graph, options?: D3ForceLayoutOptions): LayoutMapping {
     return this.genericForceLayout(false, graph, options) as LayoutMapping;
   }
   /**
    * To directly assign the positions to the nodes.
    */
-  assign(graph: Graph<Node, Edge>, options?: D3ForceLayoutOptions) {
+  assign(graph: Graph, options?: D3ForceLayoutOptions) {
     this.genericForceLayout(true, graph, options);
   }
 
-  private ticking: boolean;
+  /** The sign of running */
+  private running: boolean;
 
-  private genericForceLayout(assign: boolean, graph: Graph<Node, Edge>, options?: D3ForceLayoutOptions): LayoutMapping | void {
+  private genericForceLayout(assign: boolean, graph: Graph, options?: D3ForceLayoutOptions): LayoutMapping | void {
     const mergedOptions = { ...this.options, ...options };
     const { layoutInvisibles } = mergedOptions;
 
@@ -81,9 +82,9 @@ export class D3ForceLayout implements SyncLayout<D3ForceLayoutOptions> {
       ...node,
       x: node.data.x,
       y: node.data.y
-    }));
+    } as CalcNode));
 
-    if (this.ticking) return;
+    if (this.running) return;
 
     const {
       alphaMin,
@@ -112,7 +113,7 @@ export class D3ForceLayout implements SyncLayout<D3ForceLayoutOptions> {
         // 定义节点的力
         const nodeForce = d3Force.forceManyBody();
         if (nodeStrength) {
-          nodeForce.strength(nodeStrength);
+          nodeForce.strength(nodeStrength as any);
         }
         forceSimulation = d3Force.forceSimulation().nodes(layoutNodes as any);
 
@@ -155,10 +156,10 @@ export class D3ForceLayout implements SyncLayout<D3ForceLayoutOptions> {
             .id((d: any) => d.id)
             .links(edges);
           if (edgeStrength) {
-            edgeForce.strength(edgeStrength);
+            edgeForce.strength(edgeStrength as any);
           }
           if (linkDistance) {
-            edgeForce.distance(linkDistance);
+            edgeForce.distance(linkDistance as any);
           }
           forceSimulation.force("link", edgeForce);
         }
@@ -167,20 +168,20 @@ export class D3ForceLayout implements SyncLayout<D3ForceLayoutOptions> {
         .on("tick", () => {
           onTick?.({
             nodes: formatOutNodes(layoutNodes),
-            edges: graph.getAllEdges(),
+            edges,
           });
         })
         .on("end", () => {
-          this.ticking = false;
+          this.running = false;
           onLayoutEnd?.({
             nodes: formatOutNodes(layoutNodes),
-            edges: graph.getAllEdges(),
+            edges
           });
         });
-        this.ticking = true;
+        this.running = true;
 
       } catch (e) {
-        this.ticking = false;
+        this.running = false;
         console.warn(e);
       }
     } else {
@@ -198,10 +199,10 @@ export class D3ForceLayout implements SyncLayout<D3ForceLayoutOptions> {
           .id((d: any) => d.id)
           .links(edges);
         if (edgeStrength) {
-          edgeForce.strength(edgeStrength);
+          edgeForce.strength(edgeStrength as any);
         }
         if (linkDistance) {
-          edgeForce.distance(linkDistance);
+          edgeForce.distance(linkDistance as any);
         }
         forceSimulation.force("link", edgeForce);
       }
@@ -209,7 +210,7 @@ export class D3ForceLayout implements SyncLayout<D3ForceLayoutOptions> {
         this.overlapProcess(forceSimulation, { nodeSize, nodeSpacing, collideStrength });
       }
       forceSimulation.alpha(alpha).restart();
-      this.ticking = true;
+      this.running = true;
     }
     
     // since d3 writes x and y as node's first level properties, format them into data
@@ -222,17 +223,18 @@ export class D3ForceLayout implements SyncLayout<D3ForceLayoutOptions> {
       }))
     }
 
-    onLayoutEnd?.();
-
-    return {
+    const result = {
       nodes: outNodes,
-      edges: graph.getAllEdges()
-    };
+      edges
+    }
+    onLayoutEnd?.(result);
+
+    return result;
   }
 
   /**
-  * 防止重叠
-  * @param {object} simulation 力模拟模型
+  * Prevent overlappings.
+  * @param {object} simulation force simulation of d3
   */
   public overlapProcess(
     simulation: any,
@@ -291,6 +293,12 @@ export class D3ForceLayout implements SyncLayout<D3ForceLayoutOptions> {
   }
 }
 
+/**
+ * Format the calculation nodes into output nodes.
+ * Since d3 reads properties in plain node data object which is not compact to the OutNode
+ * @param layoutNodes 
+ * @returns 
+ */
 const formatOutNodes = (layoutNodes: CalcNode[]): OutNode[] => layoutNodes.map(node => {
   const { x, y, ...others } = node;
   return {
