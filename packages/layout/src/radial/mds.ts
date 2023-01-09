@@ -28,4 +28,4 @@ export const mds = (dimension: number, distances: Matrix[], linkDistance: number
     }
     return res;
   }
-}
+};

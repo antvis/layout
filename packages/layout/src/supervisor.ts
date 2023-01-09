@@ -18,6 +18,7 @@ export interface Payload {
   edges: Edge<any>[];
 }
 
+// tslint:disable-next-line: variable-name
 export const SupervisorEvent = {
   /**
    * Get triggerred when each iteration finished.

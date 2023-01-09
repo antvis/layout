@@ -24,7 +24,7 @@ const DEFAULTS_LAYOUT_OPTIONS: Partial<RadialNonoverlapForceOptions> = {
   speed: 100,
   gravity: 10,
   k: 5
-}
+};
 
 export const radialNonoverlapForce = (graph: Graph, options: RadialNonoverlapForceOptions): Point[] => {
   const mergedOptions = { ...DEFAULTS_LAYOUT_OPTIONS, ...options };
@@ -44,7 +44,7 @@ export const radialNonoverlapForce = (graph: Graph, options: RadialNonoverlapFor
     updatePositions(positions, disp, speed, strictRadial, focusIdx, maxDisplace, width, radii);
   }
   return positions;
-}
+};
 
 const getRepulsion = (nodes: Node[], positions: Point[], disp: Point[], k: number, radii: number[], nodeSizeFunc: (node: Node) => number) => {
   positions.forEach((v: Point, i: number) => {
@@ -74,7 +74,7 @@ const getRepulsion = (nodes: Node[], positions: Point[], disp: Point[], k: numbe
       }
     });
   });
-}
+};
 
 const updatePositions = (positions: Point[], disp: Point[], speed: number, strictRadial: boolean, focusIdx: number, maxDisplace: number, width: number, radii: number[]) => {
   const maxDisp = maxDisplace || width / 10;
@@ -120,4 +120,4 @@ const updatePositions = (positions: Point[], disp: Point[], speed: number, stric
     }
   });
   return positions;
-}
+};

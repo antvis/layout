@@ -91,15 +91,13 @@ export class GridLayout implements SyncLayout<GridLayoutOptions> {
       cols: propsCols = columns,
       nodeSpacing: paramNodeSpacing,
       nodeSize: paramNodeSize,
-      onLayoutEnd,
-      position,
-    } = mergedOptions;
-    let {
-      sortBy,
       width: propsWidth,
       height: propsHeight,
       layoutInvisibles,
+      onLayoutEnd,
+      position,
     } = mergedOptions;
+    let { sortBy } = mergedOptions;
 
     let nodes = graph.getAllNodes();
     let edges = graph.getAllEdges();

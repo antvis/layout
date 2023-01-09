@@ -5,10 +5,7 @@
     "tslint-config-prettier"
   ],
   "linterOptions": {
-    "exclude": [
-      "**/es/**/*.d.ts",
-      "**/lib/**/*.d.ts"
-    ]
+    "exclude": ["**/es/**/*.d.ts", "**/lib/**/*.d.ts"]
   },
   "rules": {
     "no-construct": true,
@@ -18,6 +15,7 @@
     "semicolon": [true, "always"],
     "arrow-parens": true,
     "no-this-assignment": false,
-    "no-increment-decrement": false
+    "no-increment-decrement": false,
+    "object-shorthand-properties-first": false
   }
 }

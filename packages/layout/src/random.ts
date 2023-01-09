@@ -63,10 +63,11 @@ export class RandomLayout implements SyncLayout<RandomLayoutOptions> {
     } = mergedOptions;
 
     let nodes = graph.getAllNodes();
-    if (!layoutInvisibles)
+    if (!layoutInvisibles) {
       nodes = nodes.filter(
         (node) => node.data.visible || node.data.visible === undefined
       );
+    }
     const layoutScale = 0.9;
     const width =
       !propsWidth && typeof window !== "undefined"

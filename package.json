@@ -15,18 +15,22 @@
     "packages/*"
   ],
   "scripts": {
-    "lint": "npm run eslint",
+    "lint:es": "eslint --ext .js --fix",
+    "lint:ts": "tslint -c tslint.json -p packages/layout/tsconfig.json --fix",
+    "lint": "npm run lint:ts && npm run lint:es",
     "lint-staged": "lint-staged",
-    "build": "father build",
+    "build": "lerna run build",
     "precommit": "lint-staged",
     "release": "release-it",
     "test": "jest",
     "coverage": "jest --coverage"
   },
   "lint-staged": {
-    "**/*.{js,ts,md}": [
-      "prettier --write",
-      "git add"
+    "*.js": [
+      "eslint --fix"
+    ],
+    "packages/**/*/src/**/*.ts": [
+      "tslint -c tslint.json -p ./tsconfig.json --fix"
     ]
   },
   "devDependencies": {

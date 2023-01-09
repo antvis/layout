@@ -33,10 +33,12 @@ export const getFuncByUnknownType = (
   if (!value && value !== 0) {
     return (d) => {
       if (d.size) {
-        if (isArray(d.size))
+        if (isArray(d.size)) {
           return d.size[0] > d.size[1] ? d.size[0] : d.size[1];
-        if (isObject(d.size))
+        }
+        if (isObject(d.size)) {
           return d.size.width > d.size.height ? d.size.width : d.size.height;
+        }
         return d.size;
       }
       return defaultValue;
