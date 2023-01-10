@@ -38,4 +38,4 @@ export const cloneFormatData = <T extends Node | Edge>(target: T): T => {
   const cloned = clone(target);
   cloned.data = cloned.data || {};
   return cloned;
-}
+};

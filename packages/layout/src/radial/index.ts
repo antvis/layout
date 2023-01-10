@@ -313,7 +313,8 @@ const eIdealDisMatrix = (
             );
           } else if (sortBy) {
             // sort the nodes on the same circle according to the attributes
-            let iValue: number, jValue: number;
+            let iValue: number;
+            let jValue: number;
             if (sortValueCache[nodes[i].id]) {
               iValue = sortValueCache[nodes[i].id];
             } else {
