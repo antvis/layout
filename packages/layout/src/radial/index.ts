@@ -1,5 +1,5 @@
 import type { Graph, Node, LayoutMapping, Matrix, OutNode, PointTuple, RadialLayoutOptions, SyncLayout, Point } from "../types";
-import { floydWarshall, getAdjMatrix, isArray, isFunction, isNumber, isObject, isString } from "../util";
+import { cloneFormatData, floydWarshall, getAdjMatrix, getEuclideanDistance, isArray, isFunction, isNumber, isObject, isString } from "../util";
 import { mds } from "./mds";
 import { radialNonoverlapForce, RadialNonoverlapForceOptions } from "./RadialNonoverlapForce";
 
@@ -9,11 +9,8 @@ const DEFAULTS_LAYOUT_OPTIONS: Partial<RadialLayoutOptions> = {
   unitRadius: null,
   linkDistance: 50,
   preventOverlap: false,
-  nodeSize: undefined,
-  nodeSpacing: undefined,
   strictRadial: true,
   maxPreventOverlapIteration: 200,
-  sortBy: undefined,
   sortStrength: 10
 };
 
@@ -124,7 +121,6 @@ export class RadialLayout implements SyncLayout<RadialLayoutOptions> {
       onLayoutEnd?.(result);
       return result;
     }
-    // layout
     let focusNode = nodes[0];
     if (isString(propsFocusNode)) {
       for (let i = 0; i < nodes.length; i++) {
@@ -174,9 +170,10 @@ export class RadialLayout implements SyncLayout<RadialLayoutOptions> {
     const weights = getWeightMatrix(idealDistances);
 
     // the initial positions from mds, move the graph to origin, centered at focusNode
-    let positions: Point[] = mds(linkDistance, idealDistances, linkDistance).map(([x, y]) => ({
-      x: (isNaN(x) ? Math.random() * linkDistance : x) - positions[focusIndex].x,
-      y: (isNaN(y) ? Math.random() * linkDistance : y) - positions[focusIndex].y,
+    const mdsResult = mds(linkDistance, idealDistances, linkDistance);
+    let positions = mdsResult.map(([x, y]) => ({
+      x: (isNaN(x) ? Math.random() * linkDistance : x) - mdsResult[focusIndex][0],
+      y: (isNaN(y) ? Math.random() * linkDistance : y) - mdsResult[focusIndex][1],
     }));
 
     this.run(maxIteration, positions, weights, idealDistances, radii, focusIndex);
@@ -201,14 +198,10 @@ export class RadialLayout implements SyncLayout<RadialLayoutOptions> {
     // move the graph to center
     const layoutNodes: OutNode[] = [];
     positions.forEach((p: Point, i: number) => {
-      layoutNodes.push({
-        ...nodes[i],
-        data: {
-          ...nodes[0].data,
-          x: p.x + center[0],
-          y: p.y + center[1]
-        }
-      });
+      const cnode = cloneFormatData(nodes[i]) as OutNode;
+      cnode.data.x = p.x + center[0];
+      cnode.data.y = p.y + center[1];
+      layoutNodes.push(cnode);
     });
 
     if (assign) {
@@ -250,7 +243,7 @@ export class RadialLayout implements SyncLayout<RadialLayoutOptions> {
     const vparam = 1 - param;
     positions.forEach((v: Point, i: number) => {
       // v
-      const originDis = getEDistance(v, { x: 0, y: 0 });
+      const originDis = getEuclideanDistance(v, { x: 0, y: 0 });
       const reciODis = originDis === 0 ? 0 : 1 / originDis;
       if (i === focusIndex) {
         return;
@@ -264,7 +257,7 @@ export class RadialLayout implements SyncLayout<RadialLayoutOptions> {
           return;
         }
         // the euclidean distance between v and u
-        const edis = getEDistance(v, u);
+        const edis = getEuclideanDistance(v, u);
         const reciEdis = edis === 0 ? 0 : 1 / edis;
         const idealDis = distances[j][i];
         // same for x and y
@@ -301,6 +294,10 @@ const eIdealDisMatrix = (
   if (!nodes) return [];
   const result: Matrix[] = [];
   if (distances) {
+    // cache the value of field sortBy for nodes to avoid dupliate calculation
+    const sortValueCache: {
+      [id: string]: number
+    } = {};
     distances.forEach((row: number[], i: number) => {
       const newRow: Matrix = [];
       row.forEach((v, j) => {
@@ -316,15 +313,37 @@ const eIdealDisMatrix = (
             );
           } else if (sortBy) {
             // sort the nodes on the same circle according to the attributes
-            let iValue: number | string =
-              ((nodes[i] as any)[sortBy] as number | string) || 0;
-            let jValue: number | string =
-              ((nodes[j] as any)[sortBy] as number | string) || 0;
-            if (isString(iValue)) {
-              iValue = iValue.charCodeAt(0);
+            let iValue: number, jValue: number;
+            if (sortValueCache[nodes[i].id]) {
+              iValue = sortValueCache[nodes[i].id];
+            } else {
+              const value = (
+                sortBy === 'id' ? 
+                nodes[i].id :
+                (nodes[i].data)?.[sortBy] as number | string
+              ) || 0;
+              if (isString(value)) {
+                iValue = value.charCodeAt(0);
+              } else {
+                iValue = value;
+              }
+              sortValueCache[nodes[i].id] = iValue;
             }
-            if (isString(jValue)) {
-              jValue = jValue.charCodeAt(0);
+
+            if (sortValueCache[nodes[j].id]) {
+              jValue = sortValueCache[nodes[j].id];
+            } else {
+              const value = (
+                sortBy === 'id' ? 
+                nodes[j].id :
+                (nodes[j].data)?.[sortBy] as number | string
+              ) || 0;
+              if (isString(value)) {
+                jValue = value.charCodeAt(0);
+              } else {
+                jValue = value;
+              }
+              sortValueCache[nodes[j].id] = jValue;
             }
             newRow.push(
               (v * (Math.abs(iValue - jValue) * sortStrength)) /
@@ -362,16 +381,6 @@ const getWeightMatrix = (idealDistances: Matrix[]) => {
   }
   return result;
 };
-
-/**
- * calculate the euclidean distance form p1 to p2
- * @param p1 
- * @param p2 
- * @returns 
- */
-const getEDistance = (p1: Point, p2: Point) => Math.sqrt(
-  (p1.x - p2.x) * (p1.x - p2.x) + (p1.y - p2.y) * (p1.y - p2.y)
-);
 
 const getIndexById = (array: any[], id: string | number) => {
   let index = -1;
