@@ -67,12 +67,12 @@ export class CircularLayout implements SyncLayout<CircularLayoutOptions> {
     // TODO: use graphlib's view with filter after graphlib supports it
     if (!layoutInvisibles) {
       nodes = nodes.filter((node) => {
-        const { data = {} } = node;
-        return data.visible || data.visible === undefined;
+        const { visible } = node.data || {};
+        return visible || visible === undefined;
       });
       edges = edges.filter((edge) => {
-        const { data = {} } = edge;
-        return data.visible || data.visible === undefined;
+        const { visible } = edge.data || {};
+        return visible || visible === undefined;
       });
     }
     const n = nodes.length;
