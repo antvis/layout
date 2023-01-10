@@ -74,27 +74,26 @@ describe("ConcentricLayout", () => {
     expect(mathEqual(node.data.y, height / 2)).toEqual(true);
   });
 
-  // it("concentric with array size in node data, sortBy in data undefined", () => {
-  //   const width = 500;
-  //   const height = 500;
-  //   data.nodes.forEach((node) => {
-  //     node.size = [10, 20];
-  //     node.labelCfg = {
-  //       style: {
-  //         fontSize: 5,
-  //       },
-  //     };
-  //   });
-  //   const concentric = new Layouts["concentric"]({
-  //     sortBy: "ttt",
-  //     width,
-  //     height,
-  //   });
-  //   concentric.layout(data);
-  //   const node = data.nodes[2];
-  //   expect(mathEqual(node.x, width / 2)).toEqual(true);
-  //   expect(mathEqual(node.y, height / 2)).toEqual(true);
-  // });
+  it("should do concentric layout with array size in node data, sortBy in data undefined", () => {
+    const graph = new Graph<any, any>({
+      // @ts-ignore
+      nodes: data.nodes,
+      // @ts-ignore
+      edges: data.edges,
+    });
+
+    const width = 500;
+    const height = 500;
+    const concentric = new ConcentricLayout({
+      sortBy: "ttt",
+      width,
+      height,
+    });
+    const positions = concentric.execute(graph);
+    const node = positions.nodes[2];
+    expect(mathEqual(node.data.x, width / 2)).toEqual(true);
+    expect(mathEqual(node.data.y, height / 2)).toEqual(true);
+  });
 
   // it("concentric preventOverlap", () => {
   //   const width = 500;
