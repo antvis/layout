@@ -34,7 +34,10 @@ export class MDSLayout implements SyncLayout<MDSLayoutOptions> {
   id = "mds";
 
   constructor(public options: MDSLayoutOptions = {} as MDSLayoutOptions) {
-    Object.assign(this.options, DEFAULTS_LAYOUT_OPTIONS, options);
+    this.options = {
+      ...DEFAULTS_LAYOUT_OPTIONS,
+      ...options
+    };
   }
 
   /**
