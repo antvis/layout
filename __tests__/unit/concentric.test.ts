@@ -95,44 +95,24 @@ describe("ConcentricLayout", () => {
     expect(mathEqual(node.data.y, height / 2)).toEqual(true);
   });
 
-  // it("concentric preventOverlap", () => {
-  //   const width = 500;
-  //   const height = 500;
-  //   const concentric = new Layouts["concentric"]({
-  //     width,
-  //     height,
-  //     preventOverlap: true,
-  //   });
-  //   concentric.layout(data);
-  //   const node = data.nodes[2];
-  //   expect(mathEqual(node.x, width / 2)).toEqual(true);
-  //   expect(mathEqual(node.y, height / 2)).not.toEqual(true);
-  // });
+  it("should use concentric equidistant.", () => {
+    const graph = new Graph<any, any>({
+      // @ts-ignore
+      nodes: data.nodes,
+      // @ts-ignore
+      edges: data.edges,
+    });
 
-  // it("concentric equidistant", () => {
-  //   const width = 500;
-  //   const height = 500;
-  //   const concentric = new Layouts["concentric"]({
-  //     width,
-  //     height,
-  //     equidistant: true,
-  //   });
-  //   concentric.layout(data);
-  //   const node = data.nodes[2];
-  //   expect(mathEqual(node.x, width / 2)).toEqual(true);
-  //   expect(mathEqual(node.y, height / 2)).toEqual(true);
-  // });
-
-  // it("instantiate layout", () => {
-  //   const concentric = new Layouts["concentric"]({
-  //     center: [250, 250],
-  //     sweep: 1,
-  //   });
-  //   concentric.layout(data);
-
-  //   expect(data.nodes[0].x).not.toEqual(undefined);
-  //   expect(data.nodes[0].y).not.toEqual(undefined);
-  //   expect(data.nodes[1].x).not.toEqual(undefined);
-  //   expect(data.nodes[1].y).not.toEqual(undefined);
-  // });
+    const width = 500;
+    const height = 500;
+    const concentric = new ConcentricLayout({
+      width,
+      height,
+      equidistant: true,
+    });
+    const positions = concentric.execute(graph);
+    const node = positions.nodes[2];
+    expect(mathEqual(node.data.x, width / 2)).toEqual(true);
+    expect(mathEqual(node.data.y, height / 2)).toEqual(true);
+  });
 });
