@@ -1,4 +1,4 @@
-import { isString, getFuncByUnknownType, isArray, clone, isNumber } from "./util";
+import { isString, isArray, isNumber, formatSizeFn, formatNumberFn, cloneFormatData } from "./util";
 import type {
   Graph,
   GridLayoutOptions,
@@ -6,6 +6,8 @@ import type {
   PointTuple,
   SyncLayout,
   OutNode,
+  Node,
+  Edge,
 } from "./types";
 
 type RowsAndCols = {
@@ -89,9 +91,8 @@ export class GridLayout implements SyncLayout<GridLayoutOptions> {
       condense,
       preventOverlapPadding,
       preventOverlap,
-      columns,
       rows: propsRows,
-      cols: propsCols = columns,
+      cols: propsCols,
       nodeSpacing: paramNodeSpacing,
       nodeSize: paramNodeSize,
       width: propsWidth,
@@ -102,16 +103,19 @@ export class GridLayout implements SyncLayout<GridLayoutOptions> {
     } = mergedOptions;
     let { sortBy } = mergedOptions;
 
-    let nodes = graph.getAllNodes();
-    let edges = graph.getAllEdges();
+    let nodes: Node[] = graph.getAllNodes();
+    let edges: Edge[] = graph.getAllEdges();
 
+    // TODO: use graphlib's view with filter after graphlib supports it
     if (!layoutInvisibles) {
-      nodes = nodes.filter(
-        (node) => node.data.visible || node.data.visible === undefined
-      );
-      edges = edges.filter(
-        (edge) => edge.data.visible || edge.data.visible === undefined
-      );
+      nodes = nodes.filter((node) => {
+        const { visible } = node.data || {};
+        return visible || visible === undefined;
+      });
+      edges = edges.filter((edge) => {
+        const { visible } = edge.data || {};
+        return visible || visible === undefined;
+      });
     }
 
     const n = nodes.length;
@@ -149,7 +153,7 @@ export class GridLayout implements SyncLayout<GridLayoutOptions> {
       return result;
     }
 
-    const layoutNodes: OutNode[] = nodes.map((node) => clone(node) as OutNode);
+    const layoutNodes: OutNode[] = nodes.map((node) => cloneFormatData(node) as OutNode);
 
     if (
       // `id` should be reserved keyword
@@ -246,8 +250,8 @@ export class GridLayout implements SyncLayout<GridLayoutOptions> {
     let cellHeight = condense ? 0 : height / rcs.rows;
 
     if (preventOverlap || paramNodeSpacing) {
-      const nodeSpacing: Function = getFuncByUnknownType(10, paramNodeSpacing);
-      const nodeSize: Function = getFuncByUnknownType(30, paramNodeSize, false);
+      const nodeSpacing: Function = formatNumberFn(10, paramNodeSpacing);
+      const nodeSize: Function = formatSizeFn(30, paramNodeSize, false);
       layoutNodes.forEach((node) => {
         if (!node.data.x || !node.data.y) {
           // for bb

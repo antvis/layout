@@ -79,9 +79,16 @@ export class RadialLayout implements SyncLayout<RadialLayoutOptions> {
     let nodes = graph.getAllNodes();
     let edges = graph.getAllEdges();
 
+    // TODO: use graphlib's view with filter after graphlib supports it
     if (!layoutInvisibles) {
-      nodes = nodes.filter((node) => node.data.visible || node.data.visible === undefined);
-      edges = edges.filter((edge) => edge.data.visible || edge.data.visible === undefined);
+      nodes = nodes.filter((node) => {
+        const { visible } = node.data || {};
+        return visible || visible === undefined;
+      });
+      edges = edges.filter((edge) => {
+        const { visible } = edge.data || {};
+        return visible || visible === undefined;
+      });
     }
 
     if (!nodes || nodes.length === 0) {

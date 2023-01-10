@@ -8,7 +8,7 @@ import type {
   SyncLayout,
   Matrix,
 } from "./types";
-import { clone, floydWarshall, getAdjMatrix, scaleMatrix } from "./util";
+import { cloneFormatData, floydWarshall, getAdjMatrix, scaleMatrix } from "./util";
 
 const DEFAULTS_LAYOUT_OPTIONS: Partial<MDSLayoutOptions> = {
   center: [0, 0],
@@ -69,13 +69,16 @@ export class MDSLayout implements SyncLayout<MDSLayoutOptions> {
     let nodes = graph.getAllNodes();
     let edges = graph.getAllEdges();
 
+    // TODO: use graphlib's view with filter after graphlib supports it
     if (!layoutInvisibles) {
-      nodes = nodes.filter(
-        (node) => node.data.visible || node.data.visible === undefined
-      );
-      edges = edges.filter(
-        (edge) => edge.data.visible || edge.data.visible === undefined
-      );
+      nodes = nodes.filter((node) => {
+        const { visible } = node.data || {};
+        return visible || visible === undefined;
+      });
+      edges = edges.filter((edge) => {
+        const { visible } = edge.data || {};
+        return visible || visible === undefined;
+      });
     }
 
     if (!nodes || nodes.length === 0) {
@@ -119,7 +122,7 @@ export class MDSLayout implements SyncLayout<MDSLayoutOptions> {
     const positions = runMDS(scaledD);
     const layoutNodes: OutNode[] = [];
     positions.forEach((p: number[], i: number) => {
-      const cnode = clone(nodes[i]) as OutNode;
+      const cnode = cloneFormatData(nodes[i]) as OutNode;
       cnode.data.x = p[0] + center[0];
       cnode.data.y = p[1] + center[1];
       layoutNodes.push(cnode);
