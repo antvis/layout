@@ -173,9 +173,9 @@ export class GridLayout implements SyncLayout<GridLayoutOptions> {
         (n1, n2) => {
           if (isNumber(n2.id) && isNumber(n1.id)) {
             return n2.id - n1.id;
-          } else {
+          } 
             return `${n2.id}`.localeCompare(`${n1.id}`);
-          }
+          
         }
       );
     } else {
