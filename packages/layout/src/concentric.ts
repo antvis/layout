@@ -51,7 +51,10 @@ export class ConcentricLayout implements SyncLayout<ConcentricLayoutOptions> {
   constructor(
     public options: ConcentricLayoutOptions = {} as ConcentricLayoutOptions
   ) {
-    Object.assign(this.options, DEFAULTS_LAYOUT_OPTIONS, options);
+    this.options = {
+      ...DEFAULTS_LAYOUT_OPTIONS,
+      ...options
+    };
   }
 
   /**

@@ -1,4 +1,4 @@
-import { isString, getFuncByUnknownType, isArray, clone } from "./util";
+import { isString, getFuncByUnknownType, isArray, clone, isNumber } from "./util";
 import type {
   Graph,
   GridLayoutOptions,
@@ -59,7 +59,10 @@ export class GridLayout implements SyncLayout<GridLayoutOptions> {
   id = "grid";
 
   constructor(public options: GridLayoutOptions = {} as GridLayoutOptions) {
-    Object.assign(this.options, DEFAULTS_LAYOUT_OPTIONS, options);
+    this.options = {
+      ...DEFAULTS_LAYOUT_OPTIONS,
+      ...options
+    };
   }
 
   /**
@@ -149,15 +152,31 @@ export class GridLayout implements SyncLayout<GridLayoutOptions> {
     const layoutNodes: OutNode[] = nodes.map((node) => clone(node) as OutNode);
 
     if (
-      !isString(sortBy) ||
-      (layoutNodes[0] as any).data[sortBy] === undefined
+      // `id` should be reserved keyword
+      sortBy !== 'id' &&
+      (
+        !isString(sortBy) ||
+        (layoutNodes[0] as any).data[sortBy] === undefined
+      )
     ) {
       sortBy = "degree";
     }
+
     if (sortBy === "degree") {
       layoutNodes.sort(
         (n1, n2) =>
           graph.getDegree(n2.id, "both") - graph.getDegree(n1.id, "both")
+      );
+    } else if (sortBy === "id") {
+      // sort nodes by ID
+      layoutNodes.sort(
+        (n1, n2) => {
+          if (isNumber(n2.id) && isNumber(n1.id)) {
+            return n2.id - n1.id;
+          } 
+            return `${n2.id}`.localeCompare(`${n1.id}`);
+          
+        }
       );
     } else {
       // sort nodes by value

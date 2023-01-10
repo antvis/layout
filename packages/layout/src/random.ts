@@ -32,7 +32,10 @@ export class RandomLayout implements SyncLayout<RandomLayoutOptions> {
   id = "random";
 
   constructor(public options: RandomLayoutOptions = {} as RandomLayoutOptions) {
-    Object.assign(this.options, DEFAULTS_LAYOUT_OPTIONS, options);
+    this.options = {
+      ...DEFAULTS_LAYOUT_OPTIONS,
+      ...options
+    };
   }
 
   /**

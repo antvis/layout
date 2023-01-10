@@ -36,7 +36,10 @@ export class RadialLayout implements SyncLayout<RadialLayoutOptions> {
   id = 'radial';
 
   constructor(public options: RadialLayoutOptions = {} as RadialLayoutOptions) {
-    Object.assign(this.options, DEFAULTS_LAYOUT_OPTIONS, options);
+    this.options = {
+      ...DEFAULTS_LAYOUT_OPTIONS,
+      ...options
+    };
   }
 
   /**
