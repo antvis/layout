@@ -83,4 +83,4 @@ export function formatSizeFn<T extends Node> (
     };
   }
   return () => defaultValue;
-};
+}

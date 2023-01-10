@@ -193,6 +193,9 @@ export class ConcentricLayout implements SyncLayout<ConcentricLayoutOptions> {
       nodeIdxMap[node.id] = i;
     });
 
+    // degree cache map
+    const degreeIdxMap: IndexMap = {};
+
     // get the node degrees
     let sortBy = propsSortBy!;
     if (
@@ -202,9 +205,12 @@ export class ConcentricLayout implements SyncLayout<ConcentricLayoutOptions> {
       sortBy = "degree";
     }
     if (sortBy === "degree") {
+      layoutNodes.forEach((node) => {
+        degreeIdxMap[node.id] = graph.getDegree(node.id, "both");
+      });
       layoutNodes.sort(
         (n1: Node, n2: Node) =>
-          graph.getDegree(n2.id, "both") - graph.getDegree(n1.id, "both")
+          degreeIdxMap[n2.id] - degreeIdxMap[n1.id]
       );
     } else {
       // sort nodes by value
@@ -228,9 +234,20 @@ export class ConcentricLayout implements SyncLayout<ConcentricLayoutOptions> {
     let currentLevel = levels[0];
     layoutNodes.forEach((node) => {
       if (currentLevel.nodes.length > 0) {
+        let currentLevelNodeValue: number;
+        let currentNodeValue: number;
+        if (sortBy === 'degree') {
+          currentLevelNodeValue = degreeIdxMap[currentLevel.nodes[0].id];
+          currentNodeValue = degreeIdxMap[node.id];
+        } else {
+          currentLevelNodeValue = currentLevel.nodes[0].data[sortBy] as number;
+          currentNodeValue = node.data[sortBy] as number;
+        }
+
         const diff = Math.abs(
-          currentLevel.nodes[0].data[sortBy] as number - (node as any).data[sortBy]
+          currentLevelNodeValue - currentNodeValue
         );
+
         if (maxLevelDiff && diff >= maxLevelDiff) {
           currentLevel = { nodes: [] };
           levels.push(currentLevel);
