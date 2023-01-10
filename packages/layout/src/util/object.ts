@@ -1,3 +1,5 @@
+import { Node, Edge } from '../types';
+
 export const isObject = (val: unknown): val is Record<any, any> =>
   val !== null && typeof val === "object";
 
@@ -26,3 +28,14 @@ export const clone = <T>(target: T): T => {
   }
   return target;
 };
+
+/**
+ * Clone node or edge data and format it
+ * @param target 
+ * @returns 
+ */
+export const cloneFormatData = <T extends Node | Edge>(target: T): T => {
+  const cloned = clone(target);
+  cloned.data = cloned.data || {};
+  return cloned;
+}

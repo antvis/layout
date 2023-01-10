@@ -100,7 +100,6 @@ export interface GridLayoutOptions extends CommonOptions {
   rows?: number;
   cols?: number;
   sortBy?: string;
-  columns?: number | undefined;
   position?: ((node?: Node) => { row?: number; col?: number }) | undefined;
   nodeSpacing?: ((node?: Node) => number) | number | undefined;
 }

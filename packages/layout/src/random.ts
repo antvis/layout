@@ -66,10 +66,12 @@ export class RandomLayout implements SyncLayout<RandomLayoutOptions> {
     } = mergedOptions;
 
     let nodes = graph.getAllNodes();
+    // TODO: use graphlib's view with filter after graphlib supports it
     if (!layoutInvisibles) {
-      nodes = nodes.filter(
-        (node) => node.data.visible || node.data.visible === undefined
-      );
+      nodes = nodes.filter((node) => {
+        const { visible } = node.data || {};
+        return visible || visible === undefined;
+      });
     }
     const layoutScale = 0.9;
     const width =

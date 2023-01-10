@@ -1,17 +1,23 @@
+import { Node } from '../types';
 import { isArray, isObject } from ".";
 import { isNumber } from "./number";
 
 export const isFunction = (val: unknown): val is Function =>
   typeof val === "function";
 
-export const getFunc = (
-  value: number,
+/**
+ * Format value with multiple types into a function returns number.
+ * @param defaultValue default value when value is invalid
+ * @param value value to be formatted
+ * @returns formatted result, a function returns number
+ */
+export const formatNumberFn = (
   defaultValue: number,
-  func?: ((d?: any) => number) | undefined
+  value: number |((d?: unknown) => number) | undefined,
 ): Function => {
   let resultFunc;
-  if (func) {
-    resultFunc = func;
+  if (isFunction(value)) {
+    resultFunc = value;
   } else if (isNumber(value)) {
     resultFunc = () => value;
   } else {
@@ -20,26 +26,34 @@ export const getFunc = (
   return resultFunc;
 };
 
-export const getFuncByUnknownType = (
+/**
+ * Format size config with multiple types into a function returns number
+ * @param defaultValue default value when value is invalid
+ * @param value value to be formatted
+ * @param resultIsNumber whether returns number
+ * @returns formatted result, a function returns number
+ */
+export function formatSizeFn<T extends Node> (
   defaultValue: number,
   value?:
     | number
     | number[]
     | { width: number; height: number }
-    | ((d?: any) => number)
+    | ((d?: T) => number)
     | undefined,
   resultIsNumber: boolean = true
-): ((d?: any) => number | number[]) => {
+): ((d: T) => number | number[]) {
   if (!value && value !== 0) {
     return (d) => {
-      if (d.size) {
-        if (isArray(d.size)) {
-          return d.size[0] > d.size[1] ? d.size[0] : d.size[1];
+      const { size } = d.data || {};
+      if (size) {
+        if (isArray(size)) {
+          return size[0] > size[1] ? size[0] : size[1];
         }
-        if (isObject(d.size)) {
-          return d.size.width > d.size.height ? d.size.width : d.size.height;
+        if (isObject(size)) {
+          return size.width > size.height ? size.width : size.height;
         }
-        return d.size;
+        return size;
       }
       return defaultValue;
     };
