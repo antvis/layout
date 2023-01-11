@@ -31,7 +31,6 @@ export async function calculateLayout(payload: Payload, transferables: Float32Ar
    * Create layout instance on the worker side.
    */
   let layout: SyncLayout<any>;
-  let positions: LayoutMapping;
   const layoutCtor = registry[id];
   if (layoutCtor) {
     layout = new layoutCtor(options);
@@ -41,8 +40,8 @@ export async function calculateLayout(payload: Payload, transferables: Float32Ar
 
   return new Promise((resolve) => {
     // Do calculation.
-    positions = layout.execute(graph, {
-      onLayoutEnd: () => {
+    layout.execute(graph, {
+      onLayoutEnd: (positions: LayoutMapping) => {
         resolve([positions, transferables]);
       }
     });
