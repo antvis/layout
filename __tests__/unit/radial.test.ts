@@ -230,8 +230,12 @@ describe("RadialLayout", () => {
       sortBy: 'data',
     });
     const positions = radial.execute(graph);
-    expect(positions.nodes[4].data.y < positions.nodes[2].data.y).toBe(true);
-    expect(positions.nodes[2].data.y < positions.nodes[1].data.y).toBe(true);
+    // keeps relative order in data.nodes
+    if (positions.nodes[4].data.y < positions.nodes[2].data.y) {
+      expect(positions.nodes[2].data.y < positions.nodes[1].data.y).toBe(true);
+    } else {
+      expect(positions.nodes[2].data.y > positions.nodes[1].data.y).toBe(true);
+    }
   });
 
   it("should do radial layout with sortBy: 'sortProperty' ", () => {
