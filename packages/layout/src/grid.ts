@@ -125,7 +125,7 @@ export class GridLayout implements SyncLayout<GridLayoutOptions> {
       const result: LayoutMapping = {
         nodes: [],
         edges,
-      }
+      };
       onLayoutEnd?.(result);
       return result;
     }
@@ -250,7 +250,7 @@ export class GridLayout implements SyncLayout<GridLayoutOptions> {
     let cellHeight = condense ? 0 : height / rcs.rows;
 
     if (preventOverlap || paramNodeSpacing) {
-      const nodeSpacing: Function = formatNumberFn(10, paramNodeSpacing);
+      const nodeSpacing: Function = formatNumberFn(10, paramNodeSpacing as number);
       const nodeSize: Function = formatSizeFn(30, paramNodeSize, false);
       layoutNodes.forEach((node) => {
         if (!node.data.x || !node.data.y) {

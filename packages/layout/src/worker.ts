@@ -15,7 +15,7 @@ import type { LayoutMapping, SyncLayout } from "./types";
 //   },
 // });
 
-export function calculateLayout(payload: Payload, transferables: Float32Array[]) {
+export async function calculateLayout(payload: Payload, transferables: Float32Array[]) {
   const { layout: { id, options }, nodes, edges } = payload;
 
   // Sync graph on the worker side.
@@ -39,8 +39,12 @@ export function calculateLayout(payload: Payload, transferables: Float32Array[])
     throw new Error(`Unknown layout id: ${id}`);
   }
 
-  // Do calculation.
-  positions = layout.execute(graph);
-  
-  return [positions, transferables];
+  return new Promise((resolve) => {
+    // Do calculation.
+    positions = layout.execute(graph, {
+      onLayoutEnd: () => {
+        resolve([positions, transferables]);
+      }
+    });
+  });
 }

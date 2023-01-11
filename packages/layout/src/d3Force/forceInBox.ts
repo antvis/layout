@@ -1,4 +1,4 @@
-import * as d3Force from 'd3-force';
+import * as d3Force from "d3-force";
 
 interface INode {
   id: string;
@@ -37,7 +37,7 @@ export default function forceInBox() {
   };
   let templateNodes: INode[] = [];
   let templateForce: any;
-  let template = 'force';
+  let template = "force";
   let enableGrouping = true;
   let strength = 0.1;
 
@@ -67,7 +67,7 @@ export default function forceInBox() {
 
     if (groupBy(nodes[0]) === undefined) {
       throw Error(
-        "Couldnt find the grouping attribute for the nodes. Make sure to set it up with forceInBox.groupBy('clusterAttr') before calling .links()",
+        "Couldnt find the grouping attribute for the nodes. Make sure to set it up with forceInBox.groupBy('clusterAttr') before calling .links()"
       );
     }
 
@@ -76,16 +76,16 @@ export default function forceInBox() {
     const net = getGroupsGraph();
     templateForce = d3Force
       .forceSimulation(net.nodes)
-      .force('x', d3Force.forceX(centerX).strength(0.1))
-      .force('y', d3Force.forceY(centerY).strength(0.1))
-      .force('collide', d3Force.forceCollide((d: any) => d.r).iterations(4))
-      .force('charge', d3Force.forceManyBody().strength(forceCharge))
+      .force("x", d3Force.forceX(centerX).strength(0.1))
+      .force("y", d3Force.forceY(centerY).strength(0.1))
+      .force("collide", d3Force.forceCollide((d: any) => d.r).iterations(4))
+      .force("charge", d3Force.forceManyBody().strength(forceCharge))
       .force(
-        'links',
+        "links",
         d3Force
           .forceLink(net.nodes.length ? net.links : [])
           .distance(forceLinkDistance)
-          .strength(forceLinkStrength),
+          .strength(forceLinkStrength)
       );
 
     templateNodes = templateForce.nodes();
@@ -97,7 +97,7 @@ export default function forceInBox() {
     const gnodes: any = [];
     const glinks: any = [];
     const dNodes: any = {};
-    let clustersList = [];
+    let clustersList: string[] = [];
     let clustersCounts: any = {};
     let clustersLinks: any = [];
 
@@ -179,8 +179,8 @@ export default function forceInBox() {
     const entries = Object.entries(dClusterLinks);
 
     entries.forEach(([key, count]: any) => {
-      const source = key.split('~')[0];
-      const target = key.split('~')[1];
+      const source = key.split("~")[0];
+      const target = key.split("~")[1];
       if (source !== undefined && target !== undefined) {
         clusterLinks.push({
           source,
@@ -236,7 +236,7 @@ export default function forceInBox() {
 
   function setGroupBy(x: any) {
     if (!arguments.length) return groupBy;
-    if (typeof x === 'string') {
+    if (typeof x === "string") {
       groupBy = (d: any) => {
         return d[x];
       };
@@ -296,7 +296,7 @@ export default function forceInBox() {
 
   function setForceNodeSize(_: any) {
     if (arguments.length) {
-      if (typeof _ === 'function') {
+      if (typeof _ === "function") {
         forceNodeSize = _;
       } else {
         forceNodeSize = constant(+_);
@@ -310,7 +310,7 @@ export default function forceInBox() {
 
   function setForceCharge(_: any) {
     if (arguments.length) {
-      if (typeof _ === 'function') {
+      if (typeof _ === "function") {
         forceCharge = _;
       } else {
         forceCharge = constant(+_);
@@ -324,7 +324,7 @@ export default function forceInBox() {
 
   function setForceLinkDistance(_: any) {
     if (arguments.length) {
-      if (typeof _ === 'function') {
+      if (typeof _ === "function") {
         forceLinkDistance = _;
       } else {
         forceLinkDistance = constant(+_);
@@ -338,7 +338,7 @@ export default function forceInBox() {
 
   function setForceLinkStrength(_: any) {
     if (arguments.length) {
-      if (typeof _ === 'function') {
+      if (typeof _ === "function") {
         forceLinkStrength = _;
       } else {
         forceLinkStrength = constant(+_);

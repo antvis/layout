@@ -1,6 +1,6 @@
-import { quadtree } from 'd3-quadtree';
-import { Point } from '../types';
-import { CalcGraph } from './types';
+import { quadtree } from "d3-quadtree";
+import { Point } from "../types";
+import { CalcGraph } from "./types";
 
 const theta2 = 0.81; // Barnes-Hut approximation threshold
 const epsilon = 0.1; // 为了防止出现除0的情况，加一个epsilon
@@ -38,7 +38,7 @@ export function forceNBody(
   const tree = quadtree(
     data,
     (d: any) => d.x,
-    (d: any) => d.y,
+    (d: any) => d.y
   ).visitAfter(accumulate); // init internal node
 
   data.forEach((n) => {
@@ -52,7 +52,7 @@ export function forceNBody(
     // 从 0 开始，= 初始化 + 加斥力
     accMap[id] = {
       x: n.vx / mass,
-      y: n.vy / mass
+      y: n.vy / mass,
     };
   });
   return accMap;
@@ -87,15 +87,22 @@ function accumulate(quad) {
 }
 
 // @ts-ignore
-const apply = (quad, x1: number, y1: number, x2: number, y2: number, node: InternalNode) => {
-  const dx = (node.x - quad.x) || epsilon;
-  const dy = (node.y - quad.y) || epsilon;
+const apply = (
+  quad,
+  x1: number,
+  y1: number,
+  x2: number,
+  y2: number,
+  node: InternalNode
+) => {
+  const dx = node.x - quad.x || epsilon;
+  const dy = node.y - quad.y || epsilon;
   const width = x2 - x1;
   const len2 = dx * dx + dy * dy;
   const len3 = Math.sqrt(len2) * len2;
 
   // far node, apply Barnes-Hut approximation
-  if ((width * width) * theta2 < len2) {
+  if (width * width * theta2 < len2) {
     const param = quad.weight / len3;
     node.vx += dx * param;
     node.vy += dy * param;

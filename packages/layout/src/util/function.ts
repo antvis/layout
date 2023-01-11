@@ -11,10 +11,10 @@ export const isFunction = (val: unknown): val is Function =>
  * @param value value to be formatted
  * @returns formatted result, a function returns number
  */
-export const formatNumberFn = (
+export function formatNumberFn<T = unknown>(
   defaultValue: number,
-  value: number | ((d?: unknown) => number) | undefined
-): Function => {
+  value: number | ((d?: T) => number) | undefined
+): (d?: T | undefined) => number {
   let resultFunc;
   if (isFunction(value)) {
     resultFunc = value;
@@ -26,7 +26,7 @@ export const formatNumberFn = (
     resultFunc = () => defaultValue;
   }
   return resultFunc;
-};
+}
 
 /**
  * Format size config with multiple types into a function returns number

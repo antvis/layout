@@ -23,6 +23,8 @@
   "dependencies": {
     "@antv/graphlib": "^2.0.0-alpha.2",
     "@naoak/workerize-transferable": "^0.1.0",
+    "d3-force": "^3.0.0",
+    "d3-quadtree": "^3.0.1",
     "eventemitter3": "^4.0.0",
     "ml-matrix": "^6.10.4"
   },

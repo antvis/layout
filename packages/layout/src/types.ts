@@ -173,7 +173,10 @@ export interface D3ForceLayoutOptions extends CommonOptions {
   center?: PointTuple;
   linkDistance?: number | ((edge?: Edge) => number) | undefined;
   edgeStrength?: number | ((edge?: Edge) => number) | undefined;
-  nodeStrength?: number | ((node: Node, i: number, nodes: Node[]) => number) | undefined;
+  nodeStrength?:
+    | number
+    | ((node: Node, i: number, nodes: Node[]) => number)
+    | undefined;
   preventOverlap?: boolean;
   collideStrength?: number;
   nodeSize?: number | number[] | ((node?: Node) => number) | undefined;
@@ -236,12 +239,12 @@ export interface ForceLayoutOptions extends CommonOptions {
   leafCluster?: boolean;
   clustering?: boolean;
   nodeClusterBy?: string;
-  clusterNodeStrength?: number | ((node?: Node) => number);
+  clusterNodeStrength?: number | ((node: Node) => number);
   collideStrength?: number;
   distanceThresholdMode?: "mean" | "max" | "min";
   animate?: boolean; // TODO: comfirm the tick way with worker
   onTick?: (data: LayoutMapping) => void;
-  getMass?: ((d?: Node) => number) | undefined;
+  getMass?: ((d: Node) => number) | undefined;
   getCenter?: ((d?: Node, degree?: number) => number[]) | undefined;
   monitor?: (params: {
     energy: number;

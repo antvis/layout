@@ -1,7 +1,14 @@
-import * as d3Force from 'd3-force';
-import { Graph, Node, Edge, LayoutMapping, OutNode, D3ForceLayoutOptions, SyncLayout } from "../types";
+import * as d3Force from "d3-force";
+import {
+  Graph,
+  Node,
+  LayoutMapping,
+  OutNode,
+  D3ForceLayoutOptions,
+  SyncLayout,
+} from "../types";
 import { isArray, isFunction, isNumber, isObject } from "../util";
-import forceInBox from './forceInBox';
+import forceInBox from "./forceInBox";
 
 /**
  * D3 writes x and y as the first level properties
@@ -28,28 +35,33 @@ const DEFAULTS_LAYOUT_OPTIONS: Partial<D3ForceLayoutOptions> = {
   clusterEdgeDistance: 100,
   clusterFociStrength: 0.8,
   clusterNodeSize: 10,
-}
+};
 
 /**
  * Layout the nodes' positions with d3's basic classic force
- * 
+ *
  * @example
  * // Assign layout options when initialization.
  * const layout = new D3ForceLayout({ center: [100, 100] });
  * const positions = layout.execute(graph); // { nodes: [], edges: [] }
- * 
+ *
  * // Or use different options later.
  * const layout = new D3ForceLayout({ center: [100, 100] });
  * const positions = layout.execute(graph, { center: [100, 100] }); // { nodes: [], edges: [] }
- * 
+ *
  * // If you want to assign the positions directly to the nodes, use assign method.
  * layout.assign(graph, { center: [100, 100] });
  */
 export class D3ForceLayout implements SyncLayout<D3ForceLayoutOptions> {
   id = "d3force";
-  
-  constructor(public options: D3ForceLayoutOptions = {} as D3ForceLayoutOptions) {
-    Object.assign(this.options, DEFAULTS_LAYOUT_OPTIONS, options);
+
+  constructor(
+    public options: D3ForceLayoutOptions = {} as D3ForceLayoutOptions
+  ) {
+    this.options = {
+      ...DEFAULTS_LAYOUT_OPTIONS,
+      ...options,
+    };
   }
 
   /**
@@ -68,21 +80,32 @@ export class D3ForceLayout implements SyncLayout<D3ForceLayoutOptions> {
   /** The sign of running */
   private running: boolean;
 
-  private genericForceLayout(assign: boolean, graph: Graph, options?: D3ForceLayoutOptions): LayoutMapping | void {
+  private genericForceLayout(
+    assign: boolean,
+    graph: Graph,
+    options?: D3ForceLayoutOptions
+  ): LayoutMapping | void {
     const mergedOptions = { ...this.options, ...options };
     const { layoutInvisibles } = mergedOptions;
 
     let nodes = graph.getAllNodes();
     let edges = graph.getAllEdges();
     if (!layoutInvisibles) {
-      nodes = nodes.filter(node => node.data.visible || node.data.visible === undefined);
-      edges = edges.filter(edge => edge.data.visible || edge.data.visible === undefined);
+      nodes = nodes.filter(
+        (node) => node.data.visible || node.data.visible === undefined
+      );
+      edges = edges.filter(
+        (edge) => edge.data.visible || edge.data.visible === undefined
+      );
     }
-    const layoutNodes: CalcNode[] = nodes.map(node => ({
-      ...node,
-      x: node.data.x,
-      y: node.data.y
-    } as CalcNode));
+    const layoutNodes: CalcNode[] = nodes.map(
+      (node) =>
+        ({
+          ...node,
+          x: node.data.x,
+          y: node.data.y,
+        } as CalcNode)
+    );
 
     if (this.running) return;
 
@@ -146,7 +169,11 @@ export class D3ForceLayout implements SyncLayout<D3ForceLayoutOptions> {
           .alphaMin(alphaMin);
 
         if (preventOverlap) {
-          this.overlapProcess(forceSimulation, { nodeSize, nodeSpacing, collideStrength });
+          this.overlapProcess(forceSimulation, {
+            nodeSize,
+            nodeSpacing,
+            collideStrength,
+          });
         }
         // 如果有边，定义边的力
         if (edges) {
@@ -163,23 +190,22 @@ export class D3ForceLayout implements SyncLayout<D3ForceLayoutOptions> {
           }
           forceSimulation.force("link", edgeForce);
         }
-        
-        forceSimulation
-        .on("tick", () => {
-          onTick?.({
-            nodes: formatOutNodes(layoutNodes),
-            edges,
-          });
-        })
-        .on("end", () => {
-          this.running = false;
-          onLayoutEnd?.({
-            nodes: formatOutNodes(layoutNodes),
-            edges
-          });
-        });
-        this.running = true;
 
+        forceSimulation
+          .on("tick", () => {
+            onTick?.({
+              nodes: formatOutNodes(layoutNodes),
+              edges,
+            });
+          })
+          .on("end", () => {
+            this.running = false;
+            onLayoutEnd?.({
+              nodes: formatOutNodes(layoutNodes),
+              edges,
+            });
+          });
+        this.running = true;
       } catch (e) {
         this.running = false;
         console.warn(e);
@@ -207,42 +233,49 @@ export class D3ForceLayout implements SyncLayout<D3ForceLayoutOptions> {
         forceSimulation.force("link", edgeForce);
       }
       if (preventOverlap) {
-        this.overlapProcess(forceSimulation, { nodeSize, nodeSpacing, collideStrength });
+        this.overlapProcess(forceSimulation, {
+          nodeSize,
+          nodeSpacing,
+          collideStrength,
+        });
       }
       forceSimulation.alpha(alpha).restart();
       this.running = true;
     }
-    
+
     // since d3 writes x and y as node's first level properties, format them into data
     const outNodes = formatOutNodes(layoutNodes);
 
     if (assign) {
-      outNodes.forEach(node => graph.mergeNodeData(node.id, {
-        x: node.data.x,
-        y: node.data.y
-      }))
+      outNodes.forEach((node) =>
+        graph.mergeNodeData(node.id, {
+          x: node.data.x,
+          y: node.data.y,
+        })
+      );
     }
 
     const result = {
       nodes: outNodes,
-      edges
-    }
+      edges,
+    };
     onLayoutEnd?.(result);
 
     return result;
   }
 
   /**
-  * Prevent overlappings.
-  * @param {object} simulation force simulation of d3
-  */
+   * Prevent overlappings.
+   * @param {object} simulation force simulation of d3
+   */
   public overlapProcess(
     simulation: any,
     options: {
       nodeSize: number | number[] | ((d?: Node) => number) | undefined;
       nodeSpacing: number | number[] | ((d?: Node) => number) | undefined;
       collideStrength: number;
-    }) {
+    }
+  ) {
     const { nodeSize, nodeSpacing, collideStrength } = options;
     let nodeSizeFunc: (d: any) => number;
     let nodeSpacingFunc: any;
@@ -261,8 +294,10 @@ export class D3ForceLayout implements SyncLayout<D3ForceLayoutOptions> {
           if (isArray(d.size)) {
             const res = d.size[0] > d.size[1] ? d.size[0] : d.size[1];
             return res / 2 + nodeSpacingFunc(d);
-          }  if (isObject(d.size)) {
-            const res = d.size.width > d.size.height ? d.size.width : d.size.height;
+          }
+          if (isObject(d.size)) {
+            const res =
+              d.size.width > d.size.height ? d.size.width : d.size.height;
             return res / 2 + nodeSpacingFunc(d);
           }
           return d.size / 2 + nodeSpacingFunc(d);
@@ -296,17 +331,18 @@ export class D3ForceLayout implements SyncLayout<D3ForceLayoutOptions> {
 /**
  * Format the calculation nodes into output nodes.
  * Since d3 reads properties in plain node data object which is not compact to the OutNode
- * @param layoutNodes 
- * @returns 
+ * @param layoutNodes
+ * @returns
  */
-const formatOutNodes = (layoutNodes: CalcNode[]): OutNode[] => layoutNodes.map(node => {
-  const { x, y, ...others } = node;
-  return {
-    ...others,
-    data: {
-      ...others.data,
-      x,
-      y,
-    }
-  }
-});
+const formatOutNodes = (layoutNodes: CalcNode[]): OutNode[] =>
+  layoutNodes.map((node) => {
+    const { x, y, ...others } = node;
+    return {
+      ...others,
+      data: {
+        ...others.data,
+        x,
+        y,
+      },
+    };
+  });

@@ -1,8 +1,24 @@
-import { Graph as IGraph } from '@antv/graphlib';
-import { Graph, Node, Edge, LayoutMapping, ForceLayoutOptions, SyncLayout, Point, OutNode } from "../types";
-import { getFunc, isArray, isNumber, isObject } from "../util";
+import { Graph as IGraph } from "@antv/graphlib";
+import {
+  Graph,
+  Node,
+  Edge,
+  LayoutMapping,
+  ForceLayoutOptions,
+  SyncLayout,
+  Point,
+  OutNode,
+} from "../types";
+import { formatNumberFn, isArray, isNumber, isObject } from "../util";
 import { forceNBody } from "./forceNBody";
-import { CalcNode, CalcEdge, CalcNodeData, CalcEdgeData, CalcGraph, FormatedOptions } from './types';
+import {
+  CalcNode,
+  CalcEdge,
+  CalcNodeData,
+  CalcEdgeData,
+  CalcGraph,
+  FormatedOptions,
+} from "./types";
 
 // TODO: animate(not silence) and webworker
 
@@ -21,21 +37,21 @@ const DEFAULTS_LAYOUT_OPTIONS: Partial<ForceLayoutOptions> = {
   linkDistance: 200,
   clusterNodeStrength: 20,
   preventOverlap: true,
-  distanceThresholdMode: 'mean',
-}
+  distanceThresholdMode: "mean",
+};
 
 /**
  * Layout with faster force
- * 
+ *
  * @example
  * // Assign layout options when initialization.
  * const layout = new ForceLayout({ center: [100, 100] });
  * const positions = layout.execute(graph); // { nodes: [], edges: [] }
- * 
+ *
  * // Or use different options later.
  * const layout = new ForceLayout({ center: [100, 100] });
  * const positions = layout.execute(graph, { center: [100, 100] }); // { nodes: [], edges: [] }
- * 
+ *
  * // If you want to assign the positions directly to the nodes, use assign method.
  * layout.assign(graph, { center: [100, 100] });
  */
@@ -51,7 +67,10 @@ export class ForceLayout implements SyncLayout<ForceLayoutOptions> {
   private judgingDistance: number = 0;
 
   constructor(public options: ForceLayoutOptions = {} as ForceLayoutOptions) {
-    Object.assign(this.options, DEFAULTS_LAYOUT_OPTIONS, options);
+    this.options = {
+      ...DEFAULTS_LAYOUT_OPTIONS,
+      ...options,
+    };
   }
 
   /**
@@ -67,14 +86,22 @@ export class ForceLayout implements SyncLayout<ForceLayoutOptions> {
     this.genericForceLayout(true, graph, options);
   }
 
-  private genericForceLayout(assign: boolean, graph: Graph, options?: ForceLayoutOptions): LayoutMapping | void {
+  private genericForceLayout(
+    assign: boolean,
+    graph: Graph,
+    options?: ForceLayoutOptions
+  ): LayoutMapping | void {
     const mergedOptions = { ...this.options, ...options };
 
     let nodes = graph.getAllNodes();
     let edges = graph.getAllEdges();
     if (!mergedOptions.layoutInvisibles) {
-      nodes = nodes.filter(node => node.data.visible || node.data.visible === undefined);
-      edges = edges.filter(edge => edge.data.visible || edge.data.visible === undefined);
+      nodes = nodes.filter(
+        (node) => node.data.visible || node.data.visible === undefined
+      );
+      edges = edges.filter(
+        (edge) => edge.data.visible || edge.data.visible === undefined
+      );
     }
 
     const formattedOptions = this.formatOptions(mergedOptions, graph);
@@ -85,41 +112,47 @@ export class ForceLayout implements SyncLayout<ForceLayoutOptions> {
       getMass,
       nodeStrength,
       edgeStrength,
-      linkDistance
+      linkDistance,
     } = formattedOptions;
 
     // clones the original data and attaches calculation attributes for this layout algorithm
-    const layoutNodes: CalcNode[] = nodes.map(node => ({
-      ...node,
-      data: {
-        ...node.data,
-        x: isNumber(node.data.x) ? node.data.x : Math.random() * width,
-        y: isNumber(node.data.y) ? node.data.y : Math.random() * height,
-        size: nodeSize(node) || 30,
-        mass: getMass(node),
-        nodeStrength: nodeStrength(node)
-      }
-    } as CalcNode));
-    const layoutEdges: CalcEdge[] = edges.map(edge => ({
+    const layoutNodes: CalcNode[] = nodes.map(
+      (node) =>
+        ({
+          ...node,
+          data: {
+            ...node.data,
+            x: isNumber(node.data.x) ? node.data.x : Math.random() * width,
+            y: isNumber(node.data.y) ? node.data.y : Math.random() * height,
+            size: nodeSize(node) || 30,
+            mass: getMass(node),
+            nodeStrength: nodeStrength(node),
+          },
+        } as CalcNode)
+    );
+    const layoutEdges: CalcEdge[] = edges.map((edge) => ({
       ...edge,
       data: {
         ...edge.data,
         edgeStrength: edgeStrength(edge),
-        linkDistance: linkDistance(edge, graph.getNode(edge.source), graph.getNode(edge.target)),
-      }
+        linkDistance: linkDistance(
+          edge,
+          graph.getNode(edge.source),
+          graph.getNode(edge.target)
+        ),
+      },
     }));
 
     if (!nodes?.length) return { nodes: [], edges };
 
-
-    const velMap: { [id: string]: Point } = {}
+    const velMap: { [id: string]: Point } = {};
     nodes.forEach((node, i) => {
       velMap[node.id] = {
         x: 0,
-        y: 0
-      }
+        y: 0,
+      };
     });
-    
+
     const calcGraph = new IGraph<CalcNodeData, CalcEdgeData>({
       nodes: layoutNodes,
       edges: layoutEdges,
@@ -127,38 +160,46 @@ export class ForceLayout implements SyncLayout<ForceLayoutOptions> {
 
     this.formatCentripetal(formattedOptions, calcGraph);
 
-    const { maxIteration, animate, minMovement, onLayoutEnd, onTick } = formattedOptions;
+    const { maxIteration, animate, minMovement, onLayoutEnd, onTick } =
+      formattedOptions;
     const silence = !animate;
     if (silence) {
-      for (let i = 0; (this.judgingDistance > minMovement || i < 1) && i < maxIteration; i++) {
+      for (
+        let i = 0;
+        (this.judgingDistance > minMovement || i < 1) && i < maxIteration;
+        i++
+      ) {
         this.runOneStep(calcGraph, graph, i, velMap, formattedOptions);
         this.updatePosition(graph, calcGraph, velMap, formattedOptions);
         if (assign) {
-          layoutNodes.forEach(node => graph.mergeNodeData(node.id, {
-            x: node.data.x,
-            y: node.data.y
-          }));
+          layoutNodes.forEach((node) =>
+            graph.mergeNodeData(node.id, {
+              x: node.data.x,
+              y: node.data.y,
+            })
+          );
         }
         onTick?.({
           nodes: formatOutNodes(graph, layoutNodes),
-          edges
+          edges,
         });
       }
 
       if (assign) {
-        layoutNodes.forEach(node => graph.mergeNodeData(node.id, {
-          x: node.data.x,
-          y: node.data.y
-        }))
+        layoutNodes.forEach((node) =>
+          graph.mergeNodeData(node.id, {
+            x: node.data.x,
+            y: node.data.y,
+          })
+        );
       }
       const result = {
         nodes: formatOutNodes(graph, layoutNodes),
-        edges
-      }
+        edges,
+      };
       onLayoutEnd?.(result);
       return result;
-      
-    } else {
+    }  {
       if (typeof window === "undefined") return;
       let iter = 0;
       // interval for render the result after each iteration
@@ -167,30 +208,32 @@ export class ForceLayout implements SyncLayout<ForceLayoutOptions> {
         this.runOneStep(calcGraph, graph, iter, velMap, formattedOptions);
         this.updatePosition(graph, calcGraph, velMap, formattedOptions);
         if (assign) {
-          layoutNodes.forEach(node => graph.mergeNodeData(node.id, {
-            x: node.data.x,
-            y: node.data.y
-          }));
+          layoutNodes.forEach((node) =>
+            graph.mergeNodeData(node.id, {
+              x: node.data.x,
+              y: node.data.y,
+            })
+          );
         }
         onTick?.({
           nodes: formatOutNodes(graph, layoutNodes),
-          edges
+          edges,
         });
         iter++;
         if (iter >= maxIteration || this.judgingDistance < minMovement) {
           onLayoutEnd?.({
             nodes: formatOutNodes(graph, layoutNodes),
-            edges
+            edges,
           });
           window.clearInterval(this.timeInterval);
         }
       }, 0);
     }
-    
+
     // has been returned while silence, and not useful for interval
     return {
       nodes: formatOutNodes(graph, layoutNodes),
-      edges
+      edges,
     };
   }
 
@@ -198,39 +241,52 @@ export class ForceLayout implements SyncLayout<ForceLayoutOptions> {
    * Format merged layout options.
    * @param options merged layout options
    * @param graph original graph
-   * @returns 
+   * @returns
    */
-  private formatOptions(options: ForceLayoutOptions, graph: Graph): FormatedOptions {
+  private formatOptions(
+    options: ForceLayoutOptions,
+    graph: Graph
+  ): FormatedOptions {
     const formattedOptions = options as FormatedOptions;
     const { width: propsWidth, height: propsHeight, getMass } = options;
-    
+
     // === formating width, height, and center =====
-    formattedOptions.width = !propsWidth && typeof window !== "undefined" ? window.innerWidth : propsWidth as number;
-    formattedOptions.height = !propsHeight && typeof window !== "undefined" ? window.innerHeight : propsHeight as number;
+    formattedOptions.width =
+      !propsWidth && typeof window !== "undefined"
+        ? window.innerWidth
+        : (propsWidth as number);
+    formattedOptions.height =
+      !propsHeight && typeof window !== "undefined"
+        ? window.innerHeight
+        : (propsHeight as number);
     if (!options.center) {
-      formattedOptions.center = [formattedOptions.width / 2, formattedOptions.height / 2];
+      formattedOptions.center = [
+        formattedOptions.width / 2,
+        formattedOptions.height / 2,
+      ];
     }
-    
+
     // === formating node mass =====
     if (!getMass) {
-      formattedOptions.getMass = (d: Node) => {
+      formattedOptions.getMass = (d?: Node) => {
         let massWeight = 1;
-        if (isNumber(d.data.mass)) massWeight = d.data.mass as number;
-        const degree = graph.getDegree(d.id, 'both');
-        return (!degree || degree < 5) ? massWeight : degree * 5 * massWeight;
-      }
+        if (isNumber(d?.data.mass)) massWeight = d?.data.mass as number;
+        const degree = graph.getDegree(d!.id, "both");
+        return !degree || degree < 5 ? massWeight : degree * 5 * massWeight;
+      };
     }
 
     // === formating node size =====
     if (options.preventOverlap) {
-      const nodeSpacingFunc = getFunc(options.nodeSpacing, 0);
+      const nodeSpacingFunc = formatNumberFn<Node>(0, options.nodeSpacing);
       if (!options.nodeSize) {
-        formattedOptions.nodeSize = (d: Node) => {
-          const { size } = d.data || {};
+        formattedOptions.nodeSize = (d?: Node) => {
+          const { size } = d?.data || {};
           if (size) {
             if (isArray(size)) {
               return Math.max(size[0], size[1]) + nodeSpacingFunc(d);
-            } if (isObject(size)) {
+            }
+            if (isObject(size)) {
               return Math.max(size.width, size.height) + nodeSpacingFunc(d);
             }
             return (size as number) + nodeSpacingFunc(d);
@@ -238,21 +294,25 @@ export class ForceLayout implements SyncLayout<ForceLayoutOptions> {
           return 10 + nodeSpacingFunc(d);
         };
       } else if (isArray(options.nodeSize)) {
-        formattedOptions.nodeSize = (d: Node) => {
+        formattedOptions.nodeSize = (d?: Node) => {
           const nodeSize = options.nodeSize as [number, number];
           return Math.max(nodeSize[0], nodeSize[1]) + nodeSpacingFunc(d);
         };
       } else {
-        formattedOptions.nodeSize = (d: Node) => (options.nodeSize as number) + nodeSpacingFunc(d);
+        formattedOptions.nodeSize = (d?: Node) =>
+          (options.nodeSize as number) + nodeSpacingFunc(d);
       }
     }
 
     // === formating node / edge strengths =====
-    formattedOptions.linkDistance = options.linkDistance ?
-      getFunc(options.linkDistance, 1) :
-      (edge: Edge) => (1 + formattedOptions.nodeSize(graph.getNode(edge.source)) + formattedOptions.nodeSize(graph.getNode(edge.target)));
-    formattedOptions.nodeStrength = getFunc(options.nodeStrength, 1);
-    formattedOptions.edgeStrength = getFunc(options.edgeStrength, 1);
+    formattedOptions.linkDistance = options.linkDistance
+      ? formatNumberFn(1, options.linkDistance)
+      : (edge?: Edge) =>
+          1 +
+          formattedOptions.nodeSize(graph.getNode(edge!.source)) +
+          formattedOptions.nodeSize(graph.getNode(edge!.target));
+    formattedOptions.nodeStrength = formatNumberFn(1, options.nodeStrength);
+    formattedOptions.edgeStrength = formatNumberFn(1, options.edgeStrength);
 
     return options as FormatedOptions;
   }
@@ -263,7 +323,14 @@ export class ForceLayout implements SyncLayout<ForceLayoutOptions> {
    * @param calcGraph calculation graph
    */
   private formatCentripetal(options: FormatedOptions, calcGraph: CalcGraph) {
-    const { centripetalOptions, center, clusterNodeStrength, leafCluster, clustering, nodeClusterBy } = options;
+    const {
+      centripetalOptions,
+      center,
+      clusterNodeStrength,
+      leafCluster,
+      clustering,
+      nodeClusterBy,
+    } = options;
     const calcNodes = calcGraph.getAllNodes();
     // === formating centripetalOptions =====
     const basicCentripetal = centripetalOptions || {
@@ -274,32 +341,40 @@ export class ForceLayout implements SyncLayout<ForceLayoutOptions> {
       center: (n: any) => {
         return {
           x: center[0],
-          y: center[1]
+          y: center[1],
         };
       },
     };
-    if (typeof clusterNodeStrength !== 'function') {
-      options.clusterNodeStrength = (node: Node) => clusterNodeStrength as number;
+    if (typeof clusterNodeStrength !== "function") {
+      options.clusterNodeStrength = (node?: Node) =>
+        clusterNodeStrength as number;
     }
     let sameTypeLeafMap: any;
     let clusters: string[] = [];
     if (leafCluster && nodeClusterBy) {
       sameTypeLeafMap = getSameTypeLeafMap(calcGraph, nodeClusterBy);
-      clusters = Array.from(new Set(calcNodes?.map((node) => node.data[nodeClusterBy] as string))) || [];
+      clusters =
+        Array.from(
+          new Set(calcNodes?.map((node) => node.data[nodeClusterBy] as string))
+        ) || [];
       options.centripetalOptions = Object.assign(basicCentripetal, {
         single: 100,
         leaf: (node: Node) => {
           // 找出与它关联的边的起点或终点出发的所有一度节点中同类型的叶子节点
-          const { siblingLeaves, sameTypeLeaves } = sameTypeLeafMap[node.id] || {};
+          const { siblingLeaves, sameTypeLeaves } =
+            sameTypeLeafMap[node.id] || {};
           // 如果都是同一类型或者每种类型只有1个，则施加默认向心力
-          if (sameTypeLeaves?.length === siblingLeaves?.length || clusters?.length === 1) {
+          if (
+            sameTypeLeaves?.length === siblingLeaves?.length ||
+            clusters?.length === 1
+          ) {
             return 1;
           }
           return options.clusterNodeStrength(node);
         },
         others: 1,
         center: (node: Node) => {
-          const degree = calcGraph.getDegree(node.id, 'both');
+          const degree = calcGraph.getDegree(node.id, "both");
           // 孤点默认给1个远离的中心点
           if (!degree) {
             return {
@@ -330,13 +405,23 @@ export class ForceLayout implements SyncLayout<ForceLayoutOptions> {
       });
     }
     if (clustering && nodeClusterBy) {
-      if (!sameTypeLeafMap) sameTypeLeafMap = getSameTypeLeafMap(calcGraph, nodeClusterBy);
-      if (!clusters) clusters = Array.from(new Set(calcNodes.map((node: Node) => node.data[nodeClusterBy] as string)));
+      if (!sameTypeLeafMap) {
+        sameTypeLeafMap = getSameTypeLeafMap(calcGraph, nodeClusterBy);
+      }
+      if (!clusters) {
+        clusters = Array.from(
+          new Set(
+            calcNodes.map((node: Node) => node.data[nodeClusterBy] as string)
+          )
+        );
+      }
       clusters = clusters.filter((item) => item !== undefined);
 
       const centerInfo: { [key: string]: Point } = {};
       clusters.forEach((cluster) => {
-        const sameTypeNodes = calcNodes.filter((node) => node.data[nodeClusterBy] === cluster).map((node) => calcGraph.getNode(node.id));
+        const sameTypeNodes = calcNodes
+          .filter((node) => node.data[nodeClusterBy] === cluster)
+          .map((node) => calcGraph.getNode(node.id));
         // 找出同类型节点平均位置节点的距离最近的节点作为中心节点
         centerInfo[cluster] = getAvgNodePosition(sameTypeNodes);
       });
@@ -355,10 +440,15 @@ export class ForceLayout implements SyncLayout<ForceLayoutOptions> {
       });
     }
     const { leaf, single, others } = options.centripetalOptions;
-    if (leaf && typeof leaf !== 'function') options.centripetalOptions.leaf = () => leaf;
-    if (single && typeof single !== 'function') options.centripetalOptions.single = () => single;
-    if (others && typeof others !== 'function') options.centripetalOptions.others = () => others;
-
+    if (leaf && typeof leaf !== "function") {
+      options.centripetalOptions.leaf = () => leaf;
+    }
+    if (single && typeof single !== "function") {
+      options.centripetalOptions.single = () => single;
+    }
+    if (others && typeof others !== "function") {
+      options.centripetalOptions.others = () => others;
+    }
   }
 
   /**
@@ -368,7 +458,7 @@ export class ForceLayout implements SyncLayout<ForceLayoutOptions> {
    * @param iter current iteration index
    * @param velMap nodes' velocity map
    * @param options formatted layout options
-   * @returns 
+   * @returns
    */
   private runOneStep(
     calcGraph: CalcGraph,
@@ -390,7 +480,12 @@ export class ForceLayout implements SyncLayout<ForceLayoutOptions> {
     /** 如果需要监控信息，则提供给用户 */
     if (monitor) {
       const energy = this.calTotalEnergy(accMap, calcNodes);
-      monitor({ energy, nodes: graph.getAllNodes(), edges: graph.getAllEdges(), iterations: iter });
+      monitor({
+        energy,
+        nodes: graph.getAllNodes(),
+        edges: graph.getAllEdges(),
+        iterations: iter,
+      });
     }
   }
 
@@ -421,7 +516,11 @@ export class ForceLayout implements SyncLayout<ForceLayoutOptions> {
    * @param accMap acceleration map
    * @param options formatted layout options
    */
-  public calRepulsive(calcGraph: CalcGraph, accMap: { [id: string]: Point }, options: FormatedOptions) {
+  public calRepulsive(
+    calcGraph: CalcGraph,
+    accMap: { [id: string]: Point },
+    options: FormatedOptions
+  ) {
     const { factor, coulombDisScale } = options;
     forceNBody(calcGraph, factor, coulombDisScale * coulombDisScale, accMap);
   }
@@ -471,23 +570,34 @@ export class ForceLayout implements SyncLayout<ForceLayoutOptions> {
    * @param accMap acceleration map
    * @param options formatted layout options
    */
-  public calGravity(calcGraph: CalcGraph, graph: Graph, accMap: { [id: string]: Point }, options: FormatedOptions) {
+  public calGravity(
+    calcGraph: CalcGraph,
+    graph: Graph,
+    accMap: { [id: string]: Point },
+    options: FormatedOptions
+  ) {
     const { getCenter } = options;
     const calcNodes = calcGraph.getAllNodes();
     const nodes = graph.getAllNodes(); // TODO: filter out the invisibles
     const edges = graph.getAllEdges(); // TODO: filter out the invisibles
-    const { width, height, center, gravity: defaultGravity, centripetalOptions } = options;
+    const {
+      width,
+      height,
+      center,
+      gravity: defaultGravity,
+      centripetalOptions,
+    } = options;
     if (!calcNodes) return;
-    calcNodes.forEach(calcNode => {
+    calcNodes.forEach((calcNode) => {
       const { id, data } = calcNode;
       const { mass, x, y } = data;
       const node = graph.getNode(id);
       let vecX = 0;
       let vecY = 0;
       let gravity = defaultGravity;
-      const inDegree = calcGraph.getDegree(id, 'in');
-      const outDegree = calcGraph.getDegree(id, 'out');
-      const degree = calcGraph.getDegree(id, 'both');
+      const inDegree = calcGraph.getDegree(id, "in");
+      const outDegree = calcGraph.getDegree(id, "out");
+      const degree = calcGraph.getDegree(id, "both");
       const forceCenter = getCenter?.(node, degree);
       if (forceCenter) {
         const [centerX, centerY, strength] = forceCenter;
@@ -500,13 +610,26 @@ export class ForceLayout implements SyncLayout<ForceLayoutOptions> {
       }
 
       if (gravity) {
-        accMap[id].x -= gravity * vecX / mass;
-        accMap[id].y -= gravity * vecY / mass;
+        accMap[id].x -= (gravity * vecX) / mass;
+        accMap[id].y -= (gravity * vecY) / mass;
       }
 
       if (centripetalOptions) {
-        const { leaf, single, others, center: centriCenter } = centripetalOptions;
-        const { x: centriX, y: centriY, centerStrength } = centriCenter?.(node, nodes, edges, width, height) || { x: 0, y: 0, centerStrength: 0 };
+        const {
+          leaf,
+          single,
+          others,
+          center: centriCenter,
+        } = centripetalOptions;
+        const {
+          x: centriX,
+          y: centriY,
+          centerStrength,
+        } = centriCenter?.(node, nodes, edges, width, height) || {
+          x: 0,
+          y: 0,
+          centerStrength: 0,
+        };
         if (!isNumber(centriX) || !isNumber(centriY)) return;
         const vx = (x - centriX) / mass;
         const vy = (y - centriY) / mass;
@@ -548,7 +671,7 @@ export class ForceLayout implements SyncLayout<ForceLayoutOptions> {
    * @param accMap acceleration map
    * @param velMap velocity map
    * @param options formatted layout options
-   * @returns 
+   * @returns
    */
   public updateVelocity(
     calcGraph: CalcGraph,
@@ -571,7 +694,7 @@ export class ForceLayout implements SyncLayout<ForceLayoutOptions> {
       }
       velMap[id] = {
         x: vx,
-        y: vy
+        y: vy,
       };
     });
   }
@@ -582,7 +705,7 @@ export class ForceLayout implements SyncLayout<ForceLayoutOptions> {
    * @param calcGraph calculatition graph
    * @param velMap velocity map
    * @param options formatted layou options
-   * @returns 
+   * @returns
    */
   public updatePosition(
     graph: Graph,
@@ -597,8 +720,8 @@ export class ForceLayout implements SyncLayout<ForceLayoutOptions> {
       return;
     }
     let sum = 0;
-    if (distanceThresholdMode === 'max') this.judgingDistance = -Infinity;
-    else if (distanceThresholdMode === 'min') this.judgingDistance = Infinity;
+    if (distanceThresholdMode === "max") this.judgingDistance = -Infinity;
+    else if (distanceThresholdMode === "min") this.judgingDistance = Infinity;
 
     calcNodes.forEach((calcNode: CalcNode) => {
       const { id } = calcNode;
@@ -619,18 +742,24 @@ export class ForceLayout implements SyncLayout<ForceLayoutOptions> {
 
       const distanceMagnitude = Math.sqrt(distX * distX + distY * distY);
       switch (distanceThresholdMode) {
-        case 'max':
-          if (this.judgingDistance < distanceMagnitude) this.judgingDistance = distanceMagnitude;
+        case "max":
+          if (this.judgingDistance < distanceMagnitude) {
+            this.judgingDistance = distanceMagnitude;
+          }
           break;
-        case 'min':
-          if (this.judgingDistance > distanceMagnitude) this.judgingDistance = distanceMagnitude;
+        case "min":
+          if (this.judgingDistance > distanceMagnitude) {
+            this.judgingDistance = distanceMagnitude;
+          }
           break;
         default:
           sum = sum + distanceMagnitude;
           break;
       }
     });
-    if (!distanceThresholdMode || distanceThresholdMode === 'mean') this.judgingDistance = sum / calcNodes.length;
+    if (!distanceThresholdMode || distanceThresholdMode === "mean") {
+      this.judgingDistance = sum / calcNodes.length;
+    }
   }
 
   /**
@@ -646,11 +775,11 @@ export class ForceLayout implements SyncLayout<ForceLayoutOptions> {
 
 type SameTypeLeafMap = {
   [nodeId: string]: {
-    coreNode: Node,
-    siblingLeaves: Node[],
-    sameTypeLeaves: Node[]
-  }
-}
+    coreNode: Node;
+    siblingLeaves: Node[];
+    sameTypeLeaves: Node[];
+  };
+};
 
 /**
  * Group the leaf nodes according to nodeClusterBy field.
@@ -666,13 +795,18 @@ const getSameTypeLeafMap = (
   if (!calcNodes?.length) return {};
   const sameTypeLeafMap: SameTypeLeafMap = {};
   calcNodes.forEach((node, i) => {
-    const degree = calcGraph.getDegree(node.id, 'both');
+    const degree = calcGraph.getDegree(node.id, "both");
     if (degree === 1) {
-      sameTypeLeafMap[node.id] = getCoreNodeAndSiblingLeaves(calcGraph, 'leaf', node, nodeClusterBy);
+      sameTypeLeafMap[node.id] = getCoreNodeAndSiblingLeaves(
+        calcGraph,
+        "leaf",
+        node,
+        nodeClusterBy
+      );
     }
   });
   return sameTypeLeafMap;
-}
+};
 
 /**
  * Find the successor or predecessor of node as coreNode, the sibling leaf nodes
@@ -684,16 +818,16 @@ const getSameTypeLeafMap = (
  */
 const getCoreNodeAndSiblingLeaves = (
   calcGraph: CalcGraph,
-  type: 'leaf' | 'all',
+  type: "leaf" | "all",
   node: Node,
   nodeClusterBy: string
 ): {
-  coreNode: Node,
-  siblingLeaves: Node[],
-  sameTypeLeaves: Node[]
+  coreNode: Node;
+  siblingLeaves: Node[];
+  sameTypeLeaves: Node[];
 } => {
-  const inDegree = calcGraph.getDegree(node.id, 'in');
-  const outDegree = calcGraph.getDegree(node.id, 'out');
+  const inDegree = calcGraph.getDegree(node.id, "in");
+  const outDegree = calcGraph.getDegree(node.id, "out");
   // node is not a leaf, coreNode is itself, siblingLeaves is empty
   let coreNode: Node = node;
   let siblingLeaves: Node[] = [];
@@ -708,9 +842,17 @@ const getCoreNodeAndSiblingLeaves = (
   }
   // siblingLeaves are leaf nodes
   siblingLeaves = siblingLeaves.filter(
-    (node) => calcGraph.getDegree(node.id, 'in') === 0 || calcGraph.getDegree(node.id, 'out') === 0
+    (node) =>
+      calcGraph.getDegree(node.id, "in") === 0 ||
+      calcGraph.getDegree(node.id, "out") === 0
   );
-  const sameTypeLeaves = getSameTypeNodes(calcGraph, type, nodeClusterBy, node, siblingLeaves);
+  const sameTypeLeaves = getSameTypeNodes(
+    calcGraph,
+    type,
+    nodeClusterBy,
+    node,
+    siblingLeaves
+  );
   return { coreNode, siblingLeaves, sameTypeLeaves };
 };
 
@@ -723,11 +865,23 @@ const getCoreNodeAndSiblingLeaves = (
  * @param relativeNodes node's related ndoes to be filtered
  * @returns related nodes that meet the filtering conditions
  */
-const getSameTypeNodes = (calcGraph: CalcGraph, type: 'leaf' | 'all', nodeClusterBy: string, node: Node, relativeNodes: Node[]) => {
-  const typeName = node.data[nodeClusterBy] || '';
-  let sameTypeNodes = relativeNodes?.filter((item) => item.data[nodeClusterBy] === typeName) || [];
-  if (type === 'leaf') {
-    sameTypeNodes = sameTypeNodes.filter((item) => calcGraph.getDegree(item.id, 'in') === 0 || calcGraph.getDegree(item.id, 'out') === 0);
+const getSameTypeNodes = (
+  calcGraph: CalcGraph,
+  type: "leaf" | "all",
+  nodeClusterBy: string,
+  node: Node,
+  relativeNodes: Node[]
+) => {
+  const typeName = node.data[nodeClusterBy] || "";
+  let sameTypeNodes =
+    relativeNodes?.filter((item) => item.data[nodeClusterBy] === typeName) ||
+    [];
+  if (type === "leaf") {
+    sameTypeNodes = sameTypeNodes.filter(
+      (item) =>
+        calcGraph.getDegree(item.id, "in") === 0 ||
+        calcGraph.getDegree(item.id, "out") === 0
+    );
   }
   return sameTypeNodes;
 };
@@ -758,15 +912,16 @@ const getAvgNodePosition = (nodes: CalcNode[]): Point => {
  * @param layoutNodes calculation nodes
  * @returns output nodes
  */
-const formatOutNodes = (graph: Graph, layoutNodes: CalcNode[]): OutNode[] => layoutNodes.map(calcNode => {
-  const { id, data } = calcNode;
-  const node = graph.getNode(id);
-  return {
-    ...node,
-    data: {
-      ...node.data,
-      x: data.x,
-      y: data.y
-    }
-  } as OutNode
-});
+const formatOutNodes = (graph: Graph, layoutNodes: CalcNode[]): OutNode[] =>
+  layoutNodes.map((calcNode) => {
+    const { id, data } = calcNode;
+    const node = graph.getNode(id);
+    return {
+      ...node,
+      data: {
+        ...node.data,
+        x: data.x,
+        y: data.y,
+      },
+    } as OutNode;
+  });

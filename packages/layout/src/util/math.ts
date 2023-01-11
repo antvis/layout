@@ -154,8 +154,6 @@ export const getLayoutBBox = (nodes: OutNode[]) => {
   });
   return { minX, minY, maxX, maxY };
 };
-<<<<<<< HEAD
-=======
 
 /**
  * 获取节点集合的平均位置信息
@@ -288,4 +286,3 @@ export const getCoreNodeAndRelativeLeafNodes = (
 export const getEuclideanDistance = (p1: Point, p2: Point) => Math.sqrt(
   (p1.x - p2.x) * (p1.x - p2.x) + (p1.y - p2.y) * (p1.y - p2.y)
 );
->>>>>>> v5
