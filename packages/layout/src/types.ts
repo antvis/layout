@@ -128,7 +128,7 @@ export interface ConcentricLayoutOptions extends CommonOptions {
   sortBy?: string;
   width?: number;
   height?: number;
-  nodeSpacing: number | number[] | ((node?: Node) => number) | undefined;
+  nodeSpacing?: number | number[] | ((node?: Node) => number) | undefined;
 }
 
 export interface RadialLayoutOptions extends CommonOptions {

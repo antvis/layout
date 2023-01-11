@@ -137,6 +137,11 @@ export class Supervisor extends EventEmitter implements LayoutSupervisor {
 
     this.worker.calculateLayout(payload, [arraybufferWithNodesEdges]).then(([positions, transferables]: [LayoutMapping, Float32Array[]]) => {
       this.emit(SupervisorEvent.LAYOUT_END, positions);
+
+      // Trigger `onLayoutEnd` callback on main thread.
+      if (this.layout.options.onLayoutEnd) {
+        this.layout.options.onLayoutEnd(positions);
+      }
     });
 
     return this;

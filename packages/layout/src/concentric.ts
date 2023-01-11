@@ -215,9 +215,10 @@ export class ConcentricLayout implements SyncLayout<ConcentricLayoutOptions> {
     }
 
     const maxValueNode = layoutNodes[0];
-
-    const maxLevelDiff =
-      propsMaxLevelDiff || (maxValueNode as any).data[sortBy] / 4;
+    const maxLevelDiff = 
+      (propsMaxLevelDiff || (
+        sortBy === 'degree' ? 
+          graph.getDegree(maxValueNode.id, "both") : (maxValueNode as any).data[sortBy])) / 4;
 
     // put the values into levels
     const levels: {
@@ -228,9 +229,12 @@ export class ConcentricLayout implements SyncLayout<ConcentricLayoutOptions> {
     let currentLevel = levels[0];
     layoutNodes.forEach((node) => {
       if (currentLevel.nodes.length > 0) {
-        const diff = Math.abs(
+        const diff = sortBy === 'degree' ?  Math.abs(
+          graph.getDegree(currentLevel.nodes[0].id, 'both') - graph.getDegree(node.id, 'both')
+        ) :  Math.abs(
           currentLevel.nodes[0].data[sortBy] as number - (node as any).data[sortBy]
         );
+
         if (maxLevelDiff && diff >= maxLevelDiff) {
           currentLevel = { nodes: [] };
           levels.push(currentLevel);
