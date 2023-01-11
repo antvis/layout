@@ -193,9 +193,6 @@ export class ConcentricLayout implements SyncLayout<ConcentricLayoutOptions> {
       nodeIdxMap[node.id] = i;
     });
 
-    // degree cache map
-    const degreeIdxMap: IndexMap = {};
-
     // get the node degrees
     let sortBy = propsSortBy!;
     if (
@@ -205,12 +202,9 @@ export class ConcentricLayout implements SyncLayout<ConcentricLayoutOptions> {
       sortBy = "degree";
     }
     if (sortBy === "degree") {
-      layoutNodes.forEach((node) => {
-        degreeIdxMap[node.id] = graph.getDegree(node.id, "both");
-      });
       layoutNodes.sort(
         (n1: Node, n2: Node) =>
-          degreeIdxMap[n2.id] - degreeIdxMap[n1.id]
+          graph.getDegree(n2.id, "both") - graph.getDegree(n1.id, "both")
       );
     } else {
       // sort nodes by value
@@ -221,9 +215,10 @@ export class ConcentricLayout implements SyncLayout<ConcentricLayoutOptions> {
     }
 
     const maxValueNode = layoutNodes[0];
-
-    const maxLevelDiff =
-      propsMaxLevelDiff || (maxValueNode as any).data[sortBy] / 4;
+    const maxLevelDiff = 
+      (propsMaxLevelDiff || (
+        sortBy === 'degree' ? 
+          graph.getDegree(maxValueNode.id, "both") : (maxValueNode as any).data[sortBy])) / 4;
 
     // put the values into levels
     const levels: {
@@ -234,18 +229,10 @@ export class ConcentricLayout implements SyncLayout<ConcentricLayoutOptions> {
     let currentLevel = levels[0];
     layoutNodes.forEach((node) => {
       if (currentLevel.nodes.length > 0) {
-        let currentLevelNodeValue: number;
-        let currentNodeValue: number;
-        if (sortBy === 'degree') {
-          currentLevelNodeValue = degreeIdxMap[currentLevel.nodes[0].id];
-          currentNodeValue = degreeIdxMap[node.id];
-        } else {
-          currentLevelNodeValue = currentLevel.nodes[0].data[sortBy] as number;
-          currentNodeValue = node.data[sortBy] as number;
-        }
-
-        const diff = Math.abs(
-          currentLevelNodeValue - currentNodeValue
+        const diff = sortBy === 'degree' ?  Math.abs(
+          graph.getDegree(currentLevel.nodes[0].id, 'both') - graph.getDegree(node.id, 'both')
+        ) :  Math.abs(
+          currentLevel.nodes[0].data[sortBy] as number - (node as any).data[sortBy]
         );
 
         if (maxLevelDiff && diff >= maxLevelDiff) {
