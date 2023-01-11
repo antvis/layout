@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,shrink-to-fit=no"
+    />
+    <title>D3Force</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      html,
+      body {
+        height: 100%;
+      }
+
+      #container {
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="container"></div>
+    <script
+      src="https://unpkg.com/@antv/g"
+      type="application/javascript"
+    ></script>
+    <script
+      src="https://unpkg.com/@antv/g-canvas"
+      type="application/javascript"
+    ></script>
+    <script
+      src="https://unpkg.com/@antv/g-plugin-dragndrop"
+      type="application/javascript"
+    ></script>
+    <script
+      src="https://unpkg.com/@antv/graphlib@2.0.0-alpha.2"
+      type="application/javascript"
+    ></script>
+    <script
+      src="../packages/layout/dist/index.min.js"
+      type="application/javascript"
+    ></script>
+    <script>
+      const { Graph } = window.GraphLib;
+      const { D3ForceLayout } = window.Layout;
+
+      fetch(
+        "https://gw.alipayobjects.com/os/antvdemo/assets/data/relations.json"
+      )
+        .then((res) => res.json())
+        .then((d) => {
+          const data = {
+            nodes: [
+              {
+                id: "0",
+                label: "0",
+              },
+              {
+                id: "1",
+                label: "1",
+              },
+              {
+                id: "2",
+                label: "2",
+              },
+              {
+                id: "3",
+                label: "3",
+              },
+              {
+                id: "4",
+                label: "4",
+              },
+              {
+                id: "5",
+                label: "5",
+              },
+              {
+                id: "6",
+                label: "6",
+              },
+              {
+                id: "7",
+                label: "7",
+              },
+              {
+                id: "8",
+                label: "8",
+              },
+              {
+                id: "9",
+                label: "9",
+              },
+            ],
+            edges: [
+              {
+                source: "0",
+                target: "1",
+              },
+              {
+                source: "0",
+                target: "2",
+              },
+              {
+                source: "0",
+                target: "3",
+              },
+              {
+                source: "0",
+                target: "4",
+              },
+              {
+                source: "0",
+                target: "5",
+              },
+              {
+                source: "0",
+                target: "7",
+              },
+              {
+                source: "0",
+                target: "8",
+              },
+              {
+                source: "0",
+                target: "9",
+              },
+              {
+                source: "2",
+                target: "3",
+              },
+              {
+                source: "4",
+                target: "5",
+              },
+              {
+                source: "4",
+                target: "6",
+              },
+              {
+                source: "5",
+                target: "6",
+              },
+            ],
+          };
+
+          const { Circle, Line, Canvas } = window.G;
+          // create a renderer
+          const canvasRenderer = new window.G.Canvas2D.Renderer();
+          const plugin = new window.G.Dragndrop.Plugin();
+          canvasRenderer.registerPlugin(plugin);
+
+          // create a canvas
+          const canvas = new Canvas({
+            container: "container",
+            width: 500,
+            height: 500,
+            renderer: canvasRenderer,
+          });
+
+          const graph = new Graph({
+            nodes: data.nodes,
+            edges: data.edges.map((edge, i) => ({ id: i, ...edge })),
+          });
+
+          const grid = new D3ForceLayout();
+
+          let rendered = false;
+          const nodes = [];
+          const edges = [];
+          grid.execute(graph, {
+            center: [200, 200], // The center of the graph by default
+            preventOverlap: true,
+            nodeSize: 20,
+            onTick: (positions) => {
+              positions.edges.forEach(({ source, target }, i) => {
+                const sourceNode = positions.nodes.find(
+                  ({ id }) => id === source
+                );
+                const targetNode = positions.nodes.find(
+                  ({ id }) => id === target
+                );
+
+                if (!rendered) {
+                  const line = new Line({
+                    style: {
+                      x1: sourceNode.data.x,
+                      y1: sourceNode.data.y,
+                      x2: targetNode.data.x,
+                      y2: targetNode.data.y,
+                      lineWidth: 1,
+                      stroke: "grey",
+                    },
+                  });
+                  canvas.appendChild(line);
+                  edges.push(line);
+                } else {
+                  edges[i].attr({
+                    x1: sourceNode.data.x,
+                    y1: sourceNode.data.y,
+                    x2: targetNode.data.x,
+                    y2: targetNode.data.y,
+                  });
+                }
+              });
+
+              positions.nodes.forEach((node, i) => {
+                if (!rendered) {
+                  const circle = new Circle({
+                    style: {
+                      cx: node.data.x,
+                      cy: node.data.y,
+                      r: 6,
+                      fill: "#1890FF",
+                      stroke: "#F04864",
+                      lineWidth: 2,
+                    },
+                  });
+                  canvas.appendChild(circle);
+                  nodes.push(circle);
+                } else {
+                  nodes[i].attr({
+                    cx: node.data.x,
+                    cy: node.data.y,
+                  });
+                }
+              });
+
+              if (!rendered) {
+                rendered = true;
+              }
+            },
+            onLayoutEnd: (positions) => {
+              console.log(positions);
+            },
+          });
+        });
+    </script>
+  </body>
+</html>

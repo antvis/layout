@@ -88,7 +88,7 @@ function accumulate(quad) {
 
 // @ts-ignore
 const apply = (
-  quad,
+  quad: any,
   x1: number,
   y1: number,
   x2: number,

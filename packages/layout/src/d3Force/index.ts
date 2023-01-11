@@ -6,6 +6,7 @@ import {
   OutNode,
   D3ForceLayoutOptions,
   SyncLayout,
+  Edge,
 } from "../types";
 import { isArray, isFunction, isNumber, isObject } from "../util";
 import forceInBox from "./forceInBox";
@@ -91,19 +92,21 @@ export class D3ForceLayout implements SyncLayout<D3ForceLayoutOptions> {
     let nodes = graph.getAllNodes();
     let edges = graph.getAllEdges();
     if (!layoutInvisibles) {
-      nodes = nodes.filter(
-        (node) => node.data.visible || node.data.visible === undefined
-      );
-      edges = edges.filter(
-        (edge) => edge.data.visible || edge.data.visible === undefined
-      );
+      nodes = nodes.filter((node) => {
+        const { visible } = node.data || {};
+        return visible || visible === undefined;
+      });
+      edges = edges.filter((edge) => {
+        const { visible } = edge.data || {};
+        return visible || visible === undefined;
+      });
     }
     const layoutNodes: CalcNode[] = nodes.map(
       (node) =>
         ({
           ...node,
-          x: node.data.x,
-          y: node.data.y,
+          x: node.data?.x,
+          y: node.data?.y,
         } as CalcNode)
     );
 
@@ -195,14 +198,14 @@ export class D3ForceLayout implements SyncLayout<D3ForceLayoutOptions> {
           .on("tick", () => {
             onTick?.({
               nodes: formatOutNodes(layoutNodes),
-              edges,
+              edges: formatOutEdges(edges),
             });
           })
           .on("end", () => {
             this.running = false;
             onLayoutEnd?.({
               nodes: formatOutNodes(layoutNodes),
-              edges,
+              edges: formatOutEdges(edges),
             });
           });
         this.running = true;
@@ -259,7 +262,9 @@ export class D3ForceLayout implements SyncLayout<D3ForceLayoutOptions> {
       nodes: outNodes,
       edges,
     };
-    onLayoutEnd?.(result);
+
+    // FIXME: should not trigger this callback twice
+    // onLayoutEnd?.(result);
 
     return result;
   }
@@ -344,5 +349,18 @@ const formatOutNodes = (layoutNodes: CalcNode[]): OutNode[] =>
         x,
         y,
       },
+    };
+  });
+
+/**
+ * d3 will modify `source` and `target` on edge object.
+ */
+const formatOutEdges = (edges: any[]): Edge[] =>
+  edges.map((edge) => {
+    const { source, target, ...rest } = edge;
+    return {
+      ...rest,
+      source: source.id,
+      target: target.id,
     };
   });
