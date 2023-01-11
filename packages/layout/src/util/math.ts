@@ -5,6 +5,7 @@ import type {
   Node,
   OutNode,
   Degree,
+  Point,
 } from "../types";
 import { isArray } from "./array";
 import { isNumber } from "./number";
@@ -329,3 +330,13 @@ export const getCoreNodeAndRelativeLeafNodes = (
   );
   return { coreNode, relativeLeafNodes, sameTypeLeafNodes };
 };
+
+/**
+ * calculate the euclidean distance form p1 to p2
+ * @param p1 
+ * @param p2 
+ * @returns 
+ */
+export const getEuclideanDistance = (p1: Point, p2: Point) => Math.sqrt(
+  (p1.x - p2.x) * (p1.x - p2.x) + (p1.y - p2.y) * (p1.y - p2.y)
+);
