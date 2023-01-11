@@ -8,7 +8,13 @@ import {
   SyncLayout,
   Edge,
 } from "../types";
-import { isArray, isFunction, isNumber, isObject } from "../util";
+import {
+  cloneFormatData,
+  isArray,
+  isFunction,
+  isNumber,
+  isObject,
+} from "../util";
 import forceInBox from "./forceInBox";
 
 /**
@@ -104,11 +110,12 @@ export class D3ForceLayout implements SyncLayout<D3ForceLayoutOptions> {
     const layoutNodes: CalcNode[] = nodes.map(
       (node) =>
         ({
-          ...node,
+          ...cloneFormatData(node),
           x: node.data?.x,
           y: node.data?.y,
         } as CalcNode)
     );
+    const layoutEdges: Edge[] = edges.map((edge) => cloneFormatData(edge));
 
     if (this.running) return;
 
@@ -150,8 +157,8 @@ export class D3ForceLayout implements SyncLayout<D3ForceLayoutOptions> {
             .centerY(center[1])
             .template("force")
             .strength(clusterFociStrength);
-          if (edges) {
-            clusterForce.links(edges);
+          if (layoutEdges) {
+            clusterForce.links(layoutEdges);
           }
           if (layoutNodes) {
             clusterForce.nodes(layoutNodes);
@@ -179,12 +186,12 @@ export class D3ForceLayout implements SyncLayout<D3ForceLayoutOptions> {
           });
         }
         // 如果有边，定义边的力
-        if (edges) {
+        if (layoutEdges) {
           // d3 的 forceLayout 会重新生成边的数据模型，为了避免污染源数据
           const edgeForce = d3Force
             .forceLink()
             .id((d: any) => d.id)
-            .links(edges);
+            .links(layoutEdges);
           if (edgeStrength) {
             edgeForce.strength(edgeStrength as any);
           }
@@ -198,14 +205,14 @@ export class D3ForceLayout implements SyncLayout<D3ForceLayoutOptions> {
           .on("tick", () => {
             onTick?.({
               nodes: formatOutNodes(layoutNodes),
-              edges: formatOutEdges(edges),
+              edges: formatOutEdges(layoutEdges),
             });
           })
           .on("end", () => {
             this.running = false;
             onLayoutEnd?.({
               nodes: formatOutNodes(layoutNodes),
-              edges: formatOutEdges(edges),
+              edges: formatOutEdges(layoutEdges),
             });
           });
         this.running = true;
@@ -218,15 +225,15 @@ export class D3ForceLayout implements SyncLayout<D3ForceLayoutOptions> {
       if (clustering) {
         const clusterForce = forceInBox() as any;
         clusterForce.nodes(layoutNodes);
-        clusterForce.links(edges);
+        clusterForce.links(layoutEdges);
       }
       forceSimulation.nodes(layoutNodes);
-      if (edges) {
+      if (layoutEdges) {
         // d3 的 forceLayout 会重新生成边的数据模型，为了避免污染源数据
         const edgeForce = d3Force
           .forceLink()
           .id((d: any) => d.id)
-          .links(edges);
+          .links(layoutEdges);
         if (edgeStrength) {
           edgeForce.strength(edgeStrength as any);
         }
@@ -248,6 +255,7 @@ export class D3ForceLayout implements SyncLayout<D3ForceLayoutOptions> {
 
     // since d3 writes x and y as node's first level properties, format them into data
     const outNodes = formatOutNodes(layoutNodes);
+    const outEdges = formatOutEdges(layoutEdges);
 
     if (assign) {
       outNodes.forEach((node) =>
@@ -260,7 +268,7 @@ export class D3ForceLayout implements SyncLayout<D3ForceLayoutOptions> {
 
     const result = {
       nodes: outNodes,
-      edges,
+      edges: outEdges,
     };
 
     // FIXME: should not trigger this callback twice
