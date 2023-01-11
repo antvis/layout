@@ -6,7 +6,7 @@
       name="viewport"
       content="width=device-width,initial-scale=1,shrink-to-fit=no"
     />
-    <title>Circular</title>
+    <title>MDS</title>
     <style>
       * {
         box-sizing: border-box;
@@ -46,7 +46,7 @@
     ></script>
     <script>
       const { Graph } = window.GraphLib;
-      const { CircularLayout } = window.Layout;
+      const { MDSLayout } = window.Layout;
 
       const data = {
         nodes: [
@@ -891,12 +891,12 @@
         edges: data.edges,
       });
 
-      const circular = new CircularLayout({
+      const mds = new MDSLayout({
         center: [250, 250],
-        radius: 200,
+        linkDistance: 50,
       });
 
-      const positions = circular.execute(graph);
+      const positions = mds.execute(graph);
       console.log(positions);
 
       const { Circle, Canvas } = window.G;

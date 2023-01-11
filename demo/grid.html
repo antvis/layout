@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,shrink-to-fit=no"
+    />
+    <title>Grid</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      html,
+      body {
+        height: 100%;
+      }
+
+      #container {
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="container"></div>
+    <script
+      src="https://unpkg.com/@antv/g"
+      type="application/javascript"
+    ></script>
+    <script
+      src="https://unpkg.com/@antv/g-canvas"
+      type="application/javascript"
+    ></script>
+    <script
+      src="https://unpkg.com/@antv/graphlib@2.0.0-alpha.2"
+      type="application/javascript"
+    ></script>
+    <script
+      src="../packages/layout/dist/index.min.js"
+      type="application/javascript"
+    ></script>
+    <script>
+      const { Graph } = window.GraphLib;
+      const { GridLayout } = window.Layout;
+
+      const data = {
+        nodes: [
+          { id: "0", data: {} },
+          { id: "1", data: {} },
+          { id: "2", data: {} },
+          { id: "3", data: {} },
+          { id: "4", data: {} },
+          { id: "5", data: {} },
+          { id: "6", data: {} },
+          { id: "7", data: {} },
+        ],
+        edges: [
+          { id: "e0", source: "0", target: "1", data: {} },
+          { id: "e1", source: "1", target: "2", data: {} },
+          { id: "e2", source: "2", target: "3", data: {} },
+          { id: "e3", source: "3", target: "4", data: {} },
+          { id: "e4", source: "5", target: "6", data: {} },
+          { id: "e5", source: "6", target: "7", data: {} },
+        ],
+      };
+
+      const graph = new Graph({
+        nodes: data.nodes,
+        edges: data.edges,
+      });
+
+      const grid = new GridLayout({
+        cols: 2,
+        sortBy: "id",
+        begin: [10, 20],
+      });
+
+      const positions = grid.execute(graph);
+
+      const { Circle, Line, Text, Canvas } = window.G;
+
+      // create a renderer
+      const canvasRenderer = new window.G.Canvas2D.Renderer();
+
+      // create a canvas
+      const canvas = new Canvas({
+        container: "container",
+        width: 500,
+        height: 500,
+        renderer: canvasRenderer,
+      });
+
+      canvas.addEventListener("ready", () => {
+        positions.edges.forEach(({ source, target }) => {
+          const sourceNode = positions.nodes.find(({ id }) => id === source);
+          const targetNode = positions.nodes.find(({ id }) => id === target);
+          const line = new Line({
+            style: {
+              x1: sourceNode.data.x,
+              y1: sourceNode.data.y,
+              x2: targetNode.data.x,
+              y2: targetNode.data.y,
+              lineWidth: 1,
+              stroke: "grey",
+            },
+          });
+          canvas.appendChild(line);
+        });
+
+        positions.nodes.forEach((node) => {
+          const circle = new Circle({
+            style: {
+              cx: node.data.x,
+              cy: node.data.y,
+              r: 10,
+              fill: "#1890FF",
+              stroke: "#F04864",
+              lineWidth: 4,
+            },
+          });
+          canvas.appendChild(circle);
+
+          const text = new Text({
+            style: {
+              x: node.data.x,
+              y: node.data.y,
+              text: node.data.name || node.id,
+              fontSize: 12,
+              textAlign: "center",
+              textBaseline: "middle",
+            },
+          });
+          canvas.appendChild(text);
+        });
+      });
+    </script>
+  </body>
+</html>

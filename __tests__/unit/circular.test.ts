@@ -1,4 +1,3 @@
-// import { jest } from "@jest/globals";
 import { Graph } from "@antv/graphlib";
 import { CircularLayout } from "@antv/layout";
 import dataset from "../data";

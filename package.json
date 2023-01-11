@@ -23,7 +23,8 @@
     "precommit": "lint-staged",
     "release": "release-it",
     "test": "jest",
-    "coverage": "jest --coverage"
+    "coverage": "jest --coverage",
+    "test-live": "DEBUG_MODE=1 jest --watch ./__tests__/unit/radial.test.ts"
   },
   "lint-staged": {
     "*.js": [
@@ -60,7 +61,8 @@
     "tslint-config-airbnb": "^5.11.2",
     "tslint-config-prettier": "^1.18.0",
     "tslint-eslint-rules": "^5.4.0",
-    "typescript": "^4.0.3"
+    "typescript": "^4.0.3",
+    "@antv/graphlib": "^2.0.0-alpha.1"
   },
   "release-it": {
     "git": {

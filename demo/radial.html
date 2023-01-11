@@ -6,7 +6,7 @@
       name="viewport"
       content="width=device-width,initial-scale=1,shrink-to-fit=no"
     />
-    <title>Circular</title>
+    <title>Radail</title>
     <style>
       * {
         box-sizing: border-box;
@@ -46,7 +46,7 @@
     ></script>
     <script>
       const { Graph } = window.GraphLib;
-      const { CircularLayout } = window.Layout;
+      const { RadialLayout } = window.Layout;
 
       const data = {
         nodes: [
@@ -891,12 +891,15 @@
         edges: data.edges,
       });
 
-      const circular = new CircularLayout({
-        center: [250, 250],
-        radius: 200,
+      const radial = new RadialLayout({
+        width: 500,
+        height: 600,
+        focusNode: 'Australia',
+        unitRadius: 100,
+        linkDistance: 100,
       });
 
-      const positions = circular.execute(graph);
+      const positions = radial.execute(graph);
       console.log(positions);
 
       const { Circle, Canvas } = window.G;

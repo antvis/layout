@@ -100,7 +100,6 @@ export interface GridLayoutOptions extends CommonOptions {
   rows?: number;
   cols?: number;
   sortBy?: string;
-  columns?: number | undefined;
   position?: ((node?: Node) => { row?: number; col?: number }) | undefined;
   nodeSpacing?: ((node?: Node) => number) | number | undefined;
 }
@@ -129,7 +128,7 @@ export interface ConcentricLayoutOptions extends CommonOptions {
   sortBy?: string;
   width?: number;
   height?: number;
-  nodeSpacing: number | number[] | ((node?: Node) => number) | undefined;
+  nodeSpacing?: number | number[] | ((node?: Node) => number) | undefined;
 }
 
 export interface RadialLayoutOptions extends CommonOptions {

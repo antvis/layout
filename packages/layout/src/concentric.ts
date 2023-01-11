@@ -9,7 +9,7 @@ import type {
   IndexMap,
 } from "./types";
 import {
-  clone,
+  cloneFormatData,
   isArray,
   isFunction,
   isNumber,
@@ -51,7 +51,10 @@ export class ConcentricLayout implements SyncLayout<ConcentricLayoutOptions> {
   constructor(
     public options: ConcentricLayoutOptions = {} as ConcentricLayoutOptions
   ) {
-    Object.assign(this.options, DEFAULTS_LAYOUT_OPTIONS, options);
+    this.options = {
+      ...DEFAULTS_LAYOUT_OPTIONS,
+      ...options
+    };
   }
 
   /**
@@ -94,13 +97,16 @@ export class ConcentricLayout implements SyncLayout<ConcentricLayoutOptions> {
     let nodes = graph.getAllNodes();
     let edges = graph.getAllEdges();
 
+    // TODO: use graphlib's view with filter after graphlib supports it
     if (!layoutInvisibles) {
-      nodes = nodes.filter(
-        (node) => node.data.visible || node.data.visible === undefined
-      );
-      edges = edges.filter(
-        (edge) => edge.data.visible || edge.data.visible === undefined
-      );
+      nodes = nodes.filter((node) => {
+        const { visible } = node.data || {};
+        return visible || visible === undefined;
+      });
+      edges = edges.filter((edge) => {
+        const { visible } = edge.data || {};
+        return visible || visible === undefined;
+      });
     }
 
     const n = nodes.length;
@@ -160,16 +166,18 @@ export class ConcentricLayout implements SyncLayout<ConcentricLayoutOptions> {
       maxNodeSpacing = nodeSpacing;
     }
     nodes.forEach((node) => {
-      layoutNodes.push(clone(node) as OutNode);
+      const cnode = cloneFormatData(node) as OutNode;
+      layoutNodes.push(cnode);
       let nodeSize: number = maxNodeSize;
-      if (isArray(node.data.size)) {
-        nodeSize = Math.max(node.data.size[0], node.data.size[1]);
-      } else if (isNumber(node.data.size)) {
-        nodeSize = node.data.size;
-      } else if (isObject(node.data.size)) {
+      const { data } = cnode;
+      if (isArray(data.size)) {
+        nodeSize = Math.max(data.size[0], data.size[1]);
+      } else if (isNumber(data.size)) {
+        nodeSize = data.size;
+      } else if (isObject(data.size)) {
         nodeSize = Math.max(
-          (node.data.size as any).width,
-          (node.data.size as any).height
+          (data.size as any).width,
+          (data.size as any).height
         );
       }
       maxNodeSize = Math.max(maxNodeSize, nodeSize);
@@ -207,9 +215,10 @@ export class ConcentricLayout implements SyncLayout<ConcentricLayoutOptions> {
     }
 
     const maxValueNode = layoutNodes[0];
-
-    const maxLevelDiff =
-      propsMaxLevelDiff || (maxValueNode as any).data[sortBy] / 4;
+    const maxLevelDiff = 
+      (propsMaxLevelDiff || (
+        sortBy === 'degree' ? 
+          graph.getDegree(maxValueNode.id, "both") : (maxValueNode as any).data[sortBy])) / 4;
 
     // put the values into levels
     const levels: {
@@ -220,9 +229,12 @@ export class ConcentricLayout implements SyncLayout<ConcentricLayoutOptions> {
     let currentLevel = levels[0];
     layoutNodes.forEach((node) => {
       if (currentLevel.nodes.length > 0) {
-        const diff = Math.abs(
+        const diff = sortBy === 'degree' ?  Math.abs(
+          graph.getDegree(currentLevel.nodes[0].id, 'both') - graph.getDegree(node.id, 'both')
+        ) :  Math.abs(
           currentLevel.nodes[0].data[sortBy] as number - (node as any).data[sortBy]
         );
+
         if (maxLevelDiff && diff >= maxLevelDiff) {
           currentLevel = { nodes: [] };
           levels.push(currentLevel);
