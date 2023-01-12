@@ -6,7 +6,7 @@
       name="viewport"
       content="width=device-width,initial-scale=1,shrink-to-fit=no"
     />
-    <title>Radial</title>
+    <title>Fruchterman</title>
     <style>
       * {
         box-sizing: border-box;
@@ -46,7 +46,7 @@
     ></script>
     <script>
       const { Graph } = window.GraphLib;
-      const { RadialLayout } = window.Layout;
+      const { FruchtermanLayout } = window.Layout;
 
       const data = {
         nodes: [
@@ -891,15 +891,12 @@
         edges: data.edges,
       });
 
-      const radial = new RadialLayout({
+      const fruchterman = new FruchtermanLayout({
         width: 500,
         height: 600,
-        focusNode: 'Australia',
-        unitRadius: 100,
-        linkDistance: 100,
       });
 
-      const positions = radial.execute(graph);
+      const positions = fruchterman.execute(graph);
       console.log(positions);
 
       const { Circle, Canvas } = window.G;

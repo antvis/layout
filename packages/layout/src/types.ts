@@ -249,3 +249,17 @@ export interface ForceLayoutOptions extends CommonOptions {
     iterations: number;
   }) => void;
 }
+
+export interface FruchtermanLayoutOptions extends CommonOptions {
+  center?: PointTuple;
+  maxIteration?: number;
+  width?: number;
+  height?: number;
+  gravity?: number;
+  speed?: number;
+  clustering?: boolean;
+  clusterGravity?: number;
+  animate?: boolean;
+  nodeClusterBy?: string;
+  onTick?: (data: LayoutMapping) => void;
+}
