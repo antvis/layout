@@ -31,23 +31,23 @@ interface ClusterMap {
     cx: number,
     cy: number,
     count: number
-  }
+  };
 }
 
 type CalcGraph = IGraph<OutNodeData, EdgeData>;
 
 type DisplacementMap = {
   [id: string]: Point
-}
+};
 
 interface FormattedOptions extends FruchtermanLayoutOptions {
-  width: number,
-  height: number,
-  center: PointTuple,
-  maxIteration: number,
-  nodeClusterBy: string,
-  gravity: number,
-  speed: number
+  width: number;
+  height: number;
+  center: PointTuple;
+  maxIteration: number;
+  nodeClusterBy: string;
+  gravity: number;
+  speed: number;
 }
 
 /**
@@ -129,7 +129,7 @@ export class FruchtermanLayout implements SyncLayout<FruchtermanLayoutOptions> {
     }
 
     if (!nodes?.length) {
-      const result = { nodes: [], edges }
+      const result = { nodes: [], edges };
       onLayoutEnd?.(result);
       return result;
     }
@@ -159,7 +159,7 @@ export class FruchtermanLayout implements SyncLayout<FruchtermanLayoutOptions> {
       return result;
     }
 
-    const layoutNodes: OutNode[] = nodes.map(node => cloneFormatData(node, [width, height]) as OutNode);
+    const layoutNodes: OutNode[] = nodes.map((node) => cloneFormatData(node, [width, height]) as OutNode);
     const calcGraph = new IGraph<OutNodeData, EdgeData>({
       nodes: layoutNodes,
       edges,
@@ -168,7 +168,7 @@ export class FruchtermanLayout implements SyncLayout<FruchtermanLayoutOptions> {
     // clustering info
     const clusterMap: ClusterMap = {};
     if (clustering) {
-      layoutNodes.forEach(node => {
+      layoutNodes.forEach((node) => {
         const clusterValue = node.data[nodeClusterBy] as string;
         if (!clusterMap[clusterValue]) {
           clusterMap[clusterValue] = { name: clusterValue, cx: 0, cy: 0, count: 0 };
@@ -203,7 +203,7 @@ export class FruchtermanLayout implements SyncLayout<FruchtermanLayoutOptions> {
       };
       onLayoutEnd?.(result);
       return result;
-    } else {
+    }  {
       if (typeof window === "undefined") return;
       let iter = 0;
       // interval for render the result after each iteration
