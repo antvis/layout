@@ -61,93 +61,125 @@
             nodes: [
               {
                 id: "0",
-                label: "0",
+                data: {
+                  label: "0",
+                },
               },
               {
                 id: "1",
-                label: "1",
+                data: {
+                  label: "1",
+                },
               },
               {
                 id: "2",
-                label: "2",
+                data: {
+                  label: "2",
+                },
               },
               {
                 id: "3",
-                label: "3",
+                data: {
+                  label: "3",
+                },
               },
               {
                 id: "4",
-                label: "4",
+                data: {
+                  label: "4",
+                },
               },
               {
                 id: "5",
-                label: "5",
+                data: {
+                  label: "5",
+                },
               },
               {
                 id: "6",
-                label: "6",
+                data: {
+                  label: "6",
+                },
               },
               {
                 id: "7",
-                label: "7",
+                data: {
+                  label: "7",
+                },
               },
               {
                 id: "8",
-                label: "8",
+                data: {
+                  label: "8",
+                },
               },
               {
                 id: "9",
-                label: "9",
+                data: {
+                  label: "9",
+                },
               },
             ],
             edges: [
               {
                 source: "0",
                 target: "1",
+                data: {},
               },
               {
                 source: "0",
                 target: "2",
+                data: {},
               },
               {
                 source: "0",
                 target: "3",
+                data: {},
               },
               {
                 source: "0",
                 target: "4",
+                data: {},
               },
               {
                 source: "0",
                 target: "5",
+                data: {},
               },
               {
                 source: "0",
                 target: "7",
+                data: {},
               },
               {
                 source: "0",
                 target: "8",
+                data: {},
               },
               {
                 source: "0",
                 target: "9",
+                data: {},
               },
               {
                 source: "2",
                 target: "3",
+                data: {},
               },
               {
                 source: "4",
                 target: "5",
+                data: {},
               },
               {
                 source: "4",
                 target: "6",
+                data: {},
               },
               {
                 source: "5",
                 target: "6",
+                data: {},
               },
             ],
           };
@@ -171,71 +203,115 @@
             edges: data.edges.map((edge, i) => ({ id: i, ...edge })),
           });
 
-          const grid = new D3ForceLayout();
+          const force = new D3ForceLayout();
 
           let rendered = false;
           const nodes = [];
           const edges = [];
-          grid.execute(graph, {
+
+          const createNodesEdges = (positions) => {
+            positions.edges.forEach(({ source, target }, i) => {
+              const sourceNode = positions.nodes.find(
+                ({ id }) => id === source
+              );
+              const targetNode = positions.nodes.find(
+                ({ id }) => id === target
+              );
+              const line = new Line({
+                style: {
+                  x1: sourceNode.data.x,
+                  y1: sourceNode.data.y,
+                  x2: targetNode.data.x,
+                  y2: targetNode.data.y,
+                  lineWidth: 1,
+                  stroke: "grey",
+                },
+              });
+              canvas.appendChild(line);
+              edges.push(line);
+            });
+
+            positions.nodes.forEach((node, i) => {
+              const circle = new Circle({
+                style: {
+                  cx: node.data.x,
+                  cy: node.data.y,
+                  r: 6,
+                  fill: "#1890FF",
+                  stroke: "#F04864",
+                  lineWidth: 2,
+                  draggable: true,
+                },
+              });
+              canvas.appendChild(circle);
+
+              let shiftX = 0;
+              let shiftY = 0;
+              function moveAt(target, canvasX, canvasY) {
+                graph.mergeNodeData(positions.nodes[i].id, {
+                  x: canvasX - shiftX,
+                  y: canvasY - shiftY,
+                });
+                force.stop();
+                force.assign(graph, {
+                  center: [200, 200], // The center of the graph by default
+                  preventOverlap: true,
+                  nodeSize: 20,
+                  onTick: (positions) => {
+                    updateNodesEdges(positions);
+                  },
+                });
+              }
+
+              circle.addEventListener("dragstart", function (e) {
+                const [x, y] = e.target.getPosition();
+                shiftX = e.canvasX - x;
+                shiftY = e.canvasY - y;
+
+                moveAt(e.target, e.canvasX, e.canvasY);
+              });
+              circle.addEventListener("drag", function (e) {
+                moveAt(e.target, e.canvasX, e.canvasY);
+              });
+              nodes.push(circle);
+            });
+          };
+
+          const updateNodesEdges = (positions) => {
+            positions.edges.forEach(({ source, target }, i) => {
+              const sourceNode = positions.nodes.find(
+                ({ id }) => id === source
+              );
+              const targetNode = positions.nodes.find(
+                ({ id }) => id === target
+              );
+
+              edges[i].attr({
+                x1: sourceNode.data.x,
+                y1: sourceNode.data.y,
+                x2: targetNode.data.x,
+                y2: targetNode.data.y,
+              });
+            });
+
+            positions.nodes.forEach((node, i) => {
+              nodes[i].attr({
+                cx: node.data.x,
+                cy: node.data.y,
+              });
+            });
+          };
+
+          force.assign(graph, {
             center: [200, 200], // The center of the graph by default
             preventOverlap: true,
             nodeSize: 20,
             onTick: (positions) => {
-              positions.edges.forEach(({ source, target }, i) => {
-                const sourceNode = positions.nodes.find(
-                  ({ id }) => id === source
-                );
-                const targetNode = positions.nodes.find(
-                  ({ id }) => id === target
-                );
-
-                if (!rendered) {
-                  const line = new Line({
-                    style: {
-                      x1: sourceNode.data.x,
-                      y1: sourceNode.data.y,
-                      x2: targetNode.data.x,
-                      y2: targetNode.data.y,
-                      lineWidth: 1,
-                      stroke: "grey",
-                    },
-                  });
-                  canvas.appendChild(line);
-                  edges.push(line);
-                } else {
-                  edges[i].attr({
-                    x1: sourceNode.data.x,
-                    y1: sourceNode.data.y,
-                    x2: targetNode.data.x,
-                    y2: targetNode.data.y,
-                  });
-                }
-              });
-
-              positions.nodes.forEach((node, i) => {
-                if (!rendered) {
-                  const circle = new Circle({
-                    style: {
-                      cx: node.data.x,
-                      cy: node.data.y,
-                      r: 6,
-                      fill: "#1890FF",
-                      stroke: "#F04864",
-                      lineWidth: 2,
-                    },
-                  });
-                  canvas.appendChild(circle);
-                  nodes.push(circle);
-                } else {
-                  nodes[i].attr({
-                    cx: node.data.x,
-                    cy: node.data.y,
-                  });
-                }
-              });
-
               if (!rendered) {
+                createNodesEdges(positions);
                 rendered = true;
+              } else {
+                updateNodesEdges(positions);
               }
             },
             onLayoutEnd: (positions) => {

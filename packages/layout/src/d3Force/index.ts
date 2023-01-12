@@ -62,6 +62,11 @@ const DEFAULTS_LAYOUT_OPTIONS: Partial<D3ForceLayoutOptions> = {
 export class D3ForceLayout implements SyncLayout<D3ForceLayoutOptions> {
   id = "d3force";
 
+  private forceSimulation: any;
+
+  /** The sign of running */
+  private running: boolean = false;
+
   constructor(
     public options: D3ForceLayoutOptions = {} as D3ForceLayoutOptions
   ) {
@@ -84,8 +89,19 @@ export class D3ForceLayout implements SyncLayout<D3ForceLayoutOptions> {
     this.genericForceLayout(true, graph, options);
   }
 
-  /** The sign of running */
-  private running: boolean;
+  /**
+   * Stop simulation immediately.
+   */
+  stop() {
+    if (this.forceSimulation?.stop) {
+      this.forceSimulation.stop();
+    }
+    this.running = false;
+  }
+
+  isRunning() {
+    return this.running;
+  }
 
   private genericForceLayout(
     assign: boolean,
@@ -203,17 +219,37 @@ export class D3ForceLayout implements SyncLayout<D3ForceLayoutOptions> {
 
         forceSimulation
           .on("tick", () => {
+            const outNodes = formatOutNodes(layoutNodes);
             onTick?.({
-              nodes: formatOutNodes(layoutNodes),
+              nodes: outNodes,
               edges: formatOutEdges(layoutEdges),
             });
+
+            if (assign) {
+              outNodes.forEach((node) =>
+                graph.mergeNodeData(node.id, {
+                  x: node.data.x,
+                  y: node.data.y,
+                })
+              );
+            }
           })
           .on("end", () => {
             this.running = false;
+            const outNodes = formatOutNodes(layoutNodes);
             onLayoutEnd?.({
-              nodes: formatOutNodes(layoutNodes),
+              nodes: outNodes,
               edges: formatOutEdges(layoutEdges),
             });
+
+            if (assign) {
+              outNodes.forEach((node) =>
+                graph.mergeNodeData(node.id, {
+                  x: node.data.x,
+                  y: node.data.y,
+                })
+              );
+            }
           });
         this.running = true;
       } catch (e) {
@@ -252,6 +288,8 @@ export class D3ForceLayout implements SyncLayout<D3ForceLayoutOptions> {
       forceSimulation.alpha(alpha).restart();
       this.running = true;
     }
+
+    this.forceSimulation = forceSimulation;
 
     // since d3 writes x and y as node's first level properties, format them into data
     const outNodes = formatOutNodes(layoutNodes);
