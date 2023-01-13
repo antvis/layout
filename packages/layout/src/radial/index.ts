@@ -458,10 +458,10 @@ const formatNodeSize = (
 
   if (!nodeSize) {
     nodeSizeFunc = (d: Node) => {
-      if (d.data.bboxSize) {
+      if (d.data?.bboxSize) {
         return Math.max(d.data.bboxSize[0], d.data.bboxSize[1]) + nodeSpacingFunc(d);
       }
-      if (d.data.size) {
+      if (d.data?.size) {
         if (isArray(d.data.size)) {
           return Math.max(d.data.size[0], d.data.size[1]) + nodeSpacingFunc(d);
         }  if (isObject(d.data.size)) {

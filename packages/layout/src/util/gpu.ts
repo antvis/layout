@@ -1,30 +1,4 @@
 import { OutNode, Edge, IndexMap } from "../types";
-import { isNumber } from "./";
-
-/**
- * 将 number | Function 类型的参数转换为 return number 的 Function
- * @param  {number | Function}  value 需要被转换的值
- * @param  {number}  defaultV 返回函数的默认返回值
- * @return {Function} 转换后的函数
- */
-export const proccessToFunc = (
-  value: number | Function | undefined,
-  defaultV?: number
-): ((d?: any) => number) => {
-  let func;
-  if (!value) {
-    func = () => {
-      return defaultV || 1;
-    };
-  } else if (isNumber(value)) {
-    func = () => {
-      return value;
-    };
-  } else {
-    func = value;
-  }
-  return func as (d?: any) => number;
-};
 
 /**
  * 将节点和边数据转换为 GPU 可读的数组。并返回 maxEdgePerVetex，每个节点上最多的边数
