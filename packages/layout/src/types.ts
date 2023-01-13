@@ -171,13 +171,16 @@ export interface DagreLayoutOptions extends CommonOptions {
 
 export interface D3ForceLayoutOptions extends CommonOptions {
   center?: PointTuple;
-  linkDistance?: number | ((d?: Edge) => number) | undefined;
-  edgeStrength?: number | ((d?: Edge) => number) | undefined;
-  nodeStrength?: number | ((d?: Node) => number) | undefined;
+  linkDistance?: number | ((edge?: Edge) => number) | undefined;
+  edgeStrength?: number | ((edge?: Edge) => number) | undefined;
+  nodeStrength?:
+    | number
+    | ((node: Node, i: number, nodes: Node[]) => number)
+    | undefined;
   preventOverlap?: boolean;
   collideStrength?: number;
-  nodeSize?: number | number[] | ((d?: Node) => number) | undefined;
-  nodeSpacing?: number | number[] | ((d?: Node) => number) | undefined;
+  nodeSize?: number | number[] | ((node?: Node) => number) | undefined;
+  nodeSpacing?: number | number[] | ((node?: Node) => number) | undefined;
   alpha?: number;
   alphaDecay?: number;
   alphaMin?: number;
@@ -222,8 +225,8 @@ export interface ForceLayoutOptions extends CommonOptions {
   nodeStrength?: number | ((d?: Node) => number) | undefined;
   edgeStrength?: number | ((d?: Edge) => number) | undefined;
   preventOverlap?: boolean;
-  nodeSize?: number | number[] | ((d?: Node) => number) | undefined;
-  nodeSpacing?: number | number[] | ((d?: Node) => number) | undefined;
+  nodeSize?: number | number[] | ((d?: Node) => number);
+  nodeSpacing?: number | ((d?: Node) => number);
   minMovement?: number;
   maxIteration?: number;
   damping?: number;
@@ -231,6 +234,7 @@ export interface ForceLayoutOptions extends CommonOptions {
   coulombDisScale?: number;
   gravity?: number;
   factor?: number;
+  interval?: number;
   centripetalOptions?: CentripetalOptions;
   leafCluster?: boolean;
   clustering?: boolean;
@@ -240,12 +244,12 @@ export interface ForceLayoutOptions extends CommonOptions {
   distanceThresholdMode?: "mean" | "max" | "min";
   animate?: boolean; // TODO: comfirm the tick way with worker
   onTick?: (data: LayoutMapping) => void;
-  getMass?: ((d?: Node) => number) | undefined;
+  getMass?: ((d: Node) => number) | undefined;
   getCenter?: ((d?: Node, degree?: number) => number[]) | undefined;
   monitor?: (params: {
     energy: number;
     nodes: Node[];
-    edge: Edge[];
+    edges: Edge[];
     iterations: number;
   }) => void;
 }

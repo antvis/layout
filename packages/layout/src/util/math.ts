@@ -1,6 +1,5 @@
 import type {
   Matrix,
-  IndexMap,
   Edge,
   Node,
   OutNode,
@@ -9,59 +8,6 @@ import type {
 } from "../types";
 import { isArray } from "./array";
 import { isNumber } from "./number";
-
-export const getDegree = (
-  n: number,
-  nodeIdxMap: IndexMap,
-  edges: Edge[] | null
-) => {
-  const degrees: Degree[] = [];
-  for (let i = 0; i < n; i++) {
-    degrees[i] = {
-      in: 0,
-      out: 0,
-      all: 0,
-    };
-  }
-  if (!edges) return degrees;
-  edges.forEach((e) => {
-    const { source, target } = e;
-    if (source && degrees[nodeIdxMap[source]]) {
-      degrees[nodeIdxMap[source]].out += 1;
-      degrees[nodeIdxMap[source]].all += 1;
-    }
-    if (target && degrees[nodeIdxMap[target]]) {
-      degrees[nodeIdxMap[target]].in += 1;
-      degrees[nodeIdxMap[target]].all += 1;
-    }
-  });
-  return degrees;
-};
-
-export const getDegreeMap = (nodes: Node[], edges: Edge[] | null) => {
-  const degreesMap: { [id: string]: Degree } = {};
-  nodes.forEach((node) => {
-    degreesMap[node.id] = {
-      in: 0,
-      out: 0,
-      all: 0,
-    };
-  });
-
-  if (!edges) return degreesMap;
-  edges.forEach((e) => {
-    const { source, target } = e;
-    if (source) {
-      degreesMap[source].out += 1;
-      degreesMap[source].all += 1;
-    }
-    if (target) {
-      degreesMap[target].in += 1;
-      degreesMap[target].all += 1;
-    }
-  });
-  return degreesMap;
-};
 
 export const floydWarshall = (adjMatrix: Matrix[]): Matrix[] => {
   // initialize

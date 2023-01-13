@@ -122,7 +122,7 @@ export class GridLayout implements SyncLayout<GridLayoutOptions> {
 
     // Need no layout if there is no node.
     if (n === 0) {
-      const result = {
+      const result: LayoutMapping = {
         nodes: [],
         edges,
       };
@@ -250,7 +250,7 @@ export class GridLayout implements SyncLayout<GridLayoutOptions> {
     let cellHeight = condense ? 0 : height / rcs.rows;
 
     if (preventOverlap || paramNodeSpacing) {
-      const nodeSpacing: Function = formatNumberFn(10, paramNodeSpacing);
+      const nodeSpacing: Function = formatNumberFn(10, paramNodeSpacing as number);
       const nodeSize: Function = formatSizeFn(30, paramNodeSize, false);
       layoutNodes.forEach((node) => {
         if (!node.data.x || !node.data.y) {

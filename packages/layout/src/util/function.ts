@@ -1,4 +1,4 @@
-import { Node } from '../types';
+import { Node } from "../types";
 import { isArray, isObject } from ".";
 import { isNumber } from "./number";
 
@@ -11,20 +11,22 @@ export const isFunction = (val: unknown): val is Function =>
  * @param value value to be formatted
  * @returns formatted result, a function returns number
  */
-export const formatNumberFn = (
+export function formatNumberFn<T = unknown>(
   defaultValue: number,
-  value: number |((d?: unknown) => number) | undefined,
-): Function => {
+  value: number | ((d?: T) => number) | undefined
+): (d?: T | undefined) => number {
   let resultFunc;
   if (isFunction(value)) {
     resultFunc = value;
   } else if (isNumber(value)) {
+    // value is number
     resultFunc = () => value;
   } else {
+    // value is not number and function
     resultFunc = () => defaultValue;
   }
   return resultFunc;
-};
+}
 
 /**
  * Format size config with multiple types into a function returns number
@@ -33,7 +35,7 @@ export const formatNumberFn = (
  * @param resultIsNumber whether returns number
  * @returns formatted result, a function returns number
  */
-export function formatSizeFn<T extends Node> (
+export function formatSizeFn<T extends Node>(
   defaultValue: number,
   value?:
     | number
@@ -42,7 +44,7 @@ export function formatSizeFn<T extends Node> (
     | ((d?: T) => number)
     | undefined,
   resultIsNumber: boolean = true
-): ((d: T) => number | number[]) {
+): (d: T) => number | number[] {
   if (!value && value !== 0) {
     return (d) => {
       const { size } = d.data || {};

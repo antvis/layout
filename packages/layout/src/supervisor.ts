@@ -110,10 +110,11 @@ export class Supervisor extends EventEmitter implements LayoutSupervisor {
     this.running = true;
 
     // Payload should include nodes & edges(if needed).
+    const { onLayoutEnd, onTick, ...rest } = this.layout.options;
     const payload = {
       layout: {
         id: this.layout.id,
-        options: this.layout.options,
+        options: rest,
       },
       nodes: this.graph.getAllNodes(),
       edges: this.graph.getAllEdges(),

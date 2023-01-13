@@ -7,3 +7,5 @@ export * from "./mds";
 export * from "./concentric";
 export * from "./radial";
 export * from "./fruchterman";
+export * from "./d3Force";
+export * from "./force";
