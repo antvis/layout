@@ -212,7 +212,6 @@ describe("ForceAtlas2Layout", () => {
         expect(res.nodes[0].data.y).not.toBe(undefined);
       },
       onLayoutEnd: res => {
-        console.log(res)
         expect(res.nodes[0].data.x).not.toBe(undefined);
         expect(res.nodes[0].data.y).not.toBe(undefined);
         // nodes more than 100, prune is opened automatically, and the iteration will be 1000 + 100(for prune post-process)
