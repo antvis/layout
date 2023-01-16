@@ -45,10 +45,10 @@ interface FormattedOptions extends ForceAtlas2LayoutOptions {
 }
 type ForceMap = {
   [id: string]: PointTuple;
-}
+};
 type BodyMap = {
   [id: string]: Body
-}
+};
 type SizeMap = { [id: string]: number };
 type CalcGraph = GGraph<OutNodeData, EdgeData>;
 
@@ -95,7 +95,6 @@ export class ForceAtlas2Layout implements SyncLayout<ForceAtlas2LayoutOptions> {
     graph: Graph,
     options?: ForceAtlas2LayoutOptions
   ): LayoutMapping | void {
-    debugger
     const edges = graph.getAllEdges();
     const nodes = graph.getAllNodes();
 
@@ -106,11 +105,11 @@ export class ForceAtlas2Layout implements SyncLayout<ForceAtlas2LayoutOptions> {
       return handleSingleNodeGraph(graph, assign, center, onLayoutEnd);
     }
 
-    const calcNodes = nodes.map(node => cloneFormatData(node, [width, height]) as OutNode);
+    const calcNodes = nodes.map((node) => cloneFormatData(node, [width, height]) as OutNode);
     const calcEdges = edges.filter((edge: Edge) => {
       const { source, target } = edge;
       return source !== target;
-    })
+    });
     const calcGraph = new GGraph<OutNodeData, EdgeData>({
       nodes: calcNodes,
       edges: calcEdges
@@ -143,7 +142,7 @@ export class ForceAtlas2Layout implements SyncLayout<ForceAtlas2LayoutOptions> {
         ...mergedOptions,
         prune: false,
         barnesHut: false
-      }
+      };
       this.run(
         calcGraph,
         graph,
@@ -281,7 +280,7 @@ export class ForceAtlas2Layout implements SyncLayout<ForceAtlas2LayoutOptions> {
     const calcNodes = calcGraph.getAllNodes();
     let sg = 0;
     let iter = iteration;
-    let forces: ForceMap = {};
+    const forces: ForceMap = {};
     const preForces: ForceMap = {};
     const bodies: BodyMap = {};
 
@@ -613,6 +612,7 @@ export class ForceAtlas2Layout implements SyncLayout<ForceAtlas2LayoutOptions> {
   // swg(G) and tra(G)
     let swgG = 0;
     let traG = 0;
+    let usingSg = sg;
     for (let i = 0; i < nodeNum; i += 1) {
       const { id } = nodes[i];
       const degree = graph.getDegree(id);
@@ -634,10 +634,10 @@ export class ForceAtlas2Layout implements SyncLayout<ForceAtlas2LayoutOptions> {
       traG += (degree + 1) * trans[i];
     }
 
-    const preSG = sg;
-    sg = tao * traG / swgG;
+    const preSG = usingSg;
+    usingSg = tao * traG / swgG;
     if (preSG !== 0) {
-      sg = sg > (1.5 * preSG) ? (1.5 * preSG) : sg;
+      usingSg = usingSg > (1.5 * preSG) ? (1.5 * preSG) : usingSg;
     }
     // update the node positions
     for (let i = 0; i < nodeNum; i += 1) {
@@ -646,7 +646,7 @@ export class ForceAtlas2Layout implements SyncLayout<ForceAtlas2LayoutOptions> {
       if (prune && (degree <= 1)) continue;
       if (isNumber(data.fx) && isNumber(data.fy)) continue;
 
-      let sn = ks * sg / (1 + sg * Math.sqrt(swgns[i]));
+      let sn = ks * usingSg / (1 + usingSg * Math.sqrt(swgns[i]));
       let absForce = Math.hypot(forces[id][0], forces[id][1]);
       absForce = absForce < 0.0001 ? 0.0001 : absForce;
       const max = ksmax / absForce;
@@ -658,6 +658,6 @@ export class ForceAtlas2Layout implements SyncLayout<ForceAtlas2LayoutOptions> {
         y: data.y + dny
       });
     }
-    return sg;
+    return usingSg;
   }
 }

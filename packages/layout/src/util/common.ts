@@ -44,4 +44,4 @@ export const handleSingleNodeGraph = (
     onLayoutEnd?.(result);
     return result;
   }
-}
+};
