@@ -18,14 +18,14 @@ describe("FruchtermanLayout", () => {
       done();
     }
 
-    const fruchterman = new FruchtermanLayout({ onLayoutEnd });
+    const fruchterman = new FruchtermanLayout({ onLayoutEnd, animate: false });
     expect(fruchterman.options).toEqual({
       maxIteration: 1000,
       gravity: 10,
       speed: 5,
       clustering: false,
       clusterGravity: 10,
-      animate: true,
+      animate: false, // for faster test
       width: 300,
       height: 300,
       nodeClusterBy: 'cluster',
