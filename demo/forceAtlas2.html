@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,shrink-to-fit=no"
+    />
+    <title>ForceAtlas2</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      html,
+      body {
+        height: 100%;
+      }
+
+      #container {
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="container"></div>
+    <script
+      src="https://unpkg.com/@antv/g"
+      type="application/javascript"
+    ></script>
+    <script
+      src="https://unpkg.com/@antv/g-canvas"
+      type="application/javascript"
+    ></script>
+    <script
+      src="https://unpkg.com/@antv/graphlib@2.0.0-alpha.2"
+      type="application/javascript"
+    ></script>
+    <script
+      src="../packages/layout/dist/index.min.js"
+      type="application/javascript"
+    ></script>
+    <script>
+      const { Graph } = window.GraphLib;
+      const { ForceAtlas2Layout } = window.Layout;
+
+      fetch(
+        "https://gw.alipayobjects.com/os/basement_prod/8dacf27e-e1bc-4522-b6d3-4b6d9b9ed7df.json"
+      )
+        .then((res) => res.json())
+        .then((data) => {
+          const graph = new Graph({
+            nodes: data.nodes,
+            edges: data.edges,
+          });
+
+          const circular = new ForceAtlas2Layout({
+            center: [200, 200],
+            width: 400,
+            height: 400,
+            preventOverlap: true
+          });
+
+          const positions = circular.execute(graph);
+
+          const { Circle, Canvas } = window.G;
+
+          // create a renderer
+          const canvasRenderer = new window.G.Canvas2D.Renderer();
+
+          // create a canvas
+          const canvas = new Canvas({
+            container: "container",
+            width: 500,
+            height: 500,
+            renderer: canvasRenderer,
+          });
+
+          canvas.addEventListener("ready", () => {
+            positions.nodes.forEach((node) => {
+              const circle = new Circle({
+                style: {
+                  cx: node.data.x,
+                  cy: node.data.y,
+                  r: 10,
+                  fill: "#1890FF",
+                  stroke: "#F04864",
+                  lineWidth: 4,
+                },
+              });
+              canvas.appendChild(circle);
+            });
+          });
+        });
+    </script>
+  </body>
+</html>

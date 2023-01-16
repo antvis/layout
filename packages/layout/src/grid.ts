@@ -9,6 +9,7 @@ import type {
   Node,
   Edge,
 } from "./types";
+import { handleSingleNodeGraph } from "./util/common";
 
 type RowsAndCols = {
   rows: number;
@@ -118,39 +119,11 @@ export class GridLayout implements SyncLayout<GridLayoutOptions> {
       });
     }
 
-    const n = nodes.length;
+    const n = nodes?.length;
 
     // Need no layout if there is no node.
-    if (n === 0) {
-      const result: LayoutMapping = {
-        nodes: [],
-        edges,
-      };
-      onLayoutEnd?.(result);
-      return result;
-    }
-    if (n === 1) {
-      if (assign) {
-        graph.mergeNodeData(nodes[0].id, {
-          x: begin[0],
-          y: begin[1],
-        });
-      }
-      const result = {
-        nodes: [
-          {
-            ...nodes[0],
-            data: {
-              ...nodes[0].data,
-              x: begin[0],
-              y: begin[1],
-            },
-          },
-        ],
-        edges,
-      };
-      onLayoutEnd?.(result);
-      return result;
+    if (!n || n === 1) {
+      return handleSingleNodeGraph(graph, assign, begin, onLayoutEnd);
     }
 
     const layoutNodes: OutNode[] = nodes.map((node) => cloneFormatData(node) as OutNode);

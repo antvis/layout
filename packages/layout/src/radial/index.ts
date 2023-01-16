@@ -1,5 +1,6 @@
 import type { Graph, Node, LayoutMapping, Matrix, OutNode, PointTuple, RadialLayoutOptions, SyncLayout, Point } from "../types";
 import { cloneFormatData, floydWarshall, getAdjMatrix, getEuclideanDistance, isArray, isFunction, isNumber, isObject, isString } from "../util";
+import { handleSingleNodeGraph } from "../util/common";
 import { mds } from "./mds";
 import { radialNonoverlapForce, RadialNonoverlapForceOptions } from "./RadialNonoverlapForce";
 
@@ -88,39 +89,14 @@ export class RadialLayout implements SyncLayout<RadialLayoutOptions> {
       });
     }
 
-    if (!nodes || nodes.length === 0) {
-      const result = { nodes: [], edges };
-      onLayoutEnd?.(result);
-      return result;
-    }
-
     const width = !propsWidth && typeof window !== "undefined" ? window.innerWidth : propsWidth as number;
     const height = !propsHeight && typeof window !== "undefined" ? window.innerHeight : propsHeight as number;
-    const center = !propsCenter ? [width / 2, height / 2] : propsCenter as PointTuple;
+    const center = (!propsCenter ? [width / 2, height / 2] : propsCenter) as PointTuple;
 
-    if (nodes.length === 1) {
-      if (assign) {
-        graph.mergeNodeData(nodes[0].id, {
-          x: center[0],
-          y: center[1],
-        });
-      }
-      const result = {
-        nodes: [
-          {
-            ...nodes[0],
-            data: {
-              ...nodes[0].data,
-              x: center[0],
-              y: center[1],
-            }
-          }
-        ],
-        edges,
-      };
-      onLayoutEnd?.(result);
-      return result;
+    if (!nodes?.length || nodes.length === 1) {
+      return handleSingleNodeGraph(graph, assign, center, onLayoutEnd);
     }
+
     let focusNode = nodes[0];
     if (isString(propsFocusNode)) {
       for (let i = 0; i < nodes.length; i++) {
