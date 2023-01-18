@@ -5,9 +5,9 @@ import {
   Edge,
   LayoutMapping,
   ForceLayoutOptions,
-  SyncLayout,
   Point,
   OutNode,
+  LayoutWithIterations,
 } from "../types";
 import { formatNumberFn, isArray, isNumber, isObject } from "../util";
 import { forceNBody } from "./forceNBody";
@@ -25,7 +25,6 @@ import {
 const DEFAULTS_LAYOUT_OPTIONS: Partial<ForceLayoutOptions> = {
   maxIteration: 500,
   gravity: 10,
-  animate: true,
   factor: 1,
   edgeStrength: 200,
   nodeStrength: 1000,
@@ -55,7 +54,7 @@ const DEFAULTS_LAYOUT_OPTIONS: Partial<ForceLayoutOptions> = {
  * // If you want to assign the positions directly to the nodes, use assign method.
  * layout.assign(graph, { center: [100, 100] });
  */
-export class ForceLayout implements SyncLayout<ForceLayoutOptions> {
+export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
   id = "force";
   /**
    * time interval for layout force animations
@@ -65,6 +64,18 @@ export class ForceLayout implements SyncLayout<ForceLayoutOptions> {
    * compare with minMovement to end the nodes' movement
    */
   private judgingDistance: number = 0;
+
+  private running: boolean = false;
+  private lastLayoutNodes: OutNode[];
+  private lastLayoutEdges: Edge[];
+  private lastAssign: boolean;
+  private lastCalcGraph: IGraph<CalcNodeData, CalcEdgeData>;
+  private lastGraph: Graph;
+  private lastOptions: FormatedOptions;
+  private lastVelMap: {
+    [id: string]: Point;
+  };
+  private lastResult: LayoutMapping;
 
   constructor(public options: ForceLayoutOptions = {} as ForceLayoutOptions) {
     this.options = {
@@ -84,6 +95,72 @@ export class ForceLayout implements SyncLayout<ForceLayoutOptions> {
    */
   assign(graph: Graph, options?: ForceLayoutOptions) {
     this.genericForceLayout(true, graph, options);
+  }
+
+  /**
+   * Stop simulation immediately.
+   */
+  stop() {
+    if (this.timeInterval && typeof window !== "undefined") {
+      window.clearInterval(this.timeInterval);
+    }
+    this.running = false;
+  }
+
+  restart() {
+    this.running = true;
+  }
+
+  /**
+   * Manually steps the simulation by the specified number of iterations.
+   * When finished it will trigger `onLayoutEnd` callback.
+   * @see https://github.com/d3/d3-force#simulation_tick
+   */
+  tick(iterations = this.options.maxIteration || 1) {
+    if (this.lastResult) {
+      return this.lastResult;
+    }
+
+    for (
+      let i = 0;
+      (this.judgingDistance > this.lastOptions.minMovement || i < 1) &&
+      i < iterations;
+      i++
+    ) {
+      this.runOneStep(
+        this.lastCalcGraph,
+        this.lastGraph,
+        i,
+        this.lastVelMap,
+        this.lastOptions
+      );
+      this.updatePosition(
+        this.lastGraph,
+        this.lastCalcGraph,
+        this.lastVelMap,
+        this.lastOptions
+      );
+    }
+
+    const result = {
+      nodes: this.lastLayoutNodes,
+      edges: this.lastLayoutEdges,
+    };
+
+    if (this.lastAssign) {
+      result.nodes.forEach((node) =>
+        this.lastGraph.mergeNodeData(node.id, {
+          x: node.data.x,
+          y: node.data.y,
+        })
+      );
+    }
+
+    if (this.lastOptions.onLayoutEnd) {
+      this.lastOptions.onLayoutEnd(result);
+    }
+
+    return result;
   }
 
   private genericForceLayout(
@@ -143,7 +220,10 @@ export class ForceLayout implements SyncLayout<ForceLayoutOptions> {
       },
     }));
 
-    if (!nodes?.length) return { nodes: [], edges };
+    if (!nodes?.length) {
+      this.lastResult = { nodes: [], edges };
+      return { nodes: [], edges };
+    }
 
     const velMap: { [id: string]: Point } = {};
     nodes.forEach((node, i) => {
@@ -160,51 +240,23 @@ export class ForceLayout implements SyncLayout<ForceLayoutOptions> {
 
     this.formatCentripetal(formattedOptions, calcGraph);
 
-    const { maxIteration, animate, minMovement, onLayoutEnd, onTick } =
-      formattedOptions;
-    const silence = !animate;
-    if (silence) {
-      for (
-        let i = 0;
-        (this.judgingDistance > minMovement || i < 1) && i < maxIteration;
-        i++
-      ) {
-        this.runOneStep(calcGraph, graph, i, velMap, formattedOptions);
-        this.updatePosition(graph, calcGraph, velMap, formattedOptions);
-        if (assign) {
-          layoutNodes.forEach((node) =>
-            graph.mergeNodeData(node.id, {
-              x: node.data.x,
-              y: node.data.y,
-            })
-          );
-        }
-        onTick?.({
-          nodes: formatOutNodes(graph, layoutNodes),
-          edges,
-        });
-      }
+    const { maxIteration, minMovement, onLayoutEnd, onTick } = formattedOptions;
 
-      if (assign) {
-        layoutNodes.forEach((node) =>
-          graph.mergeNodeData(node.id, {
-            x: node.data.x,
-            y: node.data.y,
-          })
-        );
-      }
-      const result = {
-        nodes: formatOutNodes(graph, layoutNodes),
-        edges,
-      };
-      onLayoutEnd?.(result);
-      return result;
-    }  {
+    // Use them later in `tick`.
+    this.lastLayoutNodes = layoutNodes;
+    this.lastLayoutEdges = layoutEdges;
+    this.lastAssign = assign;
+    this.lastGraph = graph;
+    this.lastCalcGraph = calcGraph;
+    this.lastOptions = formattedOptions;
+    this.lastVelMap = velMap;
+
+    {
       if (typeof window === "undefined") return;
       let iter = 0;
       // interval for render the result after each iteration
       this.timeInterval = window.setInterval(() => {
-        if (!nodes) return;
+        if (!nodes || !this.running) return;
         this.runOneStep(calcGraph, graph, iter, velMap, formattedOptions);
         this.updatePosition(graph, calcGraph, velMap, formattedOptions);
         if (assign) {
@@ -228,6 +280,7 @@ export class ForceLayout implements SyncLayout<ForceLayoutOptions> {
           window.clearInterval(this.timeInterval);
         }
       }, 0);
+      this.running = true;
     }
 
     // has been returned while silence, and not useful for interval
@@ -439,7 +492,7 @@ export class ForceLayout implements SyncLayout<ForceLayoutOptions> {
         },
       });
     }
-    const { leaf, single, others } = options.centripetalOptions;
+    const { leaf, single, others } = options.centripetalOptions || {};
     if (leaf && typeof leaf !== "function") {
       options.centripetalOptions.leaf = () => leaf;
     }
@@ -545,8 +598,7 @@ export class ForceLayout implements SyncLayout<ForceLayoutOptions> {
       const vecLength = Math.sqrt(vecX * vecX + vecY * vecY);
       const direX = vecX / vecLength;
       const direY = vecY / vecLength;
-      // @ts-ignore
-      const { linkDistance = 200, edgeStrength = 200 } = edgeInfos[i] || {};
+      const { linkDistance = 200, edgeStrength = 200 } = edge.data || {};
       const diff = linkDistance - vecLength;
       const param = diff * edgeStrength;
       const massSource = sourceNode.data.mass || 1;
@@ -759,16 +811,6 @@ export class ForceLayout implements SyncLayout<ForceLayoutOptions> {
     });
     if (!distanceThresholdMode || distanceThresholdMode === "mean") {
       this.judgingDistance = sum / calcNodes.length;
-    }
-  }
-
-  /**
-   * Stop the animation for no-silence force.
-   * TODO: confirm the controller and worker's controller
-   */
-  public stop() {
-    if (this.timeInterval && typeof window !== "undefined") {
-      window.clearInterval(this.timeInterval);
     }
   }
 }

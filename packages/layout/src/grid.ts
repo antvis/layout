@@ -1,10 +1,17 @@
-import { isString, isArray, isNumber, formatSizeFn, formatNumberFn, cloneFormatData } from "./util";
+import {
+  isString,
+  isArray,
+  isNumber,
+  formatSizeFn,
+  formatNumberFn,
+  cloneFormatData,
+} from "./util";
 import type {
   Graph,
   GridLayoutOptions,
   LayoutMapping,
   PointTuple,
-  SyncLayout,
+  Layout,
   OutNode,
   Node,
   Edge,
@@ -57,13 +64,13 @@ const DEFAULTS_LAYOUT_OPTIONS: Partial<GridLayoutOptions> = {
  * // If you want to assign the positions directly to the nodes, use assign method.
  * layout.assign(graph, { rows: 20 });
  */
-export class GridLayout implements SyncLayout<GridLayoutOptions> {
+export class GridLayout implements Layout<GridLayoutOptions> {
   id = "grid";
 
   constructor(public options: GridLayoutOptions = {} as GridLayoutOptions) {
     this.options = {
       ...DEFAULTS_LAYOUT_OPTIONS,
-      ...options
+      ...options,
     };
   }
 
@@ -153,15 +160,14 @@ export class GridLayout implements SyncLayout<GridLayoutOptions> {
       return result;
     }
 
-    const layoutNodes: OutNode[] = nodes.map((node) => cloneFormatData(node) as OutNode);
+    const layoutNodes: OutNode[] = nodes.map(
+      (node) => cloneFormatData(node) as OutNode
+    );
 
     if (
       // `id` should be reserved keyword
-      sortBy !== 'id' &&
-      (
-        !isString(sortBy) ||
-        (layoutNodes[0] as any).data[sortBy] === undefined
-      )
+      sortBy !== "id" &&
+      (!isString(sortBy) || (layoutNodes[0] as any).data[sortBy] === undefined)
     ) {
       sortBy = "degree";
     }
@@ -173,15 +179,12 @@ export class GridLayout implements SyncLayout<GridLayoutOptions> {
       );
     } else if (sortBy === "id") {
       // sort nodes by ID
-      layoutNodes.sort(
-        (n1, n2) => {
-          if (isNumber(n2.id) && isNumber(n1.id)) {
-            return n2.id - n1.id;
-          } 
-            return `${n1.id}`.localeCompare(`${n2.id}`);
-          
+      layoutNodes.sort((n1, n2) => {
+        if (isNumber(n2.id) && isNumber(n1.id)) {
+          return n2.id - n1.id;
         }
-      );
+        return `${n1.id}`.localeCompare(`${n2.id}`);
+      });
     } else {
       // sort nodes by value
       layoutNodes.sort(
@@ -250,7 +253,10 @@ export class GridLayout implements SyncLayout<GridLayoutOptions> {
     let cellHeight = condense ? 0 : height / rcs.rows;
 
     if (preventOverlap || paramNodeSpacing) {
-      const nodeSpacing: Function = formatNumberFn(10, paramNodeSpacing as number);
+      const nodeSpacing: Function = formatNumberFn(
+        10,
+        paramNodeSpacing as number
+      );
       const nodeSize: Function = formatSizeFn(30, paramNodeSize, false);
       layoutNodes.forEach((node) => {
         if (!node.data.x || !node.data.y) {

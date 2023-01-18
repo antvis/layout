@@ -1,7 +1,30 @@
-import type { Graph, Node, LayoutMapping, Matrix, OutNode, PointTuple, RadialLayoutOptions, SyncLayout, Point } from "../types";
-import { cloneFormatData, floydWarshall, getAdjMatrix, getEuclideanDistance, isArray, isFunction, isNumber, isObject, isString } from "../util";
+import type {
+  Graph,
+  Node,
+  LayoutMapping,
+  Matrix,
+  OutNode,
+  PointTuple,
+  RadialLayoutOptions,
+  Layout,
+  Point,
+} from "../types";
+import {
+  cloneFormatData,
+  floydWarshall,
+  getAdjMatrix,
+  getEuclideanDistance,
+  isArray,
+  isFunction,
+  isNumber,
+  isObject,
+  isString,
+} from "../util";
 import { mds } from "./mds";
-import { radialNonoverlapForce, RadialNonoverlapForceOptions } from "./RadialNonoverlapForce";
+import {
+  radialNonoverlapForce,
+  RadialNonoverlapForceOptions,
+} from "./RadialNonoverlapForce";
 
 const DEFAULTS_LAYOUT_OPTIONS: Partial<RadialLayoutOptions> = {
   maxIteration: 1000,
@@ -11,31 +34,31 @@ const DEFAULTS_LAYOUT_OPTIONS: Partial<RadialLayoutOptions> = {
   preventOverlap: false,
   strictRadial: true,
   maxPreventOverlapIteration: 200,
-  sortStrength: 10
+  sortStrength: 10,
 };
 
 /**
  * Layout arranging the nodes' on a radial shape
- * 
+ *
  * @example
  * // Assign layout options when initialization.
  * const layout = new RadialLayout({ focusNode: 'node0' });
  * const positions = layout.execute(graph); // { nodes: [], edges: [] }
- * 
+ *
  * // Or use different options later.
  * const layout = new RadialLayout({ focusNode: 'node0' });
  * const positions = layout.execute(graph, { focusNode: 'node0' }); // { nodes: [], edges: [] }
- * 
+ *
  * // If you want to assign the positions directly to the nodes, use assign method.
  * layout.assign(graph, { focusNode: 'node0' });
  */
-export class RadialLayout implements SyncLayout<RadialLayoutOptions> {
-  id = 'radial';
+export class RadialLayout implements Layout<RadialLayoutOptions> {
+  id = "radial";
 
   constructor(public options: RadialLayoutOptions = {} as RadialLayoutOptions) {
     this.options = {
       ...DEFAULTS_LAYOUT_OPTIONS,
-      ...options
+      ...options,
     };
   }
 
@@ -52,7 +75,11 @@ export class RadialLayout implements SyncLayout<RadialLayoutOptions> {
     this.genericRadialLayout(true, graph, options);
   }
 
-  private genericRadialLayout(assign: boolean, graph: Graph, options?: RadialLayoutOptions): LayoutMapping | void {
+  private genericRadialLayout(
+    assign: boolean,
+    graph: Graph,
+    options?: RadialLayoutOptions
+  ): LayoutMapping | void {
     const mergedOptions = { ...this.options, ...options };
     const {
       width: propsWidth,
@@ -70,7 +97,7 @@ export class RadialLayout implements SyncLayout<RadialLayoutOptions> {
       sortStrength = 10,
       maxIteration = 1000,
       layoutInvisibles,
-      onLayoutEnd
+      onLayoutEnd,
     } = mergedOptions;
 
     let nodes = graph.getAllNodes();
@@ -94,9 +121,17 @@ export class RadialLayout implements SyncLayout<RadialLayoutOptions> {
       return result;
     }
 
-    const width = !propsWidth && typeof window !== "undefined" ? window.innerWidth : propsWidth as number;
-    const height = !propsHeight && typeof window !== "undefined" ? window.innerHeight : propsHeight as number;
-    const center = !propsCenter ? [width / 2, height / 2] : propsCenter as PointTuple;
+    const width =
+      !propsWidth && typeof window !== "undefined"
+        ? window.innerWidth
+        : (propsWidth as number);
+    const height =
+      !propsHeight && typeof window !== "undefined"
+        ? window.innerHeight
+        : (propsHeight as number);
+    const center = !propsCenter
+      ? [width / 2, height / 2]
+      : (propsCenter as PointTuple);
 
     if (nodes.length === 1) {
       if (assign) {
@@ -113,8 +148,8 @@ export class RadialLayout implements SyncLayout<RadialLayoutOptions> {
               ...nodes[0].data,
               x: center[0],
               y: center[1],
-            }
-          }
+            },
+          },
         ],
         edges,
       };
@@ -132,7 +167,7 @@ export class RadialLayout implements SyncLayout<RadialLayoutOptions> {
     } else {
       focusNode = propsFocusNode || nodes[0];
     }
-    
+
     // the index of the focusNode in data
     const focusIndex = getIndexById(nodes, focusNode.id);
 
@@ -160,23 +195,42 @@ export class RadialLayout implements SyncLayout<RadialLayoutOptions> {
     const maxD = Math.max(...focusNodeD);
     // the radius for each nodes away from focusNode
     const radii: number[] = [];
-    const unitRadius = !propsUnitRadius ?  maxRadius / maxD : propsUnitRadius;
+    const unitRadius = !propsUnitRadius ? maxRadius / maxD : propsUnitRadius;
     focusNodeD.forEach((value, i) => {
       radii[i] = value * unitRadius;
     });
 
-    const idealDistances = eIdealDisMatrix(nodes, distances, linkDistance, radii, unitRadius, sortBy, sortStrength);
+    const idealDistances = eIdealDisMatrix(
+      nodes,
+      distances,
+      linkDistance,
+      radii,
+      unitRadius,
+      sortBy,
+      sortStrength
+    );
     // the weight matrix, Wij = 1 / dij^(-2)
     const weights = getWeightMatrix(idealDistances);
 
     // the initial positions from mds, move the graph to origin, centered at focusNode
     const mdsResult = mds(linkDistance, idealDistances, linkDistance);
     let positions = mdsResult.map(([x, y]) => ({
-      x: (isNaN(x) ? Math.random() * linkDistance : x) - mdsResult[focusIndex][0],
-      y: (isNaN(y) ? Math.random() * linkDistance : y) - mdsResult[focusIndex][1],
+      x:
+        (isNaN(x) ? Math.random() * linkDistance : x) -
+        mdsResult[focusIndex][0],
+      y:
+        (isNaN(y) ? Math.random() * linkDistance : y) -
+        mdsResult[focusIndex][1],
     }));
 
-    this.run(maxIteration, positions, weights, idealDistances, radii, focusIndex);
+    this.run(
+      maxIteration,
+      positions,
+      weights,
+      idealDistances,
+      radii,
+      focusIndex
+    );
     let nodeSizeFunc;
     // stagger the overlapped nodes
     if (preventOverlap) {
@@ -205,15 +259,17 @@ export class RadialLayout implements SyncLayout<RadialLayoutOptions> {
     });
 
     if (assign) {
-      layoutNodes.forEach((node) => graph.mergeNodeData(node.id, {
-        x: node.data.x,
-        y: node.data.y
-      }));
+      layoutNodes.forEach((node) =>
+        graph.mergeNodeData(node.id, {
+          x: node.data.x,
+          y: node.data.y,
+        })
+      );
     }
 
     const result = {
       nodes: layoutNodes,
-      edges
+      edges,
     };
     onLayoutEnd?.(result);
 
@@ -229,7 +285,14 @@ export class RadialLayout implements SyncLayout<RadialLayoutOptions> {
   ) {
     for (let i = 0; i <= maxIteration; i++) {
       const param = i / maxIteration;
-      this.oneIteration(param, positions, radii, idealDistances, weights, focusIndex);
+      this.oneIteration(
+        param,
+        positions,
+        radii,
+        idealDistances,
+        weights,
+        focusIndex
+      );
     }
   }
   private oneIteration(
@@ -296,7 +359,7 @@ const eIdealDisMatrix = (
   if (distances) {
     // cache the value of field sortBy for nodes to avoid dupliate calculation
     const sortValueCache: {
-      [id: string]: number
+      [id: string]: number;
     } = {};
     distances.forEach((row: number[], i: number) => {
       const newRow: Matrix = [];
@@ -308,8 +371,7 @@ const eIdealDisMatrix = (
           if (sortBy === "data") {
             // sort the nodes on the same circle according to the ordering of the data
             newRow.push(
-              (v * (Math.abs(i - j) * sortStrength)) /
-                (radii[i] / unitRadius)
+              (v * (Math.abs(i - j) * sortStrength)) / (radii[i] / unitRadius)
             );
           } else if (sortBy) {
             // sort the nodes on the same circle according to the attributes
@@ -318,11 +380,10 @@ const eIdealDisMatrix = (
             if (sortValueCache[nodes[i].id]) {
               iValue = sortValueCache[nodes[i].id];
             } else {
-              const value = (
-                sortBy === 'id' ? 
-                nodes[i].id :
-                (nodes[i].data)?.[sortBy] as number | string
-              ) || 0;
+              const value =
+                (sortBy === "id"
+                  ? nodes[i].id
+                  : (nodes[i].data?.[sortBy] as number | string)) || 0;
               if (isString(value)) {
                 iValue = value.charCodeAt(0);
               } else {
@@ -334,11 +395,10 @@ const eIdealDisMatrix = (
             if (sortValueCache[nodes[j].id]) {
               jValue = sortValueCache[nodes[j].id];
             } else {
-              const value = (
-                sortBy === 'id' ? 
-                nodes[j].id :
-                (nodes[j].data)?.[sortBy] as number | string
-              ) || 0;
+              const value =
+                (sortBy === "id"
+                  ? nodes[j].id
+                  : (nodes[j].data?.[sortBy] as number | string)) || 0;
               if (isString(value)) {
                 jValue = value.charCodeAt(0);
               } else {
@@ -438,9 +498,9 @@ const maxToFocus = (matrix: Matrix[], focusIndex: number): number => {
 
 /**
  * format the props nodeSize and nodeSpacing to a function
- * @param nodeSize 
- * @param nodeSpacing 
- * @returns 
+ * @param nodeSize
+ * @param nodeSpacing
+ * @returns
  */
 const formatNodeSize = (
   nodeSize: number | number[] | undefined,
@@ -459,14 +519,20 @@ const formatNodeSize = (
   if (!nodeSize) {
     nodeSizeFunc = (d: Node) => {
       if (d.data?.bboxSize) {
-        return Math.max(d.data.bboxSize[0], d.data.bboxSize[1]) + nodeSpacingFunc(d);
+        return (
+          Math.max(d.data.bboxSize[0], d.data.bboxSize[1]) + nodeSpacingFunc(d)
+        );
       }
       if (d.data?.size) {
         if (isArray(d.data.size)) {
           return Math.max(d.data.size[0], d.data.size[1]) + nodeSpacingFunc(d);
-        }  if (isObject(d.data.size)) {
-          const res = d.data.size.width > d.data.size.height ? d.data.size.width : d.data.size.height;
-          return res + nodeSpacingFunc(d);  
+        }
+        if (isObject(d.data.size)) {
+          const res =
+            d.data.size.width > d.data.size.height
+              ? d.data.size.width
+              : d.data.size.height;
+          return res + nodeSpacingFunc(d);
         }
         return d.data.size + nodeSpacingFunc(d);
       }

@@ -6,7 +6,7 @@
       name="viewport"
       content="width=device-width,initial-scale=1,shrink-to-fit=no"
     />
-    <title>Radial</title>
+    <title>Supervisor with D3Force</title>
     <style>
       * {
         box-sizing: border-box;
@@ -37,6 +37,10 @@
       type="application/javascript"
     ></script>
     <script
+      src="https://unpkg.com/@antv/g-plugin-dragndrop"
+      type="application/javascript"
+    ></script>
+    <script
       src="https://unpkg.com/@antv/graphlib@2.0.0-alpha.2"
       type="application/javascript"
     ></script>
@@ -46,7 +50,7 @@
     ></script>
     <script>
       const { Graph } = window.GraphLib;
-      const { RadialLayout } = window.Layout;
+      const { D3ForceLayout, Supervisor } = window.Layout;
 
       const data = {
         nodes: [
@@ -886,26 +890,11 @@
         ],
       };
 
-      const graph = new Graph({
-        nodes: data.nodes,
-        edges: data.edges,
-      });
-
-      const radial = new RadialLayout({
-        width: 500,
-        height: 600,
-        focusNode: 'Australia',
-        unitRadius: 100,
-        linkDistance: 100,
-      });
-
-      const positions = radial.execute(graph);
-      console.log(positions);
-
-      const { Circle, Canvas } = window.G;
-
+      const { Circle, Line, Canvas } = window.G;
       // create a renderer
       const canvasRenderer = new window.G.Canvas2D.Renderer();
+      const plugin = new window.G.Dragndrop.Plugin();
+      canvasRenderer.registerPlugin(plugin);
 
       // create a canvas
       const canvas = new Canvas({
@@ -915,21 +904,120 @@
         renderer: canvasRenderer,
       });
 
-      canvas.addEventListener("ready", () => {
-        positions.nodes.forEach((node) => {
+      const graph = new Graph({
+        nodes: data.nodes,
+        edges: data.edges.map((edge, i) => ({ id: i, ...edge })),
+      });
+
+      const force = new D3ForceLayout({
+        center: [200, 200], // The center of the graph by default
+        preventOverlap: true,
+        nodeSize: 20,
+      });
+      const supervisor = new Supervisor(graph, force, { iterations: 1000 });
+
+      const nodes = [];
+      const edges = [];
+
+      const createNodesEdges = (positions) => {
+        positions.edges.forEach(({ source, target }, i) => {
+          const sourceNode = positions.nodes.find(({ id }) => id === source);
+          const targetNode = positions.nodes.find(({ id }) => id === target);
+          const line = new Line({
+            style: {
+              x1: sourceNode.data.x,
+              y1: sourceNode.data.y,
+              x2: targetNode.data.x,
+              y2: targetNode.data.y,
+              lineWidth: 1,
+              stroke: "grey",
+            },
+          });
+          canvas.appendChild(line);
+          edges.push(line);
+        });
+
+        positions.nodes.forEach((node, i) => {
           const circle = new Circle({
             style: {
               cx: node.data.x,
               cy: node.data.y,
-              r: 10,
+              r: 6,
               fill: "#1890FF",
               stroke: "#F04864",
-              lineWidth: 4,
+              lineWidth: 2,
+              draggable: true,
             },
           });
           canvas.appendChild(circle);
+
+          let shiftX = 0;
+          let shiftY = 0;
+          function moveAt(target, canvasX, canvasY) {
+            graph.mergeNodeData(positions.nodes[i].id, {
+              x: canvasX - shiftX,
+              y: canvasY - shiftY,
+            });
+            force.stop();
+            force.assign(graph, {
+              center: [200, 200], // The center of the graph by default
+              preventOverlap: true,
+              nodeSize: 20,
+              onTick: (positions) => {
+                updateNodesEdges(positions);
+              },
+            });
+          }
+
+          circle.addEventListener("dragstart", function (e) {
+            const [x, y] = e.target.getPosition();
+            shiftX = e.canvasX - x;
+            shiftY = e.canvasY - y;
+
+            moveAt(e.target, e.canvasX, e.canvasY);
+          });
+          circle.addEventListener("drag", function (e) {
+            moveAt(e.target, e.canvasX, e.canvasY);
+          });
+          nodes.push(circle);
         });
+      };
+
+      const updateNodesEdges = (positions) => {
+        positions.edges.forEach(({ source, target }, i) => {
+          const sourceNode = positions.nodes.find(({ id }) => id === source);
+          const targetNode = positions.nodes.find(({ id }) => id === target);
+
+          edges[i].attr({
+            x1: sourceNode.data.x,
+            y1: sourceNode.data.y,
+            x2: targetNode.data.x,
+            y2: targetNode.data.y,
+          });
+        });
+
+        positions.nodes.forEach((node, i) => {
+          nodes[i].attr({
+            cx: node.data.x,
+            cy: node.data.y,
+          });
+        });
+      };
+
+      // Do first-time static layout on worker-side.
+      supervisor.on("layoutend", (positions) => {
+        // Update Graph model.
+        positions.nodes.forEach((node) =>
+          graph.mergeNodeData(node.id, {
+            x: node.data.x,
+            y: node.data.y,
+          })
+        );
+
+        // Render.
+        createNodesEdges(positions);
       });
+      supervisor.start();
     </script>
   </body>
 </html>
