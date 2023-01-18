@@ -79,6 +79,7 @@ export class FruchtermanLayout
   private lastGraph: IGraph<OutNodeData, EdgeData>;
   private lastOptions: FormattedOptions;
   private lastClusterMap: ClusterMap;
+  private lastResult: LayoutMapping;
 
   constructor(
     public options: FruchtermanLayoutOptions = {} as FruchtermanLayoutOptions
@@ -125,7 +126,11 @@ export class FruchtermanLayout
    * When finished it will trigger `onLayoutEnd` callback.
    * @see https://github.com/d3/d3-force#simulation_tick
    */
-  tick(iterations = 1) {
+  tick(iterations = this.options.maxIteration || 1) {
+    if (this.lastResult) {
+      return this.lastResult;
+    }
+
     for (let i = 0; i < iterations; i++) {
       this.runOneStep(this.lastGraph, this.lastClusterMap, this.lastOptions);
     }
@@ -187,6 +192,7 @@ export class FruchtermanLayout
 
     if (!nodes?.length) {
       const result = { nodes: [], edges };
+      this.lastResult = result;
       onLayoutEnd?.(result);
       return result;
     }
@@ -211,6 +217,7 @@ export class FruchtermanLayout
         ],
         edges,
       };
+      this.lastResult = result;
       onLayoutEnd?.(result);
       return result;
     }
@@ -252,6 +259,10 @@ export class FruchtermanLayout
       let iter = 0;
       // interval for render the result after each iteration
       this.timeInterval = window.setInterval(() => {
+        if (!this.running) {
+          return;
+        }
+
         this.runOneStep(calcGraph, clusterMap, mergedOptions);
         if (assign) {
           layoutNodes.forEach(({ id, data }) =>
@@ -279,6 +290,7 @@ export class FruchtermanLayout
           window.clearInterval(this.timeInterval);
         }
       }, 0);
+      this.running = true;
     }
 
     return { nodes: layoutNodes, edges };
