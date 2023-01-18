@@ -5,10 +5,15 @@ import type {
   OutNode,
   PointTuple,
   MDSLayoutOptions,
-  SyncLayout,
+  Layout,
   Matrix,
 } from "./types";
-import { cloneFormatData, floydWarshall, getAdjMatrix, scaleMatrix } from "./util";
+import {
+  cloneFormatData,
+  floydWarshall,
+  getAdjMatrix,
+  scaleMatrix,
+} from "./util";
 
 const DEFAULTS_LAYOUT_OPTIONS: Partial<MDSLayoutOptions> = {
   center: [0, 0],
@@ -30,13 +35,13 @@ const DEFAULTS_LAYOUT_OPTIONS: Partial<MDSLayoutOptions> = {
  * // If you want to assign the positions directly to the nodes, use assign method.
  * layout.assign(graph, { center: [100, 100] });
  */
-export class MDSLayout implements SyncLayout<MDSLayoutOptions> {
+export class MDSLayout implements Layout<MDSLayoutOptions> {
   id = "mds";
 
   constructor(public options: MDSLayoutOptions = {} as MDSLayoutOptions) {
     this.options = {
       ...DEFAULTS_LAYOUT_OPTIONS,
-      ...options
+      ...options,
     };
   }
 
@@ -182,9 +187,7 @@ const runMDS = (distances: Matrix[]): PointTuple[] => {
   const rowMeans = M.mean("row");
   const colMeans = M.mean("column");
   const totalMean = M.mean();
-  M.add(totalMean)
-    .subRowVector(rowMeans)
-    .subColumnVector(colMeans);
+  M.add(totalMean).subRowVector(rowMeans).subColumnVector(colMeans);
 
   // take the SVD of the double centred matrix, and return the
   // points from it

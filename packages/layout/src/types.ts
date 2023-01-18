@@ -47,15 +47,55 @@ export type Point = { x: number; y: number };
 export type Matrix = number[];
 export type LayoutMapping = { nodes: OutNode[]; edges: Edge[] };
 
-export interface SyncLayout<LayoutOptions> {
+export interface Layout<LayoutOptions> {
+  /**
+   * To directly assign the positions to the nodes.
+   */
   assign(graph: Graph, options?: LayoutOptions): void;
+  /**
+   * Return the positions of nodes and edges(if needed).
+   */
   execute(graph: Graph, options?: LayoutOptions): LayoutMapping;
+  /**
+   * Layout options, can be changed in runtime.
+   */
   options: LayoutOptions;
+  /**
+   * Unique ID, it will get registered and used on the webworker-side.
+   */
   id: string;
 }
 
-export interface SyncLayoutConstructor<LayoutOptions> {
-  new (options?: LayoutOptions): SyncLayout<LayoutOptions>;
+export function isLayoutWithIterations(
+  layout: any
+): layout is LayoutWithIterations<any> {
+  return !!layout.tick && !!layout.stop && !!layout.restart;
+}
+
+export interface LayoutWithIterations<LayoutOptions>
+  extends Layout<LayoutOptions> {
+  /**
+   * Some layout algorithm has n iterations so that the simulation needs to be stopped at any time.
+   * This method is useful for running the simulation manually.
+   * @see https://github.com/d3/d3-force#simulation_stop
+   */
+  stop: () => void;
+
+  /**
+   * Restarts the simulation’s internal timer and returns the simulation.
+   * @see https://github.com/d3/d3-force#simulation_restart
+   */
+  restart: () => void;
+
+  /**
+   * Manually steps the simulation by the specified number of iterations.
+   * @see https://github.com/d3/d3-force#simulation_tick
+   */
+  tick: (iterations?: number) => LayoutMapping;
+}
+
+export interface LayoutConstructor<LayoutOptions> {
+  new (options?: LayoutOptions): Layout<LayoutOptions>;
 }
 
 export interface LayoutSupervisor {

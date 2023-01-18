@@ -1,11 +1,11 @@
-import { Graph as IGraph } from '@antv/graphlib';
+import { Graph as IGraph } from "@antv/graphlib";
 import type {
   Graph,
   LayoutMapping,
   OutNode,
   PointTuple,
   FruchtermanLayoutOptions,
-  SyncLayout,
+  Layout,
   OutNodeData,
   EdgeData,
   Point,
@@ -21,23 +21,23 @@ const DEFAULTS_LAYOUT_OPTIONS: Partial<FruchtermanLayoutOptions> = {
   animate: true,
   width: 300,
   height: 300,
-  nodeClusterBy: 'cluster'
+  nodeClusterBy: "cluster",
 };
 const SPEED_DIVISOR = 800;
 
 interface ClusterMap {
   [clusterName: string]: {
-    name: string,
-    cx: number,
-    cy: number,
-    count: number
+    name: string;
+    cx: number;
+    cy: number;
+    count: number;
   };
 }
 
 type CalcGraph = IGraph<OutNodeData, EdgeData>;
 
 type DisplacementMap = {
-  [id: string]: Point
+  [id: string]: Point;
 };
 
 interface FormattedOptions extends FruchtermanLayoutOptions {
@@ -65,15 +65,17 @@ interface FormattedOptions extends FruchtermanLayoutOptions {
  * // If you want to assign the positions directly to the nodes, use assign method.
  * layout.assign(graph, { center: [100, 100] });
  */
-export class FruchtermanLayout implements SyncLayout<FruchtermanLayoutOptions> {
+export class FruchtermanLayout implements Layout<FruchtermanLayoutOptions> {
   id = "fruchterman";
 
   private timeInterval: number = 0;
 
-  constructor(public options: FruchtermanLayoutOptions = {} as FruchtermanLayoutOptions) {
+  constructor(
+    public options: FruchtermanLayoutOptions = {} as FruchtermanLayoutOptions
+  ) {
     this.options = {
       ...DEFAULTS_LAYOUT_OPTIONS,
-      ...options
+      ...options,
     };
   }
 
@@ -81,7 +83,11 @@ export class FruchtermanLayout implements SyncLayout<FruchtermanLayoutOptions> {
    * Return the positions of nodes and edges(if needed).
    */
   execute(graph: Graph, options?: FruchtermanLayoutOptions): LayoutMapping {
-    return this.genericFruchtermanLayout(false, graph, options) as LayoutMapping;
+    return this.genericFruchtermanLayout(
+      false,
+      graph,
+      options
+    ) as LayoutMapping;
   }
   /**
    * To directly assign the positions to the nodes.
@@ -95,7 +101,6 @@ export class FruchtermanLayout implements SyncLayout<FruchtermanLayoutOptions> {
     graph: Graph,
     options?: FruchtermanLayoutOptions
   ): LayoutMapping | void {
-
     const mergedOptions = this.formatOptions(options);
     const {
       layoutInvisibles,
@@ -107,7 +112,7 @@ export class FruchtermanLayout implements SyncLayout<FruchtermanLayoutOptions> {
       animate,
       maxIteration,
       onTick,
-      onLayoutEnd
+      onLayoutEnd,
     } = mergedOptions;
 
     let nodes = graph.getAllNodes();
@@ -123,7 +128,7 @@ export class FruchtermanLayout implements SyncLayout<FruchtermanLayoutOptions> {
         return visible || visible === undefined;
       });
     }
-    
+
     if (this.timeInterval !== undefined && typeof window !== "undefined") {
       window.clearInterval(this.timeInterval);
     }
@@ -133,7 +138,6 @@ export class FruchtermanLayout implements SyncLayout<FruchtermanLayoutOptions> {
       onLayoutEnd?.(result);
       return result;
     }
-
 
     if (nodes.length === 1) {
       if (assign) {
@@ -159,19 +163,26 @@ export class FruchtermanLayout implements SyncLayout<FruchtermanLayoutOptions> {
       return result;
     }
 
-    const layoutNodes: OutNode[] = nodes.map((node) => cloneFormatData(node, [width, height]) as OutNode);
+    const layoutNodes: OutNode[] = nodes.map(
+      (node) => cloneFormatData(node, [width, height]) as OutNode
+    );
     const calcGraph = new IGraph<OutNodeData, EdgeData>({
       nodes: layoutNodes,
       edges,
     });
-    
+
     // clustering info
     const clusterMap: ClusterMap = {};
     if (clustering) {
       layoutNodes.forEach((node) => {
         const clusterValue = node.data[nodeClusterBy] as string;
         if (!clusterMap[clusterValue]) {
-          clusterMap[clusterValue] = { name: clusterValue, cx: 0, cy: 0, count: 0 };
+          clusterMap[clusterValue] = {
+            name: clusterValue,
+            cx: 0,
+            cy: 0,
+            count: 0,
+          };
         }
       });
     }
@@ -181,10 +192,12 @@ export class FruchtermanLayout implements SyncLayout<FruchtermanLayoutOptions> {
       for (let i = 0; i < maxIteration; i++) {
         this.runOneStep(calcGraph, clusterMap, mergedOptions);
         if (assign) {
-          layoutNodes.forEach(({ id, data }) => graph.mergeNodeData(id, {
-            x: data.x,
-            y: data.y
-          }));
+          layoutNodes.forEach(({ id, data }) =>
+            graph.mergeNodeData(id, {
+              x: data.x,
+              y: data.y,
+            })
+          );
         }
         onTick?.({
           nodes: layoutNodes,
@@ -192,10 +205,12 @@ export class FruchtermanLayout implements SyncLayout<FruchtermanLayoutOptions> {
         });
       }
       if (assign) {
-        layoutNodes.forEach(({ id, data }) => graph.mergeNodeData(id, {
-          x: data.x,
-          y: data.y
-        }));
+        layoutNodes.forEach(({ id, data }) =>
+          graph.mergeNodeData(id, {
+            x: data.x,
+            y: data.y,
+          })
+        );
       }
       const result = {
         nodes: layoutNodes,
@@ -203,17 +218,20 @@ export class FruchtermanLayout implements SyncLayout<FruchtermanLayoutOptions> {
       };
       onLayoutEnd?.(result);
       return result;
-    }  {
+    }
+    {
       if (typeof window === "undefined") return;
       let iter = 0;
       // interval for render the result after each iteration
       this.timeInterval = window.setInterval(() => {
         this.runOneStep(calcGraph, clusterMap, mergedOptions);
         if (assign) {
-          layoutNodes.forEach(({ id, data }) => graph.mergeNodeData(id, {
-            x: data.x,
-            y: data.y
-          }));
+          layoutNodes.forEach(({ id, data }) =>
+            graph.mergeNodeData(id, {
+              x: data.x,
+              y: data.y,
+            })
+          );
         }
         onTick?.({
           nodes: layoutNodes,
@@ -228,7 +246,7 @@ export class FruchtermanLayout implements SyncLayout<FruchtermanLayoutOptions> {
               edges,
             });
           } catch (e) {
-            console.warn('onLayoutEnd failed', e);
+            console.warn("onLayoutEnd failed", e);
           }
           window.clearInterval(this.timeInterval);
         }
@@ -238,10 +256,12 @@ export class FruchtermanLayout implements SyncLayout<FruchtermanLayoutOptions> {
     return { nodes: layoutNodes, edges };
   }
 
-  private formatOptions(options: FruchtermanLayoutOptions = {}): FormattedOptions {
+  private formatOptions(
+    options: FruchtermanLayoutOptions = {}
+  ): FormattedOptions {
     const mergedOptions = { ...this.options, ...options } as FormattedOptions;
     const { clustering, nodeClusterBy } = mergedOptions;
-  
+
     const {
       center: propsCenter,
       width: propsWidth,
@@ -258,13 +278,17 @@ export class FruchtermanLayout implements SyncLayout<FruchtermanLayoutOptions> {
     mergedOptions.center = !propsCenter
       ? [mergedOptions.width / 2, mergedOptions.height / 2]
       : (propsCenter as PointTuple);
-    
+
     mergedOptions.clustering = clustering && !!nodeClusterBy;
 
     return mergedOptions;
   }
 
-  private runOneStep(calcGraph: CalcGraph, clusterMap: ClusterMap, options: FormattedOptions) {
+  private runOneStep(
+    calcGraph: CalcGraph,
+    clusterMap: ClusterMap,
+    options: FormattedOptions
+  ) {
     const {
       height,
       width,
@@ -340,7 +364,7 @@ export class FruchtermanLayout implements SyncLayout<FruchtermanLayoutOptions> {
         data.y = data.fy as number;
         return;
       }
-      if (!isNumber(data.x) || !isNumber(data.y)) return;  
+      if (!isNumber(data.x) || !isNumber(data.y)) return;
       const distLength = Math.sqrt(
         displacements[id].x * displacements[id].x +
           displacements[id].y * displacements[id].y
@@ -353,7 +377,7 @@ export class FruchtermanLayout implements SyncLayout<FruchtermanLayoutOptions> {
         );
         calcGraph.mergeNodeData(id, {
           x: data.x + (displacements[id].x / distLength) * limitedDist,
-          y: data.y + (displacements[id].y / distLength) * limitedDist
+          y: data.y + (displacements[id].y / distLength) * limitedDist,
         });
       }
     });
@@ -367,9 +391,12 @@ export class FruchtermanLayout implements SyncLayout<FruchtermanLayoutOptions> {
     this.calRepulsive(calcGraph, displacements, k2);
     this.calAttractive(calcGraph, displacements, k);
   }
- 
-  
-  private calRepulsive(calcGraph: CalcGraph, displacements: DisplacementMap, k2: number) {
+
+  private calRepulsive(
+    calcGraph: CalcGraph,
+    displacements: DisplacementMap,
+    k2: number
+  ) {
     const nodes = calcGraph.getAllNodes();
     nodes.forEach(({ data: v, id: vid }, i) => {
       displacements[vid] = { x: 0, y: 0 };
@@ -402,7 +429,11 @@ export class FruchtermanLayout implements SyncLayout<FruchtermanLayoutOptions> {
     });
   }
 
-  private calAttractive(calcGraph: CalcGraph, displacements: DisplacementMap, k: number) {
+  private calAttractive(
+    calcGraph: CalcGraph,
+    displacements: DisplacementMap,
+    k: number
+  ) {
     const edges = calcGraph.getAllEdges();
     edges.forEach((e) => {
       const { source, target } = e;
@@ -411,7 +442,12 @@ export class FruchtermanLayout implements SyncLayout<FruchtermanLayoutOptions> {
       }
       const { data: u } = calcGraph.getNode(source);
       const { data: v } = calcGraph.getNode(target);
-      if (!isNumber(v.x) || !isNumber(u.x) || !isNumber(v.y) || !isNumber(u.y)) {
+      if (
+        !isNumber(v.x) ||
+        !isNumber(u.x) ||
+        !isNumber(v.y) ||
+        !isNumber(u.y)
+      ) {
         return;
       }
       const vecX = v.x - u.x;

@@ -5,8 +5,8 @@ import {
   LayoutMapping,
   OutNode,
   D3ForceLayoutOptions,
-  SyncLayout,
   Edge,
+  LayoutWithIterations,
 } from "../types";
 import {
   cloneFormatData,
@@ -59,12 +59,19 @@ const DEFAULTS_LAYOUT_OPTIONS: Partial<D3ForceLayoutOptions> = {
  * // If you want to assign the positions directly to the nodes, use assign method.
  * layout.assign(graph, { center: [100, 100] });
  */
-export class D3ForceLayout implements SyncLayout<D3ForceLayoutOptions> {
+export class D3ForceLayout
+  implements LayoutWithIterations<D3ForceLayoutOptions>
+{
   id = "d3force";
 
-  private forceSimulation: any;
+  private forceSimulation: d3Force.Simulation<any, any>;
 
-  /** The sign of running */
+  private lastLayoutNodes: CalcNode[];
+  private lastLayoutEdges: Edge[];
+  private lastAssign: boolean;
+  private lastGraph: Graph;
+  private lastOptions: D3ForceLayoutOptions;
+
   private running: boolean = false;
 
   constructor(
@@ -93,14 +100,42 @@ export class D3ForceLayout implements SyncLayout<D3ForceLayoutOptions> {
    * Stop simulation immediately.
    */
   stop() {
-    if (this.forceSimulation?.stop) {
-      this.forceSimulation.stop();
-    }
+    this.forceSimulation.stop();
     this.running = false;
   }
 
-  isRunning() {
-    return this.running;
+  restart() {
+    this.forceSimulation.restart();
+    this.running = true;
+  }
+
+  /**
+   * Manually steps the simulation by the specified number of iterations.
+   * When finished it will trigger `onLayoutEnd` callback.
+   * @see https://github.com/d3/d3-force#simulation_tick
+   */
+  tick(iterations = 1) {
+    this.forceSimulation.tick(iterations);
+
+    const result = {
+      nodes: formatOutNodes(this.lastLayoutNodes),
+      edges: formatOutEdges(this.lastLayoutEdges),
+    };
+
+    if (this.lastAssign) {
+      result.nodes.forEach((node) =>
+        this.lastGraph.mergeNodeData(node.id, {
+          x: node.data.x,
+          y: node.data.y,
+        })
+      );
+    }
+
+    if (this.lastOptions.onLayoutEnd) {
+      this.lastOptions.onLayoutEnd(result);
+    }
+
+    return result;
   }
 
   private genericForceLayout(
@@ -132,6 +167,13 @@ export class D3ForceLayout implements SyncLayout<D3ForceLayoutOptions> {
         } as CalcNode)
     );
     const layoutEdges: Edge[] = edges.map((edge) => cloneFormatData(edge));
+
+    // Use them later in `tick`.
+    this.lastLayoutNodes = layoutNodes;
+    this.lastLayoutEdges = layoutEdges;
+    this.lastAssign = assign;
+    this.lastGraph = graph;
+    this.lastOptions = mergedOptions;
 
     if (this.running) return;
 
@@ -320,7 +362,7 @@ export class D3ForceLayout implements SyncLayout<D3ForceLayoutOptions> {
    * @param {object} simulation force simulation of d3
    */
   public overlapProcess(
-    simulation: any,
+    simulation: d3Force.Simulation<any, any>,
     options: {
       nodeSize: number | number[] | ((d?: Node) => number) | undefined;
       nodeSpacing: number | number[] | ((d?: Node) => number) | undefined;

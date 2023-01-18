@@ -5,7 +5,7 @@ import {
   Edge,
   LayoutMapping,
   ForceLayoutOptions,
-  SyncLayout,
+  Layout,
   Point,
   OutNode,
 } from "../types";
@@ -55,7 +55,7 @@ const DEFAULTS_LAYOUT_OPTIONS: Partial<ForceLayoutOptions> = {
  * // If you want to assign the positions directly to the nodes, use assign method.
  * layout.assign(graph, { center: [100, 100] });
  */
-export class ForceLayout implements SyncLayout<ForceLayoutOptions> {
+export class ForceLayout implements Layout<ForceLayoutOptions> {
   id = "force";
   /**
    * time interval for layout force animations
@@ -199,7 +199,8 @@ export class ForceLayout implements SyncLayout<ForceLayoutOptions> {
       };
       onLayoutEnd?.(result);
       return result;
-    }  {
+    }
+    {
       if (typeof window === "undefined") return;
       let iter = 0;
       // interval for render the result after each iteration

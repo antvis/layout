@@ -1,6 +1,6 @@
-import EventEmitter from 'eventemitter3';
+import EventEmitter from "eventemitter3";
 import { Graph, Node, Edge } from "@antv/graphlib";
-import type { LayoutMapping, SyncLayout, LayoutSupervisor } from "./types";
+import type { LayoutMapping, Layout, LayoutSupervisor } from "./types";
 // @ts-ignore
 // Inline the worker as a Blob. @see https://github.com/developit/workerize-loader#inline
 import worker from "workerize-loader?inline!./worker";
@@ -13,6 +13,7 @@ export interface Payload {
   layout: {
     id: string;
     options: any;
+    iterations: number;
   };
   nodes: Node<any>[];
   edges: Edge<any>[];
@@ -23,37 +24,43 @@ export const SupervisorEvent = {
   /**
    * Get triggerred when each iteration finished.
    */
-  LAYOUT_ITERATION: 'tick',
+  LAYOUT_ITERATION: "tick",
 
   /**
    * Get triggerred when layout calculation is done.
    */
-  LAYOUT_END: 'layoutend',
+  LAYOUT_END: "layoutend",
 };
+
+interface SupervisorOptions {
+  /**
+   * Iterations run in algorithm such as d3force, will be passed in `tick()` later.
+   */
+  iterations: number;
+}
 
 /**
  * @example
  * const graph = new Graph();
  * const layout = new CircularLayout();
- * 
+ *
  * const supervisor = new Supervisor(graph, layout, { auto: true });
  * supervisor.start();
  * supervisor.stop();
  * supervisor.kill();
- * 
+ *
  * // lifecycle
  * supervisor.on('tick', () => {
  * });
  * supervisor.on('layoutend', () => {
  * });
- * 
+ *
  * // Re-layout when graph changed.
  * graph.addNodes([{ id: 'node1' }, { id: 'node2' }]);
- * 
+ *
  * // TODO: Custom layout.
  */
 export class Supervisor extends EventEmitter implements LayoutSupervisor {
-
   /**
    * Internal worker.
    */
@@ -66,10 +73,8 @@ export class Supervisor extends EventEmitter implements LayoutSupervisor {
 
   constructor(
     private graph: Graph<any, any>,
-    private layout: SyncLayout<any>, 
-    options: {
-      auto: boolean; // 默认手动模式
-    }
+    private layout: Layout<any>,
+    private options?: Partial<SupervisorOptions>
   ) {
     super();
 
@@ -115,6 +120,7 @@ export class Supervisor extends EventEmitter implements LayoutSupervisor {
       layout: {
         id: this.layout.id,
         options: rest,
+        iterations: this.options?.iterations,
       },
       nodes: this.graph.getAllNodes(),
       edges: this.graph.getAllEdges(),
@@ -136,20 +142,26 @@ export class Supervisor extends EventEmitter implements LayoutSupervisor {
     //   },
     // });
 
-    this.worker.calculateLayout(payload, [arraybufferWithNodesEdges]).then(([positions, transferables]: [LayoutMapping, Float32Array[]]) => {
-      this.emit(SupervisorEvent.LAYOUT_END, positions);
+    this.worker
+      .calculateLayout(payload, [arraybufferWithNodesEdges])
+      .then(([positions, transferables]: [LayoutMapping, Float32Array[]]) => {
+        this.emit(SupervisorEvent.LAYOUT_END, positions);
 
-      // Trigger `onLayoutEnd` callback on main thread.
-      if (this.layout.options.onLayoutEnd) {
-        this.layout.options.onLayoutEnd(positions);
-      }
-    });
+        // Trigger `onLayoutEnd` callback on main thread.
+        if (this.layout.options.onLayoutEnd) {
+          this.layout.options.onLayoutEnd(positions);
+        }
+      });
 
     return this;
   }
 
   stop() {
     this.running = false;
+
+    // trigger `layout.stop()` if needed
+    this.worker.stopLayout();
+
     return this;
   }
 

@@ -2,7 +2,8 @@ import { Graph } from "@antv/graphlib";
 // import { setupTransferableMethodsOnWorker } from "@naoak/workerize-transferable";
 import { registry } from "./registry";
 import type { Payload } from "./supervisor";
-import type { LayoutMapping, SyncLayout } from "./types";
+import type { LayoutMapping, Layout, LayoutWithIterations } from "./types";
+import { isLayoutWithIterations } from "./types";
 
 // @see https://www.npmjs.com/package/@naoak/workerize-transferable
 // setupTransferableMethodsOnWorker({
@@ -15,11 +16,26 @@ import type { LayoutMapping, SyncLayout } from "./types";
 //   },
 // });
 
-export async function calculateLayout(payload: Payload, transferables: Float32Array[]) {
-  const { layout: { id, options }, nodes, edges } = payload;
+let currentLayout: Layout<any>;
+
+export function stopLayout() {
+  if ((currentLayout as LayoutWithIterations<any>)?.stop) {
+    (currentLayout as LayoutWithIterations<any>).stop();
+  }
+}
+
+export async function calculateLayout(
+  payload: Payload,
+  transferables: Float32Array[]
+) {
+  const {
+    layout: { id, options, iterations },
+    nodes,
+    edges,
+  } = payload;
 
   // Sync graph on the worker side.
-  // TODO: Use transferable objects like ArrayBuffer for nodes & edges, 
+  // TODO: Use transferable objects like ArrayBuffer for nodes & edges,
   // in which case we don't need the whole graph.
   // @see https://github.com/graphology/graphology/blob/master/src/layout-noverlap/webworker.tpl.js#L32
   const graph = new Graph({
@@ -30,20 +46,26 @@ export async function calculateLayout(payload: Payload, transferables: Float32Ar
   /**
    * Create layout instance on the worker side.
    */
-  let layout: SyncLayout<any>;
+
   const layoutCtor = registry[id];
   if (layoutCtor) {
-    layout = new layoutCtor(options);
+    currentLayout = new layoutCtor(options);
   } else {
     throw new Error(`Unknown layout id: ${id}`);
   }
 
   return new Promise((resolve) => {
     // Do calculation.
-    layout.execute(graph, {
+    currentLayout.assign(graph, {
       onLayoutEnd: (positions: LayoutMapping) => {
         resolve([positions, transferables]);
-      }
+      },
     });
+
+    // Do static layout.
+    if (isLayoutWithIterations(currentLayout)) {
+      currentLayout.stop();
+      currentLayout.tick(iterations);
+    }
   });
 }
