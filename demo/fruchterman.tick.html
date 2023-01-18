@@ -999,19 +999,19 @@
         });
       };
 
-      fruchterman.assign(graph, {
-        onTick: (positions) => {
-          if (!rendered) {
-            createNodesEdges(positions);
-            rendered = true;
-          } else {
-            updateNodesEdges(positions);
-          }
-        },
-        onLayoutEnd: (positions) => {
-          console.log(positions);
-        },
-      });
+      fruchterman.assign(graph);
+      // Do static layout.
+      fruchterman.stop();
+      const positions = fruchterman.tick(1000);
+      // Render nodes.
+      createNodesEdges(positions);
+      // Update Graph model.
+      positions.nodes.forEach((node) =>
+        graph.mergeNodeData(node.id, {
+          x: node.data.x,
+          y: node.data.y,
+        })
+      );
     </script>
   </body>
 </html>

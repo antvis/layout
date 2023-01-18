@@ -303,7 +303,6 @@ export interface FruchtermanLayoutOptions extends CommonOptions {
   speed?: number;
   clustering?: boolean;
   clusterGravity?: number;
-  animate?: boolean;
   nodeClusterBy?: string;
   onTick?: (data: LayoutMapping) => void;
 }

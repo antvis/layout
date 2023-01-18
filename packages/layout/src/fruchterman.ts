@@ -5,10 +5,11 @@ import type {
   OutNode,
   PointTuple,
   FruchtermanLayoutOptions,
-  Layout,
   OutNodeData,
+  Edge,
   EdgeData,
   Point,
+  LayoutWithIterations,
 } from "./types";
 import { cloneFormatData, isNumber } from "./util";
 
@@ -18,7 +19,6 @@ const DEFAULTS_LAYOUT_OPTIONS: Partial<FruchtermanLayoutOptions> = {
   speed: 5,
   clustering: false,
   clusterGravity: 10,
-  animate: true,
   width: 300,
   height: 300,
   nodeClusterBy: "cluster",
@@ -65,10 +65,20 @@ interface FormattedOptions extends FruchtermanLayoutOptions {
  * // If you want to assign the positions directly to the nodes, use assign method.
  * layout.assign(graph, { center: [100, 100] });
  */
-export class FruchtermanLayout implements Layout<FruchtermanLayoutOptions> {
+export class FruchtermanLayout
+  implements LayoutWithIterations<FruchtermanLayoutOptions>
+{
   id = "fruchterman";
 
   private timeInterval: number = 0;
+
+  private running: boolean = false;
+  private lastLayoutNodes: OutNode[];
+  private lastLayoutEdges: Edge[];
+  private lastAssign: boolean;
+  private lastGraph: IGraph<OutNodeData, EdgeData>;
+  private lastOptions: FormattedOptions;
+  private lastClusterMap: ClusterMap;
 
   constructor(
     public options: FruchtermanLayoutOptions = {} as FruchtermanLayoutOptions
@@ -96,11 +106,58 @@ export class FruchtermanLayout implements Layout<FruchtermanLayoutOptions> {
     this.genericFruchtermanLayout(true, graph, options);
   }
 
+  /**
+   * Stop simulation immediately.
+   */
+  stop() {
+    if (this.timeInterval && typeof window !== "undefined") {
+      window.clearInterval(this.timeInterval);
+    }
+    this.running = false;
+  }
+
+  restart() {
+    this.running = true;
+  }
+
+  /**
+   * Manually steps the simulation by the specified number of iterations.
+   * When finished it will trigger `onLayoutEnd` callback.
+   * @see https://github.com/d3/d3-force#simulation_tick
+   */
+  tick(iterations = 1) {
+    for (let i = 0; i < iterations; i++) {
+      this.runOneStep(this.lastGraph, this.lastClusterMap, this.lastOptions);
+    }
+
+    const result = {
+      nodes: this.lastLayoutNodes,
+      edges: this.lastLayoutEdges,
+    };
+
+    if (this.lastAssign) {
+      result.nodes.forEach((node) =>
+        this.lastGraph.mergeNodeData(node.id, {
+          x: node.data.x,
+          y: node.data.y,
+        })
+      );
+    }
+
+    if (this.lastOptions.onLayoutEnd) {
+      this.lastOptions.onLayoutEnd(result);
+    }
+
+    return result;
+  }
+
   private genericFruchtermanLayout(
     assign: boolean,
     graph: Graph,
     options?: FruchtermanLayoutOptions
   ): LayoutMapping | void {
+    if (this.running) return;
+
     const mergedOptions = this.formatOptions(options);
     const {
       layoutInvisibles,
@@ -109,7 +166,6 @@ export class FruchtermanLayout implements Layout<FruchtermanLayoutOptions> {
       center,
       clustering,
       nodeClusterBy,
-      animate,
       maxIteration,
       onTick,
       onLayoutEnd,
@@ -127,10 +183,6 @@ export class FruchtermanLayout implements Layout<FruchtermanLayoutOptions> {
         const { visible } = edge.data || {};
         return visible || visible === undefined;
       });
-    }
-
-    if (this.timeInterval !== undefined && typeof window !== "undefined") {
-      window.clearInterval(this.timeInterval);
     }
 
     if (!nodes?.length) {
@@ -187,38 +239,14 @@ export class FruchtermanLayout implements Layout<FruchtermanLayoutOptions> {
       });
     }
 
-    // silence layout
-    if (!animate) {
-      for (let i = 0; i < maxIteration; i++) {
-        this.runOneStep(calcGraph, clusterMap, mergedOptions);
-        if (assign) {
-          layoutNodes.forEach(({ id, data }) =>
-            graph.mergeNodeData(id, {
-              x: data.x,
-              y: data.y,
-            })
-          );
-        }
-        onTick?.({
-          nodes: layoutNodes,
-          edges,
-        });
-      }
-      if (assign) {
-        layoutNodes.forEach(({ id, data }) =>
-          graph.mergeNodeData(id, {
-            x: data.x,
-            y: data.y,
-          })
-        );
-      }
-      const result = {
-        nodes: layoutNodes,
-        edges,
-      };
-      onLayoutEnd?.(result);
-      return result;
-    }
+    // Use them later in `tick`.
+    this.lastLayoutNodes = layoutNodes;
+    this.lastLayoutEdges = edges;
+    this.lastAssign = assign;
+    this.lastGraph = calcGraph;
+    this.lastOptions = mergedOptions;
+    this.lastClusterMap = clusterMap;
+
     {
       if (typeof window === "undefined") return;
       let iter = 0;
@@ -460,11 +488,5 @@ export class FruchtermanLayout implements Layout<FruchtermanLayoutOptions> {
       displacements[target].x -= dispX;
       displacements[target].y -= dispY;
     });
-  }
-
-  public stop() {
-    if (this.timeInterval && typeof window !== "undefined") {
-      window.clearInterval(this.timeInterval);
-    }
   }
 }

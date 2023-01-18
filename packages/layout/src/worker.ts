@@ -2,8 +2,12 @@ import { Graph } from "@antv/graphlib";
 // import { setupTransferableMethodsOnWorker } from "@naoak/workerize-transferable";
 import { registry } from "./registry";
 import type { Payload } from "./supervisor";
-import type { LayoutMapping, Layout, LayoutWithIterations } from "./types";
-import { isLayoutWithIterations } from "./types";
+import {
+  LayoutMapping,
+  Layout,
+  LayoutWithIterations,
+  isLayoutWithIterations,
+} from "./types";
 
 // @see https://www.npmjs.com/package/@naoak/workerize-transferable
 // setupTransferableMethodsOnWorker({

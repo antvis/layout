@@ -100,12 +100,12 @@ export class D3ForceLayout
    * Stop simulation immediately.
    */
   stop() {
-    this.forceSimulation.stop();
+    this.forceSimulation?.stop();
     this.running = false;
   }
 
   restart() {
-    this.forceSimulation.restart();
+    this.forceSimulation?.restart();
     this.running = true;
   }
 
