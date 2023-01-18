@@ -163,7 +163,7 @@ export class FruchtermanLayout
   ): LayoutMapping | void {
     if (this.running) return;
 
-    const mergedOptions = this.formatOptions(options);
+    const formattedOptions = this.formatOptions(options);
     const {
       layoutInvisibles,
       width,
@@ -174,7 +174,7 @@ export class FruchtermanLayout
       maxIteration,
       onTick,
       onLayoutEnd,
-    } = mergedOptions;
+    } = formattedOptions;
 
     let nodes = graph.getAllNodes();
     let edges = graph.getAllEdges();
@@ -251,7 +251,7 @@ export class FruchtermanLayout
     this.lastLayoutEdges = edges;
     this.lastAssign = assign;
     this.lastGraph = calcGraph;
-    this.lastOptions = mergedOptions;
+    this.lastOptions = formattedOptions;
     this.lastClusterMap = clusterMap;
 
     {
@@ -263,7 +263,7 @@ export class FruchtermanLayout
           return;
         }
 
-        this.runOneStep(calcGraph, clusterMap, mergedOptions);
+        this.runOneStep(calcGraph, clusterMap, formattedOptions);
         if (assign) {
           layoutNodes.forEach(({ id, data }) =>
             graph.mergeNodeData(id, {

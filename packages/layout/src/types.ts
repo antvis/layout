@@ -282,7 +282,6 @@ export interface ForceLayoutOptions extends CommonOptions {
   clusterNodeStrength?: number | ((node: Node) => number);
   collideStrength?: number;
   distanceThresholdMode?: "mean" | "max" | "min";
-  animate?: boolean; // TODO: comfirm the tick way with worker
   onTick?: (data: LayoutMapping) => void;
   getMass?: ((d: Node) => number) | undefined;
   getCenter?: ((d?: Node, degree?: number) => number[]) | undefined;

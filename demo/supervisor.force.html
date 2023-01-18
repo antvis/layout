@@ -6,7 +6,7 @@
       name="viewport"
       content="width=device-width,initial-scale=1,shrink-to-fit=no"
     />
-    <title>Supervisor with D3Force</title>
+    <title>Supervisor with Force</title>
     <style>
       * {
         box-sizing: border-box;
@@ -50,7 +50,7 @@
     ></script>
     <script>
       const { Graph } = window.GraphLib;
-      const { D3ForceLayout, Supervisor } = window.Layout;
+      const { ForceLayout, Supervisor } = window.Layout;
 
       const data = {
         nodes: [
@@ -909,10 +909,9 @@
         edges: data.edges.map((edge, i) => ({ id: i, ...edge })),
       });
 
-      const force = new D3ForceLayout({
-        center: [200, 200], // The center of the graph by default
-        preventOverlap: true,
-        nodeSize: 20,
+      const force = new ForceLayout({
+        width: 500,
+        height: 500,
       });
       const supervisor = new Supervisor(graph, force, { iterations: 1000 });
 
@@ -960,9 +959,6 @@
             });
             force.stop();
             force.assign(graph, {
-              center: [200, 200], // The center of the graph by default
-              preventOverlap: true,
-              nodeSize: 20,
               onTick: (positions) => {
                 updateNodesEdges(positions);
               },
@@ -1006,6 +1002,8 @@
 
       // Do first-time static layout on worker-side.
       supervisor.on("layoutend", (positions) => {
+        console.log(positions);
+
         // Update Graph model.
         positions.nodes.forEach((node) =>
           graph.mergeNodeData(node.id, {

@@ -62,9 +62,7 @@ export class CircularLayout implements Layout<CircularLayoutOptions> {
    * To directly assign the positions to the nodes.
    */
   assign(graph: Graph, options?: CircularLayoutOptions) {
-    graph.batch(() => {
-      this.genericCircularLayout(true, graph, options);
-    });
+    this.genericCircularLayout(true, graph, options);
   }
 
   private genericCircularLayout(
