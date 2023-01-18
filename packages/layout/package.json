@@ -1,6 +1,6 @@
 {
   "name": "@antv/layout",
-  "version": "1.0.0-alpha.10",
+  "version": "1.0.0-alpha.11",
   "description": "graph layout algorithm",
   "main": "dist/index.min.js",
   "module": "esm/index.esm.js",
