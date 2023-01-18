@@ -7,11 +7,17 @@ import type {
   OutNode,
   PointTuple,
   ForceAtlas2LayoutOptions,
-  SyncLayout,
   OutNodeData,
   EdgeData,
+  LayoutWithIterations,
 } from "../types";
-import { cloneFormatData, isArray, isFunction, isNumber, isObject } from "../util";
+import {
+  cloneFormatData,
+  isArray,
+  isFunction,
+  isNumber,
+  isObject,
+} from "../util";
 import { handleSingleNodeGraph } from "../util/common";
 import Body from "./body";
 import Quad from "./quad";
@@ -23,7 +29,7 @@ const DEFAULTS_LAYOUT_OPTIONS: Partial<ForceAtlas2LayoutOptions> = {
   height: 300,
   kr: 5,
   kg: 1,
-  mode: 'normal',
+  mode: "normal",
   preventOverlap: false,
   dissuadeHubs: false,
   maxIteration: 0,
@@ -47,7 +53,7 @@ type ForceMap = {
   [id: string]: PointTuple;
 };
 type BodyMap = {
-  [id: string]: Body
+  [id: string]: Body;
 };
 type SizeMap = { [id: string]: number };
 type CalcGraph = GGraph<OutNodeData, EdgeData>;
@@ -67,21 +73,32 @@ type CalcGraph = GGraph<OutNodeData, EdgeData>;
  * // If you want to assign the positions directly to the nodes, use assign method.
  * layout.assign(graph, { center: [100, 100] });
  */
-export class ForceAtlas2Layout implements SyncLayout<ForceAtlas2LayoutOptions> {
+export class ForceAtlas2Layout
+  implements LayoutWithIterations<ForceAtlas2LayoutOptions>
+{
   id = "forceAtlas2";
 
-  constructor(public options: ForceAtlas2LayoutOptions = {} as ForceAtlas2LayoutOptions) {
+  constructor(
+    public options: ForceAtlas2LayoutOptions = {} as ForceAtlas2LayoutOptions
+  ) {
     this.options = {
       ...DEFAULTS_LAYOUT_OPTIONS,
-      ...options
+      ...options,
     };
   }
+  stop: () => void;
+  restart: () => void;
+  tick: (iterations?: number | undefined) => LayoutMapping;
 
   /**
    * Return the positions of nodes and edges(if needed).
    */
   execute(graph: Graph, options?: ForceAtlas2LayoutOptions): LayoutMapping {
-    return this.genericForceAtlas2Layout(false, graph, options) as LayoutMapping;
+    return this.genericForceAtlas2Layout(
+      false,
+      graph,
+      options
+    ) as LayoutMapping;
   }
   /**
    * To directly assign the positions to the nodes.
@@ -99,20 +116,30 @@ export class ForceAtlas2Layout implements SyncLayout<ForceAtlas2LayoutOptions> {
     const nodes = graph.getAllNodes();
 
     const mergedOptions = this.formatOptions(options, nodes.length);
-    const { width, height, prune, maxIteration, nodeSize, center, onLayoutEnd } = mergedOptions;
+    const {
+      width,
+      height,
+      prune,
+      maxIteration,
+      nodeSize,
+      center,
+      onLayoutEnd,
+    } = mergedOptions;
 
     if (!nodes?.length || nodes.length === 1) {
       return handleSingleNodeGraph(graph, assign, center, onLayoutEnd);
     }
 
-    const calcNodes = nodes.map((node) => cloneFormatData(node, [width, height]) as OutNode);
+    const calcNodes = nodes.map(
+      (node) => cloneFormatData(node, [width, height]) as OutNode
+    );
     const calcEdges = edges.filter((edge: Edge) => {
       const { source, target } = edge;
       return source !== target;
     });
     const calcGraph = new GGraph<OutNodeData, EdgeData>({
       nodes: calcNodes,
-      edges: calcEdges
+      edges: calcEdges,
     });
     const sizes: SizeMap = this.getSizes(calcGraph, graph, nodeSize);
 
@@ -128,34 +155,27 @@ export class ForceAtlas2Layout implements SyncLayout<ForceAtlas2LayoutOptions> {
           const targetNode = calcGraph.getNode(target);
           calcGraph.mergeNodeData(source, {
             x: targetNode.data.x,
-            y: targetNode.data.y
+            y: targetNode.data.y,
           });
         } else if (targetDegree <= 1) {
           const sourceNode = calcGraph.getNode(source);
           calcGraph.mergeNodeData(target, {
             x: sourceNode.data.x,
-            y: sourceNode.data.y
+            y: sourceNode.data.y,
           });
         }
       }
       const postOptions = {
         ...mergedOptions,
         prune: false,
-        barnesHut: false
+        barnesHut: false,
       };
-      this.run(
-        calcGraph,
-        graph,
-        100,
-        sizes,
-        assign,
-        postOptions,
-      );
+      this.run(calcGraph, graph, 100, sizes, assign, postOptions);
     }
 
     const result = {
       nodes: calcNodes,
-      edges
+      edges,
     };
 
     onLayoutEnd?.(result);
@@ -171,7 +191,11 @@ export class ForceAtlas2Layout implements SyncLayout<ForceAtlas2LayoutOptions> {
    * @param nodeSize node size config from layout options
    * @returns {SizeMap} node'id mapped to max of its width and height
    */
-  private getSizes(calcGraph: CalcGraph, graph: Graph, nodeSize?: number | number[] | ((d?: Node) => number)): SizeMap {
+  private getSizes(
+    calcGraph: CalcGraph,
+    graph: Graph,
+    nodeSize?: number | number[] | ((d?: Node) => number)
+  ): SizeMap {
     const nodes = calcGraph.getAllNodes();
     const sizes: SizeMap = {};
     for (let i = 0; i < nodes.length; i += 1) {
@@ -179,7 +203,7 @@ export class ForceAtlas2Layout implements SyncLayout<ForceAtlas2LayoutOptions> {
       sizes[id] = 10;
       if (isNumber(data.size)) {
         sizes[id] = data.size;
-      } else if (isArray(data.size))  {
+      } else if (isArray(data.size)) {
         if (!isNaN(data.size[0])) sizes[id] = Math.max(data.size[0]);
         if (!isNaN(data.size[1])) sizes[id] = Math.max(data.size[1]);
       } else if (isObject(data.size)) {
@@ -208,18 +232,13 @@ export class ForceAtlas2Layout implements SyncLayout<ForceAtlas2LayoutOptions> {
    * @param nodeNum number of nodes
    * @returns formatted options
    */
-  private formatOptions(options: ForceAtlas2LayoutOptions = {}, nodeNum: number): FormattedOptions {
+  private formatOptions(
+    options: ForceAtlas2LayoutOptions = {},
+    nodeNum: number
+  ): FormattedOptions {
     const mergedOptions = { ...this.options, ...options } as FormattedOptions;
-    const {
-      center,
-      width,
-      height,
-      barnesHut,
-      prune,
-      maxIteration,
-      kr,
-      kg
-    } = mergedOptions;
+    const { center, width, height, barnesHut, prune, maxIteration, kr, kg } =
+      mergedOptions;
     mergedOptions.width =
       !width && typeof window !== "undefined"
         ? window.innerWidth
@@ -232,8 +251,8 @@ export class ForceAtlas2Layout implements SyncLayout<ForceAtlas2LayoutOptions> {
       ? [mergedOptions.width / 2, mergedOptions.height / 2]
       : (center as PointTuple);
 
-
-    if (barnesHut === undefined && nodeNum > 250) mergedOptions.barnesHut = true;
+    if (barnesHut === undefined && nodeNum > 250)
+      mergedOptions.barnesHut = true;
     if (prune === undefined && nodeNum > 100) mergedOptions.prune = true;
     if (maxIteration === 0 && !prune) {
       mergedOptions.maxIteration = 250;
@@ -266,7 +285,7 @@ export class ForceAtlas2Layout implements SyncLayout<ForceAtlas2LayoutOptions> {
    * @param iteration iteration number
    * @param sizes nodes' size
    * @param options formatted layout options
-   * @returns 
+   * @returns
    */
   private run(
     calcGraph: CalcGraph,
@@ -295,7 +314,7 @@ export class ForceAtlas2Layout implements SyncLayout<ForceAtlas2LayoutOptions> {
           ry: data.y,
           mass: 1,
           g: kr,
-          degree: calcGraph.getDegree(id)
+          degree: calcGraph.getDegree(id),
         };
         bodies[id] = new Body(params);
       }
@@ -312,14 +331,14 @@ export class ForceAtlas2Layout implements SyncLayout<ForceAtlas2LayoutOptions> {
           forces,
           preForces,
           bodies,
-          sizes
+          sizes,
         },
         options
       );
-      iter --;
+      iter--;
       onTick?.({
         nodes: calcNodes,
-        edges: graph.getAllEdges()
+        edges: graph.getAllEdges(),
       });
       // if (assign) {
       //   calcNodes.forEach(({ id, data }) => graph.mergeNodeData(id, {
@@ -337,32 +356,25 @@ export class ForceAtlas2Layout implements SyncLayout<ForceAtlas2LayoutOptions> {
    * @param graph graph for calculation
    * @param params parameters for a loop
    * @param options formatted layout's input options
-   * @returns 
+   * @returns
    */
   private oneStep(
     graph: CalcGraph,
     params: {
-      iter: number,
-      preventOverlapIters: number,
-      krPrime: number,
-      sg: number,
-      forces: ForceMap,
-      preForces: ForceMap,
-      bodies: BodyMap,
-      sizes: SizeMap,
+      iter: number;
+      preventOverlapIters: number;
+      krPrime: number;
+      sg: number;
+      forces: ForceMap;
+      preForces: ForceMap;
+      bodies: BodyMap;
+      sizes: SizeMap;
     },
     options: FormattedOptions
   ) {
-    const {
-      iter,
-      preventOverlapIters,
-      krPrime,
-      sg,
-      preForces,
-      bodies,
-      sizes,
-    } = params;
-    let {  forces } = params;
+    const { iter, preventOverlapIters, krPrime, sg, preForces, bodies, sizes } =
+      params;
+    let { forces } = params;
     const { preventOverlap, barnesHut } = options;
     const nodes = graph.getAllNodes();
     for (let i = 0; i < nodes.length; i += 1) {
@@ -370,7 +382,7 @@ export class ForceAtlas2Layout implements SyncLayout<ForceAtlas2LayoutOptions> {
       preForces[id] = [...forces[id]];
       forces[id] = [0, 0];
     }
-      // attractive forces, existing on every actual edge
+    // attractive forces, existing on every actual edge
     forces = this.getAttrForces(
       graph,
       iter,
@@ -382,10 +394,21 @@ export class ForceAtlas2Layout implements SyncLayout<ForceAtlas2LayoutOptions> {
 
     // repulsive forces and Gravity, existing on every node pair
     // if preventOverlap, using the no-optimized method in the last preventOverlapIters instead.
-    if (barnesHut && ((preventOverlap && iter > preventOverlapIters) || !preventOverlap)) {
+    if (
+      barnesHut &&
+      ((preventOverlap && iter > preventOverlapIters) || !preventOverlap)
+    ) {
       forces = this.getOptRepGraForces(graph, forces, bodies, options);
     } else {
-      forces = this.getRepGraForces(graph, iter, preventOverlapIters, forces, krPrime, sizes, options);
+      forces = this.getRepGraForces(
+        graph,
+        iter,
+        preventOverlapIters,
+        forces,
+        krPrime,
+        sizes,
+        options
+      );
     }
     // update the positions
     return this.updatePos(graph, forces, preForces, sg, options);
@@ -399,7 +422,7 @@ export class ForceAtlas2Layout implements SyncLayout<ForceAtlas2LayoutOptions> {
    * @param sizes nodes' sizes
    * @param forces forces for nodes, which will be modified
    * @param options formatted layout's input options
-   * @returns 
+   * @returns
    */
   private getAttrForces(
     graph: CalcGraph,
@@ -420,16 +443,20 @@ export class ForceAtlas2Layout implements SyncLayout<ForceAtlas2LayoutOptions> {
       const targetDegree = graph.getDegree(target);
       if (prune && (sourceDegree <= 1 || targetDegree <= 1)) continue;
 
-      const dir = [ targetNode.data.x - sourceNode.data.x, targetNode.data.y - sourceNode.data.y ];
+      const dir = [
+        targetNode.data.x - sourceNode.data.x,
+        targetNode.data.y - sourceNode.data.y,
+      ];
       let eucliDis = Math.hypot(dir[0], dir[1]);
       eucliDis = eucliDis < 0.0001 ? 0.0001 : eucliDis;
       dir[0] = dir[0] / eucliDis;
       dir[1] = dir[1] / eucliDis;
 
-      if (preventOverlap && iter < preventOverlapIters) eucliDis = eucliDis - sizes[source] - sizes[target];
+      if (preventOverlap && iter < preventOverlapIters)
+        eucliDis = eucliDis - sizes[source] - sizes[target];
       let fa1 = eucliDis;
       let fa2 = fa1;
-      if (mode === 'linlog') {
+      if (mode === "linlog") {
         fa1 = Math.log(1 + eucliDis);
         fa2 = fa1;
       }
@@ -458,9 +485,14 @@ export class ForceAtlas2Layout implements SyncLayout<ForceAtlas2LayoutOptions> {
    * @param forces forces for nodes, which will be modified
    * @param bodies force body map
    * @param options formatted layout's input options
-   * @returns 
+   * @returns
    */
-  private getOptRepGraForces(graph: CalcGraph, forces: ForceMap, bodies: BodyMap, options: FormattedOptions) {
+  private getOptRepGraForces(
+    graph: CalcGraph,
+    forces: ForceMap,
+    bodies: BodyMap,
+    options: FormattedOptions
+  ) {
     const { kg, center, prune } = options;
     const nodes = graph.getAllNodes();
     const nodeNum = nodes.length;
@@ -470,7 +502,7 @@ export class ForceAtlas2Layout implements SyncLayout<ForceAtlas2LayoutOptions> {
     let maxy = -9e10;
     for (let i = 0; i < nodeNum; i += 1) {
       const { id, data } = nodes[i];
-      if (prune && (graph.getDegree(id) <= 1)) continue;
+      if (prune && graph.getDegree(id) <= 1) continue;
       bodies[id].setPos(data.x, data.y);
       if (data.x >= maxx) maxx = data.x;
       if (data.x <= minx) minx = data.x;
@@ -485,36 +517,36 @@ export class ForceAtlas2Layout implements SyncLayout<ForceAtlas2LayoutOptions> {
       ymid: (maxy + miny) / 2,
       length: width,
       massCenter: center,
-      mass: nodeNum
+      mass: nodeNum,
     };
     const quad = new Quad(quadParams);
     const quadTree = new QuadTree(quad);
 
-  // build the tree, insert the nodes(quads) into the tree
+    // build the tree, insert the nodes(quads) into the tree
     for (let i = 0; i < nodeNum; i += 1) {
       const { id } = nodes[i];
-      if (prune && (graph.getDegree(id) <= 1)) continue;
+      if (prune && graph.getDegree(id) <= 1) continue;
 
       if (bodies[id].in(quad)) quadTree.insert(bodies[id]);
     }
-  // update the repulsive forces and the gravity.
+    // update the repulsive forces and the gravity.
     for (let i = 0; i < nodeNum; i += 1) {
       const { id, data } = nodes[i];
       const degree = graph.getDegree(id);
-      if (prune && (degree <= 1)) continue;
+      if (prune && degree <= 1) continue;
 
       bodies[id].resetForce();
       quadTree.updateForce(bodies[id]);
       forces[id][0] -= bodies[id].fx;
       forces[id][1] -= bodies[id].fy;
 
-    // gravity
-      const dir = [ data.x - center[0], data.y - center[1] ];
+      // gravity
+      const dir = [data.x - center[0], data.y - center[1]];
       let eucliDis = Math.hypot(dir[0], dir[1]);
       eucliDis = eucliDis < 0.0001 ? 0.0001 : eucliDis;
       dir[0] = dir[0] / eucliDis;
       dir[1] = dir[1] / eucliDis;
-      const fg = kg * (degree + 1) // tslint:disable-line
+      const fg = kg * (degree + 1); // tslint:disable-line
       forces[id][0] -= fg * dir[0];
       forces[id][1] -= fg * dir[1];
     }
@@ -530,7 +562,7 @@ export class ForceAtlas2Layout implements SyncLayout<ForceAtlas2LayoutOptions> {
    * @param krPrime larger the krPrime, larger the repulsive force
    * @param sizes nodes' sizes
    * @param options formatted layout's input options
-   * @returns 
+   * @returns
    */
   private getRepGraForces(
     graph: CalcGraph,
@@ -553,22 +585,31 @@ export class ForceAtlas2Layout implements SyncLayout<ForceAtlas2LayoutOptions> {
 
         if (prune && (degreei <= 1 || degreej <= 1)) continue;
 
-        const dir = [ nodej.data.x - nodei.data.x, nodej.data.y - nodei.data.y ];
+        const dir = [nodej.data.x - nodei.data.x, nodej.data.y - nodei.data.y];
         let eucliDis = Math.hypot(dir[0], dir[1]);
         eucliDis = eucliDis < 0.0001 ? 0.0001 : eucliDis;
         dir[0] = dir[0] / eucliDis;
         dir[1] = dir[1] / eucliDis;
 
-        if (preventOverlap && iter < preventOverlapIters) eucliDis = eucliDis - sizes[nodei.id] - sizes[nodej.id];
+        if (preventOverlap && iter < preventOverlapIters)
+          eucliDis = eucliDis - sizes[nodei.id] - sizes[nodej.id];
 
-        let fr = kr * (degreei + 1) * (degreej + 1) / eucliDis;
+        let fr = (kr * (degreei + 1) * (degreej + 1)) / eucliDis;
 
         if (preventOverlap && iter < preventOverlapIters && eucliDis < 0) {
           fr = krPrime * (degreei + 1) * (degreej + 1);
-        } else if (preventOverlap && iter < preventOverlapIters && eucliDis === 0) {
+        } else if (
+          preventOverlap &&
+          iter < preventOverlapIters &&
+          eucliDis === 0
+        ) {
           fr = 0;
-        } else if (preventOverlap && iter < preventOverlapIters && eucliDis > 0) {
-          fr = kr * (degreei + 1) * (degreej + 1) / eucliDis;
+        } else if (
+          preventOverlap &&
+          iter < preventOverlapIters &&
+          eucliDis > 0
+        ) {
+          fr = (kr * (degreei + 1) * (degreej + 1)) / eucliDis;
         }
         forces[nodei.id][0] -= fr * dir[0];
         forces[nodej.id][0] += fr * dir[0];
@@ -576,12 +617,12 @@ export class ForceAtlas2Layout implements SyncLayout<ForceAtlas2LayoutOptions> {
         forces[nodej.id][1] += fr * dir[1];
       }
 
-    // gravity
-      const dir = [ nodei.data.x - center[0], nodei.data.y - center[1] ];
+      // gravity
+      const dir = [nodei.data.x - center[0], nodei.data.y - center[1]];
       const eucliDis = Math.hypot(dir[0], dir[1]);
       dir[0] = dir[0] / eucliDis;
       dir[1] = dir[1] / eucliDis;
-      const fg = kg * (degreei + 1) // tslint:disable-line
+      const fg = kg * (degreei + 1); // tslint:disable-line
       forces[nodei.id][0] -= fg * dir[0];
       forces[nodei.id][1] -= fg * dir[1];
     }
@@ -595,7 +636,7 @@ export class ForceAtlas2Layout implements SyncLayout<ForceAtlas2LayoutOptions> {
    * @param preForces previous forces for nodes, which will be modified
    * @param sg constant for move distance of one step
    * @param options formatted layout's input options
-   * @returns 
+   * @returns
    */
   private updatePos(
     graph: CalcGraph,
@@ -603,27 +644,29 @@ export class ForceAtlas2Layout implements SyncLayout<ForceAtlas2LayoutOptions> {
     preForces: ForceMap,
     sg: number,
     options: FormattedOptions
-  ): number{
+  ): number {
     const { ks, tao, prune, ksmax } = options;
     const nodes = graph.getAllNodes();
     const nodeNum = nodes.length;
     const swgns = [];
     const trans = [];
-  // swg(G) and tra(G)
+    // swg(G) and tra(G)
     let swgG = 0;
     let traG = 0;
     let usingSg = sg;
     for (let i = 0; i < nodeNum; i += 1) {
       const { id } = nodes[i];
       const degree = graph.getDegree(id);
-      if (prune && (degree <= 1)) continue;
+      if (prune && degree <= 1) continue;
 
-      const minus = [ forces[id][0] - preForces[id][0],
-        forces[id][1] - preForces[id][1]
+      const minus = [
+        forces[id][0] - preForces[id][0],
+        forces[id][1] - preForces[id][1],
       ];
       const minusNorm = Math.hypot(minus[0], minus[1]);
-      const add = [ forces[id][0] + preForces[id][0],
-        forces[id][1] + preForces[id][1]
+      const add = [
+        forces[id][0] + preForces[id][0],
+        forces[id][1] + preForces[id][1],
       ];
       const addNorm = Math.hypot(add[0], add[1]);
 
@@ -635,18 +678,18 @@ export class ForceAtlas2Layout implements SyncLayout<ForceAtlas2LayoutOptions> {
     }
 
     const preSG = usingSg;
-    usingSg = tao * traG / swgG;
+    usingSg = (tao * traG) / swgG;
     if (preSG !== 0) {
-      usingSg = usingSg > (1.5 * preSG) ? (1.5 * preSG) : usingSg;
+      usingSg = usingSg > 1.5 * preSG ? 1.5 * preSG : usingSg;
     }
     // update the node positions
     for (let i = 0; i < nodeNum; i += 1) {
       const { id, data } = nodes[i];
       const degree = graph.getDegree(id);
-      if (prune && (degree <= 1)) continue;
+      if (prune && degree <= 1) continue;
       if (isNumber(data.fx) && isNumber(data.fy)) continue;
 
-      let sn = ks * usingSg / (1 + usingSg * Math.sqrt(swgns[i]));
+      let sn = (ks * usingSg) / (1 + usingSg * Math.sqrt(swgns[i]));
       let absForce = Math.hypot(forces[id][0], forces[id][1]);
       absForce = absForce < 0.0001 ? 0.0001 : absForce;
       const max = ksmax / absForce;
@@ -655,7 +698,7 @@ export class ForceAtlas2Layout implements SyncLayout<ForceAtlas2LayoutOptions> {
       const dny = sn * forces[id][1];
       graph.mergeNodeData(id, {
         x: data.x + dnx,
-        y: data.y + dny
+        y: data.y + dny,
       });
     }
     return usingSg;

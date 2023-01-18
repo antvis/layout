@@ -1,9 +1,17 @@
-import type { Graph, CircularLayoutOptions, SyncLayout, LayoutMapping, PointTuple, OutNode, Node, Edge } from "./types";
+import type {
+  Graph,
+  CircularLayoutOptions,
+  Layout,
+  LayoutMapping,
+  PointTuple,
+  OutNode,
+  Node,
+  Edge,
+} from "./types";
 import { formatSizeFn, formatNumberFn, cloneFormatData } from "./util";
 import { handleSingleNodeGraph } from "./util/common";
 
 // TODO: graph getDegree, getNeighbors, getSuccessors considering the hidden nodes according to layoutInvisible
-
 
 const DEFAULTS_LAYOUT_OPTIONS: Partial<CircularLayoutOptions> = {
   radius: null,
@@ -14,31 +22,33 @@ const DEFAULTS_LAYOUT_OPTIONS: Partial<CircularLayoutOptions> = {
   clockwise: true,
   divisions: 1,
   ordering: null,
-  angleRatio: 1
+  angleRatio: 1,
 };
 
 /**
  * Layout arranging the nodes in a circle.
- * 
+ *
  * @example
  * // Assign layout options when initialization.
  * const layout = new CircularLayout({ radius: 10 });
  * const positions = layout.execute(graph); // { nodes: [], edges: [] }
- * 
+ *
  * // Or use different options later.
  * const layout = new CircularLayout({ radius: 10 });
  * const positions = layout.execute(graph, { radius: 20 }); // { nodes: [], edges: [] }
- * 
+ *
  * // If you want to assign the positions directly to the nodes, use assign method.
  * layout.assign(graph, { radius: 20 });
  */
-export class CircularLayout implements SyncLayout<CircularLayoutOptions> {
-  id = 'circular';
+export class CircularLayout implements Layout<CircularLayoutOptions> {
+  id = "circular";
 
-  constructor(public options: CircularLayoutOptions = {} as CircularLayoutOptions) {
+  constructor(
+    public options: CircularLayoutOptions = {} as CircularLayoutOptions
+  ) {
     this.options = {
       ...DEFAULTS_LAYOUT_OPTIONS,
-      ...options
+      ...options,
     };
   }
 
@@ -53,14 +63,30 @@ export class CircularLayout implements SyncLayout<CircularLayoutOptions> {
    * To directly assign the positions to the nodes.
    */
   assign(graph: Graph, options?: CircularLayoutOptions) {
-    graph.batch(() => {
-      this.genericCircularLayout(true, graph, options);
-    });
+    this.genericCircularLayout(true, graph, options);
   }
 
-  private genericCircularLayout(assign: boolean, graph: Graph, options?: CircularLayoutOptions): LayoutMapping | void {
+  private genericCircularLayout(
+    assign: boolean,
+    graph: Graph,
+    options?: CircularLayoutOptions
+  ): LayoutMapping | void {
     const mergedOptions = { ...this.options, ...options };
-    const { width, height, center, divisions, startAngle = 0, endAngle = 2 * Math.PI, angleRatio, ordering, clockwise, nodeSpacing: paramNodeSpacing, nodeSize: paramNodeSize, layoutInvisibles, onLayoutEnd } = mergedOptions;
+    const {
+      width,
+      height,
+      center,
+      divisions,
+      startAngle = 0,
+      endAngle = 2 * Math.PI,
+      angleRatio,
+      ordering,
+      clockwise,
+      nodeSpacing: paramNodeSpacing,
+      nodeSize: paramNodeSize,
+      layoutInvisibles,
+      onLayoutEnd,
+    } = mergedOptions;
 
     let nodes: Node[] = graph.getAllNodes();
     let edges: Edge[] = graph.getAllEdges();
@@ -78,12 +104,18 @@ export class CircularLayout implements SyncLayout<CircularLayoutOptions> {
     }
 
     // Calculate center according to `window` if not provided.
-    const [calculatedWidth, calculatedHeight, calculatedCenter] = calculateCenter(width, height, center);
+    const [calculatedWidth, calculatedHeight, calculatedCenter] =
+      calculateCenter(width, height, center);
     const n = nodes?.length;
     if (!n || n === 1) {
-      return handleSingleNodeGraph(graph, assign, calculatedCenter, onLayoutEnd);
+      return handleSingleNodeGraph(
+        graph,
+        assign,
+        calculatedCenter,
+        onLayoutEnd
+      );
     }
-    
+
     const angleStep = (endAngle - startAngle) / n;
 
     let { radius, startRadius, endRadius } = mergedOptions;
@@ -97,7 +129,7 @@ export class CircularLayout implements SyncLayout<CircularLayoutOptions> {
       });
       let perimeter = 0;
       nodes.forEach((node, i) => {
-        if (i === 0) perimeter += (maxNodeSize || 10);
+        if (i === 0) perimeter += maxNodeSize || 10;
         else perimeter += (nodeSpacing(node) || 0) + (maxNodeSize || 10);
       });
       radius = perimeter / (2 * Math.PI);
@@ -160,7 +192,7 @@ export class CircularLayout implements SyncLayout<CircularLayoutOptions> {
 
     const result = {
       nodes: layoutNodes,
-      edges
+      edges,
     };
     onLayoutEnd?.(result);
 
@@ -170,10 +202,10 @@ export class CircularLayout implements SyncLayout<CircularLayoutOptions> {
 
 /**
  * order the nodes acoording to the graph topology
- * @param graph 
- * @param nodes 
- * @param directed 
- * @returns 
+ * @param graph
+ * @param nodes
+ * @param directed
+ * @returns
  */
 const topologyOrdering = (
   graph: Graph,
@@ -190,20 +222,25 @@ const topologyOrdering = (
     if (i !== 0) {
       if (
         (i === n - 1 ||
-          graph.getDegree(node.id, 'both') !== graph.getDegree(nodes[i + 1].id, 'both') ||
-          graph.areNeighbors(orderedCNodes[k].id, node.id)
-        ) &&
+          graph.getDegree(node.id, "both") !==
+            graph.getDegree(nodes[i + 1].id, "both") ||
+          graph.areNeighbors(orderedCNodes[k].id, node.id)) &&
         !pickFlags[node.id]
       ) {
         orderedCNodes.push(cloneFormatData(node) as OutNode);
         pickFlags[node.id] = true;
         k++;
       } else {
-        const children = directed ? graph.getSuccessors(orderedCNodes[k].id) : graph.getNeighbors(orderedCNodes[k].id);
+        const children = directed
+          ? graph.getSuccessors(orderedCNodes[k].id)
+          : graph.getNeighbors(orderedCNodes[k].id);
         let foundChild = false;
         for (let j = 0; j < children.length; j++) {
           const child = children[j];
-          if (graph.getDegree(child.id) === graph.getDegree(node.id) && !pickFlags[child.id]) {
+          if (
+            graph.getDegree(child.id) === graph.getDegree(node.id) &&
+            !pickFlags[child.id]
+          ) {
             orderedCNodes.push(cloneFormatData(child) as OutNode);
             pickFlags[child.id] = true;
             foundChild = true;
@@ -230,28 +267,28 @@ const topologyOrdering = (
 
 /**
  * order the nodes according to their degree
- * @param graph 
- * @param nodes 
- * @returns 
+ * @param graph
+ * @param nodes
+ * @returns
  */
-function degreeOrdering(
-  graph: Graph,
-  nodes: Node[],
-): OutNode[] {
+function degreeOrdering(graph: Graph, nodes: Node[]): OutNode[] {
   const orderedNodes: OutNode[] = [];
   nodes.forEach((node, i) => {
     orderedNodes.push(cloneFormatData(node) as OutNode);
   });
-  orderedNodes.sort((nodeA: Node, nodeB: Node) => (graph.getDegree(nodeA.id, 'both') - graph.getDegree(nodeB.id, 'both')));
+  orderedNodes.sort(
+    (nodeA: Node, nodeB: Node) =>
+      graph.getDegree(nodeA.id, "both") - graph.getDegree(nodeB.id, "both")
+  );
   return orderedNodes;
 }
 
 /**
- * format the invalide width and height, and get the center position 
- * @param width 
- * @param height 
- * @param center 
- * @returns 
+ * format the invalide width and height, and get the center position
+ * @param width
+ * @param height
+ * @param center
+ * @returns
  */
 const calculateCenter = (
   width: number | undefined,

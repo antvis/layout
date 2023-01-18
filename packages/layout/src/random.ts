@@ -4,7 +4,7 @@ import type {
   OutNode,
   PointTuple,
   RandomLayoutOptions,
-  SyncLayout,
+  Layout,
 } from "./types";
 
 const DEFAULTS_LAYOUT_OPTIONS: Partial<RandomLayoutOptions> = {
@@ -28,13 +28,13 @@ const DEFAULTS_LAYOUT_OPTIONS: Partial<RandomLayoutOptions> = {
  * // If you want to assign the positions directly to the nodes, use assign method.
  * layout.assign(graph, { center: [100, 100] });
  */
-export class RandomLayout implements SyncLayout<RandomLayoutOptions> {
+export class RandomLayout implements Layout<RandomLayoutOptions> {
   id = "random";
 
   constructor(public options: RandomLayoutOptions = {} as RandomLayoutOptions) {
     this.options = {
       ...DEFAULTS_LAYOUT_OPTIONS,
-      ...options
+      ...options,
     };
   }
 

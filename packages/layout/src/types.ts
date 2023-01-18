@@ -47,15 +47,55 @@ export type Point = { x: number; y: number };
 export type Matrix = number[];
 export type LayoutMapping = { nodes: OutNode[]; edges: Edge[] };
 
-export interface SyncLayout<LayoutOptions> {
+export interface Layout<LayoutOptions> {
+  /**
+   * To directly assign the positions to the nodes.
+   */
   assign(graph: Graph, options?: LayoutOptions): void;
+  /**
+   * Return the positions of nodes and edges(if needed).
+   */
   execute(graph: Graph, options?: LayoutOptions): LayoutMapping;
+  /**
+   * Layout options, can be changed in runtime.
+   */
   options: LayoutOptions;
+  /**
+   * Unique ID, it will get registered and used on the webworker-side.
+   */
   id: string;
 }
 
-export interface SyncLayoutConstructor<LayoutOptions> {
-  new (options?: LayoutOptions): SyncLayout<LayoutOptions>;
+export function isLayoutWithIterations(
+  layout: any
+): layout is LayoutWithIterations<any> {
+  return !!layout.tick && !!layout.stop && !!layout.restart;
+}
+
+export interface LayoutWithIterations<LayoutOptions>
+  extends Layout<LayoutOptions> {
+  /**
+   * Some layout algorithm has n iterations so that the simulation needs to be stopped at any time.
+   * This method is useful for running the simulation manually.
+   * @see https://github.com/d3/d3-force#simulation_stop
+   */
+  stop: () => void;
+
+  /**
+   * Restarts the simulation’s internal timer and returns the simulation.
+   * @see https://github.com/d3/d3-force#simulation_restart
+   */
+  restart: () => void;
+
+  /**
+   * Manually steps the simulation by the specified number of iterations.
+   * @see https://github.com/d3/d3-force#simulation_tick
+   */
+  tick: (iterations?: number) => LayoutMapping;
+}
+
+export interface LayoutConstructor<LayoutOptions> {
+  new (options?: LayoutOptions): Layout<LayoutOptions>;
 }
 
 export interface LayoutSupervisor {
@@ -164,8 +204,8 @@ export interface DagreLayoutOptions extends CommonOptions {
     nodes: OutNode[];
     edges: Edge[];
   };
-  nodesepFunc?: ((d?: Node) => number);
-  ranksepFunc?: ((d?: Node) => number);
+  nodesepFunc?: (d?: Node) => number;
+  ranksepFunc?: (d?: Node) => number;
 }
 
 export interface D3ForceLayoutOptions extends CommonOptions {
@@ -214,9 +254,7 @@ export interface ForceLayoutOptions extends CommonOptions {
   center?: PointTuple;
   width?: number;
   height?: number;
-  linkDistance?:
-    | number
-    | ((edge?: Edge, source?: any, target?: any) => number);
+  linkDistance?: number | ((edge?: Edge, source?: any, target?: any) => number);
   nodeStrength?: number | ((d?: Node) => number);
   edgeStrength?: number | ((d?: Edge) => number);
   preventOverlap?: boolean;
@@ -237,10 +275,9 @@ export interface ForceLayoutOptions extends CommonOptions {
   clusterNodeStrength?: number | ((node: Node) => number);
   collideStrength?: number;
   distanceThresholdMode?: "mean" | "max" | "min";
-  animate?: boolean; // TODO: comfirm the tick way with worker
   onTick?: (data: LayoutMapping) => void;
-  getMass?: ((node?: Node) => number);
-  getCenter?: ((node?: Node, degree?: number) => number[]);
+  getMass?: (node?: Node) => number;
+  getCenter?: (node?: Node, degree?: number) => number[];
   monitor?: (params: {
     energy: number;
     nodes: Node[];
@@ -259,11 +296,23 @@ export interface ForceAtlas2LayoutOptions extends CommonOptions {
   ksmax?: number;
   tao?: number;
   maxIteration?: number;
-  mode?: 'normal' | 'linlog';
+  mode?: "normal" | "linlog";
   preventOverlap?: boolean;
   dissuadeHubs?: boolean;
   barnesHut?: boolean;
   prune?: boolean;
   nodeSize?: number | number[] | ((node?: Node) => number);
+  onTick?: (data: LayoutMapping) => void;
+}
+export interface FruchtermanLayoutOptions extends CommonOptions {
+  center?: PointTuple;
+  maxIteration?: number;
+  width?: number;
+  height?: number;
+  gravity?: number;
+  speed?: number;
+  clustering?: boolean;
+  clusterGravity?: number;
+  nodeClusterBy?: string;
   onTick?: (data: LayoutMapping) => void;
 }

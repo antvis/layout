@@ -1,6 +1,6 @@
 {
   "name": "@antv/layout",
-  "version": "1.0.0-alpha.9",
+  "version": "1.0.0-alpha.12",
   "description": "graph layout algorithm",
   "main": "dist/index.min.js",
   "module": "esm/index.esm.js",
@@ -32,6 +32,7 @@
     "@babel/core": "^7.7.7",
     "@babel/plugin-proposal-class-properties": "^7.1.0",
     "@babel/preset-react": "^7.7.4",
+    "@types/d3-force": "^3.0.4",
     "babel-loader": "^8.0.6",
     "ts-loader": "^7.0.3",
     "typescript": "^4.0.3",
