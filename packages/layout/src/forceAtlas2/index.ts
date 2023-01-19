@@ -251,8 +251,9 @@ export class ForceAtlas2Layout
       ? [mergedOptions.width / 2, mergedOptions.height / 2]
       : (center as PointTuple);
 
-    if (barnesHut === undefined && nodeNum > 250)
+    if (barnesHut === undefined && nodeNum > 250) {
       mergedOptions.barnesHut = true;
+    }
     if (prune === undefined && nodeNum > 100) mergedOptions.prune = true;
     if (maxIteration === 0 && !prune) {
       mergedOptions.maxIteration = 250;
@@ -452,8 +453,9 @@ export class ForceAtlas2Layout
       dir[0] = dir[0] / eucliDis;
       dir[1] = dir[1] / eucliDis;
 
-      if (preventOverlap && iter < preventOverlapIters)
+      if (preventOverlap && iter < preventOverlapIters) {
         eucliDis = eucliDis - sizes[source] - sizes[target];
+      }
       let fa1 = eucliDis;
       let fa2 = fa1;
       if (mode === "linlog") {
@@ -591,8 +593,9 @@ export class ForceAtlas2Layout
         dir[0] = dir[0] / eucliDis;
         dir[1] = dir[1] / eucliDis;
 
-        if (preventOverlap && iter < preventOverlapIters)
+        if (preventOverlap && iter < preventOverlapIters) {
           eucliDis = eucliDis - sizes[nodei.id] - sizes[nodej.id];
+        }
 
         let fr = (kr * (degreei + 1) * (degreej + 1)) / eucliDis;
 

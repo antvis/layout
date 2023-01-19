@@ -58,16 +58,15 @@
             edges: data.edges,
           });
 
-          const circular = new ForceAtlas2Layout({
+          const force = new ForceAtlas2Layout({
             center: [200, 200],
             width: 400,
             height: 400,
-            preventOverlap: true
+            preventOverlap: true,
           });
 
-          const positions = circular.execute(graph);
-
-          const { Circle, Canvas } = window.G;
+          const positions = force.execute(graph);
+          const { Circle, Line, Canvas } = window.G;
 
           // create a renderer
           const canvasRenderer = new window.G.Canvas2D.Renderer();
@@ -81,6 +80,26 @@
           });
 
           canvas.addEventListener("ready", () => {
+            positions.edges.forEach(({ source, target }, i) => {
+              const sourceNode = positions.nodes.find(
+                ({ id }) => id === source
+              );
+              const targetNode = positions.nodes.find(
+                ({ id }) => id === target
+              );
+              const line = new Line({
+                style: {
+                  x1: sourceNode.data.x,
+                  y1: sourceNode.data.y,
+                  x2: targetNode.data.x,
+                  y2: targetNode.data.y,
+                  lineWidth: 1,
+                  stroke: "grey",
+                },
+              });
+              canvas.appendChild(line);
+            });
+
             positions.nodes.forEach((node) => {
               const circle = new Circle({
                 style: {
