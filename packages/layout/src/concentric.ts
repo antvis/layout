@@ -16,10 +16,10 @@ import {
   isObject,
   isString,
 } from "./util";
+import { handleSingleNodeGraph } from "./util/common";
 
 const DEFAULTS_LAYOUT_OPTIONS: Partial<ConcentricLayoutOptions> = {
   nodeSize: 30,
-  minNodeSpacing: 10,
   nodeSpacing: 10,
   preventOverlap: false,
   sweep: undefined,
@@ -85,7 +85,6 @@ export class ConcentricLayout implements Layout<ConcentricLayoutOptions> {
       sweep: propsSweep,
       clockwise,
       equidistant,
-      minNodeSpacing = 10,
       preventOverlap,
       startAngle = (3 / 2) * Math.PI,
       nodeSize,
@@ -109,13 +108,6 @@ export class ConcentricLayout implements Layout<ConcentricLayoutOptions> {
       });
     }
 
-    const n = nodes.length;
-    if (n === 0) {
-      const result = { nodes: [], edges };
-      onLayoutEnd?.(result);
-      return result;
-    }
-
     const width =
       !propsWidth && typeof window !== "undefined"
         ? window.innerWidth
@@ -124,32 +116,12 @@ export class ConcentricLayout implements Layout<ConcentricLayoutOptions> {
       !propsHeight && typeof window !== "undefined"
         ? window.innerHeight
         : (propsHeight as number);
-    const center = !propsCenter
+    const center = (!propsCenter
       ? [width / 2, height / 2]
-      : (propsCenter as PointTuple);
+      : propsCenter) as PointTuple;
 
-    if (n === 1) {
-      if (assign) {
-        graph.mergeNodeData(nodes[0].id, {
-          x: center[0],
-          y: center[1],
-        });
-      }
-      const result = {
-        nodes: [
-          {
-            ...nodes[0],
-            data: {
-              ...nodes[0].data,
-              x: center[0],
-              y: center[1],
-            },
-          },
-        ],
-        edges,
-      };
-      onLayoutEnd?.(result);
-      return result;
+    if (!nodes?.length || nodes.length === 1) {
+      return handleSingleNodeGraph(graph, assign, center, onLayoutEnd);
     }
 
     const layoutNodes: OutNode[] = [];
@@ -250,7 +222,7 @@ export class ConcentricLayout implements Layout<ConcentricLayoutOptions> {
     });
 
     // create positions for levels
-    let minDist = maxNodeSize + (maxNodeSpacing || minNodeSpacing); // min dist between nodes
+    let minDist = maxNodeSize + maxNodeSpacing; // min dist between nodes
     if (!preventOverlap) {
       // then strictly constrain to bb
       const firstLvlHasMulti = levels.length > 0 && levels[0].nodes.length > 1;

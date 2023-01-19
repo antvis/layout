@@ -2,6 +2,7 @@ import { CircularLayout } from "./circular";
 import { ConcentricLayout } from "./concentric";
 import { D3ForceLayout } from "./d3Force";
 import { ForceLayout } from "./force";
+import { ForceAtlas2Layout } from "./forceAtlas2";
 import { FruchtermanLayout } from "./fruchterman";
 import { GridLayout } from "./grid";
 import { MDSLayout } from "./mds";
@@ -19,6 +20,7 @@ export const registry: Record<string, LayoutConstructor<any>> = {
   force: ForceLayout,
   d3force: D3ForceLayout,
   fruchterman: FruchtermanLayout,
+  forceAtlas2: ForceAtlas2Layout,
 };
 export function registerLayout(id: string, layout: LayoutConstructor<any>) {
   registry[id] = layout;

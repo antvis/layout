@@ -24,7 +24,7 @@
     "release": "release-it",
     "test": "jest",
     "coverage": "jest --coverage",
-    "test-live": "DEBUG_MODE=1 jest --watch ./__tests__/unit/radial.test.ts"
+    "test-live": "DEBUG_MODE=1 jest --watch ./__tests__/unit/forceAtlas2.test.ts"
   },
   "lint-staged": {
     "*.js": [

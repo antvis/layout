@@ -9,7 +9,6 @@ describe("ConcentricLayout", () => {
     const concentric = new ConcentricLayout();
     expect(concentric.options).toEqual({
       nodeSize: 30,
-      minNodeSpacing: 10,
       preventOverlap: false,
       sweep: undefined,
       equidistant: false,

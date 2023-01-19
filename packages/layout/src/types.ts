@@ -140,8 +140,8 @@ export interface GridLayoutOptions extends CommonOptions {
   rows?: number;
   cols?: number;
   sortBy?: string;
-  position?: ((node?: Node) => { row?: number; col?: number }) | undefined;
-  nodeSpacing?: ((node?: Node) => number) | number | undefined;
+  position?: (node?: Node) => { row?: number; col?: number };
+  nodeSpacing?: ((node?: Node) => number) | number;
 }
 
 export interface RandomLayoutOptions extends CommonOptions {
@@ -159,7 +159,6 @@ export interface ConcentricLayoutOptions extends CommonOptions {
   center?: PointTuple;
   preventOverlap?: boolean;
   nodeSize?: number | PointTuple;
-  minNodeSpacing?: number;
   sweep?: number;
   equidistant?: boolean;
   startAngle?: number;
@@ -168,7 +167,7 @@ export interface ConcentricLayoutOptions extends CommonOptions {
   sortBy?: string;
   width?: number;
   height?: number;
-  nodeSpacing?: number | number[] | ((node?: Node) => number) | undefined;
+  nodeSpacing?: number | number[] | ((node?: Node) => number);
 }
 
 export interface RadialLayoutOptions extends CommonOptions {
@@ -180,11 +179,11 @@ export interface RadialLayoutOptions extends CommonOptions {
   focusNode?: string | Node | null;
   unitRadius?: number | null;
   preventOverlap?: boolean;
-  nodeSize?: number | number[] | undefined;
-  nodeSpacing?: number | Function | undefined;
+  nodeSize?: number | number[];
+  nodeSpacing?: number | Function;
   maxPreventOverlapIteration?: number;
   strictRadial?: boolean;
-  sortBy?: string | undefined;
+  sortBy?: string;
   sortStrength?: number;
 }
 
@@ -192,7 +191,7 @@ export interface DagreLayoutOptions extends CommonOptions {
   rankdir?: "TB" | "BT" | "LR" | "RL";
   align?: "UL" | "UR" | "DL" | "DR";
   begin?: PointTuple;
-  nodeSize?: number | number[] | undefined;
+  nodeSize?: number | number[];
   nodesep?: number;
   ranksep?: number;
   controlPoints?: boolean;
@@ -205,22 +204,19 @@ export interface DagreLayoutOptions extends CommonOptions {
     nodes: OutNode[];
     edges: Edge[];
   };
-  nodesepFunc?: ((d?: Node) => number) | undefined;
-  ranksepFunc?: ((d?: Node) => number) | undefined;
+  nodesepFunc?: (d?: Node) => number;
+  ranksepFunc?: (d?: Node) => number;
 }
 
 export interface D3ForceLayoutOptions extends CommonOptions {
   center?: PointTuple;
-  linkDistance?: number | ((edge?: Edge) => number) | undefined;
-  edgeStrength?: number | ((edge?: Edge) => number) | undefined;
-  nodeStrength?:
-    | number
-    | ((node: Node, i: number, nodes: Node[]) => number)
-    | undefined;
+  linkDistance?: number | ((edge?: Edge) => number);
+  edgeStrength?: number | ((edge?: Edge) => number);
+  nodeStrength?: number | ((node?: Node) => number);
   preventOverlap?: boolean;
   collideStrength?: number;
-  nodeSize?: number | number[] | ((node?: Node) => number) | undefined;
-  nodeSpacing?: number | number[] | ((node?: Node) => number) | undefined;
+  nodeSize?: number | number[] | ((node?: Node) => number);
+  nodeSpacing?: number | number[] | ((node?: Node) => number);
   alpha?: number;
   alphaDecay?: number;
   alphaMin?: number;
@@ -258,12 +254,9 @@ export interface ForceLayoutOptions extends CommonOptions {
   center?: PointTuple;
   width?: number;
   height?: number;
-  linkDistance?:
-    | number
-    | ((edge?: Edge, source?: any, target?: any) => number)
-    | undefined;
-  nodeStrength?: number | ((d?: Node) => number) | undefined;
-  edgeStrength?: number | ((d?: Edge) => number) | undefined;
+  linkDistance?: number | ((edge?: Edge, source?: any, target?: any) => number);
+  nodeStrength?: number | ((d?: Node) => number);
+  edgeStrength?: number | ((d?: Edge) => number);
   preventOverlap?: boolean;
   nodeSize?: number | number[] | ((d?: Node) => number);
   nodeSpacing?: number | ((d?: Node) => number);
@@ -283,8 +276,8 @@ export interface ForceLayoutOptions extends CommonOptions {
   collideStrength?: number;
   distanceThresholdMode?: "mean" | "max" | "min";
   onTick?: (data: LayoutMapping) => void;
-  getMass?: ((d: Node) => number) | undefined;
-  getCenter?: ((d?: Node, degree?: number) => number[]) | undefined;
+  getMass?: (node?: Node) => number;
+  getCenter?: (node?: Node, degree?: number) => number[];
   monitor?: (params: {
     energy: number;
     nodes: Node[];
@@ -293,6 +286,24 @@ export interface ForceLayoutOptions extends CommonOptions {
   }) => void;
 }
 
+export interface ForceAtlas2LayoutOptions extends CommonOptions {
+  center?: PointTuple;
+  width?: number;
+  height?: number;
+  kr?: number;
+  kg?: number;
+  ks?: number;
+  ksmax?: number;
+  tao?: number;
+  maxIteration?: number;
+  mode?: "normal" | "linlog";
+  preventOverlap?: boolean;
+  dissuadeHubs?: boolean;
+  barnesHut?: boolean;
+  prune?: boolean;
+  nodeSize?: number | number[] | ((node?: Node) => number);
+  onTick?: (data: LayoutMapping) => void;
+}
 export interface FruchtermanLayoutOptions extends CommonOptions {
   center?: PointTuple;
   maxIteration?: number;

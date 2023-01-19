@@ -14,6 +14,7 @@ import {
   getAdjMatrix,
   scaleMatrix,
 } from "./util";
+import { handleSingleNodeGraph } from "./util/common";
 
 const DEFAULTS_LAYOUT_OPTIONS: Partial<MDSLayoutOptions> = {
   center: [0, 0],
@@ -86,33 +87,8 @@ export class MDSLayout implements Layout<MDSLayoutOptions> {
       });
     }
 
-    if (!nodes || nodes.length === 0) {
-      const result = { nodes: [], edges };
-      onLayoutEnd?.(result);
-      return result;
-    }
-    if (nodes.length === 1) {
-      if (assign) {
-        graph.mergeNodeData(nodes[0].id, {
-          x: center[0],
-          y: center[1],
-        });
-      }
-      const result = {
-        nodes: [
-          {
-            ...nodes[0],
-            data: {
-              ...nodes[0].data,
-              x: center[0],
-              y: center[1],
-            },
-          },
-        ],
-        edges,
-      };
-      onLayoutEnd?.(result);
-      return result;
+    if (!nodes?.length || nodes.length === 1) {
+      return handleSingleNodeGraph(graph, assign, center, onLayoutEnd);
     }
 
     // the graph-theoretic distance (shortest path distance) matrix

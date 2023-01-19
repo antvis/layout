@@ -1,5 +1,5 @@
-import { Node, Edge } from '../types';
-import { isNumber } from './number';
+import { Node, Edge } from "../types";
+import { isNumber } from "./number";
 
 export const isObject = (val: unknown): val is Record<any, any> =>
   val !== null && typeof val === "object";
@@ -18,12 +18,10 @@ export const clone = <T>(target: T): T => {
     });
     return cp.map((n: any) => clone<any>(n)) as any;
   }
-  if (typeof target === "object" && Object.keys(target).length) {
-    const cp = { ...(target as { [key: string]: any }) } as {
-      [key: string]: any;
-    };
-    Object.keys(cp).forEach((k) => {
-      cp[k] = clone<any>(cp[k]);
+  if (typeof target === "object") {
+    const cp = {} as { [key: string]: any };
+    Object.keys(target).forEach((k) => {
+      cp[k] = clone<any>((target as any)[k]);
     });
     return cp as T;
   }
@@ -36,7 +34,10 @@ export const clone = <T>(target: T): T => {
  * @param initRange whether init the x and y in data with the range, which means [xRange, yRange]
  * @returns cloned node/edge
  */
-export const cloneFormatData = <T extends Node | Edge>(target: T, initRange?: [number, number]): T => {
+export const cloneFormatData = <T extends Node | Edge>(
+  target: T,
+  initRange?: [number, number]
+): T => {
   const cloned = clone(target);
   cloned.data = cloned.data || {};
   if (initRange) {

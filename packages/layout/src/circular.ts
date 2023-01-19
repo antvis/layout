@@ -9,6 +9,7 @@ import type {
   Edge,
 } from "./types";
 import { formatSizeFn, formatNumberFn, cloneFormatData } from "./util";
+import { handleSingleNodeGraph } from "./util/common";
 
 // TODO: graph getDegree, getNeighbors, getSuccessors considering the hidden nodes according to layoutInvisible
 
@@ -101,47 +102,18 @@ export class CircularLayout implements Layout<CircularLayoutOptions> {
         return visible || visible === undefined;
       });
     }
-    const n = nodes.length;
-
-    // Need no layout if there is no node.
-    if (n === 0) {
-      onLayoutEnd?.({
-        nodes: [],
-        edges: [],
-      });
-      return {
-        nodes: [],
-        edges: [],
-      };
-    }
 
     // Calculate center according to `window` if not provided.
     const [calculatedWidth, calculatedHeight, calculatedCenter] =
       calculateCenter(width, height, center);
-
-    // Layout easily if there is only one node.
-    if (n === 1) {
-      if (assign) {
-        graph.mergeNodeData(nodes[0].id, {
-          x: calculatedCenter[0],
-          y: calculatedCenter[1],
-        });
-      }
-      const result = {
-        nodes: [
-          {
-            ...nodes[0],
-            data: {
-              ...nodes[0].data,
-              x: calculatedCenter[0],
-              y: calculatedCenter[1],
-            },
-          },
-        ],
-        edges,
-      };
-      onLayoutEnd?.(result);
-      return result;
+    const n = nodes?.length;
+    if (!n || n === 1) {
+      return handleSingleNodeGraph(
+        graph,
+        assign,
+        calculatedCenter,
+        onLayoutEnd
+      );
     }
 
     const angleStep = (endAngle - startAngle) / n;
