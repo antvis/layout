@@ -1,10 +1,34 @@
-## About
+# @antv/layout-wasm
 
-Collection of basic layout algorithms to be used with [@antv/graphlib]().
+A WASM binding of `@antv/layout-rust`.
 
-## Installation
+## Build
 
 Install [wasm-pack](https://rustwasm.github.io/wasm-pack/installer/) first.
+
+Then run the command `npm run build`, the compiled package will be outputted under the `/dist` directory.
+
+```bash
+$ npm run build
+```
+
+We use rollup & [rollup-plugin-rust](https://github.com/wasm-tool/rollup-plugin-rust) to generate UMD bundle.
+
+## Publish
+
+```bash
+$ npm publish
+```
+
+## Usage
+
+Load WASM asynchronously.
+
+```js
+import init from "@antv/layout-wasm";
+
+await init();
+```
 
 ## License
 

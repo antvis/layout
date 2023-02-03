@@ -1,42 +1,30 @@
 {
   "name": "@antv/layout-wasm",
-  "version": "1.0.0-alpha.0",
-  "description": "graph layout algorithm implemented with WASM",
-  "main": "dist/index.min.js",
-  "module": "dist/index.min.js",
-  "types": "lib/index.d.ts",
-  "unpkg": "dist/index.min.js",
+  "description": "A WASM binding of rust implementation for graph layout algorithms.",
+  "version": "0.0.1-alpha.2",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/antvis/layout"
+  },
   "files": [
-    "package.json",
-    "dist",
-    "lib",
-    "LICENSE",
-    "README.md"
+    "dist"
   ],
-  "keywords": [
-    "graph",
-    "layout",
-    "algorithm",
-    "antv"
-  ],
-  "dependencies": {
-    "@antv/graphlib": "^2.0.0-alpha.1"
+  "main": "dist/index.umd.js",
+  "scripts": {
+    "prebuild": "npm run clean",
+    "build": "rollup --config",
+    "watch": "rollup --config --watch",
+    "build:web": "wasm-pack build --target web",
+    "build:node": "wasm-pack build --target nodejs",
+    "clean": "rimraf dist pkg"
   },
   "devDependencies": {
-    "@babel/core": "^7.7.7",
-    "@babel/plugin-proposal-class-properties": "^7.1.0",
-    "@babel/preset-react": "^7.7.4",
-    "babel-loader": "^8.0.6",
-    "ts-loader": "^7.0.3",
-    "typescript": "^4.0.3",
-    "webpack": "^5.38.1",
-    "webpack-cli": "^4.7.2"
+    "@rollup/plugin-typescript": "^8.2.3",
+    "@wasm-tool/rollup-plugin-rust": "^1.0.7",
+    "rimraf": "^3.0.2",
+    "rollup": "^2.53.3",
+    "typescript": "^4.3.5"
   },
-  "scripts": {
-    "dev": "webpack --config webpack.dev.config.js --mode development",
-    "build:umd": "webpack --config webpack.config.js --mode production",
-    "publish:alpha": "npm publish --tag alpha",
-    "test": "jest",
-    "wasm": "wasm-pack build ./ --target web"
-  }
+  "sideEffects": false
 }

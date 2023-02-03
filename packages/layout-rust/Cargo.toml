@@ -1,0 +1,27 @@
+[package]
+name = "antv-layout"
+version = "0.0.1"
+authors = ["antv"]
+edition = "2018"
+license = "MIT"
+description = "A flexible force-directed graph framework"
+repository = "https://github.com/antvis/layout"
+documentation = "https://observablehq.com/d/2db6b0cc5e97d8d6"
+keywords = ["graph", "layout", "viz"]
+categories = ["visualization"]
+readme = "README.md"
+
+[dependencies]
+glam = "0.22"
+petgraph = "0.6"
+quad-rand = "0.2"
+serde = { version = "1", optional = true }
+serde_json = { version = "1", optional = true }
+hashlink = "0.8"
+
+[package.metadata.docs.rs]
+all-features = true
+rustdoc-args = ["--cfg", "docsrs"]
+
+[features]
+json = ["serde/derive", "glam/serde", "petgraph/serde-1", "serde_json"]
