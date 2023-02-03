@@ -6,16 +6,17 @@ A WASM binding of `@antv/layout-rust`.
 
 Install [wasm-pack](https://rustwasm.github.io/wasm-pack/installer/) first.
 
-Then run the command `make`, the compiled package will be outputted under the `/pkg` directory.
+Then run the command `npm run build`, the compiled package will be outputted under the `/dist` directory.
 
 ```bash
-$ make
+$ npm run build
 ```
+
+We use rollup & [rollup-plugin-rust](https://github.com/wasm-tool/rollup-plugin-rust) to generate UMD bundle.
 
 ## Publish
 
 ```bash
-$ cd pkg
 $ npm publish
 ```
 
