@@ -1,4 +1,4 @@
-## About
+# @antv/layout
 
 Collection of basic layout algorithms to be used with [@antv/graphlib]().
 
