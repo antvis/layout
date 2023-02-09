@@ -3,6 +3,7 @@ import {
   Node as INode,
   Edge as IEdge,
   PlainObject,
+  GraphView as IGraphView,
 } from "@antv/graphlib";
 
 export interface NodeData extends PlainObject {
@@ -41,6 +42,7 @@ export type IndexMap = {
 };
 
 export type Graph = IGraph<NodeData, EdgeData>;
+export type GraphView = IGraphView<NodeData, EdgeData>;
 
 export type PointTuple = [number, number];
 export type Point = { x: number; y: number };
