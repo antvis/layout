@@ -1,3 +1,4 @@
+import { isFunction, isNumber, isObject } from "@antv/util";
 import { Graph as GGraph } from "@antv/graphlib";
 import type {
   Graph,
@@ -11,13 +12,7 @@ import type {
   EdgeData,
   LayoutWithIterations,
 } from "../types";
-import {
-  cloneFormatData,
-  isArray,
-  isFunction,
-  isNumber,
-  isObject,
-} from "../util";
+import { cloneFormatData, isArray } from "../util";
 import { handleSingleNodeGraph } from "../util/common";
 import Body from "./body";
 import Quad from "./quad";

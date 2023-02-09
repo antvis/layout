@@ -1,9 +1,6 @@
+import { isFunction, isNumber, isObject } from "@antv/util";
 import { Node } from "../types";
-import { isArray, isObject } from ".";
-import { isNumber } from "./number";
-
-export const isFunction = (val: unknown): val is Function =>
-  typeof val === "function";
+import { isArray } from ".";
 
 /**
  * Format value with multiple types into a function returns number.
@@ -52,7 +49,7 @@ export function formatSizeFn<T extends Node>(
         if (isArray(size)) {
           return size[0] > size[1] ? size[0] : size[1];
         }
-        if (isObject(size)) {
+        if (isObject<{ width: number; height: number }>(size)) {
           return size.width > size.height ? size.width : size.height;
         }
         return size;

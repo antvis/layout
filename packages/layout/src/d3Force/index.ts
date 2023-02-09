@@ -1,4 +1,5 @@
 import * as d3Force from "d3-force";
+import { isFunction, isNumber, isObject } from "@antv/util";
 import {
   Graph,
   Node,
@@ -8,13 +9,7 @@ import {
   Edge,
   LayoutWithIterations,
 } from "../types";
-import {
-  cloneFormatData,
-  isArray,
-  isFunction,
-  isNumber,
-  isObject,
-} from "../util";
+import { cloneFormatData, isArray } from "../util";
 import forceInBox from "./forceInBox";
 
 /**

@@ -1,11 +1,5 @@
-import {
-  isString,
-  isArray,
-  isNumber,
-  formatSizeFn,
-  formatNumberFn,
-  cloneFormatData,
-} from "./util";
+import { isString, isNumber } from "@antv/util";
+import { isArray, formatSizeFn, formatNumberFn, cloneFormatData } from "./util";
 import type {
   Graph,
   GridLayoutOptions,

@@ -1,3 +1,4 @@
+import { isFunction, isNumber, isObject, isString } from "@antv/util";
 import type {
   Graph,
   Node,
@@ -8,14 +9,7 @@ import type {
   Layout,
   IndexMap,
 } from "./types";
-import {
-  cloneFormatData,
-  isArray,
-  isFunction,
-  isNumber,
-  isObject,
-  isString,
-} from "./util";
+import { cloneFormatData, isArray } from "./util";
 import { handleSingleNodeGraph } from "./util/common";
 
 const DEFAULTS_LAYOUT_OPTIONS: Partial<ConcentricLayoutOptions> = {
@@ -116,9 +110,9 @@ export class ConcentricLayout implements Layout<ConcentricLayoutOptions> {
       !propsHeight && typeof window !== "undefined"
         ? window.innerHeight
         : (propsHeight as number);
-    const center = (!propsCenter
-      ? [width / 2, height / 2]
-      : propsCenter) as PointTuple;
+    const center = (
+      !propsCenter ? [width / 2, height / 2] : propsCenter
+    ) as PointTuple;
 
     if (!nodes?.length || nodes.length === 1) {
       return handleSingleNodeGraph(graph, assign, center, onLayoutEnd);
