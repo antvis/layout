@@ -1,3 +1,4 @@
+import { isNumber } from "@antv/util";
 import { Graph as IGraph } from "@antv/graphlib";
 import type {
   Graph,
@@ -11,7 +12,7 @@ import type {
   Point,
   LayoutWithIterations,
 } from "./types";
-import { cloneFormatData, isNumber } from "./util";
+import { cloneFormatData } from "./util";
 
 const DEFAULTS_LAYOUT_OPTIONS: Partial<FruchtermanLayoutOptions> = {
   maxIteration: 1000,

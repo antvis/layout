@@ -1,4 +1,5 @@
 import { Graph as IGraph } from "@antv/graphlib";
+import { isNumber, isObject } from "@antv/util";
 import {
   Graph,
   Node,
@@ -9,7 +10,7 @@ import {
   OutNode,
   LayoutWithIterations,
 } from "../types";
-import { formatNumberFn, isArray, isNumber, isObject } from "../util";
+import { formatNumberFn, isArray } from "../util";
 import { forceNBody } from "./forceNBody";
 import {
   CalcNode,
@@ -339,7 +340,7 @@ export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
             if (isArray(size)) {
               return Math.max(size[0], size[1]) + nodeSpacingFunc(d);
             }
-            if (isObject(size)) {
+            if (isObject<{ width: number; height: number }>(size)) {
               return Math.max(size.width, size.height) + nodeSpacingFunc(d);
             }
             return (size as number) + nodeSpacingFunc(d);

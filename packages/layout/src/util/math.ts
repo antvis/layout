@@ -1,13 +1,6 @@
-import type {
-  Matrix,
-  Edge,
-  Node,
-  OutNode,
-  Degree,
-  Point,
-} from "../types";
+import { isNumber } from "@antv/util";
+import type { Matrix, Edge, Node, OutNode, Degree, Point } from "../types";
 import { isArray } from "./array";
-import { isNumber } from "./number";
 
 export const floydWarshall = (adjMatrix: Matrix[]): Matrix[] => {
   // initialize
@@ -38,7 +31,10 @@ export const floydWarshall = (adjMatrix: Matrix[]): Matrix[] => {
   return dist;
 };
 
-export const getAdjMatrix = (data: { nodes: Node[]; edges: Edge[] }, directed: boolean): Matrix[] => {
+export const getAdjMatrix = (
+  data: { nodes: Node[]; edges: Edge[] },
+  directed: boolean
+): Matrix[] => {
   const { nodes, edges } = data;
   const matrix: Matrix[] = [];
   // map node with index in data.nodes
@@ -228,7 +224,9 @@ const getSameTypeNodes = (
 ) => {
   const typeName = node[nodeClusterBy as keyof Node] || "";
   let sameTypeNodes =
-    relativeNodes?.filter((item) => item[nodeClusterBy as keyof Node] === typeName) || [];
+    relativeNodes?.filter(
+      (item) => item[nodeClusterBy as keyof Node] === typeName
+    ) || [];
   if (type === "leaf") {
     sameTypeNodes = sameTypeNodes.filter(
       (node) => degreesMap[node.id]?.in === 0 || degreesMap[node.id]?.out === 0
@@ -279,10 +277,9 @@ export const getCoreNodeAndRelativeLeafNodes = (
 
 /**
  * calculate the euclidean distance form p1 to p2
- * @param p1 
- * @param p2 
- * @returns 
+ * @param p1
+ * @param p2
+ * @returns
  */
-export const getEuclideanDistance = (p1: Point, p2: Point) => Math.sqrt(
-  (p1.x - p2.x) * (p1.x - p2.x) + (p1.y - p2.y) * (p1.y - p2.y)
-);
+export const getEuclideanDistance = (p1: Point, p2: Point) =>
+  Math.sqrt((p1.x - p2.x) * (p1.x - p2.x) + (p1.y - p2.y) * (p1.y - p2.y));

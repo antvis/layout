@@ -1,8 +1,5 @@
+import { isNumber } from "@antv/util";
 import { Node, Edge } from "../types";
-import { isNumber } from "./number";
-
-export const isObject = (val: unknown): val is Record<any, any> =>
-  val !== null && typeof val === "object";
 
 export const clone = <T>(target: T): T => {
   if (target === null) {

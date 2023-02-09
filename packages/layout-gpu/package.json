@@ -9,6 +9,7 @@
   "files": [
     "package.json",
     "dist",
+    "esm",
     "lib",
     "LICENSE",
     "README.md"
@@ -20,12 +21,13 @@
     "antv"
   ],
   "dependencies": {
-    "@antv/graphlib": "^2.0.0-alpha.1",
-    "@antv/g": "^5.15.8",
-    "@antv/g-webgpu": "^1.7.38",
-    "@antv/g-plugin-gpgpu": "^1.7.35"
+    "@antv/g-webgpu": "0.7.2",
+    "@antv/layout": "^1.0.0-alpha.13",
+    "@antv/util": "^3.0.0",
+    "tslib": "^2.5.0"
   },
   "devDependencies": {
+    "@antv/g-webgpu-compiler": "0.7.2",
     "@babel/core": "^7.7.7",
     "@babel/plugin-proposal-class-properties": "^7.1.0",
     "@babel/preset-react": "^7.7.4",
@@ -37,8 +39,9 @@
   },
   "scripts": {
     "dev": "webpack --config webpack.dev.config.js --mode development",
+    "build": "npm run build:esm && npm run build:umd",
+    "build:esm": "webpack --config webpack.esm.config.js --mode production",
     "build:umd": "webpack --config webpack.config.js --mode production",
-    "publish:alpha": "npm publish --tag alpha",
-    "test": "jest"
+    "publish:alpha": "npm publish --tag alpha"
   }
 }
