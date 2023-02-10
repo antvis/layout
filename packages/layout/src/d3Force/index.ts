@@ -1,4 +1,5 @@
 import * as d3Force from "d3-force";
+import { isFunction, isNumber, isObject } from "@antv/util";
 import {
   Graph,
   Node,
@@ -8,13 +9,7 @@ import {
   Edge,
   LayoutWithIterations,
 } from "../types";
-import {
-  cloneFormatData,
-  isArray,
-  isFunction,
-  isNumber,
-  isObject,
-} from "../util";
+import { cloneFormatData, isArray } from "../util";
 import forceInBox from "./forceInBox";
 
 /**
@@ -144,20 +139,9 @@ export class D3ForceLayout
     options?: D3ForceLayoutOptions
   ): LayoutMapping | void {
     const mergedOptions = { ...this.options, ...options };
-    const { layoutInvisibles } = mergedOptions;
 
     let nodes = graph.getAllNodes();
     let edges = graph.getAllEdges();
-    if (!layoutInvisibles) {
-      nodes = nodes.filter((node) => {
-        const { visible } = node.data || {};
-        return visible || visible === undefined;
-      });
-      edges = edges.filter((edge) => {
-        const { visible } = edge.data || {};
-        return visible || visible === undefined;
-      });
-    }
     const layoutNodes: CalcNode[] = nodes.map(
       (node) =>
         ({

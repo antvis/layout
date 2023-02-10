@@ -1,6 +1,6 @@
 {
   "name": "@antv/layout",
-  "version": "1.0.0-alpha.13",
+  "version": "1.0.0-alpha.15",
   "description": "graph layout algorithm",
   "main": "dist/index.min.js",
   "module": "esm/index.esm.js",
@@ -21,12 +21,14 @@
     "antv"
   ],
   "dependencies": {
-    "@antv/graphlib": "^2.0.0-alpha.2",
+    "@antv/graphlib": "^2.0.0-alpha.3",
+    "@antv/util": "^3.0.0",
     "@naoak/workerize-transferable": "^0.1.0",
     "d3-force": "^3.0.0",
     "d3-quadtree": "^3.0.1",
     "eventemitter3": "^4.0.0",
-    "ml-matrix": "^6.10.4"
+    "ml-matrix": "^6.10.4",
+    "tslib": "^2.5.0"
   },
   "devDependencies": {
     "@babel/core": "^7.7.7",

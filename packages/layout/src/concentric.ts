@@ -1,3 +1,4 @@
+import { isFunction, isNumber, isObject, isString } from "@antv/util";
 import type {
   Graph,
   Node,
@@ -8,14 +9,7 @@ import type {
   Layout,
   IndexMap,
 } from "./types";
-import {
-  cloneFormatData,
-  isArray,
-  isFunction,
-  isNumber,
-  isObject,
-  isString,
-} from "./util";
+import { cloneFormatData, isArray } from "./util";
 import { handleSingleNodeGraph } from "./util/common";
 
 const DEFAULTS_LAYOUT_OPTIONS: Partial<ConcentricLayoutOptions> = {
@@ -89,24 +83,11 @@ export class ConcentricLayout implements Layout<ConcentricLayoutOptions> {
       startAngle = (3 / 2) * Math.PI,
       nodeSize,
       nodeSpacing,
-      layoutInvisibles,
       onLayoutEnd,
     } = mergedOptions;
 
     let nodes = graph.getAllNodes();
     let edges = graph.getAllEdges();
-
-    // TODO: use graphlib's view with filter after graphlib supports it
-    if (!layoutInvisibles) {
-      nodes = nodes.filter((node) => {
-        const { visible } = node.data || {};
-        return visible || visible === undefined;
-      });
-      edges = edges.filter((edge) => {
-        const { visible } = edge.data || {};
-        return visible || visible === undefined;
-      });
-    }
 
     const width =
       !propsWidth && typeof window !== "undefined"
@@ -116,9 +97,9 @@ export class ConcentricLayout implements Layout<ConcentricLayoutOptions> {
       !propsHeight && typeof window !== "undefined"
         ? window.innerHeight
         : (propsHeight as number);
-    const center = (!propsCenter
-      ? [width / 2, height / 2]
-      : propsCenter) as PointTuple;
+    const center = (
+      !propsCenter ? [width / 2, height / 2] : propsCenter
+    ) as PointTuple;
 
     if (!nodes?.length || nodes.length === 1) {
       return handleSingleNodeGraph(graph, assign, center, onLayoutEnd);

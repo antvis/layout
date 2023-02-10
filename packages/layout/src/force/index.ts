@@ -1,4 +1,5 @@
 import { Graph as IGraph } from "@antv/graphlib";
+import { isNumber, isObject } from "@antv/util";
 import {
   Graph,
   Node,
@@ -9,7 +10,7 @@ import {
   OutNode,
   LayoutWithIterations,
 } from "../types";
-import { formatNumberFn, isArray, isNumber, isObject } from "../util";
+import { formatNumberFn, isArray } from "../util";
 import { forceNBody } from "./forceNBody";
 import {
   CalcNode,
@@ -172,14 +173,6 @@ export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
 
     let nodes = graph.getAllNodes();
     let edges = graph.getAllEdges();
-    if (!mergedOptions.layoutInvisibles) {
-      nodes = nodes.filter(
-        (node) => node.data.visible || node.data.visible === undefined
-      );
-      edges = edges.filter(
-        (edge) => edge.data.visible || edge.data.visible === undefined
-      );
-    }
 
     const formattedOptions = this.formatOptions(mergedOptions, graph);
     const {
@@ -339,7 +332,7 @@ export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
             if (isArray(size)) {
               return Math.max(size[0], size[1]) + nodeSpacingFunc(d);
             }
-            if (isObject(size)) {
+            if (isObject<{ width: number; height: number }>(size)) {
               return Math.max(size.width, size.height) + nodeSpacingFunc(d);
             }
             return (size as number) + nodeSpacingFunc(d);
@@ -630,8 +623,8 @@ export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
   ) {
     const { getCenter } = options;
     const calcNodes = calcGraph.getAllNodes();
-    const nodes = graph.getAllNodes(); // TODO: filter out the invisibles
-    const edges = graph.getAllEdges(); // TODO: filter out the invisibles
+    const nodes = graph.getAllNodes();
+    const edges = graph.getAllEdges();
     const {
       width,
       height,

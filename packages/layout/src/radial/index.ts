@@ -1,3 +1,4 @@
+import { isString, isFunction, isNumber, isObject } from "@antv/util";
 import type {
   Graph,
   Node,
@@ -15,10 +16,6 @@ import {
   getAdjMatrix,
   getEuclideanDistance,
   isArray,
-  isFunction,
-  isNumber,
-  isObject,
-  isString,
 } from "../util";
 import { handleSingleNodeGraph } from "../util/common";
 import { mds } from "./mds";
@@ -97,24 +94,11 @@ export class RadialLayout implements Layout<RadialLayoutOptions> {
       linkDistance = 50,
       sortStrength = 10,
       maxIteration = 1000,
-      layoutInvisibles,
       onLayoutEnd,
     } = mergedOptions;
 
     let nodes = graph.getAllNodes();
     let edges = graph.getAllEdges();
-
-    // TODO: use graphlib's view with filter after graphlib supports it
-    if (!layoutInvisibles) {
-      nodes = nodes.filter((node) => {
-        const { visible } = node.data || {};
-        return visible || visible === undefined;
-      });
-      edges = edges.filter((edge) => {
-        const { visible } = edge.data || {};
-        return visible || visible === undefined;
-      });
-    }
 
     const width =
       !propsWidth && typeof window !== "undefined"
@@ -503,14 +487,13 @@ const formatNodeSize = (
         if (isArray(d.data.size)) {
           return Math.max(d.data.size[0], d.data.size[1]) + nodeSpacingFunc(d);
         }
-        if (isObject(d.data.size)) {
+        const dataSize = d.data.size;
+        if (isObject<{ width: number; height: number }>(dataSize)) {
           const res =
-            d.data.size.width > d.data.size.height
-              ? d.data.size.width
-              : d.data.size.height;
+            dataSize.width > dataSize.height ? dataSize.width : dataSize.height;
           return res + nodeSpacingFunc(d);
         }
-        return d.data.size + nodeSpacingFunc(d);
+        return dataSize + nodeSpacingFunc(d);
       }
       return 10 + nodeSpacingFunc(d);
     };

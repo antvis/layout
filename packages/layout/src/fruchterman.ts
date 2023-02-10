@@ -1,3 +1,4 @@
+import { isNumber } from "@antv/util";
 import { Graph as IGraph } from "@antv/graphlib";
 import type {
   Graph,
@@ -11,7 +12,7 @@ import type {
   Point,
   LayoutWithIterations,
 } from "./types";
-import { cloneFormatData, isNumber } from "./util";
+import { cloneFormatData } from "./util";
 
 const DEFAULTS_LAYOUT_OPTIONS: Partial<FruchtermanLayoutOptions> = {
   maxIteration: 1000,
@@ -165,7 +166,6 @@ export class FruchtermanLayout
 
     const formattedOptions = this.formatOptions(options);
     const {
-      layoutInvisibles,
       width,
       height,
       center,
@@ -178,17 +178,6 @@ export class FruchtermanLayout
 
     let nodes = graph.getAllNodes();
     let edges = graph.getAllEdges();
-    // TODO: use graphlib's view with filter after graphlib supports it
-    if (!layoutInvisibles) {
-      nodes = nodes.filter((node) => {
-        const { visible } = node.data || {};
-        return visible || visible === undefined;
-      });
-      edges = edges.filter((edge) => {
-        const { visible } = edge.data || {};
-        return visible || visible === undefined;
-      });
-    }
 
     if (!nodes?.length) {
       const result = { nodes: [], edges };
