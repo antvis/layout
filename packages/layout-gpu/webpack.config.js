@@ -10,7 +10,12 @@ module.exports = {
     clean: true,
   },
   externals: {
-    "@antv/layout": "Layout",
+    "@antv/layout": {
+      commonjs: "@antv/layout@alpha",
+      commonjs2: "@antv/layout@alpha",
+      amd: "@antv/layout@alpha",
+      root: "Layout", // indicates global variable
+    },
   },
   resolve: {
     // Add `.ts` as a resolvable extension.
