@@ -1,5 +1,9 @@
 # ChangeLog
 
+### 0.3.14
+
+- fix: error edge controlPoints in dagre with layer assignment;
+
 ### 0.3.12
 
 - perf: comboCombined with more accurate combined layout;

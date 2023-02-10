@@ -68,6 +68,10 @@ export class DagreLayout extends Base {
   /** 迭代结束的回调函数 */
   public onLayoutEnd: () => void = () => {};
 
+  private nodeMap: {
+    [id: string]: OutNode;
+  }
+
   constructor(options?: DagreLayoutOptions) {
     super();
     this.updateCfg(options);
@@ -113,8 +117,10 @@ export class DagreLayout extends Base {
     });
 
     // collect the nodes in their combo, to create virtual edges for comboEdges
+    self.nodeMap = {};
     const nodeComboMap = {} as any;
     nodes.forEach(node => {
+      self.nodeMap[node.id] = node;
       if (!node.comboId) return;
       nodeComboMap[node.comboId] = nodeComboMap[node.comboId] || [];
       nodeComboMap[node.comboId].push(node.id);
@@ -405,7 +411,7 @@ export class DagreLayout extends Base {
       g.nodes().forEach((node: any) => {
         const coord = g.node(node)!;
         if (!coord) return;
-        let ndata: any = nodes.find((it) => it.id === node);
+        let ndata: any = this.nodeMap[node];
         if (!ndata) {
           ndata = combos?.find((it) => it.id === node);
         }
@@ -424,7 +430,7 @@ export class DagreLayout extends Base {
         });
         if (i <= -1) return;
         if ((self.edgeLabelSpace) && self.controlPoints && edges[i].type !== "loop") {
-          edges[i].controlPoints = coord?.points?.slice(1, coord.points.length - 1); // 去掉头尾
+          edges[i].controlPoints = coord?.points?.slice(1, coord.points.length - 1) || []; // 去掉头尾
           edges[i].controlPoints.forEach((point: any) => {
             point.x += dBegin[0];
             point.y += dBegin[1];
