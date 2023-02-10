@@ -83,24 +83,11 @@ export class ConcentricLayout implements Layout<ConcentricLayoutOptions> {
       startAngle = (3 / 2) * Math.PI,
       nodeSize,
       nodeSpacing,
-      layoutInvisibles,
       onLayoutEnd,
     } = mergedOptions;
 
     let nodes = graph.getAllNodes();
     let edges = graph.getAllEdges();
-
-    // TODO: use graphlib's view with filter after graphlib supports it
-    if (!layoutInvisibles) {
-      nodes = nodes.filter((node) => {
-        const { visible } = node.data || {};
-        return visible || visible === undefined;
-      });
-      edges = edges.filter((edge) => {
-        const { visible } = edge.data || {};
-        return visible || visible === undefined;
-      });
-    }
 
     const width =
       !propsWidth && typeof window !== "undefined"

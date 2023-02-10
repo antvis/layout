@@ -61,18 +61,10 @@ export class RandomLayout implements Layout<RandomLayoutOptions> {
       center: propsCenter,
       width: propsWidth,
       height: propsHeight,
-      layoutInvisibles,
       onLayoutEnd,
     } = mergedOptions;
 
     let nodes = graph.getAllNodes();
-    // TODO: use graphlib's view with filter after graphlib supports it
-    if (!layoutInvisibles) {
-      nodes = nodes.filter((node) => {
-        const { visible } = node.data || {};
-        return visible || visible === undefined;
-      });
-    }
     const layoutScale = 0.9;
     const width =
       !propsWidth && typeof window !== "undefined"

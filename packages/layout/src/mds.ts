@@ -65,27 +65,10 @@ export class MDSLayout implements Layout<MDSLayoutOptions> {
     options?: MDSLayoutOptions
   ): LayoutMapping | void {
     const mergedOptions = { ...this.options, ...options };
-    const {
-      center = [0, 0],
-      linkDistance = 50,
-      layoutInvisibles,
-      onLayoutEnd,
-    } = mergedOptions;
+    const { center = [0, 0], linkDistance = 50, onLayoutEnd } = mergedOptions;
 
     let nodes = graph.getAllNodes();
     let edges = graph.getAllEdges();
-
-    // TODO: use graphlib's view with filter after graphlib supports it
-    if (!layoutInvisibles) {
-      nodes = nodes.filter((node) => {
-        const { visible } = node.data || {};
-        return visible || visible === undefined;
-      });
-      edges = edges.filter((edge) => {
-        const { visible } = edge.data || {};
-        return visible || visible === undefined;
-      });
-    }
 
     if (!nodes?.length || nodes.length === 1) {
       return handleSingleNodeGraph(graph, assign, center, onLayoutEnd);

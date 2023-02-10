@@ -11,8 +11,6 @@ import type {
 import { formatSizeFn, formatNumberFn, cloneFormatData } from "./util";
 import { handleSingleNodeGraph } from "./util/common";
 
-// TODO: graph getDegree, getNeighbors, getSuccessors considering the hidden nodes according to layoutInvisible
-
 const DEFAULTS_LAYOUT_OPTIONS: Partial<CircularLayoutOptions> = {
   radius: null,
   startRadius: null,
@@ -84,24 +82,11 @@ export class CircularLayout implements Layout<CircularLayoutOptions> {
       clockwise,
       nodeSpacing: paramNodeSpacing,
       nodeSize: paramNodeSize,
-      layoutInvisibles,
       onLayoutEnd,
     } = mergedOptions;
 
     let nodes: Node[] = graph.getAllNodes();
     let edges: Edge[] = graph.getAllEdges();
-
-    // TODO: use graphlib's view with filter after graphlib supports it
-    if (!layoutInvisibles) {
-      nodes = nodes.filter((node) => {
-        const { visible } = node.data || {};
-        return visible || visible === undefined;
-      });
-      edges = edges.filter((edge) => {
-        const { visible } = edge.data || {};
-        return visible || visible === undefined;
-      });
-    }
 
     // Calculate center according to `window` if not provided.
     const [calculatedWidth, calculatedHeight, calculatedCenter] =

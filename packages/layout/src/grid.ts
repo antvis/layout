@@ -99,7 +99,6 @@ export class GridLayout implements Layout<GridLayoutOptions> {
       nodeSize: paramNodeSize,
       width: propsWidth,
       height: propsHeight,
-      layoutInvisibles,
       onLayoutEnd,
       position,
     } = mergedOptions;
@@ -107,18 +106,6 @@ export class GridLayout implements Layout<GridLayoutOptions> {
 
     let nodes: Node[] = graph.getAllNodes();
     let edges: Edge[] = graph.getAllEdges();
-
-    // TODO: use graphlib's view with filter after graphlib supports it
-    if (!layoutInvisibles) {
-      nodes = nodes.filter((node) => {
-        const { visible } = node.data || {};
-        return visible || visible === undefined;
-      });
-      edges = edges.filter((edge) => {
-        const { visible } = edge.data || {};
-        return visible || visible === undefined;
-      });
-    }
 
     const n = nodes?.length;
 

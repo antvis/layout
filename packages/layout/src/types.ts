@@ -109,8 +109,6 @@ export interface LayoutSupervisor {
 
 // most layout options extends CommonOptions
 interface CommonOptions {
-  // whether take the invisible nodes and edges into calculation, false by default
-  layoutInvisibles?: boolean;
   onLayoutEnd?: (data: LayoutMapping) => void;
 }
 

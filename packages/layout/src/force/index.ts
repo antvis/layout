@@ -173,14 +173,6 @@ export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
 
     let nodes = graph.getAllNodes();
     let edges = graph.getAllEdges();
-    if (!mergedOptions.layoutInvisibles) {
-      nodes = nodes.filter(
-        (node) => node.data.visible || node.data.visible === undefined
-      );
-      edges = edges.filter(
-        (edge) => edge.data.visible || edge.data.visible === undefined
-      );
-    }
 
     const formattedOptions = this.formatOptions(mergedOptions, graph);
     const {
@@ -631,8 +623,8 @@ export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
   ) {
     const { getCenter } = options;
     const calcNodes = calcGraph.getAllNodes();
-    const nodes = graph.getAllNodes(); // TODO: filter out the invisibles
-    const edges = graph.getAllEdges(); // TODO: filter out the invisibles
+    const nodes = graph.getAllNodes();
+    const edges = graph.getAllEdges();
     const {
       width,
       height,
