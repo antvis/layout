@@ -75,19 +75,15 @@ export const findType1Conflicts = (g: Graph, layering?: string[][]) => {
 export const findType2Conflicts = (g: Graph, layering?: string[][]) => {
   const conflicts = {};
 
-  const scan = (
+  function scan(
     south: string[],
     southPos: number,
     southEnd: number,
     prevNorthBorder: number,
     nextNorthBorder: number
-  ) => {
+  ) {
     let v: string;
-    const range = [];
     for (let i = southPos; i < southEnd; i++) {
-      range.push(i);
-    }
-    range.forEach((i) => {
       v = south[i];
       if (g.node(v)?.dummy) {
         g.predecessors(v)?.forEach((u) => {
@@ -101,7 +97,7 @@ export const findType2Conflicts = (g: Graph, layering?: string[][]) => {
           }
         });
       }
-    });
+    }
   };
 
   const visitLayer = (north: string[], south: string[]) => {
@@ -109,17 +105,34 @@ export const findType2Conflicts = (g: Graph, layering?: string[][]) => {
     let nextNorthPos: number;
     let southPos = 0;
 
+    const scanned = new Map<string, boolean>();
+
     south?.forEach((v: string, southLookahead: number) => {
-      if (g.node(v)?.dummy === "border") {
-        const predecessors = g.predecessors(v) || [];
+      const isBorder = g.node(v)?.dummy === "border";
+      const scanParams: Parameters<typeof scan> = 
+        isBorder ?
+          [south, southPos, southLookahead, prevNorthPos, nextNorthPos] :
+          [south, southPos, south.length, nextNorthPos, north.length];
+      
+      // south数组可能很大，不适合做key
+      const scannedKey = JSON.stringify(scanParams.slice(1));
+
+      if (scanned.get(scannedKey)) {
+        return;
+      };
+
+      if (isBorder) {
+          const predecessors = g.predecessors(v) || [];
         if (predecessors.length) {
           nextNorthPos = g.node(predecessors[0]!)!.order as number;
-          scan(south, southPos, southLookahead, prevNorthPos, nextNorthPos);
+          scan(...scanParams);
+          scanned.set(scannedKey, true);
           southPos = southLookahead;
           prevNorthPos = nextNorthPos;
         }
       }
-      scan(south, southPos, south.length, nextNorthPos, north.length);
+      scan(...scanParams);
+      scanned.set(scannedKey, true);
     });
 
     return south;
