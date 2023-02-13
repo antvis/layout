@@ -1,8 +1,9 @@
 import { partition } from "../util";
 import { ConflictEntry } from "./resolve-conflicts";
 
-const sort = (entries: ConflictEntry[], biasRight?: boolean, usePrev?: boolean) => {
+const sort = (entries: ConflictEntry[], biasRight?: boolean, usePrev?: boolean, keepNodeOrder?: boolean) => {
   const parts = partition(entries, (entry) => {
+    if (keepNodeOrder) return entry.hasOwnProperty("barycenter");
     // NOTE: 有fixorder的也可以排
     return (entry.hasOwnProperty("fixorder") && !isNaN(entry.fixorder!)) || entry.hasOwnProperty("barycenter");
   });

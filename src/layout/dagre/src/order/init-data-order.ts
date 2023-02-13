@@ -9,7 +9,10 @@ const initDataOrder = (g: Graph, nodeOrder: string[]) => {
   });
   const ranks = simpleNodes.map((v) => g.node(v)!.rank as number);
   const maxRank = Math.max(...ranks);
-  const layers: string[][] = Array(maxRank + 1).fill([]);
+  const layers: string[][] = [];
+  for (let i = 0; i < maxRank + 1; i++) {
+    layers[i] = [];
+  }
 
   nodeOrder?.forEach((n) => {
     const node = g.node(n);

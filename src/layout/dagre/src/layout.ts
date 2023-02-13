@@ -108,7 +108,7 @@ const runLayout = (g: Graph, time: any, opts: any) => {
     });
   }
   time("    order", () => {
-    order(g);
+    order(g, opts?.keepNodeOrder);
   });
   time("    insertSelfEdges", () => {
     insertSelfEdges(g);
