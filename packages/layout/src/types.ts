@@ -7,7 +7,6 @@ import {
 } from "@antv/graphlib";
 
 export interface NodeData extends PlainObject {
-  visible?: boolean;
   size?: number | number[];
   bboxSize?: number[];
 }
@@ -18,7 +17,6 @@ export interface OutNodeData extends NodeData {
 }
 
 export interface EdgeData extends PlainObject {
-  visible?: boolean;
   // temp edges e.g. the edge generated for releated collapsed combo
   virtual?: boolean;
 }
@@ -53,11 +51,11 @@ export interface Layout<LayoutOptions> {
   /**
    * To directly assign the positions to the nodes.
    */
-  assign(graph: Graph, options?: LayoutOptions): void;
+  assign(graph: Graph, options?: LayoutOptions): Promise<void>;
   /**
    * Return the positions of nodes and edges(if needed).
    */
-  execute(graph: Graph, options?: LayoutOptions): LayoutMapping;
+  execute(graph: Graph, options?: LayoutOptions): Promise<LayoutMapping>;
   /**
    * Layout options, can be changed in runtime.
    */
@@ -71,7 +69,7 @@ export interface Layout<LayoutOptions> {
 export function isLayoutWithIterations(
   layout: any
 ): layout is LayoutWithIterations<any> {
-  return !!layout.tick && !!layout.stop && !!layout.restart;
+  return !!layout.tick && !!layout.stop;
 }
 
 export interface LayoutWithIterations<LayoutOptions>
@@ -82,12 +80,6 @@ export interface LayoutWithIterations<LayoutOptions>
    * @see https://github.com/d3/d3-force#simulation_stop
    */
   stop: () => void;
-
-  /**
-   * Restarts the simulation’s internal timer and returns the simulation.
-   * @see https://github.com/d3/d3-force#simulation_restart
-   */
-  restart: () => void;
 
   /**
    * Manually steps the simulation by the specified number of iterations.
@@ -101,7 +93,7 @@ export interface LayoutConstructor<LayoutOptions> {
 }
 
 export interface LayoutSupervisor {
-  start(): void;
+  execute(): Promise<LayoutMapping>;
   stop(): void;
   kill(): void;
   isRunning(): boolean;

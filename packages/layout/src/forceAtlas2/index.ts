@@ -10,7 +10,7 @@ import type {
   ForceAtlas2LayoutOptions,
   OutNodeData,
   EdgeData,
-  LayoutWithIterations,
+  Layout,
 } from "../types";
 import { cloneFormatData, isArray } from "../util";
 import { handleSingleNodeGraph } from "../util/common";
@@ -59,18 +59,16 @@ type CalcGraph = GGraph<OutNodeData, EdgeData>;
  * @example
  * // Assign layout options when initialization.
  * const layout = new ForceAtlas2Layout({ center: [100, 100] });
- * const positions = layout.execute(graph); // { nodes: [], edges: [] }
+ * const positions = await layout.execute(graph); // { nodes: [], edges: [] }
  *
  * // Or use different options later.
  * const layout = new ForceAtlas2Layout({ center: [100, 100] });
- * const positions = layout.execute(graph, { center: [100, 100] }); // { nodes: [], edges: [] }
+ * const positions = await layout.execute(graph, { center: [100, 100] }); // { nodes: [], edges: [] }
  *
  * // If you want to assign the positions directly to the nodes, use assign method.
- * layout.assign(graph, { center: [100, 100] });
+ * await layout.assign(graph, { center: [100, 100] });
  */
-export class ForceAtlas2Layout
-  implements LayoutWithIterations<ForceAtlas2LayoutOptions>
-{
+export class ForceAtlas2Layout implements Layout<ForceAtlas2LayoutOptions> {
   id = "forceAtlas2";
 
   constructor(
@@ -81,48 +79,44 @@ export class ForceAtlas2Layout
       ...options,
     };
   }
-  stop: () => void;
-  restart: () => void;
-  tick: (iterations?: number | undefined) => LayoutMapping;
 
   /**
    * Return the positions of nodes and edges(if needed).
    */
-  execute(graph: Graph, options?: ForceAtlas2LayoutOptions): LayoutMapping {
-    return this.genericForceAtlas2Layout(
-      false,
-      graph,
-      options
-    ) as LayoutMapping;
+  async execute(graph: Graph, options?: ForceAtlas2LayoutOptions) {
+    return this.genericForceAtlas2Layout(false, graph, options);
   }
   /**
    * To directly assign the positions to the nodes.
    */
-  assign(graph: Graph, options?: ForceAtlas2LayoutOptions) {
+  async assign(graph: Graph, options?: ForceAtlas2LayoutOptions) {
     this.genericForceAtlas2Layout(true, graph, options);
   }
 
-  private genericForceAtlas2Layout(
+  private async genericForceAtlas2Layout(
+    assign: false,
+    graph: Graph,
+    options?: ForceAtlas2LayoutOptions
+  ): Promise<LayoutMapping>;
+  private async genericForceAtlas2Layout(
+    assign: true,
+    graph: Graph,
+    options?: ForceAtlas2LayoutOptions
+  ): Promise<void>;
+  private async genericForceAtlas2Layout(
     assign: boolean,
     graph: Graph,
     options?: ForceAtlas2LayoutOptions
-  ): LayoutMapping | void {
+  ): Promise<LayoutMapping | void> {
     const edges = graph.getAllEdges();
     const nodes = graph.getAllNodes();
 
     const mergedOptions = this.formatOptions(options, nodes.length);
-    const {
-      width,
-      height,
-      prune,
-      maxIteration,
-      nodeSize,
-      center,
-      onLayoutEnd,
-    } = mergedOptions;
+    const { width, height, prune, maxIteration, nodeSize, center } =
+      mergedOptions;
 
     if (!nodes?.length || nodes.length === 1) {
-      return handleSingleNodeGraph(graph, assign, center, onLayoutEnd);
+      return handleSingleNodeGraph(graph, assign, center);
     }
 
     const calcNodes = nodes.map(
@@ -168,14 +162,10 @@ export class ForceAtlas2Layout
       this.run(calcGraph, graph, 100, sizes, assign, postOptions);
     }
 
-    const result = {
+    return {
       nodes: calcNodes,
       edges,
     };
-
-    onLayoutEnd?.(result);
-
-    return result;
   }
 
   /**

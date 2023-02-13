@@ -67,8 +67,6 @@ We provide the following parallelizable layouts:
 - [Fruchterman]()
 - [GForce]()
 
-Since the GPGPU is asynchronous, `onLayoutEnd` callback should be passed in.
-
 ```js
 import { Graph } from "@antv/graphlib";
 import { FruchtermanLayout } from "@antv/layout-gpu";
@@ -76,11 +74,9 @@ import { FruchtermanLayout } from "@antv/layout-gpu";
 const graph = new Graph({ nodes: [], edges: [] });
 
 const fruchtermanLayout = new FruchtermanLayout({
-  onLayoutEnd: (positions) => {
-    // render nodes & edges
-  },
+  center: [200, 200],
 });
-fruchtermanLayout.assign(graph);
+const positions = await fruchtermanLayout.execute(graph);
 ```
 
 ### Fruchterman

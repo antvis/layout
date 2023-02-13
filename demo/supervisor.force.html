@@ -41,7 +41,7 @@
       type="application/javascript"
     ></script>
     <script
-      src="https://unpkg.com/@antv/graphlib@2.0.0-alpha.2"
+      src="https://unpkg.com/@antv/graphlib@2.0.0"
       type="application/javascript"
     ></script>
     <script
@@ -1000,10 +1000,10 @@
         });
       };
 
-      // Do first-time static layout on worker-side.
-      supervisor.on("layoutend", (positions) => {
+      (async () => {
+        // Do first-time static layout on worker-side.
+        const positions = await supervisor.execute();
         console.log(positions);
-
         // Update Graph model.
         positions.nodes.forEach((node) =>
           graph.mergeNodeData(node.id, {
@@ -1013,9 +1013,9 @@
         );
 
         // Render.
+        await canvas.ready;
         createNodesEdges(positions);
-      });
-      supervisor.start();
+      })();
     </script>
   </body>
 </html>

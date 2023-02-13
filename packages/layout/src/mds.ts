@@ -27,14 +27,14 @@ const DEFAULTS_LAYOUT_OPTIONS: Partial<MDSLayoutOptions> = {
  * @example
  * // Assign layout options when initialization.
  * const layout = new MDSLayout({ center: [100, 100] });
- * const positions = layout.execute(graph); // { nodes: [], edges: [] }
+ * const positions = await layout.execute(graph); // { nodes: [], edges: [] }
  *
  * // Or use different options later.
  * const layout = new MDSLayout({ center: [100, 100] });
- * const positions = layout.execute(graph, { rows: 20 }); // { nodes: [], edges: [] }
+ * const positions = await layout.execute(graph, { rows: 20 }); // { nodes: [], edges: [] }
  *
  * // If you want to assign the positions directly to the nodes, use assign method.
- * layout.assign(graph, { center: [100, 100] });
+ * await layout.assign(graph, { center: [100, 100] });
  */
 export class MDSLayout implements Layout<MDSLayoutOptions> {
   id = "mds";
@@ -49,29 +49,39 @@ export class MDSLayout implements Layout<MDSLayoutOptions> {
   /**
    * Return the positions of nodes and edges(if needed).
    */
-  execute(graph: Graph, options?: MDSLayoutOptions): LayoutMapping {
-    return this.genericMDSLayout(false, graph, options) as LayoutMapping;
+  async execute(graph: Graph, options?: MDSLayoutOptions) {
+    return this.genericMDSLayout(false, graph, options);
   }
   /**
    * To directly assign the positions to the nodes.
    */
-  assign(graph: Graph, options?: MDSLayoutOptions) {
+  async assign(graph: Graph, options?: MDSLayoutOptions) {
     this.genericMDSLayout(true, graph, options);
   }
 
-  private genericMDSLayout(
+  private async genericMDSLayout(
+    assign: false,
+    graph: Graph,
+    options?: MDSLayoutOptions
+  ): Promise<LayoutMapping>;
+  private async genericMDSLayout(
+    assign: true,
+    graph: Graph,
+    options?: MDSLayoutOptions
+  ): Promise<void>;
+  private async genericMDSLayout(
     assign: boolean,
     graph: Graph,
     options?: MDSLayoutOptions
-  ): LayoutMapping | void {
+  ): Promise<LayoutMapping | void> {
     const mergedOptions = { ...this.options, ...options };
-    const { center = [0, 0], linkDistance = 50, onLayoutEnd } = mergedOptions;
+    const { center = [0, 0], linkDistance = 50 } = mergedOptions;
 
     let nodes = graph.getAllNodes();
     let edges = graph.getAllEdges();
 
     if (!nodes?.length || nodes.length === 1) {
-      return handleSingleNodeGraph(graph, assign, center, onLayoutEnd);
+      return handleSingleNodeGraph(graph, assign, center);
     }
 
     // the graph-theoretic distance (shortest path distance) matrix
@@ -105,7 +115,6 @@ export class MDSLayout implements Layout<MDSLayoutOptions> {
       nodes: layoutNodes,
       edges,
     };
-    onLayoutEnd?.(result);
 
     return result;
   }

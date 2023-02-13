@@ -41,7 +41,7 @@
       type="application/javascript"
     ></script>
     <script
-      src="https://unpkg.com/@antv/graphlib@2.0.0-alpha.2"
+      src="https://unpkg.com/@antv/graphlib@2.0.0"
       type="application/javascript"
     ></script>
     <script
@@ -302,22 +302,21 @@
             });
           };
 
-          force.assign(graph, {
-            center: [200, 200], // The center of the graph by default
-            preventOverlap: true,
-            nodeSize: 20,
-            onTick: (positions) => {
-              if (!rendered) {
-                createNodesEdges(positions);
-                rendered = true;
-              } else {
-                updateNodesEdges(positions);
-              }
-            },
-            onLayoutEnd: (positions) => {
-              console.log(positions);
-            },
-          });
+          (async () => {
+            await force.assign(graph, {
+              center: [200, 200], // The center of the graph by default
+              preventOverlap: true,
+              nodeSize: 20,
+              onTick: (positions) => {
+                if (!rendered) {
+                  createNodesEdges(positions);
+                  rendered = true;
+                } else {
+                  updateNodesEdges(positions);
+                }
+              },
+            });
+          })();
         });
     </script>
   </body>

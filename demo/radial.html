@@ -37,7 +37,7 @@
       type="application/javascript"
     ></script>
     <script
-      src="https://unpkg.com/@antv/graphlib@2.0.0-alpha.2"
+      src="https://unpkg.com/@antv/graphlib@2.0.0"
       type="application/javascript"
     ></script>
     <script
@@ -894,13 +894,10 @@
       const radial = new RadialLayout({
         width: 500,
         height: 600,
-        focusNode: 'Australia',
+        focusNode: "Australia",
         unitRadius: 100,
         linkDistance: 100,
       });
-
-      const positions = radial.execute(graph);
-      console.log(positions);
 
       const { Circle, Canvas } = window.G;
 
@@ -915,21 +912,25 @@
         renderer: canvasRenderer,
       });
 
-      canvas.addEventListener("ready", () => {
-        positions.nodes.forEach((node) => {
-          const circle = new Circle({
-            style: {
-              cx: node.data.x,
-              cy: node.data.y,
-              r: 10,
-              fill: "#1890FF",
-              stroke: "#F04864",
-              lineWidth: 4,
-            },
+      (async () => {
+        const positions = await radial.execute(graph);
+        console.log(positions);
+        canvas.addEventListener("ready", () => {
+          positions.nodes.forEach((node) => {
+            const circle = new Circle({
+              style: {
+                cx: node.data.x,
+                cy: node.data.y,
+                r: 10,
+                fill: "#1890FF",
+                stroke: "#F04864",
+                lineWidth: 4,
+              },
+            });
+            canvas.appendChild(circle);
           });
-          canvas.appendChild(circle);
         });
-      });
+      })();
     </script>
   </body>
 </html>

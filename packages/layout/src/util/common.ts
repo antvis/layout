@@ -1,4 +1,4 @@
-import { PointTuple, LayoutMapping, Graph } from "../types";
+import { PointTuple, Graph } from "../types";
 
 /**
  * Assign or only return the result for the graph who has no nodes or only one node.
@@ -6,19 +6,17 @@ import { PointTuple, LayoutMapping, Graph } from "../types";
  * @param assign whether assign result to original graph
  * @param center the layout center
  * @param onLayoutEnd callback for layout end
- * @returns 
+ * @returns
  */
 export const handleSingleNodeGraph = (
   graph: Graph,
   assign: boolean,
-  center: PointTuple,
-  onLayoutEnd?: (data: LayoutMapping) => void
+  center: PointTuple
 ) => {
   const nodes = graph.getAllNodes();
   const edges = graph.getAllEdges();
   if (!nodes?.length) {
     const result = { nodes: [], edges };
-    onLayoutEnd?.(result);
     return result;
   }
   if (nodes.length === 1) {
@@ -36,12 +34,11 @@ export const handleSingleNodeGraph = (
             ...nodes[0].data,
             x: center[0],
             y: center[1],
-          }
-        }
+          },
+        },
       ],
       edges,
     };
-    onLayoutEnd?.(result);
     return result;
   }
 };

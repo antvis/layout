@@ -6,7 +6,7 @@
       name="viewport"
       content="width=device-width,initial-scale=1,shrink-to-fit=no"
     />
-    <title>D3Force</title>
+    <title>Force</title>
     <style>
       * {
         box-sizing: border-box;
@@ -50,7 +50,7 @@
     ></script>
     <script>
       const { Graph } = window.GraphLib;
-      const { D3ForceLayout } = window.Layout;
+      const { ForceLayout } = window.Layout;
 
       fetch(
         "https://gw.alipayobjects.com/os/antvdemo/assets/data/relations.json"
@@ -203,8 +203,9 @@
             edges: data.edges.map((edge, i) => ({ id: i, ...edge })),
           });
 
-          const force = new D3ForceLayout();
+          const force = new ForceLayout();
 
+          let rendered = false;
           const nodes = [];
           const edges = [];
 
@@ -253,9 +254,6 @@
                 });
                 force.stop();
                 force.assign(graph, {
-                  center: [200, 200], // The center of the graph by default
-                  preventOverlap: true,
-                  nodeSize: 20,
                   onTick: (positions) => {
                     updateNodesEdges(positions);
                   },
@@ -305,10 +303,30 @@
             center: [200, 200], // The center of the graph by default
             preventOverlap: true,
             nodeSize: 20,
+            onTick: (positions) => {
+              if (!rendered) {
+                createNodesEdges(positions);
+                rendered = true;
+              } else {
+                updateNodesEdges(positions);
+              }
+            },
           });
-          force.stop();
-          const positions = force.tick(1000);
-          createNodesEdges(positions);
+
+          setTimeout(() => {
+            force.stop();
+          }, 100);
+
+          setTimeout(() => {
+            force.assign(graph, {
+              center: [200, 200], // The center of the graph by default
+              preventOverlap: true,
+              nodeSize: 20,
+              onTick: (positions) => {
+                updateNodesEdges(positions);
+              },
+            });
+          }, 1500);
         });
     </script>
   </body>

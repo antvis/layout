@@ -57,14 +57,14 @@ interface FormattedOptions extends FruchtermanLayoutOptions {
  * @example
  * // Assign layout options when initialization.
  * const layout = new FruchtermanLayout({ center: [100, 100] });
- * const positions = layout.execute(graph); // { nodes: [], edges: [] }
+ * const positions = await layout.execute(graph); // { nodes: [], edges: [] }
  *
  * // Or use different options later.
  * const layout = new FruchtermanLayout({ center: [100, 100] });
- * const positions = layout.execute(graph, { center: [100, 100] }); // { nodes: [], edges: [] }
+ * const positions = await layout.execute(graph, { center: [100, 100] }); // { nodes: [], edges: [] }
  *
  * // If you want to assign the positions directly to the nodes, use assign method.
- * layout.assign(graph, { center: [100, 100] });
+ * await layout.assign(graph, { center: [100, 100] });
  */
 export class FruchtermanLayout
   implements LayoutWithIterations<FruchtermanLayoutOptions>
@@ -94,17 +94,13 @@ export class FruchtermanLayout
   /**
    * Return the positions of nodes and edges(if needed).
    */
-  execute(graph: Graph, options?: FruchtermanLayoutOptions): LayoutMapping {
-    return this.genericFruchtermanLayout(
-      false,
-      graph,
-      options
-    ) as LayoutMapping;
+  async execute(graph: Graph, options?: FruchtermanLayoutOptions) {
+    return this.genericFruchtermanLayout(false, graph, options);
   }
   /**
    * To directly assign the positions to the nodes.
    */
-  assign(graph: Graph, options?: FruchtermanLayoutOptions) {
+  async assign(graph: Graph, options?: FruchtermanLayoutOptions) {
     this.genericFruchtermanLayout(true, graph, options);
   }
 
@@ -116,10 +112,6 @@ export class FruchtermanLayout
       window.clearInterval(this.timeInterval);
     }
     this.running = false;
-  }
-
-  restart() {
-    this.running = true;
   }
 
   /**
@@ -157,11 +149,21 @@ export class FruchtermanLayout
     return result;
   }
 
-  private genericFruchtermanLayout(
+  private async genericFruchtermanLayout(
+    assign: false,
+    graph: Graph,
+    options?: FruchtermanLayoutOptions
+  ): Promise<LayoutMapping>;
+  private async genericFruchtermanLayout(
+    assign: true,
+    graph: Graph,
+    options?: FruchtermanLayoutOptions
+  ): Promise<void>;
+  private async genericFruchtermanLayout(
     assign: boolean,
     graph: Graph,
     options?: FruchtermanLayoutOptions
-  ): LayoutMapping | void {
+  ): Promise<LayoutMapping | void> {
     if (this.running) return;
 
     const formattedOptions = this.formatOptions(options);
@@ -173,7 +175,6 @@ export class FruchtermanLayout
       nodeClusterBy,
       maxIteration,
       onTick,
-      onLayoutEnd,
     } = formattedOptions;
 
     let nodes = graph.getAllNodes();
@@ -182,7 +183,6 @@ export class FruchtermanLayout
     if (!nodes?.length) {
       const result = { nodes: [], edges };
       this.lastResult = result;
-      onLayoutEnd?.(result);
       return result;
     }
 
@@ -207,7 +207,6 @@ export class FruchtermanLayout
         edges,
       };
       this.lastResult = result;
-      onLayoutEnd?.(result);
       return result;
     }
 
@@ -243,12 +242,14 @@ export class FruchtermanLayout
     this.lastOptions = formattedOptions;
     this.lastClusterMap = clusterMap;
 
-    {
-      if (typeof window === "undefined") return;
-      let iter = 0;
+    if (typeof window === "undefined") return;
+    let iter = 0;
+
+    return new Promise((resolve) => {
       // interval for render the result after each iteration
       this.timeInterval = window.setInterval(() => {
         if (!this.running) {
+          resolve({ nodes: layoutNodes, edges });
           return;
         }
 
@@ -267,22 +268,12 @@ export class FruchtermanLayout
         });
         iter++;
         if (iter >= maxIteration) {
-          // in case of onLayoutEnd faield leads to clearInterval not be called and endless loop
-          try {
-            onLayoutEnd?.({
-              nodes: layoutNodes,
-              edges,
-            });
-          } catch (e) {
-            console.warn("onLayoutEnd failed", e);
-          }
           window.clearInterval(this.timeInterval);
+          resolve({ nodes: layoutNodes, edges });
         }
       }, 0);
       this.running = true;
-    }
-
-    return { nodes: layoutNodes, edges };
+    });
   }
 
   private formatOptions(

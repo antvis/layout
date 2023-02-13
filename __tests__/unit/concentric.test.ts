@@ -5,7 +5,7 @@ import { mathEqual } from "../util";
 const data = dataset.data;
 
 describe("ConcentricLayout", () => {
-  it("should return correct default config.", () => {
+  it("should return correct default config.", async () => {
     const concentric = new ConcentricLayout();
     expect(concentric.options).toEqual({
       nodeSize: 30,
@@ -20,17 +20,17 @@ describe("ConcentricLayout", () => {
     });
   });
 
-  it("should do concentric with an empty graph.", () => {
+  it("should do concentric with an empty graph.", async () => {
     const graph = new Graph<any, any>({
       nodes: [],
       edges: [],
     });
     const concentric = new ConcentricLayout();
-    const positions = concentric.execute(graph);
+    const positions = await concentric.execute(graph);
     expect(positions.nodes).toEqual([]);
   });
 
-  it("should do concentric with a graph which has only one node.", () => {
+  it("should do concentric with a graph which has only one node.", async () => {
     const graph = new Graph<any, any>({
       nodes: [
         {
@@ -46,12 +46,12 @@ describe("ConcentricLayout", () => {
     const concentric = new ConcentricLayout({
       center: [150, 50],
     });
-    const positions = concentric.execute(graph);
+    const positions = await concentric.execute(graph);
     expect(positions.nodes[0].data.x).toEqual(150);
     expect(positions.nodes[0].data.y).toEqual(50);
   });
 
-  it("should do concentric with array nodeSize", () => {
+  it("should do concentric with array nodeSize", async () => {
     const graph = new Graph<any, any>({
       // @ts-ignore
       nodes: data.nodes,
@@ -67,13 +67,13 @@ describe("ConcentricLayout", () => {
       height,
     });
 
-    const positions = concentric.execute(graph);
+    const positions = await concentric.execute(graph);
     const node = positions.nodes[2];
     expect(mathEqual(node.data.x, width / 2)).toEqual(true);
     expect(mathEqual(node.data.y, height / 2)).toEqual(true);
   });
 
-  it("should do concentric layout with array size in node data, sortBy in data undefined", () => {
+  it("should do concentric layout with array size in node data, sortBy in data undefined", async () => {
     const graph = new Graph<any, any>({
       // @ts-ignore
       nodes: data.nodes,
@@ -88,13 +88,13 @@ describe("ConcentricLayout", () => {
       width,
       height,
     });
-    const positions = concentric.execute(graph);
+    const positions = await concentric.execute(graph);
     const node = positions.nodes[2];
     expect(mathEqual(node.data.x, width / 2)).toEqual(true);
     expect(mathEqual(node.data.y, height / 2)).toEqual(true);
   });
 
-  it("should use concentric equidistant.", () => {
+  it("should use concentric equidistant.", async () => {
     const graph = new Graph<any, any>({
       // @ts-ignore
       nodes: data.nodes,
@@ -109,7 +109,7 @@ describe("ConcentricLayout", () => {
       height,
       equidistant: true,
     });
-    const positions = concentric.execute(graph);
+    const positions = await concentric.execute(graph);
     const node = positions.nodes[2];
     expect(mathEqual(node.data.x, width / 2)).toEqual(true);
     expect(mathEqual(node.data.y, height / 2)).toEqual(true);

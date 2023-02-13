@@ -2,12 +2,7 @@ import { Graph } from "@antv/graphlib";
 // import { setupTransferableMethodsOnWorker } from "@naoak/workerize-transferable";
 import { registry } from "./registry";
 import type { Payload } from "./supervisor";
-import {
-  LayoutMapping,
-  Layout,
-  LayoutWithIterations,
-  isLayoutWithIterations,
-} from "./types";
+import { Layout, LayoutWithIterations, isLayoutWithIterations } from "./types";
 
 // @see https://www.npmjs.com/package/@naoak/workerize-transferable
 // setupTransferableMethodsOnWorker({
@@ -58,18 +53,10 @@ export async function calculateLayout(
     throw new Error(`Unknown layout id: ${id}`);
   }
 
-  return new Promise((resolve) => {
-    // Do calculation.
-    currentLayout.assign(graph, {
-      onLayoutEnd: (positions: LayoutMapping) => {
-        resolve([positions, transferables]);
-      },
-    });
-
-    // Do static layout.
-    if (isLayoutWithIterations(currentLayout)) {
-      currentLayout.stop();
-      currentLayout.tick(iterations);
-    }
-  });
+  let positions = await currentLayout.execute(graph);
+  if (isLayoutWithIterations(currentLayout)) {
+    currentLayout.stop();
+    positions = currentLayout.tick(iterations);
+  }
+  return [positions, transferables];
 }

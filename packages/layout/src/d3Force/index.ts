@@ -45,14 +45,14 @@ const DEFAULTS_LAYOUT_OPTIONS: Partial<D3ForceLayoutOptions> = {
  * @example
  * // Assign layout options when initialization.
  * const layout = new D3ForceLayout({ center: [100, 100] });
- * const positions = layout.execute(graph); // { nodes: [], edges: [] }
+ * const positions = await layout.execute(graph); // { nodes: [], edges: [] }
  *
  * // Or use different options later.
  * const layout = new D3ForceLayout({ center: [100, 100] });
- * const positions = layout.execute(graph, { center: [100, 100] }); // { nodes: [], edges: [] }
+ * const positions = await layout.execute(graph, { center: [100, 100] }); // { nodes: [], edges: [] }
  *
  * // If you want to assign the positions directly to the nodes, use assign method.
- * layout.assign(graph, { center: [100, 100] });
+ * await layout.assign(graph, { center: [100, 100] });
  */
 export class D3ForceLayout
   implements LayoutWithIterations<D3ForceLayoutOptions>
@@ -65,9 +65,6 @@ export class D3ForceLayout
   private lastLayoutEdges: Edge[];
   private lastAssign: boolean;
   private lastGraph: Graph;
-  private lastOptions: D3ForceLayoutOptions;
-
-  private running: boolean = false;
 
   constructor(
     public options: D3ForceLayoutOptions = {} as D3ForceLayoutOptions
@@ -81,13 +78,13 @@ export class D3ForceLayout
   /**
    * Return the positions of nodes and edges(if needed).
    */
-  execute(graph: Graph, options?: D3ForceLayoutOptions): LayoutMapping {
-    return this.genericForceLayout(false, graph, options) as LayoutMapping;
+  async execute(graph: Graph, options?: D3ForceLayoutOptions) {
+    return this.genericForceLayout(false, graph, options);
   }
   /**
    * To directly assign the positions to the nodes.
    */
-  assign(graph: Graph, options?: D3ForceLayoutOptions) {
+  async assign(graph: Graph, options?: D3ForceLayoutOptions) {
     this.genericForceLayout(true, graph, options);
   }
 
@@ -96,12 +93,6 @@ export class D3ForceLayout
    */
   stop() {
     this.forceSimulation?.stop();
-    this.running = false;
-  }
-
-  restart() {
-    this.forceSimulation?.restart();
-    this.running = true;
   }
 
   /**
@@ -126,18 +117,24 @@ export class D3ForceLayout
       );
     }
 
-    if (this.lastOptions.onLayoutEnd) {
-      this.lastOptions.onLayoutEnd(result);
-    }
-
     return result;
   }
 
-  private genericForceLayout(
+  private async genericForceLayout(
+    assign: false,
+    graph: Graph,
+    options?: D3ForceLayoutOptions
+  ): Promise<LayoutMapping>;
+  private async genericForceLayout(
+    assign: true,
+    graph: Graph,
+    options?: D3ForceLayoutOptions
+  ): Promise<void>;
+  private async genericForceLayout(
     assign: boolean,
     graph: Graph,
     options?: D3ForceLayoutOptions
-  ): LayoutMapping | void {
+  ): Promise<LayoutMapping | void> {
     const mergedOptions = { ...this.options, ...options };
 
     let nodes = graph.getAllNodes();
@@ -157,9 +154,6 @@ export class D3ForceLayout
     this.lastLayoutEdges = layoutEdges;
     this.lastAssign = assign;
     this.lastGraph = graph;
-    this.lastOptions = mergedOptions;
-
-    if (this.running) return;
 
     const {
       alphaMin,
@@ -180,54 +174,115 @@ export class D3ForceLayout
       nodeSize,
       nodeSpacing,
       onTick,
-      onLayoutEnd,
     } = mergedOptions;
     let { forceSimulation } = mergedOptions;
-    if (!forceSimulation) {
-      try {
-        // 定义节点的力
-        const nodeForce = d3Force.forceManyBody();
-        if (nodeStrength) {
-          nodeForce.strength(nodeStrength as any);
-        }
-        forceSimulation = d3Force.forceSimulation().nodes(layoutNodes as any);
 
+    return new Promise((resolve) => {
+      if (!forceSimulation) {
+        try {
+          // 定义节点的力
+          const nodeForce = d3Force.forceManyBody();
+          if (nodeStrength) {
+            nodeForce.strength(nodeStrength as any);
+          }
+          forceSimulation = d3Force.forceSimulation().nodes(layoutNodes as any);
+
+          if (clustering) {
+            const clusterForce = forceInBox() as any;
+            clusterForce
+              .centerX(center[0])
+              .centerY(center[1])
+              .template("force")
+              .strength(clusterFociStrength);
+            if (layoutEdges) {
+              clusterForce.links(layoutEdges);
+            }
+            if (layoutNodes) {
+              clusterForce.nodes(layoutNodes);
+            }
+            clusterForce
+              .forceLinkDistance(clusterEdgeDistance)
+              .forceLinkStrength(clusterEdgeStrength)
+              .forceCharge(clusterNodeStrength)
+              .forceNodeSize(clusterNodeSize);
+
+            forceSimulation.force("group", clusterForce);
+          }
+          forceSimulation
+            .force("center", d3Force.forceCenter(center[0], center[1]))
+            .force("charge", nodeForce)
+            .alpha(alpha)
+            .alphaDecay(alphaDecay)
+            .alphaMin(alphaMin);
+
+          if (preventOverlap) {
+            this.overlapProcess(forceSimulation, {
+              nodeSize,
+              nodeSpacing,
+              collideStrength,
+            });
+          }
+          // 如果有边，定义边的力
+          if (layoutEdges) {
+            // d3 的 forceLayout 会重新生成边的数据模型，为了避免污染源数据
+            const edgeForce = d3Force
+              .forceLink()
+              .id((d: any) => d.id)
+              .links(layoutEdges);
+            if (edgeStrength) {
+              edgeForce.strength(edgeStrength as any);
+            }
+            if (linkDistance) {
+              edgeForce.distance(linkDistance as any);
+            }
+            forceSimulation.force("link", edgeForce);
+          }
+
+          forceSimulation
+            .on("tick", () => {
+              const outNodes = formatOutNodes(layoutNodes);
+              onTick?.({
+                nodes: outNodes,
+                edges: formatOutEdges(layoutEdges),
+              });
+
+              if (assign) {
+                outNodes.forEach((node) =>
+                  graph.mergeNodeData(node.id, {
+                    x: node.data.x,
+                    y: node.data.y,
+                  })
+                );
+              }
+            })
+            .on("end", () => {
+              const outNodes = formatOutNodes(layoutNodes);
+
+              if (assign) {
+                outNodes.forEach((node) =>
+                  graph.mergeNodeData(node.id, {
+                    x: node.data.x,
+                    y: node.data.y,
+                  })
+                );
+              }
+
+              resolve({
+                nodes: outNodes,
+                edges: formatOutEdges(layoutEdges),
+              });
+            });
+        } catch (e) {
+          console.warn(e);
+        }
+      } else {
+        // forceSimulation is defined
         if (clustering) {
           const clusterForce = forceInBox() as any;
-          clusterForce
-            .centerX(center[0])
-            .centerY(center[1])
-            .template("force")
-            .strength(clusterFociStrength);
-          if (layoutEdges) {
-            clusterForce.links(layoutEdges);
-          }
-          if (layoutNodes) {
-            clusterForce.nodes(layoutNodes);
-          }
-          clusterForce
-            .forceLinkDistance(clusterEdgeDistance)
-            .forceLinkStrength(clusterEdgeStrength)
-            .forceCharge(clusterNodeStrength)
-            .forceNodeSize(clusterNodeSize);
-
-          forceSimulation.force("group", clusterForce);
+          clusterForce.nodes(layoutNodes);
+          clusterForce.links(layoutEdges);
         }
-        forceSimulation
-          .force("center", d3Force.forceCenter(center[0], center[1]))
-          .force("charge", nodeForce)
-          .alpha(alpha)
-          .alphaDecay(alphaDecay)
-          .alphaMin(alphaMin);
-
-        if (preventOverlap) {
-          this.overlapProcess(forceSimulation, {
-            nodeSize,
-            nodeSpacing,
-            collideStrength,
-          });
-        }
-        // 如果有边，定义边的力
+        forceSimulation.nodes(layoutNodes);
         if (layoutEdges) {
           // d3 的 forceLayout 会重新生成边的数据模型，为了避免污染源数据
           const edgeForce = d3Force
@@ -242,103 +297,36 @@ export class D3ForceLayout
           }
           forceSimulation.force("link", edgeForce);
         }
-
-        forceSimulation
-          .on("tick", () => {
-            const outNodes = formatOutNodes(layoutNodes);
-            onTick?.({
-              nodes: outNodes,
-              edges: formatOutEdges(layoutEdges),
-            });
-
-            if (assign) {
-              outNodes.forEach((node) =>
-                graph.mergeNodeData(node.id, {
-                  x: node.data.x,
-                  y: node.data.y,
-                })
-              );
-            }
-          })
-          .on("end", () => {
-            this.running = false;
-            const outNodes = formatOutNodes(layoutNodes);
-            onLayoutEnd?.({
-              nodes: outNodes,
-              edges: formatOutEdges(layoutEdges),
-            });
-
-            if (assign) {
-              outNodes.forEach((node) =>
-                graph.mergeNodeData(node.id, {
-                  x: node.data.x,
-                  y: node.data.y,
-                })
-              );
-            }
+        if (preventOverlap) {
+          this.overlapProcess(forceSimulation, {
+            nodeSize,
+            nodeSpacing,
+            collideStrength,
           });
-        this.running = true;
-      } catch (e) {
-        this.running = false;
-        console.warn(e);
-      }
-    } else {
-      // forceSimulation is defined
-      if (clustering) {
-        const clusterForce = forceInBox() as any;
-        clusterForce.nodes(layoutNodes);
-        clusterForce.links(layoutEdges);
-      }
-      forceSimulation.nodes(layoutNodes);
-      if (layoutEdges) {
-        // d3 的 forceLayout 会重新生成边的数据模型，为了避免污染源数据
-        const edgeForce = d3Force
-          .forceLink()
-          .id((d: any) => d.id)
-          .links(layoutEdges);
-        if (edgeStrength) {
-          edgeForce.strength(edgeStrength as any);
         }
-        if (linkDistance) {
-          edgeForce.distance(linkDistance as any);
-        }
-        forceSimulation.force("link", edgeForce);
+        forceSimulation.alpha(alpha).restart();
       }
-      if (preventOverlap) {
-        this.overlapProcess(forceSimulation, {
-          nodeSize,
-          nodeSpacing,
-          collideStrength,
-        });
+
+      this.forceSimulation = forceSimulation;
+
+      // since d3 writes x and y as node's first level properties, format them into data
+      const outNodes = formatOutNodes(layoutNodes);
+      const outEdges = formatOutEdges(layoutEdges);
+
+      if (assign) {
+        outNodes.forEach((node) =>
+          graph.mergeNodeData(node.id, {
+            x: node.data.x,
+            y: node.data.y,
+          })
+        );
       }
-      forceSimulation.alpha(alpha).restart();
-      this.running = true;
-    }
 
-    this.forceSimulation = forceSimulation;
-
-    // since d3 writes x and y as node's first level properties, format them into data
-    const outNodes = formatOutNodes(layoutNodes);
-    const outEdges = formatOutEdges(layoutEdges);
-
-    if (assign) {
-      outNodes.forEach((node) =>
-        graph.mergeNodeData(node.id, {
-          x: node.data.x,
-          y: node.data.y,
-        })
-      );
-    }
-
-    const result = {
-      nodes: outNodes,
-      edges: outEdges,
-    };
-
-    // FIXME: should not trigger this callback twice
-    // onLayoutEnd?.(result);
-
-    return result;
+      resolve({
+        nodes: outNodes,
+        edges: outEdges,
+      });
+    });
   }
 
   /**
