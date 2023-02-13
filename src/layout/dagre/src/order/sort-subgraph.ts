@@ -8,7 +8,8 @@ const sortSubgraph = (
   v: string,
   cg: Graph,
   biasRight?: boolean,
-  usePrev?: boolean
+  usePrev?: boolean,
+  keepNodeOrder?: boolean
 ) => {
   let movable = g.children(v);
   // fixorder的点不参与排序（这个方案不合适，只排了新增节点，和原来的分离）
@@ -26,7 +27,7 @@ const sortSubgraph = (
   const barycenters = barycenter(g, movable || []);
   barycenters?.forEach((entry) => {
     if (g.children(entry.v)?.length) {
-      const subgraphResult = sortSubgraph(g, entry.v, cg, biasRight);
+      const subgraphResult = sortSubgraph(g, entry.v, cg, biasRight, keepNodeOrder);
       subgraphs[entry.v] = subgraphResult;
       if (subgraphResult.hasOwnProperty("barycenter")) {
         mergeBarycenters(entry, subgraphResult);
@@ -49,7 +50,7 @@ const sortSubgraph = (
       }
     });
 
-  const result = sort(entries, biasRight, usePrev);
+  const result = sort(entries, biasRight, usePrev, keepNodeOrder);
 
   if (bl) {
     result.vs = [bl, result.vs, br].flat();

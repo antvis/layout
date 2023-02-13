@@ -22,7 +22,7 @@ import { buildLayerMatrix, maxRank } from "../util";
  *    1. Graph nodes will have an "order" attribute based on the results of the
  *       algorithm.
  */
-const order = (g: Graph) => {
+const order = (g: Graph, keepNodeOrder?: boolean) => {
   const mxRank = maxRank(g);
   const range1 = [];
   const range2 = [];
@@ -37,7 +37,7 @@ const order = (g: Graph) => {
   let bestCC = Number.POSITIVE_INFINITY;
   let best: string[][];
   for (let i = 0, lastBest = 0; lastBest < 4; ++i, ++lastBest) {
-    sweepLayerGraphs(i % 2 ? downLayerGraphs : upLayerGraphs, i % 4 >= 2);
+    sweepLayerGraphs(i % 2 ? downLayerGraphs : upLayerGraphs, i % 4 >= 2, false, keepNodeOrder);
 
     layering = buildLayerMatrix(g);
     const cc = crossCount(g, layering);
@@ -52,7 +52,7 @@ const order = (g: Graph) => {
   layering = initOrder(g);
   assignOrder(g, layering);
   for (let i = 0, lastBest = 0; lastBest < 4; ++i, ++lastBest) {
-    sweepLayerGraphs(i % 2 ? downLayerGraphs : upLayerGraphs, i % 4 >= 2, true);
+    sweepLayerGraphs(i % 2 ? downLayerGraphs : upLayerGraphs, i % 4 >= 2, true, keepNodeOrder);
 
     layering = buildLayerMatrix(g);
     const cc = crossCount(g, layering);
@@ -78,12 +78,13 @@ const buildLayerGraphs = (
 const sweepLayerGraphs = (
   layerGraphs: Graph[],
   biasRight: boolean,
-  usePrev?: boolean
+  usePrev?: boolean,
+  keepNodeOrder?: boolean
 ) => {
   const cg = new Graph();
   layerGraphs?.forEach((lg) => {
     const root = lg.graph().root as string;
-    const sorted = sortSubgraph(lg, root, cg, biasRight, usePrev);
+    const sorted = sortSubgraph(lg, root, cg, biasRight, usePrev, keepNodeOrder);
     for (let i = 0; i < sorted.vs?.length || 0; i++) {
       const lnode = lg.node(sorted.vs[i]);
       if (lnode) {
