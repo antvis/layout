@@ -22,16 +22,14 @@ import { FruchtermanLayout } from "@antv/layout-gpu";
 
 const graph = new Graph({ nodes: [], edges: [] });
 
-const fruchtermanLayout = new FruchtermanLayout({
-  onLayoutEnd: (positions) => {
-    // render nodes & edges
-  },
-});
+const fruchtermanLayout = new FruchtermanLayout();
 
-// Return positions of nodes & edges.
-const positions = fruchtermanLayout.execute(graph);
-// Or to directly assign the positions to the nodes:
-circularLayout.assign(graph);
+(async () => {
+  // Return positions of nodes & edges.
+  const positions = await fruchtermanLayout.execute(graph);
+  // Or to directly assign the positions to the nodes:
+  await circularLayout.assign(graph);
+})();
 ```
 
 ### UMD

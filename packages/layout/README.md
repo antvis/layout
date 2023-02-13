@@ -28,11 +28,13 @@ const graph = new Graph({ nodes: [], edges: [] });
 
 const circularLayout = new CircularLayout({ radius: 10 });
 
-// 1. Return positions of nodes & edges.
-const positions = circularLayout.execute(graph);
+(async () => {
+  // 1. Return positions of nodes & edges.
+  const positions = await circularLayout.execute(graph);
 
-// 2. To directly assign the positions to the nodes:
-circularLayout.assign(graph);
+  // 2. To directly assign the positions to the nodes:
+  await circularLayout.assign(graph);
+})();
 ```
 
 ### UMD
@@ -284,11 +286,14 @@ const graph = new Graph();
 const layout = new CircularLayout();
 
 const supervisor = new Supervisor(graph, layout);
-supervisor.on("layoutend", (positions) => {});
-supervisor.start();
+const positions = await supervisor.execute();
 ```
 
 [Online Demo](https://observablehq.com/d/2db6b0cc5e97d8d6#cell-199)
+
+- `execute` Call `execute` on the selected layout algorithm. This is an async method.
+- `stop` Call `stop` on the selected layout algorithm.
+- `kill` Terminate the WebWorker.
 
 ## License
 
