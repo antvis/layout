@@ -3,9 +3,10 @@ import { ConflictEntry } from "./resolve-conflicts";
 
 const sort = (entries: ConflictEntry[], biasRight?: boolean, usePrev?: boolean, keepNodeOrder?: boolean) => {
   const parts = partition(entries, (entry) => {
-    if (keepNodeOrder) return entry.hasOwnProperty("barycenter");
+    const hasFixOrder = entry.hasOwnProperty("fixorder") && !isNaN(entry.fixorder!);
+    if (keepNodeOrder) return !hasFixOrder && entry.hasOwnProperty("barycenter");
     // NOTE: 有fixorder的也可以排
-    return (entry.hasOwnProperty("fixorder") && !isNaN(entry.fixorder!)) || entry.hasOwnProperty("barycenter");
+    return hasFixOrder || entry.hasOwnProperty("barycenter");
   });
   const sortable = parts.lhs;
   const unsortable = parts.rhs.sort((a, b) => -a.i - (-b.i));
