@@ -1,5 +1,9 @@
 # ChangeLog
 
+### 0.3.16
+
+- fix: fix node order problem of dagre;
+
 ### 0.3.14
 
 - fix: error edge controlPoints in dagre with layer assignment;
