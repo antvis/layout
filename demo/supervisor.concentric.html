@@ -37,7 +37,7 @@
       type="application/javascript"
     ></script>
     <script
-      src="https://unpkg.com/@antv/graphlib@2.0.0-alpha.2"
+      src="https://unpkg.com/@antv/graphlib@2.0.0"
       type="application/javascript"
     ></script>
     <script
@@ -48,87 +48,81 @@
       const { Graph } = window.GraphLib;
       const { ConcentricLayout, Supervisor } = window.Layout;
 
-      fetch(
-        "https://gw.alipayobjects.com/os/basement_prod/8dacf27e-e1bc-4522-b6d3-4b6d9b9ed7df.json"
-      )
-        .then((res) => res.json())
-        .then((data) => {
-          const formattedNodes = data.nodes.map((node) => {
-            const { id, ...others } = node;
-            return {
-              id,
-              data: {
-                ...others,
-              },
-            };
-          });
+      (async () => {
+        const res = await fetch(
+          "https://gw.alipayobjects.com/os/basement_prod/8dacf27e-e1bc-4522-b6d3-4b6d9b9ed7df.json"
+        );
+        const data = await res.json();
 
-          const graph = new Graph({
-            nodes: formattedNodes,
-            edges: data.edges,
-          });
-
-          const concenric = new ConcentricLayout({
-            maxLevelDiff: 0.5,
-            center: [200, 200],
-            width: 400,
-            height: 400,
-          });
-
-          const supervisor = new Supervisor(graph, concenric);
-          supervisor.on("layoutend", (positions) => {
-            const { Circle, Line, Canvas } = window.G;
-
-            // create a renderer
-            const canvasRenderer = new window.G.Canvas2D.Renderer();
-
-            // create a canvas
-            const canvas = new Canvas({
-              container: "container",
-              width: 500,
-              height: 500,
-              renderer: canvasRenderer,
-            });
-
-            canvas.addEventListener("ready", () => {
-              positions.edges.forEach(({ source, target }, i) => {
-                const sourceNode = positions.nodes.find(
-                  ({ id }) => id === source
-                );
-                const targetNode = positions.nodes.find(
-                  ({ id }) => id === target
-                );
-                const line = new Line({
-                  style: {
-                    x1: sourceNode.data.x,
-                    y1: sourceNode.data.y,
-                    x2: targetNode.data.x,
-                    y2: targetNode.data.y,
-                    lineWidth: 1,
-                    stroke: "grey",
-                  },
-                });
-                canvas.appendChild(line);
-              });
-
-              positions.nodes.forEach((node) => {
-                const circle = new Circle({
-                  style: {
-                    cx: node.data.x,
-                    cy: node.data.y,
-                    r: 10,
-                    fill: "#1890FF",
-                    stroke: "#F04864",
-                    lineWidth: 4,
-                  },
-                });
-                canvas.appendChild(circle);
-              });
-            });
-          });
-
-          supervisor.start();
+        const formattedNodes = data.nodes.map((node) => {
+          const { id, ...others } = node;
+          return {
+            id,
+            data: {
+              ...others,
+            },
+          };
         });
+
+        const graph = new Graph({
+          nodes: formattedNodes,
+          edges: data.edges,
+        });
+
+        const concenric = new ConcentricLayout({
+          maxLevelDiff: 0.5,
+          center: [200, 200],
+          width: 400,
+          height: 400,
+        });
+
+        const { Circle, Line, Canvas } = window.G;
+
+        // create a renderer
+        const canvasRenderer = new window.G.Canvas2D.Renderer();
+
+        // create a canvas
+        const canvas = new Canvas({
+          container: "container",
+          width: 500,
+          height: 500,
+          renderer: canvasRenderer,
+        });
+        await canvas.ready;
+
+        const supervisor = new Supervisor(graph, concenric);
+        const positions = await supervisor.execute();
+
+        positions.edges.forEach(({ source, target }, i) => {
+          const sourceNode = positions.nodes.find(({ id }) => id === source);
+          const targetNode = positions.nodes.find(({ id }) => id === target);
+          const line = new Line({
+            style: {
+              x1: sourceNode.data.x,
+              y1: sourceNode.data.y,
+              x2: targetNode.data.x,
+              y2: targetNode.data.y,
+              lineWidth: 1,
+              stroke: "grey",
+            },
+          });
+          canvas.appendChild(line);
+        });
+
+        positions.nodes.forEach((node) => {
+          const circle = new Circle({
+            style: {
+              cx: node.data.x,
+              cy: node.data.y,
+              r: 10,
+              fill: "#1890FF",
+              stroke: "#F04864",
+              lineWidth: 4,
+            },
+          });
+          canvas.appendChild(circle);
+        });
+      })();
     </script>
   </body>
 </html>

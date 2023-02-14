@@ -37,7 +37,7 @@
       type="application/javascript"
     ></script>
     <script
-      src="https://unpkg.com/@antv/graphlib@2.0.0-alpha.2"
+      src="https://unpkg.com/@antv/graphlib@2.0.0"
       type="application/javascript"
     ></script>
     <script
@@ -80,8 +80,6 @@
         begin: [10, 20],
       });
 
-      const positions = grid.execute(graph);
-
       const { Circle, Line, Text, Canvas } = window.G;
 
       // create a renderer
@@ -95,49 +93,53 @@
         renderer: canvasRenderer,
       });
 
-      canvas.addEventListener("ready", () => {
-        positions.edges.forEach(({ source, target }) => {
-          const sourceNode = positions.nodes.find(({ id }) => id === source);
-          const targetNode = positions.nodes.find(({ id }) => id === target);
-          const line = new Line({
-            style: {
-              x1: sourceNode.data.x,
-              y1: sourceNode.data.y,
-              x2: targetNode.data.x,
-              y2: targetNode.data.y,
-              lineWidth: 1,
-              stroke: "grey",
-            },
-          });
-          canvas.appendChild(line);
-        });
+      (async () => {
+        const positions = await grid.execute(graph);
 
-        positions.nodes.forEach((node) => {
-          const circle = new Circle({
-            style: {
-              cx: node.data.x,
-              cy: node.data.y,
-              r: 10,
-              fill: "#1890FF",
-              stroke: "#F04864",
-              lineWidth: 4,
-            },
+        canvas.addEventListener("ready", () => {
+          positions.edges.forEach(({ source, target }) => {
+            const sourceNode = positions.nodes.find(({ id }) => id === source);
+            const targetNode = positions.nodes.find(({ id }) => id === target);
+            const line = new Line({
+              style: {
+                x1: sourceNode.data.x,
+                y1: sourceNode.data.y,
+                x2: targetNode.data.x,
+                y2: targetNode.data.y,
+                lineWidth: 1,
+                stroke: "grey",
+              },
+            });
+            canvas.appendChild(line);
           });
-          canvas.appendChild(circle);
 
-          const text = new Text({
-            style: {
-              x: node.data.x,
-              y: node.data.y,
-              text: node.data.name || node.id,
-              fontSize: 12,
-              textAlign: "center",
-              textBaseline: "middle",
-            },
+          positions.nodes.forEach((node) => {
+            const circle = new Circle({
+              style: {
+                cx: node.data.x,
+                cy: node.data.y,
+                r: 10,
+                fill: "#1890FF",
+                stroke: "#F04864",
+                lineWidth: 4,
+              },
+            });
+            canvas.appendChild(circle);
+
+            const text = new Text({
+              style: {
+                x: node.data.x,
+                y: node.data.y,
+                text: node.data.name || node.id,
+                fontSize: 12,
+                textAlign: "center",
+                textBaseline: "middle",
+              },
+            });
+            canvas.appendChild(text);
           });
-          canvas.appendChild(text);
         });
-      });
+      })();
     </script>
   </body>
 </html>

@@ -41,7 +41,7 @@
       type="application/javascript"
     ></script>
     <script
-      src="https://unpkg.com/@antv/graphlib@2.0.0-alpha.2"
+      src="https://unpkg.com/@antv/graphlib@2.0.0"
       type="application/javascript"
     ></script>
     <script
@@ -914,10 +914,10 @@
 
       const fruchterman = new GForceLayout({
         width: 500,
-        height: 600,
+        height: 500,
+        center: [250, 250],
       });
 
-      let rendered = false;
       const nodes = [];
       const edges = [];
 
@@ -952,54 +952,6 @@
             },
           });
           canvas.appendChild(circle);
-
-          let shiftX = 0;
-          let shiftY = 0;
-          function moveAt(target, canvasX, canvasY) {
-            graph.mergeNodeData(positions.nodes[i].id, {
-              x: canvasX - shiftX,
-              y: canvasY - shiftY,
-            });
-            // fruchterman.stop();
-            fruchterman.assign(graph, {
-              onLayoutEnd: (positions) => {
-                updateNodesEdges(positions);
-              },
-            });
-          }
-
-          circle.addEventListener("dragstart", function (e) {
-            const [x, y] = e.target.getPosition();
-            shiftX = e.canvasX - x;
-            shiftY = e.canvasY - y;
-
-            moveAt(e.target, e.canvasX, e.canvasY);
-          });
-          circle.addEventListener("drag", function (e) {
-            moveAt(e.target, e.canvasX, e.canvasY);
-          });
-          nodes.push(circle);
-        });
-      };
-
-      const updateNodesEdges = (positions) => {
-        positions.edges.forEach(({ source, target }, i) => {
-          const sourceNode = positions.nodes.find(({ id }) => id === source);
-          const targetNode = positions.nodes.find(({ id }) => id === target);
-
-          edges[i].attr({
-            x1: sourceNode.data.x,
-            y1: sourceNode.data.y,
-            x2: targetNode.data.x,
-            y2: targetNode.data.y,
-          });
-        });
-
-        positions.nodes.forEach((node, i) => {
-          nodes[i].attr({
-            cx: node.data.x,
-            cy: node.data.y,
-          });
         });
       };
 

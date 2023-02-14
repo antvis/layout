@@ -1,6 +1,6 @@
 import EventEmitter from "eventemitter3";
 import { Graph, Node, Edge } from "@antv/graphlib";
-import type { LayoutMapping, Layout, LayoutSupervisor } from "./types";
+import type { Layout, LayoutSupervisor } from "./types";
 // @ts-ignore
 // Inline the worker as a Blob. @see https://github.com/developit/workerize-loader#inline
 import worker from "workerize-loader?inline!./worker";
@@ -19,19 +19,6 @@ export interface Payload {
   edges: Edge<any>[];
 }
 
-// tslint:disable-next-line: variable-name
-export const SupervisorEvent = {
-  /**
-   * Get triggerred when each iteration finished.
-   */
-  LAYOUT_ITERATION: "tick",
-
-  /**
-   * Get triggerred when layout calculation is done.
-   */
-  LAYOUT_END: "layoutend",
-};
-
 interface SupervisorOptions {
   /**
    * Iterations run in algorithm such as d3force, will be passed in `tick()` later.
@@ -44,21 +31,10 @@ interface SupervisorOptions {
  * const graph = new Graph();
  * const layout = new CircularLayout();
  *
- * const supervisor = new Supervisor(graph, layout, { auto: true });
- * supervisor.start();
+ * const supervisor = new Supervisor(graph, layout, { iterations: 1000 });
+ * const positions = await supervisor.execute();
  * supervisor.stop();
  * supervisor.kill();
- *
- * // lifecycle
- * supervisor.on('tick', () => {
- * });
- * supervisor.on('layoutend', () => {
- * });
- *
- * // Re-layout when graph changed.
- * graph.addNodes([{ id: 'node1' }, { id: 'node2' }]);
- *
- * // TODO: Custom layout.
  */
 export class Supervisor extends EventEmitter implements LayoutSupervisor {
   /**
@@ -77,13 +53,6 @@ export class Supervisor extends EventEmitter implements LayoutSupervisor {
     private options?: Partial<SupervisorOptions>
   ) {
     super();
-
-    // TODO: listen to the graph-changed events.
-    // optional.
-    // forcelayout
-    // graph.onChanged = (e) => {
-    //   // node/edge added/dropped
-    // };
 
     this.spawnWorker();
   }
@@ -105,17 +74,17 @@ export class Supervisor extends EventEmitter implements LayoutSupervisor {
 
     if (this.running) {
       this.running = false;
-      this.start();
+      this.execute();
     }
   }
 
-  start() {
+  async execute() {
     if (this.running) return this;
 
     this.running = true;
 
     // Payload should include nodes & edges(if needed).
-    const { onLayoutEnd, onTick, ...rest } = this.layout.options;
+    const { onTick, ...rest } = this.layout.options;
     const payload = {
       layout: {
         id: this.layout.id,
@@ -142,18 +111,11 @@ export class Supervisor extends EventEmitter implements LayoutSupervisor {
     //   },
     // });
 
-    this.worker
-      .calculateLayout(payload, [arraybufferWithNodesEdges])
-      .then(([positions, transferables]: [LayoutMapping, Float32Array[]]) => {
-        this.emit(SupervisorEvent.LAYOUT_END, positions);
+    const [positions] = await this.worker.calculateLayout(payload, [
+      arraybufferWithNodesEdges,
+    ]);
 
-        // Trigger `onLayoutEnd` callback on main thread.
-        if (this.layout.options.onLayoutEnd) {
-          this.layout.options.onLayoutEnd(positions);
-        }
-      });
-
-    return this;
+    return positions;
   }
 
   stop() {

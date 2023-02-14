@@ -37,7 +37,7 @@ function isInTheSameCol(nodes) {
 }
 
 describe("GridLayout", () => {
-  it("should return correct default config.", () => {
+  it("should return correct default config.", async () => {
     const graph = new Graph<any, any>({
       nodes: [...data.nodes],
       edges: [...data.edges],
@@ -58,37 +58,37 @@ describe("GridLayout", () => {
       height: 300,
     });
 
-    const positions = grid.execute(graph);
+    const positions = await grid.execute(graph);
 
     expect(positions.nodes[0].data.x).not.toBe(undefined);
     expect(positions.nodes[0].data.y).not.toBe(undefined);
   });
 
-  it("should do grid layout with an empty graph.", () => {
+  it("should do grid layout with an empty graph.", async () => {
     const graph = new Graph<any, any>({
       nodes: [],
       edges: [],
     });
 
     const grid = new GridLayout();
-    const positions = grid.execute(graph);
+    const positions = await grid.execute(graph);
     expect(positions.nodes).not.toBe(undefined);
   });
 
-  it("should do grid layout with a graph which has only one node.", () => {
+  it("should do grid layout with a graph which has only one node.", async () => {
     const graph = new Graph<any, any>({
       nodes: [{ id: "node", data: {} }],
       edges: [],
     });
 
     const grid = new GridLayout({ begin: [10, 20] });
-    const positions = grid.execute(graph);
+    const positions = await grid.execute(graph);
 
     expect(positions.nodes[0].data.x).toBe(10);
     expect(positions.nodes[0].data.y).toBe(20);
   });
 
-  it("should do grid layout with fixed columns.", () => {
+  it("should do grid layout with fixed columns.", async () => {
     const graph = new Graph<any, any>({
       nodes: [...data.nodes],
       edges: [...data.edges],
@@ -106,7 +106,7 @@ describe("GridLayout", () => {
      * 3 2
      * 1 0
      */
-    const positions = grid.execute(graph);
+    const positions = await grid.execute(graph);
 
     // first column
     expect(
@@ -129,7 +129,7 @@ describe("GridLayout", () => {
     ).toEqual(true);
   });
 
-  it("should do grid layout with fixed rows.", () => {
+  it("should do grid layout with fixed rows.", async () => {
     const graph = new Graph<any, any>({
       nodes: [...data.nodes],
       edges: [...data.edges],
@@ -145,7 +145,7 @@ describe("GridLayout", () => {
      * 7 6 5 4
      * 3 2 1 0
      */
-    const positions = grid.execute(graph);
+    const positions = await grid.execute(graph);
 
     // first row
     expect(
@@ -168,7 +168,7 @@ describe("GridLayout", () => {
     ).toEqual(true);
   });
 
-  it("should do grid layout with fixed cols and rows, rows*cols>nodes, situation 1.", () => {
+  it("should do grid layout with fixed cols and rows, rows*cols>nodes, situation 1.", async () => {
     const graph = new Graph<any, any>({
       nodes: [...data.nodes],
       edges: [...data.edges],
@@ -185,7 +185,7 @@ describe("GridLayout", () => {
      * 7 6 5 4 3
      * 2 1 0
      */
-    const positions = grid.execute(graph);
+    const positions = await grid.execute(graph);
 
     expect(
       isInTheSameRow([
@@ -205,7 +205,7 @@ describe("GridLayout", () => {
     ).toEqual(true);
   });
 
-  it("should do grid layout with fixed cols and rows, rows*cols>nodes, situation 2.", () => {
+  it("should do grid layout with fixed cols and rows, rows*cols>nodes, situation 2.", async () => {
     const graph = new Graph<any, any>({
       nodes: [...data.nodes],
       edges: [...data.edges],
@@ -222,7 +222,7 @@ describe("GridLayout", () => {
      * 7 6 5 4
      * 3 2 1 0
      */
-    const positions = grid.execute(graph);
+    const positions = await grid.execute(graph);
     expect(
       isInTheSameRow([
         positions.nodes[0],
@@ -241,7 +241,7 @@ describe("GridLayout", () => {
     ).toEqual(true);
   });
 
-  it("should do grid layout with fixed cols and rows, rows*cols<nodes, situation 1", () => {
+  it("should do grid layout with fixed cols and rows, rows*cols<nodes, situation 1", async () => {
     const graph = new Graph<any, any>({
       nodes: [...data.nodes],
       edges: [...data.edges],
@@ -260,7 +260,7 @@ describe("GridLayout", () => {
      * 3 2
      * 1 0
      */
-    const positions = grid.execute(graph);
+    const positions = await grid.execute(graph);
     expect(
       isInTheSameCol([
         positions.nodes[0],
@@ -279,7 +279,7 @@ describe("GridLayout", () => {
     ).toEqual(true);
   });
 
-  it("grid layout with fixed cols and rows, rows*cols<nodes, situation 2", () => {
+  it("grid layout with fixed cols and rows, rows*cols<nodes, situation 2", async () => {
     const graph = new Graph<any, any>({
       nodes: [...data.nodes],
       edges: [...data.edges],
@@ -296,7 +296,7 @@ describe("GridLayout", () => {
      * 7 6 5 4
      * 3 2 1 0
      */
-    const positions = grid.execute(graph);
+    const positions = await grid.execute(graph);
     expect(
       isInTheSameRow([
         positions.nodes[0],
@@ -315,7 +315,7 @@ describe("GridLayout", () => {
     ).toEqual(true);
   });
 
-  it("should do grid layout with condense param.", () => {
+  it("should do grid layout with condense param.", async () => {
     const graph = new Graph<any, any>({
       nodes: [...data.nodes],
       edges: [...data.edges],
@@ -331,7 +331,7 @@ describe("GridLayout", () => {
      * 6 0 4
      * 5 7
      */
-    const positions = grid.execute(graph);
+    const positions = await grid.execute(graph);
 
     expect(
       isInTheSameRow([
@@ -354,7 +354,7 @@ describe("GridLayout", () => {
     );
   });
 
-  it("should do grid layout with preventOverlap", () => {
+  it("should do grid layout with preventOverlap", async () => {
     const graph = new Graph<any, any>({
       nodes: [...data.nodes],
       edges: [...data.edges],
@@ -370,7 +370,7 @@ describe("GridLayout", () => {
      * 6 0 4
      * 5 7
      */
-    const positions = grid.execute(graph);
+    const positions = await grid.execute(graph);
     expect(
       isInTheSameRow([
         positions.nodes[4],
@@ -392,7 +392,7 @@ describe("GridLayout", () => {
     );
   });
 
-  it("grid layout with preventOverlap, nodeSize is an array", () => {
+  it("grid layout with preventOverlap, nodeSize is an array", async () => {
     const graph = new Graph<any, any>({
       nodes: [...data.nodes],
       edges: [...data.edges],
@@ -408,7 +408,7 @@ describe("GridLayout", () => {
      * 6 0 4
      * 5 7
      */
-    const positions = grid.execute(graph);
+    const positions = await grid.execute(graph);
     expect(
       isInTheSameRow([
         positions.nodes[4],
@@ -430,7 +430,7 @@ describe("GridLayout", () => {
     );
   });
 
-  it("should do grid layout with preventOverlap & nodeSize.", () => {
+  it("should do grid layout with preventOverlap & nodeSize.", async () => {
     const graph = new Graph<any, any>({
       nodes: [...data.nodes],
       edges: [...data.edges],
@@ -446,7 +446,7 @@ describe("GridLayout", () => {
      * 6 0 4
      * 5 7
      */
-    const positions = grid.execute(graph);
+    const positions = await grid.execute(graph);
     expect(
       isInTheSameRow([
         positions.nodes[4],
@@ -473,7 +473,7 @@ describe("GridLayout", () => {
     );
   });
 
-  it("should do grid layout with position function", () => {
+  it("should do grid layout with position function", async () => {
     let rows = 0;
     const graph = new Graph<any, any>({
       nodes: [...data.nodes].map((node, i) => {
@@ -505,7 +505,7 @@ describe("GridLayout", () => {
      * 3 4 5
      * 6 7
      */
-    const positions = grid.execute(graph);
+    const positions = await grid.execute(graph);
 
     expect(
       isInTheSameRow([

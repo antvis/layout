@@ -50,14 +50,14 @@ const DEFAULTS_LAYOUT_OPTIONS: Partial<GridLayoutOptions> = {
  * @example
  * // Assign layout options when initialization.
  * const layout = new GridLayout({ rows: 10 });
- * const positions = layout.execute(graph); // { nodes: [], edges: [] }
+ * const positions = await layout.execute(graph); // { nodes: [], edges: [] }
  *
  * // Or use different options later.
  * const layout = new GridLayout({ rows: 10 });
- * const positions = layout.execute(graph, { rows: 20 }); // { nodes: [], edges: [] }
+ * const positions = await layout.execute(graph, { rows: 20 }); // { nodes: [], edges: [] }
  *
  * // If you want to assign the positions directly to the nodes, use assign method.
- * layout.assign(graph, { rows: 20 });
+ * await layout.assign(graph, { rows: 20 });
  */
 export class GridLayout implements Layout<GridLayoutOptions> {
   id = "grid";
@@ -72,21 +72,31 @@ export class GridLayout implements Layout<GridLayoutOptions> {
   /**
    * Return the positions of nodes and edges(if needed).
    */
-  execute(graph: Graph, options?: GridLayoutOptions): LayoutMapping {
-    return this.genericGridLayout(false, graph, options) as LayoutMapping;
+  async execute(graph: Graph, options?: GridLayoutOptions) {
+    return this.genericGridLayout(false, graph, options);
   }
   /**
    * To directly assign the positions to the nodes.
    */
-  assign(graph: Graph, options?: GridLayoutOptions) {
+  async assign(graph: Graph, options?: GridLayoutOptions) {
     this.genericGridLayout(true, graph, options);
   }
 
-  private genericGridLayout(
+  private async genericGridLayout(
+    assign: false,
+    graph: Graph,
+    options?: GridLayoutOptions
+  ): Promise<LayoutMapping>;
+  private async genericGridLayout(
+    assign: true,
+    graph: Graph,
+    options?: GridLayoutOptions
+  ): Promise<void>;
+  private async genericGridLayout(
     assign: boolean,
     graph: Graph,
     options?: GridLayoutOptions
-  ): LayoutMapping | void {
+  ): Promise<LayoutMapping | void> {
     const mergedOptions = { ...this.options, ...options };
     const {
       begin = [0, 0],
@@ -99,7 +109,6 @@ export class GridLayout implements Layout<GridLayoutOptions> {
       nodeSize: paramNodeSize,
       width: propsWidth,
       height: propsHeight,
-      onLayoutEnd,
       position,
     } = mergedOptions;
     let { sortBy } = mergedOptions;
@@ -111,7 +120,7 @@ export class GridLayout implements Layout<GridLayoutOptions> {
 
     // Need no layout if there is no node.
     if (!n || n === 1) {
-      return handleSingleNodeGraph(graph, assign, begin, onLayoutEnd);
+      return handleSingleNodeGraph(graph, assign, begin);
     }
 
     const layoutNodes: OutNode[] = nodes.map(
@@ -291,8 +300,6 @@ export class GridLayout implements Layout<GridLayoutOptions> {
       nodes: layoutNodes,
       edges,
     };
-
-    onLayoutEnd?.(result);
 
     if (assign) {
       layoutNodes.forEach((node) => {

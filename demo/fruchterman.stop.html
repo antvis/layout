@@ -1009,6 +1009,17 @@
           }
         },
       });
+      setTimeout(() => {
+        fruchterman.stop();
+      }, 100);
+
+      setTimeout(() => {
+        fruchterman.assign(graph, {
+          onTick: (positions) => {
+            updateNodesEdges(positions);
+          },
+        });
+      }, 1200);
     </script>
   </body>
 </html>

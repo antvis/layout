@@ -37,7 +37,7 @@
       type="application/javascript"
     ></script>
     <script
-      src="https://unpkg.com/@antv/graphlib@2.0.0-alpha.2"
+      src="https://unpkg.com/@antv/graphlib@2.0.0"
       type="application/javascript"
     ></script>
     <script
@@ -65,7 +65,6 @@
             preventOverlap: true,
           });
 
-          const positions = force.execute(graph);
           const { Circle, Line, Canvas } = window.G;
 
           // create a renderer
@@ -79,41 +78,45 @@
             renderer: canvasRenderer,
           });
 
-          canvas.addEventListener("ready", () => {
-            positions.edges.forEach(({ source, target }, i) => {
-              const sourceNode = positions.nodes.find(
-                ({ id }) => id === source
-              );
-              const targetNode = positions.nodes.find(
-                ({ id }) => id === target
-              );
-              const line = new Line({
-                style: {
-                  x1: sourceNode.data.x,
-                  y1: sourceNode.data.y,
-                  x2: targetNode.data.x,
-                  y2: targetNode.data.y,
-                  lineWidth: 1,
-                  stroke: "grey",
-                },
-              });
-              canvas.appendChild(line);
-            });
+          (async () => {
+            const positions = await force.execute(graph);
 
-            positions.nodes.forEach((node) => {
-              const circle = new Circle({
-                style: {
-                  cx: node.data.x,
-                  cy: node.data.y,
-                  r: 10,
-                  fill: "#1890FF",
-                  stroke: "#F04864",
-                  lineWidth: 4,
-                },
+            canvas.addEventListener("ready", () => {
+              positions.edges.forEach(({ source, target }, i) => {
+                const sourceNode = positions.nodes.find(
+                  ({ id }) => id === source
+                );
+                const targetNode = positions.nodes.find(
+                  ({ id }) => id === target
+                );
+                const line = new Line({
+                  style: {
+                    x1: sourceNode.data.x,
+                    y1: sourceNode.data.y,
+                    x2: targetNode.data.x,
+                    y2: targetNode.data.y,
+                    lineWidth: 1,
+                    stroke: "grey",
+                  },
+                });
+                canvas.appendChild(line);
               });
-              canvas.appendChild(circle);
+
+              positions.nodes.forEach((node) => {
+                const circle = new Circle({
+                  style: {
+                    cx: node.data.x,
+                    cy: node.data.y,
+                    r: 10,
+                    fill: "#1890FF",
+                    stroke: "#F04864",
+                    lineWidth: 4,
+                  },
+                });
+                canvas.appendChild(circle);
+              });
             });
-          });
+          })();
         });
     </script>
   </body>

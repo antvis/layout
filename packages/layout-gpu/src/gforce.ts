@@ -54,14 +54,14 @@ interface FormattedOptions extends ForceLayoutOptions {
  * @example
  * // Assign layout options when initialization.
  * const layout = new GForceLayout({ center: [100, 100], onLayoutEnd: (positions) => {} });
- * const positions = layout.execute(graph); // { nodes: [], edges: [] }
+ * const positions = await layout.execute(graph); // { nodes: [], edges: [] }
  *
  * // Or use different options later.
  * const layout = new GForceLayout({ center: [100, 100], onLayoutEnd: (positions) => {} });
- * const positions = layout.execute(graph, { center: [100, 100] }); // { nodes: [], edges: [] }
+ * const positions = await layout.execute(graph, { center: [100, 100] }); // { nodes: [], edges: [] }
  *
  * // If you want to assign the positions directly to the nodes, use assign method.
- * layout.assign(graph, { center: [100, 100] });
+ * await layout.assign(graph, { center: [100, 100] });
  */
 export class GForceLayout implements Layout<ForceLayoutOptions> {
   id = "gforce";
@@ -76,21 +76,31 @@ export class GForceLayout implements Layout<ForceLayoutOptions> {
   /**
    * Return the positions of nodes and edges(if needed).
    */
-  execute(graph: Graph, options?: ForceLayoutOptions): LayoutMapping {
-    return this.genericForceLayout(false, graph, options) as LayoutMapping;
+  async execute(graph: Graph, options?: ForceLayoutOptions) {
+    return this.genericForceLayout(false, graph, options);
   }
   /**
    * To directly assign the positions to the nodes.
    */
-  assign(graph: Graph, options?: ForceLayoutOptions) {
+  async assign(graph: Graph, options?: ForceLayoutOptions) {
     this.genericForceLayout(true, graph, options);
   }
 
-  private genericForceLayout(
+  private async genericForceLayout(
+    assign: false,
+    graph: Graph,
+    options?: ForceLayoutOptions
+  ): Promise<LayoutMapping>;
+  private async genericForceLayout(
+    assign: true,
+    graph: Graph,
+    options?: ForceLayoutOptions
+  ): Promise<void>;
+  private async genericForceLayout(
     assign: boolean,
     graph: Graph,
     options?: ForceLayoutOptions
-  ): LayoutMapping | void {
+  ): Promise<LayoutMapping | void> {
     const formattedOptions = this.formatOptions(options, graph);
     const {
       width,
@@ -99,7 +109,6 @@ export class GForceLayout implements Layout<ForceLayoutOptions> {
       gravity,
       linkDistance,
       edgeStrength,
-      onLayoutEnd,
       getMass,
       getCenter,
       nodeStrength,
@@ -116,9 +125,7 @@ export class GForceLayout implements Layout<ForceLayoutOptions> {
     let edges = graph.getAllEdges();
 
     if (!nodes?.length) {
-      const result = { nodes: [], edges };
-      onLayoutEnd?.(result);
-      return result;
+      return { nodes: [], edges };
     }
 
     if (nodes.length === 1) {
@@ -128,7 +135,7 @@ export class GForceLayout implements Layout<ForceLayoutOptions> {
           y: center[1],
         });
       }
-      const result = {
+      return {
         nodes: [
           {
             ...nodes[0],
@@ -141,8 +148,6 @@ export class GForceLayout implements Layout<ForceLayoutOptions> {
         ],
         edges,
       };
-      onLayoutEnd?.(result);
-      return result;
     }
 
     const layoutNodes: OutNode[] = nodes.map(
@@ -265,58 +270,55 @@ export class GForceLayout implements Layout<ForceLayoutOptions> {
         u_AveMovement: [0, 0, 0, 0],
       });
 
-    (async () => {
-      for (let i = 0; i < maxIteration; i++) {
-        // TODO: 似乎都来自 kernelGForce 是一个引用
-        // 当前坐标作为下一次迭代的 PreviousData
-        // if (i > 0) {
-        //   kernelAveMovement.setBinding({
-        //     u_PreviousData: kernelGForce
-        //   });
-        // }
+    for (let i = 0; i < maxIteration; i++) {
+      // TODO: 似乎都来自 kernelGForce 是一个引用
+      // 当前坐标作为下一次迭代的 PreviousData
+      // if (i > 0) {
+      //   kernelAveMovement.setBinding({
+      //     u_PreviousData: kernelGForce
+      //   });
+      // }
 
-        // eslint-disable-next-line no-await-in-loop
-        await kernelGForce.execute();
+      // eslint-disable-next-line no-await-in-loop
+      await kernelGForce.execute();
 
-        // midRes = await kernelGForce.getOutput();
+      // midRes = await kernelGForce.getOutput();
 
-        // 每次迭代完成后
-        // 计算平均位移，用于提前终止迭代
-        kernelAveMovement.setBinding({
-          // @ts-ignore
-          u_Data: kernelGForce,
-        });
-
-        // eslint-disable-next-line no-await-in-loop
-        await kernelAveMovement.execute();
-
-        // 更新衰减函数
-        const stepInterval = Math.max(0.02, interval - i * 0.002);
-        kernelGForce.setBinding({
-          u_interval: stepInterval,
-          // @ts-ignore
-          u_AveMovement: kernelAveMovement,
-        });
-      }
-      const finalParticleData = await kernelGForce.getOutput();
-
-      layoutNodes.forEach((node, i) => {
-        node.data.x = finalParticleData[4 * i];
-        node.data.y = finalParticleData[4 * i + 1];
+      // 每次迭代完成后
+      // 计算平均位移，用于提前终止迭代
+      kernelAveMovement.setBinding({
+        // @ts-ignore
+        u_Data: kernelGForce,
       });
-      const result = { nodes: layoutNodes, edges };
 
-      if (assign) {
-        layoutNodes.forEach(({ id, data }) =>
-          graph.mergeNodeData(id, {
-            x: data.x,
-            y: data.y,
-          })
-        );
-      }
+      // eslint-disable-next-line no-await-in-loop
+      await kernelAveMovement.execute();
 
-      onLayoutEnd?.(result);
-    })();
+      // 更新衰减函数
+      const stepInterval = Math.max(0.02, interval - i * 0.002);
+      kernelGForce.setBinding({
+        u_interval: stepInterval,
+        // @ts-ignore
+        u_AveMovement: kernelAveMovement,
+      });
+    }
+    const finalParticleData = await kernelGForce.getOutput();
+
+    layoutNodes.forEach((node, i) => {
+      node.data.x = finalParticleData[4 * i];
+      node.data.y = finalParticleData[4 * i + 1];
+    });
+
+    if (assign) {
+      layoutNodes.forEach(({ id, data }) =>
+        graph.mergeNodeData(id, {
+          x: data.x,
+          y: data.y,
+        })
+      );
+    }
+
+    return { nodes: layoutNodes, edges };
   }
 
   private formatOptions(

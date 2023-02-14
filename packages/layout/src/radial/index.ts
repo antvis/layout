@@ -41,14 +41,14 @@ const DEFAULTS_LAYOUT_OPTIONS: Partial<RadialLayoutOptions> = {
  * @example
  * // Assign layout options when initialization.
  * const layout = new RadialLayout({ focusNode: 'node0' });
- * const positions = layout.execute(graph); // { nodes: [], edges: [] }
+ * const positions = await layout.execute(graph); // { nodes: [], edges: [] }
  *
  * // Or use different options later.
  * const layout = new RadialLayout({ focusNode: 'node0' });
- * const positions = layout.execute(graph, { focusNode: 'node0' }); // { nodes: [], edges: [] }
+ * const positions = await layout.execute(graph, { focusNode: 'node0' }); // { nodes: [], edges: [] }
  *
  * // If you want to assign the positions directly to the nodes, use assign method.
- * layout.assign(graph, { focusNode: 'node0' });
+ * await layout.assign(graph, { focusNode: 'node0' });
  */
 export class RadialLayout implements Layout<RadialLayoutOptions> {
   id = "radial";
@@ -63,21 +63,31 @@ export class RadialLayout implements Layout<RadialLayoutOptions> {
   /**
    * Return the positions of nodes and edges(if needed).
    */
-  execute(graph: Graph, options?: RadialLayoutOptions): LayoutMapping {
-    return this.genericRadialLayout(false, graph, options) as LayoutMapping;
+  async execute(graph: Graph, options?: RadialLayoutOptions) {
+    return this.genericRadialLayout(false, graph, options);
   }
   /**
    * To directly assign the positions to the nodes.
    */
-  assign(graph: Graph, options?: RadialLayoutOptions) {
+  async assign(graph: Graph, options?: RadialLayoutOptions) {
     this.genericRadialLayout(true, graph, options);
   }
 
-  private genericRadialLayout(
+  private async genericRadialLayout(
+    assign: false,
+    graph: Graph,
+    options?: RadialLayoutOptions
+  ): Promise<LayoutMapping>;
+  private async genericRadialLayout(
+    assign: true,
+    graph: Graph,
+    options?: RadialLayoutOptions
+  ): Promise<void>;
+  private async genericRadialLayout(
     assign: boolean,
     graph: Graph,
     options?: RadialLayoutOptions
-  ): LayoutMapping | void {
+  ): Promise<LayoutMapping | void> {
     const mergedOptions = { ...this.options, ...options };
     const {
       width: propsWidth,
@@ -94,7 +104,6 @@ export class RadialLayout implements Layout<RadialLayoutOptions> {
       linkDistance = 50,
       sortStrength = 10,
       maxIteration = 1000,
-      onLayoutEnd,
     } = mergedOptions;
 
     let nodes = graph.getAllNodes();
@@ -113,7 +122,7 @@ export class RadialLayout implements Layout<RadialLayoutOptions> {
     ) as PointTuple;
 
     if (!nodes?.length || nodes.length === 1) {
-      return handleSingleNodeGraph(graph, assign, center, onLayoutEnd);
+      return handleSingleNodeGraph(graph, assign, center);
     }
 
     let focusNode = nodes[0];
@@ -231,7 +240,6 @@ export class RadialLayout implements Layout<RadialLayoutOptions> {
       nodes: layoutNodes,
       edges,
     };
-    onLayoutEnd?.(result);
 
     return result;
   }

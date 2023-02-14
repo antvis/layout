@@ -37,7 +37,7 @@
       type="application/javascript"
     ></script>
     <script
-      src="https://unpkg.com/@antv/graphlib@2.0.0-alpha.2"
+      src="https://unpkg.com/@antv/graphlib@2.0.0"
       type="application/javascript"
     ></script>
     <script
@@ -897,38 +897,36 @@
       });
 
       const supervisor = new Supervisor(graph, circular);
-      supervisor.on("layoutend", (positions) => {
-        const { Circle, Canvas } = window.G;
+      const { Circle, Canvas } = window.G;
 
-        // create a renderer
-        const canvasRenderer = new window.G.Canvas2D.Renderer();
+      // create a renderer
+      const canvasRenderer = new window.G.Canvas2D.Renderer();
 
-        // create a canvas
-        const canvas = new Canvas({
-          container: "container",
-          width: 500,
-          height: 500,
-          renderer: canvasRenderer,
-        });
-
-        canvas.addEventListener("ready", () => {
-          positions.nodes.forEach((node) => {
-            const circle = new Circle({
-              style: {
-                cx: node.data.x,
-                cy: node.data.y,
-                r: 10,
-                fill: "#1890FF",
-                stroke: "#F04864",
-                lineWidth: 4,
-              },
-            });
-            canvas.appendChild(circle);
-          });
-        });
+      // create a canvas
+      const canvas = new Canvas({
+        container: "container",
+        width: 500,
+        height: 500,
+        renderer: canvasRenderer,
       });
 
-      supervisor.start();
+      (async () => {
+        await canvas.ready;
+        const positions = await supervisor.execute();
+        positions.nodes.forEach((node) => {
+          const circle = new Circle({
+            style: {
+              cx: node.data.x,
+              cy: node.data.y,
+              r: 10,
+              fill: "#1890FF",
+              stroke: "#F04864",
+              lineWidth: 4,
+            },
+          });
+          canvas.appendChild(circle);
+        });
+      })();
     </script>
   </body>
 </html>

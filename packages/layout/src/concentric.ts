@@ -30,14 +30,14 @@ const DEFAULTS_LAYOUT_OPTIONS: Partial<ConcentricLayoutOptions> = {
  * @example
  * // Assign layout options when initialization.
  * const layout = new ConcentricLayout({ nodeSpacing: 10 });
- * const positions = layout.execute(graph); // { nodes: [], edges: [] }
+ * const positions = await layout.execute(graph); // { nodes: [], edges: [] }
  *
  * // Or use different options later.
  * const layout = new ConcentricLayout({ nodeSpacing: 10});
- * const positions = layout.execute(graph, { nodeSpacing: 10 }); // { nodes: [], edges: [] }
+ * const positions = await layout.execute(graph, { nodeSpacing: 10 }); // { nodes: [], edges: [] }
  *
  * // If you want to assign the positions directly to the nodes, use assign method.
- * layout.assign(graph, { nodeSpacing: 10 });
+ * await layout.assign(graph, { nodeSpacing: 10 });
  */
 export class ConcentricLayout implements Layout<ConcentricLayoutOptions> {
   id = "concentric";
@@ -54,21 +54,31 @@ export class ConcentricLayout implements Layout<ConcentricLayoutOptions> {
   /**
    * Return the positions of nodes and edges(if needed).
    */
-  execute(graph: Graph, options?: ConcentricLayoutOptions): LayoutMapping {
-    return this.genericConcentricLayout(false, graph, options) as LayoutMapping;
+  async execute(graph: Graph, options?: ConcentricLayoutOptions) {
+    return this.genericConcentricLayout(false, graph, options);
   }
   /**
    * To directly assign the positions to the nodes.
    */
-  assign(graph: Graph, options?: ConcentricLayoutOptions) {
+  async assign(graph: Graph, options?: ConcentricLayoutOptions) {
     this.genericConcentricLayout(true, graph, options);
   }
 
-  private genericConcentricLayout(
+  private async genericConcentricLayout(
+    assign: false,
+    graph: Graph,
+    options?: ConcentricLayoutOptions
+  ): Promise<LayoutMapping>;
+  private async genericConcentricLayout(
+    assign: true,
+    graph: Graph,
+    options?: ConcentricLayoutOptions
+  ): Promise<void>;
+  private async genericConcentricLayout(
     assign: boolean,
     graph: Graph,
     options?: ConcentricLayoutOptions
-  ): LayoutMapping | void {
+  ): Promise<LayoutMapping | void> {
     const mergedOptions = { ...this.options, ...options };
     const {
       center: propsCenter,
@@ -83,7 +93,6 @@ export class ConcentricLayout implements Layout<ConcentricLayoutOptions> {
       startAngle = (3 / 2) * Math.PI,
       nodeSize,
       nodeSpacing,
-      onLayoutEnd,
     } = mergedOptions;
 
     let nodes = graph.getAllNodes();
@@ -102,7 +111,7 @@ export class ConcentricLayout implements Layout<ConcentricLayoutOptions> {
     ) as PointTuple;
 
     if (!nodes?.length || nodes.length === 1) {
-      return handleSingleNodeGraph(graph, assign, center, onLayoutEnd);
+      return handleSingleNodeGraph(graph, assign, center);
     }
 
     const layoutNodes: OutNode[] = [];
@@ -279,8 +288,6 @@ export class ConcentricLayout implements Layout<ConcentricLayoutOptions> {
       nodes: layoutNodes,
       edges,
     };
-
-    onLayoutEnd?.(result);
 
     return result;
   }

@@ -46,14 +46,14 @@ const DEFAULTS_LAYOUT_OPTIONS: Partial<ForceLayoutOptions> = {
  * @example
  * // Assign layout options when initialization.
  * const layout = new ForceLayout({ center: [100, 100] });
- * const positions = layout.execute(graph); // { nodes: [], edges: [] }
+ * const positions = await layout.execute(graph); // { nodes: [], edges: [] }
  *
  * // Or use different options later.
  * const layout = new ForceLayout({ center: [100, 100] });
- * const positions = layout.execute(graph, { center: [100, 100] }); // { nodes: [], edges: [] }
+ * const positions = await layout.execute(graph, { center: [100, 100] }); // { nodes: [], edges: [] }
  *
  * // If you want to assign the positions directly to the nodes, use assign method.
- * layout.assign(graph, { center: [100, 100] });
+ * await layout.assign(graph, { center: [100, 100] });
  */
 export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
   id = "force";
@@ -88,13 +88,13 @@ export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
   /**
    * Return the positions of nodes and edges(if needed).
    */
-  execute(graph: Graph, options?: ForceLayoutOptions): LayoutMapping {
-    return this.genericForceLayout(false, graph, options) as LayoutMapping;
+  async execute(graph: Graph, options?: ForceLayoutOptions) {
+    return this.genericForceLayout(false, graph, options);
   }
   /**
    * To directly assign the positions to the nodes.
    */
-  assign(graph: Graph, options?: ForceLayoutOptions) {
+  async assign(graph: Graph, options?: ForceLayoutOptions) {
     this.genericForceLayout(true, graph, options);
   }
 
@@ -108,13 +108,8 @@ export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
     this.running = false;
   }
 
-  restart() {
-    this.running = true;
-  }
-
   /**
    * Manually steps the simulation by the specified number of iterations.
-   * When finished it will trigger `onLayoutEnd` callback.
    * @see https://github.com/d3/d3-force#simulation_tick
    */
   tick(iterations = this.options.maxIteration || 1) {
@@ -157,18 +152,24 @@ export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
       );
     }
 
-    if (this.lastOptions.onLayoutEnd) {
-      this.lastOptions.onLayoutEnd(result);
-    }
-
     return result;
   }
 
-  private genericForceLayout(
+  private async genericForceLayout(
+    assign: false,
+    graph: Graph,
+    options?: ForceLayoutOptions
+  ): Promise<LayoutMapping>;
+  private async genericForceLayout(
+    assign: true,
+    graph: Graph,
+    options?: ForceLayoutOptions
+  ): Promise<void>;
+  private async genericForceLayout(
     assign: boolean,
     graph: Graph,
     options?: ForceLayoutOptions
-  ): LayoutMapping | void {
+  ): Promise<LayoutMapping | void> {
     const mergedOptions = { ...this.options, ...options };
 
     let nodes = graph.getAllNodes();
@@ -233,7 +234,7 @@ export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
 
     this.formatCentripetal(formattedOptions, calcGraph);
 
-    const { maxIteration, minMovement, onLayoutEnd, onTick } = formattedOptions;
+    const { maxIteration, minMovement, onTick } = formattedOptions;
 
     // Use them later in `tick`.
     this.lastLayoutNodes = layoutNodes;
@@ -244,12 +245,18 @@ export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
     this.lastOptions = formattedOptions;
     this.lastVelMap = velMap;
 
-    {
-      if (typeof window === "undefined") return;
-      let iter = 0;
+    if (typeof window === "undefined") return;
+    let iter = 0;
+
+    return new Promise((resolve) => {
       // interval for render the result after each iteration
       this.timeInterval = window.setInterval(() => {
-        if (!nodes || !this.running) return;
+        if (!nodes || !this.running) {
+          resolve({
+            nodes: formatOutNodes(graph, layoutNodes),
+            edges,
+          });
+        }
         this.runOneStep(calcGraph, graph, iter, velMap, formattedOptions);
         this.updatePosition(graph, calcGraph, velMap, formattedOptions);
         if (assign) {
@@ -266,21 +273,16 @@ export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
         });
         iter++;
         if (iter >= maxIteration || this.judgingDistance < minMovement) {
-          onLayoutEnd?.({
+          window.clearInterval(this.timeInterval);
+
+          resolve({
             nodes: formatOutNodes(graph, layoutNodes),
             edges,
           });
-          window.clearInterval(this.timeInterval);
         }
       }, 0);
       this.running = true;
-    }
-
-    // has been returned while silence, and not useful for interval
-    return {
-      nodes: formatOutNodes(graph, layoutNodes),
-      edges,
-    };
+    });
   }
 
   /**

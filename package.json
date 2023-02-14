@@ -35,6 +35,7 @@
     ]
   },
   "devDependencies": {
+    "@antv/graphlib": "^2.0.0",
     "@babel/core": "*",
     "@babel/polyfill": "^7.12.1",
     "@babel/preset-env": "*",
@@ -61,8 +62,7 @@
     "tslint-config-airbnb": "^5.11.2",
     "tslint-config-prettier": "^1.18.0",
     "tslint-eslint-rules": "^5.4.0",
-    "typescript": "^4.0.3",
-    "@antv/graphlib": "^2.0.0-alpha.1"
+    "typescript": "^4.0.3"
   },
   "release-it": {
     "git": {

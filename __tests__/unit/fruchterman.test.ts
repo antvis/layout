@@ -4,21 +4,13 @@ import data from "../data/test-data-1";
 import { getEuclideanDistance } from "../util";
 
 describe("FruchtermanLayout", () => {
-  it("should return correct default config.", (done) => {
+  it("should return correct default config.", () => {
     const graph = new Graph<any, any>({
       nodes: [...data.nodes],
       edges: [...data.edges],
     });
 
-    const start = performance.now();
-    const onLayoutEnd = ({ nodes, edges }) => {
-      console.log("time:", performance.now() - start);
-      expect(nodes[0].data.x).not.toBe(undefined);
-      expect(nodes[0].data.y).not.toBe(undefined);
-      done();
-    };
-
-    const fruchterman = new FruchtermanLayout({ onLayoutEnd });
+    const fruchterman = new FruchtermanLayout();
     expect(fruchterman.options).toEqual({
       maxIteration: 1000,
       gravity: 10,
@@ -28,22 +20,24 @@ describe("FruchtermanLayout", () => {
       width: 300,
       height: 300,
       nodeClusterBy: "cluster",
-      onLayoutEnd,
     });
 
     fruchterman.execute(graph);
     fruchterman.stop();
-    fruchterman.tick(1000);
+    const { nodes } = fruchterman.tick(1000);
+
+    expect(nodes[0].data.x).not.toBe(undefined);
+    expect(nodes[0].data.y).not.toBe(undefined);
   });
 
-  it("should do fruchterman layout with an empty graph.", () => {
+  it("should do fruchterman layout with an empty graph.", async () => {
     const graph = new Graph<any, any>({
       nodes: [],
       edges: [],
     });
 
     const fruchterman = new FruchtermanLayout();
-    fruchterman.execute(graph);
+    await fruchterman.execute(graph);
     fruchterman.stop();
     const positions = fruchterman.tick(1000);
     expect(JSON.stringify(positions.nodes)).toBe("[]");
@@ -123,19 +117,11 @@ describe("FruchtermanLayout", () => {
     expect(cClusterDist < acClusterDist).toBe(true);
   });
 
-  it("should do fruchterman layout with onTick and onLayoutEnd.", (done) => {
+  it("should do fruchterman layout with onTick and onLayoutEnd.", async () => {
     const graph = new Graph<any, any>({
       nodes: [...data.nodes],
       edges: [...data.edges],
     });
-
-    const onLayoutEnd = ({ nodes, edges }) => {
-      expect(nodes.length).toBe(data.nodes.length);
-      expect(nodes[0].data.x).not.toBe(undefined);
-      expect(nodes[0].data.y).not.toBe(undefined);
-      expect(tick).toBe(10);
-      done();
-    };
 
     let tick = 0;
     const onTick = ({ nodes, edges }) => {
@@ -148,9 +134,12 @@ describe("FruchtermanLayout", () => {
     const fruchterman = new FruchtermanLayout({
       maxIteration: 10,
       onTick,
-      onLayoutEnd,
     });
-    fruchterman.execute(graph);
+    const { nodes } = await fruchterman.execute(graph);
+    expect(nodes.length).toBe(data.nodes.length);
+    expect(nodes[0].data.x).not.toBe(undefined);
+    expect(nodes[0].data.y).not.toBe(undefined);
+    expect(tick).toBe(10);
   });
 
   it("should do fruchterman layout with overlapped nodes and loop edge.", () => {

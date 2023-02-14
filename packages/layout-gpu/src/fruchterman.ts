@@ -39,15 +39,15 @@ interface FormattedOptions extends FruchtermanLayoutOptions {
  *
  * @example
  * // Assign layout options when initialization.
- * const layout = new FruchtermanLayout({ center: [100, 100], onLayoutEnd: (positions) => {} });
- * const positions = layout.execute(graph); // { nodes: [], edges: [] }
+ * const layout = new FruchtermanLayout({ center: [100, 100] });
+ * const positions = await layout.execute(graph); // { nodes: [], edges: [] }
  *
  * // Or use different options later.
- * const layout = new FruchtermanLayout({ center: [100, 100], onLayoutEnd: (positions) => {} });
- * const positions = layout.execute(graph, { center: [100, 100] }); // { nodes: [], edges: [] }
+ * const layout = new FruchtermanLayout({ center: [100, 100] });
+ * const positions = await layout.execute(graph, { center: [100, 100] }); // { nodes: [], edges: [] }
  *
  * // If you want to assign the positions directly to the nodes, use assign method.
- * layout.assign(graph, { center: [100, 100] });
+ * await layout.assign(graph, { center: [100, 100] });
  */
 export class FruchtermanLayout implements Layout<FruchtermanLayoutOptions> {
   id = "fruchtermanGPU";
@@ -64,25 +64,31 @@ export class FruchtermanLayout implements Layout<FruchtermanLayoutOptions> {
   /**
    * Return the positions of nodes and edges(if needed).
    */
-  execute(graph: Graph, options?: FruchtermanLayoutOptions): LayoutMapping {
-    return this.genericFruchtermanLayout(
-      false,
-      graph,
-      options
-    ) as LayoutMapping;
+  async execute(graph: Graph, options?: FruchtermanLayoutOptions) {
+    return this.genericFruchtermanLayout(false, graph, options);
   }
   /**
    * To directly assign the positions to the nodes.
    */
-  assign(graph: Graph, options?: FruchtermanLayoutOptions) {
+  async assign(graph: Graph, options?: FruchtermanLayoutOptions) {
     this.genericFruchtermanLayout(true, graph, options);
   }
 
-  private genericFruchtermanLayout(
+  private async genericFruchtermanLayout(
+    assign: false,
+    graph: Graph,
+    options?: FruchtermanLayoutOptions
+  ): Promise<LayoutMapping>;
+  private async genericFruchtermanLayout(
+    assign: true,
+    graph: Graph,
+    options?: FruchtermanLayoutOptions
+  ): Promise<void>;
+  private async genericFruchtermanLayout(
     assign: boolean,
     graph: Graph,
     options?: FruchtermanLayoutOptions
-  ): LayoutMapping | void {
+  ): Promise<LayoutMapping | void> {
     const formattedOptions = this.formatOptions(options);
     const {
       width,
@@ -94,16 +100,13 @@ export class FruchtermanLayout implements Layout<FruchtermanLayoutOptions> {
       maxIteration,
       gravity,
       speed,
-      onLayoutEnd,
     } = formattedOptions;
 
     let nodes = graph.getAllNodes();
     let edges = graph.getAllEdges();
 
     if (!nodes?.length) {
-      const result = { nodes: [], edges };
-      onLayoutEnd?.(result);
-      return result;
+      return { nodes: [], edges };
     }
 
     if (nodes.length === 1) {
@@ -113,7 +116,7 @@ export class FruchtermanLayout implements Layout<FruchtermanLayoutOptions> {
           y: center[1],
         });
       }
-      const result = {
+      return {
         nodes: [
           {
             ...nodes[0],
@@ -126,8 +129,6 @@ export class FruchtermanLayout implements Layout<FruchtermanLayoutOptions> {
         ],
         edges,
       };
-      onLayoutEnd?.(result);
-      return result;
     }
 
     const layoutNodes: OutNode[] = nodes.map(
@@ -214,46 +215,43 @@ export class FruchtermanLayout implements Layout<FruchtermanLayoutOptions> {
         });
     }
 
-    (async () => {
-      for (let i = 0; i < maxIteration; i++) {
+    for (let i = 0; i < maxIteration; i++) {
+      // eslint-disable-next-line no-await-in-loop
+      await kernelFruchterman.execute();
+
+      if (clustering) {
+        kernelCluster.setBinding({
+          u_Data: kernelFruchterman,
+        });
         // eslint-disable-next-line no-await-in-loop
-        await kernelFruchterman.execute();
-
-        if (clustering) {
-          kernelCluster.setBinding({
-            u_Data: kernelFruchterman,
-          });
-          // eslint-disable-next-line no-await-in-loop
-          await kernelCluster.execute();
-          kernelFruchterman.setBinding({
-            u_ClusterCenters: kernelCluster,
-          });
-        }
-
+        await kernelCluster.execute();
         kernelFruchterman.setBinding({
-          u_MaxDisplace: (maxDisplace *= 0.99),
+          u_ClusterCenters: kernelCluster,
         });
       }
 
-      const finalParticleData = await kernelFruchterman.getOutput();
-
-      layoutNodes.forEach((node, i) => {
-        node.data.x = finalParticleData[4 * i];
-        node.data.y = finalParticleData[4 * i + 1];
+      kernelFruchterman.setBinding({
+        u_MaxDisplace: (maxDisplace *= 0.99),
       });
-      const result = { nodes: layoutNodes, edges };
+    }
 
-      if (assign) {
-        layoutNodes.forEach(({ id, data }) =>
-          graph.mergeNodeData(id, {
-            x: data.x,
-            y: data.y,
-          })
-        );
-      }
+    const finalParticleData = await kernelFruchterman.getOutput();
 
-      onLayoutEnd?.(result);
-    })();
+    layoutNodes.forEach((node, i) => {
+      node.data.x = finalParticleData[4 * i];
+      node.data.y = finalParticleData[4 * i + 1];
+    });
+
+    if (assign) {
+      layoutNodes.forEach(({ id, data }) =>
+        graph.mergeNodeData(id, {
+          x: data.x,
+          y: data.y,
+        })
+      );
+    }
+
+    return { nodes: layoutNodes, edges };
   }
 
   private formatOptions(

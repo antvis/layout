@@ -301,14 +301,35 @@
             });
           };
 
+          let rendered = false;
           force.assign(graph, {
             center: [200, 200], // The center of the graph by default
             preventOverlap: true,
             nodeSize: 20,
+            onTick: (positions) => {
+              if (!rendered) {
+                createNodesEdges(positions);
+                rendered = true;
+              } else {
+                updateNodesEdges(positions);
+              }
+            },
           });
-          force.stop();
-          const positions = force.tick(1000);
-          createNodesEdges(positions);
+
+          setTimeout(() => {
+            force.stop();
+          }, 100);
+
+          setTimeout(() => {
+            force.assign(graph, {
+              center: [200, 200], // The center of the graph by default
+              preventOverlap: true,
+              nodeSize: 20,
+              onTick: (positions) => {
+                updateNodesEdges(positions);
+              },
+            });
+          }, 1500);
         });
     </script>
   </body>

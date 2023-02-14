@@ -41,7 +41,7 @@
       type="application/javascript"
     ></script>
     <script
-      src="https://unpkg.com/@antv/graphlib@2.0.0-alpha.2"
+      src="https://unpkg.com/@antv/graphlib@2.0.0"
       type="application/javascript"
     ></script>
     <script
@@ -52,273 +52,261 @@
       const { Graph } = window.GraphLib;
       const { FruchtermanLayout, Supervisor } = window.Layout;
 
-      fetch(
-        "https://gw.alipayobjects.com/os/antvdemo/assets/data/relations.json"
-      )
-        .then((res) => res.json())
-        .then((d) => {
-          const data = {
-            nodes: [
-              {
-                id: "0",
-                data: {
-                  label: "0",
-                },
+      (async () => {
+        const data = {
+          nodes: [
+            {
+              id: "0",
+              data: {
+                label: "0",
               },
-              {
-                id: "1",
-                data: {
-                  label: "1",
-                },
+            },
+            {
+              id: "1",
+              data: {
+                label: "1",
               },
-              {
-                id: "2",
-                data: {
-                  label: "2",
-                },
+            },
+            {
+              id: "2",
+              data: {
+                label: "2",
               },
-              {
-                id: "3",
-                data: {
-                  label: "3",
-                },
+            },
+            {
+              id: "3",
+              data: {
+                label: "3",
               },
-              {
-                id: "4",
-                data: {
-                  label: "4",
-                },
+            },
+            {
+              id: "4",
+              data: {
+                label: "4",
               },
-              {
-                id: "5",
-                data: {
-                  label: "5",
-                },
+            },
+            {
+              id: "5",
+              data: {
+                label: "5",
               },
-              {
-                id: "6",
-                data: {
-                  label: "6",
-                },
+            },
+            {
+              id: "6",
+              data: {
+                label: "6",
               },
-              {
-                id: "7",
-                data: {
-                  label: "7",
-                },
+            },
+            {
+              id: "7",
+              data: {
+                label: "7",
               },
-              {
-                id: "8",
-                data: {
-                  label: "8",
-                },
+            },
+            {
+              id: "8",
+              data: {
+                label: "8",
               },
-              {
-                id: "9",
-                data: {
-                  label: "9",
-                },
+            },
+            {
+              id: "9",
+              data: {
+                label: "9",
               },
-            ],
-            edges: [
-              {
-                source: "0",
-                target: "1",
-                data: {},
-              },
-              {
-                source: "0",
-                target: "2",
-                data: {},
-              },
-              {
-                source: "0",
-                target: "3",
-                data: {},
-              },
-              {
-                source: "0",
-                target: "4",
-                data: {},
-              },
-              {
-                source: "0",
-                target: "5",
-                data: {},
-              },
-              {
-                source: "0",
-                target: "7",
-                data: {},
-              },
-              {
-                source: "0",
-                target: "8",
-                data: {},
-              },
-              {
-                source: "0",
-                target: "9",
-                data: {},
-              },
-              {
-                source: "2",
-                target: "3",
-                data: {},
-              },
-              {
-                source: "4",
-                target: "5",
-                data: {},
-              },
-              {
-                source: "4",
-                target: "6",
-                data: {},
-              },
-              {
-                source: "5",
-                target: "6",
-                data: {},
-              },
-            ],
-          };
+            },
+          ],
+          edges: [
+            {
+              source: "0",
+              target: "1",
+              data: {},
+            },
+            {
+              source: "0",
+              target: "2",
+              data: {},
+            },
+            {
+              source: "0",
+              target: "3",
+              data: {},
+            },
+            {
+              source: "0",
+              target: "4",
+              data: {},
+            },
+            {
+              source: "0",
+              target: "5",
+              data: {},
+            },
+            {
+              source: "0",
+              target: "7",
+              data: {},
+            },
+            {
+              source: "0",
+              target: "8",
+              data: {},
+            },
+            {
+              source: "0",
+              target: "9",
+              data: {},
+            },
+            {
+              source: "2",
+              target: "3",
+              data: {},
+            },
+            {
+              source: "4",
+              target: "5",
+              data: {},
+            },
+            {
+              source: "4",
+              target: "6",
+              data: {},
+            },
+            {
+              source: "5",
+              target: "6",
+              data: {},
+            },
+          ],
+        };
 
-          const { Circle, Line, Canvas } = window.G;
-          // create a renderer
-          const canvasRenderer = new window.G.Canvas2D.Renderer();
-          const plugin = new window.G.Dragndrop.Plugin();
-          canvasRenderer.registerPlugin(plugin);
+        const { Circle, Line, Canvas } = window.G;
+        // create a renderer
+        const canvasRenderer = new window.G.Canvas2D.Renderer();
+        const plugin = new window.G.Dragndrop.Plugin();
+        canvasRenderer.registerPlugin(plugin);
 
-          // create a canvas
-          const canvas = new Canvas({
-            container: "container",
-            width: 500,
-            height: 500,
-            renderer: canvasRenderer,
-          });
+        // create a canvas
+        const canvas = new Canvas({
+          container: "container",
+          width: 500,
+          height: 500,
+          renderer: canvasRenderer,
+        });
+        await canvas.ready;
 
-          const graph = new Graph({
-            nodes: data.nodes,
-            edges: data.edges.map((edge, i) => ({ id: i, ...edge })),
-          });
+        const graph = new Graph({
+          nodes: data.nodes,
+          edges: data.edges.map((edge, i) => ({ id: i, ...edge })),
+        });
 
-          const fruchterman = new FruchtermanLayout({
-            width: 500,
-            height: 500,
-          });
-          const supervisor = new Supervisor(graph, fruchterman, {
-            iterations: 1000,
-          });
+        const fruchterman = new FruchtermanLayout({
+          width: 500,
+          height: 500,
+        });
+        const supervisor = new Supervisor(graph, fruchterman, {
+          iterations: 1000,
+        });
 
-          const nodes = [];
-          const edges = [];
+        const nodes = [];
+        const edges = [];
 
-          const createNodesEdges = (positions) => {
-            positions.edges.forEach(({ source, target }, i) => {
-              const sourceNode = positions.nodes.find(
-                ({ id }) => id === source
-              );
-              const targetNode = positions.nodes.find(
-                ({ id }) => id === target
-              );
-              const line = new Line({
-                style: {
-                  x1: sourceNode.data.x,
-                  y1: sourceNode.data.y,
-                  x2: targetNode.data.x,
-                  y2: targetNode.data.y,
-                  lineWidth: 1,
-                  stroke: "grey",
-                },
-              });
-              canvas.appendChild(line);
-              edges.push(line);
-            });
-
-            positions.nodes.forEach((node, i) => {
-              const circle = new Circle({
-                style: {
-                  cx: node.data.x,
-                  cy: node.data.y,
-                  r: 6,
-                  fill: "#1890FF",
-                  stroke: "#F04864",
-                  lineWidth: 2,
-                  draggable: true,
-                },
-              });
-              canvas.appendChild(circle);
-
-              let shiftX = 0;
-              let shiftY = 0;
-              function moveAt(target, canvasX, canvasY) {
-                graph.mergeNodeData(positions.nodes[i].id, {
-                  x: canvasX - shiftX,
-                  y: canvasY - shiftY,
-                });
-                fruchterman.stop();
-                fruchterman.assign(graph, {
-                  onTick: (positions) => {
-                    updateNodesEdges(positions);
-                  },
-                });
-              }
-
-              circle.addEventListener("dragstart", function (e) {
-                const [x, y] = e.target.getPosition();
-                shiftX = e.canvasX - x;
-                shiftY = e.canvasY - y;
-
-                moveAt(e.target, e.canvasX, e.canvasY);
-              });
-              circle.addEventListener("drag", function (e) {
-                moveAt(e.target, e.canvasX, e.canvasY);
-              });
-              nodes.push(circle);
-            });
-          };
-
-          const updateNodesEdges = (positions) => {
-            positions.edges.forEach(({ source, target }, i) => {
-              const sourceNode = positions.nodes.find(
-                ({ id }) => id === source
-              );
-              const targetNode = positions.nodes.find(
-                ({ id }) => id === target
-              );
-
-              edges[i].attr({
+        const createNodesEdges = (positions) => {
+          positions.edges.forEach(({ source, target }, i) => {
+            const sourceNode = positions.nodes.find(({ id }) => id === source);
+            const targetNode = positions.nodes.find(({ id }) => id === target);
+            const line = new Line({
+              style: {
                 x1: sourceNode.data.x,
                 y1: sourceNode.data.y,
                 x2: targetNode.data.x,
                 y2: targetNode.data.y,
-              });
+                lineWidth: 1,
+                stroke: "grey",
+              },
             });
+            canvas.appendChild(line);
+            edges.push(line);
+          });
 
-            positions.nodes.forEach((node, i) => {
-              nodes[i].attr({
+          positions.nodes.forEach((node, i) => {
+            const circle = new Circle({
+              style: {
                 cx: node.data.x,
                 cy: node.data.y,
-              });
+                r: 6,
+                fill: "#1890FF",
+                stroke: "#F04864",
+                lineWidth: 2,
+                draggable: true,
+              },
             });
-          };
+            canvas.appendChild(circle);
 
-          // Do first-time static layout on worker-side.
-          supervisor.on("layoutend", (positions) => {
-            // Update Graph model.
-            positions.nodes.forEach((node) =>
-              graph.mergeNodeData(node.id, {
-                x: node.data.x,
-                y: node.data.y,
-              })
-            );
+            let shiftX = 0;
+            let shiftY = 0;
+            function moveAt(target, canvasX, canvasY) {
+              graph.mergeNodeData(positions.nodes[i].id, {
+                x: canvasX - shiftX,
+                y: canvasY - shiftY,
+              });
+              fruchterman.stop();
+              fruchterman.assign(graph, {
+                onTick: (positions) => {
+                  updateNodesEdges(positions);
+                },
+              });
+            }
 
-            // Render.
-            createNodesEdges(positions);
+            circle.addEventListener("dragstart", function (e) {
+              const [x, y] = e.target.getPosition();
+              shiftX = e.canvasX - x;
+              shiftY = e.canvasY - y;
+
+              moveAt(e.target, e.canvasX, e.canvasY);
+            });
+            circle.addEventListener("drag", function (e) {
+              moveAt(e.target, e.canvasX, e.canvasY);
+            });
+            nodes.push(circle);
           });
-          supervisor.start();
-        });
+        };
+
+        const updateNodesEdges = (positions) => {
+          positions.edges.forEach(({ source, target }, i) => {
+            const sourceNode = positions.nodes.find(({ id }) => id === source);
+            const targetNode = positions.nodes.find(({ id }) => id === target);
+
+            edges[i].attr({
+              x1: sourceNode.data.x,
+              y1: sourceNode.data.y,
+              x2: targetNode.data.x,
+              y2: targetNode.data.y,
+            });
+          });
+
+          positions.nodes.forEach((node, i) => {
+            nodes[i].attr({
+              cx: node.data.x,
+              cy: node.data.y,
+            });
+          });
+        };
+
+        // Do first-time static layout on worker-side.
+        const positions = await supervisor.execute();
+
+        // Update Graph model.
+        positions.nodes.forEach((node) =>
+          graph.mergeNodeData(node.id, {
+            x: node.data.x,
+            y: node.data.y,
+          })
+        );
+
+        // Render.
+        createNodesEdges(positions);
+      })();
     </script>
   </body>
 </html>

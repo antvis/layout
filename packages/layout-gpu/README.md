@@ -22,16 +22,14 @@ import { FruchtermanLayout } from "@antv/layout-gpu";
 
 const graph = new Graph({ nodes: [], edges: [] });
 
-const fruchtermanLayout = new FruchtermanLayout({
-  onLayoutEnd: (positions) => {
-    // render nodes & edges
-  },
-});
+const fruchtermanLayout = new FruchtermanLayout();
 
-// Return positions of nodes & edges.
-const positions = fruchtermanLayout.execute(graph);
-// Or to directly assign the positions to the nodes:
-circularLayout.assign(graph);
+(async () => {
+  // Return positions of nodes & edges.
+  const positions = await fruchtermanLayout.execute(graph);
+  // Or to directly assign the positions to the nodes:
+  await circularLayout.assign(graph);
+})();
 ```
 
 ### UMD
@@ -67,8 +65,6 @@ We provide the following parallelizable layouts:
 - [Fruchterman]()
 - [GForce]()
 
-Since the GPGPU is asynchronous, `onLayoutEnd` callback should be passed in.
-
 ```js
 import { Graph } from "@antv/graphlib";
 import { FruchtermanLayout } from "@antv/layout-gpu";
@@ -76,11 +72,9 @@ import { FruchtermanLayout } from "@antv/layout-gpu";
 const graph = new Graph({ nodes: [], edges: [] });
 
 const fruchtermanLayout = new FruchtermanLayout({
-  onLayoutEnd: (positions) => {
-    // render nodes & edges
-  },
+  center: [200, 200],
 });
-fruchtermanLayout.assign(graph);
+const positions = await fruchtermanLayout.execute(graph);
 ```
 
 ### Fruchterman

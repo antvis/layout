@@ -29,14 +29,14 @@ const DEFAULTS_LAYOUT_OPTIONS: Partial<CircularLayoutOptions> = {
  * @example
  * // Assign layout options when initialization.
  * const layout = new CircularLayout({ radius: 10 });
- * const positions = layout.execute(graph); // { nodes: [], edges: [] }
+ * const positions = await layout.execute(graph); // { nodes: [], edges: [] }
  *
  * // Or use different options later.
  * const layout = new CircularLayout({ radius: 10 });
- * const positions = layout.execute(graph, { radius: 20 }); // { nodes: [], edges: [] }
+ * const positions = await layout.execute(graph, { radius: 20 }); // { nodes: [], edges: [] }
  *
  * // If you want to assign the positions directly to the nodes, use assign method.
- * layout.assign(graph, { radius: 20 });
+ * await layout.assign(graph, { radius: 20 });
  */
 export class CircularLayout implements Layout<CircularLayoutOptions> {
   id = "circular";
@@ -53,22 +53,32 @@ export class CircularLayout implements Layout<CircularLayoutOptions> {
   /**
    * Return the positions of nodes and edges(if needed).
    */
-  execute(graph: Graph, options?: CircularLayoutOptions): LayoutMapping {
-    return this.genericCircularLayout(false, graph, options) as LayoutMapping;
+  async execute(graph: Graph, options?: CircularLayoutOptions) {
+    return this.genericCircularLayout(false, graph, options);
   }
 
   /**
    * To directly assign the positions to the nodes.
    */
-  assign(graph: Graph, options?: CircularLayoutOptions) {
-    this.genericCircularLayout(true, graph, options);
+  async assign(graph: Graph, options?: CircularLayoutOptions) {
+    await this.genericCircularLayout(true, graph, options);
   }
 
-  private genericCircularLayout(
+  private async genericCircularLayout(
+    assign: false,
+    graph: Graph,
+    options?: CircularLayoutOptions
+  ): Promise<LayoutMapping>;
+  private async genericCircularLayout(
+    assign: true,
+    graph: Graph,
+    options?: CircularLayoutOptions
+  ): Promise<void>;
+  private async genericCircularLayout(
     assign: boolean,
     graph: Graph,
     options?: CircularLayoutOptions
-  ): LayoutMapping | void {
+  ): Promise<LayoutMapping | void> {
     const mergedOptions = { ...this.options, ...options };
     const {
       width,
@@ -82,7 +92,6 @@ export class CircularLayout implements Layout<CircularLayoutOptions> {
       clockwise,
       nodeSpacing: paramNodeSpacing,
       nodeSize: paramNodeSize,
-      onLayoutEnd,
     } = mergedOptions;
 
     let nodes: Node[] = graph.getAllNodes();
@@ -93,12 +102,7 @@ export class CircularLayout implements Layout<CircularLayoutOptions> {
       calculateCenter(width, height, center);
     const n = nodes?.length;
     if (!n || n === 1) {
-      return handleSingleNodeGraph(
-        graph,
-        assign,
-        calculatedCenter,
-        onLayoutEnd
-      );
+      return handleSingleNodeGraph(graph, assign, calculatedCenter);
     }
 
     const angleStep = (endAngle - startAngle) / n;
@@ -179,7 +183,6 @@ export class CircularLayout implements Layout<CircularLayoutOptions> {
       nodes: layoutNodes,
       edges,
     };
-    onLayoutEnd?.(result);
 
     return result;
   }
