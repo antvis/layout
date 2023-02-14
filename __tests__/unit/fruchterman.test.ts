@@ -4,7 +4,7 @@ import data from "../data/test-data-1";
 import { getEuclideanDistance } from "../util";
 
 describe("FruchtermanLayout", () => {
-  it("should return correct default config.", async () => {
+  it("should return correct default config.", () => {
     const graph = new Graph<any, any>({
       nodes: [...data.nodes],
       edges: [...data.edges],
@@ -22,9 +22,9 @@ describe("FruchtermanLayout", () => {
       nodeClusterBy: "cluster",
     });
 
-    const { nodes } = await fruchterman.execute(graph);
+    fruchterman.execute(graph);
     fruchterman.stop();
-    fruchterman.tick(1000);
+    const { nodes } = fruchterman.tick(1000);
 
     expect(nodes[0].data.x).not.toBe(undefined);
     expect(nodes[0].data.y).not.toBe(undefined);
@@ -43,7 +43,7 @@ describe("FruchtermanLayout", () => {
     expect(JSON.stringify(positions.nodes)).toBe("[]");
   });
 
-  it("should do fruchterman layout with a graph which has only one node.", async () => {
+  it("should do fruchterman layout with a graph which has only one node.", () => {
     const graph = new Graph<any, any>({
       nodes: [{ id: "node", data: {} }],
       edges: [],
@@ -53,7 +53,7 @@ describe("FruchtermanLayout", () => {
       center: [10, 20],
     });
 
-    await fruchterman.execute(graph);
+    fruchterman.execute(graph);
     fruchterman.stop();
     const positions = fruchterman.tick(1000);
 
@@ -61,7 +61,7 @@ describe("FruchtermanLayout", () => {
     expect(positions.nodes[0].data.y).toBe(20);
   });
 
-  it("should do fruchterman layout with clustering and nodeClusterBy.", async () => {
+  it("should do fruchterman layout with clustering and nodeClusterBy.", () => {
     const graph = new Graph<any, any>({
       nodes: [
         { id: "node0", data: { clusterField: "a" } },
@@ -77,7 +77,7 @@ describe("FruchtermanLayout", () => {
       clustering: true,
       nodeClusterBy: "clusterField",
     });
-    await fruchterman.execute(graph);
+    fruchterman.execute(graph);
     fruchterman.stop();
     const positions = fruchterman.tick(1000);
 
