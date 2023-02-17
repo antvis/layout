@@ -4,6 +4,7 @@
  */
 import { Graph as RawGraph } from "@antv/graphlib";
 import { Graph } from "../../graph";
+import { max, min } from '../order/math';
 import { buildLayerMatrix, minBy } from "../util";
 
 class BlockGraph extends RawGraph<string, string, number> {}
@@ -86,8 +87,10 @@ export const findType2Conflicts = (g: Graph, layering?: string[][]) => {
     for (let i = southPos; i < southEnd; i++) {
       v = south[i];
       if (g.node(v)?.dummy) {
+        // console.log('g.predecessors(v)', g.predecessors(v), v, g, g.node(v));
         g.predecessors(v)?.forEach((u) => {
           const uNode = g.node(u)!;
+          // console.log('u, v', u, v);
           if (
             uNode.dummy &&
             ((uNode.order as number) < prevNorthBorder ||
@@ -146,6 +149,7 @@ export const findType2Conflicts = (g: Graph, layering?: string[][]) => {
   if (layering?.length) {
     layering.reduce(visitLayer);
   }
+  // console.log('conflicts', conflicts)
   return conflicts;
 };
 
@@ -371,10 +375,9 @@ export function alignCoordinates(
   xss: Record<string, Record<string, number>>,
   alignTo: Record<string, number>
 ) {
-  // @ts-ignore
-  const alignToVals = Object.values(alignTo) as number[];
-  const alignToMin = Math.min(...alignToVals);
-  const alignToMax = Math.max(...alignToVals);
+  const alignToVals = Object.values(alignTo);
+  const alignToMin = Number(min(alignToVals));
+  const alignToMax = Number(max(alignToVals));
 
   ["u", "d"].forEach((vert) => {
     ["l", "r"].forEach((horiz) => {
@@ -383,11 +386,11 @@ export function alignCoordinates(
       let delta: number;
       if (xs === alignTo) return;
 
-      const xsVals = Object.values(xs) as number[];
+      const xsVals = Object.values(xs);
       delta =
         horiz === "l"
-          ? alignToMin - Math.min(...xsVals)
-          : alignToMax - Math.max(...xsVals);
+          ? alignToMin - Number(min(xsVals))
+          : alignToMax - Number(max(xsVals));
 
       if (delta) {
         xss[alignment] = {};
