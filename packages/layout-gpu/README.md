@@ -14,7 +14,7 @@ $ npm install @antv/layout-gpu --save
 $ yarn add @antv/layout-gpu
 ```
 
-Choose a layout algorithm from `@antv/layout-gpu` then. Since the GPGPU is asynchronous, `onLayoutEnd` callback should be passed in.
+Choose a layout algorithm from `@antv/layout-gpu` then.
 
 ```ts
 import { Graph } from "@antv/graphlib";

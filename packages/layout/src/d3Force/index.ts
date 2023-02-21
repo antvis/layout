@@ -97,7 +97,6 @@ export class D3ForceLayout
 
   /**
    * Manually steps the simulation by the specified number of iterations.
-   * When finished it will trigger `onLayoutEnd` callback.
    * @see https://github.com/d3/d3-force#simulation_tick
    */
   tick(iterations = 1) {
