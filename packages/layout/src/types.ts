@@ -99,12 +99,7 @@ export interface LayoutSupervisor {
   isRunning(): boolean;
 }
 
-// most layout options extends CommonOptions
-interface CommonOptions {
-  onLayoutEnd?: (data: LayoutMapping) => void;
-}
-
-export interface CircularLayoutOptions extends CommonOptions {
+export interface CircularLayoutOptions {
   center?: PointTuple;
   width?: number;
   height?: number;
@@ -121,7 +116,7 @@ export interface CircularLayoutOptions extends CommonOptions {
   nodeSize?: number | number[];
 }
 
-export interface GridLayoutOptions extends CommonOptions {
+export interface GridLayoutOptions {
   width?: number;
   height?: number;
   begin?: PointTuple;
@@ -136,18 +131,18 @@ export interface GridLayoutOptions extends CommonOptions {
   nodeSpacing?: ((node?: Node) => number) | number;
 }
 
-export interface RandomLayoutOptions extends CommonOptions {
+export interface RandomLayoutOptions {
   center?: PointTuple;
   width?: number;
   height?: number;
 }
 
-export interface MDSLayoutOptions extends CommonOptions {
+export interface MDSLayoutOptions {
   center?: PointTuple;
   linkDistance?: number;
 }
 
-export interface ConcentricLayoutOptions extends CommonOptions {
+export interface ConcentricLayoutOptions {
   center?: PointTuple;
   preventOverlap?: boolean;
   nodeSize?: number | PointTuple;
@@ -162,7 +157,7 @@ export interface ConcentricLayoutOptions extends CommonOptions {
   nodeSpacing?: number | number[] | ((node?: Node) => number);
 }
 
-export interface RadialLayoutOptions extends CommonOptions {
+export interface RadialLayoutOptions {
   center?: PointTuple;
   width?: number;
   height?: number;
@@ -179,7 +174,7 @@ export interface RadialLayoutOptions extends CommonOptions {
   sortStrength?: number;
 }
 
-export interface DagreLayoutOptions extends CommonOptions {
+export interface DagreLayoutOptions {
   rankdir?: "TB" | "BT" | "LR" | "RL";
   align?: "UL" | "UR" | "DL" | "DR";
   begin?: PointTuple;
@@ -200,7 +195,7 @@ export interface DagreLayoutOptions extends CommonOptions {
   ranksepFunc?: (d?: Node) => number;
 }
 
-export interface D3ForceLayoutOptions extends CommonOptions {
+export interface D3ForceLayoutOptions {
   center?: PointTuple;
   linkDistance?: number | ((edge?: Edge) => number);
   edgeStrength?: number | ((edge?: Edge) => number);
@@ -242,7 +237,7 @@ export interface CentripetalOptions {
     centerStrength?: number;
   };
 }
-export interface ForceLayoutOptions extends CommonOptions {
+export interface ForceLayoutOptions {
   center?: PointTuple;
   width?: number;
   height?: number;
@@ -278,7 +273,7 @@ export interface ForceLayoutOptions extends CommonOptions {
   }) => void;
 }
 
-export interface ForceAtlas2LayoutOptions extends CommonOptions {
+export interface ForceAtlas2LayoutOptions {
   center?: PointTuple;
   width?: number;
   height?: number;
@@ -296,7 +291,7 @@ export interface ForceAtlas2LayoutOptions extends CommonOptions {
   nodeSize?: number | number[] | ((node?: Node) => number);
   onTick?: (data: LayoutMapping) => void;
 }
-export interface FruchtermanLayoutOptions extends CommonOptions {
+export interface FruchtermanLayoutOptions {
   center?: PointTuple;
   maxIteration?: number;
   width?: number;
