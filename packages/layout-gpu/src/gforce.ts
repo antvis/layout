@@ -53,11 +53,11 @@ interface FormattedOptions extends ForceLayoutOptions {
  *
  * @example
  * // Assign layout options when initialization.
- * const layout = new GForceLayout({ center: [100, 100], onLayoutEnd: (positions) => {} });
+ * const layout = new GForceLayout({ center: [100, 100] });
  * const positions = await layout.execute(graph); // { nodes: [], edges: [] }
  *
  * // Or use different options later.
- * const layout = new GForceLayout({ center: [100, 100], onLayoutEnd: (positions) => {} });
+ * const layout = new GForceLayout({ center: [100, 100] });
  * const positions = await layout.execute(graph, { center: [100, 100] }); // { nodes: [], edges: [] }
  *
  * // If you want to assign the positions directly to the nodes, use assign method.

@@ -97,7 +97,6 @@ export class D3ForceLayout
 
   /**
    * Manually steps the simulation by the specified number of iterations.
-   * When finished it will trigger `onLayoutEnd` callback.
    * @see https://github.com/d3/d3-force#simulation_tick
    */
   tick(iterations = 1) {
@@ -305,27 +304,27 @@ export class D3ForceLayout
           });
         }
         forceSimulation.alpha(alpha).restart();
+
+        // since d3 writes x and y as node's first level properties, format them into data
+        const outNodes = formatOutNodes(layoutNodes);
+        const outEdges = formatOutEdges(layoutEdges);
+
+        if (assign) {
+          outNodes.forEach((node) =>
+            graph.mergeNodeData(node.id, {
+              x: node.data.x,
+              y: node.data.y,
+            })
+          );
+        }
+
+        resolve({
+          nodes: outNodes,
+          edges: outEdges,
+        });
       }
 
       this.forceSimulation = forceSimulation;
-
-      // since d3 writes x and y as node's first level properties, format them into data
-      const outNodes = formatOutNodes(layoutNodes);
-      const outEdges = formatOutEdges(layoutEdges);
-
-      if (assign) {
-        outNodes.forEach((node) =>
-          graph.mergeNodeData(node.id, {
-            x: node.data.x,
-            y: node.data.y,
-          })
-        );
-      }
-
-      resolve({
-        nodes: outNodes,
-        edges: outEdges,
-      });
     });
   }
 

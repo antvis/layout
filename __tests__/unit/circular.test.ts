@@ -20,10 +20,6 @@ describe("CircularLayout", () => {
     await circular.assign(graph);
     expect(graph.getAllNodes()).toEqual([]);
     expect(graph.getAllEdges()).toEqual([]);
-
-    // const mockOnLayoutEnd = jest.fn();
-    // circular.execute(graph, { onLayoutEnd: mockOnLayoutEnd });
-    // expect(mockOnLayoutEnd).toHaveBeenCalledTimes(1);
   });
 
   it("should layout quickly when there's only one node in graph.", async () => {

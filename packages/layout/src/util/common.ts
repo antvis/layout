@@ -5,7 +5,6 @@ import { PointTuple, Graph } from "../types";
  * @param graph original graph
  * @param assign whether assign result to original graph
  * @param center the layout center
- * @param onLayoutEnd callback for layout end
  * @returns
  */
 export const handleSingleNodeGraph = (

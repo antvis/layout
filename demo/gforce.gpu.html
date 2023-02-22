@@ -912,7 +912,7 @@
         edges: data.edges,
       });
 
-      const fruchterman = new GForceLayout({
+      const gforce = new GForceLayout({
         width: 500,
         height: 500,
         center: [250, 250],
@@ -955,12 +955,10 @@
         });
       };
 
-      fruchterman.assign(graph, {
-        onLayoutEnd: (positions) => {
-          console.log(positions);
-          createNodesEdges(positions);
-        },
-      });
+      (async () => {
+        const positions = await gforce.execute(graph);
+        createNodesEdges(positions);
+      })();
     </script>
   </body>
 </html>

@@ -116,7 +116,6 @@ export class FruchtermanLayout
 
   /**
    * Manually steps the simulation by the specified number of iterations.
-   * When finished it will trigger `onLayoutEnd` callback.
    * @see https://github.com/d3/d3-force#simulation_tick
    */
   tick(iterations = this.options.maxIteration || 1) {
@@ -140,10 +139,6 @@ export class FruchtermanLayout
           y: node.data.y,
         })
       );
-    }
-
-    if (this.lastOptions.onLayoutEnd) {
-      this.lastOptions.onLayoutEnd(result);
     }
 
     return result;

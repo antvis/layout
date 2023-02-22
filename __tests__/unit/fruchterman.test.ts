@@ -117,7 +117,7 @@ describe("FruchtermanLayout", () => {
     expect(cClusterDist < acClusterDist).toBe(true);
   });
 
-  it("should do fruchterman layout with onTick and onLayoutEnd.", async () => {
+  it("should do fruchterman layout with onTick.", async () => {
     const graph = new Graph<any, any>({
       nodes: [...data.nodes],
       edges: [...data.edges],
