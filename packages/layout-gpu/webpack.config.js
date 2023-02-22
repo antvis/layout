@@ -11,9 +11,9 @@ module.exports = {
   },
   externals: {
     "@antv/layout": {
-      commonjs: "@antv/layout@alpha",
-      commonjs2: "@antv/layout@alpha",
-      amd: "@antv/layout@alpha",
+      commonjs: "@antv/layout",
+      commonjs2: "@antv/layout",
+      amd: "@antv/layout",
       root: "Layout", // indicates global variable
     },
   },

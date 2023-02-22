@@ -1,6 +1,6 @@
 {
   "name": "@antv/layout-gpu",
-  "version": "1.0.0-alpha.3",
+  "version": "1.0.0-alpha.4",
   "description": "graph layout algorithm implemented with GPGPU",
   "main": "dist/index.min.js",
   "module": "esm/index.esm.js",
