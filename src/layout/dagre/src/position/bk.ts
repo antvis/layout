@@ -75,19 +75,15 @@ export const findType1Conflicts = (g: Graph, layering?: string[][]) => {
 export const findType2Conflicts = (g: Graph, layering?: string[][]) => {
   const conflicts = {};
 
-  const scan = (
+  function scan(
     south: string[],
     southPos: number,
     southEnd: number,
     prevNorthBorder: number,
     nextNorthBorder: number
-  ) => {
+  ) {
     let v: string;
-    const range = [];
     for (let i = southPos; i < southEnd; i++) {
-      range.push(i);
-    }
-    range.forEach((i) => {
       v = south[i];
       if (g.node(v)?.dummy) {
         g.predecessors(v)?.forEach((u) => {
@@ -101,25 +97,47 @@ export const findType2Conflicts = (g: Graph, layering?: string[][]) => {
           }
         });
       }
-    });
+    }
   };
 
+  function getScannedKey(params: Parameters<typeof scan>) {
+      // south数组可能很大，不适合做key
+      return JSON.stringify(params.slice(1));
+  }
+  
+  function scanIfNeeded(params: Parameters<typeof scan>, scanCache: Map<string, boolean>) {
+    const cacheKey = getScannedKey(params);
+    
+    if (scanCache.get(cacheKey)) return;
+
+    scan(...params);
+    scanCache.set(cacheKey, true);
+  }
+  
   const visitLayer = (north: string[], south: string[]) => {
     let prevNorthPos = -1;
     let nextNorthPos: number;
     let southPos = 0;
+
+    const scanned = new Map<string, boolean>();
 
     south?.forEach((v: string, southLookahead: number) => {
       if (g.node(v)?.dummy === "border") {
         const predecessors = g.predecessors(v) || [];
         if (predecessors.length) {
           nextNorthPos = g.node(predecessors[0]!)!.order as number;
-          scan(south, southPos, southLookahead, prevNorthPos, nextNorthPos);
+          scanIfNeeded(
+            [south, southPos, southLookahead, prevNorthPos, nextNorthPos],
+            scanned
+          );
           southPos = southLookahead;
           prevNorthPos = nextNorthPos;
         }
       }
-      scan(south, southPos, south.length, nextNorthPos, north.length);
+      scanIfNeeded(
+        [south, southPos, south.length, nextNorthPos, north.length],
+        scanned
+      );
     });
 
     return south;
