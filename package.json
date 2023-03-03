@@ -1,6 +1,6 @@
 {
   "name": "@antv/layout",
-  "version": "0.3.16",
+  "version": "0.3.17",
   "description": "graph layout algorithm",
   "main": "lib/index.js",
   "module": "es/index.js",
@@ -32,7 +32,7 @@
     "release": "release-it",
     "test": "jest",
     "coverage": "jest --coverage",
-    "test-live": "DEBUG_MODE=1 jest --watch __tests__/g6/dagre-g6-test.ts"
+    "test-live": "DEBUG_MODE=1 jest --watch __tests__/g6/dagre-layer-g6-test.ts"
   },
   "lint-staged": {
     "*.js": [
