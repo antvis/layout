@@ -304,10 +304,10 @@ export class ComboCombinedLayout extends Base {
           const { minX, minY, maxX, maxY } = getLayoutBBox(innerGraphNodes);
           // move the innerGraph to [0, 0],for later controled by parent layout
           const center = { x: (maxX + minX) / 2, y: (maxY + minY) / 2 };
-          innerGraphData.nodes.forEach(node => {
+          innerGraphData.nodes.forEach((node) => {
             node.x -= center.x;
             node.y -= center.y;
-          })
+          });
           const innerGraphSize = Math.max(maxX - minX, maxY - minY, minNodeSize) + padding * 2;
           innerGraphs[treeNode.id] = {
             id: treeNode.id,

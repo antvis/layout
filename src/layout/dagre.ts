@@ -314,47 +314,57 @@ export class DagreLayout extends Base {
         const currentNodesep = nodesepfunc(nodes[i]);
 
         if (focusLayer === 0) {
-          if (!layers[coord._rank])
+          if (!layers[coord._rank]) {
             layers[coord._rank] = {
               nodes: [],
               totalWidth: 0,
               maxSize: -Infinity,
             };
+          }
           layers[coord._rank].nodes.push(node);
           layers[coord._rank].totalWidth += currentNodesep * 2 + coord[sizeDim];
-          if (layers[coord._rank].maxSize < Math.max(coord.width, coord.height))
+          if (
+            layers[coord._rank].maxSize < Math.max(coord.width, coord.height)
+          ) {
             layers[coord._rank].maxSize = Math.max(coord.width, coord.height);
+          }
         } else {
           const diffLayer = coord._rank - focusLayer!;
           if (diffLayer === 0) {
-            if (!layers[diffLayer])
+            if (!layers[diffLayer]) {
               layers[diffLayer] = {
                 nodes: [],
                 totalWidth: 0,
                 maxSize: -Infinity,
               };
+            }
             layers[diffLayer].nodes.push(node);
             layers[diffLayer].totalWidth += currentNodesep * 2 + coord[sizeDim];
-            if (layers[diffLayer].maxSize < Math.max(coord.width, coord.height))
+            if (
+              layers[diffLayer].maxSize < Math.max(coord.width, coord.height)
+            ) {
               layers[diffLayer].maxSize = Math.max(coord.width, coord.height);
+            }
           } else {
             const diffLayerAbs = Math.abs(diffLayer);
-            if (!layers[diffLayerAbs])
+            if (!layers[diffLayerAbs]) {
               layers[diffLayerAbs] = {
                 left: [],
                 right: [],
                 totalWidth: 0,
                 maxSize: -Infinity,
               };
+            }
             layers[diffLayerAbs].totalWidth +=
               currentNodesep * 2 + coord[sizeDim];
             if (
               layers[diffLayerAbs].maxSize < Math.max(coord.width, coord.height)
-            )
+            ) {
               layers[diffLayerAbs].maxSize = Math.max(
                 coord.width,
                 coord.height
               );
+            }
             if (diffLayer < 0) {
               layers[diffLayerAbs].left.push(node);
             } else {
@@ -420,8 +430,9 @@ export class DagreLayout extends Base {
           !layerNodes?.nodes?.length &&
           !layerNodes?.left?.length &&
           !layerNodes?.right?.length
-        )
+        ) {
           return;
+        }
         // 第一层只有一个节点，直接放在圆心，初始半径设定为 0
         if (isFirstLevel && layerNodes.nodes.length === 1) {
           // 将新坐标写入源数据
@@ -564,7 +575,7 @@ export class DagreLayout extends Base {
             //   x: 终点x,
             //   y: (起点y + 下一层y) / 2,   #下一层y可能不等于终点y
             // }
-            if (targetY != sourceY && sourceX !== targetX) {
+            if (targetY !== sourceY && sourceX !== targetX) {
               const nextLayerCoord =
                 layerCoordsArr[layerCoordsArr.indexOf(sourceY) + 1];
               if (nextLayerCoord) {
