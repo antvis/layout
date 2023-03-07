@@ -541,6 +541,22 @@ export class DagreLayout extends Base {
       });
       const layerCoordsArr = Array.from(layerCoords).sort(layerCoordSort);
 
+      // pre-define the isHorizontal related functions to avoid redundant calc in interations
+      const isDifferentLayer = isHorizontal
+        ? (point1: Point, point2: Point) => point1.x !== point2.x
+        : (point1: Point, point2: Point) => point1.y !== point2.y;
+      const filterControlPointsOutOfBoundary = isHorizontal
+        ? (ps: Point[], point1: Point, point2: Point) => {
+            const max = Math.max(point1.y, point2.y);
+            const min = Math.min(point1.y, point2.y);
+            return ps.filter((point) => point.y <= max && point.y >= min);
+          }
+        : (ps: Point[], point1: Point, point2: Point) => {
+            const max = Math.max(point1.x, point2.x);
+            const min = Math.min(point1.x, point2.x);
+            return ps.filter((point) => point.x <= max && point.x >= min);
+          };
+
       g.edges().forEach((edge: any) => {
         const coord = g.edge(edge);
         const i = edges.findIndex((it) => {
@@ -554,52 +570,17 @@ export class DagreLayout extends Base {
           self.controlPoints &&
           edges[i].type !== "loop"
         ) {
-          edges[i].controlPoints =
-            coord?.points?.slice(1, coord.points.length - 1) || []; // 去掉头尾
-
           const sourceNode = self.nodeMap[edge.v];
           const targetNode = self.nodeMap[edge.w];
-
-          // 酌情增加控制点，使折线不穿过跨层的节点
-          if (sourceNode && targetNode) {
-            let { x: sourceX, y: sourceY } = sourceNode;
-            let { x: targetX, y: targetY } = targetNode;
-            if (isHorizontal) {
-              sourceX = sourceNode.y;
-              sourceY = sourceNode.x;
-              targetX = targetNode.y;
-              targetY = targetNode.x;
-            }
-            // 为跨层级的边增加第一个控制点。忽略垂直的/横向的边。
-            // 新控制点 = {
-            //   x: 终点x,
-            //   y: (起点y + 下一层y) / 2,   #下一层y可能不等于终点y
-            // }
-            if (targetY !== sourceY && sourceX !== targetX) {
-              const nextLayerCoord =
-                layerCoordsArr[layerCoordsArr.indexOf(sourceY) + 1];
-              if (nextLayerCoord) {
-                const firstControlPoint = edges[i].controlPoints[0];
-                const insertControlPoint = isHorizontal
-                  ? {
-                      x: (sourceY + nextLayerCoord) / 2,
-                      y: firstControlPoint?.x || targetX,
-                    }
-                  : {
-                      x: firstControlPoint?.x || targetX,
-                      y: (sourceY + nextLayerCoord) / 2,
-                    };
-                // 当新增的控制点不存在（!=当前第一个控制点）时添加
-                if (
-                  !firstControlPoint ||
-                  firstControlPoint.y !== insertControlPoint.y
-                ) {
-                  edges[i].controlPoints.unshift(insertControlPoint);
-                }
-              }
-            }
-          }
-
+          edges[i].controlPoints = getControlPoints(
+            coord?.points,
+            sourceNode,
+            targetNode,
+            layerCoordsArr,
+            isHorizontal,
+            isDifferentLayer,
+            filterControlPointsOutOfBoundary
+          );
           edges[i].controlPoints.forEach((point: any) => {
             point.x += dBegin[0];
             point.y += dBegin[1];
@@ -639,3 +620,113 @@ export class DagreLayout extends Base {
     return "dagre";
   }
 }
+
+/**
+ * Format controlPoints to avoid polylines crossing nodes
+ * @param points
+ * @param sourceNode
+ * @param targetNode
+ * @param layerCoordsArr
+ * @param isHorizontal
+ * @returns
+ */
+const getControlPoints = (
+  points: Point[] | undefined,
+  sourceNode: OutNode,
+  targetNode: OutNode,
+  layerCoordsArr: number[],
+  isHorizontal: boolean,
+  isDifferentLayer: (point1: Point, point2: Point) => boolean,
+  filterControlPointsOutOfBoundary: (
+    ps: Point[],
+    point1: Point,
+    point2: Point
+  ) => Point[]
+) => {
+  let controlPoints = points?.slice(1, points.length - 1) || []; // 去掉头尾
+  // 酌情增加控制点，使折线不穿过跨层的节点
+  if (sourceNode && targetNode) {
+    let { x: sourceX, y: sourceY } = sourceNode;
+    let { x: targetX, y: targetY } = targetNode;
+    if (isHorizontal) {
+      sourceX = sourceNode.y;
+      sourceY = sourceNode.x;
+      targetX = targetNode.y;
+      targetY = targetNode.x;
+    }
+    // 为跨层级的边增加第一个控制点。忽略垂直的/横向的边。
+    // 新控制点 = {
+    //   x: 终点x,
+    //   y: (起点y + 下一层y) / 2,   #下一层y可能不等于终点y
+    // }
+    if (targetY !== sourceY && sourceX !== targetX) {
+      const sourceLayer = layerCoordsArr.indexOf(sourceY);
+      const sourceNextLayerCoord = layerCoordsArr[sourceLayer + 1];
+      if (sourceNextLayerCoord) {
+        const firstControlPoint = controlPoints[0];
+        const insertStartControlPoint = isHorizontal
+          ? {
+              x: (sourceY + sourceNextLayerCoord) / 2,
+              y: firstControlPoint?.y || targetX,
+            }
+          : {
+              x: firstControlPoint?.x || targetX,
+              y: (sourceY + sourceNextLayerCoord) / 2,
+            };
+        // 当新增的控制点不存在（!=当前第一个控制点）时添加
+        if (
+          !firstControlPoint ||
+          isDifferentLayer(firstControlPoint, insertStartControlPoint)
+        ) {
+          controlPoints.unshift(insertStartControlPoint);
+        }
+      }
+
+      const targetLayer = layerCoordsArr.indexOf(targetY);
+      const layerDiff = Math.abs(targetLayer - sourceLayer);
+      if (layerDiff === 1) {
+        controlPoints = filterControlPointsOutOfBoundary(
+          controlPoints,
+          sourceNode,
+          targetNode
+        );
+        // one controlPoint at least
+        if (!controlPoints.length) {
+          controlPoints.push(
+            isHorizontal
+              ? {
+                  x: (sourceY + targetY) / 2,
+                  y: sourceX,
+                }
+              : {
+                  x: sourceX,
+                  y: (sourceY + targetY) / 2,
+                }
+          );
+        }
+      } else if (layerDiff > 1) {
+        const targetLastLayerCoord = layerCoordsArr[targetLayer - 1];
+        if (targetLastLayerCoord) {
+          const lastControlPoints = controlPoints[controlPoints.length - 1];
+          const insertEndControlPoint = isHorizontal
+            ? {
+                x: (targetY + targetLastLayerCoord) / 2,
+                y: lastControlPoints?.y || targetX,
+              }
+            : {
+                x: lastControlPoints?.x || sourceX,
+                y: (targetY + targetLastLayerCoord) / 2,
+              };
+          // 当新增的控制点不存在（!=当前最后一个控制点）时添加
+          if (
+            !lastControlPoints ||
+            isDifferentLayer(lastControlPoints, insertEndControlPoint)
+          ) {
+            controlPoints.push(insertEndControlPoint);
+          }
+        }
+      }
+    }
+  }
+  return controlPoints;
+};
