@@ -101,7 +101,7 @@ const longestPathWithLayer = (g: Graph) => {
   };
 
   g.sources()?.forEach((source) => {
-    if (g.node(source)) dfs(source)
+    if (g.node(source)) dfs(source);
   });
 
   if (minRank! === undefined) {

@@ -1,5 +1,9 @@
 # ChangeLog
 
+### 0.3.17
+
+- fix: controlPoints problem in dagre with layer in data;
+
 ### 0.3.16
 
 - fix: fix node order problem of dagre;
@@ -134,10 +138,10 @@
 - fix: dagre error;
 
 #### 0.1.25
- 
- - fix: array flat and Infinite param problem;
- - fix: dagre with NaN node rank;
- - chore: lint;
+
+- fix: array flat and Infinite param problem;
+- fix: dagre with NaN node rank;
+- chore: lint;
 
 #### 0.1.23
 
