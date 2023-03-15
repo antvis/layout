@@ -19,6 +19,7 @@ export interface OutNodeData extends NodeData {
 export interface EdgeData extends PlainObject {
   // temp edges e.g. the edge generated for releated collapsed combo
   virtual?: boolean;
+  weight?: number;
 }
 
 /** input node */
