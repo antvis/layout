@@ -1,5 +1,5 @@
 import { Graph } from "../../graph";
-import { max } from './math';
+import { max } from '@antv/util';
 
 /*
  * Assigns an initial order value for each node by performing a DFS search

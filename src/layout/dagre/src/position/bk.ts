@@ -4,7 +4,7 @@
  */
 import { Graph as RawGraph } from "@antv/graphlib";
 import { Graph } from "../../graph";
-import { max, min } from '../order/math';
+import { max, min } from '@antv/util';
 import { buildLayerMatrix, minBy } from "../util";
 
 class BlockGraph extends RawGraph<string, string, number> {}
