@@ -2,11 +2,9 @@
  * This module provides coordinate assignment based on Brandes and Köpf, "Fast
  * and Simple Horizontal Coordinate Assignment."
  */
-import { Graph as RawGraph } from "@antv/graphlib";
-import { Graph } from "../../graph";
+import { Graph, ID, Node } from "@antv/graphlib";
+import { Graph as IGraph, NodeData } from "../../types";
 import { buildLayerMatrix, minBy } from "../util";
-
-class BlockGraph extends RawGraph<string, string, number> {}
 
 /*
  * Marks all edges in the graph with a type-1 conflict with the "type1Conflict"
@@ -26,12 +24,12 @@ class BlockGraph extends RawGraph<string, string, number> {}
  * single node in the layers being scanned.
  */
 
-type Conflicts = Record<string, Record<string, boolean>>;
+type Conflicts = Record<ID, Record<ID, boolean>>;
 
-export const findType1Conflicts = (g: Graph, layering?: string[][]) => {
+export const findType1Conflicts = (g: IGraph, layering?: ID[][]) => {
   const conflicts = {};
 
-  const visitLayer = (prevLayer: string[], layer: string[]) => {
+  const visitLayer = (prevLayer: ID[], layer: ID[]) => {
     // last visited node in the previous layer that is incident on an inner
     // segment.
     let k0 = 0;
@@ -41,20 +39,20 @@ export const findType1Conflicts = (g: Graph, layering?: string[][]) => {
     const prevLayerLength = prevLayer.length;
     const lastNode = layer?.[layer?.length - 1];
 
-    layer?.forEach((v: string, i: number) => {
+    layer?.forEach((v: ID, i: number) => {
       const w = findOtherInnerSegmentNode(g, v);
-      const k1 = w ? g.node(w)!.order! : prevLayerLength;
+      const k1 = w ? (g.getNode(w.id)!.data.order! as number) : prevLayerLength;
 
       if (w || v === lastNode) {
         layer.slice(scanPos, i + 1)?.forEach((scanNode) => {
-          g.predecessors(scanNode)?.forEach((u) => {
-            const uLabel = g.node(u)!;
-            const uPos = uLabel.order as number;
+          g.getPredecessors(scanNode)?.forEach((u) => {
+            const uLabel = g.getNode(u.id)!;
+            const uPos = uLabel.data.order as number;
             if (
               (uPos < k0 || k1 < uPos) &&
-              !(uLabel.dummy && g.node(scanNode)?.dummy)
+              !(uLabel.data.dummy && g.getNode(scanNode)?.data.dummy)
             ) {
-              addConflict(conflicts, u, scanNode);
+              addConflict(conflicts, u.id, scanNode);
             }
           });
         });
@@ -72,7 +70,7 @@ export const findType1Conflicts = (g: Graph, layering?: string[][]) => {
   return conflicts;
 };
 
-export const findType2Conflicts = (g: Graph, layering?: string[][]) => {
+export const findType2Conflicts = (g: IGraph, layering?: ID[][]) => {
   const conflicts = {};
 
   function scan(
@@ -85,35 +83,38 @@ export const findType2Conflicts = (g: Graph, layering?: string[][]) => {
     let v: string;
     for (let i = southPos; i < southEnd; i++) {
       v = south[i];
-      if (g.node(v)?.dummy) {
-        g.predecessors(v)?.forEach((u) => {
-          const uNode = g.node(u)!;
+      if (g.getNode(v)?.data.dummy) {
+        g.getPredecessors(v)?.forEach((u) => {
+          const uNode = g.getNode(u.id)!;
           if (
-            uNode.dummy &&
-            ((uNode.order as number) < prevNorthBorder ||
-              (uNode.order as number) > nextNorthBorder)
+            uNode.data.dummy &&
+            ((uNode.data.order as number) < prevNorthBorder ||
+              (uNode.data.order as number) > nextNorthBorder)
           ) {
-            addConflict(conflicts, u, v);
+            addConflict(conflicts, u.id, v);
           }
         });
       }
     }
-  };
+  }
 
   function getScannedKey(params: Parameters<typeof scan>) {
-      // south数组可能很大，不适合做key
-      return JSON.stringify(params.slice(1));
+    // south数组可能很大，不适合做key
+    return JSON.stringify(params.slice(1));
   }
-  
-  function scanIfNeeded(params: Parameters<typeof scan>, scanCache: Map<string, boolean>) {
+
+  function scanIfNeeded(
+    params: Parameters<typeof scan>,
+    scanCache: Map<string, boolean>
+  ) {
     const cacheKey = getScannedKey(params);
-    
+
     if (scanCache.get(cacheKey)) return;
 
     scan(...params);
     scanCache.set(cacheKey, true);
   }
-  
+
   const visitLayer = (north: string[], south: string[]) => {
     let prevNorthPos = -1;
     let nextNorthPos: number;
@@ -122,10 +123,10 @@ export const findType2Conflicts = (g: Graph, layering?: string[][]) => {
     const scanned = new Map<string, boolean>();
 
     south?.forEach((v: string, southLookahead: number) => {
-      if (g.node(v)?.dummy === "border") {
-        const predecessors = g.predecessors(v) || [];
+      if (g.getNode(v)?.data.dummy === "border") {
+        const predecessors = g.getPredecessors(v) || [];
         if (predecessors.length) {
-          nextNorthPos = g.node(predecessors[0]!)!.order as number;
+          nextNorthPos = g.getNode(predecessors[0].id)!.data.order as number;
           scanIfNeeded(
             [south, southPos, southLookahead, prevNorthPos, nextNorthPos],
             scanned
@@ -149,13 +150,13 @@ export const findType2Conflicts = (g: Graph, layering?: string[][]) => {
   return conflicts;
 };
 
-export const findOtherInnerSegmentNode = (g: Graph, v: string) => {
-  if (g.node(v)?.dummy) {
-    return g.predecessors(v)?.find((u) => g.node(u)!.dummy);
+export const findOtherInnerSegmentNode = (g: IGraph, v: ID) => {
+  if (g.getNode(v)?.data.dummy) {
+    return g.getPredecessors(v)?.find((u) => g.getNode(u.id).data.dummy);
   }
 };
 
-export const addConflict = (conflicts: Conflicts, v: string, w: string) => {
+export const addConflict = (conflicts: Conflicts, v: ID, w: ID) => {
   let vv = v;
   let ww = w;
   if (vv > ww) {
@@ -171,7 +172,7 @@ export const addConflict = (conflicts: Conflicts, v: string, w: string) => {
   conflictsV[ww] = true;
 };
 
-export const hasConflict = (conflicts: Conflicts, v: string, w: string) => {
+export const hasConflict = (conflicts: Conflicts, v: ID, w: ID) => {
   let vv = v;
   let ww = w;
   if (vv > ww) {
@@ -191,14 +192,14 @@ export const hasConflict = (conflicts: Conflicts, v: string, w: string) => {
  * blocks would be split in that scenario.
  */
 export const verticalAlignment = (
-  g: Graph,
-  layering: string[][],
+  g: IGraph,
+  layering: ID[][],
   conflicts: Conflicts,
-  neighborFn: (v: string) => string[]
+  neighborFn: (v: ID) => Node<NodeData>[]
 ) => {
-  const root: Record<string, string> = {};
-  const align: Record<string, string> = {};
-  const pos: Record<string, number> = {};
+  const root: Record<ID, ID> = {};
+  const align: Record<ID, ID> = {};
+  const pos: Record<ID, number> = {};
 
   // We cache the position here based on the layering because the graph and
   // layering may be out of sync. The layering matrix is manipulated to
@@ -214,9 +215,10 @@ export const verticalAlignment = (
   layering?.forEach((layer) => {
     let prevIdx = -1;
     layer?.forEach((v) => {
-      let ws = neighborFn(v);
+      let ws = neighborFn(v).map((n) => n.id);
+
       if (ws.length) {
-        ws = ws.sort((a: string, b: string) => pos[a] - pos[b]);
+        ws = ws.sort((a: ID, b: ID) => pos[a] - pos[b]);
         const mp = (ws.length - 1) / 2;
         for (let i = Math.floor(mp), il = Math.ceil(mp); i <= il; ++i) {
           const w = ws[i];
@@ -238,10 +240,12 @@ export const verticalAlignment = (
 };
 
 export const horizontalCompaction = (
-  g: Graph,
-  layering: string[][],
-  root: Record<string, string>,
-  align: Record<string, string>,
+  g: IGraph,
+  layering: ID[][],
+  root: Record<ID, ID>,
+  align: Record<ID, ID>,
+  nodesep: number,
+  edgesep: number,
   reverseSep?: boolean
 ) => {
   // This portion of the algorithm differs from BK due to a number of problems.
@@ -249,24 +253,31 @@ export const horizontalCompaction = (
   // sweeps. The first sweep places blocks with the smallest possible
   // coordinates. The second sweep removes unused space by moving blocks to the
   // greatest coordinates without violating separation.
-  const xs: Record<string, number> = {};
-  const blockG = buildBlockGraph(g, layering, root, reverseSep);
+  const xs: Record<ID, number> = {};
+  const blockG = buildBlockGraph(
+    g,
+    layering,
+    root,
+    nodesep,
+    edgesep,
+    reverseSep
+  );
   const borderType = reverseSep ? "borderLeft" : "borderRight";
 
   const iterate = (
-    setXsFunc: (param: string) => void,
-    nextNodesFunc: (param: string) => string
+    setXsFunc: (param: ID) => void,
+    nextNodesFunc: (param: ID) => Node<NodeData>
   ) => {
-    let stack = blockG.nodes();
+    let stack = blockG.getAllNodes();
     let elem = stack.pop();
-    const visited: Record<string, boolean> = {};
+    const visited: Record<ID, boolean> = {};
     while (elem) {
-      if (visited[elem]) {
-        setXsFunc(elem);
+      if (visited[elem.id]) {
+        setXsFunc(elem.id);
       } else {
-        visited[elem] = true;
+        visited[elem.id] = true;
         stack.push(elem);
-        stack = stack.concat(nextNodesFunc(elem));
+        stack = stack.concat(nextNodesFunc(elem.id));
       }
 
       elem = stack.pop();
@@ -274,26 +285,35 @@ export const horizontalCompaction = (
   };
 
   // First pass, assign smallest coordinates
-  const pass1 = (elem: string) => {
-    xs[elem] = (blockG.inEdges(elem) || []).reduce((acc: number, e) => {
-      return Math.max(acc, (xs[e.v] || 0) + blockG.edge(e)!);
-    }, 0);
+  const pass1 = (elem: ID) => {
+    xs[elem] = (blockG.getRelatedEdges(elem, "in") || []).reduce(
+      (acc: number, e) => {
+        return Math.max(acc, (xs[e.source] || 0) + e.data.weight!);
+      },
+      0
+    );
   };
 
   // Second pass, assign greatest coordinates
-  const pass2 = (elem: string) => {
-    const min = (blockG.outEdges(elem) || []).reduce((acc: number, e) => {
-      return Math.min(acc, (xs[e.w] || 0) - blockG.edge(e)!);
-    }, Number.POSITIVE_INFINITY);
+  const pass2 = (elem: ID) => {
+    const min = (blockG.getRelatedEdges(elem, "out") || []).reduce(
+      (acc: number, e) => {
+        return Math.min(acc, (xs[e.target] || 0) - e.data.weight!);
+      },
+      Number.POSITIVE_INFINITY
+    );
 
-    const node = g.node(elem)!;
-    if (min !== Number.POSITIVE_INFINITY && node.borderType !== borderType) {
+    const node = g.getNode(elem)!;
+    if (
+      min !== Number.POSITIVE_INFINITY &&
+      node.data.borderType !== borderType
+    ) {
       xs[elem] = Math.max(xs[elem], min);
     }
   };
 
-  iterate(pass1, blockG.predecessors.bind(blockG));
-  iterate(pass2, blockG.successors.bind(blockG));
+  iterate(pass1, blockG.getPredecessors.bind(blockG));
+  iterate(pass2, blockG.getSuccessors.bind(blockG));
 
   // Assign x coordinates to all nodes
   Object.values(align)?.forEach((v) => {
@@ -304,32 +324,38 @@ export const horizontalCompaction = (
 };
 
 export const buildBlockGraph = (
-  g: Graph,
-  layering: string[][],
-  root: Record<string, string>,
+  g: IGraph,
+  layering: ID[][],
+  root: Record<ID, ID>,
+  nodesep: number,
+  edgesep: number,
   reverseSep?: boolean
-) => {
-  const blockGraph = new BlockGraph();
-  const graphLabel = g.graph();
-  const sepFn = sep(
-    graphLabel.nodesep as number,
-    graphLabel.edgesep as number,
-    reverseSep as boolean
-  );
+): IGraph => {
+  const blockGraph = new Graph();
+  const sepFn = sep(nodesep, edgesep, reverseSep as boolean);
 
   layering?.forEach((layer) => {
-    let u: string;
+    let u: ID;
     layer?.forEach((v) => {
       const vRoot = root[v];
-      blockGraph.setNode(vRoot);
+      if (!blockGraph.hasNode(vRoot)) {
+        blockGraph.addNode({
+          id: vRoot,
+          data: {},
+        });
+      }
       if (u) {
         const uRoot = root[u];
-        const prevMax = blockGraph.edgeFromArgs(uRoot, vRoot);
-        blockGraph.setEdge(
-          uRoot,
-          vRoot,
-          Math.max(sepFn(g, v, u), prevMax || 0)
-        );
+        // FIXME: should we support multi-edges?
+        // const prevMax = blockGraph.edgeFromArgs(uRoot, vRoot);
+        blockGraph.addEdge({
+          id: `e${Math.random()}`,
+          source: uRoot,
+          target: vRoot,
+          data: {
+            weight: Math.max(sepFn(g, v, u), 0),
+          },
+        });
       }
       u = v;
     });
@@ -341,7 +367,7 @@ export const buildBlockGraph = (
  * Returns the alignment that has the smallest width of the given alignments.
  */
 export const findSmallestWidthAlignment = (
-  g: Graph,
+  g: IGraph,
   xss: Record<string, Record<string, number>>
 ) => {
   return minBy(Object.values(xss), (xs) => {
@@ -415,15 +441,24 @@ export const balance = (
   return result;
 };
 
-export const positionX = (g: Graph) => {
+export const positionX = (
+  g: IGraph,
+  options?: Partial<{
+    align: string;
+    nodesep: number;
+    edgesep: number;
+  }>
+) => {
+  const { align: graphAlign = "", nodesep = 0, edgesep = 0 } = options || {};
+
   const layering = buildLayerMatrix(g);
   const conflicts = Object.assign(
     findType1Conflicts(g, layering),
     findType2Conflicts(g, layering)
   );
 
-  const xss: Record<string, Record<string, number>> = {};
-  let adjustedLayering: string[][];
+  const xss: Record<string, Record<ID, number>> = {};
+  let adjustedLayering: ID[][];
   ["u", "d"].forEach((vert) => {
     adjustedLayering =
       vert === "u" ? layering : Object.values(layering).reverse();
@@ -434,7 +469,9 @@ export const positionX = (g: Graph) => {
         );
       }
 
-      const neighborFn = (vert === "u" ? g.predecessors : g.successors).bind(g);
+      const neighborFn = (
+        vert === "u" ? g.getPredecessors : g.getSuccessors
+      ).bind(g);
       const align = verticalAlignment(
         g,
         adjustedLayering,
@@ -446,6 +483,8 @@ export const positionX = (g: Graph) => {
         adjustedLayering,
         align.root,
         align.align,
+        nodesep,
+        edgesep,
         horiz === "r"
       );
       if (horiz === "r") {
@@ -459,24 +498,24 @@ export const positionX = (g: Graph) => {
 
   const smallestWidth = findSmallestWidthAlignment(g, xss);
   alignCoordinates(xss, smallestWidth);
-  return balance(xss, g.graph().align as string);
+  return balance(xss, graphAlign);
 };
 
 export const sep = (nodeSep: number, edgeSep: number, reverseSep: boolean) => {
-  return (g: Graph, v: string, w: string) => {
-    const vLabel = g.node(v)!;
-    const wLabel = g.node(w)!;
+  return (g: IGraph, v: ID, w: ID) => {
+    const vLabel = g.getNode(v)!;
+    const wLabel = g.getNode(w)!;
     let sum = 0;
-    let delta;
+    let delta: number = 0;
 
-    sum += vLabel.width! / 2;
-    if (vLabel.hasOwnProperty("labelpos")) {
-      switch ((vLabel.labelpos || "").toLowerCase()) {
+    sum += (vLabel.data.width as number) / 2;
+    if (vLabel.data.hasOwnProperty("labelpos")) {
+      switch (((vLabel.data.labelpos as string) || "").toLowerCase()) {
         case "l":
-          delta = -vLabel.width! / 2;
+          delta = (-vLabel.data.width! as number) / 2;
           break;
         case "r":
-          delta = vLabel.width! / 2;
+          delta = (vLabel.data.width! as number) / 2;
           break;
       }
     }
@@ -485,17 +524,17 @@ export const sep = (nodeSep: number, edgeSep: number, reverseSep: boolean) => {
     }
     delta = 0;
 
-    sum += (vLabel.dummy ? edgeSep : nodeSep) / 2;
-    sum += (wLabel.dummy ? edgeSep : nodeSep) / 2;
+    sum += (vLabel.data.dummy ? edgeSep : nodeSep) / 2;
+    sum += (wLabel.data.dummy ? edgeSep : nodeSep) / 2;
 
-    sum += wLabel.width! / 2;
-    if (wLabel.labelpos) {
-      switch ((wLabel.labelpos || "").toLowerCase()) {
+    sum += (wLabel.data.width! as number) / 2;
+    if (wLabel.data.labelpos) {
+      switch (((wLabel.data.labelpos as string) || "").toLowerCase()) {
         case "l":
-          delta = wLabel.width! / 2;
+          delta = (wLabel.data.width! as number) / 2;
           break;
         case "r":
-          delta = -wLabel.width! / 2;
+          delta = (-wLabel.data.width! as number) / 2;
           break;
       }
     }
@@ -508,4 +547,5 @@ export const sep = (nodeSep: number, edgeSep: number, reverseSep: boolean) => {
   };
 };
 
-export const width = (g: Graph, v: string) => g.node(v)!.width || 0;
+export const width = (g: IGraph, v: ID) =>
+  (g.getNode(v)!.data.width as number) || 0;

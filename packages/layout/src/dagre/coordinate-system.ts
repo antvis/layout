@@ -1,77 +1,86 @@
-import { Graph } from "../graph";
+import { Node } from "@antv/graphlib";
+import { Graph, NodeData } from "../types";
 
-const adjust = (g: Graph) => {
-  const rankDir = g.graph().rankdir?.toLowerCase();
-  if (rankDir === "lr" || rankDir === "rl") {
+const adjust = (
+  g: Graph,
+  rankDir: "TB" | "BT" | "LR" | "RL" | "tb" | "lr" | "rl" | "bt"
+) => {
+  const rd = rankDir.toLowerCase();
+  if (rd === "lr" || rd === "rl") {
     swapWidthHeight(g);
   }
 };
 
-const undo = (g: Graph) => {
-  const rankDir = g.graph().rankdir?.toLowerCase();
-  if (rankDir === "bt" || rankDir === "rl") {
+const undo = (
+  g: Graph,
+  rankDir: "TB" | "BT" | "LR" | "RL" | "tb" | "lr" | "rl" | "bt"
+) => {
+  const rd = rankDir.toLowerCase();
+  if (rd === "bt" || rd === "rl") {
     reverseY(g);
   }
 
-  if (rankDir === "lr" || rankDir === "rl") {
+  if (rd === "lr" || rd === "rl") {
     swapXY(g);
     swapWidthHeight(g);
   }
 };
 
 const swapWidthHeight = (g: Graph) => {
-  g.nodes().forEach((v) => {
-    swapWidthHeightOne(g.node(v)!);
+  g.getAllNodes().forEach((v) => {
+    swapWidthHeightOne(v);
   });
-  g.edges().forEach((e) => {
-    swapWidthHeightOne(g.edge(e)!);
+  g.getAllEdges().forEach((e) => {
+    swapWidthHeightOne(e);
   });
 };
 
-const swapWidthHeightOne = (attrs: { width?: number; height?: number }) => {
-  const w = attrs.width;
-  attrs.width = attrs.height;
-  attrs.height = w;
+const swapWidthHeightOne = (node: Node<NodeData>) => {
+  const w = node.data.width;
+  node.data.width = node.data.height;
+  node.data.height = w;
 };
 
 const reverseY = (g: Graph) => {
-  g.nodes().forEach((v) => {
-    reverseYOne(g.node(v)!);
+  g.getAllNodes().forEach((v) => {
+    reverseYOne(v);
   });
 
-  g.edges().forEach((e) => {
-    const edge = g.edge(e)!;
-    edge.points?.forEach((point) => reverseYOne(point));
-    if (edge.hasOwnProperty("y")) {
-      reverseYOne(edge as { y: number });
+  g.getAllEdges().forEach((edge) => {
+    (edge.data.points as Node<NodeData>[])?.forEach((point) =>
+      reverseYOne(point)
+    );
+    if (edge.data.hasOwnProperty("y")) {
+      reverseYOne(edge);
     }
   });
 };
 
-const reverseYOne = (attrs: { y?: number }) => {
-  if (attrs?.y) {
-    attrs.y = -attrs.y;
+const reverseYOne = (node: Node<NodeData>) => {
+  if (node.data.y) {
+    node.data.y = -node.data.y;
   }
 };
 
 const swapXY = (g: Graph) => {
-  g.nodes().forEach((v) => {
-    swapXYOne(g.node(v));
+  g.getAllNodes().forEach((v) => {
+    swapXYOne(v);
   });
 
-  g.edges().forEach((e) => {
-    const edge = g.edge(e)!;
-    edge.points?.forEach((point) => swapXYOne(point));
-    if (edge.hasOwnProperty("x")) {
+  g.getAllEdges().forEach((edge) => {
+    (edge.data.points as Node<NodeData>[])?.forEach((point) =>
+      swapXYOne(point)
+    );
+    if (edge.data.hasOwnProperty("x")) {
       swapXYOne(edge);
     }
   });
 };
 
-const swapXYOne = (attrs: any) => {
-  const x = attrs.x;
-  attrs.x = attrs.y;
-  attrs.y = x;
+const swapXYOne = (node: Node<NodeData>) => {
+  const x = node.data.x;
+  node.data.x = node.data.y;
+  node.data.y = x;
 };
 
 export default { adjust, undo };

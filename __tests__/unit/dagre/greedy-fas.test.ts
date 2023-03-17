@@ -1,5 +1,6 @@
 import { Edge, Graph } from "@antv/graphlib";
 import { Graph as IGraph, NodeData, EdgeData } from "@antv/layout";
+// import { detectCycle } from "@antv/algorithm";
 import greedyFAS from "../../../packages/layout/src/dagre/greedy-fas";
 
 describe("greedyFAS", function () {
@@ -403,7 +404,7 @@ function checkFAS(g: IGraph, fas: Edge<EdgeData>[]) {
     g.removeEdge(edge.id);
   });
   // TODO: findCycles
-  // expect(findCycles(g)).toEqual([]);
+  // expect(detectCycle(g)).toEqual([]);
   // The more direct m/2 - n/6 fails for the simple cycle A <-> B, where one
   // edge must be reversed, but the performance bound implies that only 2/3rds
   // of an edge can be reversed. I'm using floors to acount for this.

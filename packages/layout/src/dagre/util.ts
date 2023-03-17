@@ -1,29 +1,32 @@
-import { ID } from "@antv/graphlib";
-import { Graph } from "../types";
+import { ID, Graph, Node } from "@antv/graphlib";
+import { Graph as IGraph, NodeData } from "../types";
 
 const safeSort = (valueA?: number, valueB?: number) => {
   return Number(valueA) - Number(valueB);
 };
 
-// /*
-//  * Adds a dummy node to the graph and return v.
-//  */
-// export const addDummyNode = (
-//   g: Graph,
-//   type: string,
-//   attrs: Node<Record<string, any>>,
-//   name: string
-// ) => {
-//   let v: ID;
-//   do {
-//     v = `${name}${Math.random()}`;
-//   } while (g.hasNode(v));
+/*
+ * Adds a dummy node to the graph and return v.
+ */
+export const addDummyNode = (
+  g: IGraph,
+  type: string,
+  data: NodeData,
+  name: string
+) => {
+  let v: ID;
+  do {
+    v = `${name}${Math.random()}`;
+  } while (g.hasNode(v));
 
-//   attrs.dummy = type;
-//   g.updateNodeData(v, attrs);
+  data.dummy = type;
+  g.addNode({
+    id: v,
+    data,
+  });
 
-//   return v;
-// };
+  return v;
+};
 
 // /*
 //  * Returns a new graph with only simple edges. Handles aggregation of data
@@ -48,11 +51,10 @@ const safeSort = (valueA?: number, valueB?: number) => {
 //   return simplified;
 // };
 
-// export const asNonCompoundGraph = (g: Graph) => {
-//   const simplified = new Graph({ multigraph: g.isMultigraph() }).setGraph(
-//     g.graph()
-//   );
-//   g.nodes().forEach((node) => {
+// export const asNonCompoundGraph = (g: IGraph) => {
+//   const simplified = new Graph();
+
+//   g.getAllNodes().forEach((node) => {
 //     if (!g.children(node)?.length) {
 //       simplified.setNode(node, g.node(node));
 //     }
@@ -148,7 +150,7 @@ export const zipObject = <T = any>(keys: ID[], values: T[]) => {
  * Given a DAG with each node assigned "rank" and "order" properties, this
  * const will produce a matrix with the ids of each node.
  */
-export const buildLayerMatrix = (g: Graph) => {
+export const buildLayerMatrix = (g: IGraph) => {
   const layeringNodes: ID[][] = [];
   const rankMax = maxRank(g) + 1;
   for (let i = 0; i < rankMax; i++) {
@@ -250,7 +252,7 @@ export const buildLayerMatrix = (g: Graph) => {
 //   return addDummyNode(g, "border", node, prefix);
 // };
 
-export const maxRank = (g: Graph) => {
+export const maxRank = (g: IGraph) => {
   let maxRank: number;
   g.getAllNodes().forEach((v) => {
     const rank = v.data.rank as number;

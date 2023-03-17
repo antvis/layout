@@ -52,7 +52,7 @@ const initOrder = (g: Graph) => {
   });
 
   orderedVs?.forEach((n) =>
-    g.dfs(n.id, (node) => {
+    g.dfsTree(n.id, (node) => {
       if (visited.hasOwnProperty(node.id)) return true;
       visited[node.id] = true;
       if (!isNaN(node.data.rank as number)) {

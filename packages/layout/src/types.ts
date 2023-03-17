@@ -4,11 +4,14 @@ import {
   Edge as IEdge,
   PlainObject,
   GraphView as IGraphView,
+  ID,
 } from "@antv/graphlib";
 
 export interface NodeData extends PlainObject {
   size?: number | number[];
   bboxSize?: number[];
+  borderLeft?: ID | ID[];
+  borderRight?: ID | ID[];
 }
 
 export interface OutNodeData extends NodeData {
