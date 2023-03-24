@@ -1,6 +1,7 @@
-import { slack } from './util';
-import { minBy } from '../util';
-import { Graph } from '../../graph';
+import { slack } from "./util";
+import { minBy } from "../util";
+import { Edge, Graph, ID } from "@antv/graphlib";
+import { EdgeData, Graph as IGraph } from "../../types";
 
 /*
  * Constructs a spanning tree with tight edges and adjusted the input node's
@@ -27,19 +28,19 @@ import { Graph } from '../../graph';
  * Returns a tree (undirected graph) that is constructed using only "tight"
  * edges.
  */
-const feasibleTree = (g: Graph) => {
-  const t = new Graph({ directed: false });
+const feasibleTree = (g: IGraph) => {
+  const t = new Graph();
 
   // Choose arbitrary node from which to start our tree
-  const start = g.nodes()[0];
-  const size = g.nodeCount();
-  t.setNode(start, {});
+  const start = g.getAllNodes()[0];
+  const size = g.getAllNodes().length;
+  t.addNode(start);
 
-  let edge: any;
+  let edge: Edge<EdgeData>;
   let delta: number;
   while (tightTree(t, g) < size) {
     edge = findMinSlackEdge(t, g);
-    delta = t.hasNode(edge.v) ? slack(g, edge) : -slack(g, edge);
+    delta = t.hasNode(edge.source) ? slack(g, edge) : -slack(g, edge);
     shiftRanks(t, g, delta);
   }
 
@@ -50,21 +51,29 @@ const feasibleTree = (g: Graph) => {
  * Finds a maximal tree of tight edges and returns the number of nodes in the
  * tree.
  */
-const tightTree = (t: Graph, g: Graph) => {
-  const dfs = (v: string) => {
-    g.nodeEdges(v)!.forEach((e) => {
-      const edgeV = e.v;
-      const w = (v === edgeV) ? e.w : edgeV;
+const tightTree = (t: IGraph, g: IGraph) => {
+  const dfs = (v: ID) => {
+    g.getRelatedEdges(v, "both").forEach((e) => {
+      const edgeV = e.source;
+      const w = v === edgeV ? e.target : edgeV;
       if (!t.hasNode(w) && !slack(g, e)) {
-        t.setNode(w, {});
-        t.setEdge(v, w, {});
+        t.addNode({
+          id: w,
+          data: {},
+        });
+        t.addEdge({
+          id: e.id,
+          source: v,
+          target: w,
+          data: {},
+        });
         dfs(w);
       }
     });
   };
 
-  t.nodes().forEach(dfs);
-  return t.nodeCount();
+  t.getAllNodes().forEach((n) => dfs(n.id));
+  return t.getAllNodes().length;
 };
 
 /*
@@ -92,74 +101,76 @@ const tightTree = (t: Graph, g: Graph) => {
  * Returns a tree (undirected graph) that is constructed using only "tight"
  * edges.
  */
-const feasibleTreeWithLayer = (g: Graph) => {
-  const t = new Graph({ directed: false }) as any;
+const feasibleTreeWithLayer = (g: IGraph) => {
+  const t = new Graph();
 
   // Choose arbitrary node from which to start our tree
-  const start = g.nodes()[0];
-  const size = g.nodes().filter((n) => !!g.node(n)).length;
-  t.setNode(start, {});
+  const start = g.getAllNodes()[0];
+  const size = g.getAllNodes().length;
+  t.addNode(start);
 
-  let edge: any;
+  let edge: Edge<EdgeData>;
   let delta: number;
   while (tightTreeWithLayer(t, g)! < size) {
     edge = findMinSlackEdge(t, g);
-    delta = t.hasNode(edge.v) ? slack(g, edge) : -slack(g, edge);
+    delta = t.hasNode(edge.source) ? slack(g, edge) : -slack(g, edge);
     shiftRanks(t, g, delta);
   }
 
   return t;
 };
 
-
 /*
  * Finds a maximal tree of tight edges and returns the number of nodes in the
  * tree.
  */
-const tightTreeWithLayer = (t: Graph, g: Graph) => {
-  const dfs = (v: string) => {
-    g.nodeEdges(v)?.forEach((e) => {
-      const edgeV = e.v;
-      const w = (v === edgeV) ? e.w : edgeV;
+const tightTreeWithLayer = (t: IGraph, g: IGraph) => {
+  const dfs = (v: ID) => {
+    g.getRelatedEdges(v, "both")?.forEach((e) => {
+      const edgeV = e.source;
+      const w = v === edgeV ? e.target : edgeV;
       // 对于指定layer的，直接加入tight-tree，不参与调整
-      if (!t.hasNode(w) && (g.node(w)!.layer !== undefined || !slack(g, e))) {
-        t.setNode(w, {});
-        t.setEdge(v, w, {});
+      if (
+        !t.hasNode(w) &&
+        (g.getNode(w)!.data.layer !== undefined || !slack(g, e))
+      ) {
+        t.addNode({
+          id: w,
+          data: {},
+        });
+        t.addEdge({
+          id: e.id,
+          source: v,
+          target: w,
+          data: {},
+        });
         dfs(w);
       }
     });
   };
 
-  t.nodes().forEach(dfs);
-  return t.nodeCount();
+  t.getAllNodes().forEach((n) => dfs(n.id));
+  return t.getAllNodes().length;
 };
 
 /*
  * Finds the edge with the smallest slack that is incident on tree and returns
  * it.
  */
-const findMinSlackEdge = (t: Graph, g: Graph) => {
-  return minBy(g.edges(), (e: any) => {
-    if (t.hasNode(e.v) !== t.hasNode(e.w)) {
+const findMinSlackEdge = (t: IGraph, g: IGraph) => {
+  return minBy(g.getAllEdges(), (e) => {
+    if (t.hasNode(e.source) !== t.hasNode(e.target)) {
       return slack(g, e);
     }
     return Infinity;
   });
 };
 
-const shiftRanks = (t: Graph, g: Graph, delta: number) => {
-  t.nodes().forEach((v: string) => {
-    if (!g.node(v)!.rank) g.node(v)!.rank = 0;
-    (g.node(v)!.rank as number) += delta;
+const shiftRanks = (t: IGraph, g: IGraph, delta: number) => {
+  t.getAllNodes().forEach((v) => {
+    if (!v.data.rank) v.data.rank = 0;
+    (v.data.rank as number) += delta;
   });
 };
 
-export {
-  feasibleTree,
-  feasibleTreeWithLayer
-};
-
-export default {
-  feasibleTree,
-  feasibleTreeWithLayer
-};
+export { feasibleTree, feasibleTreeWithLayer };

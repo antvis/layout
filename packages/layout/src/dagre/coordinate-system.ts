@@ -83,4 +83,4 @@ const swapXYOne = (node: Node<NodeData>) => {
   node.data.y = x;
 };
 
-export default { adjust, undo };
+export { adjust, undo };

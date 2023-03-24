@@ -1,6 +1,6 @@
 import { Edge, Graph } from "@antv/graphlib";
 import { Graph as IGraph, NodeData, EdgeData } from "../../../packages/layout";
-import addBorderSegments from "../../../packages/layout/src/dagre/add-border-segments";
+import { addBorderSegments } from "../../../packages/layout/src/dagre/add-border-segments";
 
 describe("addBorderSegments", function () {
   let g: Graph<NodeData, EdgeData>;
@@ -65,7 +65,9 @@ describe("addBorderSegments", function () {
     addBorderSegments(g);
 
     let sgNode = g.getNode("sg");
+    // @ts-ignore
     let bl2 = sgNode.data.borderLeft[1];
+    // @ts-ignore
     let br2 = sgNode.data.borderRight[1];
     expect(g.getNode(bl2).data).toEqual({
       dummy: "border",
@@ -84,7 +86,9 @@ describe("addBorderSegments", function () {
     });
     expect(g.getParent(br2)?.id).toEqual("sg");
 
+    // @ts-ignore
     let bl1 = sgNode.data.borderLeft[2];
+    // @ts-ignore
     let br1 = sgNode.data.borderRight[2];
     expect(g.getNode(bl1).data).toEqual({
       dummy: "border",
@@ -105,12 +109,16 @@ describe("addBorderSegments", function () {
 
     expect(
       g
+        // @ts-ignore
         .getRelatedEdges(sgNode.data.borderLeft[1], "out")
+        // @ts-ignore
         .find((e) => e.target === sgNode.data.borderLeft[2])
     ).toBeTruthy();
     expect(
       g
+        // @ts-ignore
         .getRelatedEdges(sgNode.data.borderRight[1], "out")
+        // @ts-ignore
         .find((e) => e.target === sgNode.data.borderRight[2])
     ).toBeTruthy();
   });
@@ -127,7 +135,9 @@ describe("addBorderSegments", function () {
     g.setParent("sg2", "sg1");
     addBorderSegments(g);
 
+    // @ts-ignore
     let bl1 = g.getNode("sg1").data.borderLeft[1];
+    // @ts-ignore
     let br1 = g.getNode("sg1").data.borderRight[1];
     expect(g.getNode(bl1).data).toEqual({
       dummy: "border",
@@ -146,7 +156,9 @@ describe("addBorderSegments", function () {
     });
     expect(g.getParent(br1)?.id).toEqual("sg1");
 
+    // @ts-ignore
     let bl2 = g.getNode("sg2").data.borderLeft[1];
+    // @ts-ignore
     let br2 = g.getNode("sg2").data.borderRight[1];
     expect(g.getNode(bl2).data).toEqual({
       dummy: "border",

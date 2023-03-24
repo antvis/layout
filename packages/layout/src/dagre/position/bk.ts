@@ -346,16 +346,25 @@ export const buildBlockGraph = (
       }
       if (u) {
         const uRoot = root[u];
-        // FIXME: should we support multi-edges?
-        // const prevMax = blockGraph.edgeFromArgs(uRoot, vRoot);
-        blockGraph.addEdge({
-          id: `e${Math.random()}`,
-          source: uRoot,
-          target: vRoot,
-          data: {
-            weight: Math.max(sepFn(g, v, u), 0),
-          },
-        });
+
+        let edge = blockGraph
+          .getRelatedEdges(uRoot, "out")
+          .find((edge) => edge.target === vRoot);
+        if (!edge) {
+          blockGraph.addEdge({
+            id: `e${Math.random()}`,
+            source: uRoot,
+            target: vRoot,
+            data: {
+              weight: Math.max(sepFn(g, v, u), 0),
+            },
+          });
+        } else {
+          blockGraph.updateEdgeData(edge.id, {
+            ...edge.data,
+            weight: Math.max(sepFn(g, v, u), (edge.data.weight as number) || 0),
+          });
+        }
       }
       u = v;
     });

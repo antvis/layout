@@ -1,4 +1,5 @@
-import { ID, Graph, Node } from "@antv/graphlib";
+import { ID, Graph } from "@antv/graphlib";
+import { isNumber } from "@antv/util";
 import { Graph as IGraph, NodeData } from "../types";
 
 const safeSort = (valueA?: number, valueB?: number) => {
@@ -13,7 +14,7 @@ export const addDummyNode = (
   type: string,
   data: NodeData,
   name: string
-) => {
+): ID => {
   let v: ID;
   do {
     v = `${name}${Math.random()}`;
@@ -28,44 +29,58 @@ export const addDummyNode = (
   return v;
 };
 
-// /*
-//  * Returns a new graph with only simple edges. Handles aggregation of data
-//  * associated with multi-edges.
-//  */
-// export const simplify = (g: Graph) => {
-//   const simplified = new Graph().setGraph(g.graph());
-//   g.nodes().forEach((v) => {
-//     simplified.setNode(v, g.node(v));
-//   });
-//   g.edges().forEach((e) => {
-//     const simpleLabel = simplified.edgeFromArgs(e.v, e.w) || {
-//       weight: 0,
-//       minlen: 1,
-//     };
-//     const label = g.edge(e)!;
-//     simplified.setEdge(e.v, e.w, {
-//       weight: simpleLabel.weight! + label.weight!,
-//       minlen: Math.max(simpleLabel.minlen!, label.minlen!),
-//     });
-//   });
-//   return simplified;
-// };
+/*
+ * Returns a new graph with only simple edges. Handles aggregation of data
+ * associated with multi-edges.
+ */
+export const simplify = (g: IGraph) => {
+  const simplified = new Graph();
+  g.getAllNodes().forEach((v) => {
+    simplified.addNode(v);
+  });
+  g.getAllEdges().forEach((e) => {
+    let edge = simplified
+      .getRelatedEdges(e.source, "out")
+      .find((edge) => edge.target === e.target);
+    if (!edge) {
+      simplified.addEdge({
+        id: e.id,
+        source: e.source,
+        target: e.target,
+        data: {
+          weight: (e.data.weight as number) || 0,
+          minlen: (e.data.minlen as number) || 1,
+        },
+      });
+    } else {
+      simplified.updateEdgeData(edge?.id!, {
+        ...edge.data,
+        weight: (edge.data.weight as number) + (e.data.weight as number) || 0,
+        minlen: Math.max(
+          edge.data.minlen as number,
+          (e.data.minlen as number) || 1
+        ),
+      });
+    }
+  });
+  return simplified;
+};
 
-// export const asNonCompoundGraph = (g: IGraph) => {
-//   const simplified = new Graph();
+export const asNonCompoundGraph = (g: IGraph): IGraph => {
+  const simplified = new Graph();
 
-//   g.getAllNodes().forEach((node) => {
-//     if (!g.children(node)?.length) {
-//       simplified.setNode(node, g.node(node));
-//     }
-//   });
+  g.getAllNodes().forEach((node) => {
+    if (!g.getChildren(node.id).length) {
+      simplified.addNode(node);
+    }
+  });
 
-//   g.edges().forEach((edge) => {
-//     simplified.setEdgeObj(edge, g.edge(edge));
-//   });
+  g.getAllEdges().forEach((edge) => {
+    simplified.addEdge(edge);
+  });
 
-//   return simplified;
-// };
+  return simplified;
+};
 
 export const zipObject = <T = any>(keys: ID[], values: T[]) => {
   return keys?.reduce((obj, key, i) => {
@@ -74,77 +89,80 @@ export const zipObject = <T = any>(keys: ID[], values: T[]) => {
   }, {} as Record<ID, T>);
 };
 
-// export const successorWeights = (g: Graph) => {
-//   const weightsMap: Record<string, Record<string, number>> = {};
+export const successorWeights = (g: IGraph) => {
+  const weightsMap: Record<ID, Record<string, number>> = {};
 
-//   g.nodes().forEach((node) => {
-//     const sucs: Record<string, number> = {};
-//     g.outEdges(node)?.forEach((e) => {
-//       sucs[e.w] = (sucs[e.w] || 0) + (g.edge(e)?.weight || 0);
-//     });
-//     weightsMap[node] = sucs;
-//   });
+  g.getAllNodes().forEach((node) => {
+    const sucs: Record<ID, number> = {};
+    g.getRelatedEdges(node.id, "out").forEach((e) => {
+      sucs[e.target] = (sucs[e.target] || 0) + (e.data.weight || 0);
+    });
+    weightsMap[node.id] = sucs;
+  });
 
-//   return weightsMap;
-// };
+  return weightsMap;
+};
 
-// export const predecessorWeights = (g: Graph) => {
-//   const nodes = g.nodes();
+export const predecessorWeights = (g: IGraph) => {
+  const nodes = g.getAllNodes();
 
-//   const weightMap = nodes.map((v) => {
-//     const preds: Record<string, number> = {};
-//     g.inEdges(v)?.forEach((e) => {
-//       preds[e.v] = (preds[e.v] || 0) + g.edge(e)!.weight!;
-//     });
-//     return preds;
-//   });
-//   return zipObject(nodes, weightMap);
-// };
+  const weightMap = nodes.map((v) => {
+    const preds: Record<ID, number> = {};
+    g.getRelatedEdges(v.id, "in").forEach((e) => {
+      preds[e.source] = (preds[e.source] || 0) + e.data.weight!;
+    });
+    return preds;
+  });
+  return zipObject(
+    nodes.map((n) => n.id),
+    weightMap
+  );
+};
 
-// /*
-//  * Finds where a line starting at point ({x, y}) would intersect a rectangle
-//  * ({x, y, width, height}) if it were pointing at the rectangle's center.
-//  */
-// export const intersectRect = (
-//   rect: { x?: number; y?: number; width?: number; height?: number },
-//   point: { x?: number; y?: number }
-// ) => {
-//   const x = Number(rect.x);
-//   const y = Number(rect.y);
+/*
+ * Finds where a line starting at point ({x, y}) would intersect a rectangle
+ * ({x, y, width, height}) if it were pointing at the rectangle's center.
+ */
+export const intersectRect = (
+  rect: { x?: number; y?: number; width?: number; height?: number },
+  point: { x?: number; y?: number }
+) => {
+  const x = Number(rect.x);
+  const y = Number(rect.y);
 
-//   // Rectangle intersection algorithm from:
-//   // http://math.stackexchange.com/questions/108113/find-edge-between-two-boxes
-//   const dx = Number(point.x) - x;
-//   const dy = Number(point.y) - y;
-//   let w = Number(rect.width) / 2;
-//   let h = Number(rect.height) / 2;
+  // Rectangle intersection algorithm from:
+  // http://math.stackexchange.com/questions/108113/find-edge-between-two-boxes
+  const dx = Number(point.x) - x;
+  const dy = Number(point.y) - y;
+  let w = Number(rect.width) / 2;
+  let h = Number(rect.height) / 2;
 
-//   if (!dx && !dy) {
-//     // completely overlapped directly, then return points its self
-//     return { x: 0, y: 0 };
-//   }
+  if (!dx && !dy) {
+    // completely overlapped directly, then return points its self
+    return { x: 0, y: 0 };
+  }
 
-//   let sx;
-//   let sy;
+  let sx;
+  let sy;
 
-//   if (Math.abs(dy) * w > Math.abs(dx) * h) {
-//     // Intersection is top or bottom of rect.
-//     if (dy < 0) {
-//       h = -h;
-//     }
-//     sx = (h * dx) / dy;
-//     sy = h;
-//   } else {
-//     // Intersection is left or right of rect.
-//     if (dx < 0) {
-//       w = -w;
-//     }
-//     sx = w;
-//     sy = (w * dy) / dx;
-//   }
+  if (Math.abs(dy) * w > Math.abs(dx) * h) {
+    // Intersection is top or bottom of rect.
+    if (dy < 0) {
+      h = -h;
+    }
+    sx = (h * dx) / dy;
+    sy = h;
+  } else {
+    // Intersection is left or right of rect.
+    if (dx < 0) {
+      w = -w;
+    }
+    sx = w;
+    sy = (w * dy) / dx;
+  }
 
-//   return { x: x + sx, y: y + sy };
-// };
+  return { x: x + sx, y: y + sy };
+};
 
 /*
  * Given a DAG with each node assigned "rank" and "order" properties, this
@@ -177,80 +195,77 @@ export const buildLayerMatrix = (g: IGraph) => {
   return layeringNodes;
 };
 
-// /*
-//  * Adjusts the ranks for all nodes in the graph such that all nodes v have
-//  * rank(v) >= 0 and at least one node w has rank(w) = 0.
-//  */
-// export const normalizeRanks = (g: Graph) => {
-//   const nodeRanks = g
-//     .nodes()
-//     .filter((v) => g.node(v)?.rank !== undefined)
-//     .map((v) => g.node(v)!.rank!);
-//   const min = Math.min(...nodeRanks);
-//   g.nodes().forEach((v) => {
-//     const node = g.node(v)!;
-//     if (node.hasOwnProperty("rank") && min !== Infinity) {
-//       node.rank! -= min;
-//     }
-//   });
-// };
+/*
+ * Adjusts the ranks for all nodes in the graph such that all nodes v have
+ * rank(v) >= 0 and at least one node w has rank(w) = 0.
+ */
+export const normalizeRanks = (g: IGraph) => {
+  const nodeRanks = g
+    .getAllNodes()
+    .filter((v) => v.data.rank !== undefined)
+    .map((v) => v.data.rank! as number);
+  const min = Math.min(...nodeRanks);
+  g.getAllNodes().forEach((v) => {
+    if (v.data.hasOwnProperty("rank") && min !== Infinity) {
+      (v.data.rank! as number) -= min;
+    }
+  });
+};
 
-// export const removeEmptyRanks = (g: Graph) => {
-//   // Ranks may not start at 0, so we need to offset them
-//   const nodes = g.nodes();
-//   const nodeRanks = nodes
-//     .filter((v) => g.node(v)?.rank !== undefined)
-//     .map((v) => g.node(v)!.rank as number);
+export const removeEmptyRanks = (g: IGraph, nodeRankFactor: number = 0) => {
+  // Ranks may not start at 0, so we need to offset them
+  const nodes = g.getAllNodes();
+  const nodeRanks = nodes
+    .filter((v) => v.data.rank !== undefined)
+    .map((v) => v.data.rank as number);
 
-//   const offset = Math.min(...nodeRanks);
-//   const layers: string[][] = [];
+  const offset = Math.min(...nodeRanks);
+  const layers: string[][] = [];
 
-//   nodes.forEach((v) => {
-//     const rank = (g.node(v)?.rank || 0) - offset;
+  nodes.forEach((v) => {
+    const rank = ((v.data.rank as number) || 0) - offset;
 
-//     if (!layers[rank]) {
-//       layers[rank] = [];
-//     }
-//     layers[rank].push(v);
-//   });
+    if (!layers[rank]) {
+      layers[rank] = [];
+    }
+    layers[rank].push(v.id as string);
+  });
 
-//   let delta = 0;
-//   const nodeRankFactor = g.graph().nodeRankFactor || 0;
+  let delta = 0;
+  for (let i = 0; i < layers.length; i++) {
+    const vs = layers[i];
+    if (vs === undefined) {
+      if (i % nodeRankFactor !== 0) {
+        delta -= 1;
+      }
+    } else if (delta) {
+      vs?.forEach((v: ID) => {
+        const node = g.getNode(v);
+        if (node) {
+          node.data.rank = node.data.rank || 0;
+          (node.data.rank as number) += delta;
+        }
+      });
+    }
+  }
+};
 
-//   for (let i = 0; i < layers.length; i++) {
-//     const vs = layers[i];
-//     if (vs === undefined) {
-//       if (i % nodeRankFactor !== 0) {
-//         delta -= 1;
-//       }
-//     } else if (delta) {
-//       vs?.forEach((v: string) => {
-//         const node = g.node(v);
-//         if (node) {
-//           node.rank = node.rank || 0;
-//           node.rank += delta;
-//         }
-//       });
-//     }
-//   }
-// };
-
-// export const addBorderNode = (
-//   g: Graph,
-//   prefix: string,
-//   rank?: number,
-//   order?: number
-// ) => {
-//   const node: Node = {
-//     width: 0,
-//     height: 0,
-//   };
-//   if (isNumber(rank) && isNumber(order)) {
-//     node.rank = rank;
-//     node.order = order;
-//   }
-//   return addDummyNode(g, "border", node, prefix);
-// };
+export const addBorderNode = (
+  g: IGraph,
+  prefix: string,
+  rank?: number,
+  order?: number
+) => {
+  const node: NodeData = {
+    width: 0,
+    height: 0,
+  };
+  if (isNumber(rank) && isNumber(order)) {
+    node.rank = rank;
+    node.order = order;
+  }
+  return addDummyNode(g, "border", node, prefix);
+};
 
 export const maxRank = (g: IGraph) => {
   let maxRank: number;

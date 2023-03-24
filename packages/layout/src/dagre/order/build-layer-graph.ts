@@ -77,6 +77,7 @@ const buildLayerGraph = (g: IGraph, rank: number, direction: "in" | "out") => {
 
       if ("minRank" in v.data) {
         result.updateNodeData(v.id, {
+          ...v.data,
           // @ts-ignore
           borderLeft: v.data.borderLeft[rank],
           // @ts-ignore

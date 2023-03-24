@@ -1,5 +1,15 @@
-import { Graph, ID } from "@antv/graphlib";
-import { Graph as IGraph } from "../types";
+/*
+ * A greedy heuristic for finding a feedback arc set for a graph. A feedback
+ * arc set is a set of edges that can be removed to make a graph acyclic.
+ * The algorithm comes from: P. Eades, X. Lin, and W. F. Smyth, "A fast and
+ * effective heuristic for the feedback arc set problem." This implementation
+ * adjusts that from the paper to allow for weighted edges.
+ *
+ * @see https://github.com/dagrejs/dagre/blob/master/lib/greedy-fas.js
+ */
+
+import { Edge, Graph, ID } from "@antv/graphlib";
+import { EdgeData, Graph as IGraph } from "../types";
 import RawList from "./data/list";
 
 type StateNode = {
@@ -12,17 +22,12 @@ type StateNode = {
 };
 class List extends RawList<StateNode> {}
 
-/*
- * A greedy heuristic for finding a feedback arc set for a graph. A feedback
- * arc set is a set of edges that can be removed to make a graph acyclic.
- * The algorithm comes from: P. Eades, X. Lin, and W. F. Smyth, "A fast and
- * effective heuristic for the feedback arc set problem." This implementation
- * adjusts that from the paper to allow for weighted edges.
- */
-
 const DEFAULT_WEIGHT_FN = () => 1;
 
-const greedyFAS = (g: IGraph, weightFn?: (e: StateNode) => number) => {
+export const greedyFAS = (
+  g: IGraph,
+  weightFn?: (e: Edge<EdgeData>) => number
+) => {
   if (g.getAllNodes().length <= 1) return [];
   const state = buildState(g, weightFn || DEFAULT_WEIGHT_FN);
   const results = doGreedyFAS(state.graph, state.buckets, state.zeroIdx);
@@ -109,7 +114,7 @@ const removeNode = (
   return collectPredecessors ? results : undefined;
 };
 
-const buildState = (g: IGraph, weightFn?: (param: StateNode) => number) => {
+const buildState = (g: IGraph, weightFn?: (e: Edge<EdgeData>) => number) => {
   const fasGraph = new Graph();
   let maxIn = 0;
   let maxOut = 0;
@@ -124,22 +129,25 @@ const buildState = (g: IGraph, weightFn?: (param: StateNode) => number) => {
   // Aggregate weights on nodes, but also sum the weights across multi-edges
   // into a single edge for the fasGraph.
   g.getAllEdges().forEach((e) => {
-    // const prevWeight = (fasGraph.getEdge(e.id).data.weight as number) || 0;
-    const weight =
-      weightFn?.({
-        v: e.source,
-        w: e.target,
-        ...e.data,
-      } as StateNode) || 1;
-    const edgeWeight = weight;
-    fasGraph.addEdge({
-      id: `e${Math.random()}`,
-      source: e.source,
-      target: e.target,
-      data: {
-        weight: edgeWeight,
-      },
-    });
+    let edge = fasGraph
+      .getRelatedEdges(e.source, "out")
+      .find((edge) => edge.target === e.target);
+    const weight = weightFn?.(e) || 1;
+    if (!edge) {
+      fasGraph.addEdge({
+        id: e.id,
+        source: e.source,
+        target: e.target,
+        data: {
+          weight,
+        },
+      });
+    } else {
+      fasGraph.updateEdgeData(edge?.id!, {
+        ...edge.data,
+        weight: (edge.data.weight as number) + weight,
+      });
+    }
     // @ts-ignore
     maxOut = Math.max(maxOut, (fasGraph.getNode(e.source)!.data.out += weight));
     // @ts-ignore
@@ -172,5 +180,3 @@ const assignBucket = (buckets: List[], zeroIdx: number, entry: StateNode) => {
     buckets[entry.out - entry["in"] + zeroIdx].enqueue(entry);
   }
 };
-
-export default greedyFAS;

@@ -1,12 +1,11 @@
-import { feasibleTree } from './feasible-tree';
-import { slack, longestPath as initRank } from './util';
-import { minBy, simplify } from '../util';
-import { algorithm } from '@antv/graphlib';
-import { Edge, Graph } from '../../graph';
+// import { } from '@antv/algorithm';
+import { EdgeData, Graph as IGraph, NodeData } from "../../types";
+import { feasibleTree } from "./feasible-tree";
+import { slack, longestPath as initRank } from "./util";
+import { minBy, simplify } from "../util";
+import { Edge, ID, Node } from "@antv/graphlib";
 
-
-const { preorder, postorder } = algorithm;
-
+// const { preorder, postorder } = algorithm;
 
 /*
  * The network simplex algorithm assigns ranks to each node in the input graph
@@ -41,15 +40,15 @@ const { preorder, postorder } = algorithm;
  * for Drawing Directed Graphs." The structure of the file roughly follows the
  * structure of the overall algorithm.
  */
-const networkSimplex = (og: Graph) => {
+const networkSimplex = (og: IGraph) => {
   const g = simplify(og);
   initRank(g);
   const t = feasibleTree(g);
   initLowLimValues(t);
   initCutValues(t, g);
 
-  let e;
-  let f;
+  let e: Edge<EdgeData> | undefined;
+  let f: Edge<EdgeData>;
   while ((e = leaveEdge(t))) {
     f = enterEdge(t, g, e);
     exchangeEdges(t, g, e, f);
@@ -59,52 +58,76 @@ const networkSimplex = (og: Graph) => {
 /*
  * Initializes cut values for all edges in the tree.
  */
-export const initCutValues = (t: Graph, g: Graph) => {
-  let vs = postorder(t, t.nodes());
+export const initCutValues = (t: IGraph, g: IGraph) => {
+  let vs: ID[] = [];
+
+  t.getAllNodes().forEach((n) => {
+    t.dfs(n.id, (node) => {
+      vs.push(node.id);
+    });
+  });
+
+  // const root = t.getRoots()[0];
+  // t.dfs(root.id, (n) => {
+  //   vs.push(n.id);
+  // });
+
+  // let vs = postorder(t, t.getAllNodes());
   vs = vs?.slice(0, vs?.length - 1);
-  vs?.forEach((v: string) => {
+  vs?.forEach((v: ID) => {
     assignCutValue(t, g, v);
   });
 };
 
-const assignCutValue = (t: Graph, g: Graph, child: string) => {
-  const childLab = t.node(child)!;
-  const parent = childLab.parent!;
-  t.edgeFromArgs(child, parent)!.cutvalue = calcCutValue(t, g, child);
+const assignCutValue = (t: IGraph, g: IGraph, child: ID) => {
+  const childLab = t.getNode(child)!;
+  const parent = childLab.data.parent! as ID;
+
+  const edge = t.getRelatedEdges(child, "out").find((e) => e.target === parent);
+  if (edge) {
+    edge.data.cutvalue = calcCutValue(t, g, child);
+  }
 };
 
 /*
  * Given the tight tree, its graph, and a child in the graph calculate and
  * return the cut value for the edge between the child and its parent.
  */
-export const calcCutValue = (t: Graph, g: Graph, child: string) => {
-  const childLab = t.node(child)!;
-  const parent = childLab.parent as string;
+export const calcCutValue = (t: IGraph, g: IGraph, child: ID) => {
+  const childLab = t.getNode(child)!;
+  const parent = childLab.data.parent as ID;
   // True if the child is on the tail end of the edge in the directed graph
   let childIsTail = true;
   // The graph's view of the tree edge we're inspecting
-  let graphEdge = g.edgeFromArgs(child, parent)!;
+
+  let graphEdge = g
+    .getRelatedEdges(child, "out")
+    .find((e) => e.target === parent)!;
   // The accumulated cut value for the edge between this node and its parent
   let cutValue = 0;
 
   if (!graphEdge) {
     childIsTail = false;
-    graphEdge = g.edgeFromArgs(parent, child)!;
+    graphEdge = g
+      .getRelatedEdges(parent, "out")
+      .find((e) => e.target === child)!;
   }
 
-  cutValue = graphEdge.weight!;
+  cutValue = graphEdge.data.weight!;
 
-  g.nodeEdges(child)?.forEach((e) => {
-    const isOutEdge = e.v === child;
-    const other = isOutEdge ? e.w : e.v;
+  g.getRelatedEdges(child, "both")?.forEach((e) => {
+    const isOutEdge = e.source === child;
+    const other = isOutEdge ? e.target : e.source;
 
     if (other !== parent) {
       const pointsToHead = isOutEdge === childIsTail;
-      const otherWeight = g.edge(e)!.weight!;
+      const otherWeight = e.data.weight!;
 
       cutValue += pointsToHead ? otherWeight : -otherWeight;
       if (isTreeEdge(t, child, other)) {
-        const otherCutValue = t.edgeFromArgs(child, other)!.cutvalue;
+        const otherCutValue = t
+          .getRelatedEdges(child, "out")
+          .find((e) => e.target === other)!.data.cutvalue as number;
         cutValue += pointsToHead ? -otherCutValue : otherCutValue;
       }
     }
@@ -113,113 +136,159 @@ export const calcCutValue = (t: Graph, g: Graph, child: string) => {
   return cutValue;
 };
 
-export const initLowLimValues = (tree: Graph, root: string = tree.nodes()[0]) => {
+export const initLowLimValues = (
+  tree: IGraph,
+  root: ID = tree.getAllNodes()[0].id
+) => {
   dfsAssignLowLim(tree, {}, 1, root);
 };
 
-const dfsAssignLowLim = (tree: Graph, visited: Record<string, boolean>, nextLim: number, v: string, parent?: string) => {
+const dfsAssignLowLim = (
+  tree: IGraph,
+  visited: Record<ID, boolean>,
+  nextLim: number,
+  v: ID,
+  parent?: ID
+) => {
   const low = nextLim;
   let useNextLim = nextLim;
-  const label = tree.node(v)!;
+  const label = tree.getNode(v)!;
 
   visited[v] = true;
-  tree.neighbors(v)?.forEach((w) => {
-    if (!visited[w]) {
-      useNextLim = dfsAssignLowLim(tree, visited, useNextLim, w, v);
+  tree.getNeighbors(v)?.forEach((w) => {
+    if (!visited[w.id]) {
+      useNextLim = dfsAssignLowLim(tree, visited, useNextLim, w.id, v);
     }
   });
 
-  label.low = low;
-  label.lim = useNextLim++;
+  label.data.low = low;
+  label.data.lim = useNextLim++;
   if (parent) {
-    label.parent = parent;
+    label.data.parent = parent;
   } else {
     // TODO should be able to remove this when we incrementally update low lim
-    delete label.parent;
+    delete label.data.parent;
   }
 
   return useNextLim;
 };
 
-export const leaveEdge = (tree: Graph) => {
-  return tree.edges().find((e) => {
-    return tree.edge(e)!.cutvalue < 0;
+export const leaveEdge = (tree: IGraph) => {
+  return tree.getAllEdges().find((e) => {
+    return (e.data.cutvalue as number) < 0;
   });
 };
 
-export const enterEdge = (t: Graph, g: Graph, edge: any) => {
-  let v = edge.v;
-  let w = edge.w;
+export const enterEdge = (t: IGraph, g: IGraph, edge: Edge<EdgeData>) => {
+  let v = edge.source;
+  let w = edge.target;
 
   // For the rest of this function we assume that v is the tail and w is the
   // head, so if we don't have this edge in the graph we should flip it to
   // match the correct orientation.
-  if (!g.hasEdge(v, w)) {
-    v = edge.w;
-    w = edge.v;
+  if (!g.getRelatedEdges(v, "out").find((e) => e.target === w)) {
+    v = edge.target;
+    w = edge.source;
   }
 
-  const vLabel = t.node(v)!;
-  const wLabel = t.node(w)!;
+  const vLabel = t.getNode(v)!;
+  const wLabel = t.getNode(w)!;
   let tailLabel = vLabel;
   let flip = false;
 
   // If the root is in the tail of the edge then we need to flip the logic that
   // checks for the head and tail nodes in the candidates function below.
-  if ((vLabel.lim as number) > (wLabel.lim as number)) {
+  if ((vLabel.data.lim as number) > (wLabel.data.lim as number)) {
     tailLabel = wLabel;
     flip = true;
   }
 
-  const candidates = g.edges().filter((edge) => {
-    return flip === isDescendant(t, t.node(edge.v), tailLabel) &&
-           flip !== isDescendant(t, t.node(edge.w), tailLabel);
+  const candidates = g.getAllEdges().filter((edge) => {
+    return (
+      flip === isDescendant(t, t.getNode(edge.source), tailLabel) &&
+      flip !== isDescendant(t, t.getNode(edge.target), tailLabel)
+    );
   });
 
-  return minBy(candidates, (edge) => { return slack(g, edge); });
+  return minBy(candidates, (edge) => {
+    return slack(g, edge);
+  });
 };
 
-export const exchangeEdges = (t: Graph, g: Graph, e: Edge, f: Edge) => {
-  const v = e.v;
-  const w = e.w;
-  t.removeEdge(v, w);
-  t.setEdge(f.v, f.w, {});
+export const exchangeEdges = (
+  t: IGraph,
+  g: IGraph,
+  e: Edge<EdgeData>,
+  f: Edge<EdgeData>
+) => {
+  t.removeEdge(e.id);
+  if (!t.hasEdge(f.id)) {
+    t.addEdge({
+      id: f.id,
+      source: f.source,
+      target: f.target,
+      data: {},
+    });
+  }
   initLowLimValues(t);
   initCutValues(t, g);
   updateRanks(t, g);
 };
 
-const updateRanks = (t: Graph, g: Graph) => {
-  const root = t.nodes().find((v) =>{ return !g.node(v)?.parent; })!;
-  let vs = preorder(t, root);
+const updateRanks = (t: IGraph, g: IGraph) => {
+  const root = t.getAllNodes().find((v) => {
+    return !v.data.parent;
+  })!;
+  // let vs = preorder(t, root);
+
+  let vs: ID[] = [];
+  t.getAllNodes().forEach((n) => {
+    t.dfs(n.id, (node) => {
+      vs.push(node.id);
+    });
+  });
+
   vs = vs?.slice(1);
-  vs?.forEach((v: string) => {
-    const parent = t.node(v)!.parent as string;
-    let edge = g.edgeFromArgs(v, parent);
+  vs?.forEach((v: ID) => {
+    const parent = t.getNode(v).data.parent as ID;
+    let edge = g.getRelatedEdges(v, "out").find((e) => e.target === parent);
+    // let edge = g.edgeFromArgs(v, parent);
     let flipped = false;
 
-    if (!edge) {
-      edge = g.edgeFromArgs(parent, v)!;
+    if (!edge && g.hasNode(parent)) {
+      // edge = g.edgeFromArgs(parent, v)!;
+      edge = g.getRelatedEdges(parent, "out").find((e) => e.target === v);
       flipped = true;
     }
 
-    g.node(v)!.rank = g.node(parent)!.rank! + (flipped ? edge.minlen! : -edge.minlen!);
+    g.getNode(v).data.rank =
+      ((g.hasNode(parent) && (g.getNode(parent).data.rank! as number)) || 0) +
+      (flipped
+        ? (edge?.data.minlen as number)
+        : -(edge?.data.minlen as number));
   });
 };
 
 /*
  * Returns true if the edge is in the tree.
  */
-const isTreeEdge = (tree: Graph, u: string, v: string) => {
-  return tree.hasEdge(u, v);
+const isTreeEdge = (tree: IGraph, u: ID, v: ID) => {
+  return tree.getRelatedEdges(u, "out").find((e) => e.target === v);
 };
 
 /*
  * Returns true if the specified node is descendant of the root node per the
  * assigned low and lim attributes in the tree.
  */
-const isDescendant = (tree: Graph, vLabel: any, rootLabel: any) => {
-  return rootLabel.low <= vLabel.lim && vLabel.lim <= rootLabel.lim;
+const isDescendant = (
+  tree: IGraph,
+  vLabel: Node<NodeData>,
+  rootLabel: Node<NodeData>
+) => {
+  return (
+    (rootLabel.data.low as number) <= (vLabel.data.lim as number) &&
+    (vLabel.data.lim as number) <= (rootLabel.data.lim as number)
+  );
 };
 
 export default networkSimplex;

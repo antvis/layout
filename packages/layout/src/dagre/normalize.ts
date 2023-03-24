@@ -1,4 +1,5 @@
-import { Edge, Graph, Node } from "../graph";
+import { Edge, ID } from "@antv/graphlib";
+import { EdgeData, Graph as IGraph } from "../types";
 import { addDummyNode } from "./util";
 
 /*
@@ -17,80 +18,104 @@ import { addDummyNode } from "./util";
  *    3. The graph is augmented with a "dummyChains" attribute which contains
  *       the first dummy in each chain of dummy nodes produced.
  */
-const run = (g: Graph) => {
-  g.graph().dummyChains = [];
-  g.edges().forEach((edge) => normalizeEdge(g, edge));
+
+const DUMMY_NODE_EDGE = "edge";
+const DUMMY_NODE_EDGE_LABEL = "edge-label";
+
+const run = (g: IGraph, dummyChains: ID[]) => {
+  // dummyChains = [];
+  // g.graph().dummyChains = [];
+  g.getAllEdges().forEach((edge) => normalizeEdge(g, edge, dummyChains));
 };
 
-const normalizeEdge = (g: Graph, e: Edge) => {
-  let v = e.v;
-  let vRank = g.node(v)!.rank as number;
-  const w = e.w;
-  const wRank = g.node(w)!.rank as number;
-  const name = e.name;
-  const edgeLabel = g.edge(e)!;
-  const labelRank = edgeLabel.labelRank;
+const normalizeEdge = (g: IGraph, e: Edge<EdgeData>, dummyChains: ID[]) => {
+  let v = e.source;
+  let vRank = g.getNode(v)!.data.rank as number;
+  const w = e.target;
+  const wRank = g.getNode(w)!.data.rank as number;
+  const labelRank = e.data.labelRank;
 
   if (wRank === vRank + 1) return;
 
-  g.removeEdgeObj(e);
+  g.removeEdge(e.id);
 
-  const graph = g.graph();
-
-  let dummy: string;
-  let attrs: Node<Record<string, any>>;
+  let dummy: ID;
+  let nodeData: {
+    width: number;
+    height: number;
+    originalEdge: Edge<EdgeData>;
+    rank: number;
+    dummy?: string;
+    labelpos?: string;
+  };
   let i;
   for (i = 0, ++vRank; vRank < wRank; ++i, ++vRank) {
-    edgeLabel.points = [];
-    attrs = {
-      edgeLabel,
+    e.data.points = [];
+    nodeData = {
+      originalEdge: e,
       width: 0,
       height: 0,
-      edgeObj: e,
       rank: vRank,
     };
-    dummy = addDummyNode(g, "edge", attrs, "_d");
+
     if (vRank === labelRank) {
-      attrs.width = edgeLabel.width!;
-      attrs.height = edgeLabel.height!;
-      attrs.dummy = "edge-label";
-      attrs.labelpos = edgeLabel.labelpos;
+      nodeData.width = e.data.width! as number;
+      nodeData.height = e.data.height! as number;
+      nodeData.dummy = DUMMY_NODE_EDGE_LABEL;
+      nodeData.labelpos = e.data.labelpos as string;
     }
-    g.setEdge(v, dummy, { weight: edgeLabel.weight }, name);
+
+    dummy = addDummyNode(g, DUMMY_NODE_EDGE, nodeData, "_d");
+    g.addEdge({
+      id: `e${Math.random()}`,
+      source: v,
+      target: dummy,
+      data: { weight: e.data.weight },
+    });
     if (i === 0) {
-      if (!graph.dummyChains) graph.dummyChains = [];
-      graph.dummyChains!.push(dummy);
+      dummyChains.push(dummy);
     }
     v = dummy;
   }
 
-  g.setEdge(v, w, { weight: edgeLabel.weight }, name);
+  g.addEdge({
+    id: `e${Math.random()}`,
+    source: v,
+    target: w,
+    data: { weight: e.data.weight },
+  });
 };
 
-const undo = (g: Graph) => {
-  g.graph().dummyChains?.forEach((v) => {
-    let node = g.node(v)!;
-    const origLabel = node.edgeLabel;
+const undo = (g: IGraph, dummyChains: ID[]) => {
+  dummyChains.forEach((v) => {
+    let node = g.getNode(v)!;
+    const { data } = node;
+    const originalEdge = data.originalEdge as Edge<EdgeData>;
+
     let w;
-    if (node.edgeObj) {
-      g.setEdgeObj(node.edgeObj, origLabel);
+    // Restore original edge.
+    if (originalEdge) {
+      g.addEdge(originalEdge);
     }
 
-    let currentV  = v;
-    while (node.dummy) {
-      w = g.successors(currentV)![0];
+    let currentV = v;
+    while (node.data.dummy) {
+      w = g.getSuccessors(currentV)![0];
       g.removeNode(currentV);
-      origLabel.points.push({ x: node.x, y: node.y });
-      if (node.dummy === "edge-label") {
-        origLabel.x = node.x;
-        origLabel.y = node.y;
-        origLabel.width = node.width;
-        origLabel.height = node.height;
+      (originalEdge.data.points as any).push({
+        x: node.data.x,
+        y: node.data.y,
+      });
+      if (node.data.dummy === DUMMY_NODE_EDGE_LABEL) {
+        originalEdge.data.x = node.data.x;
+        originalEdge.data.y = node.data.y;
+        originalEdge.data.width = node.data.width;
+        originalEdge.data.height = node.data.height;
       }
-      currentV = w;
-      node = g.node(currentV)!;
+      currentV = w.id;
+      node = g.getNode(currentV)!;
     }
   });
 };
 
-export default { run, undo };
+export { run, undo };

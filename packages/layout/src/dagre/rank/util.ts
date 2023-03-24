@@ -1,4 +1,5 @@
-import { Edge, Graph } from "../../graph";
+import { Edge, ID } from "@antv/graphlib";
+import { EdgeData, Graph } from "../../types";
 
 /*
  * Initializes ranks for the input graph using the longest path algorithm. This
@@ -22,71 +23,67 @@ import { Edge, Graph } from "../../graph";
  *    1. Each node will be assign an (unnormalized) "rank" property.
  */
 const longestPath = (g: Graph) => {
-  const visited: Record<string, boolean> = {};
+  const visited: Record<ID, boolean> = {};
 
-  const dfs = (v: string) => {
-    const label = g.node(v)!;
+  const dfs = (v: ID) => {
+    const label = g.getNode(v)!;
     if (!label) return 0;
     if (visited[v]) {
-      return label.rank!;
+      return label.data.rank! as number;
     }
     visited[v] = true;
 
     let rank: number;
 
-    g.outEdges(v)?.forEach(
-      (edgeObj) => {
-        const wRank = dfs(edgeObj.w);
-        const minLen = g.edge(edgeObj)!.minlen!;
-        const r = wRank - minLen;
-        if (r) {
-          if (rank === undefined || r < rank) {
-            rank = r;
-          }
+    g.getRelatedEdges(v, "out")?.forEach((e) => {
+      const wRank = dfs(e.target);
+      const minLen = e.data.minlen! as number;
+      const r = wRank - minLen;
+      if (r) {
+        if (rank === undefined || r < rank) {
+          rank = r;
         }
       }
-    );
-
+    });
 
     if (!rank!) {
       rank = 0;
     }
 
-    label.rank = rank;
+    label.data.rank = rank;
     return rank;
   };
 
-  g.sources()?.forEach((source) => dfs(source));
+  g.getAllNodes()
+    .filter((n) => g.getRelatedEdges(n.id, "in").length === 0)
+    .forEach((source) => dfs(source.id));
 };
 
 const longestPathWithLayer = (g: Graph) => {
   // 用longest path，找出最深的点
-  const visited: Record<string, boolean> = {};
+  const visited: Record<ID, boolean> = {};
   let minRank: number;
 
-  const dfs = (v: string) => {
-    const label = g.node(v)!;
+  const dfs = (v: ID) => {
+    const label = g.getNode(v)!;
     if (!label) return 0;
     if (visited[v]) {
-      return label.rank!;
+      return label.data.rank! as number;
     }
     visited[v] = true;
 
     let rank: number;
 
-    g.outEdges(v)?.forEach(
-      (edgeObj) => {
-        const wRank = dfs(edgeObj.w);
-        const minLen = g.edge(edgeObj)!.minlen!;
-        const r = wRank - minLen;
-        if (r) {
-          if (rank === undefined || r < rank) {
-            rank = r;
-          }
+    g.getRelatedEdges(v, "out")?.forEach((e) => {
+      const wRank = dfs(e.target);
+      const minLen = e.data.minlen! as number;
+      const r = wRank - minLen;
+      if (r) {
+        if (rank === undefined || r < rank) {
+          rank = r;
         }
       }
-    );
-
+    });
 
     if (!rank!) {
       rank = 0;
@@ -96,13 +93,15 @@ const longestPathWithLayer = (g: Graph) => {
       minRank = rank;
     }
 
-    label.rank = rank;
+    label.data.rank = rank;
     return rank;
   };
 
-  g.sources()?.forEach((source) => {
-    if (g.node(source)) dfs(source);
-  });
+  g.getAllNodes()
+    .filter((n) => g.getRelatedEdges(n.id, "in").length === 0)
+    .forEach((source) => {
+      if (source) dfs(source.id);
+    });
 
   if (minRank! === undefined) {
     minRank = 0;
@@ -112,33 +111,36 @@ const longestPathWithLayer = (g: Graph) => {
 
   // forward一遍，赋值层级
   const forwardVisited: Record<string, boolean> = {};
-  const dfsForward = (v: string, nextRank: number) => {
-    const label = g.node(v)!;
+  const dfsForward = (v: ID, nextRank: number) => {
+    const label = g.getNode(v)!;
 
     const currRank = (
-      !isNaN(label.layer as number) ? label.layer : nextRank
+      !isNaN(label.data.layer as number) ? label.data.layer : nextRank
     ) as number;
 
     // 没有指定，取最大值
-    if (label.rank === undefined || label.rank < currRank) {
-      label.rank = currRank;
+    if (
+      label.data.rank === undefined ||
+      (label.data.rank as number) < currRank
+    ) {
+      label.data.rank = currRank;
     }
 
     if (forwardVisited[v]) return;
     forwardVisited[v] = true;
 
     // DFS遍历子节点
-    g.outEdges(v)?.map((e) => {
-      dfsForward(e.w, currRank + g.edge(e)!.minlen!);
+    g.getRelatedEdges(v, "out")?.forEach((e) => {
+      dfsForward(e.target, currRank + (e.data.minlen! as number));
     });
   };
 
   // 指定层级的，更新下游
-  g.nodes().forEach((n) => {
-    const label = g.node(n)!;
-    if(!label) return;
+  g.getAllNodes().forEach((n) => {
+    const label = n.data;
+    if (!label) return;
     if (!isNaN(label.layer as number)) {
-      dfsForward(n, label.layer as number); // 默认的dummy root所在层的rank是-1
+      dfsForward(n.id, label.layer as number); // 默认的dummy root所在层的rank是-1
     } else {
       (label.rank as number) -= minRank;
     }
@@ -149,18 +151,12 @@ const longestPathWithLayer = (g: Graph) => {
  * Returns the amount of slack for the given edge. The slack is defined as the
  * difference between the length of the edge and its minimum length.
  */
-const slack = (g: Graph, e: Edge) => {
+const slack = (g: Graph, e: Edge<EdgeData>) => {
   return (
-    (g.node(e.w)!.rank as number) -
-    (g.node(e.v)!.rank as number) -
-    (g.edge(e)!.minlen as number)
+    (g.getNode(e.target).data.rank as number) -
+    (g.getNode(e.source).data.rank as number) -
+    (e.data.minlen as number)
   );
 };
 
 export { longestPath, longestPathWithLayer, slack };
-
-export default {
-  longestPath,
-  longestPathWithLayer,
-  slack,
-};

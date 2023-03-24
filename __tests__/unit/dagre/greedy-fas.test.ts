@@ -1,7 +1,7 @@
 import { Edge, Graph } from "@antv/graphlib";
 import { Graph as IGraph, NodeData, EdgeData } from "@antv/layout";
-// import { detectCycle } from "@antv/algorithm";
-import greedyFAS from "../../../packages/layout/src/dagre/greedy-fas";
+import { greedyFAS } from "../../../packages/layout/src/dagre/greedy-fas";
+import { findCycles } from "../../util";
 
 describe("greedyFAS", function () {
   let g: Graph<NodeData, EdgeData>;
@@ -384,17 +384,62 @@ describe("greedyFAS", function () {
     ]);
   });
 
-  // TODO: multigraphs
-  // it("works for multigraphs", function() {
-  //   let g = new Graph<string, any, any, any>({ multigraph: true });
-  //   g.setEdge("a", "b", 5, "foo");
-  //   g.setEdge("b", "a", 2, "bar");
-  //   g.setEdge("b", "a", 2, "baz");
-  //   expect(greedyFAS(g, weightFn(g)).sort((a, b) => a.name > b.name ? 1 : -1)).toEqual([
-  //     { v: "b", w: "a", name: "bar" },
-  //     { v: "b", w: "a", name: "baz" }
-  //   ]);
-  // });
+  it("works for multigraphs", function () {
+    let g = new Graph();
+    g.addNodes([
+      {
+        id: "a",
+        data: {},
+      },
+      {
+        id: "b",
+        data: {},
+      },
+    ]);
+    g.addEdge({
+      id: "foo",
+      source: "a",
+      target: "b",
+      data: {
+        weight: 5,
+      },
+    });
+    g.addEdge({
+      id: "bar",
+      source: "b",
+      target: "a",
+      data: {
+        weight: 2,
+      },
+    });
+    g.addEdge({
+      id: "baz",
+      source: "b",
+      target: "a",
+      data: {
+        weight: 2,
+      },
+    });
+
+    expect(greedyFAS(g, weightFn(g))).toEqual([
+      {
+        id: "bar",
+        source: "b",
+        target: "a",
+        data: {
+          weight: 2,
+        },
+      },
+      {
+        id: "baz",
+        source: "b",
+        target: "a",
+        data: {
+          weight: 2,
+        },
+      },
+    ]);
+  });
 });
 
 function checkFAS(g: IGraph, fas: Edge<EdgeData>[]) {
@@ -403,8 +448,7 @@ function checkFAS(g: IGraph, fas: Edge<EdgeData>[]) {
   fas.forEach((edge) => {
     g.removeEdge(edge.id);
   });
-  // TODO: findCycles
-  // expect(detectCycle(g)).toEqual([]);
+  expect(findCycles(g)).toEqual([]);
   // The more direct m/2 - n/6 fails for the simple cycle A <-> B, where one
   // edge must be reversed, but the performance bound implies that only 2/3rds
   // of an edge can be reversed. I'm using floors to acount for this.
@@ -412,7 +456,7 @@ function checkFAS(g: IGraph, fas: Edge<EdgeData>[]) {
 }
 
 function weightFn(g: IGraph) {
-  return function (e): number {
-    return e.weight;
+  return function (e: Edge<EdgeData>): number {
+    return e.data.weight as number;
   };
 }

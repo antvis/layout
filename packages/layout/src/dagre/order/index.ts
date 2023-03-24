@@ -23,7 +23,7 @@ import { clone } from "@antv/util";
  *    1. Graph nodes will have an "order" attribute based on the results of the
  *       algorithm.
  */
-const order = (g: IGraph, keepNodeOrder?: boolean) => {
+export const order = (g: IGraph, keepNodeOrder?: boolean) => {
   const mxRank = maxRank(g);
   const range1 = [];
   const range2 = [];
@@ -121,5 +121,3 @@ const assignOrder = (g: IGraph, layering: ID[][]) => {
     });
   });
 };
-
-export default order;

@@ -77,6 +77,11 @@ export class DagreLayout implements Layout<DagreLayoutOptions> {
     const mergedOptions = { ...this.options, ...options };
     const {} = mergedOptions;
 
+    // const g = new DagreGraph({
+    //   multigraph: true,
+    //   compound: true,
+    // });
+
     let nodes: Node[] = graph.getAllNodes();
     let edges: Edge[] = graph.getAllEdges();
 

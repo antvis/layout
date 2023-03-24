@@ -1,4 +1,5 @@
-import { Graph } from "../graph";
+import { ID } from "@antv/graphlib";
+import { Graph as IGraph } from "../types";
 import { addBorderNode, addDummyNode } from "./util";
 
 /*
@@ -24,11 +25,11 @@ import { addBorderNode, addDummyNode } from "./util";
  * The nesting graph idea comes from Sander, "Layout of Compound Directed
  * Graphs."
  */
-const run = (g: Graph) => {
+const run = (g: IGraph) => {
   const root = addDummyNode(g, "root", {}, "_root");
   const depths = treeDepths(g);
   let maxDepth = Math.max(...Object.values(depths));
-  
+
   if (Math.abs(maxDepth) === Infinity) {
     maxDepth = 1;
   }
@@ -36,108 +37,148 @@ const run = (g: Graph) => {
   const height = maxDepth - 1; // Note: depths is an Object not an array
   const nodeSep = 2 * height + 1;
 
-  g.graph().nestingRoot = root;
+  // g.graph().nestingRoot = root;
 
   // Multiply minlen by nodeSep to align nodes on non-border ranks.
-  g.edges().forEach((e) => {
-    g.edge(e)!.minlen! *= nodeSep;
+  g.getAllEdges().forEach((e) => {
+    (e.data.minlen as number) *= nodeSep;
   });
 
   // Calculate a weight that is sufficient to keep subgraphs vertically compact
   const weight = sumWeights(g) + 1;
 
   // Create border nodes and link them up
-  g.children()?.forEach((child) => {
-    dfs(g, root, nodeSep, weight, height, depths, child);
+  // g.children()?.forEach((child) => {
+  //   dfs(g, root, nodeSep, weight, height, depths, child);
+  // });
+  g.getRoots().forEach((child) => {
+    dfs(g, root, nodeSep, weight, height, depths, child.id);
   });
 
   // Save the multiplier for node layers for later removal of empty border
   // layers.
-  g.graph().nodeRankFactor = nodeSep;
+  // g.graph().nodeRankFactor = nodeSep;
+
+  return {
+    nestingRoot: root,
+    nodeRankFactor: nodeSep,
+  };
 };
 
 const dfs = (
-  g: Graph,
-  root: string,
+  g: IGraph,
+  root: ID,
   nodeSep: number,
   weight: number,
   height: number,
-  depths:Record<string, number>,
-  v: string
+  depths: Record<string, number>,
+  v: ID
 ) => {
-  const children = g.children(v);
+  const children = g.getChildren(v);
   if (!children?.length) {
     if (v !== root) {
-      g.setEdge(root, v, { weight: 0, minlen: nodeSep });
+      // g.setEdge(root, v, { weight: 0, minlen: nodeSep });
+      g.addEdge({
+        id: `e${Math.random()}`,
+        source: root,
+        target: v,
+        data: { weight: 0, minlen: nodeSep },
+      });
     }
     return;
   }
 
   const top = addBorderNode(g, "_bt");
   const bottom = addBorderNode(g, "_bb");
-  const label = g.node(v)!;
+  const label = g.getNode(v)!;
 
   g.setParent(top, v);
-  label.borderTop = top;
+  label.data.borderTop = top;
   g.setParent(bottom, v);
-  label.borderBottom = bottom;
+  label.data.borderBottom = bottom;
 
-  children?.forEach((child) => {
-    dfs(g, root, nodeSep, weight, height, depths, child);
+  children?.forEach((childNode) => {
+    dfs(g, root, nodeSep, weight, height, depths, childNode.id);
 
-    const childNode = g.node(child)!;
-    const childTop = childNode.borderTop ? childNode.borderTop : child;
-    const childBottom = childNode.borderBottom ? childNode.borderBottom : child;
-    const thisWeight = childNode.borderTop ? weight : 2 * weight;
+    const childTop = childNode.data.borderTop
+      ? (childNode.data.borderTop as ID)
+      : childNode.id;
+    const childBottom = childNode.data.borderBottom
+      ? (childNode.data.borderBottom as ID)
+      : childNode.id;
+    const thisWeight = childNode.data.borderTop ? weight : 2 * weight;
     const minlen = childTop !== childBottom ? 1 : height - depths[v] + 1;
 
-    g.setEdge(top, childTop, {
-      minlen,
-      weight: thisWeight,
-      nestingEdge: true,
+    g.addEdge({
+      id: `e${Math.random()}`,
+      source: top,
+      target: childTop,
+      data: {
+        minlen,
+        weight: thisWeight,
+        nestingEdge: true,
+      },
     });
 
-    g.setEdge(childBottom, bottom, {
-      minlen,
-      weight: thisWeight,
-      nestingEdge: true,
+    g.addEdge({
+      id: `e${Math.random()}`,
+      source: childBottom,
+      target: bottom,
+      data: {
+        minlen,
+        weight: thisWeight,
+        nestingEdge: true,
+      },
     });
   });
 
-  if (!g.parent(v)) {
-    g.setEdge(root, top, { weight: 0, minlen: height + depths[v] });
+  if (!g.getParent(v)) {
+    g.addEdge({
+      id: `e${Math.random()}`,
+      source: root,
+      target: top,
+      data: {
+        weight: 0,
+        minlen: height + depths[v],
+      },
+    });
   }
 };
 
-const treeDepths = (g: Graph) => {
-  const depths: Record<string, number> = {};
-  const dfs = (v: string, depth: number) => {
-    const children = g.children(v);
-    children?.forEach((child) => dfs(child, depth + 1));
+const treeDepths = (g: IGraph) => {
+  const depths: Record<ID, number> = {};
+  const dfs = (v: ID, depth: number) => {
+    const children = g.getChildren(v);
+    children?.forEach((child) => dfs(child.id, depth + 1));
     depths[v] = depth;
   };
-  g.children()?.forEach((v) => dfs(v, 1));
+  // g.children()?.forEach((v) => dfs(v, 1));
+
+  g.getRoots().forEach((v) => dfs(v.id, 1));
   return depths;
 };
 
-const sumWeights = (g: Graph) => {
+const sumWeights = (g: IGraph) => {
   let result = 0;
-  g.edges().forEach((e) => {
-    result += g.edge(e)!.weight!;
+  g.getAllEdges().forEach((e) => {
+    result += e.data.weight!;
   });
   return result;
 };
 
-const cleanup = (g: Graph) => {
-  const graphLabel = g.graph();
-  graphLabel.nestingRoot && g.removeNode(graphLabel.nestingRoot);
-  delete graphLabel.nestingRoot;
-  g.edges().forEach((e: any) => {
-    const edge = g.edge(e)!;
-    if (edge.nestingEdge) {
-      g.removeEdgeObj(e);
+const cleanup = (g: IGraph, nestingRoot?: ID) => {
+  // const graphLabel = g.graph();
+  // graphLabel.nestingRoot && g.removeNode(graphLabel.nestingRoot);
+  // delete graphLabel.nestingRoot;
+  if (nestingRoot) {
+    g.removeNode(nestingRoot);
+  }
+
+  g.getAllEdges().forEach((e) => {
+    if (e.data.nestingEdge) {
+      g.removeEdge(e.id);
     }
   });
 };
 
-export default { run, cleanup };
+export { run, cleanup };

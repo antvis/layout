@@ -1,4 +1,5 @@
-import { Graph } from "../../graph";
+import { ID } from "@antv/graphlib";
+import { Graph as IGraph } from "../../types";
 import { asNonCompoundGraph, buildLayerMatrix } from "../util";
 import {
   alignCoordinates,
@@ -10,21 +11,36 @@ import {
   verticalAlignment,
 } from "./bk";
 
-const positionY = (g: Graph) => {
+const positionY = (
+  g: IGraph,
+  options?: Partial<{
+    ranksep: number;
+  }>
+) => {
+  const { ranksep = 0 } = options || {};
   const layering = buildLayerMatrix(g);
-  const rankSep = g.graph().ranksep as number;
+
   let prevY = 0;
   layering?.forEach((layer) => {
-    const heights = layer.map((v) => g.node(v)!.height!);
+    const heights = layer.map((v) => g.getNode(v).data.height as number);
     const maxHeight = Math.max(...heights, 0);
     layer?.forEach((v: string) => {
-      g.node(v)!.y = prevY + maxHeight / 2;
+      g.getNode(v).data.y = prevY + maxHeight / 2;
     });
-    prevY += maxHeight + rankSep;
+    prevY += maxHeight + ranksep;
   });
 };
 
-const positionX = (g: Graph) => {
+const positionX = (
+  g: IGraph,
+  options?: Partial<{
+    align: string;
+    nodesep: number;
+    edgesep: number;
+  }>
+): Record<ID, number> => {
+  const { align: graphAlign = "", nodesep = 0, edgesep = 0 } = options || {};
+
   const layering = buildLayerMatrix(g);
   const conflicts = Object.assign(
     findType1Conflicts(g, layering),
@@ -32,7 +48,7 @@ const positionX = (g: Graph) => {
   );
 
   const xss: Record<string, Record<string, number>> = {};
-  let adjustedLayering: string[][] = [];
+  let adjustedLayering: ID[][] = [];
   ["u", "d"].forEach((vert) => {
     adjustedLayering =
       vert === "u" ? layering : Object.values(layering).reverse();
@@ -43,7 +59,9 @@ const positionX = (g: Graph) => {
         );
       }
 
-      const neighborFn = (vert === "u" ? g.predecessors : g.successors).bind(g);
+      const neighborFn = (
+        vert === "u" ? g.getPredecessors : g.getSuccessors
+      ).bind(g);
       const align = verticalAlignment(
         g,
         adjustedLayering,
@@ -55,6 +73,8 @@ const positionX = (g: Graph) => {
         adjustedLayering,
         align.root,
         align.align,
+        nodesep,
+        edgesep,
         horiz === "r"
       );
       if (horiz === "r") {
@@ -66,17 +86,23 @@ const positionX = (g: Graph) => {
 
   const smallestWidth = findSmallestWidthAlignment(g, xss);
   smallestWidth && alignCoordinates(xss, smallestWidth);
-  return balance(xss, g.graph().align as string);
+  return balance(xss, graphAlign);
 };
 
-const position = (g: Graph) => {
+export const position = (
+  g: IGraph,
+  options?: Partial<{
+    align: string;
+    nodesep: number;
+    edgesep: number;
+    ranksep: number;
+  }>
+) => {
   const ng = asNonCompoundGraph(g);
 
-  positionY(ng);
-  const xs = positionX(ng);
-  Object.keys(xs)?.forEach((key: string) => {
-    ng.node(key)!.x = xs[key];
+  positionY(ng, options);
+  const xs = positionX(ng, options);
+  Object.keys(xs)?.forEach((key: ID) => {
+    ng.getNode(key).data.x = xs[key];
   });
 };
-
-export default position;

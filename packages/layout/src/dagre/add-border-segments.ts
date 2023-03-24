@@ -2,7 +2,7 @@ import { ID, Node } from "@antv/graphlib";
 import { Graph, NodeData } from "../types";
 import { addDummyNode } from "./util";
 
-const addBorderSegments = (g: Graph) => {
+export const addBorderSegments = (g: Graph) => {
   g.getRoots().forEach((root) => {
     g.dfsTree(root.id, (node) => {
       if (node.data.hasOwnProperty("minRank")) {
@@ -46,5 +46,3 @@ const addBorderNode = (
     });
   }
 };
-
-export default addBorderSegments;

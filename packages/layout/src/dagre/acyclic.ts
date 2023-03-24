@@ -1,58 +1,70 @@
-import { Edge, Graph } from "../graph";
-import greedyFAS from "./greedy-fas";
+import { ID, Edge } from "@antv/graphlib";
+import { Graph, EdgeData } from "../types";
+import { greedyFAS } from "./greedy-fas";
 
-const run = (g: Graph) => {
+const run = (g: Graph, acyclicer: string) => {
   const weightFn = (g: Graph) => {
-    return (e: Edge) => g.edge(e)?.weight || 1;
+    return (e: Edge<EdgeData>) => e.data.weight || 1;
   };
-  const fas =
-    g.graph().acyclicer === "greedy" ? greedyFAS(g, weightFn(g)) : dfsFAS(g);
-  fas?.forEach((e: Edge) => {
-    const label = g.edge(e)!;
-    g.removeEdgeObj(e);
-    label.forwardName = e.name;
+  const fas = acyclicer === "greedy" ? greedyFAS(g, weightFn(g)) : dfsFAS(g);
+  fas?.forEach((e: Edge<EdgeData>) => {
+    const label = e.data;
+    g.removeEdge(e.id);
+    label.forwardName = e.data.name;
     label.reversed = true;
-    g.setEdge(e.w, e.v, label, `rev-${Math.random()}`);
+    g.addEdge({
+      id: e.id,
+      source: e.target,
+      target: e.source,
+      data: {
+        ...label,
+      },
+    });
   });
 };
 
 const dfsFAS = (g: Graph) => {
-  const fas: Edge[] = [];
-  const stack: Record<string, boolean> = {};
-  const visited: Record<string, boolean> = {};
+  const fas: Edge<EdgeData>[] = [];
+  const stack: Record<ID, boolean> = {};
+  const visited: Record<ID, boolean> = {};
 
-  const dfs = (v: string) => {
+  const dfs = (v: ID) => {
     if (visited[v]) {
       return;
     }
     visited[v] = true;
     stack[v] = true;
-    g.outEdges(v)?.forEach((e) => {
-      if (stack[e.w]) {
+    g.getRelatedEdges(v, "out").forEach((e) => {
+      if (stack[e.target]) {
         fas.push(e);
       } else {
-        dfs(e.w);
+        dfs(e.target);
       }
     });
     delete stack[v];
   };
 
-  g.nodes().forEach(dfs);
+  g.getAllNodes().forEach((n) => dfs(n.id));
   return fas;
 };
 
 const undo = (g: Graph) => {
-  g.edges().forEach((e) => {
-    const label = g.edge(e)!;
+  g.getAllEdges().forEach((e) => {
+    const label = e.data;
     if (label.reversed) {
-      g.removeEdgeObj(e);
+      g.removeEdge(e.id);
 
       const forwardName = label.forwardName;
       delete label.reversed;
       delete label.forwardName;
-      g.setEdge(e.w, e.v, label, forwardName);
+      g.addEdge({
+        id: e.id,
+        source: e.target,
+        target: e.source,
+        data: { ...label, forwardName },
+      });
     }
   });
 };
 
-export default { run, undo };
+export { run, undo };

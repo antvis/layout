@@ -1,18 +1,19 @@
-import { Graph } from "../graph";
+import { Edge, ID } from "@antv/graphlib";
+import { EdgeData, Graph as IGraph } from "../types";
 
 type OrderItem = { low: number; lim: number };
 
 // deep first search with both order low for pre, lim for post
-const dfsBothOrder = (g: Graph) => {
-  const result: Record<string, OrderItem> = {};
+const dfsBothOrder = (g: IGraph) => {
+  const result: Record<ID, OrderItem> = {};
   let lim = 0;
 
-  const dfs = (v: string) => {
+  const dfs = (v: ID) => {
     const low = lim;
-    g.children(v)?.forEach(dfs);
+    g.getChildren(v).forEach((n) => dfs(n.id));
     result[v] = { low, lim: lim++ };
   };
-  g.children()?.forEach(dfs);
+  g.getRoots().forEach((n) => dfs(n.id));
 
   return result;
 };
@@ -20,23 +21,23 @@ const dfsBothOrder = (g: Graph) => {
 // Find a path from v to w through the lowest common ancestor (LCA). Return the
 // full path and the LCA.
 const findPath = (
-  g: Graph,
-  postorderNums: Record<string, OrderItem>,
-  v: string,
-  w: string
+  g: IGraph,
+  postorderNums: Record<ID, OrderItem>,
+  v: ID,
+  w: ID
 ) => {
-  const vPath = [];
-  const wPath = [];
+  const vPath: ID[] = [];
+  const wPath: ID[] = [];
   const low = Math.min(postorderNums[v].low, postorderNums[w].low);
   const lim = Math.max(postorderNums[v].lim, postorderNums[w].lim);
-  let parent: string | undefined;
-  let lca: string | undefined;
+  let parent: ID | undefined;
+  let lca: ID | undefined;
 
   // Traverse up from v to find the LCA
   parent = v;
   do {
-    parent = g.parent(parent);
-    vPath.push(parent);
+    parent = g.getParent(parent)?.id;
+    vPath.push(parent!);
   } while (
     parent &&
     (postorderNums[parent].low > low || lim > postorderNums[parent].lim)
@@ -47,32 +48,40 @@ const findPath = (
   parent = w;
   while (parent && parent !== lca) {
     wPath.push(parent);
-    parent = g.parent(parent);
+    parent = g.getParent(parent)?.id;
   }
 
   return { lca, path: vPath.concat(wPath.reverse()) };
 };
 
-const parentDummyChains = (g: Graph) => {
+export const parentDummyChains = (g: IGraph, dummyChains: ID[]) => {
   const postorderNums = dfsBothOrder(g);
 
-  g.graph().dummyChains?.forEach((startV) => {
-    let v = startV; 
-    let node = g.node(v)!;
-    const edgeObj = node.edgeObj;
-    if (!edgeObj) return;
-    const pathData = findPath(g, postorderNums, edgeObj.v, edgeObj.w);
+  dummyChains.forEach((startV) => {
+    let v = startV;
+    let node = g.getNode(v)!;
+    const originalEdge = node.data.originalEdge as Edge<EdgeData>;
+    if (!originalEdge) return;
+    const pathData = findPath(
+      g,
+      postorderNums,
+      originalEdge.source,
+      originalEdge.target
+    );
     const path = pathData.path;
     const lca = pathData.lca;
     let pathIdx = 0;
     let pathV = path[pathIdx]!;
     let ascending = true;
 
-    while (v !== edgeObj.w) {
-      node = g.node(v)!;
+    while (v !== originalEdge.target) {
+      node = g.getNode(v)!;
 
       if (ascending) {
-        while (pathV !== lca && g.node(pathV)?.maxRank! < node.rank!) {
+        while (
+          pathV !== lca &&
+          g.getNode(pathV)?.data.maxRank! < node.data.rank!
+        ) {
           pathIdx++;
           pathV = path[pathIdx]!;
         }
@@ -85,8 +94,8 @@ const parentDummyChains = (g: Graph) => {
       if (!ascending) {
         while (
           pathIdx < path.length - 1 &&
-          (g.node(path[pathIdx + 1]!)?.minRank as number) <=
-            (node.rank as number)
+          (g.getNode(path[pathIdx + 1]!)?.data.minRank as number) <=
+            (node.data.rank as number)
         ) {
           pathIdx++;
         }
@@ -94,9 +103,7 @@ const parentDummyChains = (g: Graph) => {
       }
 
       g.setParent(v, pathV);
-      v = g.successors(v)![0];
+      v = g.getSuccessors(v)![0].id;
     }
   });
 };
-
-export default parentDummyChains;
