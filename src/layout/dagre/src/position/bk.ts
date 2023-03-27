@@ -373,8 +373,8 @@ export function alignCoordinates(
   alignTo: Record<string, number>
 ) {
   const alignToVals = Object.values(alignTo);
-  const alignToMin = Number(min(alignToVals));
-  const alignToMax = Number(max(alignToVals));
+  const alignToMin = min(alignToVals)!;
+  const alignToMax = max(alignToVals)!;
 
   ["u", "d"].forEach((vert) => {
     ["l", "r"].forEach((horiz) => {
@@ -386,8 +386,8 @@ export function alignCoordinates(
       const xsVals = Object.values(xs);
       delta =
         horiz === "l"
-          ? alignToMin - Number(min(xsVals))
-          : alignToMax - Number(max(xsVals));
+          ? alignToMin - min(xsVals)!
+          : alignToMax - max(xsVals)!;
 
       if (delta) {
         xss[alignment] = {};
