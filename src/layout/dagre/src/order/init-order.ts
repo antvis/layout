@@ -18,12 +18,11 @@ const initOrder = (g: Graph) => {
     return !g.children(v)?.length;
   });
   const nodeRanks = simpleNodes.map((v) => (g.node(v)!.rank as number));
-  const maxRank = max(nodeRanks);
+  const maxRank = max(nodeRanks)!;
   const layers: string[][] = [];
-  if (typeof maxRank === 'number')
-    for (let i = 0; i < maxRank + 1; i++) {
-      layers.push([]);
-    }
+  for (let i = 0; i < maxRank + 1; i++) {
+    layers.push([]);
+  }
 
   const dfs = (v: string) => {
     if (visited.hasOwnProperty(v)) return;
