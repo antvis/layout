@@ -179,7 +179,7 @@ export class DagreLayout implements Layout<DagreLayoutOptions> {
       align,
     });
 
-    const dBegin = [0, 0];
+    const layoutTopLeft = [0, 0];
     if (begin) {
       let minX = Infinity;
       let minY = Infinity;
@@ -193,8 +193,8 @@ export class DagreLayout implements Layout<DagreLayoutOptions> {
           if (minY > point.y) minY = point.y;
         });
       });
-      dBegin[0] = begin[0] - minX;
-      dBegin[1] = begin[1] - minY;
+      layoutTopLeft[0] = begin[0] - minX;
+      layoutTopLeft[1] = begin[1] - minY;
     }
 
     const isHorizontal = rankdir === "LR" || rankdir === "RL";
@@ -217,8 +217,8 @@ export class DagreLayout implements Layout<DagreLayoutOptions> {
       // ndata._order = node.data._order;
       // layerCoords.add(isHorizontal ? ndata.x : ndata.y);
 
-      node.data.x = node.data.x! + dBegin[0];
-      node.data.y = node.data.y! + dBegin[1];
+      node.data.x = node.data.x! + layoutTopLeft[0];
+      node.data.y = node.data.y! + layoutTopLeft[1];
       layerCoords.add(isHorizontal ? node.data.x : node.data.y);
     });
     const layerCoordsArr = Array.from(layerCoords).sort(layerCoordSort);
@@ -245,10 +245,11 @@ export class DagreLayout implements Layout<DagreLayoutOptions> {
       // });
       // if (i <= -1) return;
       if (edgeLabelSpace && controlPoints && edge.data.type !== "loop") {
-        // const sourceNode = self.nodeMap[edge.v];
-        // const targetNode = self.nodeMap[edge.w];
         edge.data.controlPoints = getControlPoints(
-          edge.data.points,
+          edge.data.points?.map(({ x, y }) => ({
+            x: x + layoutTopLeft[0],
+            y: y + layoutTopLeft[1],
+          })),
           g.getNode(edge.source),
           g.getNode(edge.target),
           layerCoordsArr,
@@ -256,10 +257,6 @@ export class DagreLayout implements Layout<DagreLayoutOptions> {
           isDifferentLayer,
           filterControlPointsOutOfBoundary
         );
-        edge.data.controlPoints?.forEach((point) => {
-          point.x += dBegin[0];
-          point.y += dBegin[1];
-        });
       }
     });
 
@@ -295,7 +292,7 @@ export class DagreLayout implements Layout<DagreLayoutOptions> {
 
   layoutNode = (node: Node) => {
     return node.data.layout !== false;
-  }
+  };
 }
 
 /**
