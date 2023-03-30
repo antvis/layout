@@ -457,6 +457,6 @@ function checkFAS(g: IGraph, fas: Edge<EdgeData>[]) {
 
 function weightFn(g: IGraph) {
   return function (e: Edge<EdgeData>): number {
-    return e.data.weight as number;
+    return e.data.weight!;
   };
 }

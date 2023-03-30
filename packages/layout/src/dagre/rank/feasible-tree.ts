@@ -172,7 +172,7 @@ const shiftRanks = (t: IGraph, g: IGraph, delta: number) => {
   t.getAllNodes().forEach((tn) => {
     const v = g.getNode(tn.id);
     if (!v.data.rank) v.data.rank = 0;
-    (v.data.rank as number) += delta;
+    v.data.rank! += delta;
   });
 };
 

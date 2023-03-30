@@ -66,7 +66,7 @@ export function formatSizeFn<T extends Node>(
   if (isArray(value)) {
     return () => {
       if (resultIsNumber) {
-        const max = Math.max(...(value as number[]));
+        const max = Math.max(...value);
         return isNaN(max) ? defaultValue : max;
       }
       return value;

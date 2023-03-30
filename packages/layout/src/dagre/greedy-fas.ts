@@ -9,7 +9,7 @@
  */
 
 import { Edge, Graph, ID } from "@antv/graphlib";
-import { EdgeData, Graph as IGraph } from "../types";
+import { EdgeData, Graph as IGraph, NodeData } from "../types";
 import RawList from "./data/list";
 
 type StateNode = {
@@ -115,7 +115,7 @@ const removeNode = (
 };
 
 const buildState = (g: IGraph, weightFn?: (e: Edge<EdgeData>) => number) => {
-  const fasGraph = new Graph();
+  const fasGraph = new Graph<NodeData, EdgeData>();
   let maxIn = 0;
   let maxOut = 0;
 
@@ -129,7 +129,7 @@ const buildState = (g: IGraph, weightFn?: (e: Edge<EdgeData>) => number) => {
   // Aggregate weights on nodes, but also sum the weights across multi-edges
   // into a single edge for the fasGraph.
   g.getAllEdges().forEach((e) => {
-    let edge = fasGraph
+    const edge = fasGraph
       .getRelatedEdges(e.source, "out")
       .find((edge) => edge.target === e.target);
     const weight = weightFn?.(e) || 1;
@@ -145,7 +145,7 @@ const buildState = (g: IGraph, weightFn?: (e: Edge<EdgeData>) => number) => {
     } else {
       fasGraph.updateEdgeData(edge?.id!, {
         ...edge.data,
-        weight: (edge.data.weight as number) + weight,
+        weight: edge.data.weight! + weight,
       });
     }
     // @ts-ignore

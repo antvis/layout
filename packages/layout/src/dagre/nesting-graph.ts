@@ -41,7 +41,7 @@ const run = (g: IGraph) => {
 
   // Multiply minlen by nodeSep to align nodes on non-border ranks.
   g.getAllEdges().forEach((e) => {
-    (e.data.minlen as number) *= nodeSep;
+    e.data.minlen! *= nodeSep;
   });
 
   // Calculate a weight that is sufficient to keep subgraphs vertically compact

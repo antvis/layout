@@ -1,5 +1,5 @@
 import { Graph, ID } from "@antv/graphlib";
-import { Graph as IGraph } from "../../types";
+import { EdgeData, Graph as IGraph, NodeData } from "../../types";
 
 /*
  * Constructs a graph that can be used to sort a layer of nodes. The graph will
@@ -37,7 +37,7 @@ export const buildLayerGraph = (
   direction: "in" | "out"
 ) => {
   const root = createRootNode(g);
-  const result = new Graph({
+  const result = new Graph<NodeData, EdgeData>({
     tree: [
       {
         id: root,
@@ -52,7 +52,7 @@ export const buildLayerGraph = (
 
     if (
       v.data.rank === rank ||
-      ((v.data.minRank as number) <= rank && rank <= (v.data.maxRank as number))
+      (v.data.minRank! <= rank && rank <= v.data.maxRank!)
     ) {
       if (!result.hasNode(v.id)) {
         result.addNode({ ...v });
@@ -74,7 +74,7 @@ export const buildLayerGraph = (
         const edge = result
           .getRelatedEdges(u, "out")
           .find(({ target }) => target === v.id);
-        const weight = edge !== undefined ? (edge.data.weight as number) : 0;
+        const weight = edge !== undefined ? edge.data.weight! : 0;
 
         if (!edge) {
           result.addEdge({
@@ -82,13 +82,13 @@ export const buildLayerGraph = (
             source: u,
             target: v.id,
             data: {
-              weight: (e.data.weight as number) + weight,
+              weight: e.data.weight! + weight,
             },
           });
         } else {
           result.updateEdgeData(edge.id, {
             ...edge.data,
-            weight: (e.data.weight as number) + weight,
+            weight: e.data.weight! + weight,
           });
         }
       });

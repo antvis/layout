@@ -14,7 +14,7 @@ export const barycenter = (g: Graph, movable: ID[]) => {
     const result = { sum: 0, weight: 0 };
     inV?.forEach((e) => {
       const nodeU = g.getNode(e.source)!;
-      result.sum += e.data.weight! * (nodeU.data.order as number);
+      result.sum += e.data.weight! * nodeU.data.order!;
       result.weight += e.data.weight!;
     });
     return {

@@ -1,6 +1,12 @@
 import { Graph, ID } from "@antv/graphlib";
 import { isNil } from "@antv/util";
-import { DagreRankdir, Graph as IGraph, NodeData, Point } from "../types";
+import {
+  DagreAlign,
+  DagreRankdir,
+  Graph as IGraph,
+  NodeData,
+  Point,
+} from "../types";
 import { run as runAcyclic, undo as undoAcyclic } from "./acyclic";
 import { run as runNormalize, undo as undoNormalize } from "./normalize";
 import { rank } from "./rank";
@@ -36,7 +42,7 @@ export const layout = (
     keepNodeOrder: boolean;
     prevGraph: IGraph | null;
     edgeLabelSpace?: boolean;
-    align?: string;
+    align?: DagreAlign;
     nodesep?: number;
     edgesep?: number;
     ranksep?: number;
@@ -90,7 +96,7 @@ const runLayout = (
     nodeOrder: ID[];
     ranker: "network-simplex" | "tight-tree" | "longest-path";
     rankdir: DagreRankdir;
-    align?: string;
+    align?: DagreAlign;
     nodesep?: number;
     edgesep?: number;
     ranksep?: number;
@@ -102,7 +108,7 @@ const runLayout = (
     rankdir = "tb",
     nodeOrder,
     keepNodeOrder,
-    align = "",
+    align,
     nodesep = 50,
     edgesep = 20,
     ranksep = 50,
@@ -181,7 +187,7 @@ const inheritOrder = (currG: IGraph, prevG: IGraph) => {
     const node = currG.getNode(n.id)!;
     const prevNode = prevG.getNode(n.id)!;
     if (prevNode !== undefined) {
-      node.data.fixorder = prevNode.data._order;
+      node.data.fixorder = prevNode.data._order as number;
       delete prevNode.data._order;
     } else {
       delete node.data.fixorder;
@@ -316,17 +322,17 @@ const makeSpaceForEdgeLabels = (
 ) => {
   const { ranksep = 0, rankdir } = options;
   g.getAllNodes().forEach((node) => {
-    if (!isNaN(node.data.layer as any)) {
+    if (!isNaN(node.data.layer!)) {
       if (!node.data.layer) node.data.layer = 0;
     }
   });
   g.getAllEdges().forEach((edge) => {
-    (edge.data.minlen! as number) *= 2;
+    edge.data.minlen! *= 2;
     if ((edge.data.labelpos as string)?.toLowerCase() !== "c") {
       if (rankdir === "TB" || rankdir === "BT") {
-        edge.data.width! += edge.data.labeloffset as number;
+        edge.data.width! += edge.data.labeloffset!;
       } else {
-        edge.data.height! += edge.data.labeloffset as number;
+        edge.data.height! += edge.data.labeloffset!;
       }
     }
   });
@@ -472,18 +478,14 @@ const fixupEdgeLabelCoords = (g: IGraph) => {
   g.getAllEdges().forEach((edge) => {
     if (edge.data.hasOwnProperty("x")) {
       if (edge.data.labelpos === "l" || edge.data.labelpos === "r") {
-        (edge.data.width! as number) -= edge.data.labeloffset as number;
+        edge.data.width! -= edge.data.labeloffset!;
       }
       switch (edge.data.labelpos) {
         case "l":
-          (edge.data.x as number) -=
-            (edge.data.width! as number) / 2 +
-            (edge.data.labeloffset as number);
+          edge.data.x! -= edge.data.width! / 2 + edge.data.labeloffset!;
           break;
         case "r":
-          (edge.data.x as number) +=
-            (edge.data.width! as number) / 2 +
-            (edge.data.labeloffset as number);
+          edge.data.x! += edge.data.width! / 2 + edge.data.labeloffset!;
           break;
       }
     }
@@ -515,14 +517,10 @@ const removeBorderNodes = (g: IGraph) => {
         ]
       );
 
-      node.data.width =
-        Math.abs((r?.data.x! as number) - (l?.data.x! as number)) || 10;
-      node.data.height =
-        Math.abs((b?.data.y! as number) - (t?.data.y! as number)) || 10;
-      node.data.x =
-        ((l?.data.x as number) || 0) + (node.data.width as number) / 2;
-      node.data.y =
-        ((t?.data.y as number) || 0) + (node.data.height as number) / 2;
+      node.data.width = Math.abs(r?.data.x! - l?.data.x!) || 10;
+      node.data.height = Math.abs(b?.data.y! - t?.data.y!) || 10;
+      node.data.x = (l?.data.x! || 0) + node.data.width! / 2;
+      node.data.y = (t?.data.y! || 0) + node.data.height! / 2;
     }
   });
 
@@ -577,11 +575,10 @@ const positionSelfEdges = (g: IGraph) => {
     const node = g.getNode(v.id)!;
     if (node.data.dummy === "selfedge") {
       const selfNode = g.getNode(node.data.e!.source)!;
-      const x =
-        (selfNode.data.x! as number) + (selfNode.data.width! as number) / 2;
-      const y = selfNode.data.y! as number;
-      const dx = (node.data.x! as number) - x;
-      const dy = (selfNode.data.height! as number) / 2;
+      const x = selfNode.data.x! + selfNode.data.width! / 2;
+      const y = selfNode.data.y!;
+      const dx = node.data.x! - x;
+      const dy = selfNode.data.height! / 2;
 
       if (g.hasEdge(node.data.e!.id)) {
         g.updateEdgeData(node.data.e!.id, node.data.e!.data);

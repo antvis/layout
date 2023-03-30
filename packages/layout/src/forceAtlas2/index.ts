@@ -205,7 +205,7 @@ export class ForceAtlas2Layout implements Layout<ForceAtlas2LayoutOptions> {
       } else if (isArray(nodeSize)) {
         sizes[id] = Math.max(...nodeSize);
       } else if (isNumber(nodeSize)) {
-        sizes[id] = nodeSize as number;
+        sizes[id] = nodeSize;
       }
     }
     return sizes;
@@ -225,16 +225,12 @@ export class ForceAtlas2Layout implements Layout<ForceAtlas2LayoutOptions> {
     const { center, width, height, barnesHut, prune, maxIteration, kr, kg } =
       mergedOptions;
     mergedOptions.width =
-      !width && typeof window !== "undefined"
-        ? window.innerWidth
-        : (width as number);
+      !width && typeof window !== "undefined" ? window.innerWidth : width;
     mergedOptions.height =
-      !height && typeof window !== "undefined"
-        ? window.innerHeight
-        : (height as number);
+      !height && typeof window !== "undefined" ? window.innerHeight : height;
     mergedOptions.center = !center
       ? [mergedOptions.width / 2, mergedOptions.height / 2]
-      : (center as PointTuple);
+      : center;
 
     if (barnesHut === undefined && nodeNum > 250) {
       mergedOptions.barnesHut = true;

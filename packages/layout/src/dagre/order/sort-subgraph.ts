@@ -52,8 +52,8 @@ export const sortSubgraph = (
     ?.forEach((e) => {
       const node = g.getNode(e.vs[0])!;
       if (node) {
-        e.fixorder = node.data.fixorder as number;
-        e.order = node.data.order as number;
+        e.fixorder = node.data.fixorder!;
+        e.order = node.data.order!;
       }
     });
 
@@ -70,8 +70,8 @@ export const sortSubgraph = (
       }
       result.barycenter =
         (result.barycenter! * result.weight! +
-          (blPred.data.order as number) +
-          (brPred.data.order as number)) /
+          blPred.data.order! +
+          brPred.data.order!) /
         (result.weight! + 2);
       result.weight! += 2;
     }

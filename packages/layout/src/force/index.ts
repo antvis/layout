@@ -172,8 +172,8 @@ export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
   ): Promise<LayoutMapping | void> {
     const mergedOptions = { ...this.options, ...options };
 
-    let nodes = graph.getAllNodes();
-    let edges = graph.getAllEdges();
+    const nodes = graph.getAllNodes();
+    const edges = graph.getAllEdges();
 
     const formattedOptions = this.formatOptions(mergedOptions, graph);
     const {
@@ -446,8 +446,8 @@ export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
             centerPos = undefined;
           }
           return {
-            x: centerPos?.x as number,
-            y: centerPos?.y as number,
+            x: centerPos?.x!,
+            y: centerPos?.y!,
           };
         },
       });
@@ -481,8 +481,8 @@ export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
           // 找出同类型节点平均位置节点的距离最近的节点作为中心节点
           const centerPos = centerInfo[node.data[nodeClusterBy] as string];
           return {
-            x: centerPos?.x as number,
-            y: centerPos?.y as number,
+            x: centerPos?.x!,
+            y: centerPos?.y!,
           };
         },
       });
@@ -775,8 +775,8 @@ export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
       const node = graph.getNode(id);
       if (isNumber(node.data.fx) && isNumber(node.data.fy)) {
         calcGraph.mergeNodeData(id, {
-          x: node.data.fx as number,
-          y: node.data.fy as number,
+          x: node.data.fx,
+          y: node.data.fy,
         });
         return;
       }

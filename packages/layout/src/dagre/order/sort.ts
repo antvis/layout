@@ -11,8 +11,9 @@ export const sort = (
   const parts = partition(entries, (entry) => {
     const hasFixOrder =
       entry.hasOwnProperty("fixorder") && !isNaN(entry.fixorder!);
-    if (keepNodeOrder)
+    if (keepNodeOrder) {
       return !hasFixOrder && entry.hasOwnProperty("barycenter");
+    }
     // NOTE: 有fixorder的也可以排
     return hasFixOrder || entry.hasOwnProperty("barycenter");
   });

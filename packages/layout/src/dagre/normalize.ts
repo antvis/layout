@@ -28,9 +28,9 @@ const run = (g: IGraph, dummyChains: ID[]) => {
 
 const normalizeEdge = (g: IGraph, e: Edge<EdgeData>, dummyChains: ID[]) => {
   let v = e.source;
-  let vRank = g.getNode(v)!.data.rank as number;
+  let vRank = g.getNode(v)!.data.rank!;
   const w = e.target;
-  const wRank = g.getNode(w)!.data.rank as number;
+  const wRank = g.getNode(w)!.data.rank!;
   const labelRank = e.data.labelRank;
 
   if (wRank === vRank + 1) return;
@@ -59,8 +59,8 @@ const normalizeEdge = (g: IGraph, e: Edge<EdgeData>, dummyChains: ID[]) => {
     dummy = addDummyNode(g, DUMMY_NODE_EDGE, nodeData, "_d");
 
     if (vRank === labelRank) {
-      nodeData.width = e.data.width! as number;
-      nodeData.height = e.data.height! as number;
+      nodeData.width = e.data.width!;
+      nodeData.height = e.data.height!;
       nodeData.dummy = DUMMY_NODE_EDGE_LABEL;
       nodeData.labelpos = e.data.labelpos as string;
     }

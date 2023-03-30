@@ -8,7 +8,7 @@ export const initDataOrder = (g: Graph, nodeOrder?: ID[]) => {
   const simpleNodes = g.getAllNodes().filter((v) => {
     return !g.getChildren(v.id)?.length;
   });
-  const ranks = simpleNodes.map((v) => v.data.rank as number);
+  const ranks = simpleNodes.map((v) => v.data.rank!);
   const maxRank = Math.max(...ranks);
   const layers: ID[][] = [];
   for (let i = 0; i < maxRank + 1; i++) {
@@ -18,12 +18,12 @@ export const initDataOrder = (g: Graph, nodeOrder?: ID[]) => {
   nodeOrder?.forEach((n) => {
     const node = g.getNode(n);
     // 只考虑原有节点，dummy节点需要按照后续算法排出
-    if (!node || node?.data.dummy) {
+    if (!node || node.data.dummy) {
       return;
     }
-    if (!isNaN(node.data.rank as number)) {
-      node.data.fixorder = layers[node.data.rank as number].length; // 设置fixorder为当层的顺序
-      layers[node.data.rank as number].push(n);
+    if (!isNaN(node.data.rank!)) {
+      node.data.fixorder = layers[node.data.rank!].length; // 设置fixorder为当层的顺序
+      layers[node.data.rank!].push(n);
     }
   });
 };

@@ -172,8 +172,8 @@ export class FruchtermanLayout
       onTick,
     } = formattedOptions;
 
-    let nodes = graph.getAllNodes();
-    let edges = graph.getAllEdges();
+    const nodes = graph.getAllNodes();
+    const edges = graph.getAllEdges();
 
     if (!nodes?.length) {
       const result = { nodes: [], edges };

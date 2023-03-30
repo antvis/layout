@@ -95,8 +95,8 @@ export class ConcentricLayout implements Layout<ConcentricLayoutOptions> {
       nodeSpacing,
     } = mergedOptions;
 
-    let nodes = graph.getAllNodes();
-    let edges = graph.getAllEdges();
+    const nodes = graph.getAllNodes();
+    const edges = graph.getAllEdges();
 
     const width =
       !propsWidth && typeof window !== "undefined"

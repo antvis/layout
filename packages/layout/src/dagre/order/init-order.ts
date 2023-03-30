@@ -18,9 +18,7 @@ export const initOrder = (g: Graph) => {
   //   return !g.getChildren(v.id)?.length;
   // });
   const simpleNodes = g.getAllNodes();
-  const nodeRanks = simpleNodes.map(
-    (v) => (v.data.rank as number) ?? -Infinity
-  );
+  const nodeRanks = simpleNodes.map((v) => v.data.rank! ?? -Infinity);
 
   const maxRank = Math.max(...nodeRanks);
   const layers: ID[][] = [];
@@ -29,9 +27,7 @@ export const initOrder = (g: Graph) => {
   }
 
   const orderedVs = simpleNodes.sort(
-    (a, b) =>
-      (g.getNode(a.id).data.rank as number) -
-      (g.getNode(b.id).data.rank as number)
+    (a, b) => g.getNode(a.id).data.rank! - g.getNode(b.id).data.rank!
   );
   // const orderedVs = _.sortBy(simpleNodes, function(v) { return g.node(v)!.rank; });
 
@@ -40,13 +36,11 @@ export const initOrder = (g: Graph) => {
     return g.getNode(n.id).data.fixorder !== undefined;
   });
   const fixOrderNodes = beforeSort.sort(
-    (a, b) =>
-      (g.getNode(a.id).data.fixorder as number) -
-      (g.getNode(b.id).data.fixorder as number)
+    (a, b) => g.getNode(a.id).data.fixorder! - g.getNode(b.id).data.fixorder!
   );
   fixOrderNodes?.forEach((n) => {
-    if (!isNaN(g.getNode(n.id).data.rank as number)) {
-      layers[g.getNode(n.id).data.rank as number].push(n.id);
+    if (!isNaN(g.getNode(n.id).data.rank!)) {
+      layers[g.getNode(n.id).data.rank!].push(n.id);
     }
     visited[n.id] = true;
   });
@@ -55,8 +49,8 @@ export const initOrder = (g: Graph) => {
     g.dfsTree(n.id, (node) => {
       if (visited.hasOwnProperty(node.id)) return true;
       visited[node.id] = true;
-      if (!isNaN(node.data.rank as number)) {
-        layers[node.data.rank as number].push(node.id);
+      if (!isNaN(node.data.rank!)) {
+        layers[node.data.rank!].push(node.id);
       }
     })
   );

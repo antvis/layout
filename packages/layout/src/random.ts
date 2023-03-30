@@ -73,7 +73,7 @@ export class RandomLayout implements Layout<RandomLayoutOptions> {
       height: propsHeight,
     } = mergedOptions;
 
-    let nodes = graph.getAllNodes();
+    const nodes = graph.getAllNodes();
     const layoutScale = 0.9;
     const width =
       !propsWidth && typeof window !== "undefined"

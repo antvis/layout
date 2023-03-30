@@ -83,6 +83,7 @@ export class DagreLayout implements Layout<DagreLayoutOptions> {
     const mergedOptions = { ...this.options, ...options };
     const {
       nodeSize,
+      align,
       rankdir = "TB",
       ranksep,
       nodesep,
@@ -110,8 +111,8 @@ export class DagreLayout implements Layout<DagreLayoutOptions> {
     const nodeSizeFunc = formatNodeSize(nodeSize, undefined);
 
     // copy graph to g
-    let nodes: Node[] = graph.getAllNodes();
-    let edges: Edge[] = graph.getAllEdges();
+    const nodes: Node[] = graph.getAllNodes();
+    const edges: Edge[] = graph.getAllEdges();
 
     nodes
       .filter((node) => node.data.layout !== false)
@@ -175,6 +176,7 @@ export class DagreLayout implements Layout<DagreLayoutOptions> {
       ranker: "network-simplex",
       rankdir,
       nodesep,
+      align,
     });
 
     const dBegin = [0, 0];
@@ -293,7 +295,7 @@ export class DagreLayout implements Layout<DagreLayoutOptions> {
 
   layoutNode = (node: Node) => {
     return node.data.layout !== false;
-  };
+  }
 }
 
 /**

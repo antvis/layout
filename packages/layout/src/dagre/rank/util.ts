@@ -29,7 +29,7 @@ const longestPath = (g: Graph) => {
     const label = g.getNode(v)!;
     if (!label) return 0;
     if (visited[v]) {
-      return label.data.rank! as number;
+      return label.data.rank!;
     }
     visited[v] = true;
 
@@ -37,7 +37,7 @@ const longestPath = (g: Graph) => {
 
     g.getRelatedEdges(v, "out")?.forEach((e) => {
       const wRank = dfs(e.target);
-      const minLen = e.data.minlen! as number;
+      const minLen = e.data.minlen!;
       const r = wRank - minLen;
       if (r) {
         if (rank === undefined || r < rank) {
@@ -68,7 +68,7 @@ const longestPathWithLayer = (g: Graph) => {
     const label = g.getNode(v)!;
     if (!label) return 0;
     if (visited[v]) {
-      return label.data.rank! as number;
+      return label.data.rank!;
     }
     visited[v] = true;
 
@@ -76,7 +76,7 @@ const longestPathWithLayer = (g: Graph) => {
 
     g.getRelatedEdges(v, "out")?.forEach((e) => {
       const wRank = dfs(e.target);
-      const minLen = e.data.minlen! as number;
+      const minLen = e.data.minlen!;
       const r = wRank - minLen;
       if (r) {
         if (rank === undefined || r < rank) {
@@ -114,15 +114,10 @@ const longestPathWithLayer = (g: Graph) => {
   const dfsForward = (v: ID, nextRank: number) => {
     const label = g.getNode(v)!;
 
-    const currRank = (
-      !isNaN(label.data.layer as number) ? label.data.layer : nextRank
-    ) as number;
+    const currRank = !isNaN(label.data.layer!) ? label.data.layer! : nextRank;
 
     // 没有指定，取最大值
-    if (
-      label.data.rank === undefined ||
-      (label.data.rank as number) < currRank
-    ) {
+    if (label.data.rank === undefined || label.data.rank! < currRank) {
       label.data.rank = currRank;
     }
 
@@ -131,7 +126,7 @@ const longestPathWithLayer = (g: Graph) => {
 
     // DFS遍历子节点
     g.getRelatedEdges(v, "out")?.forEach((e) => {
-      dfsForward(e.target, currRank + (e.data.minlen! as number));
+      dfsForward(e.target, currRank + e.data.minlen!);
     });
   };
 
@@ -139,10 +134,10 @@ const longestPathWithLayer = (g: Graph) => {
   g.getAllNodes().forEach((n) => {
     const label = n.data;
     if (!label) return;
-    if (!isNaN(label.layer as number)) {
-      dfsForward(n.id, label.layer as number); // 默认的dummy root所在层的rank是-1
+    if (!isNaN(label.layer!)) {
+      dfsForward(n.id, label.layer!); // 默认的dummy root所在层的rank是-1
     } else {
-      (label.rank as number) -= minRank;
+      label.rank! -= minRank;
     }
   });
 };
@@ -153,9 +148,9 @@ const longestPathWithLayer = (g: Graph) => {
  */
 const slack = (g: Graph, e: Edge<EdgeData>) => {
   return (
-    (g.getNode(e.target).data.rank as number) -
-    (g.getNode(e.source).data.rank as number) -
-    (e.data.minlen as number)
+    g.getNode(e.target).data.rank! -
+    g.getNode(e.source).data.rank! -
+    e.data.minlen!
   );
 };
 

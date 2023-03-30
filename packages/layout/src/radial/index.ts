@@ -106,17 +106,17 @@ export class RadialLayout implements Layout<RadialLayoutOptions> {
       maxIteration = 1000,
     } = mergedOptions;
 
-    let nodes = graph.getAllNodes();
-    let edges = graph.getAllEdges();
+    const nodes = graph.getAllNodes();
+    const edges = graph.getAllEdges();
 
     const width =
       !propsWidth && typeof window !== "undefined"
         ? window.innerWidth
-        : (propsWidth as number);
+        : propsWidth!;
     const height =
       !propsHeight && typeof window !== "undefined"
         ? window.innerHeight
-        : (propsHeight as number);
+        : propsHeight!;
     const center = (
       !propsCenter ? [width / 2, height / 2] : propsCenter
     ) as PointTuple;

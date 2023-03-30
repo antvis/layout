@@ -94,8 +94,7 @@ export const parentDummyChains = (g: IGraph, dummyChains: ID[]) => {
       if (!ascending) {
         while (
           pathIdx < path.length - 1 &&
-          (g.getNode(path[pathIdx + 1]!)?.data.minRank as number) <=
-            (node.data.rank as number)
+          g.getNode(path[pathIdx + 1]!)?.data.minRank! <= node.data.rank!
         ) {
           pathIdx++;
         }

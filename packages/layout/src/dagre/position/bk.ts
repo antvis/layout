@@ -3,7 +3,7 @@
  * and Simple Horizontal Coordinate Assignment."
  */
 import { Graph, ID, Node } from "@antv/graphlib";
-import { Graph as IGraph, NodeData } from "../../types";
+import { DagreAlign, EdgeData, Graph as IGraph, NodeData } from "../../types";
 import { buildLayerMatrix, minBy } from "../util";
 
 /*
@@ -41,13 +41,13 @@ export const findType1Conflicts = (g: IGraph, layering?: ID[][]) => {
 
     layer?.forEach((v: ID, i: number) => {
       const w = findOtherInnerSegmentNode(g, v);
-      const k1 = w ? (g.getNode(w.id)!.data.order! as number) : prevLayerLength;
+      const k1 = w ? g.getNode(w.id)!.data.order! : prevLayerLength;
 
       if (w || v === lastNode) {
         layer.slice(scanPos, i + 1)?.forEach((scanNode) => {
           g.getPredecessors(scanNode)?.forEach((u) => {
             const uLabel = g.getNode(u.id)!;
-            const uPos = uLabel.data.order as number;
+            const uPos = uLabel.data.order!;
             if (
               (uPos < k0 || k1 < uPos) &&
               !(uLabel.data.dummy && g.getNode(scanNode)?.data.dummy)
@@ -88,8 +88,8 @@ export const findType2Conflicts = (g: IGraph, layering?: ID[][]) => {
           const uNode = g.getNode(u.id)!;
           if (
             uNode.data.dummy &&
-            ((uNode.data.order as number) < prevNorthBorder ||
-              (uNode.data.order as number) > nextNorthBorder)
+            (uNode.data.order! < prevNorthBorder ||
+              uNode.data.order! > nextNorthBorder)
           ) {
             addConflict(conflicts, u.id, v);
           }
@@ -126,7 +126,7 @@ export const findType2Conflicts = (g: IGraph, layering?: ID[][]) => {
       if (g.getNode(v)?.data.dummy === "border") {
         const predecessors = g.getPredecessors(v) || [];
         if (predecessors.length) {
-          nextNorthPos = g.getNode(predecessors[0].id)!.data.order as number;
+          nextNorthPos = g.getNode(predecessors[0].id)!.data.order!;
           scanIfNeeded(
             [south, southPos, southLookahead, prevNorthPos, nextNorthPos],
             scanned
@@ -331,7 +331,7 @@ export const buildBlockGraph = (
   edgesep: number,
   reverseSep?: boolean
 ): IGraph => {
-  const blockGraph = new Graph();
+  const blockGraph = new Graph<NodeData, EdgeData>();
   const sepFn = sep(nodesep, edgesep, reverseSep as boolean);
 
   layering?.forEach((layer) => {
@@ -347,7 +347,7 @@ export const buildBlockGraph = (
       if (u) {
         const uRoot = root[u];
 
-        let edge = blockGraph
+        const edge = blockGraph
           .getRelatedEdges(uRoot, "out")
           .find((edge) => edge.target === vRoot);
         if (!edge) {
@@ -362,7 +362,7 @@ export const buildBlockGraph = (
         } else {
           blockGraph.updateEdgeData(edge.id, {
             ...edge.data,
-            weight: Math.max(sepFn(g, v, u), (edge.data.weight as number) || 0),
+            weight: Math.max(sepFn(g, v, u), edge.data.weight! || 0),
           });
         }
       }
@@ -406,8 +406,7 @@ export function alignCoordinates(
   xss: Record<string, Record<string, number>>,
   alignTo: Record<string, number>
 ) {
-  // @ts-ignore
-  const alignToVals = Object.values(alignTo) as number[];
+  const alignToVals = Object.values(alignTo);
   const alignToMin = Math.min(...alignToVals);
   const alignToMax = Math.max(...alignToVals);
 
@@ -418,7 +417,7 @@ export function alignCoordinates(
       let delta: number;
       if (xs === alignTo) return;
 
-      const xsVals = Object.values(xs) as number[];
+      const xsVals = Object.values(xs);
       delta =
         horiz === "l"
           ? alignToMin - Math.min(...xsVals)
@@ -436,7 +435,7 @@ export function alignCoordinates(
 
 export const balance = (
   xss: Record<string, Record<string, number>>,
-  align?: string
+  align?: DagreAlign
 ) => {
   const result: Record<string, number> = {};
   Object.keys(xss.ul).forEach((key) => {
@@ -453,12 +452,12 @@ export const balance = (
 export const positionX = (
   g: IGraph,
   options?: Partial<{
-    align: string;
+    align: DagreAlign;
     nodesep: number;
     edgesep: number;
   }>
 ) => {
-  const { align: graphAlign = "", nodesep = 0, edgesep = 0 } = options || {};
+  const { align: graphAlign, nodesep = 0, edgesep = 0 } = options || {};
 
   const layering = buildLayerMatrix(g);
   const conflicts = Object.assign(
@@ -536,14 +535,14 @@ export const sep = (nodeSep: number, edgeSep: number, reverseSep: boolean) => {
     sum += (vLabel.data.dummy ? edgeSep : nodeSep) / 2;
     sum += (wLabel.data.dummy ? edgeSep : nodeSep) / 2;
 
-    sum += (wLabel.data.width! as number) / 2;
+    sum += wLabel.data.width! / 2;
     if (wLabel.data.labelpos) {
       switch (((wLabel.data.labelpos as string) || "").toLowerCase()) {
         case "l":
-          delta = (wLabel.data.width! as number) / 2;
+          delta = wLabel.data.width! / 2;
           break;
         case "r":
-          delta = (-wLabel.data.width! as number) / 2;
+          delta = -wLabel.data.width! / 2;
           break;
       }
     }
@@ -556,5 +555,4 @@ export const sep = (nodeSep: number, edgeSep: number, reverseSep: boolean) => {
   };
 };
 
-export const width = (g: IGraph, v: ID) =>
-  (g.getNode(v)!.data.width as number) || 0;
+export const width = (g: IGraph, v: ID) => g.getNode(v)!.data.width! || 0;

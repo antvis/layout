@@ -114,7 +114,7 @@ export const calcCutValue = (t: IGraph, g: IGraph, child: ID) => {
         const otherCutValue = t
           .getRelatedEdges(child, "both")
           .find((e) => e.source === other || e.target === other)!.data
-          .cutvalue as number;
+          .cutvalue!;
         cutValue += pointsToHead ? -otherCutValue : otherCutValue;
       }
     }
@@ -162,7 +162,7 @@ const dfsAssignLowLim = (
 
 export const leaveEdge = (tree: IGraph) => {
   return tree.getAllEdges().find((e) => {
-    return (e.data.cutvalue as number) < 0;
+    return e.data.cutvalue! < 0;
   });
 };
 
@@ -185,7 +185,7 @@ export const enterEdge = (t: IGraph, g: IGraph, edge: Edge<EdgeData>) => {
 
   // If the root is in the tail of the edge then we need to flip the logic that
   // checks for the head and tail nodes in the candidates function below.
-  if ((vLabel.data.lim as number) > (wLabel.data.lim as number)) {
+  if (vLabel.data.lim! > wLabel.data.lim!) {
     tailLabel = wLabel;
     flip = true;
   }
@@ -255,10 +255,8 @@ const updateRanks = (t: IGraph, g: IGraph) => {
     }
 
     g.getNode(v).data.rank =
-      ((g.hasNode(parent) && (g.getNode(parent).data.rank! as number)) || 0) +
-      (flipped
-        ? (edge?.data.minlen as number)
-        : -(edge?.data.minlen as number));
+      ((g.hasNode(parent) && g.getNode(parent).data.rank!) || 0) +
+      (flipped ? edge?.data.minlen! : -edge?.data.minlen!);
   });
 };
 
@@ -278,7 +276,7 @@ const isTreeEdge = (tree: IGraph, u: ID, v: ID) => {
  */
 const isDescendant = (vLabel: Node<NodeData>, rootLabel: Node<NodeData>) => {
   return (
-    (rootLabel.data.low as number) <= (vLabel.data.lim as number) &&
-    (vLabel.data.lim as number) <= (rootLabel.data.lim as number)
+    rootLabel.data.low! <= vLabel.data.lim! &&
+    vLabel.data.lim! <= rootLabel.data.lim!
   );
 };

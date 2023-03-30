@@ -136,8 +136,8 @@ export class D3ForceLayout
   ): Promise<LayoutMapping | void> {
     const mergedOptions = { ...this.options, ...options };
 
-    let nodes = graph.getAllNodes();
-    let edges = graph.getAllEdges();
+    const nodes = graph.getAllNodes();
+    const edges = graph.getAllEdges();
     const layoutNodes: CalcNode[] = nodes.map(
       (node) =>
         ({

@@ -1,6 +1,6 @@
 import { ID, Graph, Node } from "@antv/graphlib";
 import { isNumber } from "@antv/util";
-import { Graph as IGraph, NodeData } from "../types";
+import { EdgeData, Graph as IGraph, NodeData } from "../types";
 
 const safeSort = (valueA?: number, valueB?: number) => {
   return Number(valueA) - Number(valueB);
@@ -34,12 +34,12 @@ export const addDummyNode = (
  * associated with multi-edges.
  */
 export const simplify = (g: IGraph) => {
-  const simplified = new Graph();
+  const simplified = new Graph<NodeData, EdgeData>();
   g.getAllNodes().forEach((v) => {
     simplified.addNode({ ...v });
   });
   g.getAllEdges().forEach((e) => {
-    let edge = simplified
+    const edge = simplified
       .getRelatedEdges(e.source, "out")
       .find((edge) => edge.target === e.target);
     if (!edge) {
@@ -48,18 +48,15 @@ export const simplify = (g: IGraph) => {
         source: e.source,
         target: e.target,
         data: {
-          weight: (e.data.weight as number) || 0,
-          minlen: (e.data.minlen as number) || 1,
+          weight: e.data.weight! || 0,
+          minlen: e.data.minlen! || 1,
         },
       });
     } else {
       simplified.updateEdgeData(edge?.id!, {
         ...edge.data,
-        weight: (edge.data.weight as number) + (e.data.weight as number) || 0,
-        minlen: Math.max(
-          edge.data.minlen as number,
-          (e.data.minlen as number) || 1
-        ),
+        weight: edge.data.weight! + e.data.weight! || 0,
+        minlen: Math.max(edge.data.minlen!, e.data.minlen! || 1),
       });
     }
   });
@@ -177,7 +174,7 @@ export const buildLayerMatrix = (g: IGraph) => {
 
   // const layering = _.map(_.range(maxRank(g) + 1), function() { return []; });
   g.getAllNodes().forEach((node) => {
-    const rank = node.data.rank as number;
+    const rank = node.data.rank!;
     if (rank !== undefined && layeringNodes[rank]) {
       layeringNodes[rank].push(node.id);
     }
@@ -185,10 +182,7 @@ export const buildLayerMatrix = (g: IGraph) => {
 
   for (let i = 0; i < rankMax; i++) {
     layeringNodes[i] = layeringNodes[i].sort((va: ID, vb: ID) =>
-      safeSort(
-        g.getNode(va).data.order as number,
-        g.getNode(vb).data.order as number
-      )
+      safeSort(g.getNode(va).data.order!, g.getNode(vb).data.order!)
     );
   }
 
@@ -203,11 +197,11 @@ export const normalizeRanks = (g: IGraph) => {
   const nodeRanks = g
     .getAllNodes()
     .filter((v) => v.data.rank !== undefined)
-    .map((v) => v.data.rank! as number);
+    .map((v) => v.data.rank!);
   const min = Math.min(...nodeRanks);
   g.getAllNodes().forEach((v) => {
     if (v.data.hasOwnProperty("rank") && min !== Infinity) {
-      (v.data.rank! as number) -= min;
+      v.data.rank! -= min;
     }
   });
 };
@@ -217,18 +211,18 @@ export const removeEmptyRanks = (g: IGraph, nodeRankFactor: number = 0) => {
   const nodes = g.getAllNodes();
   const nodeRanks = nodes
     .filter((v) => v.data.rank !== undefined)
-    .map((v) => v.data.rank as number);
+    .map((v) => v.data.rank!);
 
   const offset = Math.min(...nodeRanks);
-  const layers: string[][] = [];
+  const layers: ID[][] = [];
 
   nodes.forEach((v) => {
-    const rank = ((v.data.rank as number) || 0) - offset;
+    const rank = (v.data.rank! || 0) - offset;
 
     if (!layers[rank]) {
       layers[rank] = [];
     }
-    layers[rank].push(v.id as string);
+    layers[rank].push(v.id);
   });
 
   let delta = 0;
@@ -243,7 +237,7 @@ export const removeEmptyRanks = (g: IGraph, nodeRankFactor: number = 0) => {
         const node = g.getNode(v);
         if (node) {
           node.data.rank = node.data.rank || 0;
-          (node.data.rank as number) += delta;
+          node.data.rank! += delta;
         }
       });
     }
@@ -270,7 +264,7 @@ export const addBorderNode = (
 export const maxRank = (g: IGraph) => {
   let maxRank: number;
   g.getAllNodes().forEach((v) => {
-    const rank = v.data.rank as number;
+    const rank = v.data.rank!;
     if (rank !== undefined) {
       if (maxRank === undefined || rank > maxRank) {
         maxRank = rank;
@@ -351,7 +345,7 @@ export const dfs = (
   const visited: ID[] = [];
   nodes.forEach((node) => {
     if (!graph.hasNode(node.id)) {
-      throw new Error("Graph does not have node: " + node);
+      throw new Error(`Graph does not have node: ${node}`);
     } else {
       doDFS(graph, node, order === "post", visited, navigator, results);
     }

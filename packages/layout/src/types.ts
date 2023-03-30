@@ -20,9 +20,13 @@ export interface NodeData extends PlainObject {
   selfEdges?: IEdge<EdgeData>[];
   rank?: number;
   order?: number;
+  fixorder?: number;
   minRank?: number;
   maxRank?: number;
   layout?: boolean;
+  layer?: number;
+  low?: number;
+  lim?: number;
 }
 
 export interface OutNodeData extends NodeData {
@@ -40,6 +44,9 @@ export interface EdgeData extends PlainObject {
   width?: number;
   points?: Point[];
   controlPoints?: Point[];
+  minlen?: number;
+  cutvalue?: number;
+  labeloffset?: number;
 }
 
 /** input node */
@@ -204,10 +211,11 @@ export type DagreRankdir =
   | "lr"
   | "rl"
   | "bt";
+export type DagreAlign = "UL" | "UR" | "DL" | "DR";
 
 export interface DagreLayoutOptions {
   rankdir?: DagreRankdir;
-  align?: "UL" | "UR" | "DL" | "DR";
+  align?: DagreAlign;
   begin?: PointTuple;
   nodeSize?: number | number[];
   nodesep?: number;

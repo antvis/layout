@@ -1,5 +1,5 @@
 import { ID } from "@antv/graphlib";
-import { Graph as IGraph } from "../../types";
+import { DagreAlign, Graph as IGraph } from "../../types";
 import { asNonCompoundGraph, buildLayerMatrix } from "../util";
 import {
   alignCoordinates,
@@ -22,7 +22,7 @@ const positionY = (
 
   let prevY = 0;
   layering?.forEach((layer) => {
-    const heights = layer.map((v) => g.getNode(v).data.height as number);
+    const heights = layer.map((v) => g.getNode(v).data.height!);
     const maxHeight = Math.max(...heights, 0);
     layer?.forEach((v: string) => {
       g.getNode(v).data.y = prevY + maxHeight / 2;
@@ -34,12 +34,12 @@ const positionY = (
 const positionX = (
   g: IGraph,
   options?: Partial<{
-    align: string;
+    align: DagreAlign;
     nodesep: number;
     edgesep: number;
   }>
 ): Record<ID, number> => {
-  const { align: graphAlign = "", nodesep = 0, edgesep = 0 } = options || {};
+  const { align: graphAlign, nodesep = 0, edgesep = 0 } = options || {};
 
   const layering = buildLayerMatrix(g);
   const conflicts = Object.assign(
@@ -92,7 +92,7 @@ const positionX = (
 export const position = (
   g: IGraph,
   options?: Partial<{
-    align: string;
+    align: DagreAlign;
     nodesep: number;
     edgesep: number;
     ranksep: number;
