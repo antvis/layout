@@ -1,4 +1,4 @@
-import { ID, Graph } from "@antv/graphlib";
+import { ID, Graph, Node } from "@antv/graphlib";
 import { isNumber } from "@antv/util";
 import { Graph as IGraph, NodeData } from "../types";
 
@@ -36,7 +36,7 @@ export const addDummyNode = (
 export const simplify = (g: IGraph) => {
   const simplified = new Graph();
   g.getAllNodes().forEach((v) => {
-    simplified.addNode(v);
+    simplified.addNode({ ...v });
   });
   g.getAllEdges().forEach((e) => {
     let edge = simplified
@@ -71,7 +71,7 @@ export const asNonCompoundGraph = (g: IGraph): IGraph => {
 
   g.getAllNodes().forEach((node) => {
     if (!g.getChildren(node.id).length) {
-      simplified.addNode(node);
+      simplified.addNode({ ...node });
     }
   });
 
@@ -304,27 +304,58 @@ export const partition = <T = any>(
   return result;
 };
 
-// /*
-//  * Returns a new const that wraps `fn` with a timer. The wrapper logs the
-//  * time it takes to execute the function.
-//  */
-// export const time = (name: string, fn: () => void) => {
-//   const start = Date.now();
-//   try {
-//     return fn();
-//   } finally {
-//     console.log(`${name} time: ${Date.now() - start}ms`);
-//   }
-// };
-
-// export const notime = (name: string, fn: () => void) => {
-//   return fn();
-// };
-
 export const minBy = <T = any>(array: T[], func: (param: T) => number) => {
   return array.reduce((a, b) => {
     const valA = func(a);
     const valB = func(b);
     return valA > valB ? b : a;
   });
+};
+
+const doDFS = (
+  graph: IGraph,
+  node: Node<NodeData>,
+  postorder: boolean,
+  visited: ID[],
+  navigator: (n: ID) => Node<NodeData>[],
+  result: ID[]
+) => {
+  if (!visited.includes(node.id)) {
+    visited.push(node.id);
+    if (!postorder) {
+      result.push(node.id);
+    }
+    navigator(node.id).forEach((n) =>
+      doDFS(graph, n, postorder, visited, navigator, result)
+    );
+    if (postorder) {
+      result.push(node.id);
+    }
+  }
+};
+
+/**
+ * @description DFS traversal.
+ * @description.zh-CN DFS 遍历。
+ */
+export const dfs = (
+  graph: IGraph,
+  node: Node<NodeData> | Node<NodeData>[],
+  order: "pre" | "post",
+  isDirected: boolean
+) => {
+  const nodes = Array.isArray(node) ? node : [node];
+  const navigator = (n: ID) =>
+    (isDirected ? graph.getSuccessors(n) : graph.getNeighbors(n))!;
+  const results: ID[] = [];
+  const visited: ID[] = [];
+  nodes.forEach((node) => {
+    if (!graph.hasNode(node.id)) {
+      throw new Error("Graph does not have node: " + node);
+    } else {
+      doDFS(graph, node, order === "post", visited, navigator, results);
+    }
+  });
+
+  return results;
 };

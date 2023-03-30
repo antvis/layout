@@ -4,7 +4,7 @@ import { Graph } from "../../types";
 /**
  * 按照数据中的结果设置fixorder
  */
-const initDataOrder = (g: Graph, nodeOrder?: ID[]) => {
+export const initDataOrder = (g: Graph, nodeOrder?: ID[]) => {
   const simpleNodes = g.getAllNodes().filter((v) => {
     return !g.getChildren(v.id)?.length;
   });
@@ -27,5 +27,3 @@ const initDataOrder = (g: Graph, nodeOrder?: ID[]) => {
     }
   });
 };
-
-export default initDataOrder;

@@ -29,7 +29,9 @@ import { EdgeData, Graph as IGraph } from "../../types";
  * edges.
  */
 const feasibleTree = (g: IGraph) => {
-  const t = new Graph();
+  const t = new Graph({
+    tree: [],
+  });
 
   // Choose arbitrary node from which to start our tree
   const start = g.getAllNodes()[0];
@@ -102,7 +104,7 @@ const tightTree = (t: IGraph, g: IGraph) => {
  * edges.
  */
 const feasibleTreeWithLayer = (g: IGraph) => {
-  const t = new Graph();
+  const t = new Graph({ tree: [] });
 
   // Choose arbitrary node from which to start our tree
   const start = g.getAllNodes()[0];
@@ -167,7 +169,8 @@ const findMinSlackEdge = (t: IGraph, g: IGraph) => {
 };
 
 const shiftRanks = (t: IGraph, g: IGraph, delta: number) => {
-  t.getAllNodes().forEach((v) => {
+  t.getAllNodes().forEach((tn) => {
+    const v = g.getNode(tn.id);
     if (!v.data.rank) v.data.rank = 0;
     (v.data.rank as number) += delta;
   });

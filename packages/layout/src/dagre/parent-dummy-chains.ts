@@ -102,7 +102,10 @@ export const parentDummyChains = (g: IGraph, dummyChains: ID[]) => {
         pathV = path[pathIdx]!;
       }
 
-      g.setParent(v, pathV);
+      if (g.hasNode(pathV)) {
+        g.setParent(v, pathV);
+      }
+
       v = g.getSuccessors(v)![0].id;
     }
   });

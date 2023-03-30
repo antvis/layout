@@ -1,7 +1,7 @@
 import { Graph as IGraph } from "../../types";
 import { longestPath, longestPathWithLayer } from "./util";
 import { feasibleTreeWithLayer as feasibleTree } from "./feasible-tree";
-import networkSimplex from "./network-simplex";
+import { networkSimplex } from "./network-simplex";
 
 /*
  * Assigns a rank to each node in the input graph that respects the "minlen"
@@ -22,7 +22,7 @@ import networkSimplex from "./network-simplex";
  *       algorithm. Ranks can start at any index (including negative), we'll
  *       fix them up later.
  */
-const rank = (
+export const rank = (
   g: IGraph,
   ranker: "network-simplex" | "tight-tree" | "longest-path"
 ) => {
@@ -53,5 +53,3 @@ const tightTreeRanker = (g: IGraph) => {
 const networkSimplexRanker = (g: IGraph) => {
   networkSimplex(g);
 };
-
-export default rank;

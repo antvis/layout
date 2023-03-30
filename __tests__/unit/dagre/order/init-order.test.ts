@@ -1,6 +1,6 @@
 import { Graph } from "@antv/graphlib";
 import { Graph as IGraph, NodeData, EdgeData } from "@antv/layout";
-import initOrder from "../../../../packages/layout/src/dagre/order/init-order";
+import { initOrder } from "../../../../packages/layout/src/dagre/order/init-order";
 
 describe("order/initOrder", function () {
   let g: Graph<NodeData, EdgeData>;

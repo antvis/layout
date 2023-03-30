@@ -23,8 +23,6 @@ const DUMMY_NODE_EDGE = "edge";
 const DUMMY_NODE_EDGE_LABEL = "edge-label";
 
 const run = (g: IGraph, dummyChains: ID[]) => {
-  // dummyChains = [];
-  // g.graph().dummyChains = [];
   g.getAllEdges().forEach((edge) => normalizeEdge(g, edge, dummyChains));
 };
 
@@ -58,6 +56,8 @@ const normalizeEdge = (g: IGraph, e: Edge<EdgeData>, dummyChains: ID[]) => {
       rank: vRank,
     };
 
+    dummy = addDummyNode(g, DUMMY_NODE_EDGE, nodeData, "_d");
+
     if (vRank === labelRank) {
       nodeData.width = e.data.width! as number;
       nodeData.height = e.data.height! as number;
@@ -65,7 +65,6 @@ const normalizeEdge = (g: IGraph, e: Edge<EdgeData>, dummyChains: ID[]) => {
       nodeData.labelpos = e.data.labelpos as string;
     }
 
-    dummy = addDummyNode(g, DUMMY_NODE_EDGE, nodeData, "_d");
     g.addEdge({
       id: `e${Math.random()}`,
       source: v,
@@ -102,9 +101,9 @@ const undo = (g: IGraph, dummyChains: ID[]) => {
     while (node.data.dummy) {
       w = g.getSuccessors(currentV)![0];
       g.removeNode(currentV);
-      (originalEdge.data.points as any).push({
-        x: node.data.x,
-        y: node.data.y,
+      originalEdge.data.points!.push({
+        x: node.data.x!,
+        y: node.data.y!,
       });
       if (node.data.dummy === DUMMY_NODE_EDGE_LABEL) {
         originalEdge.data.x = node.data.x;

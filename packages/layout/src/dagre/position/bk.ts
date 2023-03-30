@@ -517,14 +517,14 @@ export const sep = (nodeSep: number, edgeSep: number, reverseSep: boolean) => {
     let sum = 0;
     let delta: number = 0;
 
-    sum += (vLabel.data.width as number) / 2;
+    sum += vLabel.data.width! / 2;
     if (vLabel.data.hasOwnProperty("labelpos")) {
       switch (((vLabel.data.labelpos as string) || "").toLowerCase()) {
         case "l":
-          delta = (-vLabel.data.width! as number) / 2;
+          delta = -vLabel.data.width! / 2;
           break;
         case "r":
-          delta = (vLabel.data.width! as number) / 2;
+          delta = vLabel.data.width! / 2;
           break;
       }
     }

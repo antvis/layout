@@ -1,6 +1,6 @@
 import { Graph } from "@antv/graphlib";
 import { Graph as IGraph, NodeData, EdgeData } from "@antv/layout";
-import buildLayerGraph from "../../../../packages/layout/src/dagre/order/build-layer-graph";
+import { buildLayerGraph } from "../../../../packages/layout/src/dagre/order/build-layer-graph";
 
 describe("order/buildLayerGraph", function () {
   let g: Graph<NodeData, EdgeData>;
@@ -233,7 +233,7 @@ describe("order/buildLayerGraph", function () {
     expect(buildLayerGraph(g, 3, "out").getAllEdges().length).toEqual(0);
   });
 
-  it.skip("collapses multi-edges", function () {
+  it("collapses multi-edges", function () {
     g.addNode({
       id: "a",
       data: { rank: 1 },

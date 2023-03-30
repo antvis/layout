@@ -63,12 +63,10 @@ const twoLayerCrossCount = (g: Graph, northLayer: ID[], southLayer: ID[]) => {
   return cc;
 };
 
-const crossCount = (g: Graph, layering: ID[][]) => {
+export const crossCount = (g: Graph, layering: ID[][]) => {
   let cc = 0;
   for (let i = 1; i < layering?.length; i += 1) {
     cc += twoLayerCrossCount(g, layering[i - 1], layering[i]);
   }
   return cc;
 };
-
-export default crossCount;

@@ -2,7 +2,7 @@ import { ID } from "@antv/graphlib";
 import { partition } from "../util";
 import { ConflictEntry } from "./resolve-conflicts";
 
-const sort = (
+export const sort = (
   entries: ConflictEntry[],
   biasRight?: boolean,
   usePrev?: boolean,
@@ -91,5 +91,3 @@ const compareWithBias = (bias: boolean, usePrev: boolean) => {
     return !bias ? entryV.i - entryW.i : entryW.i - entryV.i;
   };
 };
-
-export default sort;

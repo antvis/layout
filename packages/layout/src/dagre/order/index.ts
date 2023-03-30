@@ -1,8 +1,8 @@
-import initOrder from "./init-order";
-import crossCount from "./cross-count";
-import buildLayerGraph from "./build-layer-graph";
-import addSubgraphConstraints from "./add-subgraph-constraints";
-import sortSubgraph from "./sort-subgraph";
+import { initOrder } from "./init-order";
+import { crossCount } from "./cross-count";
+import { buildLayerGraph } from "./build-layer-graph";
+import { addSubgraphConstraints } from "./add-subgraph-constraints";
+import { sortSubgraph } from "./sort-subgraph";
 import { buildLayerMatrix, maxRank } from "../util";
 import { Graph as IGraph } from "../../types";
 import { Graph, ID } from "@antv/graphlib";

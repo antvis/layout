@@ -1,21 +1,15 @@
 import { Node } from "@antv/graphlib";
-import { Graph, NodeData } from "../types";
+import { DagreRankdir, Graph, NodeData } from "../types";
 
-const adjust = (
-  g: Graph,
-  rankDir: "TB" | "BT" | "LR" | "RL" | "tb" | "lr" | "rl" | "bt"
-) => {
-  const rd = rankDir.toLowerCase();
+const adjust = (g: Graph, rankdir: DagreRankdir) => {
+  const rd = rankdir.toLowerCase();
   if (rd === "lr" || rd === "rl") {
     swapWidthHeight(g);
   }
 };
 
-const undo = (
-  g: Graph,
-  rankDir: "TB" | "BT" | "LR" | "RL" | "tb" | "lr" | "rl" | "bt"
-) => {
-  const rd = rankDir.toLowerCase();
+const undo = (g: Graph, rankdir: DagreRankdir) => {
+  const rd = rankdir.toLowerCase();
   if (rd === "bt" || rd === "rl") {
     reverseY(g);
   }
@@ -43,44 +37,40 @@ const swapWidthHeightOne = (node: Node<NodeData>) => {
 
 const reverseY = (g: Graph) => {
   g.getAllNodes().forEach((v) => {
-    reverseYOne(v);
+    reverseYOne(v.data);
   });
 
   g.getAllEdges().forEach((edge) => {
-    (edge.data.points as Node<NodeData>[])?.forEach((point) =>
-      reverseYOne(point)
-    );
+    edge.data.points?.forEach((point) => reverseYOne(point));
     if (edge.data.hasOwnProperty("y")) {
-      reverseYOne(edge);
+      reverseYOne(edge.data);
     }
   });
 };
 
-const reverseYOne = (node: Node<NodeData>) => {
-  if (node.data.y) {
-    node.data.y = -node.data.y;
+const reverseYOne = (node: { x?: number; y?: number }) => {
+  if (node?.y) {
+    node.y = -node.y;
   }
 };
 
 const swapXY = (g: Graph) => {
   g.getAllNodes().forEach((v) => {
-    swapXYOne(v);
+    swapXYOne(v.data);
   });
 
   g.getAllEdges().forEach((edge) => {
-    (edge.data.points as Node<NodeData>[])?.forEach((point) =>
-      swapXYOne(point)
-    );
+    edge.data.points?.forEach((point) => swapXYOne(point));
     if (edge.data.hasOwnProperty("x")) {
-      swapXYOne(edge);
+      swapXYOne(edge.data);
     }
   });
 };
 
-const swapXYOne = (node: Node<NodeData>) => {
-  const x = node.data.x;
-  node.data.x = node.data.y;
-  node.data.y = x;
+const swapXYOne = (node: { x?: number; y?: number }) => {
+  const x = node.x;
+  node.x = node.y;
+  node.y = x;
 };
 
 export { adjust, undo };

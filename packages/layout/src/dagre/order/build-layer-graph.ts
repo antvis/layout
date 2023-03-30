@@ -1,4 +1,4 @@
-import { Graph } from "@antv/graphlib";
+import { Graph, ID } from "@antv/graphlib";
 import { Graph as IGraph } from "../../types";
 
 /*
@@ -31,7 +31,11 @@ import { Graph as IGraph } from "../../types";
  *    5. The weights for copied edges are aggregated as need, since the output
  *       graph is not a multi-graph.
  */
-const buildLayerGraph = (g: IGraph, rank: number, direction: "in" | "out") => {
+export const buildLayerGraph = (
+  g: IGraph,
+  rank: number,
+  direction: "in" | "out"
+) => {
   const root = createRootNode(g);
   const result = new Graph({
     tree: [
@@ -50,38 +54,52 @@ const buildLayerGraph = (g: IGraph, rank: number, direction: "in" | "out") => {
       v.data.rank === rank ||
       ((v.data.minRank as number) <= rank && rank <= (v.data.maxRank as number))
     ) {
-      result.addNode(v);
+      if (!result.hasNode(v.id)) {
+        result.addNode({ ...v });
+      }
+
+      if (parent?.id && !result.hasNode(parent?.id)) {
+        result.addNode({ ...parent });
+      }
+
       result.setParent(v.id, parent?.id || root);
 
       // This assumes we have only short edges!
       g.getRelatedEdges(v.id, direction).forEach((e) => {
         const u = e.source === v.id ? e.target : e.source;
         if (!result.hasNode(u)) {
-          result.addNode(g.getNode(u));
+          result.addNode({ ...g.getNode(u) });
         }
-        // const edge = result.edgeFromArgs(u, v);
+
         const edge = result
           .getRelatedEdges(u, "out")
           .find(({ target }) => target === v.id);
         const weight = edge !== undefined ? (edge.data.weight as number) : 0;
 
-        result.addEdge({
-          id: `e${u}-${v.id}-${Math.random()}`,
-          source: u,
-          target: v.id,
-          data: {
-            weight: e.data.weight! + weight!,
-          },
-        });
+        if (!edge) {
+          result.addEdge({
+            id: e.id,
+            source: u,
+            target: v.id,
+            data: {
+              weight: (e.data.weight as number) + weight,
+            },
+          });
+        } else {
+          result.updateEdgeData(edge.id, {
+            ...edge.data,
+            weight: (e.data.weight as number) + weight,
+          });
+        }
       });
 
-      if ("minRank" in v.data) {
+      // console.log(v);
+
+      if (v.data.hasOwnProperty("minRank")) {
         result.updateNodeData(v.id, {
           ...v.data,
-          // @ts-ignore
-          borderLeft: v.data.borderLeft[rank],
-          // @ts-ignore
-          borderRight: v.data.borderRight[rank],
+          borderLeft: (v.data.borderLeft as ID[])[rank],
+          borderRight: (v.data.borderRight as ID[])[rank],
         });
       }
     }
@@ -95,5 +113,3 @@ const createRootNode = (g: IGraph) => {
   while (g.hasNode((v = `_root${Math.random()}`)));
   return v;
 };
-
-export default buildLayerGraph;

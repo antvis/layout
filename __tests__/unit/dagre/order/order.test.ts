@@ -1,7 +1,7 @@
 import { Graph } from "@antv/graphlib";
 import { Graph as IGraph, NodeData, EdgeData } from "@antv/layout";
 import { order } from "../../../../packages/layout/src/dagre/order";
-import crossCount from "../../../../packages/layout/src/dagre/order/cross-count";
+import { crossCount } from "../../../../packages/layout/src/dagre/order/cross-count";
 import * as util from "../../../../packages/layout/src/dagre/util";
 
 describe("order", function () {

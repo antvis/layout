@@ -12,6 +12,17 @@ export interface NodeData extends PlainObject {
   bboxSize?: number[];
   borderLeft?: ID | ID[];
   borderRight?: ID | ID[];
+  x?: number;
+  y?: number;
+  height?: number;
+  width?: number;
+  e?: IEdge<EdgeData>;
+  selfEdges?: IEdge<EdgeData>[];
+  rank?: number;
+  order?: number;
+  minRank?: number;
+  maxRank?: number;
+  layout?: boolean;
 }
 
 export interface OutNodeData extends NodeData {
@@ -23,6 +34,12 @@ export interface EdgeData extends PlainObject {
   // temp edges e.g. the edge generated for releated collapsed combo
   virtual?: boolean;
   weight?: number;
+  x?: number;
+  y?: number;
+  height?: number;
+  width?: number;
+  points?: Point[];
+  controlPoints?: Point[];
 }
 
 /** input node */
@@ -178,8 +195,18 @@ export interface RadialLayoutOptions {
   sortStrength?: number;
 }
 
+export type DagreRankdir =
+  | "TB"
+  | "BT"
+  | "LR"
+  | "RL"
+  | "tb"
+  | "lr"
+  | "rl"
+  | "bt";
+
 export interface DagreLayoutOptions {
-  rankdir?: "TB" | "BT" | "LR" | "RL";
+  rankdir?: DagreRankdir;
   align?: "UL" | "UR" | "DL" | "DR";
   begin?: PointTuple;
   nodeSize?: number | number[];
@@ -190,7 +217,7 @@ export interface DagreLayoutOptions {
   edgeLabelSpace?: boolean;
   nodeOrder?: string[];
   radial?: boolean; // 是否基于 dagre 进行辐射布局
-  focusNode: string | Node | null; // radial 为 true 时生效，关注的节点
+  focusNode?: string | Node | null; // radial 为 true 时生效，关注的节点
   preset?: {
     nodes: OutNode[];
     edges: Edge[];

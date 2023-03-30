@@ -1,8 +1,9 @@
 import { Graph, ID } from "@antv/graphlib";
-import { Graph as IGraph, NodeData } from "../types";
+import { isNil } from "@antv/util";
+import { DagreRankdir, Graph as IGraph, NodeData, Point } from "../types";
 import { run as runAcyclic, undo as undoAcyclic } from "./acyclic";
 import { run as runNormalize, undo as undoNormalize } from "./normalize";
-import rank from "./rank";
+import { rank } from "./rank";
 import {
   normalizeRanks,
   removeEmptyRanks,
@@ -23,22 +24,29 @@ import {
 } from "./coordinate-system";
 import { order } from "./order";
 import { position } from "./position";
-import initDataOrder from "./order/init-data-order";
+import { initDataOrder } from "./order/init-data-order";
+
+// const graphNumAttrs = ["nodesep", "edgesep", "ranksep", "marginx", "marginy"];
+// const graphDefaults = { ranksep: 50, edgesep: 20, nodesep: 50, rankdir: "tb" };
+// const graphAttrs = ["acyclicer", "ranker", "rankdir", "align"];
 
 export const layout = (
   g: IGraph,
   options: {
     keepNodeOrder: boolean;
-    prevGraph: IGraph;
-    edgeLabelSpace: boolean;
-    ranksep: number;
+    prevGraph: IGraph | null;
+    edgeLabelSpace?: boolean;
+    align?: string;
+    nodesep?: number;
+    edgesep?: number;
+    ranksep?: number;
     acyclicer: string;
     nodeOrder: ID[];
     ranker: "network-simplex" | "tight-tree" | "longest-path";
-    rankDir: "TB" | "BT" | "LR" | "RL" | "tb" | "lr" | "rl" | "bt";
+    rankdir: DagreRankdir;
   }
 ) => {
-  const { edgeLabelSpace, keepNodeOrder, prevGraph, rankDir, ranksep } =
+  const { edgeLabelSpace, keepNodeOrder, prevGraph, rankdir, ranksep } =
     options;
 
   // 如果在原图基础上修改，继承原图的order结果
@@ -49,14 +57,15 @@ export const layout = (
 
   // 控制是否为边的label留位置（这会影响是否在边中间添加dummy node）
   if (!(edgeLabelSpace === false)) {
-    makeSpaceForEdgeLabels(layoutGraph, {
-      rankdir: rankDir,
+    options.ranksep = makeSpaceForEdgeLabels(layoutGraph, {
+      rankdir,
       ranksep,
     });
   }
+  let dimension;
   // TODO: 暂时处理层级设置不正确时的异常报错，提示设置正确的层级
   try {
-    runLayout(layoutGraph, options);
+    dimension = runLayout(layoutGraph, options);
   } catch (e) {
     if (
       e.message === "Not possible to find intersection inside of the rectangle"
@@ -70,6 +79,7 @@ export const layout = (
     throw e;
   }
   updateInputGraph(g, layoutGraph);
+  return dimension;
 };
 
 const runLayout = (
@@ -79,10 +89,24 @@ const runLayout = (
     keepNodeOrder: boolean;
     nodeOrder: ID[];
     ranker: "network-simplex" | "tight-tree" | "longest-path";
-    rankDir: "TB" | "BT" | "LR" | "RL" | "tb" | "lr" | "rl" | "bt";
+    rankdir: DagreRankdir;
+    align?: string;
+    nodesep?: number;
+    edgesep?: number;
+    ranksep?: number;
   }
 ) => {
-  const { acyclicer, ranker, rankDir, nodeOrder, keepNodeOrder } = options;
+  const {
+    acyclicer,
+    ranker,
+    rankdir = "tb",
+    nodeOrder,
+    keepNodeOrder,
+    align = "",
+    nodesep = 50,
+    edgesep = 20,
+    ranksep = 50,
+  } = options;
 
   removeSelfEdges(g);
 
@@ -96,7 +120,7 @@ const runLayout = (
 
   removeEmptyRanks(g, nodeRankFactor);
 
-  cleanupNestingGraph(g);
+  cleanupNestingGraph(g, nestingRoot);
 
   normalizeRanks(g);
 
@@ -118,9 +142,14 @@ const runLayout = (
 
   insertSelfEdges(g);
 
-  adjustCoordinateSystem(g, rankDir);
+  adjustCoordinateSystem(g, rankdir);
 
-  position(g);
+  position(g, {
+    align,
+    nodesep,
+    edgesep,
+    ranksep,
+  });
 
   positionSelfEdges(g);
 
@@ -130,15 +159,17 @@ const runLayout = (
 
   fixupEdgeLabelCoords(g);
 
-  undoCoordinateSystem(g, rankDir);
+  undoCoordinateSystem(g, rankdir);
 
-  translateGraph(g);
+  const { width, height } = translateGraph(g);
 
   assignNodeIntersects(g);
 
   reversePointsForReversedEdges(g);
 
   undoAcyclic(g);
+
+  return { width, height };
 };
 
 /**
@@ -197,9 +228,6 @@ const updateInputGraph = (inputGraph: IGraph, layoutGraph: IGraph) => {
   // inputGraph.graph().height = layoutGraph.graph().height;
 };
 
-const graphNumAttrs = ["nodesep", "edgesep", "ranksep", "marginx", "marginy"];
-const graphDefaults = { ranksep: 50, edgesep: 20, nodesep: 50, rankdir: "tb" };
-const graphAttrs = ["acyclicer", "ranker", "rankdir", "align"];
 const nodeNumAttrs = ["width", "height", "layer", "fixorder"]; // 需要传入layer, fixOrder作为参数参考
 const nodeDefaults = { width: 0, height: 0 };
 const edgeNumAttrs = ["minlen", "weight", "width", "height", "labeloffset"];
@@ -221,22 +249,6 @@ const edgeAttrs = ["labelpos"];
  */
 const buildLayoutGraph = (inputGraph: IGraph) => {
   const g = new Graph({ tree: [] });
-  // const graph = canonicalize(inputGraph.graph());
-
-  // const pickedProperties: any = {};
-  // graphAttrs?.forEach((key) => {
-  //   if (graph[key] !== undefined) pickedProperties[key] = graph[key];
-  // });
-
-  // g.setGraph(
-  //   Object.assign(
-  //     {},
-  //     graphDefaults,
-  //     selectNumberAttrs(graph, graphNumAttrs),
-  //     pickedProperties
-  //   )
-  // );
-
   inputGraph.getAllNodes().forEach((v) => {
     const node = canonicalize(inputGraph.getNode(v.id).data);
     const defaultNode = {
@@ -245,13 +257,22 @@ const buildLayoutGraph = (inputGraph: IGraph) => {
     } as NodeData;
     const defaultAttrs = selectNumberAttrs(defaultNode, nodeNumAttrs) as Node;
 
-    g.addNode({
-      id: v.id,
-      data: {
-        ...defaultAttrs,
-      },
-    });
-    g.setParent(v.id, inputGraph.getParent(v.id)!.id);
+    if (!g.hasNode(v.id)) {
+      g.addNode({
+        id: v.id,
+        data: {
+          ...defaultAttrs,
+        },
+      });
+    }
+
+    const parent = inputGraph.getParent(v.id);
+    if (!isNil(parent)) {
+      if (!g.hasNode(parent.id)) {
+        g.addNode({ ...parent });
+      }
+      g.setParent(v.id, parent.id);
+    }
   });
 
   inputGraph.getAllEdges().forEach((e) => {
@@ -289,7 +310,7 @@ const buildLayoutGraph = (inputGraph: IGraph) => {
 const makeSpaceForEdgeLabels = (
   g: IGraph,
   options: {
-    ranksep: number;
+    ranksep?: number;
     rankdir: string;
   }
 ) => {
@@ -303,9 +324,9 @@ const makeSpaceForEdgeLabels = (
     (edge.data.minlen! as number) *= 2;
     if ((edge.data.labelpos as string)?.toLowerCase() !== "c") {
       if (rankdir === "TB" || rankdir === "BT") {
-        (edge.data.width as number) += edge.data.labeloffset as number;
+        edge.data.width! += edge.data.labeloffset as number;
       } else {
-        (edge.data.height as number) += edge.data.labeloffset as number;
+        edge.data.height! += edge.data.labeloffset as number;
       }
     }
   });
@@ -326,9 +347,7 @@ const injectEdgeLabelProxies = (g: IGraph) => {
       const w = g.getNode(e.target)!;
       const label = {
         e,
-        rank:
-          ((w.data.rank as number) - (v.data.rank as number)) / 2 +
-          (v.data.rank as number),
+        rank: (w.data.rank! - v.data.rank!) / 2 + v.data.rank!,
       };
       addDummyNode(g, "edge-proxy", label, "_ep");
     }
@@ -341,7 +360,7 @@ const assignRankMinMax = (g: IGraph): number => {
     if (node.data.borderTop) {
       node.data.minRank = g.getNode(node.data.borderTop as ID)?.data.rank;
       node.data.maxRank = g.getNode(node.data.borderBottom as ID)?.data.rank;
-      maxRank = Math.max(maxRank, (node.data.maxRank as number) || -Infinity);
+      maxRank = Math.max(maxRank, node.data.maxRank || -Infinity);
     }
   });
 
@@ -351,7 +370,7 @@ const assignRankMinMax = (g: IGraph): number => {
 const removeEdgeLabelProxies = (g: IGraph) => {
   g.getAllNodes().forEach((node) => {
     if (node.data.dummy === "edge-proxy") {
-      g.getEdge(node.data.e as ID)!.data.labelRank = node.data.rank;
+      g.getEdge(node.data.e!.id)!.data.labelRank = node.data.rank;
       g.removeNode(node.id);
     }
   });
@@ -406,21 +425,20 @@ const translateGraph = (
   minY! -= marginY;
 
   g.getAllNodes().forEach((node) => {
-    (node.data.x! as number) -= minX;
-    (node.data.y! as number) -= minY;
+    node.data.x! -= minX;
+    node.data.y! -= minY;
   });
 
   g.getAllEdges().forEach((edge) => {
-    // @ts-ignore
     edge.data.points?.forEach((p) => {
       p.x -= minX;
       p.y -= minY;
     });
     if (edge.data.hasOwnProperty("x")) {
-      (edge.data.x as number) -= minX;
+      edge.data.x! -= minX;
     }
     if (edge.data.hasOwnProperty("y")) {
-      (edge.data.y as number) -= minY;
+      edge.data.y! -= minY;
     }
   });
 
@@ -434,22 +452,18 @@ const assignNodeIntersects = (g: IGraph) => {
   g.getAllEdges().forEach((e) => {
     const nodeV = g.getNode(e.source)!;
     const nodeW = g.getNode(e.target)!;
-    let p1;
-    let p2;
+    let p1: Point;
+    let p2: Point;
     if (!e.data.points) {
       e.data.points = [];
-      p1 = nodeW;
-      p2 = nodeV;
+      p1 = { x: nodeW.data.x!, y: nodeW.data.y! };
+      p2 = { x: nodeV.data.x!, y: nodeV.data.y! };
     } else {
-      // @ts-ignore
       p1 = e.data.points[0];
-      // @ts-ignore
       p2 = e.data.points[e.data.points.length - 1];
     }
 
-    // @ts-ignore
     e.data.points.unshift(intersectRect(nodeV.data, p1));
-    // @ts-ignore
     e.data.points.push(intersectRect(nodeW.data, p2));
   });
 };
@@ -479,7 +493,6 @@ const fixupEdgeLabelCoords = (g: IGraph) => {
 const reversePointsForReversedEdges = (g: IGraph) => {
   g.getAllEdges().forEach((edge) => {
     if (edge.data.reversed) {
-      // @ts-ignore
       edge.data.points?.reverse();
     }
   });
@@ -527,8 +540,7 @@ const removeSelfEdges = (g: IGraph) => {
       if (!node.data.selfEdges) {
         node.data.selfEdges = [];
       }
-      // @ts-ignore
-      node.data.selfEdges.push({ e, label: e.data });
+      node.data.selfEdges.push(e);
       g.removeEdge(e.id);
     }
   });
@@ -541,18 +553,16 @@ const insertSelfEdges = (g: IGraph) => {
     layer?.forEach((v: ID, i: number) => {
       const node = g.getNode(v)!;
       node.data.order = i + orderShift;
-      // @ts-ignore
-      node.data.selfEdges?.forEach((selfEdge: any) => {
+      node.data.selfEdges?.forEach((selfEdge) => {
         addDummyNode(
           g,
           "selfedge",
           {
-            width: selfEdge.label.width,
-            height: selfEdge.label.height,
+            width: selfEdge.data.width,
+            height: selfEdge.data.height,
             rank: node.data.rank,
             order: i + ++orderShift,
-            e: selfEdge.e,
-            label: selfEdge.label,
+            e: selfEdge,
           },
           "_se"
         );
@@ -566,36 +576,35 @@ const positionSelfEdges = (g: IGraph) => {
   g.getAllNodes().forEach((v) => {
     const node = g.getNode(v.id)!;
     if (node.data.dummy === "selfedge") {
-      // @ts-ignore
-      const selfNode = g.getNode(node.data.e.source)!;
+      const selfNode = g.getNode(node.data.e!.source)!;
       const x =
         (selfNode.data.x! as number) + (selfNode.data.width! as number) / 2;
       const y = selfNode.data.y! as number;
       const dx = (node.data.x! as number) - x;
       const dy = (selfNode.data.height! as number) / 2;
-      // g.addEdge(node.data.e);
-      // @ts-ignore
-      g.updateEdgeData(node.data.e.id, {
-        // @ts-ignore
-        ...node.data.e.data,
-        // @ts-ignore
-        ...node.data.label,
-      });
-      // g.setEdgeObj(node.e, node.data.label);
+
+      if (g.hasEdge(node.data.e!.id)) {
+        g.updateEdgeData(node.data.e!.id, node.data.e!.data);
+      } else {
+        g.addEdge({
+          id: node.data.e!.id,
+          source: node.data.e!.source,
+          target: node.data.e!.target,
+          data: node.data.e!.data,
+        });
+      }
       g.removeNode(v.id);
 
-      // @ts-ignore
-      node.data.label.points = [
+      node.data.e!.data.points = [
         { x: x + (2 * dx) / 3, y: y - dy },
         { x: x + (5 * dx) / 6, y: y - dy },
         { y, x: x + dx },
         { x: x + (5 * dx) / 6, y: y + dy },
         { x: x + (2 * dx) / 3, y: y + dy },
       ];
-      // @ts-ignore
-      node.data.label.x = node.data.x;
-      // @ts-ignore
-      node.data.label.y = node.data.y;
+
+      node.data.e!.data.x = node.data.x;
+      node.data.e!.data.y = node.data.y;
     }
   });
 };

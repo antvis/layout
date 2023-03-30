@@ -1,6 +1,6 @@
 import { Graph } from "@antv/graphlib";
 import { NodeData, EdgeData } from "@antv/layout";
-import barycenter from "../../../../packages/layout/src/dagre/order/barycenter";
+import { barycenter } from "../../../../packages/layout/src/dagre/order/barycenter";
 
 describe("order/barycenter", function () {
   let g: Graph<NodeData, EdgeData>;

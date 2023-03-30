@@ -1,10 +1,10 @@
 import { ID } from "@antv/graphlib";
 import { Graph } from "../../types";
-import barycenter from "./barycenter";
+import { barycenter } from "./barycenter";
 import resolveConflicts, { ConflictEntry } from "./resolve-conflicts";
-import sort from "./sort";
+import { sort } from "./sort";
 
-const sortSubgraph = (
+export const sortSubgraph = (
   g: Graph,
   v: ID,
   cg: Graph,
@@ -109,5 +109,3 @@ const mergeBarycenters = (
     target.weight = other.weight;
   }
 };
-
-export default sortSubgraph;

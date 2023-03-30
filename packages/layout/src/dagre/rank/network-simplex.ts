@@ -1,11 +1,8 @@
-// import { } from '@antv/algorithm';
+import { Edge, ID, Node } from "@antv/graphlib";
 import { EdgeData, Graph as IGraph, NodeData } from "../../types";
 import { feasibleTree } from "./feasible-tree";
 import { slack, longestPath as initRank } from "./util";
-import { minBy, simplify } from "../util";
-import { Edge, ID, Node } from "@antv/graphlib";
-
-// const { preorder, postorder } = algorithm;
+import { dfs, minBy, simplify } from "../util";
 
 /*
  * The network simplex algorithm assigns ranks to each node in the input graph
@@ -40,7 +37,7 @@ import { Edge, ID, Node } from "@antv/graphlib";
  * for Drawing Directed Graphs." The structure of the file roughly follows the
  * structure of the overall algorithm.
  */
-const networkSimplex = (og: IGraph) => {
+export const networkSimplex = (og: IGraph) => {
   const g = simplify(og);
   initRank(g);
   const t = feasibleTree(g);
@@ -59,22 +56,9 @@ const networkSimplex = (og: IGraph) => {
  * Initializes cut values for all edges in the tree.
  */
 export const initCutValues = (t: IGraph, g: IGraph) => {
-  let vs: ID[] = [];
-
-  t.getAllNodes().forEach((n) => {
-    t.dfs(n.id, (node) => {
-      vs.push(node.id);
-    });
-  });
-
-  // const root = t.getRoots()[0];
-  // t.dfs(root.id, (n) => {
-  //   vs.push(n.id);
-  // });
-
-  // let vs = postorder(t, t.getAllNodes());
-  vs = vs?.slice(0, vs?.length - 1);
-  vs?.forEach((v: ID) => {
+  let vs = dfs(t, t.getAllNodes(), "post", false);
+  vs = vs.slice(0, vs?.length - 1);
+  vs.forEach((v: ID) => {
     assignCutValue(t, g, v);
   });
 };
@@ -83,10 +67,11 @@ const assignCutValue = (t: IGraph, g: IGraph, child: ID) => {
   const childLab = t.getNode(child)!;
   const parent = childLab.data.parent! as ID;
 
-  const edge = t.getRelatedEdges(child, "out").find((e) => e.target === parent);
-  if (edge) {
-    edge.data.cutvalue = calcCutValue(t, g, child);
-  }
+  // FIXME: use undirected edge?
+  const edge = t
+    .getRelatedEdges(child, "both")
+    .find((e) => e.target === parent || e.source === parent)!;
+  edge.data.cutvalue = calcCutValue(t, g, child);
 };
 
 /*
@@ -115,7 +100,7 @@ export const calcCutValue = (t: IGraph, g: IGraph, child: ID) => {
 
   cutValue = graphEdge.data.weight!;
 
-  g.getRelatedEdges(child, "both")?.forEach((e) => {
+  g.getRelatedEdges(child, "both").forEach((e) => {
     const isOutEdge = e.source === child;
     const other = isOutEdge ? e.target : e.source;
 
@@ -125,9 +110,11 @@ export const calcCutValue = (t: IGraph, g: IGraph, child: ID) => {
 
       cutValue += pointsToHead ? otherWeight : -otherWeight;
       if (isTreeEdge(t, child, other)) {
+        // FIXME: use undirected edge?
         const otherCutValue = t
-          .getRelatedEdges(child, "out")
-          .find((e) => e.target === other)!.data.cutvalue as number;
+          .getRelatedEdges(child, "both")
+          .find((e) => e.source === other || e.target === other)!.data
+          .cutvalue as number;
         cutValue += pointsToHead ? -otherCutValue : otherCutValue;
       }
     }
@@ -205,8 +192,8 @@ export const enterEdge = (t: IGraph, g: IGraph, edge: Edge<EdgeData>) => {
 
   const candidates = g.getAllEdges().filter((edge) => {
     return (
-      flip === isDescendant(t, t.getNode(edge.source), tailLabel) &&
-      flip !== isDescendant(t, t.getNode(edge.target), tailLabel)
+      flip === isDescendant(t.getNode(edge.source), tailLabel) &&
+      flip !== isDescendant(t.getNode(edge.target), tailLabel)
     );
   });
 
@@ -215,21 +202,34 @@ export const enterEdge = (t: IGraph, g: IGraph, edge: Edge<EdgeData>) => {
   });
 };
 
+/**
+ *
+ * @param t
+ * @param g
+ * @param e edge to remove
+ * @param f edge to add
+ */
 export const exchangeEdges = (
   t: IGraph,
   g: IGraph,
   e: Edge<EdgeData>,
   f: Edge<EdgeData>
 ) => {
-  t.removeEdge(e.id);
-  if (!t.hasEdge(f.id)) {
-    t.addEdge({
-      id: f.id,
-      source: f.source,
-      target: f.target,
-      data: {},
-    });
+  // FIXME: use undirected edge?
+  const existed = t
+    .getRelatedEdges(e.source, "both")
+    .find((edge) => edge.source === e.target || edge.target === e.target);
+  if (existed) {
+    t.removeEdge(existed.id);
   }
+
+  t.addEdge({
+    id: `e${Math.random()}`,
+    source: f.source,
+    target: f.target,
+    data: {},
+  });
+
   initLowLimValues(t);
   initCutValues(t, g);
   updateRanks(t, g);
@@ -239,17 +239,10 @@ const updateRanks = (t: IGraph, g: IGraph) => {
   const root = t.getAllNodes().find((v) => {
     return !v.data.parent;
   })!;
-  // let vs = preorder(t, root);
 
-  let vs: ID[] = [];
-  t.getAllNodes().forEach((n) => {
-    t.dfs(n.id, (node) => {
-      vs.push(node.id);
-    });
-  });
-
-  vs = vs?.slice(1);
-  vs?.forEach((v: ID) => {
+  let vs = dfs(t, root, "pre", false);
+  vs = vs.slice(1);
+  vs.forEach((v: ID) => {
     const parent = t.getNode(v).data.parent as ID;
     let edge = g.getRelatedEdges(v, "out").find((e) => e.target === parent);
     // let edge = g.edgeFromArgs(v, parent);
@@ -273,22 +266,19 @@ const updateRanks = (t: IGraph, g: IGraph) => {
  * Returns true if the edge is in the tree.
  */
 const isTreeEdge = (tree: IGraph, u: ID, v: ID) => {
-  return tree.getRelatedEdges(u, "out").find((e) => e.target === v);
+  // FIXME: use undirected edge?
+  return tree
+    .getRelatedEdges(u, "both")
+    .find((e) => e.source === v || e.target === v);
 };
 
 /*
  * Returns true if the specified node is descendant of the root node per the
  * assigned low and lim attributes in the tree.
  */
-const isDescendant = (
-  tree: IGraph,
-  vLabel: Node<NodeData>,
-  rootLabel: Node<NodeData>
-) => {
+const isDescendant = (vLabel: Node<NodeData>, rootLabel: Node<NodeData>) => {
   return (
     (rootLabel.data.low as number) <= (vLabel.data.lim as number) &&
     (vLabel.data.lim as number) <= (rootLabel.data.lim as number)
   );
 };
-
-export default networkSimplex;

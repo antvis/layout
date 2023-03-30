@@ -1,6 +1,6 @@
 import { Graph } from "@antv/graphlib";
 import { Graph as IGraph } from "@antv/layout";
-import sort from "../../../../packages/layout/src/dagre/order/sort";
+import { sort } from "../../../../packages/layout/src/dagre/order/sort";
 
 describe("sort", function () {
   it("sorts nodes by barycenter", function () {

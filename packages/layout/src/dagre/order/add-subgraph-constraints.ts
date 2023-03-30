@@ -1,7 +1,7 @@
 import { ID } from "@antv/graphlib";
 import { Graph } from "../../types";
 
-const addSubgraphConstraints = (g: Graph, cg: Graph, vs: ID[]) => {
+export const addSubgraphConstraints = (g: Graph, cg: Graph, vs: ID[]) => {
   const prev: Record<ID, ID> = {};
   let rootPrev: ID;
 
@@ -41,5 +41,3 @@ const addSubgraphConstraints = (g: Graph, cg: Graph, vs: ID[]) => {
     }
   });
 };
-
-export default addSubgraphConstraints;

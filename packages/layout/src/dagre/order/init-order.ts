@@ -12,7 +12,7 @@ import { Graph } from "../../types";
  * Returns a layering matrix with an array per layer and each layer sorted by
  * the order of its nodes.
  */
-const initOrder = (g: Graph) => {
+export const initOrder = (g: Graph) => {
   const visited: Record<string, boolean> = {};
   // const simpleNodes = g.getAllNodes().filter((v) => {
   //   return !g.getChildren(v.id)?.length;
@@ -63,5 +63,3 @@ const initOrder = (g: Graph) => {
 
   return layers;
 };
-
-export default initOrder;
