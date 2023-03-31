@@ -19,6 +19,7 @@ export interface NodeData extends PlainObject {
   e?: IEdge<EdgeData>;
   selfEdges?: IEdge<EdgeData>[];
   rank?: number;
+  _rank?: number;
   order?: number;
   fixorder?: number;
   minRank?: number;
@@ -225,7 +226,7 @@ export interface DagreLayoutOptions {
   edgeLabelSpace?: boolean;
   nodeOrder?: string[];
   radial?: boolean; // 是否基于 dagre 进行辐射布局
-  focusNode?: string | Node | null; // radial 为 true 时生效，关注的节点
+  focusNode?: ID | Node | null; // radial 为 true 时生效，关注的节点
   preset?: {
     nodes: OutNode[];
     edges: Edge[];

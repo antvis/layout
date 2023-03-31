@@ -1,6 +1,6 @@
 {
   "name": "@antv/layout",
-  "version": "1.0.0-alpha.18",
+  "version": "1.0.0-alpha.19",
   "description": "graph layout algorithm",
   "main": "dist/index.min.js",
   "module": "esm/index.esm.js",
@@ -47,7 +47,6 @@
     "build": "npm run build:esm && npm run build:umd",
     "build:esm": "webpack --config webpack.esm.config.js --mode production",
     "build:umd": "webpack --config webpack.config.js --mode production",
-    "publish:alpha": "npm publish --tag alpha",
-    "publish": "npm publish && npm dist-tag add @antv/layout@0.3.13 latest"
+    "publish:alpha": "npm publish --tag alpha"
   }
 }
