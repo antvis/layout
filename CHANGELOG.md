@@ -1,5 +1,10 @@
 # ChangeLog
 
+### 0.3.20
+
+- fix: wrong controlPoint positions for dagre with begin;
+- fix: wrong layout order for dagre with nodeOrder;
+
 ### 0.3.19
 
 - fix: registerLayout with getDefaultCfg;
