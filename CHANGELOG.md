@@ -2,6 +2,10 @@
 
 ### 0.3.17
 
+- fix: registerLayout with getDefaultCfg;
+
+### 0.3.17
+
 - fix: controlPoints problem in dagre with layer in data;
 
 ### 0.3.16
