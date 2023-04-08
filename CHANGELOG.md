@@ -1,6 +1,6 @@
 # ChangeLog
 
-### 0.3.17
+### 0.3.19
 
 - fix: registerLayout with getDefaultCfg;
 
