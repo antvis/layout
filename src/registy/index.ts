@@ -1,11 +1,13 @@
-import { Base } from "../layout/base";
-import { isObject } from "../util";
+import { Base } from '../layout/base';
+import { isObject } from '../util';
 
 const map: Map<string, any> = new Map();
 
 export const registerLayout = (name: string, layoutOverride: any) => {
   if (map.get(name)) {
-    console.warn(`The layout with the name ${name} exists already, it will be overridden`);
+    console.warn(
+      `The layout with the name ${name} exists already, it will be overridden`
+    );
   }
   if (isObject(layoutOverride)) {
     // tslint:disable-next-line: max-classes-per-file
@@ -14,7 +16,11 @@ export const registerLayout = (name: string, layoutOverride: any) => {
         super();
         const self = this as any;
         const props: any = {};
-        const defaultCfg = self.getDefaultCfg();
+        const defaultCfg = Object.assign(
+          {},
+          self.getDefaultCfg(),
+          layoutOverride.getDefaultCfg?.() || {}
+        );
         Object.assign(props, defaultCfg, layoutOverride, cfg as unknown);
         Object.keys(props).forEach((key: string) => {
           const value = props[key];
