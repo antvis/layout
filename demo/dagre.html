@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,shrink-to-fit=no"
+    />
+    <title>Dagre</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      html,
+      body {
+        height: 100%;
+      }
+
+      #container {
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="container"></div>
+    <script
+      src="https://unpkg.com/@antv/g"
+      type="application/javascript"
+    ></script>
+    <script
+      src="https://unpkg.com/@antv/g-canvas"
+      type="application/javascript"
+    ></script>
+    <script
+      src="https://unpkg.com/@antv/graphlib@2.0.0"
+      type="application/javascript"
+    ></script>
+    <script
+      src="../packages/layout/dist/index.min.js"
+      type="application/javascript"
+    ></script>
+    <script>
+      const { Graph } = window.GraphLib;
+      const { DagreLayout } = window.Layout;
+
+      const data = {
+        nodes: [
+          {
+            id: "1",
+            data: {
+              name: "alps_file1",
+            },
+          },
+          {
+            id: "2",
+            data: {
+              name: "alps_file2",
+            },
+          },
+          {
+            id: "3",
+            data: {
+              name: "alps_file3",
+            },
+          },
+          {
+            id: "4",
+            data: {
+              name: "sql_file1",
+            },
+          },
+          {
+            id: "5",
+            data: {
+              name: "sql_file2",
+            },
+          },
+          {
+            id: "6",
+            data: {
+              name: "feature_etl_1",
+            },
+          },
+          {
+            id: "7",
+            data: {
+              name: "feature_etl_1",
+            },
+          },
+          {
+            id: "8",
+            data: {
+              name: "feature_extractor",
+            },
+          },
+        ],
+        edges: [
+          {
+            id: "e1",
+            data: {},
+            source: "1",
+            target: "2",
+          },
+          {
+            id: "e2",
+            data: {},
+            source: "1",
+            target: "3",
+          },
+          {
+            id: "e3",
+            data: {},
+            source: "2",
+            target: "4",
+          },
+          {
+            id: "e4",
+            data: {},
+            source: "3",
+            target: "4",
+          },
+          {
+            id: "e5",
+            data: {},
+            source: "4",
+            target: "5",
+          },
+          {
+            id: "e6",
+            data: {},
+            source: "5",
+            target: "6",
+          },
+          {
+            id: "7",
+            data: {},
+            source: "6",
+            target: "7",
+          },
+          {
+            id: "e8",
+            data: {},
+            source: "6",
+            target: "8",
+          },
+        ],
+      };
+
+      const graph = new Graph({
+        nodes: data.nodes,
+        edges: data.edges,
+      });
+
+      const dagre = new DagreLayout({
+        nodeSize: 10,
+        ranksep: 70,
+        controlPoints: true,
+        begin: [200, 200],
+        align: "UR",
+      });
+
+      (async () => {
+        const positions = await dagre.execute(graph);
+
+        const { Circle, Polyline, Canvas } = window.G;
+
+        // create a renderer
+        const canvasRenderer = new window.G.Canvas2D.Renderer();
+
+        // create a canvas
+        const canvas = new Canvas({
+          container: "container",
+          width: 500,
+          height: 500,
+          renderer: canvasRenderer,
+        });
+
+        canvas.document.documentElement.scale(0.5);
+
+        canvas.addEventListener("ready", () => {
+          positions.nodes.forEach((node) => {
+            const circle = new Circle({
+              style: {
+                cx: node.data.x,
+                cy: node.data.y,
+                r: 10,
+                fill: "#1890FF",
+                stroke: "#F04864",
+                lineWidth: 4,
+              },
+            });
+            canvas.appendChild(circle);
+          });
+
+          positions.edges.forEach((edge) => {
+            const { controlPoints } = edge.data;
+            const source = positions.nodes.find(({ id }) => id === edge.source);
+            const target = positions.nodes.find(({ id }) => id === edge.target);
+            const polyline = new Polyline({
+              style: {
+                stroke: "#F04864",
+                strokeWidth: 4,
+                points: [
+                  [source.data.x, source.data.y],
+                  ...controlPoints.map(({ x, y }) => [x, y]),
+                  [target.data.x, target.data.y],
+                ],
+                // markerEnd: true,
+              },
+            });
+            canvas.appendChild(polyline);
+          });
+        });
+      })();
+    </script>
+  </body>
+</html>

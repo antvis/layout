@@ -113,8 +113,8 @@ export class GridLayout implements Layout<GridLayoutOptions> {
     } = mergedOptions;
     let { sortBy } = mergedOptions;
 
-    let nodes: Node[] = graph.getAllNodes();
-    let edges: Edge[] = graph.getAllEdges();
+    const nodes: Node[] = graph.getAllNodes();
+    const edges: Edge[] = graph.getAllEdges();
 
     const n = nodes?.length;
 

@@ -48,8 +48,8 @@ export const buildTextureData = (
   for (i = 0; i < nodes.length; i++) {
     const n = nodes[i];
     mapIdPos[n.id] = i;
-    dataArray.push(n.data.x as number);
-    dataArray.push(n.data.y as number);
+    dataArray.push(n.data.x!);
+    dataArray.push(n.data.y!);
     dataArray.push(0);
     dataArray.push(0);
     nodeDict.push([]);
@@ -103,8 +103,8 @@ export const buildTextureDataWithTwoEdgeAttr = (
   for (i = 0; i < nodes.length; i++) {
     const n = nodes[i];
     mapIdPos[n.id] = i;
-    dataArray.push(n.data.x as number);
-    dataArray.push(n.data.y as number);
+    dataArray.push(n.data.x!);
+    dataArray.push(n.data.y!);
     dataArray.push(0);
     dataArray.push(0);
     nodeDict.push([]);

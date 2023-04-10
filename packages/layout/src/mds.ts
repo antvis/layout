@@ -77,8 +77,8 @@ export class MDSLayout implements Layout<MDSLayoutOptions> {
     const mergedOptions = { ...this.options, ...options };
     const { center = [0, 0], linkDistance = 50 } = mergedOptions;
 
-    let nodes = graph.getAllNodes();
-    let edges = graph.getAllEdges();
+    const nodes = graph.getAllNodes();
+    const edges = graph.getAllEdges();
 
     if (!nodes?.length || nodes.length === 1) {
       return handleSingleNodeGraph(graph, assign, center);

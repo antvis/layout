@@ -1,4 +1,4 @@
-import { isString, isFunction, isNumber, isObject } from "@antv/util";
+import { isString } from "@antv/util";
 import type {
   Graph,
   Node,
@@ -15,7 +15,7 @@ import {
   floydWarshall,
   getAdjMatrix,
   getEuclideanDistance,
-  isArray,
+  formatNodeSize,
 } from "../util";
 import { handleSingleNodeGraph } from "../util/common";
 import { mds } from "./mds";
@@ -106,17 +106,17 @@ export class RadialLayout implements Layout<RadialLayoutOptions> {
       maxIteration = 1000,
     } = mergedOptions;
 
-    let nodes = graph.getAllNodes();
-    let edges = graph.getAllEdges();
+    const nodes = graph.getAllNodes();
+    const edges = graph.getAllEdges();
 
     const width =
       !propsWidth && typeof window !== "undefined"
         ? window.innerWidth
-        : (propsWidth as number);
+        : propsWidth!;
     const height =
       !propsHeight && typeof window !== "undefined"
         ? window.innerHeight
-        : (propsHeight as number);
+        : propsHeight!;
     const center = (
       !propsCenter ? [width / 2, height / 2] : propsCenter
     ) as PointTuple;
@@ -462,56 +462,4 @@ const maxToFocus = (matrix: Matrix[], focusIndex: number): number => {
     max = matrix[focusIndex][i] > max ? matrix[focusIndex][i] : max;
   }
   return max;
-};
-
-/**
- * format the props nodeSize and nodeSpacing to a function
- * @param nodeSize
- * @param nodeSpacing
- * @returns
- */
-const formatNodeSize = (
-  nodeSize: number | number[] | undefined,
-  nodeSpacing: number | Function | undefined
-): ((nodeData: Node) => number) => {
-  let nodeSizeFunc;
-  let nodeSpacingFunc: Function;
-  if (isNumber(nodeSpacing)) {
-    nodeSpacingFunc = () => nodeSpacing;
-  } else if (isFunction(nodeSpacing)) {
-    nodeSpacingFunc = nodeSpacing;
-  } else {
-    nodeSpacingFunc = () => 0;
-  }
-
-  if (!nodeSize) {
-    nodeSizeFunc = (d: Node) => {
-      if (d.data?.bboxSize) {
-        return (
-          Math.max(d.data.bboxSize[0], d.data.bboxSize[1]) + nodeSpacingFunc(d)
-        );
-      }
-      if (d.data?.size) {
-        if (isArray(d.data.size)) {
-          return Math.max(d.data.size[0], d.data.size[1]) + nodeSpacingFunc(d);
-        }
-        const dataSize = d.data.size;
-        if (isObject<{ width: number; height: number }>(dataSize)) {
-          const res =
-            dataSize.width > dataSize.height ? dataSize.width : dataSize.height;
-          return res + nodeSpacingFunc(d);
-        }
-        return dataSize + nodeSpacingFunc(d);
-      }
-      return 10 + nodeSpacingFunc(d);
-    };
-  } else if (isArray(nodeSize)) {
-    nodeSizeFunc = (d: Node) => {
-      const res = nodeSize[0] > nodeSize[1] ? nodeSize[0] : nodeSize[1];
-      return res + nodeSpacingFunc(d);
-    };
-  } else {
-    nodeSizeFunc = (d: Node) => nodeSize + nodeSpacingFunc(d);
-  }
-  return nodeSizeFunc;
 };

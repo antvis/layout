@@ -4,11 +4,30 @@ import {
   Edge as IEdge,
   PlainObject,
   GraphView as IGraphView,
+  ID,
 } from "@antv/graphlib";
 
 export interface NodeData extends PlainObject {
   size?: number | number[];
   bboxSize?: number[];
+  borderLeft?: ID | ID[];
+  borderRight?: ID | ID[];
+  x?: number;
+  y?: number;
+  height?: number;
+  width?: number;
+  e?: IEdge<EdgeData>;
+  selfEdges?: IEdge<EdgeData>[];
+  rank?: number;
+  _rank?: number;
+  order?: number;
+  fixorder?: number;
+  minRank?: number;
+  maxRank?: number;
+  layout?: boolean;
+  layer?: number;
+  low?: number;
+  lim?: number;
 }
 
 export interface OutNodeData extends NodeData {
@@ -19,6 +38,16 @@ export interface OutNodeData extends NodeData {
 export interface EdgeData extends PlainObject {
   // temp edges e.g. the edge generated for releated collapsed combo
   virtual?: boolean;
+  weight?: number;
+  x?: number;
+  y?: number;
+  height?: number;
+  width?: number;
+  points?: Point[];
+  controlPoints?: Point[];
+  minlen?: number;
+  cutvalue?: number;
+  labeloffset?: number;
 }
 
 /** input node */
@@ -174,9 +203,20 @@ export interface RadialLayoutOptions {
   sortStrength?: number;
 }
 
+export type DagreRankdir =
+  | "TB"
+  | "BT"
+  | "LR"
+  | "RL"
+  | "tb"
+  | "lr"
+  | "rl"
+  | "bt";
+export type DagreAlign = "UL" | "UR" | "DL" | "DR";
+
 export interface DagreLayoutOptions {
-  rankdir?: "TB" | "BT" | "LR" | "RL";
-  align?: "UL" | "UR" | "DL" | "DR";
+  rankdir?: DagreRankdir;
+  align?: DagreAlign;
   begin?: PointTuple;
   nodeSize?: number | number[];
   nodesep?: number;
@@ -186,7 +226,7 @@ export interface DagreLayoutOptions {
   edgeLabelSpace?: boolean;
   nodeOrder?: string[];
   radial?: boolean; // 是否基于 dagre 进行辐射布局
-  focusNode: string | Node | null; // radial 为 true 时生效，关注的节点
+  focusNode?: ID | Node | null; // radial 为 true 时生效，关注的节点
   preset?: {
     nodes: OutNode[];
     edges: Edge[];

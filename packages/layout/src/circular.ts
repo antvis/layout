@@ -94,8 +94,8 @@ export class CircularLayout implements Layout<CircularLayoutOptions> {
       nodeSize: paramNodeSize,
     } = mergedOptions;
 
-    let nodes: Node[] = graph.getAllNodes();
-    let edges: Edge[] = graph.getAllEdges();
+    const nodes: Node[] = graph.getAllNodes();
+    const edges: Edge[] = graph.getAllEdges();
 
     // Calculate center according to `window` if not provided.
     const [calculatedWidth, calculatedHeight, calculatedCenter] =

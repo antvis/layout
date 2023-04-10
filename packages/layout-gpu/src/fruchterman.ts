@@ -148,8 +148,8 @@ export class FruchtermanLayout implements Layout<FruchtermanLayoutOptions> {
       let fx = 0;
       let fy = 0;
       if (isNumber(node.data.fx) && isNumber(node.data.fy)) {
-        fx = (node.data.fx as number) || 0.001;
-        fy = (node.data.fy as number) || 0.001;
+        fx = node.data.fx || 0.001;
+        fy = node.data.fy || 0.001;
       }
       attributeArray[4 * i + 1] = fx;
       attributeArray[4 * i + 2] = fy;
