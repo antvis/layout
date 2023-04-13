@@ -1,6 +1,6 @@
 use antv_layout::*;
 use js_sys::Array;
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 use wasm_bindgen::prelude::*;
 
 #[cfg(feature = "parallel")]
@@ -45,7 +45,11 @@ pub fn force_atlas2(val: JsValue) -> Array {
             kg: options.kg,
             kr: options.kr,
             lin_log: options.lin_log,
-            prevent_overlapping: if !options.prevent_overlapping { None } else { Some((options.node_radius, 100.0)) },
+            prevent_overlapping: if !options.prevent_overlapping {
+                None
+            } else {
+                Some((options.node_radius, 100.0))
+            },
             speed: options.speed,
             strong_gravity: options.strong_gravity,
         },
