@@ -16,12 +16,18 @@ wasm-opt = false
 
 [lib]
 crate-type = ["cdylib"]
+path = "rust-src/lib.rs"
 
 [dependencies]
+getrandom = { version = "0.2", features = ["js"] }
 console_error_panic_hook = "0.1"
-antv-layout = { path = "../layout-rust/", features = ["json"] }
+antv-layout = { path = "../layout-rust/" }
 js-sys = "0.3.51"
-serde-wasm-bindgen = "0.4"
+serde-wasm-bindgen = "0.5"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 wasm-bindgen = { version = "0.2", features = ["serde-serialize"] }
+wasm-bindgen-rayon = { version = "1.0", optional = true }
+
+[features]
+parallel = ["wasm-bindgen-rayon"]
