@@ -1,6 +1,5 @@
 import { threads } from "wasm-feature-detect";
 import * as Comlink from "comlink";
-import type { ForceAtlas2Options, Result } from "./interface";
 
 /**
  * [Not all browsers](https://webassembly.org/roadmap/) support WebAssembly threads yet,

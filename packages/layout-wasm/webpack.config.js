@@ -17,10 +17,10 @@ module.exports = {
   output: {
     filename: "bundle.js",
     path: path.resolve(__dirname, "dist"),
-    globalObject: "this",
-    library: {
-      name: "layout",
-      type: "umd",
-    },
+    library: "layoutWASM",
+    libraryTarget: "umd",
   },
+  // experiments: {
+  //   outputModule: true,
+  // },
 };

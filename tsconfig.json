@@ -13,6 +13,7 @@
     "strictNullChecks": true,
     "resolveJsonModule": true,
     "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
     "jsx": "react",
     "target": "es5",
     "lib": ["dom", "es2015"]
