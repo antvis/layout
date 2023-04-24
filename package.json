@@ -21,7 +21,6 @@
     "prepare": "husky install",
     "test": "jest",
     "coverage": "jest --coverage",
-    "test-live": "DEBUG_MODE=1 jest --watch ./__tests__/unit/forceAtlas2.test.ts",
     "benchmarks": "node benchmarks/forceatlas2.test",
     "dev": "vite",
     "build:site": "vite build && cp site/enable-threads.js site/dist",

@@ -20,4 +20,3 @@ pkg
 pkg-node
 pkg-parallel
 *.lock
-pnpm-lock.yaml
