@@ -25,7 +25,7 @@ jobs:
           pnpm lint
       - name: build
         run: |
-          pnpm build
+          pnpm build:ci
       - name: test
         run: |
           pnpm test
