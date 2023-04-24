@@ -187,7 +187,7 @@ describe("RadialLayout", () => {
 
   test("should do radial layout with preventOverlap, function nodeSpacing, and size in data", async () => {
     const graph = new Graph<any, any>({
-      nodes: data.nodes.map((node) => ({
+      nodes: data.nodes.map((node: any) => ({
         ...node,
         data: {
           ...node.data,
@@ -198,7 +198,7 @@ describe("RadialLayout", () => {
     });
     const unitRadius = 100;
     const focusNodeId = "5";
-    const nodeSpacing = (d) => {
+    const nodeSpacing = (d: any) => {
       return 5;
     };
 
@@ -239,7 +239,7 @@ describe("RadialLayout", () => {
 
   test("should do radial layout with sortBy: 'sortProperty' ", async () => {
     const graph = new Graph<any, any>({
-      nodes: data.nodes.map((node, i) => ({
+      nodes: data.nodes.map((node: any, i: number) => ({
         ...node,
         data: {
           ...node.data,

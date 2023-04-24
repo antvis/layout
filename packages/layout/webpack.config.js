@@ -8,6 +8,7 @@ module.exports = {
     library: "Layout",
     libraryTarget: "umd",
     clean: true,
+    // globalObject: "this",
   },
   resolve: {
     // Add `.ts` as a resolvable extension.

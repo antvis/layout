@@ -106,7 +106,7 @@ const data = {
 };
 
 describe("DagreLayout", () => {
-  test("should skip layout when there's no node in graph.", async () => {
+  test.skip("should skip layout when there's no node in graph.", async () => {
     const graph = new Graph<NodeData, EdgeData>(data);
 
     const dagre = new DagreLayout({

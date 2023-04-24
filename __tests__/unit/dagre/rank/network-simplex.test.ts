@@ -3,7 +3,7 @@ import {
   NodeData,
   EdgeData,
   Graph as IGraph,
-} from "../../../../packages/layout";
+} from "../../../../packages/layout/src";
 import {
   networkSimplex,
   initLowLimValues,

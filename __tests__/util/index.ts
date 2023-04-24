@@ -15,7 +15,7 @@ export function numberEqual(a: number, b: number, gap?: number) {
  * @param p2
  * @returns
  */
-export function getEuclideanDistance(p1, p2) {
+export function getEuclideanDistance(p1: any, p2: any) {
   const { data: p1d } = p1;
   const { data: p2d } = p2;
   return Math.sqrt(

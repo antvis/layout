@@ -22,18 +22,18 @@ const data = {
   ],
 };
 
-function getNodeById(nodes, id: string) {
-  return nodes.find((node) => node.id === id);
+function getNodeById(nodes: any, id: string) {
+  return nodes.find((node: any) => node.id === id);
 }
 
-function isInTheSameRow(nodes) {
+function isInTheSameRow(nodes: any) {
   const node0 = nodes[0];
-  return nodes.every((node) => node.y === node0.y);
+  return nodes.every((node: any) => node.y === node0.y);
 }
 
-function isInTheSameCol(nodes) {
+function isInTheSameCol(nodes: any) {
   const node0 = nodes[0];
-  return nodes.every((node) => node.x === node0.x);
+  return nodes.every((node: any) => node.x === node0.x);
 }
 
 describe("GridLayout", () => {

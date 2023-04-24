@@ -151,7 +151,7 @@ describe("CircularLayout", () => {
     });
     const positions = await circular.execute(graph);
 
-    let node0, node1, node2, node3;
+    let node0: any, node1: any, node2: any, node3: any;
     positions.nodes.forEach((node) => {
       if (node.id === "Uruguay") node0 = node;
       else if (node.id === "Saudi Arabia") node1 = node;
@@ -189,7 +189,7 @@ describe("CircularLayout", () => {
     });
     const positions = await circular.execute(graph);
 
-    let node0, node1, node2, node3;
+    let node0: any, node1: any, node2: any, node3: any;
     positions.nodes.forEach((node) => {
       if (node.id === "Uruguay") node0 = node;
       else if (node.id === "Tunisia") node1 = node;
@@ -228,7 +228,7 @@ describe("CircularLayout", () => {
     });
     const positions = await circular.execute(graph);
 
-    let node0, node1, node2, node3;
+    let node0: any, node1: any, node2: any, node3: any;
     positions.nodes.forEach((node) => {
       if (node.id === "England") node0 = node;
       else if (node.id === "Croatia") node1 = node;
