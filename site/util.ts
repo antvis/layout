@@ -29,7 +29,7 @@ export function outputAntvLayout(graphModel: any) {
   const edges: number[] = [];
   const nodesIdxMap: any = {};
   // @ts-ignore
-  graphModel.nodes.forEach(({ id, x, y }) => {
+  graphModel.nodes.forEach(({ id, data: { x, y } }) => {
     nodesIdxMap[id] = { x, y };
     nodes.push(x, y);
   });

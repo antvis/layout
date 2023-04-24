@@ -55,9 +55,11 @@ pub struct Settings<T: Coord> {
     pub factor: T,
     pub damping: T,
     pub interval: T,
+    pub max_speed: T,
+    pub min_movement: T,
 
     /// Used in Fruchterman layout.
-    pub center: (T, T),
+    pub center: Vec<T>,
 }
 
 impl<T: Coord> Default for Settings<T> {
@@ -81,7 +83,9 @@ impl<T: Coord> Default for Settings<T> {
             factor: T::one(),
             damping: T::one(),
             interval: T::one(),
-            center: (T::zero(), T::zero()),
+            center: vec![T::zero(); 2],
+            max_speed: T::one(),
+            min_movement: T::zero(),
         }
     }
 }

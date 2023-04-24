@@ -15,7 +15,7 @@ export const handleSingleNodeGraph = (
   const nodes = graph.getAllNodes();
   const edges = graph.getAllEdges();
   if (!nodes?.length) {
-    const result = { nodes: [], edges };
+    const result = { nodes: [] as any[], edges };
     return result;
   }
   if (nodes.length === 1) {

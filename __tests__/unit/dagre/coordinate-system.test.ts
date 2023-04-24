@@ -1,5 +1,5 @@
 import { Edge, Graph } from "@antv/graphlib";
-import { Graph as IGraph, NodeData, EdgeData } from "@antv/layout";
+import { Graph as IGraph, NodeData, EdgeData } from "../../../packages/layout";
 import {
   adjust,
   undo,
@@ -20,22 +20,22 @@ describe("coordinateSystem", function () {
       });
     });
 
-    it("does nothing to node dimensions with rankdir = TB", function () {
+    test("does nothing to node dimensions with rankdir = TB", function () {
       adjust(g, "TB");
       expect(g.getNode("a").data).toEqual({ width: 100, height: 200 });
     });
 
-    it("does nothing to node dimensions with rankdir = BT", function () {
+    test("does nothing to node dimensions with rankdir = BT", function () {
       adjust(g, "BT");
       expect(g.getNode("a").data).toEqual({ width: 100, height: 200 });
     });
 
-    it("swaps width and height for nodes with rankdir = LR", function () {
+    test("swaps width and height for nodes with rankdir = LR", function () {
       adjust(g, "LR");
       expect(g.getNode("a").data).toEqual({ width: 200, height: 100 });
     });
 
-    it("swaps width and height for nodes with rankdir = RL", function () {
+    test("swaps width and height for nodes with rankdir = RL", function () {
       adjust(g, "RL");
       expect(g.getNode("a").data).toEqual({ width: 200, height: 100 });
     });
@@ -49,7 +49,7 @@ describe("coordinateSystem", function () {
       });
     });
 
-    it("does nothing to points with rankdir = TB", function () {
+    test("does nothing to points with rankdir = TB", function () {
       undo(g, "TB");
       expect(g.getNode("a").data).toEqual({
         x: 20,
@@ -59,7 +59,7 @@ describe("coordinateSystem", function () {
       });
     });
 
-    it("flips the y coordinate for points with rankdir = BT", function () {
+    test("flips the y coordinate for points with rankdir = BT", function () {
       undo(g, "BT");
       expect(g.getNode("a").data).toEqual({
         x: 20,
@@ -69,7 +69,7 @@ describe("coordinateSystem", function () {
       });
     });
 
-    it("swaps dimensions and coordinates for points with rankdir = LR", function () {
+    test("swaps dimensions and coordinates for points with rankdir = LR", function () {
       undo(g, "LR");
       expect(g.getNode("a").data).toEqual({
         x: 40,
@@ -79,7 +79,7 @@ describe("coordinateSystem", function () {
       });
     });
 
-    it("swaps dims and coords and flips x for points with rankdir = RL", function () {
+    test("swaps dims and coords and flips x for points with rankdir = RL", function () {
       undo(g, "RL");
       expect(g.getNode("a").data).toEqual({
         x: -40,

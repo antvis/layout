@@ -1,5 +1,5 @@
 import { Graph } from "@antv/graphlib";
-import { NodeData, EdgeData } from "@antv/layout";
+import { NodeData, EdgeData } from "../../../../packages/layout";
 import { sortSubgraph } from "../../../../packages/layout/src/dagre/order/sort-subgraph";
 
 describe("order/sortSubgraph", function () {
@@ -24,7 +24,7 @@ describe("order/sortSubgraph", function () {
     cg = new Graph();
   });
 
-  it("sorts a flat subgraph based on barycenter", function () {
+  test("sorts a flat subgraph based on barycenter", function () {
     g.addTree({
       id: "movable",
       data: {},
@@ -63,7 +63,7 @@ describe("order/sortSubgraph", function () {
     expect(sortSubgraph(g, "movable", cg).vs).toEqual(["y", "x"]);
   });
 
-  it("preserves the pos of a node (y) w/o neighbors in a flat subgraph", function () {
+  test("preserves the pos of a node (y) w/o neighbors in a flat subgraph", function () {
     g.addTree({
       id: "movable",
       data: {},
@@ -111,7 +111,7 @@ describe("order/sortSubgraph", function () {
     expect(sortSubgraph(g, "movable", cg).vs).toEqual(["z", "y", "x"]);
   });
 
-  it("biases to the left without reverse bias", function () {
+  test("biases to the left without reverse bias", function () {
     g.addTree({
       id: "movable",
       data: {},
@@ -147,7 +147,7 @@ describe("order/sortSubgraph", function () {
     expect(sortSubgraph(g, "movable", cg).vs).toEqual(["x", "y"]);
   });
 
-  it("biases to the right with reverse bias", function () {
+  test("biases to the right with reverse bias", function () {
     g.addTree({
       id: "movable",
       data: {},
@@ -183,7 +183,7 @@ describe("order/sortSubgraph", function () {
     expect(sortSubgraph(g, "movable", cg, true).vs).toEqual(["y", "x"]);
   });
 
-  it("aggregates stats about the subgraph", function () {
+  test("aggregates stats about the subgraph", function () {
     g.addTree({
       id: "movable",
       data: {},
@@ -224,7 +224,7 @@ describe("order/sortSubgraph", function () {
     expect(results.weight).toEqual(4);
   });
 
-  it("can sort a nested subgraph with no barycenter", function () {
+  test("can sort a nested subgraph with no barycenter", function () {
     g.addTree({
       id: "movable",
       data: {},
@@ -289,7 +289,7 @@ describe("order/sortSubgraph", function () {
     ]);
   });
 
-  it("can sort a nested subgraph with a barycenter", function () {
+  test("can sort a nested subgraph with a barycenter", function () {
     g.addTree({
       id: "movable",
       data: {},
@@ -361,7 +361,7 @@ describe("order/sortSubgraph", function () {
     ]);
   });
 
-  it("can sort a nested subgraph with no in-edges", function () {
+  test("can sort a nested subgraph with no in-edges", function () {
     g.addTree({
       id: "movable",
       data: {},
@@ -433,7 +433,7 @@ describe("order/sortSubgraph", function () {
     ]);
   });
 
-  it("sorts border nodes to the extremes of the subgraph", function () {
+  test("sorts border nodes to the extremes of the subgraph", function () {
     g.addTree({
       id: "sg1",
       data: {
@@ -486,7 +486,7 @@ describe("order/sortSubgraph", function () {
     expect(sortSubgraph(g, "sg1", cg).vs).toEqual(["bl", "x", "y", "z", "br"]);
   });
 
-  it("assigns a barycenter to a subgraph based on previous border nodes", function () {
+  test("assigns a barycenter to a subgraph based on previous border nodes", function () {
     g.addTree({
       id: "sg",
       data: {

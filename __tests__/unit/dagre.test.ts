@@ -1,5 +1,5 @@
 import { Graph } from "@antv/graphlib";
-import { DagreLayout, NodeData, EdgeData } from "@antv/layout";
+import { DagreLayout, NodeData, EdgeData } from "../../packages/layout";
 import { mathEqual } from "../util";
 
 const data = {
@@ -106,7 +106,7 @@ const data = {
 };
 
 describe("DagreLayout", () => {
-  it("should skip layout when there's no node in graph.", async () => {
+  test("should skip layout when there's no node in graph.", async () => {
     const graph = new Graph<NodeData, EdgeData>(data);
 
     const dagre = new DagreLayout({

@@ -1,5 +1,9 @@
 import { Graph } from "@antv/graphlib";
-import { Graph as IGraph, NodeData, EdgeData } from "@antv/layout";
+import {
+  Graph as IGraph,
+  NodeData,
+  EdgeData,
+} from "../../../../packages/layout";
 import { buildLayerGraph } from "../../../../packages/layout/src/dagre/order/build-layer-graph";
 
 describe("order/buildLayerGraph", function () {
@@ -11,7 +15,7 @@ describe("order/buildLayerGraph", function () {
     });
   });
 
-  it("places movable nodes with no parents under the root node", function () {
+  test("places movable nodes with no parents under the root node", function () {
     g.addNode({
       id: "a",
       data: { rank: 1 },
@@ -46,7 +50,7 @@ describe("order/buildLayerGraph", function () {
     ]);
   });
 
-  it("copies flat nodes from the layer to the graph", function () {
+  test("copies flat nodes from the layer to the graph", function () {
     g.addNode({
       id: "a",
       data: { rank: 1 },
@@ -86,7 +90,7 @@ describe("order/buildLayerGraph", function () {
     ).toContain("d");
   });
 
-  it("uses the original node label for copied nodes", function () {
+  test("uses the original node label for copied nodes", function () {
     // This allows us to make updates to the original graph and have them
     // be available automatically in the layer graph.
     g.addNode({
@@ -109,7 +113,7 @@ describe("order/buildLayerGraph", function () {
     expect((lg.getNode("b").data as any).foo).toEqual(2);
   });
 
-  it("copies edges incident on rank nodes to the graph (inEdges)", function () {
+  test("copies edges incident on rank nodes to the graph (inEdges)", function () {
     g.addNode({
       id: "a",
       data: { rank: 1 },
@@ -171,7 +175,7 @@ describe("order/buildLayerGraph", function () {
     });
   });
 
-  it("copies edges incident on rank nodes to the graph (outEdges)", function () {
+  test("copies edges incident on rank nodes to the graph (outEdges)", function () {
     g.addNode({
       id: "a",
       data: { rank: 1 },
@@ -233,7 +237,7 @@ describe("order/buildLayerGraph", function () {
     expect(buildLayerGraph(g, 3, "out").getAllEdges().length).toEqual(0);
   });
 
-  it("collapses multi-edges", function () {
+  test("collapses multi-edges", function () {
     g.addNode({
       id: "a",
       data: { rank: 1 },
@@ -267,7 +271,7 @@ describe("order/buildLayerGraph", function () {
     });
   });
 
-  it("preserves hierarchy for the movable layer", function () {
+  test("preserves hierarchy for the movable layer", function () {
     g.addNode({
       id: "c",
       data: { rank: 0 },

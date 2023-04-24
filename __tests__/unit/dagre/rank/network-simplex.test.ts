@@ -1,5 +1,9 @@
 import { Edge, Graph } from "@antv/graphlib";
-import { NodeData, EdgeData, Graph as IGraph } from "@antv/layout";
+import {
+  NodeData,
+  EdgeData,
+  Graph as IGraph,
+} from "../../../../packages/layout";
 import {
   networkSimplex,
   initLowLimValues,
@@ -226,7 +230,7 @@ describe("network simplex", function () {
     });
   });
 
-  it("can assign a rank to a single node", function () {
+  test("can assign a rank to a single node", function () {
     g.addNode({
       id: "a",
       data: {},
@@ -235,7 +239,7 @@ describe("network simplex", function () {
     expect(g.getNode("a").data.rank).toEqual(0);
   });
 
-  it("can assign a rank to a 2-node connected graph", function () {
+  test("can assign a rank to a 2-node connected graph", function () {
     g.addNode({
       id: "a",
       data: {},
@@ -258,7 +262,7 @@ describe("network simplex", function () {
     expect(g.getNode("b").data.rank).toEqual(1);
   });
 
-  it("can assign ranks for a diamond", function () {
+  test("can assign ranks for a diamond", function () {
     g.addNodes([
       {
         id: "a",
@@ -323,7 +327,7 @@ describe("network simplex", function () {
     expect(g.getNode("d").data.rank).toEqual(2);
   });
 
-  it("uses the minlen attribute on the edge", function () {
+  test("uses the minlen attribute on the edge", function () {
     g.addNodes([
       {
         id: "a",
@@ -392,7 +396,7 @@ describe("network simplex", function () {
     expect(g.getNode("d").data.rank).toEqual(3);
   });
 
-  it("can rank the gansner graph", function () {
+  test("can rank the gansner graph", function () {
     g = gansnerGraph;
     ns(g);
     expect(g.getNode("a").data.rank).toEqual(0);
@@ -405,7 +409,7 @@ describe("network simplex", function () {
     expect(g.getNode("g").data.rank).toEqual(2);
   });
 
-  it("can handle multi-edges", function () {
+  test("can handle multi-edges", function () {
     g.addNodes([
       {
         id: "a",
@@ -496,7 +500,7 @@ describe("network simplex", function () {
   });
 
   describe("leaveEdge", function () {
-    it("returns undefined if there is no edge with a negative cutvalue", function () {
+    test("returns undefined if there is no edge with a negative cutvalue", function () {
       let tree = new Graph();
 
       tree.addNodes([
@@ -536,7 +540,7 @@ describe("network simplex", function () {
       expect(leaveEdge(tree)).toBe(undefined);
     });
 
-    it("returns an edge if one is found with a negative cutvalue", function () {
+    test("returns an edge if one is found with a negative cutvalue", function () {
       let tree = new Graph();
       tree.addNodes([
         {
@@ -583,7 +587,7 @@ describe("network simplex", function () {
   });
 
   describe("enterEdge", function () {
-    it("finds an edge from the head to tail component", function () {
+    test("finds an edge from the head to tail component", function () {
       g.addNodes([
         {
           id: "a",
@@ -672,7 +676,7 @@ describe("network simplex", function () {
       );
     });
 
-    it("works when the root of the tree is in the tail component", function () {
+    test("works when the root of the tree is in the tail component", function () {
       g.addNodes([
         {
           id: "a",
@@ -761,7 +765,7 @@ describe("network simplex", function () {
       );
     });
 
-    it("finds the edge with the least slack", function () {
+    test("finds the edge with the least slack", function () {
       g.addNodes([
         {
           id: "a",
@@ -903,7 +907,7 @@ describe("network simplex", function () {
       );
     });
 
-    it("finds an appropriate edge for gansner graph #1", function () {
+    test("finds an appropriate edge for gansner graph #1", function () {
       g = gansnerGraph;
       t = gansnerTree;
       longestPath(g);
@@ -922,7 +926,7 @@ describe("network simplex", function () {
       expect(["e", "f"]).toContain(undirectedEdge(f).target);
     });
 
-    it("finds an appropriate edge for gansner graph #2", function () {
+    test("finds an appropriate edge for gansner graph #2", function () {
       g = gansnerGraph;
       t = gansnerTree;
       longestPath(g);
@@ -941,7 +945,7 @@ describe("network simplex", function () {
       expect(["e", "f"]).toContain(undirectedEdge(f).target);
     });
 
-    it("finds an appropriate edge for gansner graph #3", function () {
+    test("finds an appropriate edge for gansner graph #3", function () {
       g = gansnerGraph;
       t = gansnerTree;
       longestPath(g);
@@ -957,7 +961,7 @@ describe("network simplex", function () {
       expect(["e", "f"]).toContain(undirectedEdge(f).target);
     });
 
-    it("finds an appropriate edge for gansner graph #4", function () {
+    test("finds an appropriate edge for gansner graph #4", function () {
       g = gansnerGraph;
       t = gansnerTree;
       longestPath(g);
@@ -975,7 +979,7 @@ describe("network simplex", function () {
   });
 
   describe("initLowLimValues", function () {
-    it("assigns low, lim, and parent for each node in a tree", function () {
+    test("assigns low, lim, and parent for each node in a tree", function () {
       let g = new Graph<any, any>({
         nodes: [
           {
@@ -1074,7 +1078,7 @@ describe("network simplex", function () {
   });
 
   describe("exchangeEdges", function () {
-    it("exchanges edges and updates cut values and low/lim numbers", function () {
+    test("exchanges edges and updates cut values and low/lim numbers", function () {
       g = gansnerGraph;
       t = gansnerTree;
       longestPath(g);
@@ -1148,7 +1152,7 @@ describe("network simplex", function () {
       expect(lims).toEqual([1, 2, 3, 4, 5, 6, 7, 8]);
     });
 
-    it("updates ranks", function () {
+    test("updates ranks", function () {
       g = gansnerGraph;
       t = gansnerTree;
       longestPath(g);
@@ -1194,7 +1198,7 @@ describe("network simplex", function () {
   // Note: we use p for parent, c for child, gc_x for grandchild nodes, and o for
   // other nodes in the tree for these tests.
   describe("calcCutValue", function () {
-    it("works for a 2-node tree with c -> p", function () {
+    test("works for a 2-node tree with c -> p", function () {
       g.addNodes([
         {
           id: "c",
@@ -1234,7 +1238,7 @@ describe("network simplex", function () {
       expect(calcCutValue(t, g, "c")).toEqual(1);
     });
 
-    it("works for a 2-node tree with c <- p", function () {
+    test("works for a 2-node tree with c <- p", function () {
       g.addNodes([
         {
           id: "c",
@@ -1273,7 +1277,7 @@ describe("network simplex", function () {
       expect(calcCutValue(t, g, "c")).toEqual(1);
     });
 
-    it("works for 3-node tree with gc -> c -> p", function () {
+    test("works for 3-node tree with gc -> c -> p", function () {
       g.addNodes([
         {
           id: "gc",
@@ -1345,7 +1349,7 @@ describe("network simplex", function () {
       expect(calcCutValue(t, g, "c")).toEqual(3);
     });
 
-    it("works for 3-node tree with gc -> c <- p", function () {
+    test("works for 3-node tree with gc -> c <- p", function () {
       g.addNodes([
         {
           id: "gc",
@@ -1417,7 +1421,7 @@ describe("network simplex", function () {
       expect(calcCutValue(t, g, "c")).toEqual(-1);
     });
 
-    it("works for 3-node tree with gc <- c -> p", function () {
+    test("works for 3-node tree with gc <- c -> p", function () {
       g.addNodes([
         {
           id: "gc",
@@ -1477,7 +1481,7 @@ describe("network simplex", function () {
       expect(calcCutValue(t, g, "c")).toEqual(-1);
     });
 
-    it("works for 3-node tree with gc <- c <- p", function () {
+    test("works for 3-node tree with gc <- c <- p", function () {
       g.addNodes([
         {
           id: "gc",
@@ -1537,7 +1541,7 @@ describe("network simplex", function () {
       expect(calcCutValue(t, g, "c")).toEqual(3);
     });
 
-    it("works for 4-node tree with gc -> c -> p -> o, with o -> c", function () {
+    test("works for 4-node tree with gc -> c -> p -> o, with o -> c", function () {
       g.addNodes([
         {
           id: "gc",
@@ -1626,7 +1630,7 @@ describe("network simplex", function () {
       expect(calcCutValue(t, g, "c")).toEqual(-4);
     });
 
-    it("works for 4-node tree with gc -> c -> p -> o, with o <- c", function () {
+    test("works for 4-node tree with gc -> c -> p -> o, with o <- c", function () {
       g.addNodes([
         {
           id: "gc",
@@ -1716,7 +1720,7 @@ describe("network simplex", function () {
       expect(calcCutValue(t, g, "c")).toEqual(10);
     });
 
-    it("works for 4-node tree with o -> gc -> c -> p, with o -> c", function () {
+    test("works for 4-node tree with o -> gc -> c -> p, with o -> c", function () {
       g.addNodes([
         {
           id: "gc",
@@ -1806,7 +1810,7 @@ describe("network simplex", function () {
       expect(calcCutValue(t, g, "c")).toEqual(-4);
     });
 
-    it("works for 4-node tree with o -> gc -> c -> p, with o <- c", function () {
+    test("works for 4-node tree with o -> gc -> c -> p, with o <- c", function () {
       g.addNodes([
         {
           id: "gc",
@@ -1896,7 +1900,7 @@ describe("network simplex", function () {
       expect(calcCutValue(t, g, "c")).toEqual(10);
     });
 
-    it("works for 4-node tree with gc -> c <- p -> o, with o -> c", function () {
+    test("works for 4-node tree with gc -> c <- p -> o, with o -> c", function () {
       g.addNodes([
         {
           id: "gc",
@@ -1987,7 +1991,7 @@ describe("network simplex", function () {
       expect(calcCutValue(t, g, "c")).toEqual(6);
     });
 
-    it("works for 4-node tree with gc -> c <- p -> o, with o <- c", function () {
+    test("works for 4-node tree with gc -> c <- p -> o, with o <- c", function () {
       g.addNodes([
         {
           id: "gc",
@@ -2078,7 +2082,7 @@ describe("network simplex", function () {
       expect(calcCutValue(t, g, "c")).toEqual(-8);
     });
 
-    it("works for 4-node tree with o -> gc -> c <- p, with o -> c", function () {
+    test("works for 4-node tree with o -> gc -> c <- p, with o -> c", function () {
       g.addNodes([
         {
           id: "gc",
@@ -2168,7 +2172,7 @@ describe("network simplex", function () {
       expect(calcCutValue(t, g, "c")).toEqual(6);
     });
 
-    it("works for 4-node tree with o -> gc -> c <- p, with o <- c", function () {
+    test("works for 4-node tree with o -> gc -> c <- p, with o <- c", function () {
       g.addNodes([
         {
           id: "gc",
@@ -2261,7 +2265,7 @@ describe("network simplex", function () {
   });
 
   describe("initCutValues", function () {
-    it("works for gansnerGraph", function () {
+    test("works for gansnerGraph", function () {
       initLowLimValues(gansnerTree);
       initCutValues(gansnerTree, gansnerGraph);
 
@@ -2295,7 +2299,7 @@ describe("network simplex", function () {
       ).toEqual(0);
     });
 
-    it("works for updated gansnerGraph", function () {
+    test("works for updated gansnerGraph", function () {
       const edge = gansnerTree
         .getRelatedEdges("g", "both")
         .find((e) => e.source === "h" || e.target === "h");

@@ -55,7 +55,7 @@ graph.edges().forEach((id) => {
 /**
  * @antv/layout-wasm
  */
-var antvLayoutWASM = require("../pkg-node/antv_layout_wasm.js");
+var antvLayoutWASM = require("@antv/layout-wasm/pkg-node/antv_layout_wasm.js");
 antvLayoutWASM.start();
 
 // add tests

@@ -1,10 +1,12 @@
 import graphologyLayout from "graphology-layout-forceatlas2";
-import { ForceAtlas2Layout } from "@antv/layout";
+import { ForceAtlas2Layout, Graph } from "../packages/layout";
 import {
   outputAntvLayout,
   outputGraphology,
   outputAntvLayoutWASM,
 } from "./util";
+import type { Layouts } from "../packages/layout-wasm";
+import { CANVAS_SIZE } from "./types";
 
 export interface ForceAtlas2LayoutOptions {
   iterations: number;
@@ -16,7 +18,7 @@ const ITERATIONS = 100;
 const kg = 1;
 const kr = 1;
 
-export async function graphology(graph: any) {
+export async function graphology(graph: any, { iterations }: any) {
   const positions = graphologyLayout(graph, {
     settings: {
       barnesHutOptimize: false,
@@ -26,27 +28,30 @@ export async function graphology(graph: any) {
       slowDown: 1,
       // adjustSizes: true,
     },
-    iterations: ITERATIONS,
+    iterations: iterations || ITERATIONS,
     getEdgeWeight: "weight",
   });
   return outputGraphology(graph, positions);
 }
 
-export async function antvlayout(graphModel: any) {
+export async function antvlayout(graphModel: Graph, { iterations }: any) {
   const forceAtlas2 = new ForceAtlas2Layout({
-    type: "forceAtlas2",
     kr,
     kg,
     ks: 0.1,
-    maxIteration: ITERATIONS,
+    maxIteration: iterations || ITERATIONS,
+    width: CANVAS_SIZE,
+    height: CANVAS_SIZE,
+    center: [CANVAS_SIZE / 2, CANVAS_SIZE / 2],
   });
-  forceAtlas2.layout(graphModel);
-  return outputAntvLayout(graphModel);
+  const positions = await forceAtlas2.execute(graphModel);
+  return outputAntvLayout(positions);
 }
 
 export async function antvlayoutWASM(
   { nodes, edges, masses, weights }: any,
-  { forceatlas2 }: any
+  { iterations }: any,
+  { forceatlas2 }: Layouts
 ) {
   const { nodes: positions } = await forceatlas2({
     nodes: nodes.length,
@@ -54,7 +59,7 @@ export async function antvlayoutWASM(
     positions: nodes,
     masses,
     weights,
-    iterations: ITERATIONS,
+    iterations: iterations || ITERATIONS,
     ka: 1.0,
     kg,
     kr,
@@ -65,6 +70,7 @@ export async function antvlayoutWASM(
     strong_gravity: false,
     lin_log: false,
     dissuade_hubs: false,
+    center: [CANVAS_SIZE / 2, CANVAS_SIZE / 2],
   });
 
   return outputAntvLayoutWASM(positions, edges);

@@ -41,6 +41,7 @@ const TestsConfig = [
 ];
 
 const $mask = document.getElementById("mask") as HTMLSelectElement;
+const $iterations = document.getElementById("iterations") as HTMLInputElement;
 const $dataset = document.getElementById("dataset") as HTMLSelectElement;
 const $datasetDesc = document.getElementById("dataset-desc") as HTMLSpanElement;
 const $layout = document.getElementById("layout") as HTMLSelectElement;
@@ -49,14 +50,14 @@ const contexts = TestsConfig.map(({ name }) => {
   return (document.getElementById(name) as HTMLCanvasElement).getContext("2d");
 });
 const $labels = TestsConfig.map((_, i) => {
-  return contexts[i].canvas.parentElement.querySelector("span");
+  return contexts[i]!.canvas.parentElement!.querySelector("span");
 });
 const $checkboxes = TestsConfig.map(({ name }, i) => {
   const $checkbox = document.getElementById(
     name + "_checkbox"
   ) as HTMLInputElement;
   $checkbox.onchange = () => {
-    contexts[i].canvas.parentElement.style.display = $checkbox.checked
+    contexts[i]!.canvas.parentElement!.style.display = $checkbox.checked
       ? "block"
       : "none";
   };
@@ -75,10 +76,11 @@ const doLayout = async (
   $label: HTMLSpanElement,
   layout: any,
   model: any,
-  wasmMethod?: any
+  options: any,
+  wasmMethod: any
 ) => {
   const start = performance.now();
-  const { nodes, edges } = await layout(model, wasmMethod);
+  const { nodes, edges } = await layout(model, options, wasmMethod);
   $label.innerHTML = `${(performance.now() - start).toFixed(2)}ms`;
   render(context, nodes, edges);
 };
@@ -146,24 +148,25 @@ const doLayout = async (
       layoutConfig.map(async ({ name, methods }: any, i: number) => {
         if (methods[layoutName] && $checkboxes[i].checked) {
           await doLayout(
-            contexts[i],
-            $labels[i],
+            contexts[i]!,
+            $labels[i]!,
             methods[layoutName],
-            name === (TestName.ANTV_LAYOUT || TestName.ANTV_LAYOUT_GPU)
-              ? JSON.parse(JSON.stringify(dataset[name]))
-              : dataset[name],
+            dataset[name],
+            {
+              iterations: parseInt($iterations.value),
+            },
             name === TestName.ANTV_LAYOUT_WASM_MULTITHREADS
               ? forceMultiThreads
               : forceSingleThread
           );
         } else {
-          contexts[i].clearRect(
+          contexts[i]!.clearRect(
             0,
             0,
-            contexts[i].canvas.width,
-            contexts[i].canvas.height
+            contexts[i]!.canvas.width,
+            contexts[i]!.canvas.height
           );
-          $labels[i].innerHTML = `not implemented.`;
+          $labels[i]!.innerHTML = `not implemented.`;
         }
       })
     );

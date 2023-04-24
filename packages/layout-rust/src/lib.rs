@@ -16,7 +16,7 @@ pub use layout::{Layout, LayoutType, Settings};
 pub use util::{Coord, Edge, Nodes, PointIter, PointIterMut, PointList, Position};
 
 use itertools::izip;
-use num_traits::cast::NumCast;
+use num_traits::{cast::NumCast, pow};
 
 impl<'a, T: Coord + std::fmt::Debug> Layout<T>
 where
@@ -86,15 +86,23 @@ where
     }
 
     /// Computes an iteration
-    pub fn iteration(&mut self) {
+    pub fn iteration(&mut self, i: usize) {
         self.init_iteration();
         self.apply_attraction();
         self.apply_repulsion();
         self.apply_gravity();
 
         match self.settings.name {
-            LayoutType::Fruchterman => self.apply_forces_fruchterman(),
-            LayoutType::Force2 => self.apply_forces_force2(),
+            LayoutType::Fruchterman => {
+                let interval = self.settings.interval.clone();
+                self.apply_forces_fruchterman(pow(interval, i));
+            },
+            LayoutType::Force2 => {
+                let m1 = T::from(0.02).unwrap_or_else(T::one);
+                let m2 = self.settings.interval.clone() - T::from(i).unwrap_or_else(T::one) * T::from(0.002).unwrap_or_else(T::one);
+                let interval = if m1 > m2 { m1 } else { m2 };
+                self.apply_forces_force2(interval);
+            },
             LayoutType::ForceAtlas2 => self.apply_forces_forceatlas2(),
         }
     }
@@ -112,8 +120,24 @@ where
                     *speed = T::zero();
                 }
             },
-            LayoutType::Fruchterman => {}
-            LayoutType::Force2 => {}
+            LayoutType::Fruchterman => {
+                for speed in self
+                    .speeds
+                    .points
+                    .iter_mut()
+                {
+                    *speed = T::zero();
+                }
+            },
+            LayoutType::Force2 => {
+                for speed in self
+                    .speeds
+                    .points
+                    .iter_mut()
+                {
+                    *speed = T::zero();
+                }
+            }
         }
     }
 
@@ -129,31 +153,10 @@ where
         (self.fn_repulsion)(self)
     }
 
-    fn apply_forces_force2(&mut self) {
-        let interval = self.settings.interval.clone();
-
-        // for (pos, speed) in izip!(
-        //     self.points.iter_mut(),
-        //     self.speeds.iter_mut(),
-        // ) {
-        //     let dist_length = speed
-        //         .iter()
-        //         .map(|s| s.clone().pow_n(2u32))
-        //         .sum::<T>()
-        //         .sqrt();
-        //     if dist_length > T::zero() {
-        //         let limited_dist = if dist_length > max_displace { max_displace.clone() } else { dist_length.clone() };
-        //         pos.iter_mut()
-        //             .zip(speed.iter_mut())
-        //             .for_each(|(pos, speed)| {
-        //                 *pos += speed.clone() / dist_length.clone() * limited_dist.clone();
-        //             });
-        //     }
-        // }
-    }
-
-    fn apply_forces_fruchterman(&mut self) {
-        let max_displace = self.settings.speed.clone() * self.settings.damping.clone();
+    fn apply_forces_force2(&mut self, interval: T) {
+        let damping = &self.settings.damping;
+        let param = interval.clone() * damping.clone();
+        let max_speed = self.settings.max_speed.clone();
 
         for (pos, speed) in izip!(
             self.points.iter_mut(),
@@ -163,15 +166,41 @@ where
                 .iter()
                 .map(|s| s.clone().pow_n(2u32))
                 .sum::<T>()
+                .sqrt() + T::from(0.0001).unwrap_or_else(T::zero);
+
+                
+            pos.iter_mut()
+                .zip(speed.iter_mut())
+                .for_each(|(pos, speed)| {
+                    let mut v = speed.clone() * param.clone();
+
+                    if dist_length > max_speed {
+                        v *= max_speed.clone() / dist_length.clone();
+                    }
+                    *pos += v * interval.clone();
+                });
+        }
+    }
+
+    fn apply_forces_fruchterman(&mut self, i: T) {
+        let u_speed = &self.settings.speed;
+        let max_displace = u_speed.clone() * self.settings.damping.clone() * i.clone();
+
+        for (pos, speed) in izip!(
+            self.points.iter_mut(),
+            self.speeds.iter_mut(),
+        ) {
+            let dist_length = speed
+                .iter()
+                .map(|s| (s.clone() * u_speed.clone()).pow_n(2u32))
+                .sum::<T>()
                 .sqrt();
-            if dist_length > T::zero() {
-                let limited_dist = if dist_length > max_displace { max_displace.clone() } else { dist_length.clone() };
-                pos.iter_mut()
-                    .zip(speed.iter_mut())
-                    .for_each(|(pos, speed)| {
-                        *pos += speed.clone() / dist_length.clone() * limited_dist.clone();
-                    });
-            }
+            let limited_dist = if dist_length > max_displace { max_displace.clone() } else { dist_length.clone() };
+            pos.iter_mut()
+                .zip(speed.iter_mut())
+                .for_each(|(pos, speed)| {
+                    *pos += speed.clone() * u_speed.clone() / dist_length.clone() * limited_dist.clone();
+                });
         }
     }
 

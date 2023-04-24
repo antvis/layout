@@ -1,4 +1,5 @@
 import Graph from "graphology";
+import { Graph as AntvGraph } from "@antv/graphlib";
 import { clusters } from "graphology-generators/random";
 import { CANVAS_SIZE, TestName } from "./types";
 
@@ -40,23 +41,52 @@ export const loadDatasets = async () => {
   const loadG6JSON = (url: string, desc: string) => {
     return async () => {
       const result = await fetch(url);
-      const antvGraphModel = await result.json();
+      const oldG6GraphFormat = await result.json();
 
+      // format old G6 graph format to @antv/graphlib
       // assign random positions
-      antvGraphModel.nodes.forEach((node: any) => {
-        if (node.x === undefined) {
-          node.x = Math.random() * CANVAS_SIZE;
-        }
-        if (node.y === undefined) {
-          node.y = Math.random() * CANVAS_SIZE;
+      const nodes: any[] = [];
+      const edges: any[] = [];
+      const uniqueNodes = new Set();
+      oldG6GraphFormat.nodes.forEach((node: any) => {
+        // remove duplicated nodes
+        if (!uniqueNodes.has(node.id)) {
+          uniqueNodes.add(node.id);
+
+          if (node.x === undefined) {
+            node.x = Math.random() * CANVAS_SIZE;
+          }
+          if (node.y === undefined) {
+            node.y = Math.random() * CANVAS_SIZE;
+          }
+
+          nodes.push({
+            id: node.id,
+            data: { x: node.x, y: node.y },
+          });
         }
       });
-      antvGraphModel.edges.forEach((edge: any) => {
+      oldG6GraphFormat.edges.forEach((edge: any, i: number) => {
+        if (edge.id === undefined) {
+          edge.id = `e${i}`;
+        }
         if (edge.weight === undefined || edge.weight === null) {
           edge.weight = 1;
         } else {
           edge.weight = Number(edge.weight);
         }
+
+        edges.push({
+          id: edge.id,
+          source: edge.source,
+          target: edge.target,
+          data: { weight: edge.weight },
+        });
+      });
+
+      const antvGraphModel = new AntvGraph({
+        nodes,
+        edges,
       });
 
       const graphlibModel = antv2graphology(antvGraphModel);
@@ -102,29 +132,34 @@ export const loadDatasets = async () => {
   return datasets;
 };
 
-const graphology2antv = (graph: any) => {
-  return {
+const graphology2antv = (graph: any): AntvGraph<any, any> => {
+  return new AntvGraph({
     nodes: graph.nodes().map((id: any) => ({
-      id: id,
-      x: graph.getNodeAttribute(id, "x"),
-      y: graph.getNodeAttribute(id, "y"),
+      id,
+      data: {
+        x: graph.getNodeAttribute(id, "x"),
+        y: graph.getNodeAttribute(id, "y"),
+      },
     })),
     edges: graph.edges().map((id: any) => ({
+      id,
       source: graph.source(id),
       target: graph.target(id),
-      weight: graph.getEdgeAttribute(id, "weight"),
+      data: {
+        weight: graph.getEdgeAttribute(id, "weight"),
+      },
     })),
-  };
+  });
 };
 
-const antv2graphology = ({ nodes, edges }: any) => {
+const antv2graphology = (graph: AntvGraph<any, any>) => {
   const g = new Graph();
-  nodes.forEach(({ id, x, y }: any) => {
+  graph.getAllNodes().forEach(({ id, data: { x, y } }: any) => {
     if (!g.hasNode(id)) {
       g.addNode(id, { x, y });
     }
   });
-  edges.forEach(({ source, target, weight }: any) => {
+  graph.getAllEdges().forEach(({ source, target, data: { weight } }: any) => {
     g.addEdge(source, target, { weight });
   });
   return g;

@@ -405,6 +405,7 @@ export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
         Array.from(
           new Set(calcNodes?.map((node) => node.data[nodeClusterBy] as string))
         ) || [];
+      // @ts-ignore
       options.centripetalOptions = Object.assign(basicCentripetal, {
         single: 100,
         leaf: (node: Node) => {

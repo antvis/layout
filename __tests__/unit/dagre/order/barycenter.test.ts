@@ -1,5 +1,5 @@
 import { Graph } from "@antv/graphlib";
-import { NodeData, EdgeData } from "@antv/layout";
+import { NodeData, EdgeData } from "../../../../packages/layout";
 import { barycenter } from "../../../../packages/layout/src/dagre/order/barycenter";
 
 describe("order/barycenter", function () {
@@ -12,7 +12,7 @@ describe("order/barycenter", function () {
     });
   });
 
-  it("assigns an undefined barycenter for a node with no predecessors", function () {
+  test("assigns an undefined barycenter for a node with no predecessors", function () {
     g.addNode({
       id: "x",
       data: {},
@@ -23,7 +23,7 @@ describe("order/barycenter", function () {
     expect(results[0]).toEqual({ v: "x" });
   });
 
-  it("assigns the position of the sole predecessors", function () {
+  test("assigns the position of the sole predecessors", function () {
     g.addNode({
       id: "a",
       data: { order: 2 },
@@ -46,7 +46,7 @@ describe("order/barycenter", function () {
     expect(results[0]).toEqual({ v: "x", barycenter: 2, weight: 1 });
   });
 
-  it("assigns the average of multiple predecessors", function () {
+  test("assigns the average of multiple predecessors", function () {
     g.addNode({
       id: "a",
       data: { order: 2 },
@@ -81,7 +81,7 @@ describe("order/barycenter", function () {
     expect(results[0]).toEqual({ v: "x", barycenter: 3, weight: 2 });
   });
 
-  it("takes into account the weight of edges", function () {
+  test("takes into account the weight of edges", function () {
     g.addNode({
       id: "a",
       data: { order: 2 },
@@ -116,7 +116,7 @@ describe("order/barycenter", function () {
     expect(results[0]).toEqual({ v: "x", barycenter: 2.5, weight: 4 });
   });
 
-  it("calculates barycenters for all nodes in the movable layer", function () {
+  test("calculates barycenters for all nodes in the movable layer", function () {
     g.addNode({
       id: "a",
       data: { order: 1 },

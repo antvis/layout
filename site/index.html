@@ -131,7 +131,7 @@
     <fieldset>
       <legend>Choose a dataset:</legend>
       <select name="dataset" id="dataset">
-        <option value="random-clusters">random-clusters</option>
+        <option value="random-clusters" selected>random-clusters</option>
         <option value="relations">relations</option>
         <option value="regions">regions</option>
         <option value="netscience">netscience</option>
@@ -143,10 +143,15 @@
     <fieldset>
       <legend>Choose a layout:</legend>
       <select name="layout" id="layout">
-        <option value="forceatlas2">forceatlas2</option>
+        <option value="forceatlas2" selected>forceatlas2</option>
         <option value="force2">force2</option>
         <option value="fruchterman">fruchterman</option>
       </select>
+
+      <div>
+        <label for="iterations">Iterations:</label>
+        <input type="number" id="iterations" name="iterations" value="50" />
+      </div>
     </fieldset>
 
     <fieldset>
@@ -261,7 +266,7 @@
     </div>
 
     <script src="./enable-threads.js"></script>
-    <script src="./bundle.js"></script>
+    <script src="./index.min.js"></script>
     <script type="module" src="./main.ts"></script>
   </body>
 </html>

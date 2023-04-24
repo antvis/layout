@@ -1,6 +1,6 @@
 # @antv/layout-wasm
 
-A WASM binding of `@antv/layout-rust`. We use [wasm-bindgen-rayon](https://github.com/GoogleChromeLabs/wasm-bindgen-rayon) implementing multi-thread
+A WASM binding of `@antv/layout-rust`. We use [wasm-bindgen-rayon](https://github.com/GoogleChromeLabs/wasm-bindgen-rayon) implementing multi-thread.
 
 ## Usage
 
@@ -17,31 +17,32 @@ A WASM binding of `@antv/layout-rust`. We use [wasm-bindgen-rayon](https://githu
 Get `initThread` method from `layout` namespace.
 
 ```js
-const { initThread, supportsThreads } = window.layout;
+const { initThreads, supportsThreads } = window.layoutWASM;
 ```
 
 Since [Not all browsers](https://webassembly.org/roadmap/) support WebAssembly threads yet, we need to use feature detection to choose the right one on the JavaScript side.
 
 ```js
 const supported = await supportsThreads();
-const { forceAtlas2 } = await initThreads(supported);
+const { forceatlas2, force2, fruchterman } = await initThreads(supported);
 ```
 
 Then we can execute layout algorithm as usual.
 
 ```js
-const { positions } = await forceAtlas2({});
+const { nodes } = await forceatlas2({
+  kg: 1,
+  // other options
+}); // [x1, y1, x2, y2...]
 ```
 
-### ESM
+## API
 
-```js
-import { initThread, supportsThreads } from "@antv/layout-wasm";
+### forceatlas2
 
-const supported = await supportsThreads();
-const { forceAtlas2 } = await initThreads(supported);
-const { positions } = await forceAtlas2({});
-```
+### fruchterman
+
+### force2
 
 ## Benchmarks
 

@@ -1,5 +1,5 @@
 import { Graph } from "@antv/graphlib";
-import { NodeData, EdgeData } from "@antv/layout";
+import { NodeData, EdgeData } from "../../../packages/layout";
 import { parentDummyChains } from "../../../packages/layout/src/dagre/parent-dummy-chains";
 
 describe("parentDummyChains", function () {
@@ -11,7 +11,7 @@ describe("parentDummyChains", function () {
     });
   });
 
-  it("does not set a parent if both the tail and head have no parent", function () {
+  test("does not set a parent if both the tail and head have no parent", function () {
     g.addNode({
       id: "a",
       data: {},
@@ -48,7 +48,7 @@ describe("parentDummyChains", function () {
     expect(g.getParent("d1")).toBe(null);
   });
 
-  it("uses the tail's parent for the first node if it is not the root", function () {
+  test("uses the tail's parent for the first node if it is not the root", function () {
     g.addNodes([
       {
         id: "a",
@@ -94,7 +94,7 @@ describe("parentDummyChains", function () {
     expect(g.getParent("d1")?.id).toEqual("sg1");
   });
 
-  it("uses the heads's parent for the first node if tail's is root", function () {
+  test("uses the heads's parent for the first node if tail's is root", function () {
     g.addNodes([
       {
         id: "a",
@@ -140,7 +140,7 @@ describe("parentDummyChains", function () {
     expect(g.getParent("d1")?.id).toEqual("sg1");
   });
 
-  it("handles a long chain starting in a subgraph", function () {
+  test("handles a long chain starting in a subgraph", function () {
     g.addNodes([
       {
         id: "a",
@@ -211,7 +211,7 @@ describe("parentDummyChains", function () {
     expect(g.getParent("d3")).toBe(null);
   });
 
-  it("handles a long chain ending in a subgraph", function () {
+  test("handles a long chain ending in a subgraph", function () {
     g.addNodes([
       {
         id: "a",
@@ -282,7 +282,7 @@ describe("parentDummyChains", function () {
     expect(g.getParent("d1")).toBe(null);
   });
 
-  it("handles nested subgraphs", function () {
+  test("handles nested subgraphs", function () {
     for (let i = 0; i < 5; ++i) {
       g.addNode({
         id: "d" + (i + 1),
@@ -374,7 +374,7 @@ describe("parentDummyChains", function () {
     expect(g.getParent("d5")?.id).toEqual("sg4");
   });
 
-  it("handles overlapping rank ranges", function () {
+  test("handles overlapping rank ranges", function () {
     g.addNodes([
       {
         id: "a",
@@ -450,7 +450,7 @@ describe("parentDummyChains", function () {
     expect(g.getParent("d3")?.id).toEqual("sg2");
   });
 
-  it("handles an LCA that is not the root of the graph #1", function () {
+  test("handles an LCA that is not the root of the graph #1", function () {
     g.addNodes([
       {
         id: "a",
@@ -516,7 +516,7 @@ describe("parentDummyChains", function () {
     expect(g.getParent("d2")?.id).toEqual("sg2");
   });
 
-  it("handles an LCA that is not the root of the graph #2", function () {
+  test("handles an LCA that is not the root of the graph #2", function () {
     g.addNodes([
       {
         id: "a",

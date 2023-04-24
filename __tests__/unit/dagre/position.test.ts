@@ -1,5 +1,5 @@
 import { Graph } from "@antv/graphlib";
-import { NodeData, EdgeData } from "@antv/layout";
+import { NodeData, EdgeData } from "../../../packages/layout";
 import { position } from "../../../packages/layout/src/dagre/position";
 
 describe("position", function () {
@@ -14,7 +14,7 @@ describe("position", function () {
     // });
   });
 
-  it("respects ranksep", function () {
+  test("respects ranksep", function () {
     g.addNodes([
       {
         id: "a",
@@ -35,7 +35,7 @@ describe("position", function () {
     expect(g.getNode("b").data.y).toEqual(100 + 1000 + 80 / 2);
   });
 
-  it("use the largest height in each rank with ranksep", function () {
+  test("use the largest height in each rank with ranksep", function () {
     g.addNodes([
       {
         id: "a",
@@ -63,7 +63,7 @@ describe("position", function () {
     expect(g.getNode("c").data.y).toEqual(100 + 1000 + 90 / 2);
   });
 
-  it("respects nodesep", function () {
+  test("respects nodesep", function () {
     g.addNodes([
       {
         id: "a",
@@ -85,7 +85,7 @@ describe("position", function () {
     );
   });
 
-  it("should not try to position the subgraph node itself", function () {
+  test("should not try to position the subgraph node itself", function () {
     g.addNodes([
       {
         id: "a",

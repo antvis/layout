@@ -1,10 +1,10 @@
 import { Graph } from "@antv/graphlib";
-import { FruchtermanLayout } from "@antv/layout";
+import { FruchtermanLayout } from "../../packages/layout";
 import data from "../data/test-data-1";
 import { getEuclideanDistance } from "../util";
 
 describe("FruchtermanLayout", () => {
-  it("should return correct default config.", () => {
+  test("should return correct default config.", () => {
     const graph = new Graph<any, any>({
       nodes: [...data.nodes],
       edges: [...data.edges],
@@ -30,7 +30,7 @@ describe("FruchtermanLayout", () => {
     expect(nodes[0].data.y).not.toBe(undefined);
   });
 
-  it("should do fruchterman layout with an empty graph.", async () => {
+  test("should do fruchterman layout with an empty graph.", async () => {
     const graph = new Graph<any, any>({
       nodes: [],
       edges: [],
@@ -43,7 +43,7 @@ describe("FruchtermanLayout", () => {
     expect(JSON.stringify(positions.nodes)).toBe("[]");
   });
 
-  it("should do fruchterman layout with a graph which has only one node.", () => {
+  test("should do fruchterman layout with a graph which has only one node.", () => {
     const graph = new Graph<any, any>({
       nodes: [{ id: "node", data: {} }],
       edges: [],
@@ -61,7 +61,7 @@ describe("FruchtermanLayout", () => {
     expect(positions.nodes[0].data.y).toBe(20);
   });
 
-  it("should do fruchterman layout with clustering and nodeClusterBy.", () => {
+  test("should do fruchterman layout with clustering and nodeClusterBy.", () => {
     const graph = new Graph<any, any>({
       nodes: [
         { id: "node0", data: { clusterField: "a" } },
@@ -117,14 +117,14 @@ describe("FruchtermanLayout", () => {
     expect(cClusterDist < acClusterDist).toBe(true);
   });
 
-  it("should do fruchterman layout with onTick.", async () => {
+  test("should do fruchterman layout with onTick.", async () => {
     const graph = new Graph<any, any>({
       nodes: [...data.nodes],
       edges: [...data.edges],
     });
 
     let tick = 0;
-    const onTick = ({ nodes, edges }) => {
+    const onTick = ({ nodes, edges }: any) => {
       expect(nodes.length).toBe(data.nodes.length);
       expect(nodes[0].data.x).not.toBe(undefined);
       expect(nodes[0].data.y).not.toBe(undefined);
@@ -142,7 +142,7 @@ describe("FruchtermanLayout", () => {
     expect(tick).toBe(10);
   });
 
-  it("should do fruchterman layout with overlapped nodes and loop edge.", () => {
+  test("should do fruchterman layout with overlapped nodes and loop edge.", () => {
     const graph = new Graph<any, any>({
       nodes: [
         {
@@ -171,7 +171,7 @@ describe("FruchtermanLayout", () => {
     expect(positions.nodes[0].data.y).not.toEqual(positions.nodes[1].data.y);
   });
 
-  it("should do fruchterman layout with different gravities.", () => {
+  test("should do fruchterman layout with different gravities.", () => {
     const graph = new Graph<any, any>({
       nodes: [
         { id: "node0", data: { x: 10, y: 10 } },

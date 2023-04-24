@@ -116,7 +116,7 @@ export class DagreLayout implements Layout<DagreLayoutOptions> {
     const edges: Edge[] = graph.getAllEdges();
 
     nodes
-      .filter((node) => node.data.layout !== false)
+      .filter((node) => node.data.layout)
       .forEach((node) => {
         const size = nodeSizeFunc(node);
         const verti = vertisep(node);
@@ -503,7 +503,7 @@ export class DagreLayout implements Layout<DagreLayoutOptions> {
   }
 
   layoutNode = (node: Node) => {
-    return node.data.layout !== false;
+    return node.data.layout;
   }
 }
 

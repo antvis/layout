@@ -1,10 +1,9 @@
 use crate::{layout::Layout, util::*};
 
 use itertools::izip;
-use rayon::vec;
 
 pub fn apply_attraction_force2_2d<T: Copy + Coord + std::fmt::Debug>(layout: &mut Layout<T>) {
-    for (edge, (n1, n2)) in layout.edges.iter().enumerate() {
+    for (_edge, (n1, n2)) in layout.edges.iter().enumerate() {
         let n1_pos = layout.points.get(*n1);
         let n2_pos = layout.points.get(*n2);
 
@@ -13,14 +12,14 @@ pub fn apply_attraction_force2_2d<T: Copy + Coord + std::fmt::Debug>(layout: &mu
 
         let (n1_speed, n2_speed) = layout.speeds.get_2_mut(*n1, *n2);
 
-        let dx = unsafe { *n2_pos.get_unchecked(0) - *n1_pos.get_unchecked(0) };
-        let dy = unsafe { *n2_pos.get_unchecked(1) - *n1_pos.get_unchecked(1) };
+        let dx = unsafe { *n1_pos.get_unchecked(0) - *n2_pos.get_unchecked(0)};
+        let dy = unsafe { *n1_pos.get_unchecked(1) - *n2_pos.get_unchecked(1) };
 
-        let vec_length = (dx * dx + dy * dy).sqrt();
-        let dire_x = dx / vec_length;
-        let dire_y = dy / vec_length;
+        let dist = (dx * dx + dy * dy).sqrt() + T::from(0.01).unwrap_or_else(T::zero);
+        let dire_x = dx / dist;
+        let dire_y = dy / dist;
 
-        let diff = layout.settings.link_distance - vec_length;
+        let diff = layout.settings.link_distance - dist;
         let param = diff * layout.settings.edge_strength;
 
         let target_mass_ratio = T::one() / n1_mass;
@@ -37,7 +36,8 @@ pub fn apply_attraction_force2_2d<T: Copy + Coord + std::fmt::Debug>(layout: &mu
 
 
 pub fn apply_attraction_fruchterman_2d<T: Copy + Coord + std::fmt::Debug>(layout: &mut Layout<T>) {
-    let k = layout.settings.ka.clone();
+    let k = &layout.settings.ka;
+    let kr = &layout.settings.kr;
     for (_edge, (n1, n2)) in layout.edges.iter().enumerate() {
         let n1_pos = layout.points.get(*n1);
         let n2_pos = layout.points.get(*n2);
@@ -47,13 +47,13 @@ pub fn apply_attraction_fruchterman_2d<T: Copy + Coord + std::fmt::Debug>(layout
         let dx = unsafe { *n2_pos.get_unchecked(0) - *n1_pos.get_unchecked(0) };
         let dy = unsafe { *n2_pos.get_unchecked(1) - *n1_pos.get_unchecked(1) };
 
-        let vec_length = (dx * dx + dy * dy).sqrt();
-        let common = vec_length * vec_length / k;
+        let dist = (dx * dx + dy * dy).sqrt() + *kr;
+        let f = dist / *k;
 
-        unsafe { n1_speed.get_unchecked_mut(0) }.add_assign(dx / vec_length * common);
-        unsafe { n1_speed.get_unchecked_mut(1) }.add_assign(dy / vec_length * common);
-        unsafe { n2_speed.get_unchecked_mut(0) }.sub_assign(dx / vec_length * common);
-        unsafe { n2_speed.get_unchecked_mut(1) }.sub_assign(dy / vec_length * common);
+        unsafe { n1_speed.get_unchecked_mut(0) }.add_assign(dx * f);
+        unsafe { n1_speed.get_unchecked_mut(1) }.add_assign(dy * f);
+        unsafe { n2_speed.get_unchecked_mut(0) }.sub_assign(dx * f);
+        unsafe { n2_speed.get_unchecked_mut(1) }.sub_assign(dy * f);
     }
 }
 

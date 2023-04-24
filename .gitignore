@@ -15,3 +15,9 @@ esm
 dist
 *.pem
 !mock-cert.pem
+target
+pkg
+pkg-node
+pkg-parallel
+*.lock
+pnpm-lock.yaml

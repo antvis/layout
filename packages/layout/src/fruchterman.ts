@@ -176,7 +176,7 @@ export class FruchtermanLayout
     const edges = graph.getAllEdges();
 
     if (!nodes?.length) {
-      const result = { nodes: [], edges };
+      const result = { nodes: [] as any[], edges };
       this.lastResult = result;
       return result;
     }

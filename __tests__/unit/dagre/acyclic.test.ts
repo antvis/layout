@@ -15,7 +15,7 @@ describe("acyclic", function () {
   ACYCLICERS.forEach(function (acyclicer) {
     describe(acyclicer, function () {
       describe("run", function () {
-        it(`${acyclicer} does not change an already acyclic graph`, function () {
+        test(`${acyclicer} does not change an already acyclic graph`, function () {
           g.addNodes([
             {
               id: "a",
@@ -117,7 +117,7 @@ describe("acyclic", function () {
           ]);
         });
 
-        it(`${acyclicer} breaks cycles in the input graph`, function () {
+        test(`${acyclicer} breaks cycles in the input graph`, function () {
           g.addNodes([
             {
               id: "a",
@@ -180,7 +180,7 @@ describe("acyclic", function () {
           expect(findCycles(g)).toEqual([]);
         });
 
-        it(`${acyclicer} creates a multi-edge where necessary`, function () {
+        test(`${acyclicer} creates a multi-edge where necessary`, function () {
           g.addNodes([
             {
               id: "a",
@@ -232,7 +232,7 @@ describe("acyclic", function () {
       });
 
       describe("undo", function () {
-        it("does not change edges where the original graph was acyclic", function () {
+        test("does not change edges where the original graph was acyclic", function () {
           g.addNodes([
             {
               id: "a",
@@ -259,7 +259,7 @@ describe("acyclic", function () {
           expect(g.getAllEdges()).toHaveLength(1);
         });
 
-        it("can restore previosuly reversed edges", function () {
+        test("can restore previosuly reversed edges", function () {
           g.addNodes([
             {
               id: "a",
@@ -302,7 +302,7 @@ describe("acyclic", function () {
   });
 
   describe("greedy-specific functionality", function () {
-    it("prefers to break cycles at low-weight edges", function () {
+    test("prefers to break cycles at low-weight edges", function () {
       g.addNodes([
         {
           id: "a",

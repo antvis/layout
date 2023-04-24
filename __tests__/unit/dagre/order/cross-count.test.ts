@@ -1,5 +1,9 @@
 import { Graph } from "@antv/graphlib";
-import { Graph as IGraph, NodeData, EdgeData } from "@antv/layout";
+import {
+  Graph as IGraph,
+  NodeData,
+  EdgeData,
+} from "../../../../packages/layout";
 import { crossCount } from "../../../../packages/layout/src/dagre/order/cross-count";
 
 describe("crossCount", function () {
@@ -12,11 +16,11 @@ describe("crossCount", function () {
     });
   });
 
-  it("returns 0 for an empty layering", function () {
+  test("returns 0 for an empty layering", function () {
     expect(crossCount(g, [])).toEqual(0);
   });
 
-  it("returns 0 for a layering with no crossings", function () {
+  test("returns 0 for a layering with no crossings", function () {
     g.addNode({
       id: "a1",
       data: {},
@@ -57,7 +61,7 @@ describe("crossCount", function () {
     ).toEqual(0);
   });
 
-  it("returns 1 for a layering with 1 crossing", function () {
+  test("returns 1 for a layering with 1 crossing", function () {
     g.addNode({
       id: "a1",
       data: {},
@@ -98,7 +102,7 @@ describe("crossCount", function () {
     ).toEqual(1);
   });
 
-  it("returns a weighted crossing count for a layering with 1 crossing", function () {
+  test("returns a weighted crossing count for a layering with 1 crossing", function () {
     g.addNode({
       id: "a1",
       data: {},
@@ -139,7 +143,7 @@ describe("crossCount", function () {
     ).toEqual(6);
   });
 
-  it("calculates crossings across layers", function () {
+  test("calculates crossings across layers", function () {
     g.addNode({
       id: "a1",
       data: {},
@@ -205,7 +209,7 @@ describe("crossCount", function () {
     ).toEqual(2);
   });
 
-  it("works for graph #1", function () {
+  test("works for graph #1", function () {
     g.addNode({
       id: "a",
       data: {},

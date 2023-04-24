@@ -4,7 +4,7 @@ import {
   NodeData,
   EdgeData,
   DagreRankdir,
-} from "@antv/layout";
+} from "../../../packages/layout";
 import { layout } from "../../../packages/layout/src/dagre/layout";
 
 describe("layout", function () {
@@ -16,7 +16,7 @@ describe("layout", function () {
     });
   });
 
-  it("can layout a single node", function () {
+  test("can layout a single node", function () {
     g.addNode({
       id: "a",
       data: { width: 50, height: 100 },
@@ -37,7 +37,7 @@ describe("layout", function () {
     expect(g.getNode("a").data.y).toEqual(100 / 2);
   });
 
-  it("can layout two nodes on the same rank", function () {
+  test("can layout two nodes on the same rank", function () {
     g.addNode({
       id: "a",
       data: { width: 50, height: 100 },
@@ -62,7 +62,7 @@ describe("layout", function () {
     });
   });
 
-  it("can layout two nodes connected by an edge", function () {
+  test("can layout two nodes connected by an edge", function () {
     g.addNode({
       id: "a",
       data: { width: 50, height: 100 },
@@ -96,7 +96,7 @@ describe("layout", function () {
     expect(g.getEdge("e1").data).not.toHaveProperty("y");
   });
 
-  it("can layout an edge with a label", function () {
+  test("can layout an edge with a label", function () {
     g.addNode({
       id: "a",
       data: { width: 50, height: 100 },
@@ -135,7 +135,7 @@ describe("layout", function () {
 
   describe("can layout an edge with a long label, with rankdir =", function () {
     (["TB", "BT", "LR", "RL"] as DagreRankdir[]).forEach((rankdir) => {
-      it(`can layout an edge with a long label, with rankdir = ${rankdir}`, function () {
+      test(`can layout an edge with a long label, with rankdir = ${rankdir}`, function () {
         ["a", "b", "c", "d"].forEach(function (v) {
           g.addNode({
             id: v,
@@ -182,7 +182,7 @@ describe("layout", function () {
 
   describe("can apply an offset, with rankdir =", function () {
     (["TB", "BT", "LR", "RL"] as DagreRankdir[]).forEach((rankdir) => {
-      it(`can apply an offset, with rankdir = ${rankdir}`, function () {
+      test(`can apply an offset, with rankdir = ${rankdir}`, function () {
         ["a", "b", "c", "d"].forEach(function (v) {
           g.addNode({
             id: v,
@@ -233,7 +233,7 @@ describe("layout", function () {
     });
   });
 
-  it("can layout a long edge with a label", function () {
+  test("can layout a long edge with a label", function () {
     g.addNode({
       id: "a",
       data: { width: 50, height: 100 },
@@ -268,7 +268,7 @@ describe("layout", function () {
     expect(g.getEdge("e1").data.y).toBeLessThan(g.getNode("b").data.y!);
   });
 
-  it("can layout out a short cycle", function () {
+  test("can layout out a short cycle", function () {
     g.addNode({
       id: "a",
       data: { width: 100, height: 100 },
@@ -314,7 +314,7 @@ describe("layout", function () {
     );
   });
 
-  it("adds rectangle intersects for edges", function () {
+  test("adds rectangle intersects for edges", function () {
     g.addNode({
       id: "a",
       data: { width: 100, height: 100 },
@@ -348,7 +348,7 @@ describe("layout", function () {
     ]);
   });
 
-  it("adds rectangle intersects for edges spanning multiple ranks", function () {
+  test("adds rectangle intersects for edges spanning multiple ranks", function () {
     g.addNode({
       id: "a",
       data: { width: 100, height: 100 },
@@ -386,7 +386,7 @@ describe("layout", function () {
 
   describe("can layout a self loop", function () {
     (["TB", "BT", "LR", "RL"] as DagreRankdir[]).forEach(function (rankdir) {
-      it("in rankdir = " + rankdir, function () {
+      test("in rankdir = " + rankdir, function () {
         g.addNode({
           id: "a",
           data: { width: 100, height: 100 },
@@ -428,7 +428,7 @@ describe("layout", function () {
     });
   });
 
-  it("can layout a graph with subgraphs", function () {
+  test("can layout a graph with subgraphs", function () {
     // To be expanded, this primarily ensures nothing blows up for the moment.
     g.addNode({
       id: "a",
@@ -450,7 +450,7 @@ describe("layout", function () {
     });
   });
 
-  it("minimizes the height of subgraphs", function () {
+  test("minimizes the height of subgraphs", function () {
     ["a", "b", "c", "d", "x", "y"].forEach(function (v) {
       g.addNode({
         id: v,
@@ -511,7 +511,7 @@ describe("layout", function () {
     });
     expect(g.getNode("x").data.y).toEqual(g.getNode("y").data.y);
   });
-  it.skip("can layout subgraphs with different rankdirs", function () {
+  test.skip("can layout subgraphs with different rankdirs", function () {
     g.addNode({
       id: "a",
       data: { width: 50, height: 50 },
@@ -541,7 +541,7 @@ describe("layout", function () {
       check();
     });
   });
-  it("adds dimensions to the graph", function () {
+  test("adds dimensions to the graph", function () {
     g.addNode({
       id: "a",
       data: { width: 100, height: 50 },
@@ -562,7 +562,7 @@ describe("layout", function () {
   describe("ensures all coordinates are in the bounding box for the graph", function () {
     (["TB", "BT", "LR", "RL"] as DagreRankdir[]).forEach(function (rankdir) {
       describe(rankdir, function () {
-        it("node", function () {
+        test("node", function () {
           g.addNode({
             id: "a",
             data: { width: 100, height: 200 },
@@ -579,7 +579,7 @@ describe("layout", function () {
           expect(g.getNode("a").data.y).toEqual(200 / 2);
         });
 
-        it("edge, labelpos = l", function () {
+        test("edge, labelpos = l", function () {
           g.addNode({
             id: "a",
             data: { width: 100, height: 100 },
@@ -618,7 +618,7 @@ describe("layout", function () {
     });
   });
 
-  it("treats attributes with case-insensitivity", function () {
+  test("treats attributes with case-insensitivity", function () {
     g.addNode({
       id: "a",
       data: { width: 50, height: 100 },

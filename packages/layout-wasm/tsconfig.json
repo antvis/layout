@@ -1,12 +1,25 @@
 {
+  "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "outDir": "./dist/",
-    "noImplicitAny": true,
-    "module": "es6",
+    "rootDir": "./src",
+    "composite": true,
+    "module": "esnext",
+    "declaration": true,
+    "sourceMap": true,
     "target": "es5",
+    "outDir": "lib",
     "jsx": "react",
-    "allowJs": true,
+    "importHelpers": true,
     "moduleResolution": "node",
-    "allowSyntheticDefaultImports": true
-  }
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "lib": ["esnext", "dom"],
+    "types": ["jest"],
+    "experimentalDecorators": false /* Enables experimental support for ES7 decorators. */,
+    // "emitDecoratorMetadata": true, /* Enables experimental support for emitting type metadata for decorators. */
+    "downlevelIteration": true
+  },
+  "include": ["src/**/*"],
+  "exclude": ["src/**/*.spec.ts"]
 }

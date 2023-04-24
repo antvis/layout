@@ -53,7 +53,9 @@ pub struct ForceLayoutOptions {
     pub damping: T,
     pub interval: T,
     /// Fruchterman. The center of the graph.
-    pub center: (T, T),
+    pub center: Vec<T>,
+    pub max_speed: T,
+    pub min_movement: T,
 }
 
 #[wasm_bindgen(js_name = "force")]
@@ -94,11 +96,13 @@ pub fn force(val: JsValue) -> Array {
             damping: options.damping,
             interval: options.interval,
             center: options.center,
+            max_speed: options.max_speed,
+            min_movement: options.min_movement,
         },
     );
 
-    for _i in 0..options.iterations {
-        layout.iteration();
+    for i in 0..options.iterations {
+        layout.iteration(i as usize);
     }
 
     let nodes = Array::new();

@@ -1,4 +1,4 @@
-export interface Lib {
+export interface Layouts {
   forceatlas2: (
     options: Forceatlas2LayoutOptions
   ) => Promise<{ nodes: number[] }>;
@@ -19,6 +19,7 @@ export interface Forceatlas2LayoutOptions extends ForceLayoutOptions {
   strong_gravity: boolean;
   lin_log: boolean;
   dissuade_hubs: boolean;
+  center: [number, number];
 }
 export interface Force2LayoutOptions extends ForceLayoutOptions {
   edge_strength: number;
@@ -29,6 +30,9 @@ export interface Force2LayoutOptions extends ForceLayoutOptions {
   interval: number;
   damping: number;
   center: [number, number];
+  kg: number; // gravity
+  max_speed: number;
+  min_movement: number;
 }
 
 export interface FruchtermanLayoutOptions extends ForceLayoutOptions {
@@ -38,13 +42,15 @@ export interface FruchtermanLayoutOptions extends ForceLayoutOptions {
   kr: number; // 0.01
   speed: number; // speed
   damping: number; // maxDisplace
+  interval: number; // *= maxDisplace 0.99
 }
 
 export interface ForceLayoutOptions {
-  name: number;
+  // name: number;
   nodes: number;
   edges: number[];
   masses: number[];
+  weights: number[];
   positions: number[];
   iterations: number;
 }

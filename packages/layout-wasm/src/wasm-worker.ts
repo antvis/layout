@@ -25,6 +25,8 @@ const DEFAULT_LAYOUT_OPTIONS = {
   interval: 0,
   damping: 0,
   center: [0, 0],
+  max_speed: 0,
+  min_movement: 0,
 };
 
 const wrapTransfer = <T extends ForceLayoutOptions>(

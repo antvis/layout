@@ -1,10 +1,10 @@
 import { Graph } from "@antv/graphlib";
-import { ForceAtlas2Layout } from "@antv/layout";
+import { ForceAtlas2Layout } from "../../packages/layout";
 import data from "../data/test-data-1";
 import { getEuclideanDistance } from "../util";
 
 describe("ForceAtlas2Layout", () => {
-  it("should return correct default config.", async () => {
+  test("should return correct default config.", async () => {
     const graph = new Graph<any, any>({
       nodes: [...data.nodes],
       edges: [...data.edges],
@@ -32,7 +32,7 @@ describe("ForceAtlas2Layout", () => {
     expect(positions.nodes[0].data.y).not.toBe(undefined);
   });
 
-  it("should do fa2 layout with an empty graph.", async () => {
+  test("should do fa2 layout with an empty graph.", async () => {
     const graph = new Graph<any, any>({
       nodes: [],
       edges: [],
@@ -43,7 +43,7 @@ describe("ForceAtlas2Layout", () => {
     expect(positions.nodes).not.toBe(undefined);
   });
 
-  it("should do fa2 layout with a graph which has only one node.", async () => {
+  test("should do fa2 layout with a graph which has only one node.", async () => {
     const graph = new Graph<any, any>({
       nodes: [{ id: "node", data: {} }],
       edges: [],
@@ -56,7 +56,7 @@ describe("ForceAtlas2Layout", () => {
     expect(positions.nodes[0].data.y).toBe(20);
   });
 
-  it("should do fa2 layout with diffrent kr", async () => {
+  test("should do fa2 layout with diffrent kr", async () => {
     const graph = new Graph<any, any>({
       nodes: [
         {
@@ -96,7 +96,7 @@ describe("ForceAtlas2Layout", () => {
 
     expect(dist1 < dist2).toBe(true);
   });
-  it("should do fa2 layout with diffrent kg", async () => {
+  test("should do fa2 layout with diffrent kg", async () => {
     const graph = new Graph<any, any>({
       nodes: [
         {
@@ -136,7 +136,7 @@ describe("ForceAtlas2Layout", () => {
 
     expect(dist1 > dist2).toBe(true);
   });
-  it("should do fa2 layout with diffrent mode", async () => {
+  test("should do fa2 layout with diffrent mode", async () => {
     const graph = new Graph<any, any>({
       nodes: [
         {
@@ -176,7 +176,7 @@ describe("ForceAtlas2Layout", () => {
 
     expect(dist1 < dist2).toBe(true);
   });
-  it("should do fa2 layout with onTick", async () => {
+  test("should do fa2 layout with onTick", async () => {
     const graph = new Graph<any, any>({
       nodes: [
         {

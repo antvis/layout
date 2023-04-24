@@ -1,5 +1,5 @@
 import { Edge, Graph, ID } from "@antv/graphlib";
-import { Graph as IGraph, NodeData, EdgeData } from "@antv/layout";
+import { Graph as IGraph, NodeData, EdgeData } from "../../../packages/layout";
 import { run, cleanup } from "../../../packages/layout/src/dagre/nesting-graph";
 import { components } from "../../util";
 
@@ -13,7 +13,7 @@ describe("rank/nestingGraph", function () {
   });
 
   describe("run", function () {
-    it("connects a disconnected graph", function () {
+    test("connects a disconnected graph", function () {
       g.addNodes([
         {
           id: "a",
@@ -31,7 +31,7 @@ describe("rank/nestingGraph", function () {
       expect(g.hasNode("b"));
     });
 
-    it("adds border nodes to the top and bottom of a subgraph", function () {
+    test("adds border nodes to the top and bottom of a subgraph", function () {
       g.addNodes([
         {
           id: "a",
@@ -79,7 +79,7 @@ describe("rank/nestingGraph", function () {
       });
     });
 
-    it("adds edges between borders of nested subgraphs", function () {
+    test("adds edges between borders of nested subgraphs", function () {
       g.addNodes([
         {
           id: "a",
@@ -133,7 +133,7 @@ describe("rank/nestingGraph", function () {
       ).toEqual(1);
     });
 
-    it("adds sufficient weight to border to node edges", function () {
+    test("adds sufficient weight to border to node edges", function () {
       g.addNodes([
         {
           id: "x",
@@ -181,7 +181,7 @@ describe("rank/nestingGraph", function () {
       ).toBeGreaterThan(300);
     });
 
-    it("adds an edge from the root to the tops of top-level subgraphs", function () {
+    test("adds an edge from the root to the tops of top-level subgraphs", function () {
       g.addNodes([
         {
           id: "sg1",
@@ -207,7 +207,7 @@ describe("rank/nestingGraph", function () {
       expect(edge).toBeTruthy();
     });
 
-    it("adds an edge from root to each node with the correct minlen #1", function () {
+    test("adds an edge from root to each node with the correct minlen #1", function () {
       g.addNodes([
         {
           id: "a",
@@ -228,7 +228,7 @@ describe("rank/nestingGraph", function () {
       });
     });
 
-    it("adds an edge from root to each node with the correct minlen #2", function () {
+    test("adds an edge from root to each node with the correct minlen #2", function () {
       g.addNodes([
         {
           id: "sg1",
@@ -255,7 +255,7 @@ describe("rank/nestingGraph", function () {
       });
     });
 
-    it("adds an edge from root to each node with the correct minlen #3", function () {
+    test("adds an edge from root to each node with the correct minlen #3", function () {
       g.addNodes([
         {
           id: "sg1",
@@ -287,7 +287,7 @@ describe("rank/nestingGraph", function () {
       });
     });
 
-    it("does not add an edge from the root to itself", function () {
+    test("does not add an edge from the root to itself", function () {
       g.addNodes([
         {
           id: "a",
@@ -302,7 +302,7 @@ describe("rank/nestingGraph", function () {
       ).toHaveLength(0);
     });
 
-    it("expands inter-node edges to separate SG border and nodes #1", function () {
+    test("expands inter-node edges to separate SG border and nodes #1", function () {
       g.addNodes([
         {
           id: "a",
@@ -326,7 +326,7 @@ describe("rank/nestingGraph", function () {
       ).toEqual(1);
     });
 
-    it("expands inter-node edges to separate SG border and nodes #2", function () {
+    test("expands inter-node edges to separate SG border and nodes #2", function () {
       g.addNodes([
         {
           id: "a",
@@ -355,7 +355,7 @@ describe("rank/nestingGraph", function () {
       ).toEqual(3);
     });
 
-    it("expands inter-node edges to separate SG border and nodes #3", function () {
+    test("expands inter-node edges to separate SG border and nodes #3", function () {
       g.addNodes([
         {
           id: "a",
@@ -391,7 +391,7 @@ describe("rank/nestingGraph", function () {
       ).toEqual(5);
     });
 
-    it("sets minlen correctly for nested SG boder to children", function () {
+    test("sets minlen correctly for nested SG boder to children", function () {
       g.addNodes([
         {
           id: "a",
@@ -471,7 +471,7 @@ describe("rank/nestingGraph", function () {
   });
 
   describe("cleanup", function () {
-    it("removes nesting graph edges", function () {
+    test("removes nesting graph edges", function () {
       g.addNodes([
         {
           id: "a",
@@ -499,7 +499,7 @@ describe("rank/nestingGraph", function () {
       expect(g.getSuccessors("a").map((n) => n.id)).toEqual(["b"]);
     });
 
-    it("removes the root node", function () {
+    test("removes the root node", function () {
       g.addNodes([
         {
           id: "a",
