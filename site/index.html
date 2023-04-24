@@ -128,6 +128,23 @@
   </head>
   <body>
     <p>Benchmarks of force-directed layouts</p>
+    <p>
+      Typically force-guided layouts contain multiple iterations and are
+      therefore parallelizable. We would like to provide WebWorker / WASM and
+      GPU approaches to obtain performance gains. Here's what we have done for now:
+      
+      <ul>
+        <li>
+          <a href="https://github.com/antvis/layout/tree/fa2818a764d5a016288d42de05a42b5d239efec8/packages/layout-gpu">@antv/layout-gpu</a> uses
+      WebGL / WebGPU to implement GPGPU and have the best performance
+        </li>
+        <li>
+          <a href="https://github.com/antvis/layout/tree/fa2818a764d5a016288d42de05a42b5d239efec8/packages/layout-wasm">@antv/layout-wasm</a> uses WebWorker multi-threaded shared memory to run
+      WASM, with Rust <a href="https://github.com/rayon-rs/rayon">rayon</a> based parallelism behind it.
+        </li>
+      </ul>
+      
+    </p>
     <fieldset>
       <legend>Choose a dataset:</legend>
       <select name="dataset" id="dataset">
