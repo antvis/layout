@@ -16,6 +16,18 @@
         height: 400px;
         border: 1px solid black;
       }
+      figure {
+        flex: 1 1 25%;
+        display: flex;
+        flex-direction: column;
+      }
+      .test-cases {
+        display: flex;
+        flex-wrap: wrap;
+        width: 100%;
+        align-items: center;
+        justify-content: center;
+      }
       .mask {
         display: none;
         position: absolute;
@@ -113,14 +125,14 @@
         }
       }
     </style>
-    <script type="module" crossorigin src="/layout/assets/index.7998355e.js"></script>
+    <script type="module" crossorigin src="/layout/assets/index.56ba73ab.js"></script>
   </head>
   <body>
     <p>Benchmarks of force-directed layouts</p>
     <fieldset>
       <legend>Choose a dataset:</legend>
       <select name="dataset" id="dataset">
-        <option value="random-clusters">random-clusters</option>
+        <option value="random-clusters" selected>random-clusters</option>
         <option value="relations">relations</option>
         <option value="regions">regions</option>
         <option value="netscience">netscience</option>
@@ -132,10 +144,15 @@
     <fieldset>
       <legend>Choose a layout:</legend>
       <select name="layout" id="layout">
-        <option value="forceatlas2">forceatlas2</option>
+        <option value="forceatlas2" selected>forceatlas2</option>
         <option value="force2">force2</option>
         <option value="fruchterman">fruchterman</option>
       </select>
+
+      <div>
+        <label for="iterations">Iterations:</label>
+        <input type="number" id="iterations" name="iterations" value="50" />
+      </div>
     </fieldset>
 
     <fieldset>
@@ -180,41 +197,57 @@
           >@antv/layout-wasm multithreads</label
         >
       </div>
+      <div>
+        <input
+          type="checkbox"
+          id="@antv/layout-gpu_checkbox"
+          name="@antv/layout-gpu_checkbox"
+          checked
+        />
+        <label for="@antv/layout-gpu_checkbox">@antv/layout-gpu</label>
+      </div>
     </fieldset>
 
     <button id="run">Run layout</button>
 
-    <figure>
-      <canvas id="graphology" width="800" height="800"></canvas>
-      <figurecaption> graphology <span></span></figurecaption>
-    </figure>
+    <div class="test-cases">
+      <figure>
+        <canvas id="graphology" width="800" height="800"></canvas>
+        <figurecaption> graphology <span></span></figurecaption>
+      </figure>
 
-    <figure>
-      <canvas id="@antv/layout" width="800" height="800"></canvas>
-      <figurecaption> @antv/layout <span></span></figurecaption>
-    </figure>
+      <figure>
+        <canvas id="@antv/layout" width="800" height="800"></canvas>
+        <figurecaption> @antv/layout <span></span></figurecaption>
+      </figure>
 
-    <figure>
-      <canvas
-        id="@antv/layout-wasm - singlethread"
-        width="800"
-        height="800"
-      ></canvas>
-      <figurecaption>
-        @antv/layout-wasm singlethread <span></span
-      ></figurecaption>
-    </figure>
+      <figure>
+        <canvas
+          id="@antv/layout-wasm - singlethread"
+          width="800"
+          height="800"
+        ></canvas>
+        <figurecaption>
+          @antv/layout-wasm singlethread <span></span
+        ></figurecaption>
+      </figure>
 
-    <figure>
-      <canvas
-        id="@antv/layout-wasm - multithreads"
-        width="800"
-        height="800"
-      ></canvas>
-      <figurecaption>
-        @antv/layout-wasm multithreads <span></span
-      ></figurecaption>
-    </figure>
+      <figure>
+        <canvas
+          id="@antv/layout-wasm - multithreads"
+          width="800"
+          height="800"
+        ></canvas>
+        <figurecaption>
+          @antv/layout-wasm multithreads <span></span
+        ></figurecaption>
+      </figure>
+
+      <figure>
+        <canvas id="@antv/layout-gpu" width="800" height="800"></canvas>
+        <figurecaption> @antv/layout-gpu <span></span></figurecaption>
+      </figure>
+    </div>
 
     <div id="mask" class="mask">
       <div class="lds-spinner">
@@ -234,7 +267,7 @@
     </div>
 
     <script src="./enable-threads.js"></script>
-    <script src="./bundle.js"></script>
+    <script src="./index.min.js"></script>
     
   </body>
 </html>
