@@ -16,6 +16,8 @@ wasm-opt = false
 
 [profile.release]
 panic = 'abort'
+lto = true
+opt-level = 's'
 
 [lib]
 crate-type = ["cdylib"]

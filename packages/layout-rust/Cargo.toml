@@ -13,6 +13,8 @@ readme = "README.md"
 
 [profile.release]
 panic = 'abort'
+lto = true
+opt-level = 's'
 
 [dependencies]
 itertools = "0.10.3"
