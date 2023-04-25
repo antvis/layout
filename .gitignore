@@ -20,3 +20,4 @@ pkg
 pkg-node
 pkg-parallel
 *.lock
+Cargo.lock

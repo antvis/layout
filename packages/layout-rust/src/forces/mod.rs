@@ -3,9 +3,8 @@ pub mod gravity;
 pub mod repulsion;
 
 use crate::{
-    layout::{Layout, Settings},
+    layout::{Layout, Settings, LayoutType},
     util::*,
-    LayoutType,
 };
 
 #[doc(hidden)]

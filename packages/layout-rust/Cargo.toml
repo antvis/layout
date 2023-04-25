@@ -12,8 +12,7 @@ categories = ["visualization"]
 readme = "README.md"
 
 [profile.release]
-codegen-units = 1
-debug = true
+panic = 'abort'
 
 [dependencies]
 itertools = "0.10.3"
