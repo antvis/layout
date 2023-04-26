@@ -11,7 +11,7 @@ describe("addBorderSegments", function () {
     });
   });
 
-  it("does not add border nodes for a non-compound graph", function () {
+  test("does not add border nodes for a non-compound graph", function () {
     g.addNode({
       id: "a",
       data: { rank: 0 },
@@ -21,14 +21,14 @@ describe("addBorderSegments", function () {
     expect(g.getNode("a").data).toEqual({ rank: 0 });
   });
 
-  // it("does not add border nodes for a graph with no clusters", function () {
+  // test("does not add border nodes for a graph with no clusters", function () {
   //   g.addNode("a", { rank: 0 });
   //   addBorderSegments(g);
   //   expect(g.nodeCount()).toEqual(1);
   //   expect(g.node("a")).toEqual({ rank: 0 });
   // });
 
-  it("adds a border for a single-rank subgraph", function () {
+  test("adds a border for a single-rank subgraph", function () {
     g.addNode({
       id: "sg",
       data: { minRank: 1, maxRank: 1 },
@@ -57,7 +57,7 @@ describe("addBorderSegments", function () {
     expect(g.getParent(br)?.id).toEqual("sg");
   });
 
-  it("adds a border for a multi-rank subgraph", function () {
+  test("adds a border for a multi-rank subgraph", function () {
     g.addNode({
       id: "sg",
       data: { minRank: 1, maxRank: 2 },
@@ -123,7 +123,7 @@ describe("addBorderSegments", function () {
     ).toBeTruthy();
   });
 
-  it("adds borders for nested subgraphs", function () {
+  test("adds borders for nested subgraphs", function () {
     g.addNode({
       id: "sg1",
       data: { minRank: 1, maxRank: 1 },

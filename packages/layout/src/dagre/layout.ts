@@ -62,7 +62,7 @@ export const layout = (
   const layoutGraph = buildLayoutGraph(g);
 
   // 控制是否为边的label留位置（这会影响是否在边中间添加dummy node）
-  if (!(edgeLabelSpace === false)) {
+  if (!(!edgeLabelSpace)) {
     options.ranksep = makeSpaceForEdgeLabels(layoutGraph, {
       rankdir,
       ranksep,

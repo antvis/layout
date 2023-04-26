@@ -1,5 +1,5 @@
 import { Graph } from "@antv/graphlib";
-import { NodeData, EdgeData } from "@antv/layout";
+import { NodeData, EdgeData } from "../../../../packages/layout";
 import { rank } from "../../../../packages/layout/src/dagre/rank";
 
 describe("rank", function () {
@@ -136,7 +136,7 @@ describe("rank", function () {
 
   RANKERS.forEach(function (ranker) {
     describe(ranker, function () {
-      it(`${ranker} respects the minlen attribute`, function () {
+      test(`${ranker} respects the minlen attribute`, function () {
         // @ts-ignore
         rank(g, ranker);
         g.getAllEdges().forEach(function (e) {
@@ -146,7 +146,7 @@ describe("rank", function () {
         });
       });
 
-      it(`${ranker} can rank a single node graph`, function () {
+      test(`${ranker} can rank a single node graph`, function () {
         let g = new Graph({
           nodes: [
             {

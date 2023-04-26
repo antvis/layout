@@ -1,9 +1,9 @@
 import { Graph } from "@antv/graphlib";
-import { Graph as IGraph } from "@antv/layout";
+import { Graph as IGraph } from "../../../../packages/layout";
 import { sort } from "../../../../packages/layout/src/dagre/order/sort";
 
 describe("sort", function () {
-  it("sorts nodes by barycenter", function () {
+  test("sorts nodes by barycenter", function () {
     let input = [
       { vs: ["a"], i: 0, barycenter: 2, weight: 3 },
       { vs: ["b"], i: 1, barycenter: 1, weight: 2 },
@@ -15,7 +15,7 @@ describe("sort", function () {
     });
   });
 
-  it("can sort super-nodes", function () {
+  test("can sort super-nodes", function () {
     let input = [
       { vs: ["a", "c", "d"], i: 0, barycenter: 2, weight: 3 },
       { vs: ["b"], i: 1, barycenter: 1, weight: 2 },
@@ -27,7 +27,7 @@ describe("sort", function () {
     });
   });
 
-  it("biases to the left by default", function () {
+  test("biases to the left by default", function () {
     let input = [
       { vs: ["a"], i: 0, barycenter: 1, weight: 1 },
       { vs: ["b"], i: 1, barycenter: 1, weight: 1 },
@@ -39,7 +39,7 @@ describe("sort", function () {
     });
   });
 
-  it("biases to the right if biasRight = true", function () {
+  test("biases to the right if biasRight = true", function () {
     let input = [
       { vs: ["a"], i: 0, barycenter: 1, weight: 1 },
       { vs: ["b"], i: 1, barycenter: 1, weight: 1 },
@@ -51,7 +51,7 @@ describe("sort", function () {
     });
   });
 
-  it("can sort nodes without a barycenter", function () {
+  test("can sort nodes without a barycenter", function () {
     let input = [
       { vs: ["a"], i: 0, barycenter: 2, weight: 1 },
       { vs: ["b"], i: 1, barycenter: 6, weight: 1 },
@@ -65,7 +65,7 @@ describe("sort", function () {
     });
   });
 
-  it("can handle no barycenters for any nodes", function () {
+  test("can handle no barycenters for any nodes", function () {
     let input = [
       { vs: ["a"], i: 0 },
       { vs: ["b"], i: 3 },
@@ -75,7 +75,7 @@ describe("sort", function () {
     expect(sort(input)).toEqual({ vs: ["a", "d", "c", "b"] });
   });
 
-  it("can handle a barycenter of 0", function () {
+  test("can handle a barycenter of 0", function () {
     let input = [
       { vs: ["a"], i: 0, barycenter: 0, weight: 1 },
       { vs: ["b"], i: 3 },

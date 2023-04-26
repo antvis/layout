@@ -1,5 +1,5 @@
 import { Edge, Graph } from "@antv/graphlib";
-import { Graph as IGraph, NodeData, EdgeData } from "@antv/layout";
+import { Graph as IGraph, NodeData, EdgeData } from "../../../packages/layout";
 import { greedyFAS } from "../../../packages/layout/src/dagre/greedy-fas";
 import { findCycles } from "../../util";
 
@@ -10,11 +10,11 @@ describe("greedyFAS", function () {
     g = new Graph<NodeData, EdgeData>();
   });
 
-  it("returns the empty set for empty graphs", function () {
+  test("returns the empty set for empty graphs", function () {
     expect(greedyFAS(g)).toEqual([]);
   });
 
-  it("returns the empty set for single-node graphs", function () {
+  test("returns the empty set for single-node graphs", function () {
     g.addNode({
       id: "a",
       data: {},
@@ -22,7 +22,7 @@ describe("greedyFAS", function () {
     expect(greedyFAS(g)).toEqual([]);
   });
 
-  it("returns an empty set if the input graph is acyclic", function () {
+  test("returns an empty set if the input graph is acyclic", function () {
     g.addNode({
       id: "a",
       data: {},
@@ -70,7 +70,7 @@ describe("greedyFAS", function () {
     expect(greedyFAS(g)).toEqual([]);
   });
 
-  it("returns a single edge with a simple cycle", function () {
+  test("returns a single edge with a simple cycle", function () {
     g.addNode({
       id: "a",
       data: {},
@@ -94,7 +94,7 @@ describe("greedyFAS", function () {
     checkFAS(g, greedyFAS(g));
   });
 
-  it("returns a single edge in a 4-node cycle", function () {
+  test("returns a single edge in a 4-node cycle", function () {
     g.addNodes([
       {
         id: "n1",
@@ -174,7 +174,7 @@ describe("greedyFAS", function () {
     checkFAS(g, greedyFAS(g));
   });
 
-  it("returns two edges for two 4-node cycles", function () {
+  test("returns two edges for two 4-node cycles", function () {
     g.addNodes([
       {
         id: "n1",
@@ -313,7 +313,7 @@ describe("greedyFAS", function () {
     checkFAS(g, greedyFAS(g));
   });
 
-  it("works with arbitrarily weighted edges", function () {
+  test("works with arbitrarily weighted edges", function () {
     // Our algorithm should also work for graphs with multi-edges, a graph
     // where more than one edge can be pointing in the same direction between
     // the same pair of incident nodes. We try this by assigning weights to
@@ -384,7 +384,7 @@ describe("greedyFAS", function () {
     ]);
   });
 
-  it("works for multigraphs", function () {
+  test("works for multigraphs", function () {
     let g = new Graph();
     g.addNodes([
       {

@@ -1,11 +1,11 @@
 import { Graph } from "@antv/graphlib";
-import { CircularLayout, NodeData, EdgeData } from "@antv/layout";
+import { CircularLayout, NodeData, EdgeData } from "../../packages/layout";
 import dataset from "../data";
 import { mathEqual } from "../util";
 const data = dataset.data;
 
 describe("CircularLayout", () => {
-  it("should skip layout when there's no node in graph.", async () => {
+  test("should skip layout when there's no node in graph.", async () => {
     const graph = new Graph<NodeData, EdgeData>({
       nodes: [],
       edges: [],
@@ -22,7 +22,7 @@ describe("CircularLayout", () => {
     expect(graph.getAllEdges()).toEqual([]);
   });
 
-  it("should layout quickly when there's only one node in graph.", async () => {
+  test("should layout quickly when there's only one node in graph.", async () => {
     const graph = new Graph<NodeData, EdgeData>({
       nodes: [{ id: "Node1", data: {} }],
       edges: [],
@@ -58,7 +58,7 @@ describe("CircularLayout", () => {
     expect(graph.getAllEdges()).toEqual([]);
   });
 
-  it("should layout with fixed radius, start angle, end angle.", async () => {
+  test("should layout with fixed radius, start angle, end angle.", async () => {
     const graph = new Graph<NodeData, EdgeData>({
       // @ts-ignore
       nodes: data.nodes,
@@ -81,7 +81,7 @@ describe("CircularLayout", () => {
     expect(mathEqual(positions.nodes[0].data.y, 250 + pos)).toEqual(true);
   });
 
-  it("circular with no radius but startRadius and endRadius", async () => {
+  test("circular with no radius but startRadius and endRadius", async () => {
     const graph = new Graph<any, any>({
       // @ts-ignore
       nodes: data.nodes,
@@ -103,7 +103,7 @@ describe("CircularLayout", () => {
     expect(mathEqual(nodeModelLast.data.y, 180)).toEqual(true);
   });
 
-  it("circular with no radius and startRadius but endRadius", async () => {
+  test("circular with no radius and startRadius but endRadius", async () => {
     const graph = new Graph<any, any>({
       // @ts-ignore
       nodes: data.nodes,
@@ -120,7 +120,7 @@ describe("CircularLayout", () => {
     expect(nodeModelFirst.data.y).toEqual(200);
   });
 
-  it("circular with no radius and endRadius but startRadius", async () => {
+  test("circular with no radius and endRadius but startRadius", async () => {
     const graph = new Graph<any, any>({
       // @ts-ignore
       nodes: data.nodes,
@@ -137,7 +137,7 @@ describe("CircularLayout", () => {
     expect(nodeModelFirst.data.y).toEqual(200);
   });
 
-  it("circular with topology ordering", async () => {
+  test("circular with topology ordering", async () => {
     const graph = new Graph<any, any>({
       // @ts-ignore
       nodes: data.nodes,
@@ -151,7 +151,7 @@ describe("CircularLayout", () => {
     });
     const positions = await circular.execute(graph);
 
-    let node0, node1, node2, node3;
+    let node0: any, node1: any, node2: any, node3: any;
     positions.nodes.forEach((node) => {
       if (node.id === "Uruguay") node0 = node;
       else if (node.id === "Saudi Arabia") node1 = node;
@@ -175,7 +175,7 @@ describe("CircularLayout", () => {
     expect(mathEqual(dist3, dist2)).toEqual(true);
   });
 
-  it("circular with topology-directed ordering", async () => {
+  test("circular with topology-directed ordering", async () => {
     const graph = new Graph<any, any>({
       // @ts-ignore
       nodes: data.nodes,
@@ -189,7 +189,7 @@ describe("CircularLayout", () => {
     });
     const positions = await circular.execute(graph);
 
-    let node0, node1, node2, node3;
+    let node0: any, node1: any, node2: any, node3: any;
     positions.nodes.forEach((node) => {
       if (node.id === "Uruguay") node0 = node;
       else if (node.id === "Tunisia") node1 = node;
@@ -213,7 +213,7 @@ describe("CircularLayout", () => {
     expect(mathEqual(dist3, dist2)).toEqual(true);
   });
 
-  it("circular with degree ordering, counterclockwise", async () => {
+  test("circular with degree ordering, counterclockwise", async () => {
     const graph = new Graph<any, any>({
       // @ts-ignore
       nodes: data.nodes,
@@ -228,7 +228,7 @@ describe("CircularLayout", () => {
     });
     const positions = await circular.execute(graph);
 
-    let node0, node1, node2, node3;
+    let node0: any, node1: any, node2: any, node3: any;
     positions.nodes.forEach((node) => {
       if (node.id === "England") node0 = node;
       else if (node.id === "Croatia") node1 = node;

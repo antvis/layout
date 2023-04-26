@@ -1,48 +1,43 @@
 {
   "name": "@antv/layout-wasm",
   "description": "A WASM binding of rust implementation for graph layout algorithms.",
-  "version": "0.0.1-alpha.2",
+  "version": "1.0.0-alpha.0",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/antvis/layout"
   },
+  "main": "dist/index.min.js",
+  "module": "esm/index.esm.js",
+  "types": "lib/index.d.ts",
+  "unpkg": "dist/index.min.js",
   "files": [
     "package.json",
     "dist",
+    "esm",
+    "lib",
     "LICENSE",
     "README.md"
   ],
-  "main": "dist/bundle.js",
   "scripts": {
-    "prebuild": "npm run clean",
     "build:wasm-st": "wasm-pack build --target web",
     "build:wasm-mt": "cross-env RUSTFLAGS='-C target-feature=+atomics,+bulk-memory,+mutable-globals' rustup run nightly wasm-pack build --target web --out-dir pkg-parallel -- --features parallel -Z build-std=panic_abort,std",
     "build:wasm-node": "wasm-pack build --target nodejs --out-dir pkg-node",
     "build:wasm": "run-p build:wasm-st build:wasm-mt build:wasm-node",
-    "build": "npm run build:wasm && webpack build --mode production",
-    "clean": "rimraf dist pkg pkg-parallel pkg-node",
-    "benchmarks": "node benchmarks/forceatlas2.test",
-    "demo": "statikk --port 9093 --coi"
+    "build:esm": "webpack --config webpack.esm.config.js --mode production",
+    "build:umd": "webpack --config webpack.config.js --mode production",
+    "build": "npm run clean && npm run build:wasm && npm run build:esm && npm run build:umd",
+    "clean": "rimraf dist esm lib pkg pkg-parallel pkg-node"
   },
   "dependencies": {
     "comlink": "^4.3.1",
-    "wasm-feature-detect": "^1.2.10"
+    "wasm-feature-detect": "^1.2.10",
+    "tslib": "^2.5.0"
   },
   "devDependencies": {
-    "@antv/layout": "^0.3.17",
-    "benchmark": "^2.1.4",
-    "graphology": "",
-    "graphology-layout-forceatlas2": "",
-    "graphology-generators": "",
-    "rimraf": "^3.0.2",
-    "statikk": "",
-    "seedrandom": "",
-    "typescript": "^4.3.5",
-    "cross-env": "^7.0.3",
-    "npm-run-all": "^4.1.5",
-    "webpack": "^5.25.1",
-    "webpack-cli": "^4.5.0",
-    "ts-loader": ""
+    "ts-loader": "^7.0.3",
+    "typescript": "^4.0.3",
+    "webpack": "^5.38.1",
+    "webpack-cli": "^5.0.2"
   }
 }

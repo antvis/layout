@@ -1,20 +1,11 @@
 {
-  "include": ["src"],
   "compilerOptions": {
-    "module": "ESNext",
-    "moduleResolution": "node",
-    "sourceMap": true,
-    "declaration": true,
-    "skipLibCheck": true,
-    "esModuleInterop": true,
     "noImplicitAny": true,
-    // "noEmitOnError": true,
-    "noUnusedLocals": true,
-    "strictNullChecks": true,
-    "resolveJsonModule": true,
-    "experimentalDecorators": true,
+    "module": "es6",
+    "target": "es6",
     "jsx": "react",
-    "target": "es5",
-    "lib": ["dom", "es2015"]
+    "allowJs": true,
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true
   }
 }

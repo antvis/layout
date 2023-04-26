@@ -1,6 +1,6 @@
 import { threads } from "wasm-feature-detect";
 import * as Comlink from "comlink";
-import type { ForceAtlas2Options, Result } from "./interface";
+import { Layouts } from "./interface";
 
 /**
  * [Not all browsers](https://webassembly.org/roadmap/) support WebAssembly threads yet,
@@ -14,7 +14,7 @@ export async function supportsThreads() {
   return threads();
 }
 
-export async function initThreads(useMultiThread = true) {
+export async function initThreads(useMultiThread = true): Promise<Layouts> {
   const initHandlers = Comlink.wrap(
     // @ts-ignore
     new Worker(new URL("./wasm-worker.ts", import.meta.url), {
@@ -26,3 +26,5 @@ export async function initThreads(useMultiThread = true) {
   const handlers = await initHandlers(useMultiThread);
   return handlers;
 }
+
+export { Layouts };

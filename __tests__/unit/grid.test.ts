@@ -1,5 +1,5 @@
 import { Graph, Node } from "@antv/graphlib";
-import { GridLayout } from "@antv/layout";
+import { GridLayout } from "../../packages/layout";
 
 const data = {
   nodes: [
@@ -22,22 +22,22 @@ const data = {
   ],
 };
 
-function getNodeById(nodes, id: string) {
-  return nodes.find((node) => node.id === id);
+function getNodeById(nodes: any, id: string) {
+  return nodes.find((node: any) => node.id === id);
 }
 
-function isInTheSameRow(nodes) {
+function isInTheSameRow(nodes: any) {
   const node0 = nodes[0];
-  return nodes.every((node) => node.y === node0.y);
+  return nodes.every((node: any) => node.y === node0.y);
 }
 
-function isInTheSameCol(nodes) {
+function isInTheSameCol(nodes: any) {
   const node0 = nodes[0];
-  return nodes.every((node) => node.x === node0.x);
+  return nodes.every((node: any) => node.x === node0.x);
 }
 
 describe("GridLayout", () => {
-  it("should return correct default config.", async () => {
+  test("should return correct default config.", async () => {
     const graph = new Graph<any, any>({
       nodes: [...data.nodes],
       edges: [...data.edges],
@@ -64,7 +64,7 @@ describe("GridLayout", () => {
     expect(positions.nodes[0].data.y).not.toBe(undefined);
   });
 
-  it("should do grid layout with an empty graph.", async () => {
+  test("should do grid layout with an empty graph.", async () => {
     const graph = new Graph<any, any>({
       nodes: [],
       edges: [],
@@ -75,7 +75,7 @@ describe("GridLayout", () => {
     expect(positions.nodes).not.toBe(undefined);
   });
 
-  it("should do grid layout with a graph which has only one node.", async () => {
+  test("should do grid layout with a graph which has only one node.", async () => {
     const graph = new Graph<any, any>({
       nodes: [{ id: "node", data: {} }],
       edges: [],
@@ -88,7 +88,7 @@ describe("GridLayout", () => {
     expect(positions.nodes[0].data.y).toBe(20);
   });
 
-  it("should do grid layout with fixed columns.", async () => {
+  test("should do grid layout with fixed columns.", async () => {
     const graph = new Graph<any, any>({
       nodes: [...data.nodes],
       edges: [...data.edges],
@@ -129,7 +129,7 @@ describe("GridLayout", () => {
     ).toEqual(true);
   });
 
-  it("should do grid layout with fixed rows.", async () => {
+  test("should do grid layout with fixed rows.", async () => {
     const graph = new Graph<any, any>({
       nodes: [...data.nodes],
       edges: [...data.edges],
@@ -168,7 +168,7 @@ describe("GridLayout", () => {
     ).toEqual(true);
   });
 
-  it("should do grid layout with fixed cols and rows, rows*cols>nodes, situation 1.", async () => {
+  test("should do grid layout with fixed cols and rows, rows*cols>nodes, situation 1.", async () => {
     const graph = new Graph<any, any>({
       nodes: [...data.nodes],
       edges: [...data.edges],
@@ -205,7 +205,7 @@ describe("GridLayout", () => {
     ).toEqual(true);
   });
 
-  it("should do grid layout with fixed cols and rows, rows*cols>nodes, situation 2.", async () => {
+  test("should do grid layout with fixed cols and rows, rows*cols>nodes, situation 2.", async () => {
     const graph = new Graph<any, any>({
       nodes: [...data.nodes],
       edges: [...data.edges],
@@ -241,7 +241,7 @@ describe("GridLayout", () => {
     ).toEqual(true);
   });
 
-  it("should do grid layout with fixed cols and rows, rows*cols<nodes, situation 1", async () => {
+  test("should do grid layout with fixed cols and rows, rows*cols<nodes, situation 1", async () => {
     const graph = new Graph<any, any>({
       nodes: [...data.nodes],
       edges: [...data.edges],
@@ -279,7 +279,7 @@ describe("GridLayout", () => {
     ).toEqual(true);
   });
 
-  it("grid layout with fixed cols and rows, rows*cols<nodes, situation 2", async () => {
+  test("grid layout with fixed cols and rows, rows*cols<nodes, situation 2", async () => {
     const graph = new Graph<any, any>({
       nodes: [...data.nodes],
       edges: [...data.edges],
@@ -315,7 +315,7 @@ describe("GridLayout", () => {
     ).toEqual(true);
   });
 
-  it("should do grid layout with condense param.", async () => {
+  test("should do grid layout with condense param.", async () => {
     const graph = new Graph<any, any>({
       nodes: [...data.nodes],
       edges: [...data.edges],
@@ -354,7 +354,7 @@ describe("GridLayout", () => {
     );
   });
 
-  it("should do grid layout with preventOverlap", async () => {
+  test("should do grid layout with preventOverlap", async () => {
     const graph = new Graph<any, any>({
       nodes: [...data.nodes],
       edges: [...data.edges],
@@ -392,7 +392,7 @@ describe("GridLayout", () => {
     );
   });
 
-  it("grid layout with preventOverlap, nodeSize is an array", async () => {
+  test("grid layout with preventOverlap, nodeSize is an array", async () => {
     const graph = new Graph<any, any>({
       nodes: [...data.nodes],
       edges: [...data.edges],
@@ -430,7 +430,7 @@ describe("GridLayout", () => {
     );
   });
 
-  it("should do grid layout with preventOverlap & nodeSize.", async () => {
+  test("should do grid layout with preventOverlap & nodeSize.", async () => {
     const graph = new Graph<any, any>({
       nodes: [...data.nodes],
       edges: [...data.edges],
@@ -473,7 +473,7 @@ describe("GridLayout", () => {
     );
   });
 
-  it("should do grid layout with position function", async () => {
+  test("should do grid layout with position function", async () => {
     let rows = 0;
     const graph = new Graph<any, any>({
       nodes: [...data.nodes].map((node, i) => {

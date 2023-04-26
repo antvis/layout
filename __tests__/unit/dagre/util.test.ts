@@ -1,5 +1,5 @@
 import { Graph } from "@antv/graphlib";
-import { NodeData, EdgeData } from "@antv/layout";
+import { NodeData, EdgeData } from "../../../packages/layout";
 import * as util from "../../../packages/layout/src/dagre/util";
 
 describe("util", function () {
@@ -10,7 +10,7 @@ describe("util", function () {
       g = new Graph<NodeData, EdgeData>();
     });
 
-    it("copies without change a graph with no multi-edges", function () {
+    test("copies without change a graph with no multi-edges", function () {
       g.addNode({
         id: "a",
         data: {},
@@ -36,7 +36,7 @@ describe("util", function () {
       expect(g2.getAllEdges().length).toEqual(1);
     });
 
-    it("collapses multi-edges", function () {
+    test("collapses multi-edges", function () {
       g.addNode({
         id: "a",
         data: {},
@@ -72,7 +72,7 @@ describe("util", function () {
       expect(g2.getAllEdges().length).toEqual(1);
     });
 
-    it("copies the graph object", function () {
+    test("copies the graph object", function () {
       let g2 = util.simplify(g);
       expect(g2.getAllNodes().length).toEqual(0);
       expect(g2.getAllEdges().length).toEqual(0);
@@ -88,7 +88,7 @@ describe("util", function () {
       });
     });
 
-    it("copies all nodes", function () {
+    test("copies all nodes", function () {
       g.addNodes([
         {
           id: "a",
@@ -105,7 +105,7 @@ describe("util", function () {
       expect(g2.hasNode("b")).toBe(true);
     });
 
-    it("copies all edges", function () {
+    test("copies all edges", function () {
       g.addNodes([
         {
           id: "a",
@@ -136,7 +136,7 @@ describe("util", function () {
       expect(g2.getRelatedEdges("a", "out")[1].data).toEqual({ foo: "baz" });
     });
 
-    it("does not copy compound nodes", function () {
+    test("does not copy compound nodes", function () {
       g.addTree({
         id: "sg1",
         data: {},
@@ -154,14 +154,14 @@ describe("util", function () {
       expect(g2.hasNode("sg1")).toBeFalsy();
     });
 
-    it("copies the graph object", function () {
+    test("copies the graph object", function () {
       let g2 = util.asNonCompoundGraph(g);
       expect(g2).toBeTruthy();
     });
   });
 
   describe("successorWeights", function () {
-    it("maps a node to its successors with associated weights", function () {
+    test("maps a node to its successors with associated weights", function () {
       let g = new Graph();
       g.addNodes([
         {
@@ -216,7 +216,7 @@ describe("util", function () {
   });
 
   describe("predecessorWeights", function () {
-    it("maps a node to its predecessors with associated weights", function () {
+    test("maps a node to its predecessors with associated weights", function () {
       let g = new Graph();
       g.addNodes([
         {
@@ -270,7 +270,7 @@ describe("util", function () {
   });
 
   describe("intersectRect", function () {
-    function expectIntersects(rect, point) {
+    function expectIntersects(rect: any, point: any) {
       let cross = util.intersectRect(rect, point);
       if (cross.x !== point.x) {
         let m = (cross.y - point.y) / (cross.x - point.x);
@@ -278,14 +278,14 @@ describe("util", function () {
       }
     }
 
-    function expectTouchesBorder(rect, point) {
+    function expectTouchesBorder(rect: any, point: any) {
       let cross = util.intersectRect(rect, point);
       if (Math.abs(rect.x - cross.x) !== rect.width / 2) {
         expect(Math.abs(rect.y - cross.y)).toEqual(rect.height / 2);
       }
     }
 
-    it("creates a slope that will intersect the rectangle's center", function () {
+    test("creates a slope that will intersect the rectangle's center", function () {
       let rect = { x: 0, y: 0, width: 1, height: 1 };
       expectIntersects(rect, { x: 2, y: 6 });
       expectIntersects(rect, { x: 2, y: -6 });
@@ -295,7 +295,7 @@ describe("util", function () {
       expectIntersects(rect, { x: 0, y: 5 });
     });
 
-    it("touches the border of the rectangle", function () {
+    test("touches the border of the rectangle", function () {
       let rect = { x: 0, y: 0, width: 1, height: 1 };
       expectTouchesBorder(rect, { x: 2, y: 6 });
       expectTouchesBorder(rect, { x: 2, y: -6 });
@@ -305,14 +305,14 @@ describe("util", function () {
       expectTouchesBorder(rect, { x: 0, y: 5 });
     });
 
-    it("return (0, 0) if the point is at the center of the rectangle", function () {
+    test("return (0, 0) if the point is at the center of the rectangle", function () {
       let rect = { x: 0, y: 0, width: 1, height: 1 };
       expect(util.intersectRect(rect, { x: 0, y: 0 })).toEqual({ x: 0, y: 0 });
     });
   });
 
   describe("buildLayerMatrix", function () {
-    it("creates a matrix based on rank and order of nodes in the graph", function () {
+    test("creates a matrix based on rank and order of nodes in the graph", function () {
       let g = new Graph();
 
       g.addNodes([
@@ -353,7 +353,7 @@ describe("util", function () {
   //     console.log = consoleLog;
   //   });
 
-  //   it("logs timing information", function() {
+  //   test("logs timing information", function() {
   //     let capture = [];
   //     console.log = function() { capture.push(Array.from(arguments)[0]); };
   //     util.time("foo", function() {});
@@ -361,14 +361,14 @@ describe("util", function () {
   //     expect(capture[0]).toMatch(/^foo time: .*ms/);
   //   });
 
-  //   it("returns the value from the evaluated function", function() {
+  //   test("returns the value from the evaluated function", function() {
   //     console.log = function() {};
   //     expect(util.time("foo", () => 'bar')).toEqual("bar");
   //   });
   // });
 
   describe("normalizeRanks", function () {
-    it("adjust ranks such that all are >= 0, and at least one is 0", function () {
+    test("adjust ranks such that all are >= 0, and at least one is 0", function () {
       let g = new Graph();
       g.addNodes([
         {
@@ -392,7 +392,7 @@ describe("util", function () {
       expect(g.getNode("c").data.rank).toEqual(2);
     });
 
-    it("works for negative ranks", function () {
+    test("works for negative ranks", function () {
       let g = new Graph();
       g.addNodes([
         {
@@ -411,7 +411,7 @@ describe("util", function () {
       expect(g.getNode("b").data.rank).toEqual(1);
     });
 
-    it("does not assign a rank to subgraphs", function () {
+    test("does not assign a rank to subgraphs", function () {
       let g = new Graph<any, any>({
         tree: [
           {
@@ -435,7 +435,7 @@ describe("util", function () {
   });
 
   describe("removeEmptyRanks", function () {
-    it("Removes border ranks without any nodes", function () {
+    test("Removes border ranks without any nodes", function () {
       let g = new Graph<any, any>({
         nodes: [
           {
@@ -453,7 +453,7 @@ describe("util", function () {
       expect(g.getNode("b").data.rank).toEqual(1);
     });
 
-    it("Does not remove non-border ranks", function () {
+    test("Does not remove non-border ranks", function () {
       let g = new Graph<any, any>({
         nodes: [
           {

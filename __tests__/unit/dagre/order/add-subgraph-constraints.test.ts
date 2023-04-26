@@ -1,5 +1,5 @@
 import { Graph } from "@antv/graphlib";
-import { NodeData, EdgeData } from "@antv/layout";
+import { NodeData, EdgeData } from "../../../../packages/layout";
 import { addSubgraphConstraints } from "../../../../packages/layout/src/dagre/order/add-subgraph-constraints";
 
 describe("order/addSubgraphConstraints", function () {
@@ -16,7 +16,7 @@ describe("order/addSubgraphConstraints", function () {
     });
   });
 
-  it("does not change CG for a flat set of nodes", function () {
+  test("does not change CG for a flat set of nodes", function () {
     let vs = ["a", "b", "c", "d"];
     const children = vs.map((v) => ({ id: v, data: {} }));
     g.addTree({
@@ -29,7 +29,7 @@ describe("order/addSubgraphConstraints", function () {
     expect(cg.getAllEdges().length).toEqual(0);
   });
 
-  it("doesn't create a constraint for contiguous subgraph nodes", function () {
+  test("doesn't create a constraint for contiguous subgraph nodes", function () {
     let vs = ["a", "b", "c"];
     g.addTree({
       id: "sg",
@@ -45,7 +45,7 @@ describe("order/addSubgraphConstraints", function () {
     expect(cg.getAllEdges().length).toEqual(0);
   });
 
-  it("adds a constraint when the parents for adjacent nodes are different", function () {
+  test("adds a constraint when the parents for adjacent nodes are different", function () {
     g.addTree([
       {
         id: "sg1",
@@ -72,7 +72,7 @@ describe("order/addSubgraphConstraints", function () {
     expect(cg.getAllEdges()[0].target).toEqual("sg2");
   });
 
-  it("works for multiple levels", function () {
+  test("works for multiple levels", function () {
     let vs = ["a", "b", "c", "d", "e", "f", "g", "h"];
     vs.forEach((v) => {
       g.addNode({ id: v, data: {} });

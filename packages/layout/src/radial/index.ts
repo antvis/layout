@@ -22,7 +22,7 @@ import { mds } from "./mds";
 import {
   radialNonoverlapForce,
   RadialNonoverlapForceOptions,
-} from "./RadialNonoverlapForce";
+} from "./radial-nonoverlap-force";
 
 const DEFAULTS_LAYOUT_OPTIONS: Partial<RadialLayoutOptions> = {
   maxIteration: 1000,

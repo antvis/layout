@@ -2,7 +2,6 @@ use crate::{layout::Layout, util::*};
 
 use std::marker::PhantomData;
 
-#[cfg(feature = "parallel")]
 pub use parallel::*;
 
 pub struct Node<'a, T: Coord> {
@@ -107,7 +106,6 @@ impl<'a, T: Coord> Iterator for NodeIter2<'a, T> {
     }
 }
 
-#[cfg(feature = "parallel")]
 mod parallel {
     use super::*;
 

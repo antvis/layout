@@ -1,5 +1,5 @@
-import { Edge, Graph } from "@antv/graphlib";
-import { NodeData, EdgeData } from "@antv/layout";
+import { Edge, Graph, ID } from "@antv/graphlib";
+import { NodeData, EdgeData } from "../../../packages/layout";
 import { run, undo } from "../../../packages/layout/src/dagre/normalize";
 
 describe("normalize", function () {
@@ -12,7 +12,7 @@ describe("normalize", function () {
   });
 
   describe("run", function () {
-    it("does not change a short edge", function () {
+    test("does not change a short edge", function () {
       g.addNode({
         id: "a",
         data: { rank: 0 },
@@ -37,7 +37,7 @@ describe("normalize", function () {
       expect(g.getNode("b").data.rank).toEqual(1);
     });
 
-    it("splits a two layer edge into two segments", function () {
+    test("splits a two layer edge into two segments", function () {
       g.addNode({
         id: "a",
         data: { rank: 0 },
@@ -53,7 +53,7 @@ describe("normalize", function () {
         data: {},
       });
 
-      const dummyChains = [];
+      const dummyChains: ID[] = [];
       run(g, dummyChains);
 
       expect(g.getSuccessors("a")).toHaveLength(1);
@@ -68,7 +68,7 @@ describe("normalize", function () {
       expect(g.getNode(dummyChains[0])).toEqual(successor);
     });
 
-    it("assigns width = 0, height = 0 to dummy nodes by default", function () {
+    test("assigns width = 0, height = 0 to dummy nodes by default", function () {
       g.addNode({
         id: "a",
         data: { rank: 0 },
@@ -87,7 +87,7 @@ describe("normalize", function () {
         },
       });
 
-      const dummyChains = [];
+      const dummyChains: ID[] = [];
       run(g, dummyChains);
 
       expect(g.getSuccessors("a")).toHaveLength(1);
@@ -96,7 +96,7 @@ describe("normalize", function () {
       expect(g.getNode(successor.id).data.height).toEqual(0);
     });
 
-    it("assigns width and height from the edge for the node on labelRank", function () {
+    test("assigns width and height from the edge for the node on labelRank", function () {
       g.addNode({
         id: "a",
         data: { rank: 0 },
@@ -116,7 +116,7 @@ describe("normalize", function () {
         },
       });
 
-      const dummyChains = [];
+      const dummyChains: ID[] = [];
       run(g, dummyChains);
 
       let labelV = g.getSuccessors(g.getSuccessors("a")[0].id)[0];
@@ -124,7 +124,7 @@ describe("normalize", function () {
       expect(labelV.data.height).toEqual(10);
     });
 
-    it("preserves the weight for the edge", function () {
+    test("preserves the weight for the edge", function () {
       g.addNode({
         id: "a",
         data: { rank: 0 },
@@ -142,7 +142,7 @@ describe("normalize", function () {
         },
       });
 
-      const dummyChains = [];
+      const dummyChains: ID[] = [];
       run(g, dummyChains);
 
       expect(g.getSuccessors("a")).toHaveLength(1);
@@ -150,7 +150,7 @@ describe("normalize", function () {
     });
 
     describe("undo", function () {
-      it("reverses the run operation", function () {
+      test("reverses the run operation", function () {
         g.addNode({
           id: "a",
           data: { rank: 0 },
@@ -166,7 +166,7 @@ describe("normalize", function () {
           data: {},
         });
 
-        const dummyChains = [];
+        const dummyChains: ID[] = [];
         run(g, dummyChains);
         undo(g, dummyChains);
 
@@ -177,7 +177,7 @@ describe("normalize", function () {
         expect(g.getNode("b").data.rank).toEqual(2);
       });
 
-      it("restores previous edge labels", function () {
+      test("restores previous edge labels", function () {
         g.addNode({
           id: "a",
           data: { rank: 0 },
@@ -193,14 +193,14 @@ describe("normalize", function () {
           data: { foo: "bar" },
         });
 
-        const dummyChains = [];
+        const dummyChains: ID[] = [];
         run(g, dummyChains);
         undo(g, dummyChains);
 
         expect(g.getEdge("e1").data.foo).toEqual("bar");
       });
 
-      it("collects assigned coordinates into the 'points' attribute", function () {
+      test("collects assigned coordinates into the 'points' attribute", function () {
         g.addNode({
           id: "a",
           data: { rank: 0 },
@@ -216,7 +216,7 @@ describe("normalize", function () {
           data: {},
         });
 
-        const dummyChains = [];
+        const dummyChains: ID[] = [];
         run(g, dummyChains);
 
         let dummyLabel = g.getNode(g.getNeighbors("a")[0].id);
@@ -228,7 +228,7 @@ describe("normalize", function () {
         expect(g.getEdge("e1").data.points).toEqual([{ x: 5, y: 10 }]);
       });
 
-      it("merges assigned coordinates into the 'points' attribute", function () {
+      test("merges assigned coordinates into the 'points' attribute", function () {
         g.addNode({
           id: "a",
           data: { rank: 0 },
@@ -244,7 +244,7 @@ describe("normalize", function () {
           data: {},
         });
 
-        const dummyChains = [];
+        const dummyChains: ID[] = [];
         run(g, dummyChains);
 
         let aSucLabel = g.getNode(g.getNeighbors("a")[0].id);
@@ -270,7 +270,7 @@ describe("normalize", function () {
         ]);
       });
 
-      it("sets coords and dims for the label, if the edge has one", function () {
+      test("sets coords and dims for the label, if the edge has one", function () {
         g.addNode({
           id: "a",
           data: { rank: 0 },
@@ -290,7 +290,7 @@ describe("normalize", function () {
           },
         });
 
-        const dummyChains = [];
+        const dummyChains: ID[] = [];
         run(g, dummyChains);
 
         let labelNode = g.getNode(g.getSuccessors("a")[0].id);
@@ -318,7 +318,7 @@ describe("normalize", function () {
         });
       });
 
-      it("sets coords and dims for the label, if the long edge has one", function () {
+      test("sets coords and dims for the label, if the long edge has one", function () {
         g.addNode({
           id: "a",
           data: { rank: 0 },
@@ -338,7 +338,7 @@ describe("normalize", function () {
           },
         });
 
-        const dummyChains = [];
+        const dummyChains: ID[] = [];
         run(g, dummyChains);
 
         let labelNode = g.getNode(
@@ -364,7 +364,7 @@ describe("normalize", function () {
         });
       });
 
-      it("restores multi-edges", function () {
+      test("restores multi-edges", function () {
         g.addNode({
           id: "a",
           data: { rank: 0 },
@@ -386,7 +386,7 @@ describe("normalize", function () {
           data: {},
         });
 
-        const dummyChains = [];
+        const dummyChains: ID[] = [];
         run(g, dummyChains);
 
         let outEdges = g

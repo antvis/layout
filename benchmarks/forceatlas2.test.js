@@ -29,7 +29,7 @@ graph.nodes().forEach(function (node) {
 /**
  * @antv/layout
  */
-var { ForceAtlas2Layout } = require("@antv/layout");
+var { ForceAtlas2Layout } = require("../packages/layout");
 const antvForceAtlas2Layout = new ForceAtlas2Layout({
   type: "forceAtlas2",
   maxIteration: ITERATIONS,
@@ -55,7 +55,7 @@ graph.edges().forEach((id) => {
 /**
  * @antv/layout-wasm
  */
-var antvLayoutWASM = require("../pkg-node/antv_layout_wasm.js");
+var antvLayoutWASM = require("../packages/layout-wasm/pkg-node/antv_layout_wasm.js");
 antvLayoutWASM.start();
 
 // add tests

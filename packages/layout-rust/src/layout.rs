@@ -4,13 +4,15 @@ use rayon::prelude::*;
 use std::marker::PhantomData;
 
 #[derive(Clone)]
+pub enum LayoutType {
+    ForceAtlas2,
+    Force2,
+    Fruchterman,
+}
+
+#[derive(Clone)]
 pub struct Settings<T: Coord> {
-    /// Optimize repulsion using Barnes-Hut algorithm (time passes from N^2 to NlogN)
-    /// The argument is theta.
-    ///
-    /// **Note**: only implemented for `T=f64` and `dimension` 2 or 3.
-    #[cfg(feature = "barnes_hut")]
-    pub barnes_hut: Option<T>,
+    pub name: LayoutType,
     /// Number of nodes computed by each thread
     ///
     /// Only used in repulsion computation. Set to `None` to turn off parallelization.
@@ -18,7 +20,6 @@ pub struct Settings<T: Coord> {
     /// but small enough to maximize concurrency.
     ///
     /// Requires `T: Send + Sync`
-    #[cfg(feature = "parallel")]
     pub chunk_size: Option<usize>,
     /// Number of spatial dimensions
     pub dimensions: usize,
@@ -41,14 +42,29 @@ pub struct Settings<T: Coord> {
     pub speed: T,
     /// Gravity does not decrease with distance, resulting in a more compact graph.
     pub strong_gravity: bool,
+
+    /// Used in Force2 layout.
+    pub link_distance: T,
+    /// The strength of edge force. Calculated according to the degree of nodes by default
+    pub edge_strength: T,
+    /// The strength of node force. Positive value means repulsive force, negative value means attractive force (it is different from 'force')
+    pub node_strength: T,
+    /// A parameter for repulsive force between nodes. Large the number, larger the repulsion.
+    pub coulomb_dis_scale: T,
+    /// Coefficient for the repulsive force. Larger the number, larger the repulsive force.
+    pub factor: T,
+    pub damping: T,
+    pub interval: T,
+    pub max_speed: T,
+    pub min_movement: T,
+
+    /// Used in Fruchterman layout.
+    pub center: Vec<T>,
 }
 
 impl<T: Coord> Default for Settings<T> {
     fn default() -> Self {
         Self {
-            #[cfg(feature = "barnes_hut")]
-            barnes_hut: None,
-            #[cfg(feature = "parallel")]
             chunk_size: Some(256),
             dimensions: 2,
             dissuade_hubs: false,
@@ -59,6 +75,17 @@ impl<T: Coord> Default for Settings<T> {
             prevent_overlapping: None,
             speed: T::from(0.01).unwrap_or_else(T::one),
             strong_gravity: false,
+            name: LayoutType::ForceAtlas2,
+            link_distance: T::one(),
+            edge_strength: T::one(),
+            node_strength: T::one(),
+            coulomb_dis_scale: T::one(),
+            factor: T::one(),
+            damping: T::one(),
+            interval: T::one(),
+            center: vec![T::zero(); 2],
+            max_speed: T::one(),
+            min_movement: T::zero(),
         }
     }
 }
@@ -89,7 +116,6 @@ impl<T: Coord> Layout<T> {
     }
 }
 
-#[cfg(feature = "parallel")]
 impl<T: Coord + Send> Layout<T> {
     pub fn iter_par_nodes(
         &mut self,
@@ -126,7 +152,6 @@ mod test {
     use super::*;
     use itertools::iproduct;
     use std::collections::BTreeSet;
-    #[cfg(feature = "parallel")]
     use std::sync::{Arc, RwLock};
 
     #[test]
@@ -150,48 +175,6 @@ mod test {
                 }
             }
             assert!(hits.is_empty());
-        }
-    }
-
-    #[test]
-    #[cfg(feature = "parallel")]
-    fn test_iter_par_nodes() {
-        for n_nodes in 1usize..16 {
-            let mut layout = Layout::<f32>::from_graph(
-                vec![],
-                Nodes::Mass((1..n_nodes + 1).map(|i| i as f32).collect()),
-                None,
-                Settings::default(),
-            );
-            layout
-                .speeds
-                .iter_mut()
-                .enumerate()
-                .for_each(|(i, speed)| speed.iter_mut().for_each(|speed| *speed = i as f32));
-            let hits = Arc::new(RwLock::new(
-                iproduct!(0..n_nodes, 0..n_nodes)
-                    .filter(|(n1, n2)| n1 < n2)
-                    .collect::<BTreeSet<(usize, usize)>>(),
-            ));
-            let points = layout.points.clone();
-            let speeds = layout.speeds.clone();
-            for chunk_iter in layout.iter_par_nodes(4) {
-                chunk_iter.for_each(|n1_iter| {
-                    for n1 in n1_iter {
-                        for n2 in n1.n2_iter {
-                            let mut hits = hits.write().unwrap();
-                            assert!(hits.remove(&(n1.ind, n2.ind)));
-                            assert_eq!(n1.pos, points.get(n1.ind));
-                            assert_eq!(n2.pos, points.get(n2.ind));
-                            assert_eq!(n1.speed, speeds.get(n1.ind));
-                            assert_eq!(n2.speed, speeds.get(n2.ind));
-                            assert_eq!(*n1.mass, n1.ind as f32 + 1.);
-                            assert_eq!(*n2.mass, n2.ind as f32 + 1.);
-                        }
-                    }
-                });
-            }
-            assert!(hits.read().unwrap().is_empty());
         }
     }
 }

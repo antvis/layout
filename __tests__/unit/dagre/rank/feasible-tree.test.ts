@@ -1,5 +1,5 @@
 import { Graph, ID } from "@antv/graphlib";
-import { NodeData, EdgeData } from "@antv/layout";
+import { NodeData, EdgeData } from "../../../../packages/layout";
 import { feasibleTree } from "../../../../packages/layout/src/dagre/rank/feasible-tree";
 
 describe("feasibleTree", function () {
@@ -9,7 +9,7 @@ describe("feasibleTree", function () {
     g = new Graph<NodeData, EdgeData>();
   });
 
-  it("creates a tree for a trivial input graph", function () {
+  test("creates a tree for a trivial input graph", function () {
     g.addNodes([
       {
         id: "a",
@@ -36,7 +36,7 @@ describe("feasibleTree", function () {
     expect(tree.getNeighbors("a").map((n) => n.id)).toEqual(["b"]);
   });
 
-  it("correctly shortens slack by pulling a node up", function () {
+  test("correctly shortens slack by pulling a node up", function () {
     g.addNodes([
       {
         id: "a",
@@ -102,7 +102,7 @@ describe("feasibleTree", function () {
     expect(tree.getNeighbors("d").map((n) => n.id)).toEqual(["a"]);
   });
 
-  it("correctly shortens slack by pulling a node down", function () {
+  test("correctly shortens slack by pulling a node down", function () {
     g.addNodes([
       {
         id: "a",

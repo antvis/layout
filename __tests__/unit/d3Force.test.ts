@@ -1,9 +1,9 @@
 import { Graph } from "@antv/graphlib";
-import { D3ForceLayout } from "@antv/layout";
+import { D3ForceLayout } from "../../packages/layout";
 import data from "../data/test-data-1";
 
 describe("D3ForceLayout", () => {
-  it("should return correct default config.", async () => {
+  test("should return correct default config.", async () => {
     const graph = new Graph<any, any>({
       nodes: [...data.nodes],
       edges: [...data.edges],
@@ -20,7 +20,7 @@ describe("D3ForceLayout", () => {
     expect(node.data.y).not.toEqual(undefined);
   });
 
-  it("force layout with onTick", async () => {
+  test("force layout with onTick", async () => {
     const graph = new Graph<any, any>({
       nodes: [...data.nodes],
       edges: [...data.edges],

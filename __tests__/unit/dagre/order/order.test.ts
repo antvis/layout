@@ -1,5 +1,9 @@
 import { Graph } from "@antv/graphlib";
-import { Graph as IGraph, NodeData, EdgeData } from "@antv/layout";
+import {
+  Graph as IGraph,
+  NodeData,
+  EdgeData,
+} from "../../../../packages/layout";
 import { order } from "../../../../packages/layout/src/dagre/order";
 import { crossCount } from "../../../../packages/layout/src/dagre/order/cross-count";
 import * as util from "../../../../packages/layout/src/dagre/util";
@@ -13,7 +17,7 @@ describe("order", function () {
     });
   });
 
-  it("does not add crossings to a tree structure", function () {
+  test("does not add crossings to a tree structure", function () {
     g.addNode({
       id: "a",
       data: { rank: 1 },
@@ -84,7 +88,7 @@ describe("order", function () {
     expect(crossCount(g, layering)).toEqual(0);
   });
 
-  it("can solve a simple graph", function () {
+  test("can solve a simple graph", function () {
     // This graph resulted in a single crossing for previous versions of dagre.
     ["a", "d"].forEach((v) => {
       g.addNode({
@@ -109,7 +113,7 @@ describe("order", function () {
     expect(crossCount(g, layering)).toEqual(0);
   });
 
-  it("can minimize crossings", function () {
+  test("can minimize crossings", function () {
     g.addNode({
       id: "a",
       data: { rank: 1 },

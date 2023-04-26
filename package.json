@@ -11,20 +11,22 @@
   },
   "license": "MIT",
   "author": "antv",
-  "workspaces": [
-    "packages/*"
-  ],
   "scripts": {
     "lint:es": "eslint --ext .js --fix",
     "lint:ts": "tslint -c tslint.json -p packages/layout/tsconfig.json --fix",
     "lint": "npm run lint:ts && npm run lint:es",
     "lint-staged": "lint-staged",
-    "build": "lerna run build",
-    "precommit": "lint-staged",
-    "release": "release-it",
+    "build": "pnpm -r run build",
+    "build:ci": "pnpm -r run build:ci",
+    "watch": "pnpm --parallel -r run watch",
+    "prepare": "husky install",
     "test": "jest",
     "coverage": "jest --coverage",
-    "test-live": "DEBUG_MODE=1 jest --watch ./__tests__/unit/forceAtlas2.test.ts"
+    "benchmarks": "node benchmarks/forceatlas2.test",
+    "dev": "vite",
+    "build:site": "vite build && cp site/enable-threads.js site/dist",
+    "deploy": "gh-pages -d site/dist",
+    "preview": "vite preview --port 9092"
   },
   "lint-staged": {
     "*.js": [
@@ -35,47 +37,43 @@
     ]
   },
   "devDependencies": {
+    "@changesets/cli": "^2.26.1",
     "@antv/graphlib": "^2.0.0",
     "@babel/core": "*",
     "@babel/polyfill": "^7.12.1",
     "@babel/preset-env": "*",
     "@babel/preset-typescript": "*",
     "@types/d3-force": "^2.1.0",
-    "@types/jest": "^25.2.1",
+    "@types/jest": "^29.5.1",
     "@types/d3-quadtree": "^2.0.0",
     "babel-jest": "28.1.3",
     "babel-loader": "^8.2.2",
+    "benchmark": "^2.1.4",
+    "cross-env": "^7.0.3",
     "eslint": "^7.11.0",
     "eslint-config-airbnb-base": "^14.0.0",
     "eslint-config-prettier": "^6.7.0",
     "eslint-plugin-import": "^2.18.2",
-    "jest": "^26.0.1",
-    "jest-electron": "^0.1.7",
-    "jest-extended": "^0.11.2",
-    "lerna": "^6.4.0",
+    "graphology": "",
+    "graphology-types": "",
+    "graphology-layout-forceatlas2": "",
+    "graphology-generators": "",
+    "gh-pages": "^5.0.0",
+    "husky": "^7.0.0",
+    "jest": "^29.5.0",
+    "jest-environment-jsdom": "29.5.0",
     "lint-staged": "^10.2.2",
-    "release-it": "^14.0.1",
+    "npm-run-all": "^4.1.5",
     "rimraf": "^3.0.0",
-    "ts-jest": "^24.1.0",
+    "seedrandom": "",
+    "ts-jest": "^29.1.0",
     "ts-loader": "^8.0.17",
     "tslint": "^6.1.3",
     "tslint-config-airbnb": "^5.11.2",
     "tslint-config-prettier": "^1.18.0",
     "tslint-eslint-rules": "^5.4.0",
-    "typescript": "^4.0.3"
-  },
-  "release-it": {
-    "git": {
-      "commitMessage": ":sparkles: Release ${version}"
-    },
-    "github": {
-      "release": true
-    },
-    "hooks": {
-      "before:init": [
-        "yarn run build"
-      ]
-    }
+    "typescript": "^4.0.3",
+    "vite": "^3.1.0"
   },
   "publishConfig": {
     "access": "public",

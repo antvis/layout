@@ -6,8 +6,6 @@ use maths_traits::{
     analysis::{ordered::Signed, RealExponential},
 };
 use num_traits::cast::{FromPrimitive, NumCast};
-#[cfg(feature = "rand")]
-use rand::Rng;
 
 pub trait Coord = Clone
     + Div<Self, Output = Self>
@@ -214,52 +212,6 @@ impl<'a, T: Coord> PointList<T> {
             .copy_within(offset + self.dimensions..len, offset);
         self.points.truncate(self.points.len() - self.dimensions);
     }
-}
-
-/// Uniform random distribution of points on a n-sphere
-///
-/// `n` is the number of spatial dimensions (1 => two points; 2 => circle; 3 => sphere; etc.).
-#[cfg(feature = "rand")]
-pub fn _sample_unit_nsphere<T: Coord + Clone + DivAssign<T> + RealExponential, R: Rng>(
-    rng: &mut R,
-    n: usize,
-) -> Vec<T>
-where
-    rand::distributions::Standard: rand::distributions::Distribution<T>,
-    T: rand::distributions::uniform::SampleUniform + PartialOrd,
-{
-    let ray: T = NumCast::from(n).unwrap();
-    let mut v = valloc(n);
-    let mut d = T::zero();
-    for x in v.iter_mut() {
-        *x = rng.gen_range(ray.clone().neg()..ray.clone());
-        d += x.clone().pow_n(2u32);
-    }
-    d = d.sqrt();
-    for x in v.iter_mut() {
-        *x /= d.clone();
-    }
-    v
-}
-
-/// Uniform random distribution of points in a n-cube
-///
-/// `n` is the number of spatial dimensions (1 => segment; 2 => square; 3 => cube; etc.).
-#[cfg(feature = "rand")]
-pub fn sample_unit_ncube<T: Coord + Clone + DivAssign<T> + RealExponential, R: Rng>(
-    rng: &mut R,
-    n: usize,
-) -> Vec<T>
-where
-    rand::distributions::Standard: rand::distributions::Distribution<T>,
-    T: rand::distributions::uniform::SampleUniform + PartialOrd,
-{
-    let ray: T = NumCast::from(n).unwrap();
-    let mut v = valloc(n);
-    for x in v.iter_mut() {
-        *x = rng.gen_range(ray.clone().neg()..ray.clone());
-    }
-    v
 }
 
 pub(crate) struct SendPtr<T>(pub std::ptr::NonNull<T>);

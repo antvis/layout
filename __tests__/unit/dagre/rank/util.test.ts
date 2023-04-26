@@ -1,5 +1,5 @@
 import { Graph } from "@antv/graphlib";
-import { NodeData, EdgeData } from "@antv/layout";
+import { NodeData, EdgeData } from "../../../../packages/layout";
 import { longestPath } from "../../../../packages/layout/src/dagre/rank/util";
 import { normalizeRanks } from "../../../../packages/layout/src/dagre/util";
 
@@ -11,7 +11,7 @@ describe("rank/util", function () {
       g = new Graph<NodeData, EdgeData>();
     });
 
-    it("can assign a rank to a single node graph", function () {
+    test("can assign a rank to a single node graph", function () {
       g.addNode({
         id: "a",
         data: {},
@@ -21,7 +21,7 @@ describe("rank/util", function () {
       expect(g.getNode("a").data.rank).toEqual(0);
     });
 
-    it("can assign ranks to unconnected nodes", function () {
+    test("can assign ranks to unconnected nodes", function () {
       g.addNode({
         id: "a",
         data: {},
@@ -36,7 +36,7 @@ describe("rank/util", function () {
       expect(g.getNode("b").data.rank).toEqual(0);
     });
 
-    it("can assign ranks to connected nodes", function () {
+    test("can assign ranks to connected nodes", function () {
       g.addNode({
         id: "a",
         data: {},
@@ -59,7 +59,7 @@ describe("rank/util", function () {
       expect(g.getNode("b").data.rank).toEqual(1);
     });
 
-    it("can assign ranks for a diamond", function () {
+    test("can assign ranks for a diamond", function () {
       g.addNodes([
         {
           id: "a",
@@ -120,7 +120,7 @@ describe("rank/util", function () {
       expect(g.getNode("d").data.rank).toEqual(2);
     });
 
-    it("uses the minlen attribute on the edge", function () {
+    test("uses the minlen attribute on the edge", function () {
       g.addNodes([
         {
           id: "a",
