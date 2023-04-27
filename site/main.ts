@@ -42,6 +42,12 @@ const TestsConfig = [
 
 const $mask = document.getElementById("mask") as HTMLSelectElement;
 const $iterations = document.getElementById("iterations") as HTMLInputElement;
+const $min_movement = document.getElementById(
+  "min_movement"
+) as HTMLInputElement;
+const $distance_threshold_mode = document.getElementById(
+  "distance_threshold_mode"
+) as HTMLInputElement;
 const $dataset = document.getElementById("dataset") as HTMLSelectElement;
 const $datasetDesc = document.getElementById("dataset-desc") as HTMLSpanElement;
 const $layout = document.getElementById("layout") as HTMLSelectElement;
@@ -71,12 +77,17 @@ const initThreads = async () => {
   return [singleThread, multiThreads];
 };
 
+export type CommonLayoutOptions = {
+  iterations: number;
+  min_movement: number;
+  distance_threshold_mode: "mean" | "max" | "min";
+};
 const doLayout = async (
   context: CanvasRenderingContext2D,
   $label: HTMLSpanElement,
   layout: any,
   model: any,
-  options: any,
+  options: CommonLayoutOptions,
   wasmMethod: any
 ) => {
   const start = performance.now();
@@ -154,6 +165,11 @@ const doLayout = async (
             dataset[name],
             {
               iterations: parseInt($iterations.value),
+              min_movement: parseFloat($min_movement.value),
+              distance_threshold_mode: $distance_threshold_mode.value as
+                | "mean"
+                | "max"
+                | "min",
             },
             name === TestName.ANTV_LAYOUT_WASM_MULTITHREADS
               ? forceMultiThreads

@@ -159,7 +159,6 @@ pub fn apply_repulsion_fruchterman_2d_parallel<T: Copy + Coord + std::fmt::Debug
 ) {
     let k = &layout.settings.ka;
     let k2 = *k * *k;
-    let kr = layout.settings.kr;
     for chunk_iter in layout.iter_par_nodes(layout.settings.chunk_size.unwrap()) {
         chunk_iter.for_each(|n1_iter| {
             for n1 in n1_iter {
@@ -167,7 +166,7 @@ pub fn apply_repulsion_fruchterman_2d_parallel<T: Copy + Coord + std::fmt::Debug
                     let dx = unsafe { *n2.pos.get_unchecked(0) - *n1.pos.get_unchecked(0) };
                     let dy = unsafe { *n2.pos.get_unchecked(1) - *n1.pos.get_unchecked(1) };
 
-                    let d2 = dx * dx + dy * dy + kr.clone();
+                    let d2 = dx * dx + dy * dy + T::from(0.01).unwrap_or_else(T::zero);
                     
                     let param = k2 / d2;
 

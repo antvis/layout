@@ -61,3 +61,11 @@ export function outputAntvLayoutWASM(
 
   return { nodes, edges: outputEdges };
 }
+
+export function distanceThresholdMode(mode: string): number {
+  return {
+    mean: 0,
+    min: 1,
+    max: 2,
+  }[mode];
+}
