@@ -31,18 +31,111 @@ Then we can execute layout algorithm as usual.
 
 ```js
 const { nodes } = await forceatlas2({
-  kg: 1,
+  nodes,
+  edges,
+  masses,
+  weights,
+  iterations,
   // other options
+  kg: 1,
 }); // [x1, y1, x2, y2...]
 ```
 
-## API
+## API Reference
+
+### Shared params
+
+<a name="nodes" href="#nodes">#</a> <b>nodes</b>
+
+A list of nodes' coordinates, e.g. `[x1, y1, x2, y2, ...]`.
+
+<a name="edges" href="#edges">#</a> <b>edges</b>
+
+The specified array of **edges**. Assumes edges `(n1, n2)` respect `n1 < n2`, e.g. `[[n1, n2], [n3, n4], ...]`.
+
+<a name="masses" href="#masses">#</a> <b>masses</b>
+
+A list of masses, e.g. `[m1, m2, ...]`.
+
+<a name="weights" href="#weights">#</a> <b>weights</b>
+
+A list of weights, e.g. `[e1, e2, ...]`.
+
+<a name="iterations" href="#iterations">#</a> <b>iterations</b>
+
+The max number of iterations. If the average movement do not reach minMovement but the iteration number is over maxIteration, terminate the layout.
+
+<a name="distance_threshold_mode" href="#distance_threshold_mode">#</a> <b>distance_threshold_mode</b>
+
+The condition to judge with minMovement:
+
+- 0 -> 'mean' means the layout stops while the nodes' average movement is smaller than minMovement
+- 1 -> 'min' means the layout stops while the nodes' minimum movement is smaller than minMovement
+- 2 -> 'max' means the layout stops while the nodes' maximum movement is smaller than minMovement
+
+<a name="min_movement" href="#min_movement">#</a> <b>min_movement</b>
+
+When the average/minimum/maximum (according to distanceThresholdMode) movement of nodes in one iteration is smaller than minMovement, terminate the layout
 
 ### forceatlas2
 
+<a name="ka" href="#ka">#</a> <b>ka</b>
+
+Attraction coefficient.
+
+<a name="kg" href="#kg">#</a> <b>kg</b>
+
+Gravity coefficient, larger the kg, the graph will be more compact to the center.
+
+<a name="kr" href="#kr">#</a> <b>kr</b>
+
+Repulsion coefficient, smaller the kr, more compact the graph will be.
+
+<a name="speed" href="#speed">#</a> <b>speed</b>
+
+Speed factor.
+
+<a name="strong_gravity" href="#strong_gravity">#</a> <b>strong_gravity</b>
+
+<a name="lin_log" href="#lin_log">#</a> <b>lin_log</b>
+
+<a name="dissuade_hubs" href="#dissuade_hubs">#</a> <b>dissuade_hubs</b>
+
 ### fruchterman
 
+<a name="kg" href="#kg">#</a> <b>kg</b>
+
+Gravity coefficient, larger the kg, the graph will be more compact to the center.
+
+<a name="width" href="#width">#</a> <b>width</b>
+
+<a name="height" href="#height">#</a> <b>height</b>
+
+<a name="speed" href="#speed">#</a> <b>speed</b>
+
+Speed factor.
+
 ### force2
+
+<a name="kg" href="#kg">#</a> <b>kg</b>
+
+Gravity coefficient, larger the kg, the graph will be more compact to the center.
+
+<a name="edge_strength" href="#edge_strength">#</a> <b>edge_strength</b>
+
+<a name="link_distance" href="#link_distance">#</a> <b>link_distance</b>
+
+<a name="node_strength" href="#node_strength">#</a> <b>node_strength</b>
+
+<a name="coulomb_dis_scale" href="#coulomb_dis_scale">#</a> <b>coulomb_dis_scale</b>
+
+<a name="factor" href="#factor">#</a> <b>factor</b>
+
+<a name="damping" href="#damping">#</a> <b>damping</b>
+
+<a name="interval" href="#interval">#</a> <b>interval</b>
+
+<a name="max_speed" href="#max_speed">#</a> <b>max_speed</b>
 
 ## Benchmarks
 

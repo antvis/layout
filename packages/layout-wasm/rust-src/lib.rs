@@ -21,17 +21,18 @@ type T = f32;
 #[derive(Serialize, Deserialize)]
 pub struct ForceLayoutOptions {
     pub name: usize,
-    pub nodes: usize,
+    /// A list of coordinates, e.g. `[x1, y1, x2, y2, ...]`.
+    pub nodes: Vec<T>,
     /// Assumes edges `(n1, n2)` respect `n1 < n2`
     pub edges: Vec<(usize, usize)>,
-    /// A list of coordinates, e.g. `[x1, y1, x2, y2, ...]`.
-    pub positions: Vec<T>,
     /// A list of masses, e.g. `[m1, m2, ...]`.
     pub masses: Vec<T>,
     /// A list of weights, e.g. `[e1, e2, ...]`.
     pub weights: Vec<T>,
     /// Iterations to execute.
     pub iterations: u32,
+    pub distance_threshold_mode: usize,
+    pub min_movement: T,
     /// ForceAtlas2. Attraction coefficient.
     pub ka: T,
     /// ForceAtlas2. Gravity coefficient.
@@ -59,7 +60,6 @@ pub struct ForceLayoutOptions {
     /// Fruchterman. The center of the graph.
     pub center: Vec<T>,
     pub max_speed: T,
-    pub min_movement: T,
 }
 
 #[wasm_bindgen(js_name = "force")]
@@ -69,7 +69,7 @@ pub fn force(val: JsValue) -> Array {
     let mut layout = Layout::<T>::from_position_graph(
         options.edges,
         Nodes::Mass(options.masses),
-        options.positions,
+        options.nodes,
         Some(options.weights),
         Settings {
             name: match options.name {
@@ -102,11 +102,20 @@ pub fn force(val: JsValue) -> Array {
             center: options.center,
             max_speed: options.max_speed,
             min_movement: options.min_movement,
+            distance_threshold_mode: match options.distance_threshold_mode {
+                0 => DistanceThresholdMode::Average,
+                1 => DistanceThresholdMode::Min,
+                2 => DistanceThresholdMode::Max,
+                _ => panic!("Unknown layout type"),
+            },
         },
     );
 
     for i in 0..options.iterations {
-        layout.iteration(i as usize);
+        if layout.iteration(i as usize) {
+            // Break early if layout is convergent.
+            break;
+        }
     }
 
     let nodes = Array::new();

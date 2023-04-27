@@ -12,7 +12,7 @@ mod util;
 
 use forces::{Attraction, Repulsion};
 
-pub use layout::{Layout, LayoutType, Settings};
+pub use layout::{Layout, LayoutType, DistanceThresholdMode, Settings};
 pub use util::{Coord, Edge, Nodes, PointIter, PointIterMut, PointList, Position};
 
 use itertools::izip;
@@ -86,25 +86,56 @@ where
     }
 
     /// Computes an iteration
-    pub fn iteration(&mut self, i: usize) {
+    pub fn iteration(&mut self, i: usize) -> bool {
         self.init_iteration();
         self.apply_attraction();
         self.apply_repulsion();
         self.apply_gravity();
 
+        let mut judging_distance = match self.settings.distance_threshold_mode {
+            DistanceThresholdMode::Average => T::zero(),
+            DistanceThresholdMode::Max => T::from(f32::MIN).unwrap_or_else(T::zero),
+            DistanceThresholdMode::Min => T::from(f32::MAX).unwrap_or_else(T::zero),
+        };
+        let distance_threshold_mode = self.settings.distance_threshold_mode.clone();
+
+        let mut update_judging_distance = |distance| {
+            match distance_threshold_mode {
+                DistanceThresholdMode::Average => {
+                    judging_distance += distance;
+                },
+                DistanceThresholdMode::Max => {
+                    if distance > judging_distance {
+                        judging_distance = distance;
+                    }
+                },
+                DistanceThresholdMode::Min => {
+                    if distance < judging_distance {
+                        judging_distance = distance;
+                    }
+                },
+            }
+        };
+
         match self.settings.name {
             LayoutType::Fruchterman => {
                 let interval = self.settings.interval.clone();
-                self.apply_forces_fruchterman(pow(interval, i));
+                self.apply_forces_fruchterman(pow(interval, i), &mut update_judging_distance);
             },
             LayoutType::Force2 => {
                 let m1 = T::from(0.02).unwrap_or_else(T::one);
                 let m2 = self.settings.interval.clone() - T::from(i).unwrap_or_else(T::one) * T::from(0.002).unwrap_or_else(T::one);
                 let interval = if m1 > m2 { m1 } else { m2 };
-                self.apply_forces_force2(interval);
+                self.apply_forces_force2(interval, &mut update_judging_distance);
             },
-            LayoutType::ForceAtlas2 => self.apply_forces_forceatlas2(),
+            LayoutType::ForceAtlas2 => self.apply_forces_forceatlas2(&mut update_judging_distance),
+        };
+
+        if let DistanceThresholdMode::Average = self.settings.distance_threshold_mode  {
+            judging_distance /= T::from(self.points.points.len() / self.points.dimensions).unwrap_or_else(T::one);
         }
+
+        judging_distance < self.settings.min_movement
     }
 
     fn init_iteration(&mut self) {
@@ -120,16 +151,7 @@ where
                     *speed = T::zero();
                 }
             },
-            LayoutType::Fruchterman => {
-                for speed in self
-                    .speeds
-                    .points
-                    .iter_mut()
-                {
-                    *speed = T::zero();
-                }
-            },
-            LayoutType::Force2 => {
+            _ => {
                 for speed in self
                     .speeds
                     .points
@@ -153,7 +175,7 @@ where
         (self.fn_repulsion)(self)
     }
 
-    fn apply_forces_force2(&mut self, interval: T) {
+    fn apply_forces_force2(&mut self, interval: T, update_judging_distance: &mut impl FnMut(T)) {
         let damping = &self.settings.damping;
         let param = interval.clone() * damping.clone();
         let max_speed = self.settings.max_speed.clone();
@@ -170,7 +192,7 @@ where
 
                 
             pos.iter_mut()
-                .zip(speed.iter_mut())
+                .zip(speed.iter())
                 .for_each(|(pos, speed)| {
                     let mut v = speed.clone() * param.clone();
 
@@ -179,16 +201,18 @@ where
                     }
                     *pos += v * interval.clone();
                 });
+
+            update_judging_distance(dist_length);
         }
     }
 
-    fn apply_forces_fruchterman(&mut self, i: T) {
+    fn apply_forces_fruchterman(&mut self, i: T, update_judging_distance: &mut impl FnMut(T)) {
         let u_speed = &self.settings.speed;
         let max_displace = u_speed.clone() * self.settings.damping.clone() * i.clone();
 
         for (pos, speed) in izip!(
             self.points.iter_mut(),
-            self.speeds.iter_mut(),
+            self.speeds.iter(),
         ) {
             let dist_length = speed
                 .iter()
@@ -196,15 +220,22 @@ where
                 .sum::<T>()
                 .sqrt();
             let limited_dist = if dist_length > max_displace { max_displace.clone() } else { dist_length.clone() };
+
+            let mut distance = T::zero();
             pos.iter_mut()
-                .zip(speed.iter_mut())
+                .zip(speed.iter())
                 .for_each(|(pos, speed)| {
-                    *pos += speed.clone() * u_speed.clone() / dist_length.clone() * limited_dist.clone();
+                    let d = speed.clone() * u_speed.clone() / dist_length.clone() * limited_dist.clone();
+                    distance += d.clone() * d.clone();
+                    *pos += d.clone();
                 });
+            distance = distance.sqrt();
+
+            update_judging_distance(distance);
         }
     }
 
-    fn apply_forces_forceatlas2(&mut self) {
+    fn apply_forces_forceatlas2(&mut self, update_judging_distance: &mut impl FnMut(T)) {
         for (pos, speed, old_speed) in izip!(
             self.points.iter_mut(),
             self.speeds.iter_mut(),
@@ -225,11 +256,17 @@ where
 
             let f = traction.ln_1p() / (swinging.sqrt() + T::one()) * self.settings.speed.clone();
 
+            let mut distance = T::zero();
             pos.iter_mut()
-                .zip(speed.iter_mut())
+                .zip(speed.iter())
                 .for_each(|(pos, speed)| {
-                    *pos += speed.clone() * f.clone();
+                    let d = speed.clone() * f.clone();
+                    distance += d.clone() * d.clone();
+                    *pos += d.clone();
                 });
+            distance = distance.sqrt();
+
+            update_judging_distance(distance);
         }
     }
 }

@@ -7,6 +7,8 @@ import type {
 } from "./interface";
 
 const DEFAULT_LAYOUT_OPTIONS = {
+  min_movement: 0.4,
+  distance_threshold_mode: 0, // mean
   ka: 0,
   kg: 0,
   kr: 0,
@@ -26,7 +28,6 @@ const DEFAULT_LAYOUT_OPTIONS = {
   damping: 0,
   center: [0, 0],
   max_speed: 0,
-  min_movement: 0,
 };
 
 const wrapTransfer = <T extends ForceLayoutOptions>(
@@ -34,11 +35,26 @@ const wrapTransfer = <T extends ForceLayoutOptions>(
   force: any
 ) => {
   return (options: T) => {
-    const positions = force({
+    const layoutOptions = {
       name,
       ...DEFAULT_LAYOUT_OPTIONS,
       ...options,
-    });
+    };
+
+    // calculate fruchterman layout options
+    if (name === 2) {
+      // @ts-ignore
+      const area = layoutOptions.width * layoutOptions.height;
+      const maxDisplace = Math.sqrt(area) / 10;
+      const k2 = area / (layoutOptions.nodes.length + 1);
+      const k = Math.sqrt(k2);
+      layoutOptions.ka = k;
+      layoutOptions.interval = 0.99;
+      layoutOptions.damping = maxDisplace;
+    }
+
+    const positions = force(layoutOptions);
+
     return {
       // Little perf boost to transfer data to the main thread w/o copying.
       nodes: Comlink.transfer(positions, [positions]),

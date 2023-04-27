@@ -8,6 +8,7 @@ const ITERATIONS = 100;
 /**
  * Graphology
  */
+var AntvGraph = require("@antv/graphlib");
 var Graph = require("graphology");
 var graphologyLayout = require("graphology-layout-forceatlas2");
 var randomClusters = require("graphology-generators/random/clusters");

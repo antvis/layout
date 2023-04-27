@@ -4,9 +4,11 @@ import {
   outputAntvLayout,
   outputGraphology,
   outputAntvLayoutWASM,
+  distanceThresholdMode,
 } from "./util";
 import type { Layouts } from "../packages/layout-wasm";
 import { CANVAS_SIZE } from "./types";
+import { CommonLayoutOptions } from "./main";
 
 export interface ForceAtlas2LayoutOptions {
   iterations: number;
@@ -18,7 +20,10 @@ const ITERATIONS = 100;
 const kg = 1;
 const kr = 1;
 
-export async function graphology(graph: any, { iterations }: any) {
+export async function graphology(
+  graph: any,
+  { iterations }: CommonLayoutOptions
+) {
   const positions = graphologyLayout(graph, {
     settings: {
       barnesHutOptimize: false,
@@ -31,10 +36,16 @@ export async function graphology(graph: any, { iterations }: any) {
     iterations: iterations || ITERATIONS,
     getEdgeWeight: "weight",
   });
-  return outputGraphology(graph, positions);
+  return outputGraphology(graph, positions, (node) => {
+    node.x = node.x + CANVAS_SIZE / 2;
+    node.y = node.y + CANVAS_SIZE / 2;
+  });
 }
 
-export async function antvlayout(graphModel: Graph, { iterations }: any) {
+export async function antvlayout(
+  graphModel: Graph,
+  { iterations }: CommonLayoutOptions
+) {
   const forceAtlas2 = new ForceAtlas2Layout({
     kr,
     kg,
@@ -50,16 +61,18 @@ export async function antvlayout(graphModel: Graph, { iterations }: any) {
 
 export async function antvlayoutWASM(
   { nodes, edges, masses, weights }: any,
-  { iterations }: any,
+  { iterations, min_movement, distance_threshold_mode }: CommonLayoutOptions,
   { forceatlas2 }: Layouts
 ) {
   const { nodes: positions } = await forceatlas2({
-    nodes: nodes.length,
+    nodes,
     edges,
-    positions: nodes,
     masses,
     weights,
     iterations: iterations || ITERATIONS,
+    min_movement,
+    distance_threshold_mode: distanceThresholdMode(distance_threshold_mode),
+    center: [CANVAS_SIZE / 2, CANVAS_SIZE / 2],
     ka: 1.0,
     kg,
     kr,
@@ -70,7 +83,6 @@ export async function antvlayoutWASM(
     strong_gravity: false,
     lin_log: false,
     dissuade_hubs: false,
-    center: [CANVAS_SIZE / 2, CANVAS_SIZE / 2],
   });
 
   return outputAntvLayoutWASM(positions, edges);

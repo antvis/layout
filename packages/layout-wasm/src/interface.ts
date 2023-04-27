@@ -19,7 +19,6 @@ export interface Forceatlas2LayoutOptions extends ForceLayoutOptions {
   strong_gravity: boolean;
   lin_log: boolean;
   dissuade_hubs: boolean;
-  center: [number, number];
 }
 export interface Force2LayoutOptions extends ForceLayoutOptions {
   edge_strength: number;
@@ -29,28 +28,25 @@ export interface Force2LayoutOptions extends ForceLayoutOptions {
   factor: number;
   interval: number;
   damping: number;
-  center: [number, number];
   kg: number; // gravity
   max_speed: number;
-  min_movement: number;
 }
 
 export interface FruchtermanLayoutOptions extends ForceLayoutOptions {
-  center: [number, number];
-  ka: number; // k
+  height: number; // height
+  width: number; // width
   kg: number; // gravity
-  kr: number; // 0.01
   speed: number; // speed
-  damping: number; // maxDisplace
-  interval: number; // *= maxDisplace 0.99
 }
 
 export interface ForceLayoutOptions {
   // name: number;
-  nodes: number;
+  nodes: number[];
   edges: number[];
   masses: number[];
   weights: number[];
-  positions: number[];
   iterations: number;
+  min_movement: number;
+  distance_threshold_mode: number;
+  center: [number, number];
 }

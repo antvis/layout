@@ -11,6 +11,16 @@ pub enum LayoutType {
 }
 
 #[derive(Clone)]
+pub enum DistanceThresholdMode {
+    /// Use the average distance between nodes
+    Average,
+    /// Use the maximum distance between nodes
+    Max,
+    /// Use the minimum distance between nodes
+    Min,
+}
+
+#[derive(Clone)]
 pub struct Settings<T: Coord> {
     pub name: LayoutType,
     /// Number of nodes computed by each thread
@@ -57,6 +67,7 @@ pub struct Settings<T: Coord> {
     pub interval: T,
     pub max_speed: T,
     pub min_movement: T,
+    pub distance_threshold_mode: DistanceThresholdMode,
 
     /// Used in Fruchterman layout.
     pub center: Vec<T>,
@@ -86,6 +97,7 @@ impl<T: Coord> Default for Settings<T> {
             center: vec![T::zero(); 2],
             max_speed: T::one(),
             min_movement: T::zero(),
+            distance_threshold_mode: DistanceThresholdMode::Average,
         }
     }
 }

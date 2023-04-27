@@ -2,19 +2,24 @@ import { FruchtermanLayout, Graph } from "../packages/layout";
 import { FruchtermanLayout as FruchtermanGPULayout } from "../packages/layout-gpu";
 import { fruchtermanReingoldLayout } from "./graphology-layout-fruchtermanreingold";
 import {
+  distanceThresholdMode,
   outputAntvLayout,
   outputAntvLayoutWASM,
   outputGraphology,
 } from "./util";
 import { CANVAS_SIZE } from "./types";
 import type { Layouts } from "../packages/layout-wasm";
+import { CommonLayoutOptions } from "./main";
 
 const speed = 5;
 const gravity = 1;
 const ITERATIONS = 5000;
 const SPEED_DIVISOR = 800;
 
-export async function graphology(graph: any, { iterations }: any) {
+export async function graphology(
+  graph: any,
+  { iterations }: CommonLayoutOptions
+) {
   const positions = fruchtermanReingoldLayout(graph, {
     height: CANVAS_SIZE,
     width: CANVAS_SIZE,
@@ -31,7 +36,10 @@ export async function graphology(graph: any, { iterations }: any) {
   });
 }
 
-export async function antvlayout(graphModel: Graph, { iterations }: any) {
+export async function antvlayout(
+  graphModel: Graph,
+  { iterations, min_movement, distance_threshold_mode }: CommonLayoutOptions
+) {
   const fruchterman = new FruchtermanLayout({
     height: CANVAS_SIZE,
     width: CANVAS_SIZE,
@@ -44,7 +52,10 @@ export async function antvlayout(graphModel: Graph, { iterations }: any) {
   return outputAntvLayout(positions);
 }
 
-export async function antvlayoutGPU(graphModel: Graph, { iterations }: any) {
+export async function antvlayoutGPU(
+  graphModel: Graph,
+  { iterations, min_movement, distance_threshold_mode }: CommonLayoutOptions
+) {
   const fruchterman = new FruchtermanGPULayout({
     height: CANVAS_SIZE,
     width: CANVAS_SIZE,
@@ -59,28 +70,22 @@ export async function antvlayoutGPU(graphModel: Graph, { iterations }: any) {
 
 export async function antvlayoutWASM(
   { nodes, edges, masses, weights }: any,
-  { iterations }: any,
+  { iterations, min_movement, distance_threshold_mode }: CommonLayoutOptions,
   { fruchterman }: Layouts
 ) {
-  const area = CANVAS_SIZE * CANVAS_SIZE;
-  const maxDisplace = Math.sqrt(area) / 10;
-  const k2 = area / (nodes.length + 1);
-  const k = Math.sqrt(k2);
-
   const { nodes: positions } = await fruchterman({
-    nodes: nodes.length,
+    nodes,
     edges,
-    positions: nodes,
     masses,
     weights,
     iterations: iterations || ITERATIONS,
-    ka: k, // k
-    kg: gravity, // gravity
-    kr: 0.01, // 0.01
-    speed, // speed
-    interval: 0.99, // *= maxDisplace
-    damping: maxDisplace, // maxDisplace
+    min_movement,
+    distance_threshold_mode: distanceThresholdMode(distance_threshold_mode),
+    height: CANVAS_SIZE,
+    width: CANVAS_SIZE,
     center: [CANVAS_SIZE / 2, CANVAS_SIZE / 2],
+    kg: gravity, // gravity
+    speed, // speed
   });
 
   return outputAntvLayoutWASM(positions, edges);
