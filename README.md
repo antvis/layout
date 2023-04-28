@@ -14,6 +14,8 @@ This is a collection of basic layout algorithms. We provide the following packag
 - [@antv/layout-wasm](./packages/layout-wasm/README.md) [![npm Version](https://img.shields.io/npm/v/@antv/layout-wasm)](https://www.npmjs.com/package/@antv/layout-wasm) Provide a WASM binding of `@antv/layout-rust`. [Online Demo](https://observablehq.com/d/288c16a54543a141)
 - [@antv/layout-gpu](./packages/layout-gpu/README.md) [![npm Version](https://img.shields.io/npm/v/@antv/layout-gpu)](https://www.npmjs.com/package/@antv/layout-gpu) Accelerate some parallelizable algorithms such as Fruchterman with WebGPU which has a better performance under large amount of data.
 
+Online benchmarks: https://antv.vision/layout/index.html
+
 ## Development
 
 We use [Vite](https://vitejs.dev/) to start a dev server:

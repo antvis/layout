@@ -40,7 +40,6 @@ export interface FruchtermanLayoutOptions extends ForceLayoutOptions {
 }
 
 export interface ForceLayoutOptions {
-  // name: number;
   nodes: number[];
   edges: number[];
   masses: number[];
