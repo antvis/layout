@@ -190,7 +190,7 @@ where
                 .sum::<T>()
                 .sqrt() + T::from(0.0001).unwrap_or_else(T::zero);
 
-                
+            let mut distance = T::zero();    
             pos.iter_mut()
                 .zip(speed.iter())
                 .for_each(|(pos, speed)| {
@@ -199,10 +199,14 @@ where
                     if dist_length > max_speed {
                         v *= max_speed.clone() / dist_length.clone();
                     }
-                    *pos += v * interval.clone();
-                });
 
-            update_judging_distance(dist_length);
+                    let d = v * interval.clone();
+                    distance += d.clone() * d.clone();
+                    *pos += d.clone();
+                });
+            distance = distance.sqrt();
+
+            update_judging_distance(distance);
         }
     }
 

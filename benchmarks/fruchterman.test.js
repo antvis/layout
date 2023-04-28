@@ -5,16 +5,14 @@ const NODE_NUM = 2000;
 const EDGE_NUM = 2000;
 const ITERATIONS = 100;
 const CANVAS_SIZE = 800;
-const kg = 1;
-const kr = 1;
-const speed = 1;
+const speed = 5;
+const gravity = 1;
 
 /**
  * Graphology
  */
-var AntvGraph = require("@antv/graphlib");
 var Graph = require("graphology");
-var graphologyLayout = require("graphology-layout-forceatlas2");
+// var graphologyLayout = require("graphology-layout-forceatlas2");
 var randomClusters = require("graphology-generators/random/clusters");
 var seedrandom = require("seedrandom");
 var rng = function () {
@@ -41,16 +39,14 @@ const antvgraphWASM = graphology2antv_wasm(graph);
 /**
  * @antv/layout
  */
-var { ForceAtlas2Layout } = require("../packages/layout");
-const antvForceAtlas2Layout = new ForceAtlas2Layout({
-  kr,
-  kg,
-  ks: 0.1,
+var { FruchtermanLayout } = require("../packages/layout");
+const fruchterman = new FruchtermanLayout({
+  height: CANVAS_SIZE,
+  width: CANVAS_SIZE,
+  center: [CANVAS_SIZE / 2, CANVAS_SIZE / 2],
+  gravity,
   speed,
   maxIteration: ITERATIONS,
-  width: CANVAS_SIZE,
-  height: CANVAS_SIZE,
-  center: [CANVAS_SIZE / 2, CANVAS_SIZE / 2],
 });
 
 const DEFAULT_LAYOUT_OPTIONS = {
@@ -85,43 +81,38 @@ antvLayoutWASM.start();
 
 // add tests
 suite
-  .add("Graphology", async function () {
-    graphologyLayout(graph, {
-      settings: {
-        barnesHutOptimize: false,
-        strongGravityMode: false,
-        gravity: kg,
-        scalingRatio: kr,
-        slowDown: 1,
-      },
-      iterations: ITERATIONS,
-      getEdgeWeight: "weight",
-    });
-  })
+  // .add("Graphology", async function () {
+  //   graphologyLayout(graph, {
+  //     settings: {
+  //       barnesHutOptimize: false,
+  //       strongGravityMode: false,
+  //       gravity: kg,
+  //       scalingRatio: kr,
+  //       slowDown: 1,
+  //     },
+  //     iterations: ITERATIONS,
+  //     getEdgeWeight: "weight",
+  //   });
+  // })
   .add("@antv/layout", async function () {
-    await antvForceAtlas2Layout.execute(antvgraph);
+    await fruchterman.execute(antvgraph);
   })
   .add("@antv/layout-wasm", async function () {
     const { nodes, edges, masses, weights } = antvgraphWASM;
     antvLayoutWASM.force({
       ...DEFAULT_LAYOUT_OPTIONS,
-      name: 0,
+      name: 2,
       nodes,
       edges,
       masses,
       weights,
       iterations: ITERATIONS,
+      distance_threshold_mode: 0,
+      height: CANVAS_SIZE,
+      width: CANVAS_SIZE,
       center: [CANVAS_SIZE / 2, CANVAS_SIZE / 2],
-      ka: 0.5,
-      kg,
-      kr,
-      speed,
-      prevent_overlapping: false,
-      kr_prime: 0,
-      node_radius: 1,
-      strong_gravity: false,
-      dissuade_hubs: false,
-      lin_log: false,
+      kg: gravity, // gravity
+      speed, // speed
     });
   })
   // add listeners
@@ -134,7 +125,6 @@ suite
   .run({ async: true });
 
 // logs:
-// Graphology x 5.86 ops/sec ±2.28% (19 runs sampled)
-// @antv/layout x 0.36 ops/sec ±2.26% (5 runs sampled)
-// @antv/layout-wasm x 21.52 ops/sec ±0.68% (40 runs sampled)
+// @antv/layout x 0.06 ops/sec ±1.05% (5 runs sampled)
+// @antv/layout-wasm x 1.40 ops/sec ±0.44% (8 runs sampled)
 // Fastest is @antv/layout-wasm

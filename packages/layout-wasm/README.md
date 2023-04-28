@@ -2,6 +2,8 @@
 
 A WASM binding of `@antv/layout-rust`. We use [wasm-bindgen-rayon](https://github.com/GoogleChromeLabs/wasm-bindgen-rayon) implementing multi-thread.
 
+Online benchmarks: https://antv.vision/layout/index.html
+
 ## Usage
 
 ### UMD
@@ -23,7 +25,7 @@ const { initThreads, supportsThreads } = window.layoutWASM;
 Since [Not all browsers](https://webassembly.org/roadmap/) support WebAssembly threads yet, we need to use feature detection to choose the right one on the JavaScript side.
 
 ```js
-const supported = await supportsThreads();
+const supported = await supportsThreads(); // `true` means we can use multithreads now!
 const { forceatlas2, force2, fruchterman } = await initThreads(supported);
 ```
 
@@ -40,6 +42,19 @@ const { nodes } = await forceatlas2({
   kg: 1,
 }); // [x1, y1, x2, y2...]
 ```
+
+### Use WASM with multithreads
+
+First of all, in order to use SharedArrayBuffer on the Web, you need to enable [cross-origin isolation policies](https://web.dev/coop-coep/). Check out the linked article for details.
+
+To opt in to a cross-origin isolated state, you need to send the following HTTP headers on the main document:
+
+```
+Cross-Origin-Embedder-Policy: require-corp
+Cross-Origin-Opener-Policy: same-origin
+```
+
+If you can't control the server, try this hacky workaround which implemented with ServiceWorker: https://github.com/orgs/community/discussions/13309#discussioncomment-3844940
 
 ## API Reference
 
@@ -75,7 +90,11 @@ The condition to judge with minMovement:
 
 <a name="min_movement" href="#min_movement">#</a> <b>min_movement</b>
 
-When the average/minimum/maximum (according to distanceThresholdMode) movement of nodes in one iteration is smaller than minMovement, terminate the layout
+When the average/minimum/maximum (according to distanceThresholdMode) movement of nodes in one iteration is smaller than minMovement, terminate the layout.
+
+<a name="center" href="#center">#</a> <b>center</b>
+
+The center of the layout, default to `[0, 0]`.
 
 ### forceatlas2
 
@@ -93,13 +112,19 @@ Repulsion coefficient, smaller the kr, more compact the graph will be.
 
 <a name="speed" href="#speed">#</a> <b>speed</b>
 
-Speed factor.
+Speed factor, e.g. `0.5`
 
 <a name="strong_gravity" href="#strong_gravity">#</a> <b>strong_gravity</b>
 
+Gravity does not decrease with distance, resulting in a more compact graph, default to `false`.
+
 <a name="lin_log" href="#lin_log">#</a> <b>lin_log</b>
 
+Logarithmic attraction, default to `false`.
+
 <a name="dissuade_hubs" href="#dissuade_hubs">#</a> <b>dissuade_hubs</b>
+
+Move hubs (high degree nodes) to the center, default to `false`.
 
 ### fruchterman
 
@@ -109,11 +134,15 @@ Gravity coefficient, larger the kg, the graph will be more compact to the center
 
 <a name="width" href="#width">#</a> <b>width</b>
 
+The width of canvas.
+
 <a name="height" href="#height">#</a> <b>height</b>
+
+The height of canvas.
 
 <a name="speed" href="#speed">#</a> <b>speed</b>
 
-Speed factor.
+The moving speed of each iteraction. Large value of the speed might lead to violent swing.
 
 ### force2
 
@@ -123,19 +152,35 @@ Gravity coefficient, larger the kg, the graph will be more compact to the center
 
 <a name="edge_strength" href="#edge_strength">#</a> <b>edge_strength</b>
 
+The strength of edge force. Calculated according to the degree of nodes by default.
+
 <a name="link_distance" href="#link_distance">#</a> <b>link_distance</b>
+
+The edge length, default to `1`.
 
 <a name="node_strength" href="#node_strength">#</a> <b>node_strength</b>
 
+The strength of node force. Positive value means repulsive force, negative value means attractive force, default to `1000`.
+
 <a name="coulomb_dis_scale" href="#coulomb_dis_scale">#</a> <b>coulomb_dis_scale</b>
+
+A parameter for repulsive force between nodes. Large the number, larger the repulsion, default to `0.005`.
 
 <a name="factor" href="#factor">#</a> <b>factor</b>
 
+Coefficient for the repulsive force. Larger the number, larger the repulsive force, default to `1`.
+
 <a name="damping" href="#damping">#</a> <b>damping</b>
+
+Range `[0, 1]`, affect the speed of decreasing node moving speed. Large the number, slower the decreasing, default to `0.9`.
 
 <a name="interval" href="#interval">#</a> <b>interval</b>
 
+Controls the speed of the nodes' movement in each iteration, default to `0.002`.
+
 <a name="max_speed" href="#max_speed">#</a> <b>max_speed</b>
+
+The max speed in each iteration, default to `1000`.
 
 ## Benchmarks
 
