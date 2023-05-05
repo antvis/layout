@@ -9,7 +9,6 @@ repository = "https://github.com/antvis/layout"
 documentation = "https://observablehq.com/d/2db6b0cc5e97d8d6"
 keywords = ["graph", "layout", "viz"]
 categories = ["visualization"]
-readme = "README.md"
 
 [package.metadata.wasm-pack.profile.release]
 wasm-opt = false

@@ -1,21 +1,23 @@
 {
   "name": "@antv/layout-wasm",
   "description": "A WASM binding of rust implementation for graph layout algorithms.",
-  "version": "1.0.0-alpha.1",
+  "version": "1.0.0-alpha.6",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/antvis/layout"
   },
   "main": "dist/index.min.js",
-  "module": "esm/index.esm.js",
+  "module": "lib/index.js",
   "types": "lib/index.d.ts",
   "unpkg": "dist/index.min.js",
   "files": [
     "package.json",
     "dist",
-    "esm",
     "lib",
+    "pkg/**/*",
+    "pkg-parallel/**/*",
+    "pkg-node/**/*",
     "LICENSE",
     "README.md"
   ],
@@ -24,10 +26,10 @@
     "build:wasm-mt": "cross-env RUSTFLAGS='-C target-feature=+atomics,+bulk-memory,+mutable-globals' rustup run nightly wasm-pack build --target web --out-dir pkg-parallel -- --features parallel -Z build-std=panic_abort,std",
     "build:wasm-node": "wasm-pack build --target nodejs --out-dir pkg-node",
     "build:wasm": "run-p build:wasm-st build:wasm-mt build:wasm-node",
-    "build:esm": "webpack --config webpack.esm.config.js --mode production",
+    "build:esm": "tsc",
     "build:umd": "webpack --config webpack.config.js --mode production",
     "build": "npm run clean && npm run build:wasm && npm run build:esm && npm run build:umd",
-    "clean": "rimraf dist esm lib pkg pkg-parallel pkg-node"
+    "clean": "rimraf pkg pkg-parallel pkg-node"
   },
   "dependencies": {
     "comlink": "^4.3.1",

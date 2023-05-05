@@ -1,4 +1,4 @@
-import "./enable-threads";
+// import "./enable-threads";
 import { render } from "./render";
 import {
   graphology as graphologyForceatlas2,
@@ -18,6 +18,7 @@ import {
 } from "./fruchterman";
 import { loadDatasets } from "./datasets";
 import { TestName } from "./types";
+import { initThreads } from "../packages/layout-wasm";
 
 /**
  * We compare graphology, @antv/layout and its WASM versions.
@@ -70,9 +71,9 @@ const $checkboxes = TestsConfig.map(({ name }, i) => {
   return $checkbox;
 });
 
-const initThreads = async () => {
-  const singleThread = await (window as any).layoutWASM.initThreads(false);
-  const multiThreads = await (window as any).layoutWASM.initThreads(true);
+const initThreadsPool = async () => {
+  const singleThread = await initThreads(false);
+  const multiThreads = await initThreads(true);
 
   return [singleThread, multiThreads];
 };
@@ -105,7 +106,7 @@ const doLayout = async (
   console.timeEnd("Load datasets");
 
   console.time("Init WASM threads");
-  const [forceSingleThread, forceMultiThreads] = await initThreads();
+  const [forceSingleThread, forceMultiThreads] = await initThreadsPool();
   console.timeEnd("Init WASM threads");
 
   const layoutConfig: any = [
