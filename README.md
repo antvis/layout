@@ -29,3 +29,18 @@ $ pnpm dev
 ```bash
 $ pnpm test
 ```
+
+## Publish
+
+```bash
+pnpm changeset version
+pnpm changeset publish
+```
+
+If you want to publish versions for test:
+
+```bash
+pnpm changeset pre enter alpha   # 发布 alpha 版本
+pnpm changeset pre enter beta    # 发布 beta 版本
+pnpm changeset pre enter rc      # 发布 rc 版本
+```

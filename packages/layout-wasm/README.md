@@ -20,21 +20,22 @@ Since [Not all browsers](https://webassembly.org/roadmap/) support WebAssembly t
 
 ```js
 const supported = await supportsThreads(); // `true` means we can use multithreads now!
-const { forceatlas2, force2, fruchterman } = await initThreads(supported);
+const threads = await initThreads(supported);
 ```
 
-Then we can execute layout algorithm as usual.
+Then we can execute layout algorithm as usual, don't forget to pass in threads created in the previous step:
 
 ```js
-const { nodes } = await forceatlas2({
-  nodes,
-  edges,
-  masses,
-  weights,
-  iterations,
-  // other options
-  kg: 1,
-}); // [x1, y1, x2, y2...]
+import { Graph } from "@antv/graphlib";
+import { ForceAtlas2 } from "@antv/layout-wasm";
+
+const forceatlas2 = new ForceAtlas2({
+  threads,
+  maxIteration: 1000,
+  // ...other params
+});
+
+const { nodes } = await forceatlas2.execute(graph);
 ```
 
 ### Use WASM with multithreads
@@ -90,129 +91,64 @@ If you can't control the server, try this hacky workaround which implemented wit
 
 ## API Reference
 
-### Shared params
+### Common force-directed layout options
 
-<a name="nodes" href="#nodes">#</a> <b>nodes</b>
+- `center` **[number, number]** The center of the graph. e.g. `[0, 0]`
+- `maxIteration` **number**
+- `minMovement` **number** When the average/minimum/maximum (according to `distanceThresholdMode`) movement of nodes in one iteration is smaller than minMovement, terminate the layout.
+- `distanceThresholdMode` **'mean' | 'max' ｜ 'min'** The condition to judge with minMovement, `'mean'` means the layout stops while the nodes' average movement is smaller than minMovement, `'max' / 'min'` means the layout stops while the nodes' maximum/minimum movement is smaller than minMovement. `'mean'` by default
 
-A list of nodes' coordinates, e.g. `[x1, y1, x2, y2, ...]`.
+### ForceAtlas2
 
-<a name="edges" href="#edges">#</a> <b>edges</b>
+FA2 is a kind of force directed layout, which performs better on the convergence and compactness.
 
-The specified array of **edges**. Assumes edges `(n1, n2)` respect `n1 < n2`, e.g. `[[n1, n2], [n3, n4], ...]`.
+<img src="https://gw.alipayobjects.com/mdn/rms_f8c6a0/afts/img/A*MqwAQZLIVPwAAAAAAAAAAAAAARQnAQ" alt="forceAtlas2 layout" width="300">
 
-<a name="masses" href="#masses">#</a> <b>masses</b>
+LayoutOptions:
 
-A list of masses, e.g. `[m1, m2, ...]`.
+- `kr` **number** Repulsive parameter, smaller the kr, more compact the graph. The default value is `5`.
+- `kg` **number** The parameter for the gravity. Larger kg, the graph will be more compact to the center. The default value is `5`.
+- `ks` **number** The moving speed of the nodes during iterations. The default value is `0.1`.
+- `tao` **number** The threshold of the swinging. The default value is `0.1`.
+- `preventOverlap` **boolean**
+- `dissuadeHubs` **boolean** Wheather to enable hub mode. If it is `true`, the nodes with larger in-degree will be placed on the center in higher priority.
+- `barnesHut` **boolean** Whether to enable the barnes hut speedup, which is the quad-tree optimization. Due to the computation for quad-tree re-build in each iteration, we sugguest to enable it in large graph. It is `undefined` by deafult, when the number of nodes is larger than 250, it will be activated automatically. If it is set to be `false`, it will not be activated anyway.
 
-<a name="weights" href="#weights">#</a> <b>weights</b>
+### Fruchterman
 
-A list of weights, e.g. `[e1, e2, ...]`.
+Fruchterman is a kind of force-directed layout. The implementation is according to the paper [Graph Drawing by Force-directed Placement](http://www.mathe2.uni-bayreuth.de/axel/papers/reingold:graph_drawing_by_force_directed_placement.pdf).
 
-<a name="iterations" href="#iterations">#</a> <b>iterations</b>
+<img src="https://gw.alipayobjects.com/mdn/rms_f8c6a0/afts/img/A*jK3ITYqVJnQAAAAAAAAAAABkARQnAQ" alt="fruchterman layout" width="300">
 
-The max number of iterations. If the average movement do not reach minMovement but the iteration number is over maxIteration, terminate the layout.
+LayoutOptions:
 
-<a name="distance_threshold_mode" href="#distance_threshold_mode">#</a> <b>distance_threshold_mode</b>
+- `width` **number** The width of the graph.
+- `height` **number** The height of the graph.
+- `gravity` **number** The gravity, which will affect the compactness of the layout. The default value is `10`.
+- `speed` **number** The moving speed of each iteraction. Large value of the speed might lead to violent swing.
+- `clustering` **boolean** We can also layout according to `nodeClusterBy` field in data when enable clustering.
+- `clusterGravity` The gravity of each cluster, which will affect the compactness of each cluster. The default value is `10`.
 
-The condition to judge with minMovement:
+### Force
 
-- 0 -> 'mean' means the layout stops while the nodes' average movement is smaller than minMovement
-- 1 -> 'min' means the layout stops while the nodes' minimum movement is smaller than minMovement
-- 2 -> 'max' means the layout stops while the nodes' maximum movement is smaller than minMovement
+Force2 implements the force-directed layout algorithm. It comes from graphin-force, supports assign different masses and center gravities for different nodes freedomly. Comparing to graphin-force, the performance is improved greatly.
 
-<a name="min_movement" href="#min_movement">#</a> <b>min_movement</b>
+<img src="https://gw.alipayobjects.com/mdn/rms_f8c6a0/afts/img/A*lX-qSqDECrIAAAAAAAAAAAAAARQnAQ" alt="force layout" width="300">
 
-When the average/minimum/maximum (according to distanceThresholdMode) movement of nodes in one iteration is smaller than minMovement, terminate the layout.
+LayoutOptions:
 
-<a name="center" href="#center">#</a> <b>center</b>
-
-The center of the layout, default to `[0, 0]`.
-
-### forceatlas2
-
-<a name="ka" href="#ka">#</a> <b>ka</b>
-
-Attraction coefficient.
-
-<a name="kg" href="#kg">#</a> <b>kg</b>
-
-Gravity coefficient, larger the kg, the graph will be more compact to the center.
-
-<a name="kr" href="#kr">#</a> <b>kr</b>
-
-Repulsion coefficient, smaller the kr, more compact the graph will be.
-
-<a name="speed" href="#speed">#</a> <b>speed</b>
-
-Speed factor, e.g. `0.5`
-
-<a name="strong_gravity" href="#strong_gravity">#</a> <b>strong_gravity</b>
-
-Gravity does not decrease with distance, resulting in a more compact graph, default to `false`.
-
-<a name="lin_log" href="#lin_log">#</a> <b>lin_log</b>
-
-Logarithmic attraction, default to `false`.
-
-<a name="dissuade_hubs" href="#dissuade_hubs">#</a> <b>dissuade_hubs</b>
-
-Move hubs (high degree nodes) to the center, default to `false`.
-
-### fruchterman
-
-<a name="kg" href="#kg">#</a> <b>kg</b>
-
-Gravity coefficient, larger the kg, the graph will be more compact to the center.
-
-<a name="width" href="#width">#</a> <b>width</b>
-
-The width of canvas.
-
-<a name="height" href="#height">#</a> <b>height</b>
-
-The height of canvas.
-
-<a name="speed" href="#speed">#</a> <b>speed</b>
-
-The moving speed of each iteraction. Large value of the speed might lead to violent swing.
-
-### force2
-
-<a name="kg" href="#kg">#</a> <b>kg</b>
-
-Gravity coefficient, larger the kg, the graph will be more compact to the center.
-
-<a name="edge_strength" href="#edge_strength">#</a> <b>edge_strength</b>
-
-The strength of edge force. Calculated according to the degree of nodes by default.
-
-<a name="link_distance" href="#link_distance">#</a> <b>link_distance</b>
-
-The edge length, default to `1`.
-
-<a name="node_strength" href="#node_strength">#</a> <b>node_strength</b>
-
-The strength of node force. Positive value means repulsive force, negative value means attractive force, default to `1000`.
-
-<a name="coulomb_dis_scale" href="#coulomb_dis_scale">#</a> <b>coulomb_dis_scale</b>
-
-A parameter for repulsive force between nodes. Large the number, larger the repulsion, default to `0.005`.
-
-<a name="factor" href="#factor">#</a> <b>factor</b>
-
-Coefficient for the repulsive force. Larger the number, larger the repulsive force, default to `1`.
-
-<a name="damping" href="#damping">#</a> <b>damping</b>
-
-Range `[0, 1]`, affect the speed of decreasing node moving speed. Large the number, slower the decreasing, default to `0.9`.
-
-<a name="interval" href="#interval">#</a> <b>interval</b>
-
-Controls the speed of the nodes' movement in each iteration, default to `0.002`.
-
-<a name="max_speed" href="#max_speed">#</a> <b>max_speed</b>
-
-The max speed in each iteration, default to `1000`.
+- `linkDistance` **number** The edge length. The default length is `200`.
+- `nodeStrength` **number** The strength of node force. Positive value means repulsive force, negative value means attractive force (it is different from 'force'). The default value is `1000`.
+- `edgeStrength` **number** The strength of edge force. Calculated according to the degree of nodes by default. The default value is `200`.
+- `preventOverlap` **boolean**
+- `nodeSize` **number** The diameter of the node. It is used for preventing node overlappings. If nodeSize is not assigned, the size property in node data will take effect. If the size in node data does not exist either, nodeSize is assigned to `10` by default.
+- `nodeSpacing` **number** The minimum space between two nodes when preventOverlap is true. The default value is `0`.
+- `damping` **number** Range [0, 1], affect the speed of decreasing node moving speed. Large the number, slower the decreasing. The default value is `0.9`.
+- `interval` **number** Controls the speed of the nodes' movement in each iteration. The default value is `0.02`.
+- `maxSpeed` **number** The max speed in each iteration. The default value is `1000`.
+- `force` **number** Coefficient for the repulsive force. Larger the number, larger the repulsive force.
+- `coulombDisScale` **number** A parameter for repulsive force between nodes. Large the number, larger the repulsion. The default value is `0.005`.
+- `gravity` **number** The gravity strength to the center for all the nodes. Larger the number, more compact the nodes. The default value is `10`.
 
 ## Benchmarks
 
