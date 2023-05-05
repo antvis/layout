@@ -3,3 +3,4 @@ pkg
 pkg-node
 pkg-parallel
 *.lock
+tsconfig.tsbuildinfo

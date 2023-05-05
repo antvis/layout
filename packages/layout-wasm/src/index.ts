@@ -17,7 +17,7 @@ export async function supportsThreads() {
 export async function initThreads(useMultiThread = true): Promise<Layouts> {
   const initHandlers = Comlink.wrap(
     // @ts-ignore
-    new Worker(new URL("./wasm-worker.ts", import.meta.url), {
+    new Worker(new URL("./wasm-worker.js", import.meta.url), {
       type: "module",
     })
   );

@@ -1,25 +1,19 @@
 # @antv/layout-wasm
 
-A WASM binding of `@antv/layout-rust`. We use [wasm-bindgen-rayon](https://github.com/GoogleChromeLabs/wasm-bindgen-rayon) implementing multi-thread.
+A WASM binding of `@antv/layout-rust`. We use [wasm-bindgen-rayon](https://github.com/GoogleChromeLabs/wasm-bindgen-rayon) implementing data parallelism with WebWorkers.
 
-Online benchmarks: https://antv.vision/layout/index.html
+- [Online benchmarks](https://antv.vision/layout/index.html)
+- [Use with Webpack](#webpack)
+- [Use with Vite](#vite)
 
 ## Usage
 
-### UMD
+Since [cross origin workers are blocked](https://stackoverflow.com/questions/58098143/why-are-cross-origin-workers-blocked-and-why-is-the-workaround-ok/60015898#60015898), we do not recommand the UMD way of using it for now. You can opt to ESM usage with bundler such as [Webpack](#webpack) or [Vite](#vite).
 
-```html
-<script
-  src="https://unpkg.com/@antv/layout-wasm"
-  crossorigin="anonymous"
-  type="text/javascript"
-></script>
-```
-
-Get `initThread` method from `layout` namespace.
+### ESM
 
 ```js
-const { initThreads, supportsThreads } = window.layoutWASM;
+import { initThreads, supportsThreads } from "@antv/layout-wasm";
 ```
 
 Since [Not all browsers](https://webassembly.org/roadmap/) support WebAssembly threads yet, we need to use feature detection to choose the right one on the JavaScript side.
@@ -54,7 +48,43 @@ Cross-Origin-Embedder-Policy: require-corp
 Cross-Origin-Opener-Policy: same-origin
 ```
 
-If you can't control the server, try this hacky workaround which implemented with ServiceWorker: https://github.com/orgs/community/discussions/13309#discussioncomment-3844940
+If you can't control the server, try this hacky workaround which implemented with ServiceWorker: https://github.com/orgs/community/discussions/13309#discussioncomment-3844940. Here's an example on [Stackblitz](https://stackblitz.com/edit/github-wpncwj-fxmffg?file=src/index.js).
+
+### Webpack
+
+Webpack has good support for Webworker, here's an example on [Stackblitz](https://stackblitz.com/edit/github-wpncwj?file=src/index.js). We use [statikk](https://www.npmjs.com/package/statikk) as static server in this example since it has a good support of cross-origin isolation headers. For more information, please refer to [Use WASM with multithreads](#use-wasm-with-multithreads).
+
+### Vite
+
+Vite also provides [worker options](https://vitejs.dev/config/worker-options.html) in its config. To let Vite [process URL correctly](https://vitejs.dev/guide/dep-pre-bundling.html#customizing-the-behavior) when creating WebWorker in third-party packages, we need to add the package to `optimizeDeps.exclude`:
+
+```js
+// vite.config.js
+optimizeDeps: {
+  exclude: ['@antv/layout-wasm'],
+},
+```
+
+To enable COOP & COEP headers, we can set them with `plugins`:
+
+```js
+// vite.config.js
+plugins: [
+  {
+    name: 'isolation',
+    configureServer(server) {
+      // @see https://gist.github.com/mizchi/afcc5cf233c9e6943720fde4b4579a2b
+      server.middlewares.use((_req, res, next) => {
+        res.setHeader('Cross-Origin-Opener-Policy', 'same-origin');
+        res.setHeader('Cross-Origin-Embedder-Policy', 'require-corp');
+        next();
+      });
+    },
+  },
+],
+```
+
+Here's a complete example on [Stackblitz](https://stackblitz.com/edit/vite-6b9ga6?file=README.md).
 
 ## API Reference
 
