@@ -1,6 +1,6 @@
 {
   "name": "@antv/layout-wasm",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "A WASM binding of rust implementation for graph layout algorithms.",
   "license": "MIT",
   "repository": {
@@ -33,7 +33,7 @@
     "clean": "rimraf pkg pkg-parallel pkg-node"
   },
   "dependencies": {
-    "@antv/layout": "workspace:*",
+    "@antv/layout": "^1.0.0",
     "@antv/util": "^3.3.2",
     "comlink": "^4.3.1",
     "wasm-feature-detect": "^1.2.10",

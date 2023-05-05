@@ -1,6 +1,6 @@
 {
   "name": "@antv/layout-gpu",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "graph layout algorithm implemented with GPGPU",
   "license": "MIT",
   "repository": {
@@ -28,7 +28,7 @@
   ],
   "dependencies": {
     "@antv/g-webgpu": "0.7.2",
-    "@antv/layout": "workspace:*",
+    "@antv/layout": "^1.0.0",
     "@antv/util": "^3.3.2",
     "tslib": "^2.5.0"
   },
