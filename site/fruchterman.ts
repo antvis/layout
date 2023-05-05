@@ -1,20 +1,17 @@
 import { FruchtermanLayout, Graph } from "../packages/layout";
 import { FruchtermanLayout as FruchtermanGPULayout } from "../packages/layout-gpu";
 import { fruchtermanReingoldLayout } from "./graphology-layout-fruchtermanreingold";
-import {
-  distanceThresholdMode,
-  outputAntvLayout,
-  outputAntvLayoutWASM,
-  outputGraphology,
-} from "./util";
+import { outputAntvLayout, outputGraphology } from "./util";
 import { CANVAS_SIZE } from "./types";
-import type { Layouts } from "../packages/layout-wasm";
+import {
+  Threads,
+  FruchtermanLayout as FruchtermanWASMLayout,
+} from "../packages/layout-wasm";
 import { CommonLayoutOptions } from "./main";
 
 const speed = 5;
 const gravity = 1;
 const ITERATIONS = 5000;
-const SPEED_DIVISOR = 800;
 
 export async function graphology(
   graph: any,
@@ -69,24 +66,22 @@ export async function antvlayoutGPU(
 }
 
 export async function antvlayoutWASM(
-  { nodes, edges, masses, weights }: any,
+  graphModel: Graph,
   { iterations, min_movement, distance_threshold_mode }: CommonLayoutOptions,
-  { fruchterman }: Layouts
+  threads: Threads
 ) {
-  const { nodes: positions } = await fruchterman({
-    nodes,
-    edges,
-    masses,
-    weights,
-    iterations: iterations || ITERATIONS,
-    min_movement,
-    distance_threshold_mode: distanceThresholdMode(distance_threshold_mode),
+  const fruchterman = new FruchtermanWASMLayout({
+    threads,
+    maxIteration: iterations || ITERATIONS,
+    minMovement: min_movement,
+    distanceThresholdMode: distance_threshold_mode,
     height: CANVAS_SIZE,
     width: CANVAS_SIZE,
     center: [CANVAS_SIZE / 2, CANVAS_SIZE / 2],
-    kg: gravity, // gravity
-    speed, // speed
+    gravity,
+    speed,
   });
 
-  return outputAntvLayoutWASM(positions, edges);
+  const positions = await fruchterman.execute(graphModel);
+  return outputAntvLayout(positions);
 }
