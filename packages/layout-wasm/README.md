@@ -1,6 +1,6 @@
 # @antv/layout-wasm
 
-A WASM binding of `@antv/layout-rust`. We use [wasm-bindgen-rayon](https://github.com/GoogleChromeLabs/wasm-bindgen-rayon) implementing multi-thread.
+A WASM binding of `@antv/layout-rust`. We used [wasm-bindgen-rayon](https://github.com/GoogleChromeLabs/wasm-bindgen-rayon) to implement multi-thread.
 
 Online benchmarks: https://antv.vision/layout/index.html
 
