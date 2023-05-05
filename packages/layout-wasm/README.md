@@ -48,7 +48,6 @@ Cross-Origin-Embedder-Policy: require-corp
 Cross-Origin-Opener-Policy: same-origin
 ```
 
-<<<<<<< HEAD
 If you can't control the server, try this hacky workaround which implemented with ServiceWorker: https://github.com/orgs/community/discussions/13309#discussioncomment-3844940. Here's an example on [Stackblitz](https://stackblitz.com/edit/github-wpncwj-fxmffg?file=src/index.js).
 
 ### Webpack
@@ -85,11 +84,9 @@ plugins: [
 ],
 ```
 
-# Here's a complete example on [Stackblitz](https://stackblitz.com/edit/vite-6b9ga6?file=README.md).
+Here's a complete example on [Stackblitz](https://stackblitz.com/edit/vite-6b9ga6?file=README.md).
 
 If you can't control the server, try this hacky workaround which implemented with ServiceWorker: https://github.com/orgs/community/discussions/13309#discussioncomment-3844940
-
-> > > > > > > origin/v5
 
 ## API Reference
 
