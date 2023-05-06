@@ -16,7 +16,7 @@ export const graphlib2WASMInput = (
     masses.push((node.data.mass as number) || 1);
   });
   iedges.forEach((edge) => {
-    const weight = edge.data.weight;
+    const weight = edge.data.weight || 1;
     const sourceIdx = nodeIdxMap[edge.source];
     const targetIdx = nodeIdxMap[edge.target];
 

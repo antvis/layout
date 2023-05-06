@@ -7,7 +7,6 @@ import {
 } from "./forceatlas2";
 import {
   antvlayout as antvlayoutForce2,
-  antvlayoutGPU as antvlayoutGPUForce2,
   antvlayoutWASM as antvlayoutWASMForce2,
 } from "./force2";
 import {
@@ -70,6 +69,7 @@ const $checkboxes = TestsConfig.map(({ name }, i) => {
   };
   return $checkbox;
 });
+const $scaling = document.getElementById("scaling") as HTMLInputElement;
 
 const initThreadsPool = async () => {
   const singleThread = await initThreads(false);
@@ -89,12 +89,13 @@ const doLayout = async (
   layout: any,
   model: any,
   options: CommonLayoutOptions,
-  wasmMethod: any
+  wasmMethod: any,
+  scaling: number
 ) => {
   const start = performance.now();
   const { nodes, edges } = await layout(model, options, wasmMethod);
   $label.innerHTML = `${(performance.now() - start).toFixed(2)}ms`;
-  render(context, nodes, edges);
+  render(context, nodes, edges, scaling);
 };
 
 (async () => {
@@ -144,7 +145,7 @@ const doLayout = async (
     {
       name: TestName.ANTV_LAYOUT_GPU,
       methods: {
-        force2: antvlayoutGPUForce2,
+        // force2: antvlayoutGPUForce2,
         fruchterman: antvlayoutGPUFruchterman,
       },
     },
@@ -174,7 +175,8 @@ const doLayout = async (
             },
             name === TestName.ANTV_LAYOUT_WASM_MULTITHREADS
               ? forceMultiThreads
-              : forceSingleThread
+              : forceSingleThread,
+            Number($scaling.value)
           );
         } else {
           contexts[i]!.clearRect(

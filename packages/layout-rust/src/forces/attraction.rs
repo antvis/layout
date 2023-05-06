@@ -1,41 +1,42 @@
-use crate::{layout::Layout, util::*};
+use crate::{layout::Layout};
 
 use itertools::izip;
 
-pub fn apply_attraction_force2_2d<T: Copy + Coord + std::fmt::Debug>(layout: &mut Layout<T>) {
+pub fn apply_attraction_force2_2d(layout: &mut Layout) {
     for (_edge, (n1, n2)) in layout.edges.iter().enumerate() {
         let n1_pos = layout.points.get(*n1);
         let n2_pos = layout.points.get(*n2);
 
-        let n1_mass = layout.masses.get(*n1).unwrap().clone();
-        let n2_mass = layout.masses.get(*n2).unwrap().clone();
+        let n1_mass = unsafe { *layout.masses.get_unchecked(*n1) };
+        let n2_mass = unsafe { *layout.masses.get_unchecked(*n2) };
 
         let (n1_speed, n2_speed) = layout.speeds.get_2_mut(*n1, *n2);
 
         let dx = unsafe { *n1_pos.get_unchecked(0) - *n2_pos.get_unchecked(0)};
         let dy = unsafe { *n1_pos.get_unchecked(1) - *n2_pos.get_unchecked(1) };
 
-        let dist = (dx * dx + dy * dy).sqrt() + T::from(0.01).unwrap_or_else(T::zero);
+        let dist = (dx * dx + dy * dy).sqrt();
         let dire_x = dx / dist;
         let dire_y = dy / dist;
 
         let diff = layout.settings.link_distance - dist;
         let param = diff * layout.settings.edge_strength;
 
-        let target_mass_ratio = T::one() / n1_mass;
-        let source_mass_ratio = T::one() / n2_mass;
+        let target_mass_ratio = 1.0 / n1_mass;
+        let source_mass_ratio = 1.0 / n2_mass;
+
         let dis_x = dire_x * param;
         let dis_y = dire_y * param;
 
-        unsafe { n1_speed.get_unchecked_mut(0) }.add_assign(dis_x * target_mass_ratio);
-        unsafe { n1_speed.get_unchecked_mut(1) }.add_assign(dis_y * target_mass_ratio);
-        unsafe { n2_speed.get_unchecked_mut(0) }.sub_assign(dis_x * source_mass_ratio);
-        unsafe { n2_speed.get_unchecked_mut(1) }.sub_assign(dis_y * source_mass_ratio);
+        unsafe { *n1_speed.get_unchecked_mut(0) += dis_x * target_mass_ratio };
+        unsafe { *n1_speed.get_unchecked_mut(1) += dis_y * target_mass_ratio };
+        unsafe { *n2_speed.get_unchecked_mut(0) -= dis_x * source_mass_ratio };
+        unsafe { *n2_speed.get_unchecked_mut(1) -= dis_y * source_mass_ratio };
     }
 }
 
 
-pub fn apply_attraction_fruchterman_2d<T: Copy + Coord + std::fmt::Debug>(layout: &mut Layout<T>) {
+pub fn apply_attraction_fruchterman_2d(layout: &mut Layout) {
     let k = &layout.settings.ka;
     let kr = &layout.settings.kr;
     for (_edge, (n1, n2)) in layout.edges.iter().enumerate() {
@@ -50,14 +51,14 @@ pub fn apply_attraction_fruchterman_2d<T: Copy + Coord + std::fmt::Debug>(layout
         let dist = (dx * dx + dy * dy).sqrt() + *kr;
         let f = dist / *k;
 
-        unsafe { n1_speed.get_unchecked_mut(0) }.add_assign(dx * f);
-        unsafe { n1_speed.get_unchecked_mut(1) }.add_assign(dy * f);
-        unsafe { n2_speed.get_unchecked_mut(0) }.sub_assign(dx * f);
-        unsafe { n2_speed.get_unchecked_mut(1) }.sub_assign(dy * f);
+        unsafe { *n1_speed.get_unchecked_mut(0) += dx * f };
+        unsafe { *n1_speed.get_unchecked_mut(1) += dy * f };
+        unsafe { *n2_speed.get_unchecked_mut(0) -= dx * f };
+        unsafe { *n2_speed.get_unchecked_mut(1) -= dy * f };
     }
 }
 
-pub fn apply_attraction_forceatlas2_2d<T: Copy + Coord + std::fmt::Debug>(layout: &mut Layout<T>) {
+pub fn apply_attraction_forceatlas2_2d(layout: &mut Layout) {
     for (edge, (n1, n2)) in layout.edges.iter().enumerate() {
         let (n1, n2) = (*n1, *n2);
 
@@ -76,41 +77,41 @@ pub fn apply_attraction_forceatlas2_2d<T: Copy + Coord + std::fmt::Debug>(layout
         let dx = unsafe { *n2_pos.get_unchecked(0) - *n1_pos.get_unchecked(0) } * weight;
         let dy = unsafe { *n2_pos.get_unchecked(1) - *n1_pos.get_unchecked(1) } * weight;
 
-        unsafe { n1_speed.get_unchecked_mut(0) }.add_assign(dx);
-        unsafe { n1_speed.get_unchecked_mut(1) }.add_assign(dy);
-        unsafe { n2_speed.get_unchecked_mut(0) }.sub_assign(dx);
-        unsafe { n2_speed.get_unchecked_mut(1) }.sub_assign(dy);
+        unsafe { *n1_speed.get_unchecked_mut(0) += dx };
+        unsafe { *n1_speed.get_unchecked_mut(1) += dy };
+        unsafe { *n2_speed.get_unchecked_mut(0) -= dx };
+        unsafe { *n2_speed.get_unchecked_mut(1) -= dy };
     }
 }
 
-pub fn apply_attraction_forceatlas2_3d<T: Copy + Coord + std::fmt::Debug>(layout: &mut Layout<T>) {
-    for (edge, (n1, n2)) in layout.edges.iter().enumerate() {
-        let (n1, n2) = (*n1, *n2);
+// pub fn apply_attraction_forceatlas2_3d(layout: &mut Layout) {
+//     for (edge, (n1, n2)) in layout.edges.iter().enumerate() {
+//         let (n1, n2) = (*n1, *n2);
 
-        let n1_pos = layout.points.get(n1);
-        let n2_pos = layout.points.get(n2);
-        let weight = layout
-            .weights
-            .as_ref()
-            .map_or_else(T::one, |weights| weights[edge])
-            * layout.settings.ka;
+//         let n1_pos = layout.points.get(n1);
+//         let n2_pos = layout.points.get(n2);
+//         let weight = layout
+//             .weights
+//             .as_ref()
+//             .map_or_else(T::one, |weights| weights[edge])
+//             * layout.settings.ka;
 
-        let (n1_speed, n2_speed) = layout.speeds.get_2_mut(n1, n2);
+//         let (n1_speed, n2_speed) = layout.speeds.get_2_mut(n1, n2);
 
-        let dx = unsafe { *n2_pos.get_unchecked(0) - *n1_pos.get_unchecked(0) } * weight;
-        let dy = unsafe { *n2_pos.get_unchecked(1) - *n1_pos.get_unchecked(1) } * weight;
-        let dz = unsafe { *n2_pos.get_unchecked(2) - *n1_pos.get_unchecked(2) } * weight;
+//         let dx = unsafe { *n2_pos.get_unchecked(0) - *n1_pos.get_unchecked(0) } * weight;
+//         let dy = unsafe { *n2_pos.get_unchecked(1) - *n1_pos.get_unchecked(1) } * weight;
+//         let dz = unsafe { *n2_pos.get_unchecked(2) - *n1_pos.get_unchecked(2) } * weight;
 
-        unsafe { n1_speed.get_unchecked_mut(0) }.add_assign(dx);
-        unsafe { n1_speed.get_unchecked_mut(1) }.add_assign(dy);
-        unsafe { n1_speed.get_unchecked_mut(2) }.add_assign(dz);
-        unsafe { n2_speed.get_unchecked_mut(0) }.sub_assign(dx);
-        unsafe { n2_speed.get_unchecked_mut(1) }.sub_assign(dy);
-        unsafe { n2_speed.get_unchecked_mut(2) }.sub_assign(dz);
-    }
-}
+//         unsafe { n1_speed.get_unchecked_mut(0) }.add_assign(dx);
+//         unsafe { n1_speed.get_unchecked_mut(1) }.add_assign(dy);
+//         unsafe { n1_speed.get_unchecked_mut(2) }.add_assign(dz);
+//         unsafe { n2_speed.get_unchecked_mut(0) }.sub_assign(dx);
+//         unsafe { n2_speed.get_unchecked_mut(1) }.sub_assign(dy);
+//         unsafe { n2_speed.get_unchecked_mut(2) }.sub_assign(dz);
+//     }
+// }
 
-pub fn apply_attraction_forceatlas2_dh<T: Coord + std::fmt::Debug>(layout: &mut Layout<T>) {
+pub fn apply_attraction_forceatlas2_dh(layout: &mut Layout) {
     for (edge, (n1, n2)) in layout.edges.iter().enumerate() {
         let f = layout.weights.as_ref().map_or_else(
             || layout.settings.ka.clone(),
@@ -134,16 +135,16 @@ pub fn apply_attraction_forceatlas2_dh<T: Coord + std::fmt::Debug>(layout: &mut 
     }
 }
 
-pub fn apply_attraction_forceatlas2_log<T: Coord + std::fmt::Debug>(layout: &mut Layout<T>) {
+pub fn apply_attraction_forceatlas2_log(layout: &mut Layout) {
     for (edge, (n1, n2)) in layout.edges.iter().enumerate() {
-        let mut d = T::zero();
+        let mut d = 0.0;
         let mut di_v = layout.points.get_clone(*n2);
         let di = di_v.as_mut_slice();
         for (di, n1) in di.iter_mut().zip(layout.points.get(*n1)) {
             *di -= n1.clone();
-            d += di.clone().pow_n(2u32);
+            d += di.clone().powi(2);
         }
-        if d.is_zero() {
+        if d == 0.0 {
             continue;
         }
         d = d.sqrt();
@@ -165,16 +166,16 @@ pub fn apply_attraction_forceatlas2_log<T: Coord + std::fmt::Debug>(layout: &mut
     }
 }
 
-pub fn apply_attraction_forceatlas2_dh_log<T: Coord + std::fmt::Debug>(layout: &mut Layout<T>) {
+pub fn apply_attraction_forceatlas2_dh_log(layout: &mut Layout) {
     for (edge, (n1, n2)) in layout.edges.iter().enumerate() {
-        let mut d = T::zero();
+        let mut d = 0.0;
         let mut di_v = layout.points.get_clone(*n2);
         let di = di_v.as_mut_slice();
         for (di, n1) in di.iter_mut().zip(layout.points.get(*n1)) {
             *di -= n1.clone();
-            d += di.clone().pow_n(2u32);
+            d += di.clone().powi(2);
         }
-        if d.is_zero() {
+        if d == 0.0 {
             continue;
         }
         d = d.sqrt();
@@ -197,21 +198,21 @@ pub fn apply_attraction_forceatlas2_dh_log<T: Coord + std::fmt::Debug>(layout: &
     }
 }
 
-pub fn apply_attraction_forceatlas2_po<T: Coord + std::fmt::Debug>(layout: &mut Layout<T>) {
+pub fn apply_attraction_forceatlas2_po(layout: &mut Layout) {
     let node_size = &layout.settings.prevent_overlapping.as_ref().unwrap().0;
     for (edge, (n1, n2)) in layout.edges.iter().enumerate() {
-        let mut d = T::zero();
+        let mut d = 0.0;
         let n1_pos = layout.points.get(*n1);
         let mut di_v = layout.points.get_clone(*n2);
         let di = di_v.as_mut_slice();
         for i in 0usize..layout.settings.dimensions {
             di[i] -= n1_pos[i].clone();
-            d += di[i].clone().pow_n(2u32);
+            d += di[i].clone().powi(2);
         }
         d = d.sqrt();
 
         let dprime = d.clone() - node_size.clone();
-        if dprime.non_positive() {
+        if dprime <= 0.0 {
             continue;
         }
         let f = dprime / d
@@ -231,21 +232,21 @@ pub fn apply_attraction_forceatlas2_po<T: Coord + std::fmt::Debug>(layout: &mut 
     }
 }
 
-pub fn apply_attraction_forceatlas2_dh_po<T: Coord + std::fmt::Debug>(layout: &mut Layout<T>) {
+pub fn apply_attraction_forceatlas2_dh_po(layout: &mut Layout) {
     let node_size = &layout.settings.prevent_overlapping.as_ref().unwrap().0;
     for (edge, (n1, n2)) in layout.edges.iter().enumerate() {
-        let mut d = T::zero();
+        let mut d = 0.0;
         let n1_pos = layout.points.get(*n1);
         let mut di_v = layout.points.get_clone(*n2);
         let di = di_v.as_mut_slice();
         for i in 0usize..layout.settings.dimensions {
             di[i] -= n1_pos[i].clone();
-            d += di[i].clone().pow_n(2u32);
+            d += di[i].clone().powi(2);
         }
         d = d.sqrt();
 
         let dprime = d.clone() - node_size.clone();
-        if dprime.non_positive() {
+        if dprime < 0.0 {
             dbg!(dprime);
             continue;
         }
@@ -267,21 +268,21 @@ pub fn apply_attraction_forceatlas2_dh_po<T: Coord + std::fmt::Debug>(layout: &m
     }
 }
 
-pub fn apply_attraction_forceatlas2_log_po<T: Coord + std::fmt::Debug>(layout: &mut Layout<T>) {
+pub fn apply_attraction_forceatlas2_log_po(layout: &mut Layout) {
     let node_size = &layout.settings.prevent_overlapping.as_ref().unwrap().0;
     for (edge, (n1, n2)) in layout.edges.iter().enumerate() {
-        let mut d = T::zero();
+        let mut d = 0.0;
         let n1_pos = layout.points.get(*n1);
         let mut di_v = layout.points.get_clone(*n2);
         let di = di_v.as_mut_slice();
         for i in 0usize..layout.settings.dimensions {
             di[i] -= n1_pos[i].clone();
-            d += di[i].clone().pow_n(2u32);
+            d += di[i].clone().powi(2);
         }
         d = d.sqrt();
 
         let dprime = d - node_size.clone();
-        if dprime.non_positive() {
+        if dprime < 0.0 {
             continue;
         }
         let f = dprime.clone().ln_1p() / dprime
@@ -301,21 +302,21 @@ pub fn apply_attraction_forceatlas2_log_po<T: Coord + std::fmt::Debug>(layout: &
     }
 }
 
-pub fn apply_attraction_forceatlas2_dh_log_po<T: Coord + std::fmt::Debug>(layout: &mut Layout<T>) {
+pub fn apply_attraction_forceatlas2_dh_log_po(layout: &mut Layout) {
     let node_size = &layout.settings.prevent_overlapping.as_ref().unwrap().0;
     for (edge, (n1, n2)) in layout.edges.iter().enumerate() {
-        let mut d = T::zero();
+        let mut d = 0.0;
         let n1_pos = layout.points.get(*n1);
         let mut di_v = layout.points.get_clone(*n2);
         let di = di_v.as_mut_slice();
         for i in 0usize..layout.settings.dimensions {
             di[i] -= n1_pos[i].clone();
-            d += di[i].clone().pow_n(2u32);
+            d += di[i].clone().powi(2);
         }
         d = d.sqrt();
 
         let dprime = d - node_size.clone();
-        if dprime.non_positive() {
+        if dprime < 0.0 {
             continue;
         }
         let n1_mass = layout.masses.get(*n1).unwrap().clone();

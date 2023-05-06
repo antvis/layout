@@ -4,25 +4,25 @@ pub mod repulsion;
 
 use crate::{
     layout::{Layout, Settings, LayoutType},
-    util::*,
 };
 
 #[doc(hidden)]
-pub trait Attraction<T: Coord + std::fmt::Debug> {
-    fn choose_attraction(settings: &Settings<T>) -> fn(&mut Layout<T>);
+pub trait Attraction {
+    fn choose_attraction(settings: &Settings) -> fn(&mut Layout);
 }
 
 #[doc(hidden)]
-pub trait Repulsion<T: Coord + std::fmt::Debug> {
-    fn choose_repulsion(settings: &Settings<T>) -> fn(&mut Layout<T>);
+pub trait Repulsion {
+    fn choose_repulsion(settings: &Settings) -> fn(&mut Layout);
 }
 
-impl<T> Attraction<T> for Layout<T>
-where
-    T: Copy + Coord + std::fmt::Debug,
-{
-    #[allow(clippy::collapsible_else_if)]
-    fn choose_attraction(settings: &Settings<T>) -> fn(&mut Layout<T>) {
+#[doc(hidden)]
+pub trait Gravity {
+    fn choose_gravity(settings: &Settings) -> fn(&mut Layout);
+}
+
+impl Attraction for Layout {
+    fn choose_attraction(settings: &Settings) -> fn(&mut Layout) {
         match settings.name {
             LayoutType::Fruchterman => match settings.dimensions {
                 3 => attraction::apply_attraction_fruchterman_2d,
@@ -59,7 +59,7 @@ where
                             attraction::apply_attraction_forceatlas2_dh
                         } else {
                             match settings.dimensions {
-                                3 => attraction::apply_attraction_forceatlas2_3d,
+                                // 3 => attraction::apply_attraction_forceatlas2_3d,
                                 _ => attraction::apply_attraction_forceatlas2_2d,
                             }
                         }
@@ -70,25 +70,27 @@ where
     }
 }
 
-pub fn choose_gravity<T: Coord + std::fmt::Debug>(settings: &Settings<T>) -> fn(&mut Layout<T>) {
-    match settings.name {
-        LayoutType::Fruchterman => gravity::apply_gravity_fruchterman,
-        LayoutType::Force2 => gravity::apply_gravity_force2,
-        LayoutType::ForceAtlas2 => {
-            if settings.kg.is_zero() {
-                return |_| {};
-            }
-            if settings.strong_gravity {
-                gravity::apply_gravity_forceatlas2_sg
-            } else {
-                gravity::apply_gravity_forceatlas2
+impl Gravity for Layout {
+    fn choose_gravity(settings: &Settings) -> fn(&mut Layout) {
+        match settings.name {
+            LayoutType::Fruchterman => gravity::apply_gravity_fruchterman,
+            LayoutType::Force2 => gravity::apply_gravity_force2,
+            LayoutType::ForceAtlas2 => {
+                if settings.kg == 0.0 {
+                    return |_| {};
+                }
+                if settings.strong_gravity {
+                    gravity::apply_gravity_forceatlas2_sg
+                } else {
+                    gravity::apply_gravity_forceatlas2
+                }
             }
         }
     }
 }
 
-impl Repulsion<f32> for Layout<f32> {
-    fn choose_repulsion(settings: &Settings<f32>) -> fn(&mut Layout<f32>) {
+impl Repulsion for Layout {
+    fn choose_repulsion(settings: &Settings) -> fn(&mut Layout) {
         match settings.name {
             LayoutType::Fruchterman => {
                 match settings.dimensions {

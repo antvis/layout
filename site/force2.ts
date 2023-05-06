@@ -1,5 +1,5 @@
 import { ForceLayout, Graph } from "../packages/layout";
-import { GForceLayout } from "../packages/layout-gpu";
+// import { GForceLayout } from "../packages/layout-gpu";
 import { outputAntvLayout } from "./util";
 import { CANVAS_SIZE } from "./types";
 import {
@@ -47,31 +47,31 @@ export async function antvlayout(
   return outputAntvLayout(positions);
 }
 
-export async function antvlayoutGPU(
-  graphModel: any,
-  { iterations, min_movement, distance_threshold_mode }: CommonLayoutOptions
-) {
-  const force2 = new GForceLayout({
-    factor,
-    gravity,
-    linkDistance,
-    edgeStrength,
-    nodeStrength,
-    coulombDisScale: coulombDisScale,
-    damping,
-    maxSpeed,
-    minMovement: min_movement,
-    interval,
-    // clusterNodeStrength: 20,
-    // preventOverlap: true,
-    distanceThresholdMode: distance_threshold_mode,
-    maxIteration: iterations || ITERATIONS,
-    center: [CANVAS_SIZE / 2, CANVAS_SIZE / 2],
-  });
-  const positions = await force2.execute(graphModel);
+// export async function antvlayoutGPU(
+//   graphModel: any,
+//   { iterations, min_movement, distance_threshold_mode }: CommonLayoutOptions
+// ) {
+//   const force2 = new GForceLayout({
+//     factor,
+//     gravity,
+//     linkDistance,
+//     edgeStrength,
+//     nodeStrength,
+//     coulombDisScale,
+//     damping,
+//     maxSpeed,
+//     minMovement: min_movement,
+//     interval,
+//     // clusterNodeStrength: 20,
+//     // preventOverlap: true,
+//     distanceThresholdMode: distance_threshold_mode,
+//     maxIteration: iterations || ITERATIONS,
+//     center: [CANVAS_SIZE / 2, CANVAS_SIZE / 2],
+//   });
+//   const positions = await force2.execute(graphModel);
 
-  return outputAntvLayout(positions);
-}
+//   return outputAntvLayout(positions);
+// }
 
 export async function antvlayoutWASM(
   graphModel: Graph,
@@ -91,7 +91,7 @@ export async function antvlayoutWASM(
     linkDistance,
     edgeStrength,
     nodeStrength,
-    coulombDisScale: coulombDisScale,
+    coulombDisScale,
     damping,
     maxSpeed,
     interval,

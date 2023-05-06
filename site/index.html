@@ -141,7 +141,7 @@
       <ul>
         <li>
           <a href="https://github.com/antvis/layout/tree/v5/packages/layout-gpu">@antv/layout-gpu</a> uses
-      WebGL / WebGPU to implement GPGPU and have the best performance
+      WebGL / WebGPU to implement GPGPU which has the best performance.
         </li>
         <li>
           <a href="https://github.com/antvis/layout/tree/v5/packages/layout-wasm">@antv/layout-wasm</a> uses WebWorker multi-threaded shared memory to run
@@ -253,6 +253,15 @@
     </fieldset>
 
     <button id="run">Run layout</button>
+    <span>
+      <label for="scaling">Scaling:</label>
+      <input
+          type="number"
+          id="scaling"
+          name="scaling"
+          value="0.4"
+        />
+    </span>
 
     <div class="test-cases">
       <figure>

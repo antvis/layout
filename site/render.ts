@@ -1,11 +1,14 @@
 export function render(
   context: CanvasRenderingContext2D,
   nodes: number[],
-  edges: number[]
+  edges: number[],
+  scaling: number
 ) {
+  context.resetTransform();
   context.clearRect(0, 0, context.canvas.width, context.canvas.height);
 
-  // context.scale(0.2, 0.2);
+  context.translate(context.canvas.width / 2, context.canvas.height / 2);
+  context.scale(scaling, scaling);
 
   for (let i = 0; i < edges.length; i += 4) {
     context.moveTo(edges[i], edges[i + 1]);

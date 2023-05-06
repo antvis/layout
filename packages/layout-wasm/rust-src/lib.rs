@@ -22,13 +22,13 @@ type T = f32;
 pub struct ForceLayoutOptions {
     pub name: usize,
     /// A list of coordinates, e.g. `[x1, y1, x2, y2, ...]`.
-    pub nodes: Vec<T>,
+    pub nodes: Vec<f32>,
     /// Assumes edges `(n1, n2)` respect `n1 < n2`
     pub edges: Vec<(usize, usize)>,
     /// A list of masses, e.g. `[m1, m2, ...]`.
-    pub masses: Vec<T>,
+    pub masses: Vec<f32>,
     /// A list of weights, e.g. `[e1, e2, ...]`.
-    pub weights: Vec<T>,
+    pub weights: Vec<f32>,
     /// Iterations to execute.
     pub iterations: u32,
     pub distance_threshold_mode: usize,
@@ -58,7 +58,7 @@ pub struct ForceLayoutOptions {
     pub damping: T,
     pub interval: T,
     /// Fruchterman. The center of the graph.
-    pub center: Vec<T>,
+    pub center: Vec<f32>,
     pub max_speed: T,
 }
 
@@ -66,7 +66,7 @@ pub struct ForceLayoutOptions {
 pub fn force(val: JsValue) -> Array {
     let options: ForceLayoutOptions = serde_wasm_bindgen::from_value(val).unwrap();
 
-    let mut layout = Layout::<T>::from_position_graph(
+    let mut layout = Layout::from_position_graph(
         options.edges,
         Nodes::Mass(options.masses),
         options.nodes,
@@ -78,7 +78,8 @@ pub fn force(val: JsValue) -> Array {
                 2 => LayoutType::Fruchterman,
                 _ => panic!("Unknown layout type"),
             },
-            chunk_size: Some(256),
+            // chunk_size: Some(256),
+            chunk_size: Some(512),
             dimensions: 2,
             dissuade_hubs: options.dissuade_hubs,
             ka: options.ka,

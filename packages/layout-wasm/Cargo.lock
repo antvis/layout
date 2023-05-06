@@ -7,8 +7,6 @@ name = "antv-layout"
 version = "0.0.1"
 dependencies = [
  "itertools",
- "maths-traits",
- "num-traits",
  "rayon",
 ]
 
@@ -173,15 +171,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "maths-traits"
-version = "0.2.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "22f026e1cd0e5f4d5a794e119ba9b3caeef6de22b2d772606b59dda2cdd52d5c"
-dependencies = [
- "num-traits",
-]
-
-[[package]]
 name = "memoffset"
 version = "0.8.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -195,15 +184,6 @@ name = "memory_units"
 version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8452105ba047068f40ff7093dd1d9da90898e63dd61736462e9cdda6a90ad3c3"
-
-[[package]]
-name = "num-traits"
-version = "0.2.15"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "578ede34cf02f8924ab9447f50c28075b4d3e5b269972345e7e0372b38c6cdcd"
-dependencies = [
- "autocfg",
-]
 
 [[package]]
 name = "num_cpus"

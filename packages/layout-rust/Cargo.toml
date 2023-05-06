@@ -18,8 +18,6 @@ opt-level = 's'
 
 [dependencies]
 itertools = "0.10.3"
-maths-traits = "0.2.1"
-num-traits = "0.2.14"
 rayon = "1.5.1"
 
 [dev-dependencies]

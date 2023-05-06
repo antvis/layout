@@ -52,12 +52,12 @@ export const loadDatasets = async () => {
         if (!uniqueNodes.has(node.id)) {
           uniqueNodes.add(node.id);
 
-          if (node.x === undefined) {
-            node.x = Math.random() * CANVAS_SIZE;
-          }
-          if (node.y === undefined) {
-            node.y = Math.random() * CANVAS_SIZE;
-          }
+          // if (node.x === undefined) {
+          node.x = Math.random() * CANVAS_SIZE;
+          // }
+          // if (node.y === undefined) {
+          node.y = Math.random() * CANVAS_SIZE;
+          // }
 
           nodes.push({
             id: node.id,

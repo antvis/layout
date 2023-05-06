@@ -1,29 +1,9 @@
-use maths_traits::{
-    algebra::group_like::{
-        additive::Sub,
-        multiplicative::{Div, DivAssign},
-    },
-    analysis::{ordered::Signed, RealExponential},
-};
-use num_traits::cast::{FromPrimitive, NumCast};
-
-pub trait Coord = Clone
-    + Div<Self, Output = Self>
-    + DivAssign<Self>
-    + FromPrimitive
-    + NumCast
-    //	+ From<f32>
-    + Signed
-    + RealExponential
-    + Sub<Self>
-    + std::iter::Sum;
-
 /// n-dimensional position
-pub type Position<T> = [T];
+pub type Position = [f32];
 
-pub fn clone_slice_mut<T: Clone>(s: &[T]) -> Vec<T> {
-    let mut v = valloc::<T>(s.len());
-    let c: &mut [T] = v.as_mut_slice();
+pub fn clone_slice_mut(s: &[f32]) -> Vec<f32> {
+    let mut v = valloc(s.len());
+    let c: &mut [f32] = v.as_mut_slice();
     /*for (i, e) in s.iter().enumerate() {
         c[i] = e.clone();
     }*/
@@ -33,18 +13,18 @@ pub fn clone_slice_mut<T: Clone>(s: &[T]) -> Vec<T> {
 
 pub type Edge = (usize, usize);
 
-pub enum Nodes<T> {
-    Mass(Vec<T>),
+pub enum Nodes {
+    Mass(Vec<f32>),
     Degree(usize),
 }
 
-pub fn norm<T: Coord>(n: &Position<T>) -> T {
-    n.iter().map(|i| i.clone().pow_n(2u32)).sum::<T>().sqrt()
+pub fn norm(n: &Position) -> f32 {
+    n.iter().map(|i| i.clone().powi(2)).sum::<f32>().sqrt()
 }
 
 /// Allocate Vec without initializing
 #[allow(clippy::uninit_vec)]
-pub fn valloc<T>(n: usize) -> Vec<T> {
+pub fn valloc(n: usize) -> Vec<f32> {
     let mut v = Vec::with_capacity(n);
     unsafe {
         v.set_len(n);
@@ -52,7 +32,7 @@ pub fn valloc<T>(n: usize) -> Vec<T> {
     v
 }
 
-pub(crate) unsafe fn split_at_mut_unchecked<T>(s: &mut [T], mid: usize) -> (&mut [T], &mut [T]) {
+pub(crate) unsafe fn split_at_mut_unchecked(s: &mut [f32], mid: usize) -> (&mut [f32], &mut [f32]) {
     let len = s.len();
     let ptr = s.as_mut_ptr();
 
@@ -62,26 +42,26 @@ pub(crate) unsafe fn split_at_mut_unchecked<T>(s: &mut [T], mid: usize) -> (&mut
     )
 }
 
-pub struct PointIter<'a, T> {
+pub struct PointIter<'a> {
     pub dimensions: usize,
     pub offset: usize,
-    pub list: &'a Vec<T>,
+    pub list: &'a Vec<f32>,
 }
 
-impl<'a, T> PointIter<'a, T> {
+impl<'a> PointIter<'a> {
     /// Returns a raw pointer to the next element, and increments the counter by `n`.
     ///
     /// # Safety
     /// Returned pointer may overflow the data.
-    pub unsafe fn next_unchecked(&mut self, n: usize) -> *const T {
+    pub unsafe fn next_unchecked(&mut self, n: usize) -> *const f32 {
         let ptr = self.list.as_ptr().add(self.offset);
         self.offset += self.dimensions * n;
         ptr
     }
 }
 
-impl<'a, T> Iterator for PointIter<'a, T> {
-    type Item = &'a [T];
+impl<'a> Iterator for PointIter<'a> {
+    type Item = &'a [f32];
 
     fn next(&mut self) -> Option<Self::Item> {
         if self.offset >= self.list.len() {
@@ -96,20 +76,20 @@ impl<'a, T> Iterator for PointIter<'a, T> {
     }
 }
 
-pub struct PointIterMut<'a, T> {
+pub struct PointIterMut<'a> {
     pub dimensions: usize,
     pub offset: usize,
-    pub list: &'a mut Vec<T>,
+    pub list: &'a mut Vec<f32>,
 }
 
-impl<'a, T> Iterator for PointIterMut<'a, T> {
-    type Item = &'a mut [T];
+impl<'a> Iterator for PointIterMut<'a> {
+    type Item = &'a mut [f32];
 
     fn next<'b>(&'b mut self) -> Option<Self::Item> {
         if self.offset >= self.list.len() {
             return None;
         }
-        let ret: &'b mut [T] = unsafe {
+        let ret: &'b mut [f32] = unsafe {
             self.list
                 .get_unchecked_mut(self.offset..self.offset + self.dimensions)
         };
@@ -119,41 +99,41 @@ impl<'a, T> Iterator for PointIterMut<'a, T> {
 }
 
 #[derive(Clone)]
-pub struct PointList<T: Coord> {
+pub struct PointList {
     /// Number of coordinates in a vector
     pub dimensions: usize,
     /// List of the coordinates of the vectors
-    pub points: Vec<T>,
+    pub points: Vec<f32>,
 }
 
-impl<'a, T: Coord> PointList<T> {
-    pub fn get(&'a self, n: usize) -> &'a Position<T> {
+impl<'a> PointList {
+    pub fn get(&'a self, n: usize) -> &'a Position {
         let offset = n * self.dimensions;
         &self.points[offset..offset + self.dimensions]
     }
 
     /// # Safety
     /// `n` must be in bounds.
-    pub unsafe fn get_unchecked(&'a self, n: usize) -> &'a Position<T> {
+    pub unsafe fn get_unchecked(&'a self, n: usize) -> &'a Position {
         let offset = n * self.dimensions;
         self.points.get_unchecked(offset..offset + self.dimensions)
     }
 
-    pub fn get_clone(&self, n: usize) -> Vec<T> {
+    pub fn get_clone(&self, n: usize) -> Vec<f32> {
         clone_slice_mut(self.get(n))
     }
 
-    pub fn get_clone_slice(&self, n: usize, v: &mut [T]) {
+    pub fn get_clone_slice(&self, n: usize, v: &mut [f32]) {
         v.clone_from_slice(self.get(n))
     }
 
-    pub fn get_mut(&mut self, n: usize) -> &mut Position<T> {
+    pub fn get_mut(&mut self, n: usize) -> &mut Position {
         let offset = n * self.dimensions;
         &mut self.points[offset..offset + self.dimensions]
     }
 
     /// n1 < n2
-    pub fn get_2_mut(&mut self, n1: usize, n2: usize) -> (&mut Position<T>, &mut Position<T>) {
+    pub fn get_2_mut(&mut self, n1: usize, n2: usize) -> (&mut Position, &mut Position) {
         let offset1 = n1 * self.dimensions;
         let offset2 = n2 * self.dimensions;
         unsafe {
@@ -165,12 +145,12 @@ impl<'a, T: Coord> PointList<T> {
         }
     }
 
-    pub fn set(&mut self, n: usize, val: &Position<T>) {
+    pub fn set(&mut self, n: usize, val: &Position) {
         let offset = n * self.dimensions;
         self.points[offset..offset + self.dimensions].clone_from_slice(val);
     }
 
-    pub fn iter(&self) -> PointIter<T> {
+    pub fn iter(&self) -> PointIter {
         PointIter {
             dimensions: self.dimensions,
             list: &self.points,
@@ -178,7 +158,7 @@ impl<'a, T: Coord> PointList<T> {
         }
     }
 
-    pub fn iter_from(&self, offset: usize) -> PointIter<T> {
+    pub fn iter_from(&self, offset: usize) -> PointIter {
         PointIter {
             dimensions: self.dimensions,
             list: &self.points,
@@ -186,7 +166,7 @@ impl<'a, T: Coord> PointList<T> {
         }
     }
 
-    pub fn iter_mut(&mut self) -> PointIterMut<T> {
+    pub fn iter_mut(&mut self) -> PointIterMut {
         PointIterMut {
             dimensions: self.dimensions,
             list: &mut self.points,
@@ -194,7 +174,7 @@ impl<'a, T: Coord> PointList<T> {
         }
     }
 
-    pub fn iter_mut_from(&mut self, offset: usize) -> PointIterMut<T> {
+    pub fn iter_mut_from(&mut self, offset: usize) -> PointIterMut {
         PointIterMut {
             dimensions: self.dimensions,
             list: &mut self.points,
@@ -203,8 +183,6 @@ impl<'a, T: Coord> PointList<T> {
     }
 
     pub fn remove(&mut self, mut offset: usize)
-    where
-        T: Copy,
     {
         offset *= self.dimensions;
         let len = self.points.len();
