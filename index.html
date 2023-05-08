@@ -130,8 +130,9 @@
         }
       }
     </style>
-    <script type="module" crossorigin src="/layout/assets/index.90849a28.js"></script>
-  </head>
+  <script type="module" crossorigin src="/layout/assets/index.0ec376be.js"></script>
+  <link rel="modulepreload" href="/layout/assets/vendor.eaf49d67.js">
+</head>
   <body>
     <p>Benchmarks of force-directed layouts</p>
     <p>
@@ -142,7 +143,7 @@
       <ul>
         <li>
           <a href="https://github.com/antvis/layout/tree/v5/packages/layout-gpu">@antv/layout-gpu</a> uses
-      WebGL / WebGPU to implement GPGPU and have the best performance
+      WebGL / WebGPU to implement GPGPU which has the best performance.
         </li>
         <li>
           <a href="https://github.com/antvis/layout/tree/v5/packages/layout-wasm">@antv/layout-wasm</a> uses WebWorker multi-threaded shared memory to run
@@ -254,6 +255,15 @@
     </fieldset>
 
     <button id="run">Run layout</button>
+    <span>
+      <label for="scaling">Scaling:</label>
+      <input
+          type="number"
+          id="scaling"
+          name="scaling"
+          value="0.4"
+        />
+    </span>
 
     <div class="test-cases">
       <figure>
@@ -311,8 +321,7 @@
       </div>
     </div>
 
-    <script src="./enable-threads.js"></script>
-    <script src="./index.min.js"></script>
+    <!-- <script src="./enable-threads.js"></script> -->
     
   </body>
 </html>
