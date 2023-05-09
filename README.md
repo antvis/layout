@@ -32,9 +32,24 @@ $ pnpm test
 
 ## Publish
 
+Using Changesets with pnpm: https://pnpm.io/next/using-changesets
+
+The generated markdown files in the .changeset directory should be committed to the repository.
+
+```bash
+pnpm changeset
+```
+
+This will bump the versions of the packages previously specified with pnpm changeset (and any dependents of those) and update the changelog files.
+
 ```bash
 pnpm changeset version
-pnpm changeset publish
+```
+
+Commit the changes. This command will publish all packages that have bumped versions not yet present in the registry.
+
+```bash
+pnpm publish -r
 ```
 
 If you want to publish versions for test:
