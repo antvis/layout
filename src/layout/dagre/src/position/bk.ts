@@ -4,6 +4,7 @@
  */
 import { Graph as RawGraph } from "@antv/graphlib";
 import { Graph } from "../../graph";
+import { max, min } from '@antv/util';
 import { buildLayerMatrix, minBy } from "../util";
 
 class BlockGraph extends RawGraph<string, string, number> {}
@@ -371,10 +372,9 @@ export function alignCoordinates(
   xss: Record<string, Record<string, number>>,
   alignTo: Record<string, number>
 ) {
-  // @ts-ignore
-  const alignToVals = Object.values(alignTo) as number[];
-  const alignToMin = Math.min(...alignToVals);
-  const alignToMax = Math.max(...alignToVals);
+  const alignToVals = Object.values(alignTo);
+  const alignToMin = min(alignToVals)!;
+  const alignToMax = max(alignToVals)!;
 
   ["u", "d"].forEach((vert) => {
     ["l", "r"].forEach((horiz) => {
@@ -383,11 +383,11 @@ export function alignCoordinates(
       let delta: number;
       if (xs === alignTo) return;
 
-      const xsVals = Object.values(xs) as number[];
+      const xsVals = Object.values(xs);
       delta =
         horiz === "l"
-          ? alignToMin - Math.min(...xsVals)
-          : alignToMax - Math.max(...xsVals);
+          ? alignToMin - min(xsVals)!
+          : alignToMax - max(xsVals)!;
 
       if (delta) {
         xss[alignment] = {};

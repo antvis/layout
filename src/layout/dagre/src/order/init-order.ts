@@ -1,4 +1,5 @@
 import { Graph } from "../../graph";
+import { max } from '@antv/util';
 
 /*
  * Assigns an initial order value for each node by performing a DFS search
@@ -17,7 +18,7 @@ const initOrder = (g: Graph) => {
     return !g.children(v)?.length;
   });
   const nodeRanks = simpleNodes.map((v) => (g.node(v)!.rank as number));
-  const maxRank = Math.max(...nodeRanks);
+  const maxRank = max(nodeRanks)!;
   const layers: string[][] = [];
   for (let i = 0; i < maxRank + 1; i++) {
     layers.push([]);
