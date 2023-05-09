@@ -24,6 +24,7 @@ const DEFAULTS_LAYOUT_OPTIONS: Partial<ForceAtlas2LayoutOptions> = {
   ks: 0.1,
   ksmax: 10,
   tao: 0.1,
+  maxDistance: Infinity,
 };
 
 interface FormattedOptions extends WASMForceAtlas2LayoutOptions {
@@ -121,6 +122,7 @@ export class ForceAtlas2Layout implements Layout<WASMForceAtlas2LayoutOptions> {
       ks,
       dissuadeHubs,
       mode,
+      maxDistance,
     } = formattedOptions;
 
     let nodes = graph.getAllNodes();
@@ -183,6 +185,7 @@ export class ForceAtlas2Layout implements Layout<WASMForceAtlas2LayoutOptions> {
       strong_gravity: false,
       lin_log: mode === "linlog",
       dissuade_hubs: dissuadeHubs,
+      max_distance: maxDistance
     });
 
     layoutNodes.forEach((node, i) => {

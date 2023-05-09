@@ -45,7 +45,6 @@
     "@babel/preset-env": "*",
     "@babel/preset-typescript": "*",
     "@types/d3-force": "^2.1.0",
-    "@types/jest": "^29.5.1",
     "@types/d3-quadtree": "^2.0.0",
     "babel-jest": "28.1.3",
     "babel-loader": "^8.2.2",
@@ -74,7 +73,7 @@
     "tslint-config-prettier": "^1.18.0",
     "tslint-eslint-rules": "^5.4.0",
     "typescript": "^4.0.3",
-    "vite": "^4.3.4"
+    "vite": "^2.0.0"
   },
   "publishConfig": {
     "access": "public",

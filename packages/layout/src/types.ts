@@ -283,6 +283,13 @@ interface CommonForceLayoutOptions {
   minMovement?: number;
   maxIteration?: number;
   distanceThresholdMode?: "mean" | "max" | "min";
+
+  /**
+   * If distance is specified, sets the maximum distance between nodes over which this force is considered. 
+   * If distance is not specified, returns the current maximum distance, which defaults to infinity. 
+   * Specifying a finite maximum distance improves performance and produces a more localized layout.
+   */
+  maxDistance?: number;
 }
 
 export interface ForceLayoutOptions extends CommonForceLayoutOptions {

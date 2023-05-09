@@ -68,6 +68,7 @@ pub struct Settings {
     pub max_speed: f32,
     pub min_movement: f32,
     pub distance_threshold_mode: DistanceThresholdMode,
+    pub max_distance: f32,
 
     /// Used in Fruchterman layout.
     pub center: Vec<f32>,
@@ -98,6 +99,7 @@ impl Default for Settings {
             max_speed: 1.0,
             min_movement: 0.0,
             distance_threshold_mode: DistanceThresholdMode::Average,
+            max_distance: 100.0,
         }
     }
 }

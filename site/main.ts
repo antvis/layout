@@ -99,6 +99,8 @@ const doLayout = async (
 };
 
 (async () => {
+  $run.innerHTML = 'Loading...';
+  $run.disabled = true;
   console.time("Load datasets");
   const datasets = await loadDatasets();
   $dataset.onchange = () => {
@@ -109,6 +111,8 @@ const doLayout = async (
   console.time("Init WASM threads");
   const [forceSingleThread, forceMultiThreads] = await initThreadsPool();
   console.timeEnd("Init WASM threads");
+  $run.innerHTML = 'Run layouts';
+  $run.disabled = false;
 
   const layoutConfig: any = [
     {

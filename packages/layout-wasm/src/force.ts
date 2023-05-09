@@ -25,6 +25,7 @@ const DEFAULTS_LAYOUT_OPTIONS: Partial<ForceLayoutOptions> = {
   clusterNodeStrength: 20,
   preventOverlap: true,
   distanceThresholdMode: "mean",
+  maxDistance: Infinity,
 };
 
 interface WASMForceLayoutOptions
@@ -104,6 +105,7 @@ export class ForceLayout implements Layout<WASMForceLayoutOptions> {
       linkDistance,
       nodeStrength,
       coulombDisScale,
+      maxDistance,
     } = formattedOptions;
 
     let nodes = graph.getAllNodes();
@@ -165,6 +167,7 @@ export class ForceLayout implements Layout<WASMForceLayoutOptions> {
       interval,
       damping,
       max_speed: maxSpeed,
+      max_distance: maxDistance,
     });
 
     layoutNodes.forEach((node, i) => {

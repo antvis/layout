@@ -1,6 +1,7 @@
 import * as Comlink from "comlink";
 
 const DEFAULT_LAYOUT_OPTIONS = {
+  chunk_size: 256,
   min_movement: 0.4,
   distance_threshold_mode: 0, // mean
   ka: 0,
@@ -22,6 +23,7 @@ const DEFAULT_LAYOUT_OPTIONS = {
   damping: 0,
   center: [0, 0],
   max_speed: 0,
+  max_distance: 100.0,
 };
 
 const wrapTransfer = (name, force) => {

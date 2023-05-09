@@ -97,6 +97,7 @@ If you can't control the server, try this hacky workaround which implemented wit
 - `maxIteration` **number**
 - `minMovement` **number** When the average/minimum/maximum (according to `distanceThresholdMode`) movement of nodes in one iteration is smaller than minMovement, terminate the layout.
 - `distanceThresholdMode` **'mean' | 'max' ｜ 'min'** The condition to judge with minMovement, `'mean'` means the layout stops while the nodes' average movement is smaller than minMovement, `'max' / 'min'` means the layout stops while the nodes' maximum/minimum movement is smaller than minMovement. `'mean'` by default
+- `maxDistance` **number** If distance is specified, sets the maximum distance between nodes over which this force is considered. If distance is not specified, returns the current maximum distance, which defaults to `Infinity`. Specifying a finite maximum distance improves performance and produces a more localized layout.
 
 ### ForceAtlas2
 

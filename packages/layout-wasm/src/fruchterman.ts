@@ -20,6 +20,7 @@ const DEFAULTS_LAYOUT_OPTIONS: Partial<FruchtermanLayoutOptions> = {
   width: 300,
   height: 300,
   nodeClusterBy: "cluster",
+  maxDistance: Infinity,
 };
 
 interface WASMFruchtermanLayoutOptions
@@ -105,6 +106,7 @@ export class FruchtermanLayout implements Layout<WASMFruchtermanLayoutOptions> {
       distanceThresholdMode,
       gravity,
       speed,
+      maxDistance,
     } = formattedOptions;
 
     let nodes = graph.getAllNodes();
@@ -161,6 +163,7 @@ export class FruchtermanLayout implements Layout<WASMFruchtermanLayoutOptions> {
       width,
       kg: gravity,
       speed,
+      max_distance: maxDistance,
     });
 
     layoutNodes.forEach((node, i) => {

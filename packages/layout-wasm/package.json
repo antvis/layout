@@ -30,10 +30,10 @@
     "build:esm": "tsc",
     "build:umd": "webpack --config webpack.config.js --mode production",
     "build": "npm run clean && npm run build:wasm && npm run build:esm && npm run build:umd",
-    "clean": "rimraf pkg pkg-parallel pkg-node"
+    "clean": "rimraf dist pkg pkg-parallel pkg-node"
   },
   "dependencies": {
-    "@antv/layout": "^1.0.0",
+    "@antv/layout": "workspace:*",
     "@antv/util": "^3.3.2",
     "comlink": "^4.3.1",
     "wasm-feature-detect": "^1.2.10",

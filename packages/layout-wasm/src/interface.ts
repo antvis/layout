@@ -48,6 +48,7 @@ export interface ForceLayoutOptions {
   min_movement: number;
   distance_threshold_mode: number;
   center: [number, number];
+  max_distance: number;
 }
 
 export interface WASMLayoutOptions {

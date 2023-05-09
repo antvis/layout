@@ -28,7 +28,7 @@
   ],
   "dependencies": {
     "@antv/g-webgpu": "0.7.2",
-    "@antv/layout": "^1.0.0",
+    "@antv/layout": "workspace:*",
     "@antv/util": "^3.3.2",
     "tslib": "^2.5.0"
   },

@@ -7,6 +7,7 @@ pub fn apply_repulsion_forceatlas2_2d_parallel(
     layout: &mut Layout,
 ) {
     let kr = layout.settings.kr;
+    let max_distance2 = layout.settings.max_distance * layout.settings.max_distance;
     for chunk_iter in layout.iter_par_nodes(layout.settings.chunk_size.unwrap()) {
         chunk_iter.for_each(|n1_iter| {
             for n1 in n1_iter {
@@ -16,24 +17,18 @@ pub fn apply_repulsion_forceatlas2_2d_parallel(
                     let dy = unsafe { *n2.pos.get_unchecked(1) - *n1.pos.get_unchecked(1) };
 
                     let d2 = dx * dx + dy * dy;
-                    if d2 == 0.0 {
-                        continue;
+                    if d2 < max_distance2 {
+
+                        let f = n1_mass * (*n2.mass + 1.0) / d2 * kr;
+
+                        let vx = f * dx;
+                        let vy = f * dy;
+
+                        unsafe { *n1.speed.get_unchecked_mut(0) -= vx };
+                        unsafe { *n1.speed.get_unchecked_mut(1) -= vy };
+                        unsafe { *n2.speed.get_unchecked_mut(0) += vx };
+                        unsafe { *n2.speed.get_unchecked_mut(1) += vy };
                     }
-
-                    let f = n1_mass * (*n2.mass + 1.0) / d2 * kr;
-
-                    let vx = f * dx;
-                    let vy = f * dy;
-
-                    unsafe { *n1.speed.get_unchecked_mut(0) -= vx };
-                    unsafe { *n1.speed.get_unchecked_mut(1) -= vy };
-                    unsafe { *n2.speed.get_unchecked_mut(0) += vx };
-                    unsafe { *n2.speed.get_unchecked_mut(1) += vy };
-
-                    // unsafe { n1.speed.get_unchecked_mut(0) }.sub_assign(vx); // n1_speed[0] -= f * dx
-                    // unsafe { n1.speed.get_unchecked_mut(1) }.sub_assign(vy); // n1_speed[1] -= f * dy
-                    // unsafe { n2.speed.get_unchecked_mut(0) }.add_assign(vx); // n2_speed[0] += f * dx
-                    // unsafe { n2.speed.get_unchecked_mut(1) }.add_assign(vy); // n2_speed[1] += f * dy
                 }
             }
         });
@@ -136,6 +131,7 @@ pub fn apply_repulsion_force2_2d_parallel(
     let coulomb_dis_scale = layout.settings.coulomb_dis_scale;
     let node_strength = layout.settings.node_strength;
     let weight = node_strength * factor / coulomb_dis_scale / coulomb_dis_scale;
+    let max_distance2 = layout.settings.max_distance * layout.settings.max_distance;
     for chunk_iter in layout.iter_par_nodes(layout.settings.chunk_size.unwrap()) {
         chunk_iter.for_each(|n1_iter| {
             for n1 in n1_iter {
@@ -145,15 +141,17 @@ pub fn apply_repulsion_force2_2d_parallel(
                     let dx = unsafe { *n2.pos.get_unchecked(0) - *n1.pos.get_unchecked(0) };
                     let dy = unsafe { *n2.pos.get_unchecked(1) - *n1.pos.get_unchecked(1) };
 
-                    let d2 = dx * dx + dy * dy + 0.01;
+                    let d2 = dx * dx + dy * dy;
 
-                    let d3 = d2.sqrt() * d2;
-                    let param = weight / d3;
+                    if d2 < max_distance2 {
+                        let d3 = d2.sqrt() * d2;
+                        let param = weight / d3;
 
-                    unsafe { *n1.speed.get_unchecked_mut(0) -= dx * param / n1_mass };
-                    unsafe { *n1.speed.get_unchecked_mut(1) -= dy * param / n1_mass };
-                    unsafe { *n2.speed.get_unchecked_mut(0) += dx * param / n2_mass };
-                    unsafe { *n2.speed.get_unchecked_mut(1) += dy * param / n2_mass };
+                        unsafe { *n1.speed.get_unchecked_mut(0) -= dx * param / n1_mass };
+                        unsafe { *n1.speed.get_unchecked_mut(1) -= dy * param / n1_mass };
+                        unsafe { *n2.speed.get_unchecked_mut(0) += dx * param / n2_mass };
+                        unsafe { *n2.speed.get_unchecked_mut(1) += dy * param / n2_mass };
+                    }
                 }
             }
         });
@@ -163,8 +161,9 @@ pub fn apply_repulsion_force2_2d_parallel(
 pub fn apply_repulsion_fruchterman_2d_parallel(
     layout: &mut Layout,
 ) {
-    let k = &layout.settings.ka;
-    let k2 = *k * *k;
+    let k = layout.settings.ka;
+    let k2 = k * k;
+    let max_distance2 = layout.settings.max_distance * layout.settings.max_distance;
     for chunk_iter in layout.iter_par_nodes(layout.settings.chunk_size.unwrap()) {
         chunk_iter.for_each(|n1_iter| {
             for n1 in n1_iter {
@@ -173,13 +172,15 @@ pub fn apply_repulsion_fruchterman_2d_parallel(
                     let dy = unsafe { *n2.pos.get_unchecked(1) - *n1.pos.get_unchecked(1) };
 
                     let d2 = dx * dx + dy * dy + 0.01;
-                    
-                    let param = k2 / d2;
 
-                    unsafe { *n1.speed.get_unchecked_mut(0) -= dx * param };
-                    unsafe { *n1.speed.get_unchecked_mut(1) -= dy * param };
-                    unsafe { *n2.speed.get_unchecked_mut(0) += dx * param };
-                    unsafe { *n2.speed.get_unchecked_mut(1) += dy * param };
+                    if d2 < max_distance2 {
+                        let param = k2 / d2;
+
+                        unsafe { *n1.speed.get_unchecked_mut(0) -= dx * param };
+                        unsafe { *n1.speed.get_unchecked_mut(1) -= dy * param };
+                        unsafe { *n2.speed.get_unchecked_mut(0) += dx * param };
+                        unsafe { *n2.speed.get_unchecked_mut(1) += dy * param };
+                    }
                 }
             }
         });

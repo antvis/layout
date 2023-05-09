@@ -38,7 +38,7 @@ export const graphlib2WASMInput = (
   };
 };
 
-export function distanceThresholdMode2Index(mode: string): number {
+export function distanceThresholdMode2Index(mode: 'mean' | 'min' | 'max'): number {
   return {
     mean: 0,
     min: 1,
