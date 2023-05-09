@@ -10,8 +10,8 @@ import {
   PointTuple,
   Point,
   Node,
-} from "./types";
-import dagre from "./dagre/index";
+} from './types';
+import dagre from './dagre/index';
 import {
   isArray,
   isNumber,
@@ -19,19 +19,19 @@ import {
   getEdgeTerminal,
   getFunc,
   isString,
-} from "../util";
-import { Base } from "./base";
-import { Graph as DagreGraph } from "./dagre/graph";
+} from '../util';
+import { Base } from './base';
+import { Graph as DagreGraph } from './dagre/graph';
 
 /**
  * 层次布局
  */
 export class DagreLayout extends Base {
   /** layout 方向, 可选 TB, BT, LR, RL */
-  public rankdir: "TB" | "BT" | "LR" | "RL" = "TB";
+  public rankdir: 'TB' | 'BT' | 'LR' | 'RL' = 'TB';
 
   /** 节点对齐方式，可选 UL, UR, DL, DR */
-  public align: undefined | "UL" | "UR" | "DL" | "DR";
+  public align: undefined | 'UL' | 'UR' | 'DL' | 'DR';
 
   /** 布局的起始（左上角）位置 */
   public begin: PointTuple;
@@ -93,7 +93,7 @@ export class DagreLayout extends Base {
 
   public getDefaultCfg() {
     return {
-      rankdir: "TB", // layout 方向, 可选 TB, BT, LR, RL
+      rankdir: 'TB', // layout 方向, 可选 TB, BT, LR, RL
       align: undefined, // 节点对齐方式，可选 UL, UR, DL, DR
       nodeSize: undefined, // 节点大小
       nodesepFunc: undefined, // 节点水平间距(px)
@@ -149,6 +149,20 @@ export class DagreLayout extends Base {
       nodeComboMap[node.comboId].push(node.id);
     });
 
+    let sortedNodes: OutNode[] = [];
+    const visitedMap: { [id: string]: boolean } = {};
+    if (self.nodeOrder?.length) {
+      self.nodeOrder.forEach((id) => {
+        visitedMap[id] = true;
+        sortedNodes.push(self.nodeMap[id]);
+      });
+      nodes.forEach((node) => {
+        if (!visitedMap[node.id]) sortedNodes.push(node);
+      });
+    } else {
+      sortedNodes = nodes;
+    }
+
     let nodeSizeFunc: (d?: any) => number[];
     if (!nodeSize) {
       nodeSizeFunc = (d: any) => {
@@ -173,7 +187,7 @@ export class DagreLayout extends Base {
     let horisep: Function = nodesepfunc;
     let vertisep: Function = ranksepfunc;
 
-    if (rankdir === "LR" || rankdir === "RL") {
+    if (rankdir === 'LR' || rankdir === 'RL') {
       horisep = ranksepfunc;
       vertisep = nodesepfunc;
     }
@@ -202,7 +216,7 @@ export class DagreLayout extends Base {
       });
     }
 
-    nodes
+    sortedNodes
       .filter((node) => node.layout !== false)
       .forEach((node) => {
         const size = nodeSizeFunc(node);
@@ -229,8 +243,8 @@ export class DagreLayout extends Base {
 
     edges.forEach((edge) => {
       // dagrejs Wiki https://github.com/dagrejs/dagre/wiki#configuring-the-layout
-      const source = getEdgeTerminal(edge, "source");
-      const target = getEdgeTerminal(edge, "target");
+      const source = getEdgeTerminal(edge, 'source');
+      const target = getEdgeTerminal(edge, 'target');
       if (this.layoutNode(source) && this.layoutNode(target)) {
         g.setEdge(source, target, {
           weight: edge.weight || 1,
@@ -295,23 +309,22 @@ export class DagreLayout extends Base {
       dBegin[1] = begin[1] - minY;
     }
 
-    const isHorizontal = rankdir === "LR" || rankdir === "RL";
+    const isHorizontal = rankdir === 'LR' || rankdir === 'RL';
     // 变形为辐射
     if (radial) {
       const { focusNode, ranksep, getRadialPos } = this;
       const focusId = isString(focusNode) ? focusNode : focusNode?.id;
       const focusLayer = focusId ? g.node(focusId)?._rank : 0;
       const layers: any[] = [];
-      const dim = isHorizontal ? "y" : "x";
-      const sizeDim = isHorizontal ? "height" : "width";
+      const dim = isHorizontal ? 'y' : 'x';
+      const sizeDim = isHorizontal ? 'height' : 'width';
       // 找到整个图作为环的坐标维度（dim）的最大、最小值，考虑节点宽度
       let min = Infinity;
       let max = -Infinity;
       g.nodes().forEach((node: any) => {
         const coord = g.node(node)! as any;
-        const i = nodes.findIndex((it) => it.id === node);
-        if (!nodes[i]) return;
-        const currentNodesep = nodesepfunc(nodes[i]);
+        if (!self.nodeMap[node]) return;
+        const currentNodesep = nodesepfunc(self.nodeMap[node]);
 
         if (focusLayer === 0) {
           if (!layers[coord._rank]) {
@@ -409,15 +422,14 @@ export class DagreLayout extends Base {
             arcRange
           );
           // 将新坐标写入源数据
-          const i = nodes.findIndex((it) => it.id === node);
-          if (!nodes[i]) return;
-          nodes[i].x = newX + dBegin[0];
-          nodes[i].y = newY + dBegin[1];
+          if (!self.nodeMap[node]) return;
+          self.nodeMap[node].x = newX + dBegin[0];
+          self.nodeMap[node].y = newY + dBegin[1];
           // @ts-ignore: pass layer order to data for increment layout use
-          nodes[i]._order = coord._order;
+          self.nodeMap[node]._order = coord._order;
 
           // 找到本层最大的一个 ranksep，作为下一层与本层的间隙，叠加到下一层的半径上
-          const currentNodeRanksep = ranksepfunc(nodes[i]);
+          const currentNodeRanksep = ranksepfunc(self.nodeMap[node]);
           if (maxRanksep < currentNodeRanksep) maxRanksep = currentNodeRanksep;
         });
         return maxRanksep;
@@ -436,12 +448,12 @@ export class DagreLayout extends Base {
         // 第一层只有一个节点，直接放在圆心，初始半径设定为 0
         if (isFirstLevel && layerNodes.nodes.length === 1) {
           // 将新坐标写入源数据
-          const i = nodes.findIndex((it) => it.id === layerNodes.nodes[0]);
-          if (i <= -1) return;
-          nodes[i].x = dBegin[0];
-          nodes[i].y = dBegin[1];
+          const nodeId = layerNodes.nodes[0];
+          if (!self.nodeMap[nodeId]) return;
+          self.nodeMap[nodeId].x = dBegin[0];
+          self.nodeMap[nodeId].y = dBegin[1];
           radiusMap[layerNodes.nodes[0]] = 0;
-          radius = ranksepfunc(nodes[i]);
+          radius = ranksepfunc(self.nodeMap[nodeId]);
           isFirstLevel = false;
           return;
         }
@@ -477,17 +489,17 @@ export class DagreLayout extends Base {
       g.edges().forEach((edge: any) => {
         const coord = g.edge(edge);
         const i = edges.findIndex((it) => {
-          const source = getEdgeTerminal(it, "source");
-          const target = getEdgeTerminal(it, "target");
+          const source = getEdgeTerminal(it, 'source');
+          const target = getEdgeTerminal(it, 'target');
           return source === edge.v && target === edge.w;
         });
         if (i <= -1) return;
         if (
           self.edgeLabelSpace &&
           self.controlPoints &&
-          edges[i].type !== "loop"
+          edges[i].type !== 'loop'
         ) {
-          const otherDim = dim === "x" ? "y" : "x";
+          const otherDim = dim === 'x' ? 'y' : 'x';
           const controlPoints = coord?.points?.slice(
             1,
             coord.points.length - 1
@@ -521,7 +533,7 @@ export class DagreLayout extends Base {
       });
     } else {
       const layerCoords: Set<number> = new Set();
-      const isInvert = rankdir === "BT" || rankdir === "RL";
+      const isInvert = rankdir === 'BT' || rankdir === 'RL';
       const layerCoordSort = isInvert
         ? (a: number, b: number) => b - a
         : (a: number, b: number) => a - b;
@@ -560,16 +572,21 @@ export class DagreLayout extends Base {
       g.edges().forEach((edge: any) => {
         const coord = g.edge(edge);
         const i = edges.findIndex((it) => {
-          const source = getEdgeTerminal(it, "source");
-          const target = getEdgeTerminal(it, "target");
+          const source = getEdgeTerminal(it, 'source');
+          const target = getEdgeTerminal(it, 'target');
           return source === edge.v && target === edge.w;
         });
         if (i <= -1) return;
         if (
           self.edgeLabelSpace &&
           self.controlPoints &&
-          edges[i].type !== "loop"
+          edges[i].type !== 'loop'
         ) {
+          coord?.points?.forEach((point: any) => {
+            point.x += dBegin[0];
+            point.y += dBegin[1];
+          });
+
           const sourceNode = self.nodeMap[edge.v];
           const targetNode = self.nodeMap[edge.w];
           edges[i].controlPoints = getControlPoints(
@@ -581,10 +598,6 @@ export class DagreLayout extends Base {
             isDifferentLayer,
             filterControlPointsOutOfBoundary
           );
-          edges[i].controlPoints.forEach((point: any) => {
-            point.x += dBegin[0];
-            point.y += dBegin[1];
-          });
         }
       });
     }
@@ -617,7 +630,7 @@ export class DagreLayout extends Base {
   }
 
   public getType() {
-    return "dagre";
+    return 'dagre';
   }
 }
 
