@@ -4,39 +4,39 @@ use std::marker::PhantomData;
 
 pub use parallel::*;
 
-pub struct Node<'a, T: Coord> {
+pub struct Node<'a> {
     #[cfg(test)]
     pub ind: usize,
-    pub mass: &'a T,
-    pub n2_iter: NodeIter2<'a, T>,
-    pub pos: &'a [T],
-    pub speed: &'a mut [T],
+    pub mass: &'a f32,
+    pub n2_iter: NodeIter2<'a>,
+    pub pos: &'a [f32],
+    pub speed: &'a mut [f32],
 }
 
-pub struct NodeIter<'a, T: Coord> {
+pub struct NodeIter<'a> {
     pub ind: usize,
-    pub(crate) layout: SendPtr<Layout<T>>,
+    pub(crate) layout: SendPtr<Layout>,
     pub offset: usize,
-    pub(crate) _phantom: PhantomData<&'a mut Layout<T>>,
+    pub(crate) _phantom: PhantomData<&'a mut Layout>,
 }
 
-pub struct Node2<'a, T: Coord> {
+pub struct Node2<'a> {
     #[cfg(test)]
     pub ind: usize,
-    pub mass: &'a T,
-    pub pos: &'a [T],
-    pub speed: &'a mut [T],
+    pub mass: &'a f32,
+    pub pos: &'a [f32],
+    pub speed: &'a mut [f32],
 }
 
-pub struct NodeIter2<'a, T: Coord> {
+pub struct NodeIter2<'a> {
     pub ind: usize,
-    pub(crate) layout: SendPtr<Layout<T>>,
+    pub(crate) layout: SendPtr<Layout>,
     pub offset: usize,
-    pub(crate) _phantom: PhantomData<&'a mut Layout<T>>,
+    pub(crate) _phantom: PhantomData<&'a mut Layout>,
 }
 
-impl<'a, T: Coord> Iterator for NodeIter<'a, T> {
-    type Item = Node<'a, T>;
+impl<'a> Iterator for NodeIter<'a> {
+    type Item = Node<'a>;
 
     fn next(&mut self) -> Option<Self::Item> {
         let layout = unsafe { self.layout.0.as_mut() };
@@ -74,8 +74,8 @@ impl<'a, T: Coord> Iterator for NodeIter<'a, T> {
     }
 }
 
-impl<'a, T: Coord> Iterator for NodeIter2<'a, T> {
-    type Item = Node2<'a, T>;
+impl<'a> Iterator for NodeIter2<'a> {
+    type Item = Node2<'a>;
 
     fn next(&mut self) -> Option<Self::Item> {
         let layout = unsafe { self.layout.0.as_mut() };
@@ -109,44 +109,44 @@ impl<'a, T: Coord> Iterator for NodeIter2<'a, T> {
 mod parallel {
     use super::*;
 
-    pub struct NodePar<'a, T: Coord> {
+    pub struct NodePar<'a> {
         #[cfg(test)]
         pub ind: usize,
-        pub mass: &'a T,
-        pub n2_iter: NodeParIter2<'a, T>,
-        pub pos: &'a [T],
-        pub speed: &'a mut [T],
+        pub mass: &'a f32,
+        pub n2_iter: NodeParIter2<'a>,
+        pub pos: &'a [f32],
+        pub speed: &'a mut [f32],
     }
 
-    pub struct NodeParIter<'a, T: Coord> {
+    pub struct NodeParIter<'a> {
         pub end: usize,
         pub ind: usize,
-        pub(crate) layout: SendPtr<Layout<T>>,
+        pub(crate) layout: SendPtr<Layout>,
         pub n2_start: usize,
         pub n2_start_ind: usize,
         pub n2_end: usize,
         pub offset: usize,
-        pub(crate) _phantom: PhantomData<&'a mut Layout<T>>,
+        pub(crate) _phantom: PhantomData<&'a mut Layout>,
     }
 
-    pub struct NodePar2<'a, T: Coord> {
+    pub struct NodePar2<'a> {
         #[cfg(test)]
         pub ind: usize,
-        pub mass: &'a T,
-        pub pos: &'a [T],
-        pub speed: &'a mut [T],
+        pub mass: &'a f32,
+        pub pos: &'a [f32],
+        pub speed: &'a mut [f32],
     }
 
-    pub struct NodeParIter2<'a, T: Coord> {
+    pub struct NodeParIter2<'a> {
         pub end: usize,
         pub ind: usize,
-        pub(crate) layout: SendPtr<Layout<T>>,
+        pub(crate) layout: SendPtr<Layout>,
         pub offset: usize,
-        pub(crate) _phantom: PhantomData<&'a mut Layout<T>>,
+        pub(crate) _phantom: PhantomData<&'a mut Layout>,
     }
 
-    impl<'a, T: Coord> Iterator for NodeParIter<'a, T> {
-        type Item = NodePar<'a, T>;
+    impl<'a> Iterator for NodeParIter<'a> {
+        type Item = NodePar<'a>;
 
         fn next(&mut self) -> Option<Self::Item> {
             if self.offset < self.end {
@@ -187,8 +187,8 @@ mod parallel {
         }
     }
 
-    impl<'a, T: Coord> Iterator for NodeParIter2<'a, T> {
-        type Item = NodePar2<'a, T>;
+    impl<'a> Iterator for NodeParIter2<'a> {
+        type Item = NodePar2<'a>;
 
         fn next(&mut self) -> Option<Self::Item> {
             if self.offset < self.end {

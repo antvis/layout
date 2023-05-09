@@ -44,8 +44,6 @@ version = "0.0.1"
 dependencies = [
  "alloc_counter",
  "itertools",
- "maths-traits",
- "num-traits",
  "plotters",
  "rayon",
  "scanrs",
@@ -552,15 +550,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "abb12e687cfb44aa40f41fc3978ef76448f9b6038cad6aef4259d3c095a2382e"
 dependencies = [
  "cfg-if",
-]
-
-[[package]]
-name = "maths-traits"
-version = "0.2.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "22f026e1cd0e5f4d5a794e119ba9b3caeef6de22b2d772606b59dda2cdd52d5c"
-dependencies = [
- "num-traits",
 ]
 
 [[package]]

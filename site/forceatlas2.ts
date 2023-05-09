@@ -1,12 +1,10 @@
 import graphologyLayout from "graphology-layout-forceatlas2";
 import { ForceAtlas2Layout, Graph } from "../packages/layout";
+import { outputAntvLayout, outputGraphology } from "./util";
 import {
-  outputAntvLayout,
-  outputGraphology,
-  outputAntvLayoutWASM,
-  distanceThresholdMode,
-} from "./util";
-import type { Layouts } from "../packages/layout-wasm";
+  Threads,
+  ForceAtlas2Layout as ForceAtlas2WASMLayout,
+} from "../packages/layout-wasm";
 import { CANVAS_SIZE } from "./types";
 import { CommonLayoutOptions } from "./main";
 
@@ -60,30 +58,23 @@ export async function antvlayout(
 }
 
 export async function antvlayoutWASM(
-  { nodes, edges, masses, weights }: any,
+  graphModel: Graph,
   { iterations, min_movement, distance_threshold_mode }: CommonLayoutOptions,
-  { forceatlas2 }: Layouts
+  threads: Threads
 ) {
-  const { nodes: positions } = await forceatlas2({
-    nodes,
-    edges,
-    masses,
-    weights,
-    iterations: iterations || ITERATIONS,
-    min_movement,
-    distance_threshold_mode: distanceThresholdMode(distance_threshold_mode),
+  const forceatlas2 = new ForceAtlas2WASMLayout({
+    threads,
+    maxIteration: iterations || ITERATIONS,
+    minMovement: min_movement,
+    distanceThresholdMode: distance_threshold_mode,
+    height: CANVAS_SIZE,
+    width: CANVAS_SIZE,
     center: [CANVAS_SIZE / 2, CANVAS_SIZE / 2],
-    ka: 1.0,
     kg,
     kr,
-    speed: 0.1,
-    prevent_overlapping: false,
-    node_radius: 10,
-    kr_prime: 10,
-    strong_gravity: false,
-    lin_log: false,
-    dissuade_hubs: false,
+    ks: 0.1,
   });
 
-  return outputAntvLayoutWASM(positions, edges);
+  const positions = await forceatlas2.execute(graphModel);
+  return outputAntvLayout(positions);
 }

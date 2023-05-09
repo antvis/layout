@@ -1,6 +1,6 @@
 {
   "name": "@antv/layout-wasm",
-  "version": "1.0.0",
+  "version": "1.2.0",
   "description": "A WASM binding of rust implementation for graph layout algorithms.",
   "license": "MIT",
   "repository": {
@@ -30,9 +30,11 @@
     "build:esm": "tsc",
     "build:umd": "webpack --config webpack.config.js --mode production",
     "build": "npm run clean && npm run build:wasm && npm run build:esm && npm run build:umd",
-    "clean": "rimraf pkg pkg-parallel pkg-node"
+    "clean": "rimraf dist pkg pkg-parallel pkg-node"
   },
   "dependencies": {
+    "@antv/layout": "workspace:*",
+    "@antv/util": "^3.3.2",
     "comlink": "^4.3.1",
     "wasm-feature-detect": "^1.2.10",
     "tslib": "^2.5.0"

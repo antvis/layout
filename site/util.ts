@@ -44,28 +44,3 @@ export function outputAntvLayout(graphModel: any) {
 
   return { nodes, edges };
 }
-
-export function outputAntvLayoutWASM(
-  nodes: number[],
-  edges: [number, number][]
-) {
-  const outputEdges: number[] = [];
-  edges.forEach(([source, target]) => {
-    outputEdges.push(
-      nodes[source * 2],
-      nodes[source * 2 + 1],
-      nodes[target * 2],
-      nodes[target * 2 + 1]
-    );
-  });
-
-  return { nodes, edges: outputEdges };
-}
-
-export function distanceThresholdMode(mode: string): number {
-  return {
-    mean: 0,
-    min: 1,
-    max: 2,
-  }[mode];
-}

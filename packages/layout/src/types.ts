@@ -277,8 +277,22 @@ export interface CentripetalOptions {
     centerStrength?: number;
   };
 }
-export interface ForceLayoutOptions {
+
+interface CommonForceLayoutOptions {
   center?: PointTuple;
+  minMovement?: number;
+  maxIteration?: number;
+  distanceThresholdMode?: "mean" | "max" | "min";
+
+  /**
+   * If distance is specified, sets the maximum distance between nodes over which this force is considered. 
+   * If distance is not specified, returns the current maximum distance, which defaults to infinity. 
+   * Specifying a finite maximum distance improves performance and produces a more localized layout.
+   */
+  maxDistance?: number;
+}
+
+export interface ForceLayoutOptions extends CommonForceLayoutOptions {
   width?: number;
   height?: number;
   linkDistance?: number | ((edge?: Edge, source?: any, target?: any) => number);
@@ -287,8 +301,6 @@ export interface ForceLayoutOptions {
   preventOverlap?: boolean;
   nodeSize?: number | number[] | ((d?: Node) => number);
   nodeSpacing?: number | ((d?: Node) => number);
-  minMovement?: number;
-  maxIteration?: number;
   damping?: number;
   maxSpeed?: number;
   coulombDisScale?: number;
@@ -301,7 +313,6 @@ export interface ForceLayoutOptions {
   nodeClusterBy?: string;
   clusterNodeStrength?: number | ((node: Node) => number);
   collideStrength?: number;
-  distanceThresholdMode?: "mean" | "max" | "min";
   onTick?: (data: LayoutMapping) => void;
   getMass?: (node?: Node) => number;
   getCenter?: (node?: Node, degree?: number) => number[];
@@ -313,8 +324,7 @@ export interface ForceLayoutOptions {
   }) => void;
 }
 
-export interface ForceAtlas2LayoutOptions {
-  center?: PointTuple;
+export interface ForceAtlas2LayoutOptions extends CommonForceLayoutOptions {
   width?: number;
   height?: number;
   kr?: number;
@@ -322,7 +332,6 @@ export interface ForceAtlas2LayoutOptions {
   ks?: number;
   ksmax?: number;
   tao?: number;
-  maxIteration?: number;
   mode?: "normal" | "linlog";
   preventOverlap?: boolean;
   dissuadeHubs?: boolean;
@@ -331,9 +340,7 @@ export interface ForceAtlas2LayoutOptions {
   nodeSize?: number | number[] | ((node?: Node) => number);
   onTick?: (data: LayoutMapping) => void;
 }
-export interface FruchtermanLayoutOptions {
-  center?: PointTuple;
-  maxIteration?: number;
+export interface FruchtermanLayoutOptions extends CommonForceLayoutOptions {
   width?: number;
   height?: number;
   gravity?: number;

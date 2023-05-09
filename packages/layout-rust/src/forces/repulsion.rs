@@ -3,73 +3,75 @@ use crate::{layout::*, util::*};
 use itertools::izip;
 use rayon::prelude::*;
 
-pub fn apply_repulsion_forceatlas2_2d_parallel<T: Copy + Coord + std::fmt::Debug + Send + Sync>(
-    layout: &mut Layout<T>,
+pub fn apply_repulsion_forceatlas2_2d_parallel(
+    layout: &mut Layout,
 ) {
     let kr = layout.settings.kr;
+    let max_distance2 = layout.settings.max_distance * layout.settings.max_distance;
     for chunk_iter in layout.iter_par_nodes(layout.settings.chunk_size.unwrap()) {
         chunk_iter.for_each(|n1_iter| {
             for n1 in n1_iter {
-                let n1_mass = *n1.mass + T::one();
+                let n1_mass = *n1.mass + 1.0;
                 for n2 in n1.n2_iter {
                     let dx = unsafe { *n2.pos.get_unchecked(0) - *n1.pos.get_unchecked(0) };
                     let dy = unsafe { *n2.pos.get_unchecked(1) - *n1.pos.get_unchecked(1) };
 
                     let d2 = dx * dx + dy * dy;
-                    if d2.is_zero() {
-                        continue;
+                    if d2 < max_distance2 {
+
+                        let f = n1_mass * (*n2.mass + 1.0) / d2 * kr;
+
+                        let vx = f * dx;
+                        let vy = f * dy;
+
+                        unsafe { *n1.speed.get_unchecked_mut(0) -= vx };
+                        unsafe { *n1.speed.get_unchecked_mut(1) -= vy };
+                        unsafe { *n2.speed.get_unchecked_mut(0) += vx };
+                        unsafe { *n2.speed.get_unchecked_mut(1) += vy };
                     }
-
-                    let f = n1_mass * (*n2.mass + T::one()) / d2 * kr;
-
-                    let vx = f * dx;
-                    let vy = f * dy;
-                    unsafe { n1.speed.get_unchecked_mut(0) }.sub_assign(vx); // n1_speed[0] -= f * dx
-                    unsafe { n1.speed.get_unchecked_mut(1) }.sub_assign(vy); // n1_speed[1] -= f * dy
-                    unsafe { n2.speed.get_unchecked_mut(0) }.add_assign(vx); // n2_speed[0] += f * dx
-                    unsafe { n2.speed.get_unchecked_mut(1) }.add_assign(vy); // n2_speed[1] += f * dy
                 }
             }
         });
     }
 }
 
-pub fn apply_repulsion_forceatlas2_3d_parallel<T: Copy + Coord + std::fmt::Debug + Send + Sync>(
-    layout: &mut Layout<T>,
+pub fn apply_repulsion_forceatlas2_3d_parallel(
+    layout: &mut Layout,
 ) {
     let kr = layout.settings.kr;
     for chunk_iter in layout.iter_par_nodes(layout.settings.chunk_size.unwrap()) {
         chunk_iter.for_each(|n1_iter| {
             for n1 in n1_iter {
-                let n1_mass = *n1.mass + T::one();
+                let n1_mass = *n1.mass + 1.0;
                 for n2 in n1.n2_iter {
                     let dx = unsafe { *n2.pos.get_unchecked(0) - *n1.pos.get_unchecked(0) };
                     let dy = unsafe { *n2.pos.get_unchecked(1) - *n1.pos.get_unchecked(1) };
                     let dz = unsafe { *n2.pos.get_unchecked(2) - *n1.pos.get_unchecked(2) };
 
                     let d2 = dx * dx + dy * dy + dz * dz;
-                    if d2.is_zero() {
+                    if d2 == 0.0 {
                         continue;
                     }
 
-                    let f = n1_mass * (*n2.mass + T::one()) / d2 * kr;
+                    let f = n1_mass * (*n2.mass + 1.0) / d2 * kr;
 
                     let vx = f * dx;
                     let vy = f * dy;
                     let vz = f * dz;
-                    unsafe { n1.speed.get_unchecked_mut(0) }.sub_assign(vx);
-                    unsafe { n1.speed.get_unchecked_mut(1) }.sub_assign(vy);
-                    unsafe { n1.speed.get_unchecked_mut(2) }.sub_assign(vz);
-                    unsafe { n2.speed.get_unchecked_mut(0) }.add_assign(vx);
-                    unsafe { n2.speed.get_unchecked_mut(1) }.add_assign(vy);
-                    unsafe { n2.speed.get_unchecked_mut(2) }.add_assign(vz);
+
+                    unsafe { *n1.speed.get_unchecked_mut(0) -= vx };
+                    unsafe { *n1.speed.get_unchecked_mut(1) -= vy };
+                    unsafe { *n1.speed.get_unchecked_mut(2) -= vz };
+                    unsafe { *n2.speed.get_unchecked_mut(0) += vx };
+                    unsafe { *n2.speed.get_unchecked_mut(1) += vy };
+                    unsafe { *n2.speed.get_unchecked_mut(2) += vz };
                 }
             }
         });
     }
 }
 
-pub fn apply_repulsion_forceatlas2_po<T: Coord + std::fmt::Debug>(layout: &mut Layout<T>) {
+pub fn apply_repulsion_forceatlas2_po(layout: &mut Layout) {
     let mut di = valloc(layout.settings.dimensions);
     let (node_size, krprime) = unsafe {
         layout
@@ -80,7 +82,7 @@ pub fn apply_repulsion_forceatlas2_po<T: Coord + std::fmt::Debug>(layout: &mut L
     };
     for (n1, (n1_mass, n1_pos)) in layout.masses.iter().zip(layout.points.iter()).enumerate() {
         let mut n2_iter = layout.points.iter();
-        let n1_mass = n1_mass.clone() + T::one();
+        let n1_mass = n1_mass.clone() + 1.0;
         n2_iter.offset = (n1 + 1) * layout.settings.dimensions;
         for (n2, n2_pos) in (0..n1).zip(&mut n2_iter) {
             di.clone_from_slice(n2_pos);
@@ -90,10 +92,10 @@ pub fn apply_repulsion_forceatlas2_po<T: Coord + std::fmt::Debug>(layout: &mut L
                 .zip(n1_pos.iter())
                 .map(|(di, n1_pos)| {
                     *di -= n1_pos.clone();
-                    di.clone().pow_n(2u32)
+                    di.clone().powi(2)
                 })
-                .sum::<T>();
-            if d2.is_zero() {
+                .sum::<f32>();
+            if d2 == 0.0 {
                 continue;
             }
 
@@ -101,9 +103,9 @@ pub fn apply_repulsion_forceatlas2_po<T: Coord + std::fmt::Debug>(layout: &mut L
             let dprime = d.clone() - node_size.clone();
 
             let f = n1_mass.clone()
-                * (unsafe { layout.masses.get_unchecked(n2) }.clone() + T::one())
+                * (unsafe { layout.masses.get_unchecked(n2) }.clone() + 1.0)
                 / d2
-                * if dprime.positive() {
+                * if dprime < 0.0 {
                     layout.settings.kr.clone() / dprime
                 } else {
                     krprime.clone()
@@ -122,43 +124,46 @@ pub fn apply_repulsion_forceatlas2_po<T: Coord + std::fmt::Debug>(layout: &mut L
 }
 
 
-pub fn apply_repulsion_force2_2d_parallel<T: Copy + Coord + std::fmt::Debug + Send + Sync>(
-    layout: &mut Layout<T>,
+pub fn apply_repulsion_force2_2d_parallel(
+    layout: &mut Layout,
 ) {
     let factor = layout.settings.factor;
     let coulomb_dis_scale = layout.settings.coulomb_dis_scale;
     let node_strength = layout.settings.node_strength;
+    let weight = node_strength * factor / coulomb_dis_scale / coulomb_dis_scale;
+    let max_distance2 = layout.settings.max_distance * layout.settings.max_distance;
     for chunk_iter in layout.iter_par_nodes(layout.settings.chunk_size.unwrap()) {
         chunk_iter.for_each(|n1_iter| {
             for n1 in n1_iter {
-                // let n1_mass = *n1.mass;
+                let n1_mass = *n1.mass;
                 for n2 in n1.n2_iter {
+                    let n2_mass = *n2.mass;
                     let dx = unsafe { *n2.pos.get_unchecked(0) - *n1.pos.get_unchecked(0) };
                     let dy = unsafe { *n2.pos.get_unchecked(1) - *n1.pos.get_unchecked(1) };
 
                     let d2 = dx * dx + dy * dy;
 
-                    let dist = d2.sqrt() + T::from(0.01).unwrap_or_else(T::zero);
-                    let n_dist = (dist + T::from(0.1).unwrap_or_else(T::zero)) * coulomb_dis_scale;
-                    let direx = dx / dist;
-                    let direy = dy / dist;
-                    let param = node_strength * factor / (n_dist * n_dist);
+                    if d2 < max_distance2 {
+                        let d3 = d2.sqrt() * d2;
+                        let param = weight / d3;
 
-                    unsafe { n1.speed.get_unchecked_mut(0) }.sub_assign(direx * param); // n1_speed[0] -= f * dx
-                    unsafe { n1.speed.get_unchecked_mut(1) }.sub_assign(direy * param); // n1_speed[1] -= f * dy
-                    unsafe { n2.speed.get_unchecked_mut(0) }.add_assign(direx * param); // n2_speed[0] += f * dx
-                    unsafe { n2.speed.get_unchecked_mut(1) }.add_assign(direy * param); // n2_speed[1] += f * dy
+                        unsafe { *n1.speed.get_unchecked_mut(0) -= dx * param / n1_mass };
+                        unsafe { *n1.speed.get_unchecked_mut(1) -= dy * param / n1_mass };
+                        unsafe { *n2.speed.get_unchecked_mut(0) += dx * param / n2_mass };
+                        unsafe { *n2.speed.get_unchecked_mut(1) += dy * param / n2_mass };
+                    }
                 }
             }
         });
     }
 }
 
-pub fn apply_repulsion_fruchterman_2d_parallel<T: Copy + Coord + std::fmt::Debug + Send + Sync>(
-    layout: &mut Layout<T>,
+pub fn apply_repulsion_fruchterman_2d_parallel(
+    layout: &mut Layout,
 ) {
-    let k = &layout.settings.ka;
-    let k2 = *k * *k;
+    let k = layout.settings.ka;
+    let k2 = k * k;
+    let max_distance2 = layout.settings.max_distance * layout.settings.max_distance;
     for chunk_iter in layout.iter_par_nodes(layout.settings.chunk_size.unwrap()) {
         chunk_iter.for_each(|n1_iter| {
             for n1 in n1_iter {
@@ -166,14 +171,16 @@ pub fn apply_repulsion_fruchterman_2d_parallel<T: Copy + Coord + std::fmt::Debug
                     let dx = unsafe { *n2.pos.get_unchecked(0) - *n1.pos.get_unchecked(0) };
                     let dy = unsafe { *n2.pos.get_unchecked(1) - *n1.pos.get_unchecked(1) };
 
-                    let d2 = dx * dx + dy * dy + T::from(0.01).unwrap_or_else(T::zero);
-                    
-                    let param = k2 / d2;
+                    let d2 = dx * dx + dy * dy + 0.01;
 
-                    unsafe { n1.speed.get_unchecked_mut(0) }.sub_assign(dx * param);
-                    unsafe { n1.speed.get_unchecked_mut(1) }.sub_assign(dy * param);
-                    unsafe { n2.speed.get_unchecked_mut(0) }.add_assign(dx * param);
-                    unsafe { n2.speed.get_unchecked_mut(1) }.add_assign(dy * param);
+                    if d2 < max_distance2 {
+                        let param = k2 / d2;
+
+                        unsafe { *n1.speed.get_unchecked_mut(0) -= dx * param };
+                        unsafe { *n1.speed.get_unchecked_mut(1) -= dy * param };
+                        unsafe { *n2.speed.get_unchecked_mut(0) += dx * param };
+                        unsafe { *n2.speed.get_unchecked_mut(1) += dy * param };
+                    }
                 }
             }
         });

@@ -1,4 +1,4 @@
-export interface Layouts {
+export interface Threads {
   forceatlas2: (
     options: Forceatlas2LayoutOptions
   ) => Promise<{ nodes: number[] }>;
@@ -41,11 +41,16 @@ export interface FruchtermanLayoutOptions extends ForceLayoutOptions {
 
 export interface ForceLayoutOptions {
   nodes: number[];
-  edges: number[];
+  edges: number[][];
   masses: number[];
   weights: number[];
   iterations: number;
   min_movement: number;
   distance_threshold_mode: number;
   center: [number, number];
+  max_distance: number;
+}
+
+export interface WASMLayoutOptions {
+  threads: Threads;
 }
