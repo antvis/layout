@@ -130,7 +130,7 @@
         }
       }
     </style>
-  <script type="module" crossorigin src="/layout/assets/index.877136b9.js"></script>
+  <script type="module" crossorigin src="/layout/assets/index.db0768ad.js"></script>
   <link rel="modulepreload" href="/layout/assets/vendor.eaf49d67.js">
 </head>
   <body>
@@ -155,10 +155,10 @@
     <fieldset>
       <legend>Choose a dataset:</legend>
       <select name="dataset" id="dataset">
-        <option value="random-clusters" selected>random-clusters</option>
+        <option value="random-clusters">random-clusters</option>
         <option value="relations">relations</option>
         <option value="regions">regions</option>
-        <option value="netscience">netscience</option>
+        <option value="netscience" selected>netscience</option>
         <option value="eva">eva</option>
       </select>
       <p id="dataset-desc"></p>
@@ -167,14 +167,14 @@
     <fieldset>
       <legend>Choose a layout:</legend>
       <select name="layout" id="layout">
-        <option value="forceatlas2" selected>forceatlas2</option>
-        <option value="force2">force2</option>
+        <option value="forceatlas2">forceatlas2</option>
+        <option value="force2" selected>force2</option>
         <option value="fruchterman">fruchterman</option>
       </select>
 
       <div>
         <label for="iterations">Iterations:</label>
-        <input type="number" id="iterations" name="iterations" value="50" />
+        <input type="number" id="iterations" name="iterations" value="500" />
       </div>
       <div>
         <label for="min_movement">Min movement:</label>
@@ -187,18 +187,17 @@
           <option value="min">min</option>
           <option value="max">max</option>
         </select>
+          It means the condition to judge with min movement:
+          <ul>
+            <li>
+              'mean' means the layout stops while the nodes' average movement is smaller than min movement
+            </li>
+            <li>
+              'max' / 'min' means the layout stops while the nodes' maximum/minimum movement is smaller than min movement
+            </li>
+          </ul>
       </div>
-      <p>
-        Distance threshold mode means the condition to judge with min movement:
-        <ul>
-          <li>
-            'mean' means the layout stops while the nodes' average movement is smaller than min movement
-          </li>
-          <li>
-            'max' / 'min' means the layout stops while the nodes' maximum/minimum movement is smaller than min movement
-          </li>
-        </ul>
-      </p>
+      
     </fieldset>
 
     <fieldset>
@@ -261,7 +260,7 @@
           type="number"
           id="scaling"
           name="scaling"
-          value="0.4"
+          value="0.2"
         />
     </span>
 
