@@ -1,5 +1,12 @@
 # @antv/layout-gpu
 
+## 1.1.1
+
+### Patch Changes
+
+- Updated dependencies [ffbdcdb]
+  - @antv/layout@1.2.0
+
 ## 1.1.0
 
 ### Minor Changes
