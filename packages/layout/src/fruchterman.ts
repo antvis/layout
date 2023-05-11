@@ -137,6 +137,7 @@ export class FruchtermanLayout
         this.lastGraph.mergeNodeData(node.id, {
           x: node.data.x,
           y: node.data.y,
+          z: this.options.dimensions === 3 ? node.data.z : undefined
         })
       );
     }
@@ -163,6 +164,7 @@ export class FruchtermanLayout
 
     const formattedOptions = this.formatOptions(options);
     const {
+      dimensions,
       width,
       height,
       center,
@@ -186,6 +188,7 @@ export class FruchtermanLayout
         graph.mergeNodeData(nodes[0].id, {
           x: center[0],
           y: center[1],
+          z: dimensions === 3 ? center[2] : undefined
         });
       }
       const result = {
@@ -196,6 +199,7 @@ export class FruchtermanLayout
               ...nodes[0].data,
               x: center[0],
               y: center[1],
+              z: dimensions === 3 ? center[2] : undefined
             },
           },
         ],
@@ -254,6 +258,7 @@ export class FruchtermanLayout
             graph.mergeNodeData(id, {
               x: data.x,
               y: data.y,
+              z: dimensions === 3 ? data.z : undefined
             })
           );
         }
@@ -305,6 +310,7 @@ export class FruchtermanLayout
     options: FormattedOptions
   ) {
     const {
+      dimensions,
       height,
       width,
       gravity,
@@ -369,6 +375,9 @@ export class FruchtermanLayout
       const gravityForce = 0.01 * k * gravity;
       displacements[id].x -= gravityForce * (data.x - center[0]);
       displacements[id].y -= gravityForce * (data.y - center[1]);
+      if (dimensions === 3) {
+        displacements[id].z -= gravityForce * (data.z - center[2]);
+      }
     });
 
     // move
@@ -377,12 +386,15 @@ export class FruchtermanLayout
       if (isNumber(data.fx) && isNumber(data.fy)) {
         data.x = data.fx as number;
         data.y = data.fy as number;
+        if (dimensions === 3) {
+          data.z = data.fz as number;
+        }
         return;
       }
       if (!isNumber(data.x) || !isNumber(data.y)) return;
       const distLength = Math.sqrt(
         displacements[id].x * displacements[id].x +
-          displacements[id].y * displacements[id].y
+          displacements[id].y * displacements[id].y + (dimensions === 3 ? displacements[id].z * displacements[id].z : 0)
       );
       if (distLength > 0) {
         // && !n.isFixed()
@@ -393,6 +405,7 @@ export class FruchtermanLayout
         calcGraph.mergeNodeData(id, {
           x: data.x + (displacements[id].x / distLength) * limitedDist,
           y: data.y + (displacements[id].y / distLength) * limitedDist,
+          z: dimensions === 3 ? data.z + (displacements[id].z / distLength) * limitedDist : undefined
         });
       }
     });
@@ -414,7 +427,7 @@ export class FruchtermanLayout
   ) {
     const nodes = calcGraph.getAllNodes();
     nodes.forEach(({ data: v, id: vid }, i) => {
-      displacements[vid] = { x: 0, y: 0 };
+      displacements[vid] = { x: 0, y: 0, z: 0 };
       nodes.forEach(({ data: u, id: uid }, j) => {
         if (
           i <= j ||
@@ -427,19 +440,27 @@ export class FruchtermanLayout
         }
         let vecX = v.x - u.x;
         let vecY = v.y - u.y;
-        let lengthSqr = vecX * vecX + vecY * vecY;
+        let vecZ = this.options.dimensions === 3 ? v.z - u.z : 0;
+        let lengthSqr = vecX * vecX + vecY * vecY + vecZ * vecZ;
         if (lengthSqr === 0) {
           lengthSqr = 1;
           vecX = 0.01;
           vecY = 0.01;
+          vecZ = 0.01;
         }
         const common = k2 / lengthSqr;
         const dispX = vecX * common;
         const dispY = vecY * common;
+        const dispZ = vecZ * common;
         displacements[vid].x += dispX;
         displacements[vid].y += dispY;
         displacements[uid].x -= dispX;
         displacements[uid].y -= dispY;
+
+        if (this.options.dimensions === 3) {
+          displacements[vid].z += dispZ;
+          displacements[uid].z -= dispZ;
+        }
       });
     });
   }
@@ -467,13 +488,20 @@ export class FruchtermanLayout
       }
       const vecX = v.x - u.x;
       const vecY = v.y - u.y;
-      const common = Math.sqrt(vecX * vecX + vecY * vecY) / k;
+      const vecZ = this.options.dimensions === 3 ? v.z - u.z : 0;
+      const common = Math.sqrt(vecX * vecX + vecY * vecY + vecZ * vecZ) / k;
       const dispX = vecX * common;
       const dispY = vecY * common;
+      const dispZ = vecZ * common;
       displacements[source].x += dispX;
       displacements[source].y += dispY;
       displacements[target].x -= dispX;
       displacements[target].y -= dispY;
+
+      if (this.options.dimensions === 3) {
+        displacements[source].z += dispZ;
+        displacements[target].z -= dispZ;
+      }
     });
   }
 }

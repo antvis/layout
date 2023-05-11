@@ -93,11 +93,12 @@ If you can't control the server, try this hacky workaround which implemented wit
 
 ### Common force-directed layout options
 
-- `center` **[number, number]** The center of the graph. e.g. `[0, 0]`
+- `center` **[number, number] | [number, number, number]** The center of the graph. e.g. `[0, 0]` or `[0, 0, 0]` in 3-dimensional scene.
 - `maxIteration` **number**
 - `minMovement` **number** When the average/minimum/maximum (according to `distanceThresholdMode`) movement of nodes in one iteration is smaller than minMovement, terminate the layout.
 - `distanceThresholdMode` **'mean' | 'max' ｜ 'min'** The condition to judge with minMovement, `'mean'` means the layout stops while the nodes' average movement is smaller than minMovement, `'max' / 'min'` means the layout stops while the nodes' maximum/minimum movement is smaller than minMovement. `'mean'` by default
 - `maxDistance` **number** If distance is specified, sets the maximum distance between nodes over which this force is considered. If distance is not specified, returns the current maximum distance, which defaults to `Infinity`. Specifying a finite maximum distance improves performance and produces a more localized layout.
+- `dimensions` **number** Dimensions of coordinates, default to `2`.
 
 ### ForceAtlas2
 

@@ -1,12 +1,10 @@
-import graphologyLayout from "graphology-layout-forceatlas2";
-import { ForceAtlas2Layout, Graph } from "../packages/layout";
-import { outputAntvLayout, outputGraphology } from "./util";
+import { ForceAtlas2Layout, Graph } from "../../packages/layout";
+import { outputAntvLayout } from "./util";
 import {
   Threads,
   ForceAtlas2Layout as ForceAtlas2WASMLayout,
-} from "../packages/layout-wasm";
-import { CANVAS_SIZE } from "./types";
-import { CommonLayoutOptions } from "./main";
+} from "../../packages/layout-wasm";
+import { CANVAS_SIZE, CommonLayoutOptions } from "../types";
 
 export interface ForceAtlas2LayoutOptions {
   iterations: number;
@@ -18,33 +16,12 @@ const ITERATIONS = 100;
 const kg = 1;
 const kr = 1;
 
-export async function graphology(
-  graph: any,
-  { iterations }: CommonLayoutOptions
-) {
-  const positions = graphologyLayout(graph, {
-    settings: {
-      barnesHutOptimize: false,
-      strongGravityMode: false,
-      gravity: kg,
-      scalingRatio: kr,
-      slowDown: 1,
-      // adjustSizes: true,
-    },
-    iterations: iterations || ITERATIONS,
-    getEdgeWeight: "weight",
-  });
-  return outputGraphology(graph, positions, (node) => {
-    node.x = node.x + CANVAS_SIZE / 2;
-    node.y = node.y + CANVAS_SIZE / 2;
-  });
-}
-
 export async function antvlayout(
   graphModel: Graph,
   { iterations }: CommonLayoutOptions
 ) {
   const forceAtlas2 = new ForceAtlas2Layout({
+    dimensions: 3,
     kr,
     kg,
     ks: 0.1,
@@ -64,6 +41,7 @@ export async function antvlayoutWASM(
 ) {
   const forceatlas2 = new ForceAtlas2WASMLayout({
     threads,
+    dimensions: 3,
     maxIteration: iterations || ITERATIONS,
     minMovement: min_movement,
     distanceThresholdMode: distance_threshold_mode,

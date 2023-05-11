@@ -1,12 +1,10 @@
-import { ForceLayout, Graph } from "../packages/layout";
-// import { GForceLayout } from "../packages/layout-gpu";
+import { ForceLayout, Graph } from "../../packages/layout";
 import { outputAntvLayout } from "./util";
-import { CANVAS_SIZE } from "./types";
+import { CANVAS_SIZE, CommonLayoutOptions } from "../types";
 import {
   Threads,
   ForceLayout as ForceWASMLayout,
-} from "../packages/layout-wasm";
-import { CommonLayoutOptions } from "./main";
+} from "../../packages/layout-wasm";
 
 const ITERATIONS = 100;
 const gravity = 10;
@@ -24,6 +22,7 @@ export async function antvlayout(
   { iterations, min_movement, distance_threshold_mode }: CommonLayoutOptions
 ) {
   const force2 = new ForceLayout({
+    dimensions: 3,
     factor,
     gravity,
     linkDistance,
@@ -34,44 +33,17 @@ export async function antvlayout(
     maxSpeed,
     minMovement: min_movement,
     interval,
-    // clusterNodeStrength: 20,
     preventOverlap: true,
     distanceThresholdMode: distance_threshold_mode,
     maxIteration: iterations || ITERATIONS,
     width: CANVAS_SIZE,
     height: CANVAS_SIZE,
-    center: [CANVAS_SIZE / 2, CANVAS_SIZE / 2],
+    center: [CANVAS_SIZE / 2, CANVAS_SIZE / 2, 0],
   });
   const positions = await force2.execute(graphModel);
 
   return outputAntvLayout(positions);
 }
-
-// export async function antvlayoutGPU(
-//   graphModel: any,
-//   { iterations, min_movement, distance_threshold_mode }: CommonLayoutOptions
-// ) {
-//   const force2 = new GForceLayout({
-//     factor,
-//     gravity,
-//     linkDistance,
-//     edgeStrength,
-//     nodeStrength,
-//     coulombDisScale,
-//     damping,
-//     maxSpeed,
-//     minMovement: min_movement,
-//     interval,
-//     // clusterNodeStrength: 20,
-//     // preventOverlap: true,
-//     distanceThresholdMode: distance_threshold_mode,
-//     maxIteration: iterations || ITERATIONS,
-//     center: [CANVAS_SIZE / 2, CANVAS_SIZE / 2],
-//   });
-//   const positions = await force2.execute(graphModel);
-
-//   return outputAntvLayout(positions);
-// }
 
 export async function antvlayoutWASM(
   graphModel: Graph,
@@ -80,12 +52,13 @@ export async function antvlayoutWASM(
 ) {
   const force = new ForceWASMLayout({
     threads,
+    dimensions: 3,
     maxIteration: iterations || ITERATIONS,
     minMovement: min_movement,
     distanceThresholdMode: distance_threshold_mode,
     height: CANVAS_SIZE,
     width: CANVAS_SIZE,
-    center: [CANVAS_SIZE / 2, CANVAS_SIZE / 2],
+    center: [CANVAS_SIZE / 2, CANVAS_SIZE / 2, 0],
     factor,
     gravity,
     linkDistance,

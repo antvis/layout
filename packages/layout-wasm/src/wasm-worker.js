@@ -1,6 +1,7 @@
 import * as Comlink from "comlink";
 
 const DEFAULT_LAYOUT_OPTIONS = {
+  dimensions: 2,
   chunk_size: 256,
   min_movement: 0.4,
   distance_threshold_mode: 0, // mean

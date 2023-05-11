@@ -12,6 +12,7 @@ import {
 export interface CalcNodeData extends NodeData {
   x: number;
   y: number;
+  z?: number;
   mass: number;
   nodeStrength: number;
 }

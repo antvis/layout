@@ -1,3 +1,4 @@
+import { resolve } from "path";
 import { defineConfig } from "vite";
 
 export default defineConfig({
@@ -8,6 +9,15 @@ export default defineConfig({
   },
   publicDir: "../packages/layout-wasm/dist",
   base: "/layout/",
+  build: {
+    rollupOptions: {
+      input: {
+        main: resolve(__dirname, "site/index.html"),
+        benchmark: resolve(__dirname, "site/benchmark/index.html"),
+        "3d": resolve(__dirname, "site/3d/index.html"),
+      },
+    },
+  },
   plugins: [
     {
       name: "isolation",

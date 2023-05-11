@@ -25,11 +25,11 @@ impl Attraction for Layout {
     fn choose_attraction(settings: &Settings) -> fn(&mut Layout) {
         match settings.name {
             LayoutType::Fruchterman => match settings.dimensions {
-                3 => attraction::apply_attraction_fruchterman_2d,
+                3 => attraction::apply_attraction_fruchterman_3d,
                 _ => attraction::apply_attraction_fruchterman_2d,
             },
             LayoutType::Force2 => match settings.dimensions {
-                3 => attraction::apply_attraction_force2_2d,
+                3 => attraction::apply_attraction_force2_3d,
                 _ => attraction::apply_attraction_force2_2d,
             },
             LayoutType::ForceAtlas2 => {
@@ -59,7 +59,7 @@ impl Attraction for Layout {
                             attraction::apply_attraction_forceatlas2_dh
                         } else {
                             match settings.dimensions {
-                                // 3 => attraction::apply_attraction_forceatlas2_3d,
+                                3 => attraction::apply_attraction_forceatlas2_3d,
                                 _ => attraction::apply_attraction_forceatlas2_2d,
                             }
                         }
@@ -95,7 +95,7 @@ impl Repulsion for Layout {
             LayoutType::Fruchterman => {
                 match settings.dimensions {
                     3 => {
-                        return repulsion::apply_repulsion_fruchterman_2d_parallel;
+                        return repulsion::apply_repulsion_fruchterman_3d_parallel;
                     }
                     _ => {
                         return repulsion::apply_repulsion_fruchterman_2d_parallel;
@@ -105,7 +105,7 @@ impl Repulsion for Layout {
             LayoutType::Force2 => {
                 match settings.dimensions {
                     3 => {
-                        return repulsion::apply_repulsion_force2_2d_parallel;
+                        return repulsion::apply_repulsion_force2_3d_parallel;
                     }
                     _ => {
                         return repulsion::apply_repulsion_force2_2d_parallel;

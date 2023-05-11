@@ -21,9 +21,8 @@ import {
   FormatedOptions,
 } from "./types";
 
-// TODO: animate(not silence) and webworker
-
 const DEFAULTS_LAYOUT_OPTIONS: Partial<ForceLayoutOptions> = {
+  dimensions: 2,
   maxIteration: 500,
   gravity: 10,
   factor: 1,
@@ -148,6 +147,7 @@ export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
         this.lastGraph.mergeNodeData(node.id, {
           x: node.data.x,
           y: node.data.y,
+          z: this.options.dimensions === 3 ? node.data.z : undefined
         })
       );
     }
@@ -177,6 +177,7 @@ export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
 
     const formattedOptions = this.formatOptions(mergedOptions, graph);
     const {
+      dimensions,
       width,
       height,
       nodeSize,
@@ -188,13 +189,15 @@ export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
 
     // clones the original data and attaches calculation attributes for this layout algorithm
     const layoutNodes: CalcNode[] = nodes.map(
-      (node) =>
+      (node, i) =>
         ({
           ...node,
           data: {
             ...node.data,
+            // ...randomDistribution(node, dimensions, 30, i),
             x: isNumber(node.data.x) ? node.data.x : Math.random() * width,
             y: isNumber(node.data.y) ? node.data.y : Math.random() * height,
+            z: isNumber(node.data.z) ? node.data.z : Math.random() * Math.sqrt(width * height),
             size: nodeSize(node) || 30,
             mass: getMass(node),
             nodeStrength: nodeStrength(node),
@@ -224,6 +227,7 @@ export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
       velMap[node.id] = {
         x: 0,
         y: 0,
+        z: 0,
       };
     });
 
@@ -264,6 +268,7 @@ export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
             graph.mergeNodeData(node.id, {
               x: node.data.x,
               y: node.data.y,
+              z: dimensions === 3 ? node.data.z : undefined
             })
           );
         }
@@ -372,6 +377,7 @@ export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
    */
   private formatCentripetal(options: FormatedOptions, calcGraph: CalcGraph) {
     const {
+      dimensions,
       centripetalOptions,
       center,
       clusterNodeStrength,
@@ -390,6 +396,7 @@ export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
         return {
           x: center[0],
           y: center[1],
+          z: dimensions === 3 ? center[2] : undefined
         };
       },
     };
@@ -429,6 +436,7 @@ export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
             return {
               x: 100,
               y: 100,
+              z: 0,
             };
           }
           let centerPos: Point | undefined;
@@ -449,6 +457,7 @@ export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
           return {
             x: centerPos?.x!,
             y: centerPos?.y!,
+            z: centerPos?.z!,
           };
         },
       });
@@ -484,6 +493,7 @@ export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
           return {
             x: centerPos?.x!,
             y: centerPos?.y!,
+            z: centerPos?.z!,
           };
         },
       });
@@ -522,7 +532,7 @@ export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
     if (!calcNodes?.length) return;
     const { monitor } = options;
     this.calRepulsive(calcGraph, accMap, options);
-    if (calcEdges) this.calAttractive(calcGraph, accMap);
+    if (calcEdges) this.calAttractive(calcGraph, accMap, options);
     this.calGravity(calcGraph, graph, accMap, options);
     this.updateVelocity(calcGraph, accMap, velMap, options);
 
@@ -551,7 +561,8 @@ export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
     nodes.forEach((node, i) => {
       const vx = accMap[node.id].x;
       const vy = accMap[node.id].y;
-      const speed2 = vx * vx + vy * vy;
+      const vz = this.options.dimensions === 3 ? accMap[node.id].z : 0;
+      const speed2 = vx * vx + vy * vy + vz * vz;
       const { mass = 1 } = node.data;
       energy += mass * speed2 * 0.5; // p = 1/2*(mv^2)
     });
@@ -570,8 +581,8 @@ export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
     accMap: { [id: string]: Point },
     options: FormatedOptions
   ) {
-    const { factor, coulombDisScale } = options;
-    forceNBody(calcGraph, factor, coulombDisScale * coulombDisScale, accMap);
+    const { dimensions, factor, coulombDisScale } = options;
+    forceNBody(calcGraph, factor, coulombDisScale * coulombDisScale, accMap, dimensions);
   }
 
   /**
@@ -579,7 +590,8 @@ export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
    * @param calcGraph calculation graph
    * @param accMap acceleration map
    */
-  public calAttractive(calcGraph: CalcGraph, accMap: { [id: string]: Point }) {
+  public calAttractive(calcGraph: CalcGraph, accMap: { [id: string]: Point }, options: FormatedOptions) {
+    const { dimensions } = options;
     calcGraph.getAllEdges().forEach((edge, i) => {
       const { source, target } = edge;
       const sourceNode = calcGraph.getNode(source);
@@ -587,13 +599,19 @@ export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
       if (!sourceNode || !targetNode) return;
       let vecX = targetNode.data.x - sourceNode.data.x;
       let vecY = targetNode.data.y - sourceNode.data.y;
+      let vecZ = dimensions === 3 ? targetNode.data.z - sourceNode.data.z : 0;
       if (!vecX && !vecY) {
         vecX = Math.random() * 0.01;
         vecY = Math.random() * 0.01;
+
+        if (dimensions === 3 && !vecZ) {
+          vecZ = Math.random() * 0.01;
+        }
       }
-      const vecLength = Math.sqrt(vecX * vecX + vecY * vecY);
+      const vecLength = Math.sqrt(vecX * vecX + vecY * vecY + vecZ * vecZ);
       const direX = vecX / vecLength;
       const direY = vecY / vecLength;
+      const direZ = vecZ / vecLength;
       const { linkDistance = 200, edgeStrength = 200 } = edge.data || {};
       const diff = linkDistance - vecLength;
       const param = diff * edgeStrength;
@@ -604,10 +622,13 @@ export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
       const targetMassRatio = 1 / massTarget;
       const disX = direX * param;
       const disY = direY * param;
+      const disZ = direZ * param;
       accMap[source].x -= disX * sourceMassRatio;
       accMap[source].y -= disY * sourceMassRatio;
+      accMap[source].z -= disZ * sourceMassRatio;
       accMap[target].x += disX * targetMassRatio;
       accMap[target].y += disY * targetMassRatio;
+      accMap[target].z += disZ * targetMassRatio;
     });
   }
 
@@ -638,10 +659,11 @@ export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
     if (!calcNodes) return;
     calcNodes.forEach((calcNode) => {
       const { id, data } = calcNode;
-      const { mass, x, y } = data;
+      const { mass, x, y, z } = data;
       const node = graph.getNode(id);
       let vecX = 0;
       let vecY = 0;
+      let vecZ = 0;
       let gravity = defaultGravity;
       const inDegree = calcGraph.getDegree(id, "in");
       const outDegree = calcGraph.getDegree(id, "out");
@@ -655,11 +677,13 @@ export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
       } else {
         vecX = x - center[0];
         vecY = y - center[1];
+        vecZ = z - center[2];
       }
 
       if (gravity) {
         accMap[id].x -= (gravity * vecX) / mass;
         accMap[id].y -= (gravity * vecY) / mass;
+        accMap[id].z -= (gravity * vecZ) / mass;
       }
 
       if (centripetalOptions) {
@@ -672,18 +696,22 @@ export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
         const {
           x: centriX,
           y: centriY,
+          z: centriZ,
           centerStrength,
         } = centriCenter?.(node, nodes, edges, width, height) || {
           x: 0,
           y: 0,
+          z: 0,
           centerStrength: 0,
         };
         if (!isNumber(centriX) || !isNumber(centriY)) return;
         const vx = (x - centriX) / mass;
         const vy = (y - centriY) / mass;
+        const vz = (z - centriZ) / mass;
         if (centerStrength) {
           accMap[id].x -= centerStrength * vx;
           accMap[id].y -= centerStrength * vy;
+          accMap[id].z -= centerStrength * vz;
         }
 
         // 孤点
@@ -692,6 +720,7 @@ export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
           if (!singleStrength) return;
           accMap[id].x -= singleStrength * vx;
           accMap[id].y -= singleStrength * vy;
+          accMap[id].z -= singleStrength * vz;
           return;
         }
 
@@ -701,6 +730,7 @@ export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
           if (!leafStrength) return;
           accMap[id].x -= leafStrength * vx;
           accMap[id].y -= leafStrength * vy;
+          accMap[id].z -= leafStrength * vz;
           return;
         }
 
@@ -709,6 +739,7 @@ export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
         if (!othersStrength) return;
         accMap[id].x -= othersStrength * vx;
         accMap[id].y -= othersStrength * vy;
+        accMap[id].z -= othersStrength * vz;
       }
     });
   }
@@ -727,22 +758,25 @@ export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
     velMap: { [id: string]: Point },
     options: FormatedOptions
   ) {
-    const { damping, maxSpeed, interval } = options;
+    const { damping, maxSpeed, interval, dimensions } = options;
     const calcNodes = calcGraph.getAllNodes();
     if (!calcNodes?.length) return;
     calcNodes.forEach((calcNode) => {
       const { id } = calcNode;
       let vx = (velMap[id].x + accMap[id].x * interval) * damping || 0.01;
       let vy = (velMap[id].y + accMap[id].y * interval) * damping || 0.01;
-      const vLength = Math.sqrt(vx * vx + vy * vy);
+      let vz = dimensions === 3 ? ((velMap[id].z + accMap[id].z * interval) * damping || 0.01) : 0.0;
+      const vLength = Math.sqrt(vx * vx + vy * vy + vz * vz);
       if (vLength > maxSpeed) {
         const param2 = maxSpeed / vLength;
         vx = param2 * vx;
         vy = param2 * vy;
+        vz = param2 * vz;
       }
       velMap[id] = {
         x: vx,
         y: vy,
+        z: vz
       };
     });
   }
@@ -761,7 +795,7 @@ export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
     velMap: { [id: string]: Point },
     options: FormatedOptions
   ) {
-    const { distanceThresholdMode, interval } = options;
+    const { distanceThresholdMode, interval, dimensions } = options;
     const calcNodes = calcGraph.getAllNodes();
     if (!calcNodes?.length) {
       this.judgingDistance = 0;
@@ -778,17 +812,20 @@ export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
         calcGraph.mergeNodeData(id, {
           x: node.data.fx,
           y: node.data.fy,
+          z: dimensions === 3 ? node.data.fz as number : undefined,
         });
         return;
       }
       const distX = velMap[id].x * interval;
       const distY = velMap[id].y * interval;
+      const distZ = dimensions === 3 ? velMap[id].z * interval : 0.0;
       calcGraph.mergeNodeData(id, {
         x: calcNode.data.x + distX,
         y: calcNode.data.y + distY,
+        z: calcNode.data.z + distZ,
       });
 
-      const distanceMagnitude = Math.sqrt(distX * distX + distY * distY);
+      const distanceMagnitude = Math.sqrt(distX * distX + distY * distY + distZ * distZ);
       switch (distanceThresholdMode) {
         case "max":
           if (this.judgingDistance < distanceMagnitude) {
@@ -960,6 +997,7 @@ const formatOutNodes = (graph: Graph, layoutNodes: CalcNode[]): OutNode[] =>
         ...node.data,
         x: data.x,
         y: data.y,
+        z: data.z
       },
     } as OutNode;
   });

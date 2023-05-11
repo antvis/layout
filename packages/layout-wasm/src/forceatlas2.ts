@@ -6,9 +6,10 @@ import {
   Layout,
   OutNode,
   cloneFormatData,
+  OutNodeData,
 } from "@antv/layout";
 import { isNumber } from "@antv/util";
-import { WASMLayoutOptions } from "./interface";
+import type { WASMLayoutOptions } from "./interface";
 import { graphlib2WASMInput, distanceThresholdMode2Index } from "./util";
 
 const DEFAULTS_LAYOUT_OPTIONS: Partial<ForceAtlas2LayoutOptions> = {
@@ -110,6 +111,7 @@ export class ForceAtlas2Layout implements Layout<WASMForceAtlas2LayoutOptions> {
     const formattedOptions = this.formatOptions(options);
     const {
       threads,
+      dimensions,
       width,
       height,
       center,
@@ -137,6 +139,7 @@ export class ForceAtlas2Layout implements Layout<WASMForceAtlas2LayoutOptions> {
         graph.mergeNodeData(nodes[0].id, {
           x: center[0],
           y: center[1],
+          z: dimensions === 3 ? center[2] : undefined
         });
       }
       return {
@@ -147,6 +150,7 @@ export class ForceAtlas2Layout implements Layout<WASMForceAtlas2LayoutOptions> {
               ...nodes[0].data,
               x: center[0],
               y: center[1],
+              z: dimensions === 3 ? center[2] : undefined
             },
           },
         ],
@@ -160,11 +164,15 @@ export class ForceAtlas2Layout implements Layout<WASMForceAtlas2LayoutOptions> {
     layoutNodes.forEach((node, i) => {
       if (!isNumber(node.data.x)) node.data.x = Math.random() * width;
       if (!isNumber(node.data.y)) node.data.y = Math.random() * height;
+      if (dimensions === 3) {
+        if (!isNumber(node.data.z)) node.data.z = Math.random() * Math.sqrt(width * height);
+      }
     });
 
-    const wasmInput = graphlib2WASMInput(layoutNodes, edges);
+    const wasmInput = graphlib2WASMInput(layoutNodes, edges, dimensions);
 
     const { nodes: positions } = await threads.forceatlas2({
+      dimensions,
       nodes: wasmInput.nodes,
       edges: wasmInput.edges,
       masses: wasmInput.masses,
@@ -189,17 +197,24 @@ export class ForceAtlas2Layout implements Layout<WASMForceAtlas2LayoutOptions> {
     });
 
     layoutNodes.forEach((node, i) => {
-      node.data.x = positions[2 * i];
-      node.data.y = positions[2 * i + 1];
+      node.data.x = positions[dimensions * i];
+      node.data.y = positions[dimensions * i + 1];
+      if (dimensions === 3) {
+        node.data.z = positions[dimensions * i + 2];
+      }
     });
 
     if (assign) {
-      layoutNodes.forEach(({ id, data }) =>
-        graph.mergeNodeData(id, {
+      layoutNodes.forEach(({ id, data }) => {
+        const nodeData: OutNodeData = {
           x: data.x,
           y: data.y,
-        })
-      );
+        };
+        if (dimensions === 3) {
+          nodeData.z = data.z;
+        }
+        graph.mergeNodeData(id, nodeData);
+      });
     }
 
     return { nodes: layoutNodes, edges };

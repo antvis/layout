@@ -40,15 +40,16 @@ export interface FruchtermanLayoutOptions extends ForceLayoutOptions {
 }
 
 export interface ForceLayoutOptions {
+  dimensions?: number;
   nodes: number[];
   edges: number[][];
-  masses: number[];
-  weights: number[];
+  masses?: number[];
+  weights?: number[];
   iterations: number;
-  min_movement: number;
-  distance_threshold_mode: number;
-  center: [number, number];
-  max_distance: number;
+  min_movement?: number;
+  distance_threshold_mode?: number;
+  center?: [number, number] | [number, number, number];
+  max_distance?: number;
 }
 
 export interface WASMLayoutOptions {
