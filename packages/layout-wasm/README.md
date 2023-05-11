@@ -6,6 +6,9 @@ A WASM binding of `@antv/layout-rust`. We used [wasm-bindgen-rayon](https://gith
 - [Use with Webpack](#webpack)
 - [Use with Vite](#vite)
 
+Besides 2D, we also support force-directed layouts in 3D.
+![3D snapshot](https://user-images.githubusercontent.com/3608471/237603139-4104b2de-edb0-4e24-93cc-a69fb0200336.png)
+
 ## Usage
 
 Since [cross origin workers are blocked](https://stackoverflow.com/questions/58098143/why-are-cross-origin-workers-blocked-and-why-is-the-workaround-ok/60015898#60015898), we do not recommand the UMD way of using it for now. You can opt to ESM usage with bundler such as [Webpack](#webpack) or [Vite](#vite).
