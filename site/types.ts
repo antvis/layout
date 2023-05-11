@@ -7,3 +7,9 @@ export enum TestName {
 }
 
 export const CANVAS_SIZE = 800;
+
+export type CommonLayoutOptions = {
+  iterations: number;
+  min_movement: number;
+  distance_threshold_mode: "mean" | "max" | "min";
+};

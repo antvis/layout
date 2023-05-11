@@ -35,6 +35,43 @@ pub fn apply_attraction_force2_2d(layout: &mut Layout) {
     }
 }
 
+pub fn apply_attraction_force2_3d(layout: &mut Layout) {
+    for (_edge, (n1, n2)) in layout.edges.iter().enumerate() {
+        let n1_pos = layout.points.get(*n1);
+        let n2_pos = layout.points.get(*n2);
+
+        let n1_mass = unsafe { *layout.masses.get_unchecked(*n1) };
+        let n2_mass = unsafe { *layout.masses.get_unchecked(*n2) };
+
+        let (n1_speed, n2_speed) = layout.speeds.get_2_mut(*n1, *n2);
+
+        let dx = unsafe { *n1_pos.get_unchecked(0) - *n2_pos.get_unchecked(0)};
+        let dy = unsafe { *n1_pos.get_unchecked(1) - *n2_pos.get_unchecked(1) };
+        let dz = unsafe { *n1_pos.get_unchecked(2) - *n2_pos.get_unchecked(2) };
+
+        let dist = (dx * dx + dy * dy + dz * dz).sqrt();
+        let dire_x = dx / dist;
+        let dire_y = dy / dist;
+        let dire_z = dz / dist;
+
+        let diff = layout.settings.link_distance - dist;
+        let param = diff * layout.settings.edge_strength;
+
+        let target_mass_ratio = 1.0 / n1_mass;
+        let source_mass_ratio = 1.0 / n2_mass;
+
+        let dis_x = dire_x * param;
+        let dis_y = dire_y * param;
+        let dis_z = dire_z * param;
+
+        unsafe { *n1_speed.get_unchecked_mut(0) += dis_x * target_mass_ratio };
+        unsafe { *n1_speed.get_unchecked_mut(1) += dis_y * target_mass_ratio };
+        unsafe { *n1_speed.get_unchecked_mut(2) += dis_z * target_mass_ratio };
+        unsafe { *n2_speed.get_unchecked_mut(0) -= dis_x * source_mass_ratio };
+        unsafe { *n2_speed.get_unchecked_mut(1) -= dis_y * source_mass_ratio };
+        unsafe { *n2_speed.get_unchecked_mut(2) -= dis_z * source_mass_ratio };
+    }
+}
 
 pub fn apply_attraction_fruchterman_2d(layout: &mut Layout) {
     let k = &layout.settings.ka;
@@ -58,6 +95,31 @@ pub fn apply_attraction_fruchterman_2d(layout: &mut Layout) {
     }
 }
 
+pub fn apply_attraction_fruchterman_3d(layout: &mut Layout) {
+    let k = &layout.settings.ka;
+    let kr = &layout.settings.kr;
+    for (_edge, (n1, n2)) in layout.edges.iter().enumerate() {
+        let n1_pos = layout.points.get(*n1);
+        let n2_pos = layout.points.get(*n2);
+
+        let (n1_speed, n2_speed) = layout.speeds.get_2_mut(*n1, *n2);
+
+        let dx = unsafe { *n2_pos.get_unchecked(0) - *n1_pos.get_unchecked(0) };
+        let dy = unsafe { *n2_pos.get_unchecked(1) - *n1_pos.get_unchecked(1) };
+        let dz = unsafe { *n2_pos.get_unchecked(2) - *n1_pos.get_unchecked(2) };
+
+        let dist = (dx * dx + dy * dy + dz * dz).sqrt() + *kr;
+        let f = dist / *k;
+
+        unsafe { *n1_speed.get_unchecked_mut(0) += dx * f };
+        unsafe { *n1_speed.get_unchecked_mut(1) += dy * f };
+        unsafe { *n1_speed.get_unchecked_mut(2) += dz * f };
+        unsafe { *n2_speed.get_unchecked_mut(0) -= dx * f };
+        unsafe { *n2_speed.get_unchecked_mut(1) -= dy * f };
+        unsafe { *n2_speed.get_unchecked_mut(2) -= dz * f };
+    }
+}
+
 pub fn apply_attraction_forceatlas2_2d(layout: &mut Layout) {
     for (edge, (n1, n2)) in layout.edges.iter().enumerate() {
         let (n1, n2) = (*n1, *n2);
@@ -68,9 +130,8 @@ pub fn apply_attraction_forceatlas2_2d(layout: &mut Layout) {
         let weight = layout
             .weights
             .as_ref()
-            .map_or(layout.settings.ka, |weights| {
-                layout.settings.ka * weights[edge]
-            });
+            .map_or(1.0, |weights| weights[edge])
+            * layout.settings.ka;
 
         let (n1_speed, n2_speed) = layout.speeds.get_2_mut(n1, n2);
 
@@ -84,32 +145,32 @@ pub fn apply_attraction_forceatlas2_2d(layout: &mut Layout) {
     }
 }
 
-// pub fn apply_attraction_forceatlas2_3d(layout: &mut Layout) {
-//     for (edge, (n1, n2)) in layout.edges.iter().enumerate() {
-//         let (n1, n2) = (*n1, *n2);
+pub fn apply_attraction_forceatlas2_3d(layout: &mut Layout) {
+    for (edge, (n1, n2)) in layout.edges.iter().enumerate() {
+        let (n1, n2) = (*n1, *n2);
 
-//         let n1_pos = layout.points.get(n1);
-//         let n2_pos = layout.points.get(n2);
-//         let weight = layout
-//             .weights
-//             .as_ref()
-//             .map_or_else(T::one, |weights| weights[edge])
-//             * layout.settings.ka;
+        let n1_pos = layout.points.get(n1);
+        let n2_pos = layout.points.get(n2);
+        let weight = layout
+            .weights
+            .as_ref()
+            .map_or(1.0, |weights| weights[edge])
+            * layout.settings.ka;
 
-//         let (n1_speed, n2_speed) = layout.speeds.get_2_mut(n1, n2);
+        let (n1_speed, n2_speed) = layout.speeds.get_2_mut(n1, n2);
 
-//         let dx = unsafe { *n2_pos.get_unchecked(0) - *n1_pos.get_unchecked(0) } * weight;
-//         let dy = unsafe { *n2_pos.get_unchecked(1) - *n1_pos.get_unchecked(1) } * weight;
-//         let dz = unsafe { *n2_pos.get_unchecked(2) - *n1_pos.get_unchecked(2) } * weight;
+        let dx = unsafe { *n2_pos.get_unchecked(0) - *n1_pos.get_unchecked(0) } * weight;
+        let dy = unsafe { *n2_pos.get_unchecked(1) - *n1_pos.get_unchecked(1) } * weight;
+        let dz = unsafe { *n2_pos.get_unchecked(2) - *n1_pos.get_unchecked(2) } * weight;
 
-//         unsafe { n1_speed.get_unchecked_mut(0) }.add_assign(dx);
-//         unsafe { n1_speed.get_unchecked_mut(1) }.add_assign(dy);
-//         unsafe { n1_speed.get_unchecked_mut(2) }.add_assign(dz);
-//         unsafe { n2_speed.get_unchecked_mut(0) }.sub_assign(dx);
-//         unsafe { n2_speed.get_unchecked_mut(1) }.sub_assign(dy);
-//         unsafe { n2_speed.get_unchecked_mut(2) }.sub_assign(dz);
-//     }
-// }
+        unsafe { *n1_speed.get_unchecked_mut(0) += dx };
+        unsafe { *n1_speed.get_unchecked_mut(1) += dy };
+        unsafe { *n1_speed.get_unchecked_mut(2) += dz };
+        unsafe { *n2_speed.get_unchecked_mut(0) -= dx };
+        unsafe { *n2_speed.get_unchecked_mut(1) -= dy };
+        unsafe { *n2_speed.get_unchecked_mut(2) -= dz };
+    }
+}
 
 pub fn apply_attraction_forceatlas2_dh(layout: &mut Layout) {
     for (edge, (n1, n2)) in layout.edges.iter().enumerate() {

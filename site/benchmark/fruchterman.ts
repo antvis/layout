@@ -1,13 +1,12 @@
-import { FruchtermanLayout, Graph } from "../packages/layout";
-import { FruchtermanLayout as FruchtermanGPULayout } from "../packages/layout-gpu";
+import { FruchtermanLayout, Graph } from "../../packages/layout";
+import { FruchtermanLayout as FruchtermanGPULayout } from "../../packages/layout-gpu";
 import { fruchtermanReingoldLayout } from "./graphology-layout-fruchtermanreingold";
 import { outputAntvLayout, outputGraphology } from "./util";
-import { CANVAS_SIZE } from "./types";
+import { CANVAS_SIZE, CommonLayoutOptions } from "../types";
 import {
   Threads,
   FruchtermanLayout as FruchtermanWASMLayout,
-} from "../packages/layout-wasm";
-import { CommonLayoutOptions } from "./main";
+} from "../../packages/layout-wasm";
 
 const speed = 5;
 const gravity = 1;

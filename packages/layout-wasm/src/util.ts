@@ -1,9 +1,10 @@
 import { ID, Node, Edge } from "@antv/graphlib";
-import { NodeData, EdgeData } from "@antv/layout";
+import type { NodeData, EdgeData } from "@antv/layout";
 
 export const graphlib2WASMInput = (
   inodes: Node<NodeData>[],
-  iedges: Edge<EdgeData>[]
+  iedges: Edge<EdgeData>[],
+  dimensions: number
 ) => {
   const nodes: number[] = [];
   const masses: number[] = [];
@@ -13,6 +14,9 @@ export const graphlib2WASMInput = (
   inodes.forEach((node, i) => {
     nodeIdxMap[node.id] = i;
     nodes.push(node.data.x, node.data.y);
+    if (dimensions === 3) {
+      nodes.push(node.data.z);
+    }
     masses.push((node.data.mass as number) || 1);
   });
   iedges.forEach((edge) => {

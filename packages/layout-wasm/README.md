@@ -6,6 +6,9 @@ A WASM binding of `@antv/layout-rust`. We used [wasm-bindgen-rayon](https://gith
 - [Use with Webpack](#webpack)
 - [Use with Vite](#vite)
 
+Besides 2D, we also support force-directed layouts in 3D.
+![3D snapshot](https://user-images.githubusercontent.com/3608471/237603139-4104b2de-edb0-4e24-93cc-a69fb0200336.png)
+
 ## Usage
 
 Since [cross origin workers are blocked](https://stackoverflow.com/questions/58098143/why-are-cross-origin-workers-blocked-and-why-is-the-workaround-ok/60015898#60015898), we do not recommand the UMD way of using it for now. You can opt to ESM usage with bundler such as [Webpack](#webpack) or [Vite](#vite).
@@ -93,11 +96,12 @@ If you can't control the server, try this hacky workaround which implemented wit
 
 ### Common force-directed layout options
 
-- `center` **[number, number]** The center of the graph. e.g. `[0, 0]`
+- `center` **[number, number] | [number, number, number]** The center of the graph. e.g. `[0, 0]` or `[0, 0, 0]` in 3-dimensional scene.
 - `maxIteration` **number**
 - `minMovement` **number** When the average/minimum/maximum (according to `distanceThresholdMode`) movement of nodes in one iteration is smaller than minMovement, terminate the layout.
 - `distanceThresholdMode` **'mean' | 'max' ｜ 'min'** The condition to judge with minMovement, `'mean'` means the layout stops while the nodes' average movement is smaller than minMovement, `'max' / 'min'` means the layout stops while the nodes' maximum/minimum movement is smaller than minMovement. `'mean'` by default
 - `maxDistance` **number** If distance is specified, sets the maximum distance between nodes over which this force is considered. If distance is not specified, returns the current maximum distance, which defaults to `Infinity`. Specifying a finite maximum distance improves performance and produces a more localized layout.
+- `dimensions` **number** Dimensions of coordinates, default to `2`.
 
 ### ForceAtlas2
 

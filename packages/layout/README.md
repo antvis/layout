@@ -204,7 +204,8 @@ Fruchterman is a kind of force-directed layout. The implementation is according 
 
 LayoutOptions:
 
-- `center` **[number, number]** The center of the graph. e.g. `[0, 0]`
+- `dimensions` **number** The dimensions of node's coordinates. The default value is `2`.
+- `center` **[number, number] | [number, number, number]** The center of the graph. e.g. `[0, 0]`.
 - `width` **number** The width of the graph.
 - `height` **number** The height of the graph.
 - `maxIteration` **number**
@@ -242,7 +243,8 @@ Force2 implements the force-directed layout algorithm. It comes from graphin-for
 
 LayoutOptions:
 
-- `center` **[number, number]** The center of the graph. e.g. `[0, 0]`.
+- `dimensions` **number** The dimensions of node's coordinates. The default value is `2`.
+- `center` **[number, number] | [number, number, number]** The center of the graph. e.g. `[0, 0]`.
 - `linkDistance` **number** The edge length. The default length is `200`.
 - `nodeStrength` **number** The strength of node force. Positive value means repulsive force, negative value means attractive force (it is different from 'force'). The default value is `1000`.
 - `edgeStrength` **number** The strength of edge force. Calculated according to the degree of nodes by default. The default value is `200`.

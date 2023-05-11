@@ -3,7 +3,7 @@ import { Graph as AntvGraph } from "@antv/graphlib";
 import { clusters } from "graphology-generators/random";
 import { CANVAS_SIZE, TestName } from "./types";
 
-export const loadDatasets = async () => {
+export const loadDatasets = async (dimensions = 2) => {
   const datasets: Record<any, any> = {};
 
   const loadRandomClusters = () => {
@@ -23,6 +23,10 @@ export const loadDatasets = async () => {
     graph.nodes().forEach(function (node) {
       graph.setNodeAttribute(node, "x", Math.random() * CANVAS_SIZE);
       graph.setNodeAttribute(node, "y", Math.random() * CANVAS_SIZE);
+
+      if (dimensions === 3) {
+        graph.setNodeAttribute(node, "z", Math.random() * CANVAS_SIZE);
+      }
     });
 
     const antvgraph = graphology2antv(graph);
@@ -47,21 +51,19 @@ export const loadDatasets = async () => {
       const nodes: any[] = [];
       const edges: any[] = [];
       const uniqueNodes = new Set();
-      oldG6GraphFormat.nodes.forEach((node: any) => {
+      oldG6GraphFormat.nodes.forEach((node: any, i: number) => {
         // remove duplicated nodes
         if (!uniqueNodes.has(node.id)) {
           uniqueNodes.add(node.id);
 
-          // if (node.x === undefined) {
-          node.x = Math.random() * CANVAS_SIZE;
-          // }
-          // if (node.y === undefined) {
-          node.y = Math.random() * CANVAS_SIZE;
-          // }
+          // clear
+          node.x = undefined;
+          node.y = undefined;
+          node.z = undefined;
 
           nodes.push({
             id: node.id,
-            data: { x: node.x, y: node.y },
+            data: { x: node.x, y: node.y, z: node.z },
           });
         }
       });
@@ -137,6 +139,7 @@ const graphology2antv = (graph: any): AntvGraph<any, any> => {
       data: {
         x: graph.getNodeAttribute(id, "x"),
         y: graph.getNodeAttribute(id, "y"),
+        z: graph.getNodeAttribute(id, "z"),
       },
     })),
     edges: graph.edges().map((id: any) => ({
@@ -152,9 +155,9 @@ const graphology2antv = (graph: any): AntvGraph<any, any> => {
 
 const antv2graphology = (graph: AntvGraph<any, any>) => {
   const g = new Graph();
-  graph.getAllNodes().forEach(({ id, data: { x, y } }: any) => {
+  graph.getAllNodes().forEach(({ id, data: { x, y, z } }: any) => {
     if (!g.hasNode(id)) {
-      g.addNode(id, { x, y });
+      g.addNode(id, { x, y, z });
     }
   });
   graph.getAllEdges().forEach(({ source, target, data: { weight } }: any) => {

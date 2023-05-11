@@ -1,7 +1,9 @@
-// import "./enable-threads";
+import { Canvas } from '@antv/g';
+import { Renderer } from '@antv/g-webgl';
+import { Plugin as Plugin3D } from '@antv/g-plugin-3d';
+import { Plugin as PluginControl } from '@antv/g-plugin-control';
 import { render } from "./render";
 import {
-  graphology as graphologyForceatlas2,
   antvlayout as antvlayoutForceatlas2,
   antvlayoutWASM as antvlayoutWASMForceatlas2,
 } from "./forceatlas2";
@@ -10,22 +12,17 @@ import {
   antvlayoutWASM as antvlayoutWASMForce2,
 } from "./force2";
 import {
-  graphology as graphologyFruchterman,
   antvlayout as antvlayoutFruchterman,
-  antvlayoutGPU as antvlayoutGPUFruchterman,
   antvlayoutWASM as antvlayoutWASMFruchterman,
 } from "./fruchterman";
-import { loadDatasets } from "./datasets";
-import { TestName } from "./types";
-import { initThreads } from "../packages/layout-wasm";
+import { loadDatasets } from "../datasets";
+import { CommonLayoutOptions, TestName } from "../types";
+import { initThreads } from "../../packages/layout-wasm";
 
 /**
  * We compare graphology, @antv/layout and its WASM versions.
  */
 const TestsConfig = [
-  {
-    name: TestName.GRAPHOLOGY,
-  },
   {
     name: TestName.ANTV_LAYOUT,
   },
@@ -34,9 +31,6 @@ const TestsConfig = [
   },
   {
     name: TestName.ANTV_LAYOUT_WASM_MULTITHREADS,
-  },
-  {
-    name: TestName.ANTV_LAYOUT_GPU,
   },
 ];
 
@@ -52,18 +46,35 @@ const $dataset = document.getElementById("dataset") as HTMLSelectElement;
 const $datasetDesc = document.getElementById("dataset-desc") as HTMLSpanElement;
 const $layout = document.getElementById("layout") as HTMLSelectElement;
 const $run = document.getElementById("run") as HTMLButtonElement;
-const contexts = TestsConfig.map(({ name }) => {
-  return (document.getElementById(name) as HTMLCanvasElement).getContext("2d");
+const $canvases = TestsConfig.map(({ name }) => {
+  return (document.getElementById(name) as HTMLCanvasElement);
+});
+const canvasesAndRenderers = $canvases.map<[Canvas, Renderer]>(($canvas) => {
+  const renderer = new Renderer();
+  const plugin3d = new Plugin3D();
+  const pluginControl = new PluginControl();
+  renderer.registerPlugin(plugin3d);
+  renderer.registerPlugin(pluginControl);
+  const canvas = new Canvas({
+    // @ts-ignore
+    canvas: $canvas,
+    renderer,
+  });
+
+  // adjust camera's position
+  const camera = canvas.getCamera();
+  camera.setPerspective(0.1, 5000, 45, 1);
+  return [canvas, renderer];
 });
 const $labels = TestsConfig.map((_, i) => {
-  return contexts[i]!.canvas.parentElement!.querySelector("span");
+  return $canvases[i].parentElement!.querySelector("span");
 });
 const $checkboxes = TestsConfig.map(({ name }, i) => {
   const $checkbox = document.getElementById(
     name + "_checkbox"
   ) as HTMLInputElement;
   $checkbox.onchange = () => {
-    contexts[i]!.canvas.parentElement!.style.display = $checkbox.checked
+    $canvases[i].parentElement!.style.display = $checkbox.checked
       ? "block"
       : "none";
   };
@@ -78,13 +89,10 @@ const initThreadsPool = async () => {
   return [singleThread, multiThreads];
 };
 
-export type CommonLayoutOptions = {
-  iterations: number;
-  min_movement: number;
-  distance_threshold_mode: "mean" | "max" | "min";
-};
+
 const doLayout = async (
-  context: CanvasRenderingContext2D,
+  canvas: Canvas,
+  renderer: Renderer,
   $label: HTMLSpanElement,
   layout: any,
   model: any,
@@ -92,17 +100,23 @@ const doLayout = async (
   wasmMethod: any,
   scaling: number
 ) => {
+  await canvas.ready;
+
+  const plugin = renderer.getPlugin('device-renderer');
+  // @ts-ignore
+  const device = plugin.getDevice();
+
   const start = performance.now();
   const { nodes, edges } = await layout(model, options, wasmMethod);
   $label.innerHTML = `${(performance.now() - start).toFixed(2)}ms`;
-  render(context, nodes, edges, scaling);
+  render(canvas, device, nodes, edges, scaling);
 };
 
 (async () => {
   $run.innerHTML = 'Loading...';
   $run.disabled = true;
   console.time("Load datasets");
-  const datasets = await loadDatasets();
+  const datasets = await loadDatasets(3);
   $dataset.onchange = () => {
     $datasetDesc.innerHTML = datasets[$dataset.value].desc;
   };
@@ -115,13 +129,6 @@ const doLayout = async (
   $run.disabled = false;
 
   const layoutConfig: any = [
-    {
-      name: TestName.GRAPHOLOGY,
-      methods: {
-        forceatlas2: graphologyForceatlas2,
-        fruchterman: graphologyFruchterman,
-      },
-    },
     {
       name: TestName.ANTV_LAYOUT,
       methods: {
@@ -146,13 +153,6 @@ const doLayout = async (
         fruchterman: antvlayoutWASMFruchterman,
       },
     },
-    {
-      name: TestName.ANTV_LAYOUT_GPU,
-      methods: {
-        // force2: antvlayoutGPUForce2,
-        fruchterman: antvlayoutGPUFruchterman,
-      },
-    },
   ];
 
   $run.onclick = async () => {
@@ -165,7 +165,8 @@ const doLayout = async (
       layoutConfig.map(async ({ name, methods }: any, i: number) => {
         if (methods[layoutName] && $checkboxes[i].checked) {
           await doLayout(
-            contexts[i]!,
+            canvasesAndRenderers[i][0],
+            canvasesAndRenderers[i][1],
             $labels[i]!,
             methods[layoutName],
             dataset[name],
@@ -182,14 +183,6 @@ const doLayout = async (
               : forceSingleThread,
             Number($scaling.value)
           );
-        } else {
-          contexts[i]!.clearRect(
-            0,
-            0,
-            contexts[i]!.canvas.width,
-            contexts[i]!.canvas.height
-          );
-          $labels[i]!.innerHTML = `not implemented.`;
         }
       })
     );

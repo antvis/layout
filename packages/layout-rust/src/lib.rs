@@ -144,35 +144,23 @@ where
                 }
             },
             LayoutType::Force2 => {
-                for (speed, old_speed) in self
+                if i == 0 {
+                    // Use as `velMap` in Force2.
+                    for old_speed in self
+                            .old_speeds
+                            .points
+                            .iter_mut()
+                        {
+                            *old_speed = 0.0;
+                        }
+                }
+                for speed in self
                     .speeds
                     .points
                     .iter_mut()
-                    .zip(self.old_speeds.points.iter_mut())
                 {
-                    if i == 0 {
-                        *old_speed = 0.0;
-                    }
                     *speed = 0.0;
                 }
-
-                // if i == 0 {
-                //     // Use as `velMap` in Force2.
-                //     for old_speed in self
-                //             .old_speeds
-                //             .points
-                //             .iter_mut()
-                //         {
-                //             *old_speed = 0.0;
-                //         }
-                // }
-                // for speed in self
-                //     .speeds
-                //     .points
-                //     .iter_mut()
-                // {
-                //     *speed = 0.0;
-                // }
             },
             _ => {
                 for speed in self

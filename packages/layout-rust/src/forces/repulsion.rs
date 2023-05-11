@@ -158,6 +158,43 @@ pub fn apply_repulsion_force2_2d_parallel(
     }
 }
 
+pub fn apply_repulsion_force2_3d_parallel(
+    layout: &mut Layout,
+) {
+    let factor = layout.settings.factor;
+    let coulomb_dis_scale = layout.settings.coulomb_dis_scale;
+    let node_strength = layout.settings.node_strength;
+    let weight = node_strength * factor / coulomb_dis_scale / coulomb_dis_scale;
+    let max_distance2 = layout.settings.max_distance * layout.settings.max_distance;
+    for chunk_iter in layout.iter_par_nodes(layout.settings.chunk_size.unwrap()) {
+        chunk_iter.for_each(|n1_iter| {
+            for n1 in n1_iter {
+                let n1_mass = *n1.mass;
+                for n2 in n1.n2_iter {
+                    let n2_mass = *n2.mass;
+                    let dx = unsafe { *n2.pos.get_unchecked(0) - *n1.pos.get_unchecked(0) };
+                    let dy = unsafe { *n2.pos.get_unchecked(1) - *n1.pos.get_unchecked(1) };
+                    let dz = unsafe { *n2.pos.get_unchecked(2) - *n1.pos.get_unchecked(2) };
+
+                    let d2 = dx * dx + dy * dy + dz * dz;
+
+                    if d2 < max_distance2 {
+                        let d3 = d2.sqrt() * d2;
+                        let param = weight / d3;
+
+                        unsafe { *n1.speed.get_unchecked_mut(0) -= dx * param / n1_mass };
+                        unsafe { *n1.speed.get_unchecked_mut(1) -= dy * param / n1_mass };
+                        unsafe { *n1.speed.get_unchecked_mut(2) -= dz * param / n1_mass };
+                        unsafe { *n2.speed.get_unchecked_mut(0) += dx * param / n2_mass };
+                        unsafe { *n2.speed.get_unchecked_mut(1) += dy * param / n2_mass };
+                        unsafe { *n2.speed.get_unchecked_mut(2) += dz * param / n2_mass };
+                    }
+                }
+            }
+        });
+    }
+}
+
 pub fn apply_repulsion_fruchterman_2d_parallel(
     layout: &mut Layout,
 ) {
@@ -180,6 +217,38 @@ pub fn apply_repulsion_fruchterman_2d_parallel(
                         unsafe { *n1.speed.get_unchecked_mut(1) -= dy * param };
                         unsafe { *n2.speed.get_unchecked_mut(0) += dx * param };
                         unsafe { *n2.speed.get_unchecked_mut(1) += dy * param };
+                    }
+                }
+            }
+        });
+    }
+}
+
+pub fn apply_repulsion_fruchterman_3d_parallel(
+    layout: &mut Layout,
+) {
+    let k = layout.settings.ka;
+    let k2 = k * k;
+    let max_distance2 = layout.settings.max_distance * layout.settings.max_distance;
+    for chunk_iter in layout.iter_par_nodes(layout.settings.chunk_size.unwrap()) {
+        chunk_iter.for_each(|n1_iter| {
+            for n1 in n1_iter {
+                for n2 in n1.n2_iter {
+                    let dx = unsafe { *n2.pos.get_unchecked(0) - *n1.pos.get_unchecked(0) };
+                    let dy = unsafe { *n2.pos.get_unchecked(1) - *n1.pos.get_unchecked(1) };
+                    let dz = unsafe { *n2.pos.get_unchecked(2) - *n1.pos.get_unchecked(2) };
+
+                    let d2 = dx * dx + dy * dy + dz * dz + 0.01;
+
+                    if d2 < max_distance2 {
+                        let param = k2 / d2;
+
+                        unsafe { *n1.speed.get_unchecked_mut(0) -= dx * param };
+                        unsafe { *n1.speed.get_unchecked_mut(1) -= dy * param };
+                        unsafe { *n1.speed.get_unchecked_mut(2) -= dz * param };
+                        unsafe { *n2.speed.get_unchecked_mut(0) += dx * param };
+                        unsafe { *n2.speed.get_unchecked_mut(1) += dy * param };
+                        unsafe { *n2.speed.get_unchecked_mut(2) += dz * param };
                     }
                 }
             }

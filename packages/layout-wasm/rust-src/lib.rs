@@ -19,6 +19,7 @@ pub fn start() {
 #[derive(Serialize, Deserialize)]
 pub struct ForceLayoutOptions {
     pub name: usize,
+    pub dimensions: usize,
     /// A list of coordinates, e.g. `[x1, y1, x2, y2, ...]`.
     pub nodes: Vec<f32>,
     /// Assumes edges `(n1, n2)` respect `n1 < n2`
@@ -79,7 +80,7 @@ pub fn force(val: JsValue) -> Array {
                 _ => panic!("Unknown layout type"),
             },
             chunk_size: Some(options.chunk_size),
-            dimensions: 2,
+            dimensions: options.dimensions,
             dissuade_hubs: options.dissuade_hubs,
             ka: options.ka,
             kg: options.kg,
@@ -123,6 +124,9 @@ pub fn force(val: JsValue) -> Array {
     for pos in layout.points.iter() {
         nodes.push(&pos[0].into());
         nodes.push(&pos[1].into());
+        if options.dimensions == 3 {
+            nodes.push(&pos[2].into());
+        }
     }
 
     nodes

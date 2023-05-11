@@ -14,6 +14,7 @@ export interface NodeData extends PlainObject {
   borderRight?: ID | ID[];
   x?: number;
   y?: number;
+  z?: number;
   height?: number;
   width?: number;
   e?: IEdge<EdgeData>;
@@ -33,6 +34,7 @@ export interface NodeData extends PlainObject {
 export interface OutNodeData extends NodeData {
   x: number;
   y: number;
+  z?: number;
 }
 
 export interface EdgeData extends PlainObject {
@@ -71,8 +73,8 @@ export type IndexMap = {
 export type Graph = IGraph<NodeData, EdgeData>;
 export type GraphView = IGraphView<NodeData, EdgeData>;
 
-export type PointTuple = [number, number];
-export type Point = { x: number; y: number };
+export type PointTuple = [number, number] | [number, number, number];
+export type Point = { x: number; y: number; z?: number };
 export type Matrix = number[];
 export type LayoutMapping = { nodes: OutNode[]; edges: Edge[] };
 
@@ -274,11 +276,13 @@ export interface CentripetalOptions {
   ) => {
     x: number;
     y: number;
+    z?: number;
     centerStrength?: number;
   };
 }
 
 interface CommonForceLayoutOptions {
+  dimensions?: number;
   center?: PointTuple;
   minMovement?: number;
   maxIteration?: number;
