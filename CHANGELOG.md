@@ -1,5 +1,9 @@
 # ChangeLog
 
+### 0.3.21
+
+- chore: replace the latest version;
+
 ### 0.3.20
 
 - fix: wrong controlPoint positions for dagre with begin;
