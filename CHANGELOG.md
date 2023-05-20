@@ -1,5 +1,9 @@
 # ChangeLog
 
+### 0.3.22
+
+- feat: force2 supports attractive forces to the top and bottom;
+
 ### 0.3.21
 
 - chore: replace the latest version;
