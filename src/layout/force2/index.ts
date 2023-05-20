@@ -13,16 +13,24 @@ import {
   GForceLayoutOptions,
   Degree,
   NodeMap,
-  CentripetalOptions
-} from "../types";
-import { Base } from "../base";
-import { isNumber, isFunction, isArray, getDegreeMap, isObject, getEdgeTerminal, getAvgNodePosition, getCoreNodeAndRelativeLeafNodes } from "../../util";
-import { forceNBody } from "./ForceNBody";
+  CentripetalOptions,
+} from '../types';
+import { Base } from '../base';
+import {
+  isNumber,
+  isFunction,
+  isArray,
+  getDegreeMap,
+  isObject,
+  getEdgeTerminal,
+  getAvgNodePosition,
+  getCoreNodeAndRelativeLeafNodes,
+} from '../../util';
+import { forceNBody } from './ForceNBody';
 
 type INode = OutNode & {
   size: number | PointTuple;
 };
-
 
 const proccessToFunc = (
   value: number | Function | undefined,
@@ -60,7 +68,10 @@ export class Force2Layout extends Base {
   public edgeStrength: number | ((d?: any) => number) | undefined = 200;
 
   /** 斥力系数 */
-  public nodeStrength: number | ((d?: any) => number) | undefined = 1000;
+  public nodeStrength:
+    | number
+    | ((d?: any, edges?: any[]) => number)
+    | undefined = 1000;
 
   /** 库伦系数 */
   public coulombDisScale: number = 0.005;
@@ -87,13 +98,19 @@ export class Force2Layout extends Base {
   public getCenter: ((d?: any, degree?: number) => number[]) | undefined;
 
   /** 计算画布上下两侧对节点吸引力大小  */
-  public defSideCoe?: (node: Node) => number;
+  public defSideCoe?: (node: Node, edges: Edge[]) => number;
 
   /** 理想边长 */
-  public linkDistance: number | ((edge?: any, source?: any, target?: any) => number) | undefined = 200;
+  public linkDistance:
+    | number
+    | ((edge?: any, source?: any, target?: any) => number)
+    | undefined = 200;
 
   /** 理想边长，兼容 graphin-force */
-  public defSpringLen: number | ((edge?: any, source?: any, target?: any) => number) | undefined;
+  public defSpringLen:
+    | number
+    | ((edge?: any, source?: any, target?: any) => number)
+    | undefined;
 
   /** 重力大小 */
   public gravity: number = 0;
@@ -126,7 +143,7 @@ export class Force2Layout extends Base {
   public distanceThresholdMode: 'mean' | 'max' | 'min' = 'mean';
 
   /** 每次迭代结束的回调函数 */
-  public tick: (() => void) | null = () => { };
+  public tick: (() => void) | null = () => {};
 
   /** 是否允许每次迭代结束调用回调函数 */
   public enableTick: boolean;
@@ -151,7 +168,12 @@ export class Force2Layout extends Base {
   public animate: Boolean;
 
   /** 监控信息，不配置则不计算 */
-  public monitor: (params: { energy: number, nodes: INode[], edge: Edge[], iterations: number }) => void;
+  public monitor: (params: {
+    energy: number;
+    nodes: INode[];
+    edge: Edge[];
+    iterations: number;
+  }) => void;
 
   /** 存储节点度数 */
   private degreesMap: { [id: string]: Degree };
@@ -161,6 +183,13 @@ export class Force2Layout extends Base {
 
   /** 与 minMovement 进行对比的判断停止迭代节点移动距离 */
   private judgingDistance: number;
+
+  /** 缓存一个节点的相关边数据 */
+  private relatedEdges: { [nodeId: string]: Edge[] };
+
+  /** 缓存当前迭代中最小和最大的 y 值，用于计算上下引力 */
+  private currentMinY: number;
+  private currentMaxY: number;
 
   constructor(options?: GForceLayoutOptions) {
     super();
@@ -184,24 +213,38 @@ export class Force2Layout extends Base {
   }
 
   public getCentripetalOptions() {
-    const { leafCluster, clustering, nodeClusterBy, nodes, nodeMap, clusterNodeStrength: propsClusterNodeStrength } = this;
+    const {
+      leafCluster,
+      clustering,
+      nodeClusterBy,
+      nodes,
+      nodeMap,
+      clusterNodeStrength: propsClusterNodeStrength,
+    } = this;
 
     const getClusterNodeStrength = (node: Node) =>
-      typeof propsClusterNodeStrength === 'function' ? propsClusterNodeStrength(node) : propsClusterNodeStrength;
+      typeof propsClusterNodeStrength === 'function'
+        ? propsClusterNodeStrength(node)
+        : propsClusterNodeStrength;
 
     let centripetalOptions = {};
     let sameTypeLeafMap: any;
     // 如果传入了需要叶子节点聚类
     if (leafCluster) {
       sameTypeLeafMap = this.getSameTypeLeafMap() || {};
-      const relativeNodesType = Array.from(new Set(nodes?.map((node) => node[nodeClusterBy]))) || [];
+      const relativeNodesType =
+        Array.from(new Set(nodes?.map((node) => node[nodeClusterBy]))) || [];
       centripetalOptions = {
         single: 100,
         leaf: (node, nodes, edges) => {
           // 找出与它关联的边的起点或终点出发的所有一度节点中同类型的叶子节点
-          const { relativeLeafNodes, sameTypeLeafNodes } = sameTypeLeafMap[node.id] || {};
+          const { relativeLeafNodes, sameTypeLeafNodes } =
+            sameTypeLeafMap[node.id] || {};
           // 如果都是同一类型或者每种类型只有1个，则施加默认向心力
-          if (sameTypeLeafNodes?.length === relativeLeafNodes?.length || relativeNodesType?.length === 1) {
+          if (
+            sameTypeLeafNodes?.length === relativeLeafNodes?.length ||
+            relativeNodesType?.length === 1
+          ) {
             return 1;
           }
           return getClusterNodeStrength(node);
@@ -242,14 +285,18 @@ export class Force2Layout extends Base {
     // 如果传入了全局节点聚类
     if (clustering) {
       if (!sameTypeLeafMap) sameTypeLeafMap = this.getSameTypeLeafMap();
-      const clusters: string[] = Array.from(new Set(nodes.map((node, i) => {
-        return node[nodeClusterBy];
-      }))).filter(
-        (item) => item !== undefined,
-      );
+      const clusters: string[] = Array.from(
+        new Set(
+          nodes.map((node, i) => {
+            return node[nodeClusterBy];
+          })
+        )
+      ).filter((item) => item !== undefined);
       const centerNodeInfo: { [key: string]: { x: number; y: number } } = {};
       clusters.forEach((cluster) => {
-        const sameTypeNodes = nodes.filter((item) => item[nodeClusterBy] === cluster).map((node) => nodeMap[node.id]);
+        const sameTypeNodes = nodes
+          .filter((item) => item[nodeClusterBy] === cluster)
+          .map((node) => nodeMap[node.id]);
         // 找出同类型节点平均位置节点的距离最近的节点作为中心节点
         centerNodeInfo[cluster] = getAvgNodePosition(sameTypeNodes);
       });
@@ -274,9 +321,12 @@ export class Force2Layout extends Base {
     };
 
     const { leaf, single, others } = this.centripetalOptions;
-    if (leaf && typeof leaf !== 'function') this.centripetalOptions.leaf = () => leaf;
-    if (single && typeof single !== 'function') this.centripetalOptions.single = () => single;
-    if (others && typeof others !== 'function') this.centripetalOptions.others = () => others;
+    if (leaf && typeof leaf !== 'function')
+      this.centripetalOptions.leaf = () => leaf;
+    if (single && typeof single !== 'function')
+      this.centripetalOptions.single = () => single;
+    if (others && typeof others !== 'function')
+      this.centripetalOptions.others = () => others;
   }
 
   public updateCfg(cfg: any) {
@@ -307,10 +357,10 @@ export class Force2Layout extends Base {
       return;
     }
 
-    if (!self.width && typeof window !== "undefined") {
+    if (!self.width && typeof window !== 'undefined') {
       self.width = window.innerWidth;
     }
-    if (!self.height && typeof window !== "undefined") {
+    if (!self.height && typeof window !== 'undefined') {
       self.height = window.innerHeight;
     }
     if (!self.center) {
@@ -332,10 +382,9 @@ export class Force2Layout extends Base {
         let massWeight = 1;
         if (isNumber(d.mass)) massWeight = d.mass;
         const degree = self.degreesMap[d.id].all;
-        return (!degree || degree < 5) ? massWeight : degree * 5 * massWeight;
+        return !degree || degree < 5 ? massWeight : degree * 5 * massWeight;
       };
     }
-
 
     // node size function
     const nodeSize = self.nodeSize;
@@ -355,7 +404,7 @@ export class Force2Layout extends Base {
           if (d.size) {
             if (isArray(d.size)) {
               return Math.max(d.size[0], d.size[1]) + nodeSpacingFunc(d);
-            } if (isObject(d.size)) {
+            } else if (isObject(d.size)) {
               return Math.max(d.size.width, d.size.height) + nodeSpacingFunc(d);
             }
             return (d.size as number) + nodeSpacingFunc(d);
@@ -395,16 +444,15 @@ export class Force2Layout extends Base {
             sDegree: degree.out,
             force: {
               mass: self.getMass(node),
-              nodeStrength: self.nodeStrength(node)
-            }
-          }
-        }
+              nodeStrength: self.nodeStrength(node, edges),
+            },
+          },
+        },
       };
       nodeIdxMap[node.id] = i;
     });
     self.nodeMap = nodeMap;
     self.nodeIdxMap = nodeIdxMap;
-
 
     self.edgeInfos = [];
     edges?.forEach((edge) => {
@@ -415,29 +463,43 @@ export class Force2Layout extends Base {
       } else {
         self.edgeInfos.push({
           edgeStrength: self.edgeStrength(edge),
-          linkDistance: defSpringLen ? defSpringLen(
-            {
-              ...edge,
-              source: sourceNode,
-              target: targetNode
-            },
-            sourceNode,
-            targetNode
-          ) : self.linkDistance(edge, sourceNode, targetNode) || 1 + ((nodeSize(sourceNode) + nodeSize(sourceNode)) || 0) / 2
+          linkDistance: defSpringLen
+            ? defSpringLen(
+                {
+                  ...edge,
+                  source: sourceNode,
+                  target: targetNode,
+                },
+                sourceNode,
+                targetNode
+              )
+            : self.linkDistance(edge, sourceNode, targetNode) ||
+              1 + (nodeSize(sourceNode) + nodeSize(sourceNode) || 0) / 2,
         });
       }
     });
 
     this.getCentripetalOptions();
 
-    self.onLayoutEnd = self.onLayoutEnd || (() => { });
+    self.onLayoutEnd = self.onLayoutEnd || (() => {});
 
     self.run();
   }
 
   public run() {
     const self = this;
-    const { maxIteration, nodes, workerEnabled, minMovement, animate, nodeMap } = self;
+    const {
+      maxIteration,
+      nodes,
+      edges,
+      workerEnabled,
+      minMovement,
+      animate,
+      nodeMap,
+      height,
+    } = self;
+    self.currentMinY = 0;
+    self.currentMaxY = height;
 
     if (!nodes) return;
 
@@ -447,17 +509,33 @@ export class Force2Layout extends Base {
       velArray[2 * i + 1] = 0;
     });
 
+    if (this.defSideCoe && typeof this.defSideCoe === 'function') {
+      const relatedEdges: { [nodeId: string]: Edge[] } = {};
+      edges.forEach((edge) => {
+        const { source, target } = edge;
+        relatedEdges[source] = relatedEdges[source] || [];
+        relatedEdges[source].push(edge);
+        relatedEdges[target] = relatedEdges[target] || [];
+        relatedEdges[target].push(edge);
+      });
+      this.relatedEdges = relatedEdges;
+    }
+
     const maxIter = maxIteration;
     const silence = !animate;
     if (workerEnabled || silence) {
       let usedIter = 0;
-      for (let i = 0; (self.judgingDistance > minMovement || i < 1) && i < maxIter; i++) {
+      for (
+        let i = 0;
+        (self.judgingDistance > minMovement || i < 1) && i < maxIter;
+        i++
+      ) {
         usedIter = i;
         self.runOneStep(i, velArray);
       }
       self.onLayoutEnd(Object.values(nodeMap));
     } else {
-      if (typeof window === "undefined") return;
+      if (typeof window === 'undefined') return;
       let iter = 0;
       // interval for render the result after each iteration
       this.timeInterval = window.setInterval(() => {
@@ -480,6 +558,7 @@ export class Force2Layout extends Base {
     self.calRepulsive(accArray);
     if (edges) self.calAttractive(accArray);
     self.calGravity(accArray);
+    self.attractToSide(accArray);
     const stepInterval = self.interval; // Math.max(0.02, self.interval - iter * 0.002);
     self.updateVelocity(accArray, velArray, stepInterval);
     self.updatePosition(velArray, stepInterval);
@@ -513,7 +592,13 @@ export class Force2Layout extends Base {
     const self = this;
     const { nodes, nodeMap, factor, coulombDisScale } = self;
     const nodeSize = self.nodeSize as Function;
-    forceNBody(nodes, nodeMap, factor, coulombDisScale * coulombDisScale, accArray);
+    forceNBody(
+      nodes,
+      nodeMap,
+      factor,
+      coulombDisScale * coulombDisScale,
+      accArray
+    );
   }
 
   // hooks law
@@ -559,7 +644,17 @@ export class Force2Layout extends Base {
   // attract to center
   public calGravity(accArray: number[]) {
     const self = this;
-    const { nodes, edges = [], nodeMap, width, height, center, gravity: defaultGravity, degreesMap, centripetalOptions } = self;
+    const {
+      nodes,
+      edges = [],
+      nodeMap,
+      width,
+      height,
+      center,
+      gravity: defaultGravity,
+      degreesMap,
+      centripetalOptions,
+    } = self;
     if (!nodes) return;
     const nodeLength = nodes.length;
     for (let i = 0; i < nodeLength; i++) {
@@ -583,13 +678,26 @@ export class Force2Layout extends Base {
       }
 
       if (gravity) {
-        accArray[idx] -= gravity * vecX / mass;
-        accArray[idx + 1] -= gravity * vecY / mass;
+        accArray[idx] -= (gravity * vecX) / mass;
+        accArray[idx + 1] -= (gravity * vecY) / mass;
       }
 
       if (centripetalOptions) {
-        const { leaf, single, others, center: centriCenter } = centripetalOptions;
-        const { x: centriX, y: centriY, centerStrength } = centriCenter?.(node, nodes, edges, width, height) || { x: 0, y: 0, centerStrength: 0 };
+        const {
+          leaf,
+          single,
+          others,
+          center: centriCenter,
+        } = centripetalOptions;
+        const {
+          x: centriX,
+          y: centriY,
+          centerStrength,
+        } = centriCenter?.(node, nodes, edges, width, height) || {
+          x: 0,
+          y: 0,
+          centerStrength: 0,
+        };
         if (!isNumber(centriX) || !isNumber(centriY)) continue;
         const vx = (node.x - centriX) / mass;
         const vy = (node.y - centriY) / mass;
@@ -625,18 +733,30 @@ export class Force2Layout extends Base {
     }
   }
 
-  // TODO: 待 graphin 修改正确
-  // public attractToSide(accArray: number[]) {
-  //   const { defSideCoe, height, nodes } = this;
-  //   if (!defSideCoe || typeof defSideCoe !== 'function' || !nodes?.length) return;
-  //   nodes.forEach((node, i) => {
-  //     const sideCoe = defSideCoe!(node);
-  //     if (sideCoe === 0) return;
-  //     const targetY = sideCoe > 0 ? 0 : height;
-  //     const strength = Math.abs(sideCoe);
-  //     accArray[2 * i + 1] -= strength * (targetY - node.y);
-  //   });
-  // };
+  /**
+   * Attract forces to the top and bottom.
+   * @param accArray
+   * @returns
+   */
+  public attractToSide(accArray: number[]) {
+    const {
+      defSideCoe,
+      height,
+      nodes,
+      relatedEdges,
+      currentMinY = 0,
+      currentMaxY = this.height,
+    } = this;
+    if (!defSideCoe || typeof defSideCoe !== 'function' || !nodes?.length)
+      return;
+    nodes.forEach((node, i) => {
+      const sideCoe = defSideCoe!(node, relatedEdges[node.id] || []);
+      if (sideCoe === 0) return;
+      const targetY = sideCoe < 0 ? currentMinY : currentMaxY;
+      const strength = Math.abs(sideCoe);
+      accArray[2 * i + 1] -= strength * (node.y - targetY);
+    });
+  }
 
   public updateVelocity(
     accArray: number[],
@@ -647,8 +767,11 @@ export class Force2Layout extends Base {
     const { nodes, damping, maxSpeed } = self;
     if (!nodes?.length) return;
     nodes.forEach((_, i) => {
-      let vx = (velArray[2 * i] + accArray[2 * i] * stepInterval) * damping || 0.01;
-      let vy = (velArray[2 * i + 1] + accArray[2 * i + 1] * stepInterval) * damping || 0.01;
+      let vx =
+        (velArray[2 * i] + accArray[2 * i] * stepInterval) * damping || 0.01;
+      let vy =
+        (velArray[2 * i + 1] + accArray[2 * i + 1] * stepInterval) * damping ||
+        0.01;
       const vLength = Math.sqrt(vx * vx + vy * vy);
       if (vLength > maxSpeed) {
         const param2 = maxSpeed / vLength;
@@ -660,10 +783,7 @@ export class Force2Layout extends Base {
     });
   }
 
-  public updatePosition(
-    velArray: number[],
-    stepInterval: number,
-  ) {
+  public updatePosition(velArray: number[], stepInterval: number) {
     const self = this;
     const { nodes, distanceThresholdMode, nodeMap } = self;
     if (!nodes?.length) {
@@ -674,6 +794,8 @@ export class Force2Layout extends Base {
     if (distanceThresholdMode === 'max') self.judgingDistance = -Infinity;
     else if (distanceThresholdMode === 'min') self.judgingDistance = Infinity;
 
+    let currentMinY = Infinity;
+    let currentMaxY = -Infinity;
     nodes.forEach((node: any, i) => {
       const mappedNode = nodeMap[node.id];
       if (isNumber(node.fx) && isNumber(node.fy)) {
@@ -690,24 +812,32 @@ export class Force2Layout extends Base {
       mappedNode.x = node.x;
       mappedNode.y = node.y;
 
+      if (node.y < currentMinY) currentMinY = node.y;
+      if (node.y > currentMaxY) currentMaxY = node.y;
+
       const distanceMagnitude = Math.sqrt(distX * distX + distY * distY);
       switch (distanceThresholdMode) {
         case 'max':
-          if (self.judgingDistance < distanceMagnitude) self.judgingDistance = distanceMagnitude;
+          if (self.judgingDistance < distanceMagnitude)
+            self.judgingDistance = distanceMagnitude;
           break;
         case 'min':
-          if (self.judgingDistance > distanceMagnitude) self.judgingDistance = distanceMagnitude;
+          if (self.judgingDistance > distanceMagnitude)
+            self.judgingDistance = distanceMagnitude;
           break;
         default:
           sum = sum + distanceMagnitude;
           break;
       }
     });
-    if (!distanceThresholdMode || distanceThresholdMode === 'mean') self.judgingDistance = sum / nodes.length;
+    this.currentMinY = currentMinY;
+    this.currentMaxY = currentMaxY;
+    if (!distanceThresholdMode || distanceThresholdMode === 'mean')
+      self.judgingDistance = sum / nodes.length;
   }
 
   public stop() {
-    if (this.timeInterval && typeof window !== "undefined") {
+    if (this.timeInterval && typeof window !== 'undefined') {
       window.clearInterval(this.timeInterval);
     }
   }
@@ -722,7 +852,7 @@ export class Force2Layout extends Base {
   }
 
   public getType() {
-    return "force2";
+    return 'force2';
   }
 
   private getSameTypeLeafMap() {
@@ -733,7 +863,14 @@ export class Force2Layout extends Base {
     nodes.forEach((node, i) => {
       const degree = degreesMap[node.id].all;
       if (degree === 1) {
-        sameTypeLeafMap[node.id] = getCoreNodeAndRelativeLeafNodes('leaf', node, edges, nodeClusterBy, degreesMap, nodeMap);
+        sameTypeLeafMap[node.id] = getCoreNodeAndRelativeLeafNodes(
+          'leaf',
+          node,
+          edges,
+          nodeClusterBy,
+          degreesMap,
+          nodeMap
+        );
       }
     });
     return sameTypeLeafMap;
