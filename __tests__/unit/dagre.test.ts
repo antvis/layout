@@ -106,21 +106,133 @@ const data = {
 };
 
 describe("DagreLayout", () => {
-  test.skip("should skip layout when there's no node in graph.", async () => {
+  test("should layout correctly with UR alignment.", async () => {
     const graph = new Graph<NodeData, EdgeData>(data);
 
+    //             +---+
+    //             |-| |
+    //            -/-|-+
+    //          -/   |  
+    //       --/     |  
+    // +----/      +-|-+
+    // | --|       | | |
+    // +---\-      +-|-+
+    //       \-      |  
+    //         \--   |  
+    //            \--|-+
+    //             |\- |
+    //             +-|-+
+    //               |  
+    //               |  
+    //             +-|-+
+    //             | | |
+    //             +-|-+
+    //               |  
+    //               |  
+    //             +-|-+
+    //             |-- |
+    //            -/-|-+
+    //          -/   |  
+    //       --/     |  
+    // +----/      +-|-+
+    // | -/|       | + |
+    // +---+       +---+
     const dagre = new DagreLayout({
-      nodesep: 50, // 节点水平间距(px)
-      ranksep: 50, // 每一层节点之间间距
-      controlPoints: false, // 是否保留布局连线的控制点
+      nodeSize: 10,
+      ranksep: 70,
+      controlPoints: true,
+      begin: [0, 0],
+      align: "UR",
     });
 
     const positions = await dagre.execute(graph);
-    // expect(positions).toEqual({ nodes: [], edges: [] });
+    expect(positions.nodes[0].data.x).toBe(160);
+    expect(positions.nodes[0].data.y).toBe(0);
 
-    // Graph should remain unchanged.
-    // await circular.assign(graph);
-    expect(positions.nodes[0].data.x).not.toBe(undefined);
-    expect(positions.nodes[0].data.y).not.toBe(undefined);
+    expect(positions.nodes[1].data.x).toBe(0);
+    expect(positions.nodes[1].data.y).toBe(150);
+
+    expect(positions.nodes[2].data.x).toBe(160);
+    expect(positions.nodes[2].data.y).toBe(150);
+
+    expect(positions.nodes[3].data.x).toBe(160);
+    expect(positions.nodes[3].data.y).toBe(300);
+
+    expect(positions.nodes[4].data.x).toBe(160);
+    expect(positions.nodes[4].data.y).toBe(450);
+
+    expect(positions.nodes[5].data.x).toBe(160);
+    expect(positions.nodes[5].data.y).toBe(600);
+
+    expect(positions.nodes[6].data.x).toBe(0);
+    expect(positions.nodes[6].data.y).toBe(750);
+
+    expect(positions.nodes[7].data.x).toBe(160);
+    expect(positions.nodes[7].data.y).toBe(750);
+  });
+
+  test("should layout correctly with UR alignment & ranksepFunc.", async () => {
+    const graph = new Graph<NodeData, EdgeData>(data);
+
+    //             +---+
+    //             |-| |
+    //            -/-|-+
+    //          -/   |  
+    //       --/     |  
+    // +----/      +-|-+
+    // | --|       | | |
+    // +---\-      +-|-+
+    //       \-      |  
+    //         \--   |  
+    //            \--|-+
+    //             |\- |
+    //             +-|-+
+    //               |  
+    //               |  
+    //             +-|-+
+    //             | | |
+    //             +-|-+
+    //               |  
+    //               |  
+    //             +-|-+
+    //             |-- |
+    //            -/-|-+
+    //          -/   |  
+    //       --/     |  
+    // +----/      +-|-+
+    // | -/|       | + |
+    // +---+       +---+
+    const dagre = new DagreLayout({
+      nodeSize: 10,
+      ranksepFunc: () => 70,
+      controlPoints: true,
+      begin: [0, 0],
+      align: "UR",
+    });
+
+    const positions = await dagre.execute(graph);
+    expect(positions.nodes[0].data.x).toBe(160);
+    expect(positions.nodes[0].data.y).toBe(0);
+
+    expect(positions.nodes[1].data.x).toBe(0);
+    expect(positions.nodes[1].data.y).toBe(150);
+
+    expect(positions.nodes[2].data.x).toBe(160);
+    expect(positions.nodes[2].data.y).toBe(150);
+
+    expect(positions.nodes[3].data.x).toBe(160);
+    expect(positions.nodes[3].data.y).toBe(300);
+
+    expect(positions.nodes[4].data.x).toBe(160);
+    expect(positions.nodes[4].data.y).toBe(450);
+
+    expect(positions.nodes[5].data.x).toBe(160);
+    expect(positions.nodes[5].data.y).toBe(600);
+
+    expect(positions.nodes[6].data.x).toBe(0);
+    expect(positions.nodes[6].data.y).toBe(750);
+
+    expect(positions.nodes[7].data.x).toBe(160);
+    expect(positions.nodes[7].data.y).toBe(750);
   });
 });

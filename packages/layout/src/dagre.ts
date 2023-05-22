@@ -116,7 +116,6 @@ export class DagreLayout implements Layout<DagreLayoutOptions> {
     const edges: Edge[] = graph.getAllEdges();
 
     nodes
-      .filter((node) => node.data.layout)
       .forEach((node) => {
         const size = nodeSizeFunc(node);
         const verti = vertisep(node);
@@ -152,19 +151,14 @@ export class DagreLayout implements Layout<DagreLayoutOptions> {
 
     edges.forEach((edge) => {
       // dagrejs Wiki https://github.com/dagrejs/dagre/wiki#configuring-the-layout
-      if (
-        this.layoutNode(g.getNode(edge.source)) &&
-        this.layoutNode(g.getNode(edge.target))
-      ) {
-        g.addEdge({
-          id: edge.id,
-          source: edge.source,
-          target: edge.target,
-          data: {
-            weight: edge.data.weight || 1,
-          },
-        });
-      }
+      g.addEdge({
+        id: edge.id,
+        source: edge.source,
+        target: edge.target,
+        data: {
+          weight: edge.data.weight || 1,
+        },
+      });
     });
 
     // TODO: combo & prevGraph
@@ -500,10 +494,6 @@ export class DagreLayout implements Layout<DagreLayoutOptions> {
     };
 
     return result;
-  }
-
-  layoutNode = (node: Node) => {
-    return node.data.layout;
   }
 }
 

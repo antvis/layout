@@ -48,6 +48,7 @@
     "@babel/preset-env": "^7.21.5",
     "@babel/preset-typescript": "^7.21.5",
     "@changesets/cli": "^2.26.1",
+    "@types/jest": "latest",
     "@types/d3-force": "^2.1.4",
     "@types/d3-quadtree": "^2.0.2",
     "babel-jest": "28.1.3",
