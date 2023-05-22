@@ -22,6 +22,7 @@ export async function antvlayout(
   { iterations, min_movement, distance_threshold_mode }: CommonLayoutOptions
 ) {
   const force2 = new ForceLayout({
+    dimensions: 2,
     factor,
     gravity,
     linkDistance,
@@ -52,6 +53,7 @@ export async function antvlayoutWASM(
 ) {
   const force = new ForceWASMLayout({
     threads,
+    dimensions: 2,
     maxIteration: iterations || ITERATIONS,
     minMovement: min_movement,
     distanceThresholdMode: distance_threshold_mode,
