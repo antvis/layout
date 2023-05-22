@@ -7,7 +7,7 @@ export default defineConfig({
     port: 8080,
     open: "/",
   },
-  publicDir: "../packages/layout-wasm/dist",
+  // publicDir: "../packages/layout-wasm/dist",
   base: "/layout/",
   build: {
     rollupOptions: {

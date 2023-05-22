@@ -124,7 +124,7 @@ where
         };
 
         if let DistanceThresholdMode::Average = self.settings.distance_threshold_mode  {
-            judging_distance = judging_distance / self.points.points.len() as f32;
+            judging_distance = judging_distance / (self.points.points.len() / self.points.dimensions) as f32;
         }
 
         judging_distance < self.settings.min_movement

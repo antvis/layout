@@ -37,6 +37,7 @@ export async function antvlayout(
   { iterations, min_movement, distance_threshold_mode }: CommonLayoutOptions
 ) {
   const fruchterman = new FruchtermanLayout({
+    dimensions: 2,
     height: CANVAS_SIZE,
     width: CANVAS_SIZE,
     center: [CANVAS_SIZE / 2, CANVAS_SIZE / 2],
@@ -53,6 +54,7 @@ export async function antvlayoutGPU(
   { iterations, min_movement, distance_threshold_mode }: CommonLayoutOptions
 ) {
   const fruchterman = new FruchtermanGPULayout({
+    dimensions: 2,
     height: CANVAS_SIZE,
     width: CANVAS_SIZE,
     center: [CANVAS_SIZE / 2, CANVAS_SIZE / 2],
@@ -71,6 +73,7 @@ export async function antvlayoutWASM(
 ) {
   const fruchterman = new FruchtermanWASMLayout({
     threads,
+    dimensions: 2,
     maxIteration: iterations || ITERATIONS,
     minMovement: min_movement,
     distanceThresholdMode: distance_threshold_mode,

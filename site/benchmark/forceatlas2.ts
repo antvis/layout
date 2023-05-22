@@ -44,6 +44,7 @@ export async function antvlayout(
   { iterations }: CommonLayoutOptions
 ) {
   const forceAtlas2 = new ForceAtlas2Layout({
+    dimensions: 2,
     kr,
     kg,
     ks: 0.1,
@@ -63,6 +64,7 @@ export async function antvlayoutWASM(
 ) {
   const forceatlas2 = new ForceAtlas2WASMLayout({
     threads,
+    dimensions: 2,
     maxIteration: iterations || ITERATIONS,
     minMovement: min_movement,
     distanceThresholdMode: distance_threshold_mode,
