@@ -1,6 +1,6 @@
 {
   "name": "@antv/layout",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "graph layout algorithm",
   "license": "MIT",
   "repository": {
@@ -27,6 +27,7 @@
     "antv"
   ],
   "dependencies": {
+    "@antv/event-emitter": "^0.1.3",
     "@antv/graphlib": "^2.0.0",
     "@antv/util": "^3.3.2",
     "@naoak/workerize-transferable": "^0.1.0",
@@ -34,7 +35,6 @@
     "d3-force": "^3.0.0",
     "d3-quadtree": "^3.0.1",
     "d3-octree": "^1.0.2",
-    "eventemitter3": "^4.0.0",
     "ml-matrix": "^6.10.4",
     "tslib": "^2.5.0"
   },

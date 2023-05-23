@@ -1,5 +1,13 @@
 # @antv/layout-gpu
 
+## 1.1.4
+
+### Patch Changes
+
+- Replace eventemitter with @antv/event-emitter
+- Updated dependencies
+  - @antv/layout@1.2.3
+
 ## 1.1.3
 
 ### Patch Changes

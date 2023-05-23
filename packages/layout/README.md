@@ -297,6 +297,22 @@ const positions = await supervisor.execute();
 - `stop` Call `stop` on the selected layout algorithm.
 - `kill` Terminate the WebWorker.
 
+### Use WebWorker in UMD and ESM format
+
+We use the following syntax in ESM, which is also available in native ECMAScript modules in the browser:
+
+```js
+new Worker(new URL('./worker.js', import.meta.url));
+```
+
+Here are some demos with different bundlers:
+
+* UMD format: https://codepen.io/xiaoiver/pen/LYgqEbN
+* ESM with Vite https://stackblitz.com/edit/vite-t1euu4?file=vite.config.js
+* ESM with Webpack5
+
+For more discussion see: https://github.com/antvis/layout/issues/121#issuecomment-1558408701.
+
 ## License
 
 The scripts and documentation in this project are released under the [MIT License](LICENSE).

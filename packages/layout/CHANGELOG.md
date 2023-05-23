@@ -1,5 +1,11 @@
 # @antv/layout
 
+## 1.2.3
+
+### Patch Changes
+
+- Replace eventemitter with @antv/event-emitter
+
 ## 1.2.2
 
 ### Patch Changes

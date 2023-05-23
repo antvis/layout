@@ -1,4 +1,5 @@
-import EventEmitter from "eventemitter3";
+// @ts-ignore
+import EventEmitter from "@antv/event-emitter";
 import { Graph, Node, Edge } from "@antv/graphlib";
 import * as Comlink from "comlink";
 import type { Layout, LayoutSupervisor } from "./types";
