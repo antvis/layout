@@ -1,5 +1,12 @@
 # @antv/layout-wasm
 
+## 1.3.1
+
+### Patch Changes
+
+- Updated dependencies
+  - @antv/layout@1.2.1
+
 ## 1.3.0
 
 ### Minor Changes

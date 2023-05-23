@@ -1,5 +1,11 @@
 # @antv/layout
 
+## 1.2.1
+
+### Patch Changes
+
+- Use comlink instead of webpack worker-loader
+
 ## 1.2.0
 
 ### Minor Changes
