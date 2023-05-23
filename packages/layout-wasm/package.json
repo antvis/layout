@@ -22,6 +22,7 @@
     "LICENSE",
     "README.md"
   ],
+  "sideEffects": false,
   "scripts": {
     "build:wasm-st": "wasm-pack build --target web",
     "build:wasm-mt": "cross-env RUSTFLAGS='-C target-feature=+atomics,+bulk-memory,+mutable-globals' rustup run nightly wasm-pack build --target web --out-dir pkg-parallel -- --features parallel -Z build-std=panic_abort,std",

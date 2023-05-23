@@ -1,7 +1,10 @@
 import EventEmitter from "eventemitter3";
 import { Graph, Node, Edge } from "@antv/graphlib";
-import * as Comlink from "comlink";
 import type { Layout, LayoutSupervisor } from "./types";
+// @ts-ignore
+// Inline the worker as a Blob. @see https://github.com/developit/workerize-loader#inline
+import worker from "workerize-loader?inline!./bundle-worker";
+// import { setupTransferableMethodsOnMain } from "@naoak/workerize-transferable";
 
 /**
  * The payload transferred from main thread to the worker.
@@ -59,10 +62,15 @@ export class Supervisor extends EventEmitter implements LayoutSupervisor {
       this.worker.terminate();
     }
 
-    this.worker = Comlink.wrap(
-      // @ts-ignore
-      new Worker(new URL("./worker.js", import.meta.url))
-    );
+    /**
+     * Worker function
+     */
+    // this.worker = this.createWorker(workerFunctionString);
+    // this.worker.addEventListener('message', this.handleWorkerMessage);
+
+    // Use workerize-loader to create WebWorker.
+    // @see https://github.com/developit/workerize-loader
+    this.worker = worker();
 
     if (this.running) {
       this.running = false;
@@ -120,9 +128,9 @@ export class Supervisor extends EventEmitter implements LayoutSupervisor {
   }
 
   kill() {
-    // if (this.worker) {
-    //   this.worker.terminate();
-    // }
+    if (this.worker) {
+      this.worker.terminate();
+    }
 
     // TODO: unbind listeners on graph.
 
