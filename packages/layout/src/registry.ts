@@ -24,6 +24,3 @@ export const registry: Record<string, LayoutConstructor<any>> = {
   forceAtlas2: ForceAtlas2Layout,
   dagre: DagreLayout,
 };
-export function registerLayout(id: string, layout: LayoutConstructor<any>) {
-  registry[id] = layout;
-}
