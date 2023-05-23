@@ -1,5 +1,11 @@
 # @antv/layout
 
+## 1.2.2
+
+### Patch Changes
+
+- Add sideEffects field in package.json
+
 ## 1.2.1
 
 ### Patch Changes

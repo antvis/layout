@@ -1,5 +1,13 @@
 # @antv/layout-gpu
 
+## 1.1.3
+
+### Patch Changes
+
+- Add sideEffects field in package.json
+- Updated dependencies
+  - @antv/layout@1.2.2
+
 ## 1.1.2
 
 ### Patch Changes

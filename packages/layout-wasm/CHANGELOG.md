@@ -1,5 +1,13 @@
 # @antv/layout-wasm
 
+## 1.3.2
+
+### Patch Changes
+
+- Add sideEffects field in package.json
+- Updated dependencies
+  - @antv/layout@1.2.2
+
 ## 1.3.1
 
 ### Patch Changes
