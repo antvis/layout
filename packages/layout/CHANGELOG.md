@@ -1,5 +1,11 @@
 # @antv/layout
 
+## 1.2.4
+
+### Patch Changes
+
+- Use type module when creating WebWorker
+
 ## 1.2.3
 
 ### Patch Changes

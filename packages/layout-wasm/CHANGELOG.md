@@ -1,5 +1,13 @@
 # @antv/layout-wasm
 
+## 1.3.4
+
+### Patch Changes
+
+- Use type module when creating WebWorker
+- Updated dependencies
+  - @antv/layout@1.2.4
+
 ## 1.3.3
 
 ### Patch Changes

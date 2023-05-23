@@ -62,7 +62,7 @@ export class Supervisor extends EventEmitter implements LayoutSupervisor {
 
     this.worker = Comlink.wrap(
       // @ts-ignore
-      new Worker(new URL("./worker.js", import.meta.url))
+      new Worker(new URL("./worker.js", import.meta.url), { type: 'module' })
     );
 
     if (this.running) {

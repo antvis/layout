@@ -1,5 +1,13 @@
 # @antv/layout-gpu
 
+## 1.1.5
+
+### Patch Changes
+
+- Use type module when creating WebWorker
+- Updated dependencies
+  - @antv/layout@1.2.4
+
 ## 1.1.4
 
 ### Patch Changes
