@@ -308,8 +308,8 @@ new Worker(new URL('./worker.js', import.meta.url));
 Here are some demos with different bundlers:
 
 * UMD format: https://codepen.io/xiaoiver/pen/LYgqEbN
-* ESM with Vite https://stackblitz.com/edit/vite-t1euu4?file=vite.config.js
-* ESM with Webpack5
+* ESM with Vite: https://stackblitz.com/edit/vite-t1euu4?file=vite.config.js
+* ESM with Webpack5: https://stackblitz.com/edit/github-wpncwj-u8ghot?file=src%2Findex.js
 
 For more discussion see: https://github.com/antvis/layout/issues/121#issuecomment-1558408701.
 

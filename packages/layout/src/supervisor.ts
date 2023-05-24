@@ -38,7 +38,7 @@ export class Supervisor extends EventEmitter implements LayoutSupervisor {
   /**
    * Internal worker.
    */
-  private worker: any;
+  private proxy: Comlink.Remote<any>;
 
   /**
    * Flag of running state.
@@ -56,11 +56,7 @@ export class Supervisor extends EventEmitter implements LayoutSupervisor {
   }
 
   spawnWorker() {
-    if (this.worker) {
-      this.worker.terminate();
-    }
-
-    this.worker = Comlink.wrap(
+    this.proxy = Comlink.wrap(
       // @ts-ignore
       new Worker(new URL("./worker.js", import.meta.url), { type: 'module' })
     );
@@ -104,7 +100,7 @@ export class Supervisor extends EventEmitter implements LayoutSupervisor {
     //   },
     // });
 
-    const [positions] = await this.worker.calculateLayout(payload, [
+    const [positions] = await this.proxy.calculateLayout(payload, [
       arraybufferWithNodesEdges,
     ]);
 
@@ -115,15 +111,15 @@ export class Supervisor extends EventEmitter implements LayoutSupervisor {
     this.running = false;
 
     // trigger `layout.stop()` if needed
-    this.worker.stopLayout();
+    this.proxy.stopLayout();
 
     return this;
   }
 
   kill() {
-    // if (this.worker) {
-    //   this.worker.terminate();
-    // }
+    // allow the GC to collect wrapper port
+    // @see https://github.com/GoogleChromeLabs/comlink#comlinkreleaseproxy
+    this.proxy[Comlink.releaseProxy]();
 
     // TODO: unbind listeners on graph.
 
