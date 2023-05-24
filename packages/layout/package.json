@@ -1,6 +1,6 @@
 {
   "name": "@antv/layout",
-  "version": "1.2.0",
+  "version": "1.2.4",
   "description": "graph layout algorithm",
   "license": "MIT",
   "repository": {
@@ -9,17 +9,17 @@
     "directory": "packages/layout"
   },
   "main": "dist/index.min.js",
-  "module": "esm/index.esm.js",
+  "module": "lib/index.js",
   "types": "lib/index.d.ts",
   "unpkg": "dist/index.min.js",
   "files": [
     "package.json",
     "dist",
-    "esm",
     "lib",
     "LICENSE",
     "README.md"
   ],
+  "sideEffects": false,
   "keywords": [
     "graph",
     "layout",
@@ -27,13 +27,14 @@
     "antv"
   ],
   "dependencies": {
+    "@antv/event-emitter": "^0.1.3",
     "@antv/graphlib": "^2.0.0",
     "@antv/util": "^3.3.2",
     "@naoak/workerize-transferable": "^0.1.0",
+    "comlink": "^4.4.1",
     "d3-force": "^3.0.0",
     "d3-quadtree": "^3.0.1",
     "d3-octree": "^1.0.2",
-    "eventemitter3": "^4.0.0",
     "ml-matrix": "^6.10.4",
     "tslib": "^2.5.0"
   },
@@ -50,11 +51,11 @@
     "workerize-loader": "^2.0.2"
   },
   "scripts": {
-    "clean": "rimraf dist esm lib",
+    "clean": "rimraf dist lib",
     "dev": "webpack --config webpack.dev.config.js --mode development",
     "build": "npm run clean && npm run build:esm && npm run build:umd",
     "build:ci": "npm run build",
-    "build:esm": "webpack --config webpack.esm.config.js --mode production",
+    "build:esm": "tsc",
     "build:umd": "webpack --config webpack.config.js --mode production",
     "publish:alpha": "npm publish --tag alpha"
   }

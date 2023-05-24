@@ -1,9 +1,10 @@
 const path = require("path");
 
 module.exports = {
-  entry: "./src/index.ts",
+  entry: "./src/bundle-entry.ts",
   output: {
     filename: "index.min.js",
+    publicPath: "",
     path: path.resolve(__dirname, "dist"),
     library: "Layout",
     libraryTarget: "umd",

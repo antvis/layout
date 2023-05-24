@@ -1,6 +1,6 @@
 {
   "name": "@antv/layout-wasm",
-  "version": "1.3.0",
+  "version": "1.3.4",
   "description": "A WASM binding of rust implementation for graph layout algorithms.",
   "license": "MIT",
   "repository": {
@@ -22,6 +22,7 @@
     "LICENSE",
     "README.md"
   ],
+  "sideEffects": false,
   "scripts": {
     "build:wasm-st": "wasm-pack build --target web",
     "build:wasm-mt": "cross-env RUSTFLAGS='-C target-feature=+atomics,+bulk-memory,+mutable-globals' rustup run nightly wasm-pack build --target web --out-dir pkg-parallel -- --features parallel -Z build-std=panic_abort,std",

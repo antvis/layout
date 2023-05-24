@@ -21,3 +21,4 @@ pkg-node
 pkg-parallel
 *.lock
 Cargo.lock
+tsconfig.tsbuildinfo

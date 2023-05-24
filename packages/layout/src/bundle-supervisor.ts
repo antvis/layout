@@ -1,8 +1,11 @@
 // @ts-ignore
 import EventEmitter from "@antv/event-emitter";
 import { Graph, Node, Edge } from "@antv/graphlib";
-import * as Comlink from "comlink";
 import type { Layout, LayoutSupervisor } from "./types";
+// @ts-ignore
+// Inline the worker as a Blob. @see https://github.com/developit/workerize-loader#inline
+import worker from "workerize-loader?inline!./bundle-worker";
+// import { setupTransferableMethodsOnMain } from "@naoak/workerize-transferable";
 
 /**
  * The payload transferred from main thread to the worker.
@@ -38,7 +41,7 @@ export class Supervisor extends EventEmitter implements LayoutSupervisor {
   /**
    * Internal worker.
    */
-  private proxy: Comlink.Remote<any>;
+  private worker: any;
 
   /**
    * Flag of running state.
@@ -56,10 +59,19 @@ export class Supervisor extends EventEmitter implements LayoutSupervisor {
   }
 
   spawnWorker() {
-    this.proxy = Comlink.wrap(
-      // @ts-ignore
-      new Worker(new URL("./worker.js", import.meta.url), { type: 'module' })
-    );
+    if (this.worker) {
+      this.worker.terminate();
+    }
+
+    /**
+     * Worker function
+     */
+    // this.worker = this.createWorker(workerFunctionString);
+    // this.worker.addEventListener('message', this.handleWorkerMessage);
+
+    // Use workerize-loader to create WebWorker.
+    // @see https://github.com/developit/workerize-loader
+    this.worker = worker();
 
     if (this.running) {
       this.running = false;
@@ -100,7 +112,7 @@ export class Supervisor extends EventEmitter implements LayoutSupervisor {
     //   },
     // });
 
-    const [positions] = await this.proxy.calculateLayout(payload, [
+    const [positions] = await this.worker.calculateLayout(payload, [
       arraybufferWithNodesEdges,
     ]);
 
@@ -111,15 +123,15 @@ export class Supervisor extends EventEmitter implements LayoutSupervisor {
     this.running = false;
 
     // trigger `layout.stop()` if needed
-    this.proxy.stopLayout();
+    this.worker.stopLayout();
 
     return this;
   }
 
   kill() {
-    // allow the GC to collect wrapper port
-    // @see https://github.com/GoogleChromeLabs/comlink#comlinkreleaseproxy
-    this.proxy[Comlink.releaseProxy]();
+    if (this.worker) {
+      this.worker.terminate();
+    }
 
     // TODO: unbind listeners on graph.
 
