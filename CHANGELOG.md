@@ -1,5 +1,9 @@
 # ChangeLog
 
+### 0.3.23
+
+- fix: comboCombined node size problem;
+
 ### 0.3.22
 
 - feat: force2 supports attractive forces to the top and bottom;

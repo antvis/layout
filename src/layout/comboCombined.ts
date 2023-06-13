@@ -3,18 +3,32 @@
  * @author shiwu.wyy@antfin.com
  */
 
- import {
+import {
   Edge,
   Combo,
   OutNode,
   PointTuple,
   ComboTree,
-  ComboCombinedLayoutOptions
-} from "./types";
+  ComboCombinedLayoutOptions,
+} from './types';
 import { FORCE_LAYOUT_TYPE_MAP } from './constants';
-import { Base } from "./base";
-import { isArray, isNumber, isFunction, traverseTreeUp, isObject, getLayoutBBox } from "../util";
-import { CircularLayout, ConcentricLayout, GridLayout, RadialLayout, GForceLayout, MDSLayout } from ".";
+import { Base } from './base';
+import {
+  isArray,
+  isNumber,
+  isFunction,
+  traverseTreeUp,
+  isObject,
+  getLayoutBBox,
+} from '../util';
+import {
+  CircularLayout,
+  ConcentricLayout,
+  GridLayout,
+  RadialLayout,
+  GForceLayout,
+  MDSLayout,
+} from '.';
 
 type Node = OutNode & {
   depth?: number;
@@ -29,7 +43,6 @@ type Node = OutNode & {
  * combined two layouts (inner and outer) for graph with combos
  */
 export class ComboCombinedLayout extends Base {
-
   /** 布局中心 */
   public center: PointTuple = [0, 0];
 
@@ -52,7 +65,11 @@ export class ComboCombinedLayout extends Base {
   public outerLayout: any;
 
   /** combo 内部的布局算法，默认为 concentric */
-  public innerLayout: ConcentricLayout | CircularLayout | GridLayout | RadialLayout;
+  public innerLayout:
+    | ConcentricLayout
+    | CircularLayout
+    | GridLayout
+    | RadialLayout;
 
   /** Combo 内部的 padding */
   public comboPadding:
@@ -101,7 +118,7 @@ export class ComboCombinedLayout extends Base {
   public run() {
     const self = this;
     const { nodes, edges, combos, comboEdges, center } = self;
-    
+
     const nodeMap: any = {};
     nodes.forEach((node) => {
       nodeMap[node.id] = node;
@@ -128,10 +145,15 @@ export class ComboCombinedLayout extends Base {
         fx: innerNode.fx || comboMap[cTree.id].fx,
         fy: innerNode.fy || comboMap[cTree.id].fy,
         mass: innerNode.mass || comboMap[cTree.id].mass,
-        size: innerNode.size
+        size: innerNode.size,
       };
       outerNodes.push(oNode);
-      if (!isNaN(oNode.x) && oNode.x !== 0 && !isNaN(oNode.y) && oNode.y !== 0) {
+      if (
+        !isNaN(oNode.x) &&
+        oNode.x !== 0 &&
+        !isNaN(oNode.y) &&
+        oNode.y !== 0
+      ) {
         allHaveNoPosition = false;
       } else {
         oNode.x = Math.random() * 100;
@@ -148,7 +170,12 @@ export class ComboCombinedLayout extends Base {
       // 代表节点的节点
       const oNode: Node = { ...node };
       outerNodes.push(oNode);
-      if (!isNaN(oNode.x) && oNode.x !== 0 && !isNaN(oNode.y) && oNode.y !== 0) {
+      if (
+        !isNaN(oNode.x) &&
+        oNode.x !== 0 &&
+        !isNaN(oNode.y) &&
+        oNode.y !== 0
+      ) {
         allHaveNoPosition = false;
       } else {
         oNode.x = Math.random() * 100;
@@ -161,12 +188,14 @@ export class ComboCombinedLayout extends Base {
       const sourceAncestorId = nodeAncestorIdMap[edge.source] || edge.source;
       const targetAncestorId = nodeAncestorIdMap[edge.target] || edge.target;
       // 若两个点的祖先都在力导图的节点中，且是不同的节点，创建一条链接两个祖先的边到力导图的边中
-      if (sourceAncestorId !== targetAncestorId &&
+      if (
+        sourceAncestorId !== targetAncestorId &&
         outerNodeIds.includes(sourceAncestorId) &&
-        outerNodeIds.includes(targetAncestorId)) {
+        outerNodeIds.includes(targetAncestorId)
+      ) {
         outerEdges.push({
           source: sourceAncestorId,
-          target: targetAncestorId
+          target: targetAncestorId,
         });
       }
     });
@@ -179,19 +208,22 @@ export class ComboCombinedLayout extends Base {
       } else {
         const outerData = {
           nodes: outerNodes,
-          edges: outerEdges
+          edges: outerEdges,
         };
 
         // 需要使用一个同步的布局
         // @ts-ignore
-        const outerLayout = this.outerLayout || new GForceLayout({
-          gravity: 1,
-          factor: 4,
-          linkDistance: (edge: any, source: any, target: any) => {
-            const nodeSize = ((source.size?.[0] || 30) + (target.size?.[0] || 30)) / 2;
-            return Math.min(nodeSize * 1.5, 700);
-          }
-        });
+        const outerLayout =
+          this.outerLayout ||
+          new GForceLayout({
+            gravity: 1,
+            factor: 4,
+            linkDistance: (edge: any, source: any, target: any) => {
+              const nodeSize =
+                ((source.size?.[0] || 30) + (target.size?.[0] || 30)) / 2;
+              return Math.min(nodeSize * 1.5, 700);
+            },
+          });
         const outerLayoutType = outerLayout.getType?.();
         outerLayout.updateCfg({
           center,
@@ -201,7 +233,8 @@ export class ComboCombinedLayout extends Base {
         });
         // 若所有 outerNodes 都没有位置，且 outerLayout 是力导家族的布局，则先执行 preset mds 或 grid
         if (allHaveNoPosition && FORCE_LAYOUT_TYPE_MAP[outerLayoutType]) {
-          const outerLayoutPreset = outerNodes.length < 100 ? new MDSLayout() : new GridLayout();
+          const outerLayoutPreset =
+            outerNodes.length < 100 ? new MDSLayout() : new GridLayout();
           outerLayoutPreset.layout(outerData);
         }
         outerLayout.layout(outerData);
@@ -235,8 +268,8 @@ export class ComboCombinedLayout extends Base {
       if (!innerGraph) continue;
       innerGraph.nodes.forEach((node: OutNode) => {
         if (!innerGraph.visited) {
-          node.x += (innerGraph.x || 0);
-          node.y += (innerGraph.y || 0);
+          node.x += innerGraph.x || 0;
+          node.y += innerGraph.y || 0;
         }
         if (nodeMap[node.id]) {
           nodeMap[node.id].x = node.x;
@@ -257,7 +290,8 @@ export class ComboCombinedLayout extends Base {
     const innerGraphs: any = {};
 
     // @ts-ignore
-    const innerGraphLayout: any = this.innerLayout || (new ConcentricLayout({ sortBy: 'id' }));
+    const innerGraphLayout: any =
+      this.innerLayout || new ConcentricLayout({ sortBy: 'id' });
     innerGraphLayout.center = [0, 0];
     innerGraphLayout.preventOverlap = true;
     innerGraphLayout.nodeSpacing = spacing;
@@ -270,11 +304,13 @@ export class ComboCombinedLayout extends Base {
         if (!treeNode.children?.length) {
           // 空 combo
           if (treeNode.itemType === 'combo') {
-            const treeNodeSize = padding ? [padding * 2, padding * 2] : [30, 30];
+            const treeNodeSize = padding
+              ? [padding * 2, padding * 2]
+              : [30, 30];
             innerGraphs[treeNode.id] = {
               id: treeNode.id,
               nodes: [],
-              size: treeNodeSize
+              size: treeNodeSize,
             };
           }
         } else {
@@ -287,19 +323,25 @@ export class ComboCombinedLayout extends Base {
           const innerGraphNodeIds = innerGraphNodes.map((node) => node.id);
           const innerGraphData = {
             nodes: innerGraphNodes,
-            edges: edges.filter((edge) => innerGraphNodeIds.includes(edge.source) && innerGraphNodeIds.includes(edge.target))
+            edges: edges.filter(
+              (edge) =>
+                innerGraphNodeIds.includes(edge.source) &&
+                innerGraphNodeIds.includes(edge.target)
+            ),
           };
           let minNodeSize = Infinity;
           innerGraphNodes.forEach((node) => {
             // @ts-ignore
-            if (!node.size) node.size = innerGraphs[node.id]?.size || nodeSize?.(node) || [30, 30];
+            if (!node.size)
+              node.size = innerGraphs[node.id]?.size ||
+                nodeSize?.(node) || [30, 30];
             if (isNumber(node.size)) node.size = [node.size, node.size];
             if (minNodeSize > node.size[0]) minNodeSize = node.size[0];
             if (minNodeSize > node.size[1]) minNodeSize = node.size[1];
           });
 
           // 根据节点数量、spacing，调整布局参数
-          
+
           innerGraphLayout.layout(innerGraphData);
           const { minX, minY, maxX, maxY } = getLayoutBBox(innerGraphNodes);
           // move the innerGraph to [0, 0],for later controled by parent layout
@@ -308,11 +350,14 @@ export class ComboCombinedLayout extends Base {
             node.x -= center.x;
             node.y -= center.y;
           });
-          const innerGraphSize = Math.max(maxX - minX, maxY - minY, minNodeSize) + padding * 2;
+          const innerGraphWidth =
+            Math.max(maxX - minX, minNodeSize) + padding * 2;
+          const innerGraphHeight =
+            Math.max(maxY - minY, minNodeSize) + padding * 2;
           innerGraphs[treeNode.id] = {
             id: treeNode.id,
             nodes: innerGraphNodes,
-            size: [innerGraphSize, innerGraphSize]
+            size: [innerGraphWidth, innerGraphHeight],
           };
         }
         return true;
@@ -347,8 +392,10 @@ export class ComboCombinedLayout extends Base {
           if (isArray(d.size)) {
             const res = d.size[0] > d.size[1] ? d.size[0] : d.size[1];
             return (res + spacing) / 2;
-          }  if (isObject(d.size)) {
-            const res = d.size.width > d.size.height ? d.size.width : d.size.height;
+          }
+          if (isObject(d.size)) {
+            const res =
+              d.size.width > d.size.height ? d.size.width : d.size.height;
             return (res + spacing) / 2;
           }
           return (d.size + spacing) / 2;
@@ -392,6 +439,6 @@ export class ComboCombinedLayout extends Base {
     this.comboPadding = comboPaddingFunc;
   }
   public getType() {
-    return "comboCombined";
+    return 'comboCombined';
   }
 }
