@@ -291,7 +291,8 @@ export class ComboCombinedLayout extends Base {
 
     // @ts-ignore
     const innerGraphLayout: any =
-      this.innerLayout || new ConcentricLayout({ sortBy: 'id' });
+      this.innerLayout ||
+      new ConcentricLayout({ type: 'concentric', sortBy: 'id' });
     innerGraphLayout.center = [0, 0];
     innerGraphLayout.preventOverlap = true;
     innerGraphLayout.nodeSpacing = spacing;
@@ -334,7 +335,7 @@ export class ComboCombinedLayout extends Base {
             // @ts-ignore
             if (!node.size)
               node.size = innerGraphs[node.id]?.size ||
-                nodeSize?.(node) || [30, 30];
+                (nodeSize as Function)?.(node) || [30, 30];
             if (isNumber(node.size)) node.size = [node.size, node.size];
             if (minNodeSize > node.size[0]) minNodeSize = node.size[0];
             if (minNodeSize > node.size[1]) minNodeSize = node.size[1];
