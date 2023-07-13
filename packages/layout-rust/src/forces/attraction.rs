@@ -1,4 +1,4 @@
-use crate::{layout::Layout};
+use crate::layout::Layout;
 
 use itertools::izip;
 
@@ -12,7 +12,7 @@ pub fn apply_attraction_force2_2d(layout: &mut Layout) {
 
         let (n1_speed, n2_speed) = layout.speeds.get_2_mut(*n1, *n2);
 
-        let dx = unsafe { *n1_pos.get_unchecked(0) - *n2_pos.get_unchecked(0)};
+        let dx = unsafe { *n1_pos.get_unchecked(0) - *n2_pos.get_unchecked(0) };
         let dy = unsafe { *n1_pos.get_unchecked(1) - *n2_pos.get_unchecked(1) };
 
         let dist = (dx * dx + dy * dy).sqrt();
@@ -45,7 +45,7 @@ pub fn apply_attraction_force2_3d(layout: &mut Layout) {
 
         let (n1_speed, n2_speed) = layout.speeds.get_2_mut(*n1, *n2);
 
-        let dx = unsafe { *n1_pos.get_unchecked(0) - *n2_pos.get_unchecked(0)};
+        let dx = unsafe { *n1_pos.get_unchecked(0) - *n2_pos.get_unchecked(0) };
         let dy = unsafe { *n1_pos.get_unchecked(1) - *n2_pos.get_unchecked(1) };
         let dz = unsafe { *n1_pos.get_unchecked(2) - *n2_pos.get_unchecked(2) };
 
@@ -127,11 +127,8 @@ pub fn apply_attraction_forceatlas2_2d(layout: &mut Layout) {
         let n1_pos = layout.points.get(n1);
         let n2_pos = layout.points.get(n2);
 
-        let weight = layout
-            .weights
-            .as_ref()
-            .map_or(1.0, |weights| weights[edge])
-            * layout.settings.ka;
+        let weight =
+            layout.weights.as_ref().map_or(1.0, |weights| weights[edge]) * layout.settings.ka;
 
         let (n1_speed, n2_speed) = layout.speeds.get_2_mut(n1, n2);
 
@@ -151,11 +148,8 @@ pub fn apply_attraction_forceatlas2_3d(layout: &mut Layout) {
 
         let n1_pos = layout.points.get(n1);
         let n2_pos = layout.points.get(n2);
-        let weight = layout
-            .weights
-            .as_ref()
-            .map_or(1.0, |weights| weights[edge])
-            * layout.settings.ka;
+        let weight =
+            layout.weights.as_ref().map_or(1.0, |weights| weights[edge]) * layout.settings.ka;
 
         let (n1_speed, n2_speed) = layout.speeds.get_2_mut(n1, n2);
 

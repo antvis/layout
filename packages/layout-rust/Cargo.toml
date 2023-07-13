@@ -17,8 +17,19 @@ lto = true
 opt-level = 's'
 
 [dependencies]
+atoi = "2.0.0"
+atomic = "0.5.1"
+atomic_float = "0.1.0"
+byte-slice-cast = "1.2.2"
+delegate = "0.8.0"
 itertools = "0.10.3"
+fast-float = "0.2.0"
 rayon = "1.5.1"
+parking_lot = "0.12.1"
+thiserror = "1.0.37"
+page_size = "0.4.2"
+num_cpus = "1.14.0"
+memmap2 = "0.5.8"
 
 [dev-dependencies]
 alloc_counter = "0.0.4"

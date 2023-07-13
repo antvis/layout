@@ -182,8 +182,7 @@ impl<'a> PointList {
         }
     }
 
-    pub fn remove(&mut self, mut offset: usize)
-    {
+    pub fn remove(&mut self, mut offset: usize) {
         offset *= self.dimensions;
         let len = self.points.len();
         self.points
