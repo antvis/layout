@@ -12,7 +12,6 @@ import type {
 import { isArray, getLayoutBBox, graphTreeDfs } from './util';
 import { handleSingleNodeGraph } from './util/common';
 import { MDSLayout } from './mds';
-import { GridLayout } from './grid';
 import { ForceLayout } from './force';
 import { ConcentricLayout } from './concentric';
 
@@ -373,7 +372,7 @@ export class ComboCombinedLayout implements Layout<ComboCombinedLayoutOptions> {
   ): Promise<any>[] {
     const { nodeSize, comboPadding, spacing, innerLayout } = options;
 
-    const innerGraphLayout: any = innerLayout || new GridLayout({});
+    const innerGraphLayout: any = innerLayout || new ConcentricLayout({});
     const innerLayoutOptions = {
       center: [0, 0],
       preventOverlap: true,
