@@ -1,4 +1,4 @@
-import { isFunction, isNumber, isObject, isString } from "@antv/util";
+import { isFunction, isNumber, isObject, isString } from '@antv/util';
 import type {
   Graph,
   Node,
@@ -8,9 +8,9 @@ import type {
   ConcentricLayoutOptions,
   Layout,
   IndexMap,
-} from "./types";
-import { cloneFormatData, isArray } from "./util";
-import { handleSingleNodeGraph } from "./util/common";
+} from './types';
+import { cloneFormatData, isArray } from './util';
+import { handleSingleNodeGraph } from './util/common';
 
 const DEFAULTS_LAYOUT_OPTIONS: Partial<ConcentricLayoutOptions> = {
   nodeSize: 30,
@@ -21,7 +21,7 @@ const DEFAULTS_LAYOUT_OPTIONS: Partial<ConcentricLayoutOptions> = {
   startAngle: (3 / 2) * Math.PI,
   clockwise: true,
   maxLevelDiff: undefined,
-  sortBy: "degree",
+  sortBy: 'degree',
 };
 
 /**
@@ -40,7 +40,7 @@ const DEFAULTS_LAYOUT_OPTIONS: Partial<ConcentricLayoutOptions> = {
  * await layout.assign(graph, { nodeSpacing: 10 });
  */
 export class ConcentricLayout implements Layout<ConcentricLayoutOptions> {
-  id = "concentric";
+  id = 'concentric';
 
   constructor(
     public options: ConcentricLayoutOptions = {} as ConcentricLayoutOptions
@@ -99,11 +99,11 @@ export class ConcentricLayout implements Layout<ConcentricLayoutOptions> {
     const edges = graph.getAllEdges();
 
     const width =
-      !propsWidth && typeof window !== "undefined"
+      !propsWidth && typeof window !== 'undefined'
         ? window.innerWidth
         : (propsWidth as number);
     const height =
-      !propsHeight && typeof window !== "undefined"
+      !propsHeight && typeof window !== 'undefined'
         ? window.innerHeight
         : (propsHeight as number);
     const center = (
@@ -161,12 +161,12 @@ export class ConcentricLayout implements Layout<ConcentricLayoutOptions> {
       !isString(sortBy) ||
       (layoutNodes[0] as any).data[sortBy] === undefined
     ) {
-      sortBy = "degree";
+      sortBy = 'degree';
     }
-    if (sortBy === "degree") {
+    if (sortBy === 'degree') {
       layoutNodes.sort(
         (n1: Node, n2: Node) =>
-          graph.getDegree(n2.id, "both") - graph.getDegree(n1.id, "both")
+          graph.getDegree(n2.id, 'both') - graph.getDegree(n1.id, 'both')
       );
     } else {
       // sort nodes by value
@@ -179,8 +179,8 @@ export class ConcentricLayout implements Layout<ConcentricLayoutOptions> {
     const maxValueNode = layoutNodes[0];
     const maxLevelDiff =
       (propsMaxLevelDiff ||
-        (sortBy === "degree"
-          ? graph.getDegree(maxValueNode.id, "both")
+        (sortBy === 'degree'
+          ? graph.getDegree(maxValueNode.id, 'both')
           : (maxValueNode as any).data[sortBy])) / 4;
 
     // put the values into levels
@@ -193,10 +193,10 @@ export class ConcentricLayout implements Layout<ConcentricLayoutOptions> {
     layoutNodes.forEach((node) => {
       if (currentLevel.nodes.length > 0) {
         const diff =
-          sortBy === "degree"
+          sortBy === 'degree'
             ? Math.abs(
-                graph.getDegree(currentLevel.nodes[0].id, "both") -
-                  graph.getDegree(node.id, "both")
+                graph.getDegree(currentLevel.nodes[0].id, 'both') -
+                  graph.getDegree(node.id, 'both')
               )
             : Math.abs(
                 (currentLevel.nodes[0].data[sortBy] as number) -

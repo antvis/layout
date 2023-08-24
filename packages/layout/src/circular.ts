@@ -7,9 +7,9 @@ import type {
   OutNode,
   Node,
   Edge,
-} from "./types";
-import { formatSizeFn, formatNumberFn, cloneFormatData } from "./util";
-import { handleSingleNodeGraph } from "./util/common";
+} from './types';
+import { formatSizeFn, formatNumberFn, cloneFormatData } from './util';
+import { handleSingleNodeGraph } from './util/common';
 
 const DEFAULTS_LAYOUT_OPTIONS: Partial<CircularLayoutOptions> = {
   radius: null,
@@ -39,7 +39,7 @@ const DEFAULTS_LAYOUT_OPTIONS: Partial<CircularLayoutOptions> = {
  * await layout.assign(graph, { radius: 20 });
  */
 export class CircularLayout implements Layout<CircularLayoutOptions> {
-  id = "circular";
+  id = 'circular';
 
   constructor(
     public options: CircularLayoutOptions = {} as CircularLayoutOptions
@@ -133,13 +133,13 @@ export class CircularLayout implements Layout<CircularLayoutOptions> {
 
     // calculated nodes as temporary result
     let layoutNodes: OutNode[] = [];
-    if (ordering === "topology") {
+    if (ordering === 'topology') {
       // layout according to the topology
       layoutNodes = topologyOrdering(graph, nodes);
-    } else if (ordering === "topology-directed") {
+    } else if (ordering === 'topology-directed') {
       // layout according to the topology
       layoutNodes = topologyOrdering(graph, nodes, true);
-    } else if (ordering === "degree") {
+    } else if (ordering === 'degree') {
       // layout according to the descent order of degrees
       layoutNodes = degreeOrdering(graph, nodes);
     } else {
@@ -210,8 +210,8 @@ const topologyOrdering = (
     if (i !== 0) {
       if (
         (i === n - 1 ||
-          graph.getDegree(node.id, "both") !==
-            graph.getDegree(nodes[i + 1].id, "both") ||
+          graph.getDegree(node.id, 'both') !==
+            graph.getDegree(nodes[i + 1].id, 'both') ||
           graph.areNeighbors(orderedCNodes[k].id, node.id)) &&
         !pickFlags[node.id]
       ) {
@@ -266,7 +266,7 @@ function degreeOrdering(graph: Graph, nodes: Node[]): OutNode[] {
   });
   orderedNodes.sort(
     (nodeA: Node, nodeB: Node) =>
-      graph.getDegree(nodeA.id, "both") - graph.getDegree(nodeB.id, "both")
+      graph.getDegree(nodeA.id, 'both') - graph.getDegree(nodeB.id, 'both')
   );
   return orderedNodes;
 }
@@ -286,10 +286,10 @@ const calculateCenter = (
   let calculatedWidth = width;
   let calculatedHeight = height;
   let calculatedCenter = center;
-  if (!calculatedWidth && typeof window !== "undefined") {
+  if (!calculatedWidth && typeof window !== 'undefined') {
     calculatedWidth = window.innerWidth;
   }
-  if (!calculatedHeight && typeof window !== "undefined") {
+  if (!calculatedHeight && typeof window !== 'undefined') {
     calculatedHeight = window.innerHeight;
   }
   if (!calculatedCenter) {

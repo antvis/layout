@@ -1,15 +1,16 @@
-import { CircularLayout } from "./circular";
-import { ConcentricLayout } from "./concentric";
-import { D3ForceLayout } from "./d3Force";
-import { DagreLayout } from "./dagre";
-import { ForceLayout } from "./force";
-import { ForceAtlas2Layout } from "./forceAtlas2";
-import { FruchtermanLayout } from "./fruchterman";
-import { GridLayout } from "./grid";
-import { MDSLayout } from "./mds";
-import { RadialLayout } from "./radial";
-import { RandomLayout } from "./random";
-import type { LayoutConstructor } from "./types";
+import { CircularLayout } from './circular';
+import { ComboCombinedLayout } from './comboCombined';
+import { ConcentricLayout } from './concentric';
+import { D3ForceLayout } from './d3Force';
+import { DagreLayout } from './dagre';
+import { ForceLayout } from './force';
+import { ForceAtlas2Layout } from './forceAtlas2';
+import { FruchtermanLayout } from './fruchterman';
+import { GridLayout } from './grid';
+import { MDSLayout } from './mds';
+import { RadialLayout } from './radial';
+import { RandomLayout } from './random';
+import type { LayoutConstructor } from './types';
 
 export const registry: Record<string, LayoutConstructor<any>> = {
   circular: CircularLayout,
@@ -23,4 +24,5 @@ export const registry: Record<string, LayoutConstructor<any>> = {
   fruchterman: FruchtermanLayout,
   forceAtlas2: ForceAtlas2Layout,
   dagre: DagreLayout,
+  comboCombined: ComboCombinedLayout,
 };

@@ -1,6 +1,7 @@
-import { isNumber } from "@antv/util";
-import type { Matrix, Edge, Node, OutNode, Degree, Point } from "../types";
-import { isArray } from "./array";
+import { isNumber } from '@antv/util';
+import type { Matrix, Edge, Node, OutNode, Degree, Point } from '../types';
+import { isArray } from './array';
+import { Graph } from '@antv/graphlib';
 
 export const floydWarshall = (adjMatrix: Matrix[]): Matrix[] => {
   // initialize
@@ -43,7 +44,7 @@ export const getAdjMatrix = (
   } = {};
 
   if (!nodes) {
-    throw new Error("invalid nodes data!");
+    throw new Error('invalid nodes data!');
   }
   if (nodes) {
     nodes.forEach((node, i) => {
@@ -111,7 +112,7 @@ export const traverseTreeUp = <T extends { children?: T[] }>(
   data: T,
   fn: (param: T) => boolean
 ) => {
-  if (typeof fn !== "function") {
+  if (typeof fn !== 'function') {
     return;
   }
   traverseUp(data, fn);
@@ -171,8 +172,8 @@ export const getAvgNodePosition = (nodes: OutNode[]) => {
 };
 
 // 找出指定节点关联的边的起点或终点
-const getCoreNode = (type: "source" | "target", node: Node, edges: Edge[]) => {
-  if (type === "source") {
+const getCoreNode = (type: 'source' | 'target', node: Node, edges: Edge[]) => {
+  if (type === 'source') {
     return (edges?.find((edge) => edge.target === node.id)?.source ||
       {}) as Node;
   }
@@ -181,23 +182,23 @@ const getCoreNode = (type: "source" | "target", node: Node, edges: Edge[]) => {
 
 // 找出指定节点为起点或终点的所有一度叶子节点
 const getRelativeNodeIds = (
-  type: "source" | "target" | "both",
+  type: 'source' | 'target' | 'both',
   coreNode: Node,
   edges: Edge[]
 ) => {
   let relativeNodes: (string | number)[] = [];
   switch (type) {
-    case "source":
+    case 'source':
       relativeNodes = edges
         ?.filter((edge) => edge.source === coreNode.id)
         .map((edge) => edge.target);
       break;
-    case "target":
+    case 'target':
       relativeNodes = edges
         ?.filter((edge) => edge.target === coreNode.id)
         .map((edge) => edge.source);
       break;
-    case "both":
+    case 'both':
       relativeNodes = edges
         ?.filter((edge) => edge.source === coreNode.id)
         .map((edge) => edge.target)
@@ -216,18 +217,18 @@ const getRelativeNodeIds = (
 };
 // 找出同类型的节点
 const getSameTypeNodes = (
-  type: "leaf" | "all",
+  type: 'leaf' | 'all',
   nodeClusterBy: string,
   node: Node,
   relativeNodes: Node[],
   degreesMap: { [id: string]: Degree }
 ) => {
-  const typeName = node[nodeClusterBy as keyof Node] || "";
+  const typeName = node[nodeClusterBy as keyof Node] || '';
   let sameTypeNodes =
     relativeNodes?.filter(
       (item) => item[nodeClusterBy as keyof Node] === typeName
     ) || [];
-  if (type === "leaf") {
+  if (type === 'leaf') {
     sameTypeNodes = sameTypeNodes.filter(
       (node) => degreesMap[node.id]?.in === 0 || degreesMap[node.id]?.out === 0
     );
@@ -237,7 +238,7 @@ const getSameTypeNodes = (
 
 // 找出与指定节点关联的边的起点或终点出发的所有一度叶子节点
 export const getCoreNodeAndRelativeLeafNodes = (
-  type: "leaf" | "all",
+  type: 'leaf' | 'all',
   node: Node,
   edges: Edge[],
   nodeClusterBy: string,
@@ -249,14 +250,14 @@ export const getCoreNodeAndRelativeLeafNodes = (
   let relativeLeafNodes: Node[] = [];
   if (inDegree === 0) {
     // 如果为没有出边的叶子节点，则找出与它关联的边的起点出发的所有一度节点
-    coreNode = getCoreNode("source", node, edges);
-    relativeLeafNodes = getRelativeNodeIds("both", coreNode, edges).map(
+    coreNode = getCoreNode('source', node, edges);
+    relativeLeafNodes = getRelativeNodeIds('both', coreNode, edges).map(
       (nodeId) => nodeMap[nodeId]
     );
   } else if (outDegree === 0) {
     // 如果为没有入边边的叶子节点，则找出与它关联的边的起点出发的所有一度节点
-    coreNode = getCoreNode("target", node, edges);
-    relativeLeafNodes = getRelativeNodeIds("both", coreNode, edges).map(
+    coreNode = getCoreNode('target', node, edges);
+    relativeLeafNodes = getRelativeNodeIds('both', coreNode, edges).map(
       (nodeId) => nodeMap[nodeId]
     );
   }
@@ -283,3 +284,42 @@ export const getCoreNodeAndRelativeLeafNodes = (
  */
 export const getEuclideanDistance = (p1: Point, p2: Point) =>
   Math.sqrt((p1.x - p2.x) * (p1.x - p2.x) + (p1.y - p2.y) * (p1.y - p2.y));
+
+/**
+ * Depth first search begin from nodes in graphCore data.
+ * @param graphCore graphlib data structure
+ * @param nodes begin nodes
+ * @param fn will be called while visiting each node
+ * @param mode 'TB' - visit from top to bottom; 'BT' - visit from bottom to top;
+ * @returns
+ */
+export const graphTreeDfs = (
+  graph: Graph<any, any>,
+  nodes: Node[],
+  fn: (n: Node) => void,
+  mode: 'TB' | 'BT' = 'TB',
+  treeKey: string,
+  stopFns: {
+    stopBranchFn?: (node: Node) => boolean;
+    stopAllFn?: (node: Node) => boolean;
+  } = {}
+) => {
+  if (!nodes?.length) return;
+  const { stopBranchFn, stopAllFn } = stopFns;
+  for (let i = 0; i < nodes.length; i++) {
+    const node = nodes[i];
+    if (!graph.hasNode(node.id)) continue;
+    if (stopBranchFn?.(node)) continue; // Stop this branch
+    if (stopAllFn?.(node)) return; // Stop all
+    if (mode === 'TB') fn(node); // Traverse from top to bottom
+    graphTreeDfs(
+      graph,
+      graph.getChildren(node.id, treeKey),
+      fn,
+      mode,
+      treeKey,
+      stopFns
+    );
+    if (mode !== 'TB') fn(node); // Traverse from bottom to top
+  }
+};

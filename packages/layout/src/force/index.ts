@@ -1,5 +1,5 @@
-import { Graph as IGraph } from "@antv/graphlib";
-import { isNumber, isObject } from "@antv/util";
+import { Graph as IGraph } from '@antv/graphlib';
+import { isNumber, isObject } from '@antv/util';
 import {
   Graph,
   Node,
@@ -9,9 +9,9 @@ import {
   Point,
   OutNode,
   LayoutWithIterations,
-} from "../types";
-import { formatNumberFn, isArray } from "../util";
-import { forceNBody } from "./forceNBody";
+} from '../types';
+import { formatNumberFn, isArray } from '../util';
+import { forceNBody } from './forceNBody';
 import {
   CalcNode,
   CalcEdge,
@@ -19,7 +19,7 @@ import {
   CalcEdgeData,
   CalcGraph,
   FormatedOptions,
-} from "./types";
+} from './types';
 
 const DEFAULTS_LAYOUT_OPTIONS: Partial<ForceLayoutOptions> = {
   dimensions: 2,
@@ -36,7 +36,7 @@ const DEFAULTS_LAYOUT_OPTIONS: Partial<ForceLayoutOptions> = {
   linkDistance: 200,
   clusterNodeStrength: 20,
   preventOverlap: true,
-  distanceThresholdMode: "mean",
+  distanceThresholdMode: 'mean',
 };
 
 /**
@@ -55,7 +55,7 @@ const DEFAULTS_LAYOUT_OPTIONS: Partial<ForceLayoutOptions> = {
  * await layout.assign(graph, { center: [100, 100] });
  */
 export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
-  id = "force";
+  id = 'force';
   /**
    * time interval for layout force animations
    */
@@ -101,7 +101,7 @@ export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
    * Stop simulation immediately.
    */
   stop() {
-    if (this.timeInterval && typeof window !== "undefined") {
+    if (this.timeInterval && typeof window !== 'undefined') {
       window.clearInterval(this.timeInterval);
     }
     this.running = false;
@@ -147,7 +147,7 @@ export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
         this.lastGraph.mergeNodeData(node.id, {
           x: node.data.x,
           y: node.data.y,
-          z: this.options.dimensions === 3 ? node.data.z : undefined
+          z: this.options.dimensions === 3 ? node.data.z : undefined,
         })
       );
     }
@@ -197,7 +197,9 @@ export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
             // ...randomDistribution(node, dimensions, 30, i),
             x: isNumber(node.data.x) ? node.data.x : Math.random() * width,
             y: isNumber(node.data.y) ? node.data.y : Math.random() * height,
-            z: isNumber(node.data.z) ? node.data.z : Math.random() * Math.sqrt(width * height),
+            z: isNumber(node.data.z)
+              ? node.data.z
+              : Math.random() * Math.sqrt(width * height),
             size: nodeSize(node) || 30,
             mass: getMass(node),
             nodeStrength: nodeStrength(node),
@@ -249,7 +251,7 @@ export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
     this.lastOptions = formattedOptions;
     this.lastVelMap = velMap;
 
-    if (typeof window === "undefined") return;
+    if (typeof window === 'undefined') return;
     let iter = 0;
 
     return new Promise((resolve) => {
@@ -268,7 +270,7 @@ export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
             graph.mergeNodeData(node.id, {
               x: node.data.x,
               y: node.data.y,
-              z: dimensions === 3 ? node.data.z : undefined
+              z: dimensions === 3 ? node.data.z : undefined,
             })
           );
         }
@@ -305,11 +307,11 @@ export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
 
     // === formating width, height, and center =====
     formattedOptions.width =
-      !propsWidth && typeof window !== "undefined"
+      !propsWidth && typeof window !== 'undefined'
         ? window.innerWidth
         : (propsWidth as number);
     formattedOptions.height =
-      !propsHeight && typeof window !== "undefined"
+      !propsHeight && typeof window !== 'undefined'
         ? window.innerHeight
         : (propsHeight as number);
     if (!options.center) {
@@ -324,7 +326,7 @@ export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
       formattedOptions.getMass = (d?: Node) => {
         let massWeight = 1;
         if (isNumber(d?.data.mass)) massWeight = d?.data.mass as number;
-        const degree = graph.getDegree(d!.id, "both");
+        const degree = graph.getDegree(d!.id, 'both');
         return !degree || degree < 5 ? massWeight : degree * 5 * massWeight;
       };
     }
@@ -396,11 +398,11 @@ export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
         return {
           x: center[0],
           y: center[1],
-          z: dimensions === 3 ? center[2] : undefined
+          z: dimensions === 3 ? center[2] : undefined,
         };
       },
     };
-    if (typeof clusterNodeStrength !== "function") {
+    if (typeof clusterNodeStrength !== 'function') {
       options.clusterNodeStrength = (node?: Node) =>
         clusterNodeStrength as number;
     }
@@ -430,7 +432,7 @@ export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
         },
         others: 1,
         center: (node: Node) => {
-          const degree = calcGraph.getDegree(node.id, "both");
+          const degree = calcGraph.getDegree(node.id, 'both');
           // 孤点默认给1个远离的中心点
           if (!degree) {
             return {
@@ -499,13 +501,13 @@ export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
       });
     }
     const { leaf, single, others } = options.centripetalOptions || {};
-    if (leaf && typeof leaf !== "function") {
+    if (leaf && typeof leaf !== 'function') {
       options.centripetalOptions.leaf = () => leaf;
     }
-    if (single && typeof single !== "function") {
+    if (single && typeof single !== 'function') {
       options.centripetalOptions.single = () => single;
     }
-    if (others && typeof others !== "function") {
+    if (others && typeof others !== 'function') {
       options.centripetalOptions.others = () => others;
     }
   }
@@ -582,7 +584,13 @@ export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
     options: FormatedOptions
   ) {
     const { dimensions, factor, coulombDisScale } = options;
-    forceNBody(calcGraph, factor, coulombDisScale * coulombDisScale, accMap, dimensions);
+    forceNBody(
+      calcGraph,
+      factor,
+      coulombDisScale * coulombDisScale,
+      accMap,
+      dimensions
+    );
   }
 
   /**
@@ -590,7 +598,11 @@ export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
    * @param calcGraph calculation graph
    * @param accMap acceleration map
    */
-  public calAttractive(calcGraph: CalcGraph, accMap: { [id: string]: Point }, options: FormatedOptions) {
+  public calAttractive(
+    calcGraph: CalcGraph,
+    accMap: { [id: string]: Point },
+    options: FormatedOptions
+  ) {
     const { dimensions } = options;
     calcGraph.getAllEdges().forEach((edge, i) => {
       const { source, target } = edge;
@@ -665,9 +677,9 @@ export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
       let vecY = 0;
       let vecZ = 0;
       let gravity = defaultGravity;
-      const inDegree = calcGraph.getDegree(id, "in");
-      const outDegree = calcGraph.getDegree(id, "out");
-      const degree = calcGraph.getDegree(id, "both");
+      const inDegree = calcGraph.getDegree(id, 'in');
+      const outDegree = calcGraph.getDegree(id, 'out');
+      const degree = calcGraph.getDegree(id, 'both');
       const forceCenter = getCenter?.(node, degree);
       if (forceCenter) {
         const [centerX, centerY, strength] = forceCenter;
@@ -765,7 +777,10 @@ export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
       const { id } = calcNode;
       let vx = (velMap[id].x + accMap[id].x * interval) * damping || 0.01;
       let vy = (velMap[id].y + accMap[id].y * interval) * damping || 0.01;
-      let vz = dimensions === 3 ? ((velMap[id].z + accMap[id].z * interval) * damping || 0.01) : 0.0;
+      let vz =
+        dimensions === 3
+          ? (velMap[id].z + accMap[id].z * interval) * damping || 0.01
+          : 0.0;
       const vLength = Math.sqrt(vx * vx + vy * vy + vz * vz);
       if (vLength > maxSpeed) {
         const param2 = maxSpeed / vLength;
@@ -776,7 +791,7 @@ export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
       velMap[id] = {
         x: vx,
         y: vy,
-        z: vz
+        z: vz,
       };
     });
   }
@@ -802,8 +817,8 @@ export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
       return;
     }
     let sum = 0;
-    if (distanceThresholdMode === "max") this.judgingDistance = -Infinity;
-    else if (distanceThresholdMode === "min") this.judgingDistance = Infinity;
+    if (distanceThresholdMode === 'max') this.judgingDistance = -Infinity;
+    else if (distanceThresholdMode === 'min') this.judgingDistance = Infinity;
 
     calcNodes.forEach((calcNode: CalcNode) => {
       const { id } = calcNode;
@@ -812,7 +827,7 @@ export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
         calcGraph.mergeNodeData(id, {
           x: node.data.fx,
           y: node.data.fy,
-          z: dimensions === 3 ? node.data.fz as number : undefined,
+          z: dimensions === 3 ? (node.data.fz as number) : undefined,
         });
         return;
       }
@@ -825,14 +840,16 @@ export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
         z: calcNode.data.z + distZ,
       });
 
-      const distanceMagnitude = Math.sqrt(distX * distX + distY * distY + distZ * distZ);
+      const distanceMagnitude = Math.sqrt(
+        distX * distX + distY * distY + distZ * distZ
+      );
       switch (distanceThresholdMode) {
-        case "max":
+        case 'max':
           if (this.judgingDistance < distanceMagnitude) {
             this.judgingDistance = distanceMagnitude;
           }
           break;
-        case "min":
+        case 'min':
           if (this.judgingDistance > distanceMagnitude) {
             this.judgingDistance = distanceMagnitude;
           }
@@ -842,7 +859,7 @@ export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
           break;
       }
     });
-    if (!distanceThresholdMode || distanceThresholdMode === "mean") {
+    if (!distanceThresholdMode || distanceThresholdMode === 'mean') {
       this.judgingDistance = sum / calcNodes.length;
     }
   }
@@ -870,11 +887,11 @@ const getSameTypeLeafMap = (
   if (!calcNodes?.length) return {};
   const sameTypeLeafMap: SameTypeLeafMap = {};
   calcNodes.forEach((node, i) => {
-    const degree = calcGraph.getDegree(node.id, "both");
+    const degree = calcGraph.getDegree(node.id, 'both');
     if (degree === 1) {
       sameTypeLeafMap[node.id] = getCoreNodeAndSiblingLeaves(
         calcGraph,
-        "leaf",
+        'leaf',
         node,
         nodeClusterBy
       );
@@ -893,7 +910,7 @@ const getSameTypeLeafMap = (
  */
 const getCoreNodeAndSiblingLeaves = (
   calcGraph: CalcGraph,
-  type: "leaf" | "all",
+  type: 'leaf' | 'all',
   node: Node,
   nodeClusterBy: string
 ): {
@@ -901,8 +918,8 @@ const getCoreNodeAndSiblingLeaves = (
   siblingLeaves: Node[];
   sameTypeLeaves: Node[];
 } => {
-  const inDegree = calcGraph.getDegree(node.id, "in");
-  const outDegree = calcGraph.getDegree(node.id, "out");
+  const inDegree = calcGraph.getDegree(node.id, 'in');
+  const outDegree = calcGraph.getDegree(node.id, 'out');
   // node is not a leaf, coreNode is itself, siblingLeaves is empty
   let coreNode: Node = node;
   let siblingLeaves: Node[] = [];
@@ -918,8 +935,8 @@ const getCoreNodeAndSiblingLeaves = (
   // siblingLeaves are leaf nodes
   siblingLeaves = siblingLeaves.filter(
     (node) =>
-      calcGraph.getDegree(node.id, "in") === 0 ||
-      calcGraph.getDegree(node.id, "out") === 0
+      calcGraph.getDegree(node.id, 'in') === 0 ||
+      calcGraph.getDegree(node.id, 'out') === 0
   );
   const sameTypeLeaves = getSameTypeNodes(
     calcGraph,
@@ -942,20 +959,20 @@ const getCoreNodeAndSiblingLeaves = (
  */
 const getSameTypeNodes = (
   calcGraph: CalcGraph,
-  type: "leaf" | "all",
+  type: 'leaf' | 'all',
   nodeClusterBy: string,
   node: Node,
   relativeNodes: Node[]
 ) => {
-  const typeName = node.data[nodeClusterBy] || "";
+  const typeName = node.data[nodeClusterBy] || '';
   let sameTypeNodes =
     relativeNodes?.filter((item) => item.data[nodeClusterBy] === typeName) ||
     [];
-  if (type === "leaf") {
+  if (type === 'leaf') {
     sameTypeNodes = sameTypeNodes.filter(
       (item) =>
-        calcGraph.getDegree(item.id, "in") === 0 ||
-        calcGraph.getDegree(item.id, "out") === 0
+        calcGraph.getDegree(item.id, 'in') === 0 ||
+        calcGraph.getDegree(item.id, 'out') === 0
     );
   }
   return sameTypeNodes;
@@ -997,7 +1014,7 @@ const formatOutNodes = (graph: Graph, layoutNodes: CalcNode[]): OutNode[] =>
         ...node.data,
         x: data.x,
         y: data.y,
-        z: data.z
+        z: data.z,
       },
     } as OutNode;
   });

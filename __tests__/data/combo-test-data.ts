@@ -2,173 +2,270 @@ export default {
   nodes: [
     {
       id: '0',
-      label: '0',
-      comboId: 'a',
+      data: {
+        label: '0',
+        parentId: 'a',
+      },
     },
     {
       id: '1',
-      label: '1',
-      comboId: 'a',
+      data: {
+        label: '1',
+        parentId: 'a',
+      },
     },
     {
       id: '2',
-      label: '2',
-      comboId: 'a',
+      data: {
+        label: '2',
+        parentId: 'a',
+      },
     },
     {
       id: '3',
-      label: '3',
-      comboId: 'a',
+      data: {
+        label: '3',
+        parentId: 'a',
+      },
     },
     {
       id: '4',
-      label: '4',
-      comboId: 'a',
+      data: {
+        label: '4',
+        parentId: 'a',
+      },
     },
     {
       id: '5',
-      label: '5',
-      comboId: 'a',
+      data: {
+        label: '5',
+        parentId: 'a',
+      },
     },
     {
       id: '6',
-      label: '6',
-      comboId: 'a',
+      data: {
+        label: '6',
+        parentId: 'a',
+      },
     },
     {
       id: '7',
-      label: '7',
-      comboId: 'a',
+      data: {
+        label: '7',
+        parentId: 'a',
+      },
     },
     {
       id: '8',
-      label: '8',
-      comboId: 'a',
+      data: {
+        label: '8',
+        parentId: 'a',
+      },
     },
     {
       id: '9',
-      label: '9',
-      comboId: 'a',
+      data: {
+        label: '9',
+        parentId: 'a',
+      },
     },
     {
       id: '10',
-      label: '10',
-      comboId: 'a',
+      data: {
+        label: '10',
+        parentId: 'a',
+      },
     },
     {
       id: '11',
-      label: '11',
-      comboId: 'a',
+      data: {
+        label: '11',
+        parentId: 'a',
+      },
     },
     {
       id: '12',
-      label: '12',
-      comboId: 'a',
+      data: {
+        label: '12',
+        parentId: 'a',
+      },
     },
     {
       id: '13',
-      label: '13',
-      comboId: 'b',
+      data: {
+        label: '13',
+        parentId: 'b',
+      },
     },
     {
       id: '14',
-      label: '14',
-      comboId: 'b',
+      data: {
+        label: '14',
+        parentId: 'b',
+      },
     },
     {
       id: '15',
-      label: '15',
-      comboId: 'b',
+      data: {
+        label: '15',
+        parentId: 'b',
+      },
     },
     {
       id: '16',
-      label: '16',
-      comboId: 'b',
+      data: {
+        label: '16',
+        parentId: 'b',
+      },
     },
     {
       id: '17',
-      label: '17',
-      comboId: 'b',
+      data: {
+        label: '17',
+        parentId: 'b',
+      },
     },
     {
       id: '18',
-      label: '18',
-      comboId: 'c',
+      data: {
+        label: '18',
+        parentId: 'c',
+      },
     },
     {
       id: '19',
-      label: '19',
-      comboId: 'c',
+      data: {
+        label: '19',
+        parentId: 'c',
+      },
     },
     {
       id: '20',
-      label: '20',
-      comboId: 'c',
+      data: {
+        label: '20',
+        parentId: 'c',
+      },
     },
     {
       id: '21',
-      label: '21',
-      comboId: 'c',
+      data: {
+        label: '21',
+        parentId: 'c',
+      },
     },
     {
       id: '22',
-      label: '22',
-      comboId: 'c',
+      data: {
+        label: '22',
+        parentId: 'c',
+      },
     },
     {
       id: '23',
-      label: '23',
-      comboId: 'c',
+      data: {
+        label: '23',
+        parentId: 'c',
+      },
     },
     {
       id: '24',
-      label: '24',
-      comboId: 'c',
+      data: {
+        label: '24',
+        parentId: 'c',
+      },
     },
     {
       id: '25',
-      label: '25',
-      comboId: 'c',
+      data: {
+        label: '25',
+        parentId: 'c',
+      },
     },
     {
       id: '26',
-      label: '26',
-      comboId: 'c',
+      data: {
+        label: '26',
+        parentId: 'c',
+      },
     },
     {
       id: '27',
-      label: '27',
-      comboId: 'c',
+      data: {
+        label: '27',
+        parentId: 'c',
+      },
     },
     {
       id: '28',
-      label: '28',
-      comboId: 'c',
+      data: {
+        label: '28',
+        parentId: 'c',
+      },
     },
     {
       id: '29',
-      label: '29',
-      comboId: 'c',
+      data: {
+        label: '29',
+        parentId: 'c',
+      },
     },
     {
       id: '30',
-      label: '30',
-      comboId: 'c',
+      data: {
+        label: '30',
+        parentId: 'c',
+      },
     },
     {
       id: '31',
-      label: '31',
-      comboId: 'd',
+      data: {
+        label: '31',
+        parentId: 'd',
+      },
     },
     {
       id: '32',
-      label: '32',
-      comboId: 'd',
+      data: {
+        label: '32',
+        parentId: 'd',
+      },
     },
     {
       id: '33',
-      label: '33',
-      comboId: 'd',
+      data: {
+        label: '33',
+        parentId: 'd',
+      },
+    },
+    {
+      id: 'a',
+      data: {
+        label: 'combo a',
+        _isCombo: true,
+      },
+    },
+    {
+      id: 'b',
+      data: {
+        label: 'combo b',
+        _isCombo: true,
+      },
+    },
+    {
+      id: 'c',
+      data: {
+        label: 'combo c',
+        _isCombo: true,
+      },
+    },
+    {
+      id: 'd',
+      data: {
+        label: 'combo d',
+        parentId: 'b',
+        _isCombo: true,
+      },
     },
   ],
   edges: [
@@ -427,25 +524,6 @@ export default {
     {
       source: '32',
       target: '33',
-    },
-  ],
-  combos: [
-    {
-      id: 'a',
-      label: 'combo a',
-    },
-    {
-      id: 'b',
-      label: 'combo b',
-    },
-    {
-      id: 'c',
-      label: 'combo c',
-    },
-    {
-      id: 'd',
-      label: 'combo d',
-      parentId: 'b',
     },
   ],
 };

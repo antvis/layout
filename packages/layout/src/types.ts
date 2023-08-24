@@ -5,7 +5,7 @@ import {
   PlainObject,
   GraphView as IGraphView,
   ID,
-} from "@antv/graphlib";
+} from '@antv/graphlib';
 
 export interface NodeData extends PlainObject {
   size?: number | number[];
@@ -139,7 +139,7 @@ export interface CircularLayoutOptions {
   endRadius?: number | null;
   clockwise?: boolean;
   divisions?: number;
-  ordering?: "topology" | "topology-directed" | "degree" | null;
+  ordering?: 'topology' | 'topology-directed' | 'degree' | null;
   angleRatio?: number;
   startAngle?: number;
   endAngle?: number;
@@ -206,15 +206,15 @@ export interface RadialLayoutOptions {
 }
 
 export type DagreRankdir =
-  | "TB"
-  | "BT"
-  | "LR"
-  | "RL"
-  | "tb"
-  | "lr"
-  | "rl"
-  | "bt";
-export type DagreAlign = "UL" | "UR" | "DL" | "DR";
+  | 'TB'
+  | 'BT'
+  | 'LR'
+  | 'RL'
+  | 'tb'
+  | 'lr'
+  | 'rl'
+  | 'bt';
+export type DagreAlign = 'UL' | 'UR' | 'DL' | 'DR';
 
 export interface DagreLayoutOptions {
   rankdir?: DagreRankdir;
@@ -281,16 +281,26 @@ export interface CentripetalOptions {
   };
 }
 
+export interface ComboCombinedLayoutOptions {
+  center?: PointTuple;
+  nodeSize?: number | number[] | ((d?: Node) => number);
+  spacing?: number | ((d?: Node) => number);
+  outerLayout?: Layout<any>;
+  innerLayout?: Layout<any>;
+  comboPadding?: ((d?: unknown) => number) | number | number[] | undefined;
+  treeKey?: string;
+}
+
 interface CommonForceLayoutOptions {
   dimensions?: number;
   center?: PointTuple;
   minMovement?: number;
   maxIteration?: number;
-  distanceThresholdMode?: "mean" | "max" | "min";
+  distanceThresholdMode?: 'mean' | 'max' | 'min';
 
   /**
-   * If distance is specified, sets the maximum distance between nodes over which this force is considered. 
-   * If distance is not specified, returns the current maximum distance, which defaults to infinity. 
+   * If distance is specified, sets the maximum distance between nodes over which this force is considered.
+   * If distance is not specified, returns the current maximum distance, which defaults to infinity.
    * Specifying a finite maximum distance improves performance and produces a more localized layout.
    */
   maxDistance?: number;
@@ -336,7 +346,7 @@ export interface ForceAtlas2LayoutOptions extends CommonForceLayoutOptions {
   ks?: number;
   ksmax?: number;
   tao?: number;
-  mode?: "normal" | "linlog";
+  mode?: 'normal' | 'linlog';
   preventOverlap?: boolean;
   dissuadeHubs?: boolean;
   barnesHut?: boolean;
