@@ -1,5 +1,5 @@
 import { Graph as IGraph } from '@antv/graphlib';
-import { isNumber, isObject } from '@antv/util';
+import { isFunction, isNumber, isObject } from '@antv/util';
 import {
   Graph,
   Node,
@@ -26,11 +26,11 @@ const DEFAULTS_LAYOUT_OPTIONS: Partial<ForceLayoutOptions> = {
   maxIteration: 500,
   gravity: 10,
   factor: 1,
-  edgeStrength: 200,
+  edgeStrength: 50,
   nodeStrength: 1000,
   coulombDisScale: 0.005,
   damping: 0.9,
-  maxSpeed: 500,
+  maxSpeed: 200,
   minMovement: 0.4,
   interval: 0.02,
   linkDistance: 200,
@@ -303,7 +303,12 @@ export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
     graph: Graph
   ): FormatedOptions {
     const formattedOptions = options as FormatedOptions;
-    const { width: propsWidth, height: propsHeight, getMass } = options;
+    const {
+      width: propsWidth,
+      height: propsHeight,
+      getMass,
+      nodeSize,
+    } = options;
 
     // === formating width, height, and center =====
     formattedOptions.width =
@@ -334,7 +339,7 @@ export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
     // === formating node size =====
     if (options.preventOverlap) {
       const nodeSpacingFunc = formatNumberFn<Node>(0, options.nodeSpacing);
-      if (!options.nodeSize) {
+      if (!nodeSize) {
         formattedOptions.nodeSize = (d?: Node) => {
           const { size } = d?.data || {};
           if (size) {
@@ -348,14 +353,17 @@ export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
           }
           return 10 + nodeSpacingFunc(d);
         };
-      } else if (isArray(options.nodeSize)) {
+      } else if (isFunction(nodeSize)) {
+        formattedOptions.nodeSize = (d?: Node) =>
+          (nodeSize as Function)(d) + nodeSpacingFunc(d);
+      } else if (isArray(nodeSize)) {
         formattedOptions.nodeSize = (d?: Node) => {
-          const nodeSize = options.nodeSize as [number, number];
-          return Math.max(nodeSize[0], nodeSize[1]) + nodeSpacingFunc(d);
+          const nodeSizeArr = nodeSize as [number, number];
+          return Math.max(nodeSizeArr[0], nodeSizeArr[1]) + nodeSpacingFunc(d);
         };
       } else {
         formattedOptions.nodeSize = (d?: Node) =>
-          (options.nodeSize as number) + nodeSpacingFunc(d);
+          (nodeSize as number) + nodeSpacingFunc(d);
       }
     }
 
@@ -603,7 +611,7 @@ export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
     accMap: { [id: string]: Point },
     options: FormatedOptions
   ) {
-    const { dimensions } = options;
+    const { dimensions, nodeSize } = options;
     calcGraph.getAllEdges().forEach((edge, i) => {
       const { source, target } = edge;
       const sourceNode = calcGraph.getNode(source);
@@ -621,6 +629,7 @@ export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
         }
       }
       const vecLength = Math.sqrt(vecX * vecX + vecY * vecY + vecZ * vecZ);
+      if (vecLength < nodeSize(sourceNode) + nodeSize(targetNode)) return;
       const direX = vecX / vecLength;
       const direY = vecY / vecLength;
       const direZ = vecZ / vecLength;

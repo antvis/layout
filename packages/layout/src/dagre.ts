@@ -1,6 +1,6 @@
-import { Graph } from "@antv/graphlib";
-import { isNumber } from "@antv/util";
-import { layout } from "./dagre/layout";
+import { Graph, ID } from '@antv/graphlib';
+import { isNumber } from '@antv/util';
+import { layout } from './dagre/layout';
 import type {
   Graph as IGraph,
   Layout,
@@ -12,11 +12,11 @@ import type {
   NodeData,
   EdgeData,
   Point,
-} from "./types";
-import { cloneFormatData, formatNumberFn, formatNodeSize } from "./util";
+} from './types';
+import { cloneFormatData, formatNumberFn, formatNodeSize } from './util';
 
 const DEFAULTS_LAYOUT_OPTIONS: Partial<DagreLayoutOptions> = {
-  rankdir: "TB",
+  rankdir: 'TB',
   nodesep: 50, // 节点水平间距(px)
   ranksep: 50, // 每一层节点之间间距
   edgeLabelSpace: true,
@@ -41,7 +41,7 @@ const DEFAULTS_LAYOUT_OPTIONS: Partial<DagreLayoutOptions> = {
  * await layout.assign(graph, { radius: 20 });
  */
 export class DagreLayout implements Layout<DagreLayoutOptions> {
-  id = "dagre";
+  id = 'dagre';
 
   constructor(public options: DagreLayoutOptions = {} as DagreLayoutOptions) {
     this.options = {
@@ -83,7 +83,7 @@ export class DagreLayout implements Layout<DagreLayoutOptions> {
     const {
       nodeSize,
       align,
-      rankdir = "TB",
+      rankdir = 'TB',
       ranksep,
       nodesep,
       ranksepFunc,
@@ -93,6 +93,7 @@ export class DagreLayout implements Layout<DagreLayoutOptions> {
       begin,
       controlPoints,
       radial,
+      sortByCombo,
       // focusNode,
       // prevGraph,
     } = mergedOptions;
@@ -105,7 +106,7 @@ export class DagreLayout implements Layout<DagreLayoutOptions> {
     const nodesepfunc = formatNumberFn(nodesep || 50, nodesepFunc);
     let horisep: (d?: Node | undefined) => number = nodesepfunc;
     let vertisep: (d?: Node | undefined) => number = ranksepfunc;
-    if (rankdir === "LR" || rankdir === "RL") {
+    if (rankdir === 'LR' || rankdir === 'RL') {
       horisep = ranksepfunc;
       vertisep = nodesepfunc;
     }
@@ -115,39 +116,40 @@ export class DagreLayout implements Layout<DagreLayoutOptions> {
     const nodes: Node[] = graph.getAllNodes();
     const edges: Edge[] = graph.getAllEdges();
 
-    nodes
-      .forEach((node) => {
-        const size = nodeSizeFunc(node);
-        const verti = vertisep(node);
-        const hori = horisep(node);
-        // FIXME: support 2 dimensions?
-        // const width = size[0] + 2 * hori;
-        // const height = size[1] + 2 * verti;
-        const width = size + 2 * hori;
-        const height = size + 2 * verti;
-        const layer = node.data.layer;
-        if (isNumber(layer)) {
-          // 如果有layer属性，加入到node的label中
-          g.addNode({
-            id: node.id,
-            data: { width, height, layer },
-          });
-        } else {
-          g.addNode({
-            id: node.id,
-            data: { width, height },
-          });
+    nodes.forEach((node) => {
+      const size = nodeSizeFunc(node);
+      const verti = vertisep(node);
+      const hori = horisep(node);
+      // FIXME: support 2 dimensions?
+      // const width = size[0] + 2 * hori;
+      // const height = size[1] + 2 * verti;
+      const width = size + 2 * hori;
+      const height = size + 2 * verti;
+      const layer = node.data.layer;
+      if (isNumber(layer)) {
+        // 如果有layer属性，加入到node的label中
+        g.addNode({
+          id: node.id,
+          data: { width, height, layer },
+        });
+      } else {
+        g.addNode({
+          id: node.id,
+          data: { width, height },
+        });
+      }
+    });
+    if (sortByCombo) {
+      g.attachTreeStructure('combo');
+      nodes.forEach((node) => {
+        const { parentId } = node.data;
+        if (parentId === undefined) return;
+        console.log('setparent', g.hasNode(parentId as ID));
+        if (g.hasNode(parentId as ID)) {
+          g.setParent(node.id, parentId as ID, 'combo');
         }
-
-        // TODO: combo
-        // if (this.sortByCombo && node.comboId) {
-        //   if (!comboMap[node.comboId]) {
-        //     comboMap[node.comboId] = { id: node.comboId };
-        //     g.setNode(node.comboId, {});
-        //   }
-        //   g.setParent(node.id, node.comboId);
-        // }
       });
+    }
 
     edges.forEach((edge) => {
       // dagrejs Wiki https://github.com/dagrejs/dagre/wiki#configuring-the-layout
@@ -167,8 +169,8 @@ export class DagreLayout implements Layout<DagreLayoutOptions> {
       edgeLabelSpace,
       keepNodeOrder: !!nodeOrder,
       nodeOrder: nodeOrder || [],
-      acyclicer: "greedy",
-      ranker: "network-simplex",
+      acyclicer: 'greedy',
+      ranker: 'network-simplex',
       rankdir,
       nodesep,
       align,
@@ -192,7 +194,7 @@ export class DagreLayout implements Layout<DagreLayoutOptions> {
       layoutTopLeft[1] = begin[1] - minY;
     }
 
-    const isHorizontal = rankdir === "LR" || rankdir === "RL";
+    const isHorizontal = rankdir === 'LR' || rankdir === 'RL';
     if (radial) {
       // const focusId = (isString(focusNode) ? focusNode : focusNode?.id) as ID;
       // const focusLayer = focusId ? g.getNode(focusId)?.data._rank as number : 0;
@@ -406,7 +408,7 @@ export class DagreLayout implements Layout<DagreLayoutOptions> {
       // });
     } else {
       const layerCoords: Set<number> = new Set();
-      const isInvert = rankdir === "BT" || rankdir === "RL";
+      const isInvert = rankdir === 'BT' || rankdir === 'RL';
       const layerCoordSort = isInvert
         ? (a: number, b: number) => b - a
         : (a: number, b: number) => a - b;
@@ -449,7 +451,7 @@ export class DagreLayout implements Layout<DagreLayoutOptions> {
         //   return it.source === edge.source && it.target === edge.target;
         // });
         // if (i <= -1) return;
-        if (edgeLabelSpace && controlPoints && edge.data.type !== "loop") {
+        if (edgeLabelSpace && controlPoints && edge.data.type !== 'loop') {
           edge.data.controlPoints = getControlPoints(
             edge.data.points?.map(({ x, y }) => ({
               x: x + layoutTopLeft[0],

@@ -1,8 +1,8 @@
-import { quadtree } from "d3-quadtree";
+import { quadtree } from 'd3-quadtree';
 // @ts-ignore
-import { octree } from "d3-octree";
-import { Point } from "../types";
-import { CalcGraph } from "./types";
+import { octree } from 'd3-octree';
+import { Point } from '../types';
+import { CalcGraph } from './types';
 
 const theta2 = 0.81; // Barnes-Hut approximation threshold
 const epsilon = 0.1; // 为了防止出现除0的情况，加一个epsilon
@@ -23,7 +23,7 @@ export function forceNBody(
   factor: number,
   coulombDisScale2: number,
   accMap: { [id: string]: Point },
-  dimensions: number,
+  dimensions: number = 2
 ) {
   const weightParam = factor / coulombDisScale2;
   const calcNodes = calcGraph.getAllNodes();
@@ -35,6 +35,7 @@ export function forceNBody(
       z,
       size,
       index: i,
+      id: calcNode.id,
       vx: 0,
       vy: 0,
       vz: 0,
@@ -42,18 +43,24 @@ export function forceNBody(
     };
   });
 
-  const tree = (dimensions === 2 ? quadtree(
-    data,
-    (d: any) => d.x,
-    (d: any) => d.y
-  ) : octree(
-    data,
-    (d: any) => d.x,
-    (d: any) => d.y,
-    (d: any) => d.z
-  )).visitAfter(accumulate); // init internal node
+  const tree = (
+    dimensions === 2
+      ? quadtree(
+          data,
+          (d: any) => d.x,
+          (d: any) => d.y
+        )
+      : octree(
+          data,
+          (d: any) => d.x,
+          (d: any) => d.y,
+          (d: any) => d.z
+        )
+  ).visitAfter(accumulate); // init internal node
 
+  const nodeMap = new Map();
   data.forEach((n) => {
+    nodeMap.set(n.id, n);
     // @ts-ignore
     computeForce(n, tree, dimensions);
   });
@@ -76,6 +83,7 @@ function accumulate(treeNode: any) {
   let accX = 0;
   let accY = 0;
   let accZ = 0;
+  let accSize = 0;
   const numChildren = treeNode.length;
 
   if (numChildren) {
@@ -87,11 +95,13 @@ function accumulate(treeNode: any) {
         accX += q.x * q.weight;
         accY += q.y * q.weight;
         accZ += q.z * q.weight;
+        accSize += q.size * q.weight;
       }
     }
     treeNode.x = accX / accWeight;
     treeNode.y = accY / accWeight;
     treeNode.z = accZ / accWeight;
+    treeNode.size = accSize / accWeight;
     treeNode.weight = accWeight;
   } else {
     // leaf node
@@ -99,6 +109,7 @@ function accumulate(treeNode: any) {
     treeNode.x = q.data.x;
     treeNode.y = q.data.y;
     treeNode.z = q.data.z;
+    treeNode.size = q.data.size;
     treeNode.weight = q.data.weight;
   }
 }
@@ -110,16 +121,22 @@ const apply = (
   arg2: number,
   arg3: number,
   node: InternalNode,
-  dimensions: number,
+  dimensions: number
 ) => {
+  if (treeNode.data?.id === node.id) return;
   const x2 = [arg1, arg2, arg3][dimensions - 1];
 
-  const dx = node.x - treeNode.x || epsilon;
-  const dy = node.y - treeNode.y || epsilon;
-  const dz = node.z - treeNode.z || epsilon;
+  let dx = node.x - treeNode.x || epsilon;
+  let dy = node.y - treeNode.y || epsilon;
+  let dz = node.z - treeNode.z || epsilon;
+  const pos = [dx, dy, dz];
   const width = x2 - x1;
-  const len2 = dx * dx + dy * dy + dz * dz;
-  const len3 = Math.sqrt(len2) * len2;
+  let len2 = 0;
+  for (let i = 0; i < dimensions; i++) {
+    len2 += pos[i] * pos[i];
+  }
+  let len1 = Math.sqrt(len2);
+  let len3 = len1 * len2;
 
   // far node, apply Barnes-Hut approximation
   if (width * width * theta2 < len2) {
@@ -145,5 +162,7 @@ const apply = (
 // @ts-ignore
 function computeForce(node: InternalNode, tree: any, dimensions: number) {
   // @ts-ignore
-  tree.visit((treeNode, x1, y1, x2, y2) => apply(treeNode, x1, y1, x2, y2, node, dimensions));
+  tree.visit((treeNode, x1, y1, x2, y2) =>
+    apply(treeNode, x1, y1, x2, y2, node, dimensions)
+  );
 }

@@ -1,6 +1,6 @@
-import { ID, Graph, Node } from "@antv/graphlib";
-import { isNumber } from "@antv/util";
-import { EdgeData, Graph as IGraph, NodeData } from "../types";
+import { ID, Graph, Node } from '@antv/graphlib';
+import { isNumber } from '@antv/util';
+import { EdgeData, Graph as IGraph, NodeData } from '../types';
 
 const safeSort = (valueA?: number, valueB?: number) => {
   return Number(valueA) - Number(valueB);
@@ -40,7 +40,7 @@ export const simplify = (g: IGraph) => {
   });
   g.getAllEdges().forEach((e) => {
     const edge = simplified
-      .getRelatedEdges(e.source, "out")
+      .getRelatedEdges(e.source, 'out')
       .find((edge) => edge.target === e.target);
     if (!edge) {
       simplified.addEdge({
@@ -91,7 +91,7 @@ export const successorWeights = (g: IGraph) => {
 
   g.getAllNodes().forEach((node) => {
     const sucs: Record<ID, number> = {};
-    g.getRelatedEdges(node.id, "out").forEach((e) => {
+    g.getRelatedEdges(node.id, 'out').forEach((e) => {
       sucs[e.target] = (sucs[e.target] || 0) + (e.data.weight || 0);
     });
     weightsMap[node.id] = sucs;
@@ -105,7 +105,7 @@ export const predecessorWeights = (g: IGraph) => {
 
   const weightMap = nodes.map((v) => {
     const preds: Record<ID, number> = {};
-    g.getRelatedEdges(v.id, "in").forEach((e) => {
+    g.getRelatedEdges(v.id, 'in').forEach((e) => {
       preds[e.source] = (preds[e.source] || 0) + e.data.weight!;
     });
     return preds;
@@ -200,7 +200,7 @@ export const normalizeRanks = (g: IGraph) => {
     .map((v) => v.data.rank!);
   const min = Math.min(...nodeRanks);
   g.getAllNodes().forEach((v) => {
-    if (v.data.hasOwnProperty("rank") && min !== Infinity) {
+    if (v.data.hasOwnProperty('rank') && min !== Infinity) {
       v.data.rank! -= min;
     }
   });
@@ -258,7 +258,7 @@ export const addBorderNode = (
     node.rank = rank;
     node.order = order;
   }
-  return addDummyNode(g, "border", node, prefix);
+  return addDummyNode(g, 'border', node, prefix);
 };
 
 export const maxRank = (g: IGraph) => {
@@ -335,7 +335,7 @@ const doDFS = (
 export const dfs = (
   graph: IGraph,
   node: Node<NodeData> | Node<NodeData>[],
-  order: "pre" | "post",
+  order: 'pre' | 'post',
   isDirected: boolean
 ) => {
   const nodes = Array.isArray(node) ? node : [node];
@@ -347,7 +347,7 @@ export const dfs = (
     if (!graph.hasNode(node.id)) {
       throw new Error(`Graph does not have node: ${node}`);
     } else {
-      doDFS(graph, node, order === "post", visited, navigator, results);
+      doDFS(graph, node, order === 'post', visited, navigator, results);
     }
   });
 

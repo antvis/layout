@@ -1,6 +1,6 @@
-import { ID, Node } from "@antv/graphlib";
-import { Graph, NodeData } from "../types";
-import { addDummyNode } from "./util";
+import { ID, Node } from '@antv/graphlib';
+import { Graph, NodeData } from '../types';
+import { addDummyNode } from './util';
 
 export const addBorderSegments = (g: Graph) => {
   const dfs = (v: ID) => {
@@ -10,7 +10,7 @@ export const addBorderSegments = (g: Graph) => {
       children.forEach((child) => dfs(child.id));
     }
 
-    if (node.data.hasOwnProperty("minRank")) {
+    if (node.data.hasOwnProperty('minRank')) {
       node.data.borderLeft = [];
       node.data.borderRight = [];
       for (
@@ -18,8 +18,8 @@ export const addBorderSegments = (g: Graph) => {
         rank < maxRank;
         rank += 1
       ) {
-        addBorderNode(g, "borderLeft", "_bl", v, node, rank);
-        addBorderNode(g, "borderRight", "_br", v, node, rank);
+        addBorderNode(g, 'borderLeft', '_bl', v, node, rank);
+        addBorderNode(g, 'borderRight', '_br', v, node, rank);
       }
     }
   };
@@ -38,7 +38,7 @@ const addBorderNode = (
   const label: NodeData = { rank, borderType: prop, width: 0, height: 0 };
   // @ts-ignore
   const prev = sgNode.data[prop][rank - 1];
-  const curr = addDummyNode(g, "border", label, prefix);
+  const curr = addDummyNode(g, 'border', label, prefix);
   // @ts-ignore
   sgNode.data[prop][rank] = curr;
   g.setParent(curr, sg);

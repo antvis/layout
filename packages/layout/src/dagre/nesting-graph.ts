@@ -1,6 +1,6 @@
-import { ID } from "@antv/graphlib";
-import { Graph as IGraph } from "../types";
-import { addBorderNode, addDummyNode } from "./util";
+import { ID } from '@antv/graphlib';
+import { Graph as IGraph } from '../types';
+import { addBorderNode, addDummyNode } from './util';
 
 /*
  * A nesting graph creates dummy nodes for the tops and bottoms of subgraphs,
@@ -26,7 +26,7 @@ import { addBorderNode, addDummyNode } from "./util";
  * Graphs."
  */
 const run = (g: IGraph) => {
-  const root = addDummyNode(g, "root", {}, "_root");
+  const root = addDummyNode(g, 'root', {}, '_root');
   const depths = treeDepths(g);
   let maxDepth = Math.max(...Object.values(depths));
 
@@ -88,8 +88,8 @@ const dfs = (
     return;
   }
 
-  const top = addBorderNode(g, "_bt");
-  const bottom = addBorderNode(g, "_bb");
+  const top = addBorderNode(g, '_bt');
+  const bottom = addBorderNode(g, '_bb');
   const label = g.getNode(v)!;
 
   g.setParent(top, v);
