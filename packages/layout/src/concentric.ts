@@ -119,6 +119,12 @@ export class ConcentricLayout implements Layout<ConcentricLayoutOptions> {
     let maxNodeSpacing: number = 0;
     if (isArray(nodeSize)) {
       maxNodeSize = Math.max(nodeSize[0], nodeSize[1]);
+    } else if (isFunction(nodeSize)) {
+      maxNodeSize = -Infinity;
+      nodes.forEach((node) => {
+        const currentSize = nodeSize(node);
+        if (currentSize > maxNodeSize) maxNodeSize = currentSize;
+      });
     } else {
       maxNodeSize = nodeSize as number;
     }

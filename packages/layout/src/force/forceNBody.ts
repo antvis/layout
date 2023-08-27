@@ -8,6 +8,7 @@ const theta2 = 0.81; // Barnes-Hut approximation threshold
 const epsilon = 0.1; // 为了防止出现除0的情况，加一个epsilon
 
 interface InternalNode {
+  id: string;
   x: number;
   y: number;
   z?: number;

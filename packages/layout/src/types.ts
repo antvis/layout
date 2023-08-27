@@ -144,7 +144,7 @@ export interface CircularLayoutOptions {
   startAngle?: number;
   endAngle?: number;
   nodeSpacing?: ((node?: Node) => number) | number;
-  nodeSize?: number | number[];
+  nodeSize?: number | number[] | ((nodeData: Node) => number);
 }
 
 export interface GridLayoutOptions {
@@ -152,7 +152,7 @@ export interface GridLayoutOptions {
   height?: number;
   begin?: PointTuple;
   preventOverlap?: boolean;
-  nodeSize?: number | number[];
+  nodeSize?: number | number[] | ((nodeData: Node) => number);
   preventOverlapPadding?: number;
   condense?: boolean;
   rows?: number;
@@ -176,7 +176,7 @@ export interface MDSLayoutOptions {
 export interface ConcentricLayoutOptions {
   center?: PointTuple;
   preventOverlap?: boolean;
-  nodeSize?: number | PointTuple;
+  nodeSize?: number | PointTuple | ((nodeData: Node) => number);
   sweep?: number;
   equidistant?: boolean;
   startAngle?: number;
@@ -197,7 +197,7 @@ export interface RadialLayoutOptions {
   focusNode?: string | Node | null;
   unitRadius?: number | null;
   preventOverlap?: boolean;
-  nodeSize?: number | number[];
+  nodeSize?: number | number[] | ((nodeData: Node) => number);
   nodeSpacing?: number | Function;
   maxPreventOverlapIteration?: number;
   strictRadial?: boolean;
@@ -220,7 +220,7 @@ export interface DagreLayoutOptions {
   rankdir?: DagreRankdir;
   align?: DagreAlign;
   begin?: PointTuple;
-  nodeSize?: number | number[];
+  nodeSize?: number | number[] | ((nodeData: Node) => number);
   nodesep?: number;
   ranksep?: number;
   controlPoints?: boolean;

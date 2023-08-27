@@ -144,7 +144,6 @@ export class DagreLayout implements Layout<DagreLayoutOptions> {
       nodes.forEach((node) => {
         const { parentId } = node.data;
         if (parentId === undefined) return;
-        console.log('setparent', g.hasNode(parentId as ID));
         if (g.hasNode(parentId as ID)) {
           g.setParent(node.id, parentId as ID, 'combo');
         }

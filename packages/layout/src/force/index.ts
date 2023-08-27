@@ -415,7 +415,7 @@ export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
         clusterNodeStrength as number;
     }
     let sameTypeLeafMap: any;
-    let clusters: string[] = [];
+    let clusters: string[];
     if (leafCluster && nodeClusterBy) {
       sameTypeLeafMap = getSameTypeLeafMap(calcGraph, nodeClusterBy);
       clusters =
