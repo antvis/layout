@@ -1,15 +1,15 @@
-import { Graph, ID } from "@antv/graphlib";
-import { isNil } from "@antv/util";
+import { Graph, ID } from '@antv/graphlib';
+import { isNil } from '@antv/util';
 import {
   DagreAlign,
   DagreRankdir,
   Graph as IGraph,
   NodeData,
   Point,
-} from "../types";
-import { run as runAcyclic, undo as undoAcyclic } from "./acyclic";
-import { run as runNormalize, undo as undoNormalize } from "./normalize";
-import { rank } from "./rank";
+} from '../types';
+import { run as runAcyclic, undo as undoAcyclic } from './acyclic';
+import { run as runNormalize, undo as undoNormalize } from './normalize';
+import { rank } from './rank';
 import {
   normalizeRanks,
   removeEmptyRanks,
@@ -17,20 +17,20 @@ import {
   addDummyNode,
   intersectRect,
   buildLayerMatrix,
-} from "./util";
-import { parentDummyChains } from "./parent-dummy-chains";
+} from './util';
+import { parentDummyChains } from './parent-dummy-chains';
 import {
   run as runNestingGraph,
   cleanup as cleanupNestingGraph,
-} from "./nesting-graph";
-import { addBorderSegments } from "./add-border-segments";
+} from './nesting-graph';
+import { addBorderSegments } from './add-border-segments';
 import {
   adjust as adjustCoordinateSystem,
   undo as undoCoordinateSystem,
-} from "./coordinate-system";
-import { order } from "./order";
-import { position } from "./position";
-import { initDataOrder } from "./order/init-data-order";
+} from './coordinate-system';
+import { order } from './order';
+import { position } from './position';
+import { initDataOrder } from './order/init-data-order';
 
 // const graphNumAttrs = ["nodesep", "edgesep", "ranksep", "marginx", "marginy"];
 // const graphDefaults = { ranksep: 50, edgesep: 20, nodesep: 50, rankdir: "tb" };
@@ -48,7 +48,7 @@ export const layout = (
     ranksep?: number;
     acyclicer: string;
     nodeOrder: ID[];
-    ranker: "network-simplex" | "tight-tree" | "longest-path";
+    ranker: 'network-simplex' | 'tight-tree' | 'longest-path';
     rankdir: DagreRankdir;
   }
 ) => {
@@ -62,7 +62,7 @@ export const layout = (
   const layoutGraph = buildLayoutGraph(g);
 
   // 控制是否为边的label留位置（这会影响是否在边中间添加dummy node）
-  if (!(!edgeLabelSpace)) {
+  if (!!edgeLabelSpace) {
     options.ranksep = makeSpaceForEdgeLabels(layoutGraph, {
       rankdir,
       ranksep,
@@ -74,7 +74,7 @@ export const layout = (
     dimension = runLayout(layoutGraph, options);
   } catch (e) {
     if (
-      e.message === "Not possible to find intersection inside of the rectangle"
+      e.message === 'Not possible to find intersection inside of the rectangle'
     ) {
       console.error(
         "The following error may be caused by improper layer setting, please make sure your manual layer setting does not violate the graph's structure:\n",
@@ -94,7 +94,7 @@ const runLayout = (
     acyclicer: string;
     keepNodeOrder: boolean;
     nodeOrder: ID[];
-    ranker: "network-simplex" | "tight-tree" | "longest-path";
+    ranker: 'network-simplex' | 'tight-tree' | 'longest-path';
     rankdir: DagreRankdir;
     align?: DagreAlign;
     nodesep?: number;
@@ -105,7 +105,7 @@ const runLayout = (
   const {
     acyclicer,
     ranker,
-    rankdir = "tb",
+    rankdir = 'tb',
     nodeOrder,
     keepNodeOrder,
     align,
@@ -224,7 +224,7 @@ const updateInputGraph = (inputGraph: IGraph, layoutGraph: IGraph) => {
     const layoutLabel = layoutGraph.getEdge(e.id)!;
 
     inputLabel.data.points = layoutLabel ? layoutLabel.data.points : [];
-    if (layoutLabel && layoutLabel.data.hasOwnProperty("x")) {
+    if (layoutLabel && layoutLabel.data.hasOwnProperty('x')) {
       inputLabel.data.x = layoutLabel.data.x;
       inputLabel.data.y = layoutLabel.data.y;
     }
@@ -234,18 +234,18 @@ const updateInputGraph = (inputGraph: IGraph, layoutGraph: IGraph) => {
   // inputGraph.graph().height = layoutGraph.graph().height;
 };
 
-const nodeNumAttrs = ["width", "height", "layer", "fixorder"]; // 需要传入layer, fixOrder作为参数参考
+const nodeNumAttrs = ['width', 'height', 'layer', 'fixorder']; // 需要传入layer, fixOrder作为参数参考
 const nodeDefaults = { width: 0, height: 0 };
-const edgeNumAttrs = ["minlen", "weight", "width", "height", "labeloffset"];
+const edgeNumAttrs = ['minlen', 'weight', 'width', 'height', 'labeloffset'];
 const edgeDefaults = {
   minlen: 1,
   weight: 1,
   width: 0,
   height: 0,
   labeloffset: 10,
-  labelpos: "r",
+  labelpos: 'r',
 };
-const edgeAttrs = ["labelpos"];
+const edgeAttrs = ['labelpos'];
 
 /*
  * Constructs a new graph from the input graph, which can be used for layout.
@@ -272,7 +272,9 @@ const buildLayoutGraph = (inputGraph: IGraph) => {
       });
     }
 
-    const parent = inputGraph.getParent(v.id);
+    const parent = inputGraph.hasTreeStructure('combo')
+      ? inputGraph.getParent(v.id, 'combo')
+      : inputGraph.getParent(v.id);
     if (!isNil(parent)) {
       if (!g.hasNode(parent.id)) {
         g.addNode({ ...parent });
@@ -328,8 +330,8 @@ const makeSpaceForEdgeLabels = (
   });
   g.getAllEdges().forEach((edge) => {
     edge.data.minlen! *= 2;
-    if ((edge.data.labelpos as string)?.toLowerCase() !== "c") {
-      if (rankdir === "TB" || rankdir === "BT") {
+    if ((edge.data.labelpos as string)?.toLowerCase() !== 'c') {
+      if (rankdir === 'TB' || rankdir === 'BT') {
         edge.data.width! += edge.data.labeloffset!;
       } else {
         edge.data.height! += edge.data.labeloffset!;
@@ -355,7 +357,7 @@ const injectEdgeLabelProxies = (g: IGraph) => {
         e,
         rank: (w.data.rank! - v.data.rank!) / 2 + v.data.rank!,
       };
-      addDummyNode(g, "edge-proxy", label, "_ep");
+      addDummyNode(g, 'edge-proxy', label, '_ep');
     }
   });
 };
@@ -375,7 +377,7 @@ const assignRankMinMax = (g: IGraph): number => {
 
 const removeEdgeLabelProxies = (g: IGraph) => {
   g.getAllNodes().forEach((node) => {
-    if (node.data.dummy === "edge-proxy") {
+    if (node.data.dummy === 'edge-proxy') {
       g.getEdge(node.data.e!.id)!.data.labelRank = node.data.rank;
       g.removeNode(node.id);
     }
@@ -422,7 +424,7 @@ const translateGraph = (
     getExtremes(v);
   });
   g.getAllEdges().forEach((e) => {
-    if (e?.data.hasOwnProperty("x")) {
+    if (e?.data.hasOwnProperty('x')) {
       getExtremes(e);
     }
   });
@@ -440,10 +442,10 @@ const translateGraph = (
       p.x -= minX;
       p.y -= minY;
     });
-    if (edge.data.hasOwnProperty("x")) {
+    if (edge.data.hasOwnProperty('x')) {
       edge.data.x! -= minX;
     }
-    if (edge.data.hasOwnProperty("y")) {
+    if (edge.data.hasOwnProperty('y')) {
       edge.data.y! -= minY;
     }
   });
@@ -476,15 +478,15 @@ const assignNodeIntersects = (g: IGraph) => {
 
 const fixupEdgeLabelCoords = (g: IGraph) => {
   g.getAllEdges().forEach((edge) => {
-    if (edge.data.hasOwnProperty("x")) {
-      if (edge.data.labelpos === "l" || edge.data.labelpos === "r") {
+    if (edge.data.hasOwnProperty('x')) {
+      if (edge.data.labelpos === 'l' || edge.data.labelpos === 'r') {
         edge.data.width! -= edge.data.labeloffset!;
       }
       switch (edge.data.labelpos) {
-        case "l":
+        case 'l':
           edge.data.x! -= edge.data.width! / 2 + edge.data.labeloffset!;
           break;
-        case "r":
+        case 'r':
           edge.data.x! += edge.data.width! / 2 + edge.data.labeloffset!;
           break;
       }
@@ -525,7 +527,7 @@ const removeBorderNodes = (g: IGraph) => {
   });
 
   g.getAllNodes().forEach((n) => {
-    if (n.data.dummy === "border") {
+    if (n.data.dummy === 'border') {
       g.removeNode(n.id);
     }
   });
@@ -554,7 +556,7 @@ const insertSelfEdges = (g: IGraph) => {
       node.data.selfEdges?.forEach((selfEdge) => {
         addDummyNode(
           g,
-          "selfedge",
+          'selfedge',
           {
             width: selfEdge.data.width,
             height: selfEdge.data.height,
@@ -562,7 +564,7 @@ const insertSelfEdges = (g: IGraph) => {
             order: i + ++orderShift,
             e: selfEdge,
           },
-          "_se"
+          '_se'
         );
       });
       delete node.data.selfEdges;
@@ -573,7 +575,7 @@ const insertSelfEdges = (g: IGraph) => {
 const positionSelfEdges = (g: IGraph) => {
   g.getAllNodes().forEach((v) => {
     const node = g.getNode(v.id)!;
-    if (node.data.dummy === "selfedge") {
+    if (node.data.dummy === 'selfedge') {
       const selfNode = g.getNode(node.data.e!.source)!;
       const x = selfNode.data.x! + selfNode.data.width! / 2;
       const y = selfNode.data.y!;

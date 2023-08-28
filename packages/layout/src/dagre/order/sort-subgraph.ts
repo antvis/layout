@@ -1,8 +1,8 @@
-import { ID } from "@antv/graphlib";
-import { Graph } from "../../types";
-import { barycenter } from "./barycenter";
-import resolveConflicts, { ConflictEntry } from "./resolve-conflicts";
-import { sort } from "./sort";
+import { ID } from '@antv/graphlib';
+import { Graph } from '../../types';
+import { barycenter } from './barycenter';
+import resolveConflicts, { ConflictEntry } from './resolve-conflicts';
+import { sort } from './sort';
 
 export const sortSubgraph = (
   g: Graph,
@@ -36,7 +36,7 @@ export const sortSubgraph = (
         keepNodeOrder
       );
       subgraphs[entry.v] = subgraphResult;
-      if (subgraphResult.hasOwnProperty("barycenter")) {
+      if (subgraphResult.hasOwnProperty('barycenter')) {
         mergeBarycenters(entry, subgraphResult);
       }
     }
@@ -62,9 +62,9 @@ export const sortSubgraph = (
   if (bl) {
     result.vs = [bl, result.vs, br].flat() as ID[];
     if (g.getPredecessors(bl)?.length) {
-      const blPred = g.getNode(g.getPredecessors(bl)?.[0].id || "")!;
-      const brPred = g.getNode(g.getPredecessors(br!)?.[0].id || "")!;
-      if (!result.hasOwnProperty("barycenter")) {
+      const blPred = g.getNode(g.getPredecessors(bl)?.[0].id || '')!;
+      const brPred = g.getNode(g.getPredecessors(br!)?.[0].id || '')!;
+      if (!result.hasOwnProperty('barycenter')) {
         result.barycenter = 0;
         result.weight = 0;
       }

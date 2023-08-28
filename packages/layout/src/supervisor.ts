@@ -1,8 +1,9 @@
 // @ts-ignore
-import EventEmitter from "@antv/event-emitter";
-import { Graph, Node, Edge } from "@antv/graphlib";
-import * as Comlink from "comlink";
-import type { Layout, LayoutSupervisor } from "./types";
+import EventEmitter from '@antv/event-emitter';
+import { Graph, Node, Edge } from '@antv/graphlib';
+import * as Comlink from 'comlink';
+import type { Layout, LayoutSupervisor } from './types';
+import { isFunction } from '@antv/util';
 
 /**
  * The payload transferred from main thread to the worker.
@@ -58,7 +59,7 @@ export class Supervisor extends EventEmitter implements LayoutSupervisor {
   spawnWorker() {
     this.proxy = Comlink.wrap(
       // @ts-ignore
-      new Worker(new URL("./worker.js", import.meta.url), { type: 'module' })
+      new Worker(new URL('./worker.js', import.meta.url), { type: 'module' })
     );
 
     if (this.running) {
@@ -74,10 +75,14 @@ export class Supervisor extends EventEmitter implements LayoutSupervisor {
 
     // Payload should include nodes & edges(if needed).
     const { onTick, ...rest } = this.layout.options;
+    const noFunctionOptions: any = {};
+    Object.keys(rest).forEach((name) => {
+      if (!isFunction(rest[name])) noFunctionOptions[name] = rest[name];
+    });
     const payload = {
       layout: {
         id: this.layout.id,
-        options: rest,
+        options: noFunctionOptions,
         iterations: this.options?.iterations,
       },
       nodes: this.graph.getAllNodes(),

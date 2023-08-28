@@ -1,5 +1,5 @@
-import { ID } from "@antv/graphlib";
-import { Graph } from "../../types";
+import { ID } from '@antv/graphlib';
+import { Graph } from '../../types';
 
 /*
  * Assigns an initial order value for each node by performing a DFS search

@@ -1,5 +1,5 @@
-import { Edge, ID } from "@antv/graphlib";
-import { EdgeData, Graph as IGraph } from "../types";
+import { Edge, ID } from '@antv/graphlib';
+import { EdgeData, Graph as IGraph } from '../types';
 
 type OrderItem = { low: number; lim: number };
 

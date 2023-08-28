@@ -1,5 +1,5 @@
-import { ID } from "@antv/graphlib";
-import { Graph } from "../../types";
+import { ID } from '@antv/graphlib';
+import { Graph } from '../../types';
 
 export const addSubgraphConstraints = (g: Graph, cg: Graph, vs: ID[]) => {
   const prev: Record<ID, ID> = {};
@@ -19,22 +19,26 @@ export const addSubgraphConstraints = (g: Graph, cg: Graph, vs: ID[]) => {
         rootPrev = child.id;
       }
       if (prevChild && prevChild !== child.id) {
-        cg.addNodes([
-          {
+        if (!cg.hasNode(prevChild)) {
+          cg.addNode({
             id: prevChild,
             data: {},
-          },
-          {
+          });
+        }
+        if (!cg.hasNode(child.id)) {
+          cg.addNode({
             id: child.id,
             data: {},
-          },
-        ]);
-        cg.addEdge({
-          id: `e${prevChild}-${child.id}`,
-          source: prevChild,
-          target: child.id,
-          data: {},
-        });
+          });
+        }
+        if (!cg.hasEdge(`e${prevChild}-${child.id}`)) {
+          cg.addEdge({
+            id: `e${prevChild}-${child.id}`,
+            source: prevChild,
+            target: child.id,
+            data: {},
+          });
+        }
         return;
       }
       child = parent;
