@@ -1,9 +1,10 @@
 <h1 align="center">
-<b>AntV Layout</b>
+<b>@antv/layout</b>
 </h1>
 
-[![Build Status](https://github.com/antvis/layout/workflows/build/badge.svg?branch=v5)](https://github.com/antvis//actions)
+[![Build Status](https://github.com/antvis/layout/actions/workflows/build.yml/badge.svg)](https://github.com/antvis/layout/actions)
 [![Coverage Status](https://img.shields.io/coveralls/github/antvis/layout/v5.svg)](https://coveralls.io/github/antvis/layout?branch=v5)
+[![npm Version](https://img.shields.io/npm/v/@antv/layout.svg)](https://www.npmjs.com/package/@antv/layout)
 [![npm Download](https://img.shields.io/npm/dm/@antv/layout.svg)](https://www.npmjs.com/package/@antv/layout)
 [![npm License](https://img.shields.io/npm/l/@antv/layout.svg)](https://www.npmjs.com/package/@antv/layout)
 
