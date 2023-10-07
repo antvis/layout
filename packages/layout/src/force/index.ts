@@ -186,26 +186,24 @@ export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
       edgeStrength,
       linkDistance,
     } = formattedOptions;
-
     // clones the original data and attaches calculation attributes for this layout algorithm
-    const layoutNodes: CalcNode[] = nodes.map(
-      (node, i) =>
-        ({
-          ...node,
-          data: {
-            ...node.data,
-            // ...randomDistribution(node, dimensions, 30, i),
-            x: isNumber(node.data.x) ? node.data.x : Math.random() * width,
-            y: isNumber(node.data.y) ? node.data.y : Math.random() * height,
-            z: isNumber(node.data.z)
-              ? node.data.z
-              : Math.random() * Math.sqrt(width * height),
-            size: nodeSize(node) || 30,
-            mass: getMass(node),
-            nodeStrength: nodeStrength(node),
-          },
-        } as CalcNode)
-    );
+    const layoutNodes: CalcNode[] = nodes.map((node, i) => {
+      return {
+        ...node,
+        data: {
+          ...node.data,
+          // ...randomDistribution(node, dimensions, 30, i),
+          x: isNumber(node.data.x) ? node.data.x : Math.random() * width,
+          y: isNumber(node.data.y) ? node.data.y : Math.random() * height,
+          z: isNumber(node.data.z)
+            ? node.data.z
+            : Math.random() * Math.sqrt(width * height),
+          size: nodeSize(node) || 30,
+          mass: getMass(node),
+          nodeStrength: nodeStrength(node),
+        },
+      } as CalcNode;
+    });
     const layoutEdges: CalcEdge[] = edges.map((edge) => ({
       ...edge,
       data: {
@@ -302,7 +300,7 @@ export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
     options: ForceLayoutOptions,
     graph: Graph
   ): FormatedOptions {
-    const formattedOptions = options as FormatedOptions;
+    const formattedOptions = { ...options } as FormatedOptions;
     const {
       width: propsWidth,
       height: propsHeight,
@@ -337,47 +335,50 @@ export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
     }
 
     // === formating node size =====
-    if (options.preventOverlap) {
-      const nodeSpacingFunc = formatNumberFn<Node>(0, options.nodeSpacing);
-      if (!nodeSize) {
-        formattedOptions.nodeSize = (d?: Node) => {
-          const { size } = d?.data || {};
-          if (size) {
-            if (isArray(size)) {
-              return Math.max(size[0], size[1]) + nodeSpacingFunc(d);
-            }
-            if (isObject<{ width: number; height: number }>(size)) {
-              return Math.max(size.width, size.height) + nodeSpacingFunc(d);
-            }
-            return (size as number) + nodeSpacingFunc(d);
+
+    const nodeSpacingFunc = formatNumberFn<Node>(0, options.nodeSpacing);
+    let nodeSizeFn;
+    if (!nodeSize) {
+      nodeSizeFn = (d?: Node) => {
+        const { size } = d?.data || {};
+        if (size) {
+          if (isArray(size)) {
+            return Math.max(size[0], size[1]) + nodeSpacingFunc(d);
           }
-          return 10 + nodeSpacingFunc(d);
-        };
-      } else if (isFunction(nodeSize)) {
-        formattedOptions.nodeSize = (d?: Node) =>
-          (nodeSize as Function)(d) + nodeSpacingFunc(d);
-      } else if (isArray(nodeSize)) {
-        formattedOptions.nodeSize = (d?: Node) => {
-          const nodeSizeArr = nodeSize as [number, number];
-          return Math.max(nodeSizeArr[0], nodeSizeArr[1]) + nodeSpacingFunc(d);
-        };
-      } else {
-        formattedOptions.nodeSize = (d?: Node) =>
-          (nodeSize as number) + nodeSpacingFunc(d);
-      }
+          if (isObject<{ width: number; height: number }>(size)) {
+            return Math.max(size.width, size.height) + nodeSpacingFunc(d);
+          }
+          return (size as number) + nodeSpacingFunc(d);
+        }
+        return 10 + nodeSpacingFunc(d);
+      };
+    } else if (isFunction(nodeSize)) {
+      nodeSizeFn = (d?: Node) => (nodeSize as Function)(d) + nodeSpacingFunc(d);
+    } else if (isArray(nodeSize)) {
+      nodeSizeFn = (d?: Node) => {
+        const nodeSizeArr = nodeSize as [number, number];
+        return Math.max(nodeSizeArr[0], nodeSizeArr[1]) + nodeSpacingFunc(d);
+      };
+    } else {
+      nodeSizeFn = (d?: Node) => (nodeSize as number) + nodeSpacingFunc(d);
     }
+    formattedOptions.nodeSize = nodeSizeFn;
 
     // === formating node / edge strengths =====
-    formattedOptions.linkDistance = options.linkDistance
+    const linkDistanceFn = options.linkDistance
       ? formatNumberFn(1, options.linkDistance)
-      : (edge?: Edge) =>
-          1 +
-          formattedOptions.nodeSize(graph.getNode(edge!.source)) +
-          formattedOptions.nodeSize(graph.getNode(edge!.target));
+      : (edge?: Edge) => {
+          return (
+            1 +
+            formattedOptions.nodeSize(graph.getNode(edge!.source)) +
+            formattedOptions.nodeSize(graph.getNode(edge!.target))
+          );
+        };
+    formattedOptions.linkDistance = linkDistanceFn;
     formattedOptions.nodeStrength = formatNumberFn(1, options.nodeStrength);
     formattedOptions.edgeStrength = formatNumberFn(1, options.edgeStrength);
 
-    return options as FormatedOptions;
+    return formattedOptions as FormatedOptions;
   }
 
   /**
