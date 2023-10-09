@@ -1,6 +1,5 @@
 import { isFunction, isNumber, isObject } from '@antv/util';
 import { Node } from '../types';
-import { isArray } from '.';
 
 /**
  * Format value with multiple types into a function returns number.
@@ -46,7 +45,7 @@ export function formatSizeFn<T extends Node>(
     return (d) => {
       const { size } = d.data || {};
       if (size) {
-        if (isArray(size)) {
+        if (Array.isArray(size)) {
           return size[0] > size[1] ? size[0] : size[1];
         }
         if (isObject<{ width: number; height: number }>(size)) {
@@ -63,7 +62,7 @@ export function formatSizeFn<T extends Node>(
   if (isNumber(value)) {
     return () => value;
   }
-  if (isArray(value)) {
+  if (Array.isArray(value)) {
     return () => {
       if (resultIsNumber) {
         const max = Math.max(...value);
@@ -112,7 +111,7 @@ export const formatNodeSize = (
         );
       }
       if (d.data?.size) {
-        if (isArray(d.data.size)) {
+        if (Array.isArray(d.data.size)) {
           return Math.max(d.data.size[0], d.data.size[1]) + nodeSpacingFunc(d);
         }
         const dataSize = d.data.size;
@@ -125,7 +124,7 @@ export const formatNodeSize = (
       }
       return 10 + nodeSpacingFunc(d);
     };
-  } else if (isArray(nodeSize)) {
+  } else if (Array.isArray(nodeSize)) {
     nodeSizeFunc = (d: Node) => {
       const res = nodeSize[0] > nodeSize[1] ? nodeSize[0] : nodeSize[1];
       return res + nodeSpacingFunc(d);
