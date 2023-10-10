@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Benchmarks of force-directed layouts</title>
+    <title>Benchmarks of dagre layout</title>
     <style>
       html,
       body {
@@ -132,33 +132,16 @@
     </style>
   </head>
   <body>
-    <p>Benchmarks of force-directed layouts</p>
-    <p>
-      Typically force-directed layouts contain multiple iterations and are
-      therefore parallelizable. We would like to provide WebWorker / WASM and
-      GPU approaches to obtain performance gains. Here's what we have done for now:
-      
-      <ul>
-        <li>
-          <a href="https://github.com/antvis/layout/tree/v5/packages/layout-gpu">@antv/layout-gpu</a> uses
-      WebGL / WebGPU to implement GPGPU which has the best performance.
-        </li>
-        <li>
-          <a href="https://github.com/antvis/layout/tree/v5/packages/layout-wasm">@antv/layout-wasm</a> uses WebWorker multi-threaded shared memory to run
-      WASM, with Rust <a href="https://github.com/rayon-rs/rayon">rayon</a> based parallelism behind it.
-        </li>
-      </ul>
-      
-    </p>
+    <p>Benchmarks of dagre layouts</p>
     <fieldset>
       <legend>Choose a dataset:</legend>
       <select name="dataset" id="dataset">
         <option value="random-clusters-100">random-clusters 100</option>
         <option value="random-clusters-1000">random-clusters 1000</option>
+        <option value="random-clusters2-1000">random-clusters 2k nodes 1k edges</option>
+        <option value="random-clusters-2000">random-clusters 2000</option>
         <option value="relations">relations</option>
         <option value="regions">regions</option>
-        <option value="netscience" selected>netscience</option>
-        <option value="eva">eva</option>
       </select>
       <p id="dataset-desc"></p>
     </fieldset>
@@ -166,37 +149,35 @@
     <fieldset>
       <legend>Choose a layout:</legend>
       <select name="layout" id="layout">
-        <option value="forceatlas2">forceatlas2</option>
-        <option value="force2" selected>force2</option>
-        <option value="fruchterman">fruchterman</option>
+        <option value="dagre">dagre</option>
       </select>
 
       <div>
-        <label for="iterations">Iterations:</label>
-        <input type="number" id="iterations" name="iterations" value="500" />
-      </div>
-      <div>
-        <label for="min_movement">Min movement:</label>
-        <input type="number" id="min_movement" name="min_movement" value="1" />
-      </div>
-      <div>
-        <label for="distance_threshold_mode">Distance threshold mode:</label>
-        <select name="distance_threshold_mode" id="distance_threshold_mode">
-          <option value="mean" selected>mean</option>
-          <option value="min">min</option>
-          <option value="max">max</option>
+        <label for="rankdir">rankdir:</label>
+        <select name="rankdir" id="rankdir">
+          <option value="tb" selected>tb</option>
+          <option value="bt">bt</option>
+          <option value="lr">lr</option>
+          <option value="rl">rl</option>
         </select>
-          It means the condition to judge with min movement:
-          <ul>
-            <li>
-              'mean' means the layout stops while the nodes' average movement is smaller than min movement
-            </li>
-            <li>
-              'max' / 'min' means the layout stops while the nodes' maximum/minimum movement is smaller than min movement
-            </li>
-          </ul>
       </div>
-      
+      <div>
+        <label for="align">align:</label>
+        <select name="align" id="align">
+          <option value="ul" selected>ul</option>
+          <option value="ur">ur</option>
+          <option value="dl">dl</option>
+          <option value="dr">dr</option>
+        </select>
+      </div>
+      <div>
+        <label for="ranksep">ranksep:</label>
+        <input type="number" id="ranksep" name="ranksep" value="50" />
+      </div>
+      <div>
+        <label for="nodesep">nodesep:</label>
+        <input type="number" id="nodesep" name="nodesep" value="50" />
+      </div>
     </fieldset>
 
     <fieldset>
@@ -204,20 +185,13 @@
       <div>
         <input
           type="checkbox"
-          id="graphology_checkbox"
-          name="graphology_checkbox"
-          checked
-        />
-        <label for="graphology_checkbox">graphology</label>
-      </div>
-      <div>
-        <input
-          type="checkbox"
           id="@antv/layout_checkbox"
-          name="@antv/layout_checkbox"
+          name="@antv/layou_checkbox"
           checked
         />
-        <label for="@antv/layout_checkbox">@antv/layout</label>
+        <label for="@antv/layout"
+          >@antv/layout</label
+        >
       </div>
       <div>
         <input
@@ -230,7 +204,7 @@
           >@antv/layout-wasm singlethread</label
         >
       </div>
-      <div>
+      <!-- <div>
         <input
           type="checkbox"
           id="@antv/layout-wasm - multithreads_checkbox"
@@ -240,16 +214,7 @@
         <label for="@antv/layout-wasm - multithreads_checkbox"
           >@antv/layout-wasm multithreads</label
         >
-      </div>
-      <div>
-        <input
-          type="checkbox"
-          id="@antv/layout-gpu_checkbox"
-          name="@antv/layout-gpu_checkbox"
-          checked
-        />
-        <label for="@antv/layout-gpu_checkbox">@antv/layout-gpu</label>
-      </div>
+      </div> -->
     </fieldset>
 
     <button id="run">Run layout</button>
@@ -265,13 +230,14 @@
 
     <div class="test-cases">
       <figure>
-        <canvas id="graphology" width="800" height="800"></canvas>
-        <figurecaption> graphology <span></span></figurecaption>
-      </figure>
-
-      <figure>
-        <canvas id="@antv/layout" width="800" height="800"></canvas>
-        <figurecaption> @antv/layout <span></span></figurecaption>
+        <canvas
+          id="@antv/layout"
+          width="800"
+          height="800"
+        ></canvas>
+        <figurecaption>
+          @antv/layout <span></span
+        ></figurecaption>
       </figure>
 
       <figure>
@@ -285,7 +251,7 @@
         ></figurecaption>
       </figure>
 
-      <figure>
+      <!-- <figure>
         <canvas
           id="@antv/layout-wasm - multithreads"
           width="800"
@@ -294,12 +260,7 @@
         <figurecaption>
           @antv/layout-wasm multithreads <span></span
         ></figurecaption>
-      </figure>
-
-      <figure>
-        <canvas id="@antv/layout-gpu" width="800" height="800"></canvas>
-        <figurecaption> @antv/layout-gpu <span></span></figurecaption>
-      </figure>
+      </figure> -->
     </div>
 
     <div id="mask" class="mask">

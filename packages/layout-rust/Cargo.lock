@@ -43,7 +43,9 @@ name = "antv-layout"
 version = "0.0.1"
 dependencies = [
  "alloc_counter",
+ "graphlib_rust",
  "itertools",
+ "ordered_hashmap",
  "plotters",
  "rayon",
  "scanrs",
@@ -441,6 +443,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "graphlib_rust"
+version = "0.0.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3fa37f1c85894560fddc6c059682d62e147d0268526ae0021ac4ec3e1b46df75"
+dependencies = [
+ "ordered_hashmap",
+]
+
+[[package]]
 name = "hermit-abi"
 version = "0.2.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -615,6 +626,12 @@ name = "once_cell"
 version = "1.17.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6f61fba1741ea2b3d6a1e3178721804bb716a68a6aeba1149b5d52e3d464ea66"
+
+[[package]]
+name = "ordered_hashmap"
+version = "0.0.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "cb1ea499d242299d564879c8b375c11285f5a26d62d8010768909d6d099c4c5a"
 
 [[package]]
 name = "pathfinder_geometry"
