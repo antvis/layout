@@ -9,8 +9,8 @@ import {
   OutNode,
   Edge,
   Matrix,
-  RadialLayoutOptions
-} from "../types";
+  RadialLayoutOptions,
+} from '../types';
 import {
   isNaN,
   isArray,
@@ -19,13 +19,13 @@ import {
   isString,
   floydWarshall,
   getAdjMatrix,
-  isObject
-} from "../../util";
-import { Base } from "../base";
-import MDS from "./mds";
+  isObject,
+} from '../../util';
+import { Base } from '../base';
+import MDS from './mds';
 import RadialNonoverlapForce, {
-  RadialNonoverlapForceParam
-} from "./radialNonoverlapForce";
+  RadialNonoverlapForceParam,
+} from './radialNonoverlapForce';
 
 type INode = OutNode & {
   size?: number | PointTuple;
@@ -123,6 +123,8 @@ export class RadialLayout extends Base {
 
   public onLayoutEnd: () => void;
 
+  public initWithMDS: boolean;
+
   constructor(options?: RadialLayoutOptions) {
     super();
     this.updateCfg(options);
@@ -140,7 +142,8 @@ export class RadialLayout extends Base {
       strictRadial: true,
       maxPreventOverlapIteration: 200,
       sortBy: undefined,
-      sortStrength: 10
+      sortStrength: 10,
+      initWithMDS: true,
     };
   }
 
@@ -156,10 +159,10 @@ export class RadialLayout extends Base {
       return;
     }
 
-    if (!self.width && typeof window !== "undefined") {
+    if (!self.width && typeof window !== 'undefined') {
       self.width = window.innerWidth;
     }
-    if (!self.height && typeof window !== "undefined") {
+    if (!self.height && typeof window !== 'undefined') {
       self.height = window.innerHeight;
     }
     if (!self.center) {
@@ -245,25 +248,34 @@ export class RadialLayout extends Base {
     self.weights = W;
 
     // the initial positions from mds
-    const mds = new MDS({ linkDistance, distances: eIdealD });
-    let positions = mds.layout();
-    positions.forEach((p: PointTuple) => {
-      if (isNaN(p[0])) {
-        p[0] = Math.random() * linkDistance;
-      }
-      if (isNaN(p[1])) {
-        p[1] = Math.random() * linkDistance;
-      }
-    });
-    self.positions = positions;
-    positions.forEach((p: PointTuple, i: number) => {
+    if (self.initWithMDS) {
+      const mds = new MDS({ linkDistance, distances: eIdealD });
+      let positions = mds.layout();
+      positions.forEach((p: PointTuple) => {
+        if (isNaN(p[0])) {
+          p[0] = Math.random() * linkDistance;
+        }
+        if (isNaN(p[1])) {
+          p[1] = Math.random() * linkDistance;
+        }
+      });
+      self.positions = positions;
+    } else {
+      self.positions = nodes.map((node, i) => {
+        return [
+          (Math.random() - 0.5) * eIdealD[i][focusIndex],
+          (Math.random() - 0.5) * eIdealD[i][focusIndex],
+        ];
+      });
+    }
+    self.positions.forEach((p: PointTuple, i: number) => {
       nodes[i].x = p[0] + center[0];
       nodes[i].y = p[1] + center[1];
     });
     // move the graph to origin, centered at focusNode
-    positions.forEach((p: PointTuple) => {
-      p[0] -= positions[focusIndex][0];
-      p[1] -= positions[focusIndex][1];
+    self.positions.forEach((p: PointTuple) => {
+      p[0] -= (self.positions as PointTuple[])[focusIndex][0];
+      p[1] -= (self.positions as PointTuple[])[focusIndex][1];
     });
     self.run();
     const preventOverlap = self.preventOverlap;
@@ -287,9 +299,11 @@ export class RadialLayout extends Base {
             if (isArray(d.size)) {
               const res = d.size[0] > d.size[1] ? d.size[0] : d.size[1];
               return res + nodeSpacingFunc(d);
-            }  if (isObject(d.size)) {
-              const res = d.size.width > d.size.height ? d.size.width : d.size.height;
-              return res + nodeSpacingFunc(d);  
+            }
+            if (isObject(d.size)) {
+              const res =
+                d.size.width > d.size.height ? d.size.width : d.size.height;
+              return res + nodeSpacingFunc(d);
             }
             return d.size + nodeSpacingFunc(d);
           }
@@ -307,20 +321,20 @@ export class RadialLayout extends Base {
         nodes,
         nodeSizeFunc,
         adjMatrix,
-        positions,
+        positions: self.positions,
         radii,
         height,
         width,
         strictRadial,
         focusID: focusIndex,
         iterations: self.maxPreventOverlapIteration || 200,
-        k: positions.length / 4.5
+        k: self.positions.length / 4.5,
       };
       const nonoverlapForce = new RadialNonoverlapForce(nonoverlapForceParams);
-      positions = nonoverlapForce.layout();
+      self.positions = nonoverlapForce.layout();
     }
     // move the graph to center
-    positions.forEach((p: PointTuple, i: number) => {
+    self.positions.forEach((p: PointTuple, i: number) => {
       nodes[i].x = p[0] + center[0];
       nodes[i].y = p[1] + center[1];
     });
@@ -329,7 +343,7 @@ export class RadialLayout extends Base {
 
     return {
       nodes,
-      edges
+      edges,
     };
   }
 
@@ -413,7 +427,7 @@ export class RadialLayout extends Base {
             newRow.push(0);
           } else if (radii[i] === radii[j]) {
             // i and j are on the same circle
-            if (self.sortBy === "data") {
+            if (self.sortBy === 'data') {
               // sort the nodes on the same circle according to the ordering of the data
               newRow.push(
                 (v * (Math.abs(i - j) * self.sortStrength)) /
@@ -495,6 +509,6 @@ export class RadialLayout extends Base {
   }
 
   public getType() {
-    return "radial";
+    return 'radial';
   }
 }
