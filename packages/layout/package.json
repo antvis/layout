@@ -1,6 +1,6 @@
 {
   "name": "@antv/layout",
-  "version": "1.2.10",
+  "version": "1.2.12",
   "description": "graph layout algorithm",
   "license": "MIT",
   "repository": {
@@ -51,7 +51,7 @@
     "workerize-loader": "^2.0.2"
   },
   "scripts": {
-    "clean": "rimraf dist lib",
+    "clean": "rimraf dist lib tsconfig.tsbuildinfo",
     "dev": "webpack --config webpack.dev.config.js --mode development",
     "build": "npm run clean && npm run build:esm && npm run build:umd",
     "build:ci": "npm run build",
