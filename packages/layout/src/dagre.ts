@@ -20,6 +20,7 @@ const DEFAULTS_LAYOUT_OPTIONS: Partial<DagreLayoutOptions> = {
   nodesep: 50, // 节点水平间距(px)
   ranksep: 50, // 每一层节点之间间距
   edgeLabelSpace: true,
+  ranker: 'tight-tree',
   controlPoints: false, // 是否保留布局连线的控制点
   radial: false, // 是否基于 dagre 进行辐射布局
   focusNode: null, // radial 为 true 时生效，关注的节点
@@ -89,6 +90,7 @@ export class DagreLayout implements Layout<DagreLayoutOptions> {
       ranksepFunc,
       nodesepFunc,
       edgeLabelSpace,
+      ranker,
       nodeOrder,
       begin,
       controlPoints,
@@ -175,7 +177,7 @@ export class DagreLayout implements Layout<DagreLayoutOptions> {
       keepNodeOrder: !!nodeOrder,
       nodeOrder: nodeOrder || [],
       acyclicer: 'greedy',
-      ranker: 'network-simplex',
+      ranker,
       rankdir,
       nodesep,
       align,

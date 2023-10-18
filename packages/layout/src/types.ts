@@ -218,6 +218,7 @@ export type DagreAlign = 'UL' | 'UR' | 'DL' | 'DR';
 
 export interface DagreLayoutOptions {
   rankdir?: DagreRankdir;
+  ranker?: 'network-simplex' | 'tight-tree' | 'longest-path';
   align?: DagreAlign;
   begin?: PointTuple;
   nodeSize?: number | number[] | ((nodeData: Node) => number);
