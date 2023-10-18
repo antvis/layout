@@ -95,7 +95,7 @@ export class DagreLayout implements Layout<DagreLayoutOptions> {
       radial,
       sortByCombo,
       // focusNode,
-      // prevGraph,
+      preset,
     } = mergedOptions;
 
     const g = new Graph<NodeData, EdgeData>({
@@ -162,9 +162,15 @@ export class DagreLayout implements Layout<DagreLayoutOptions> {
       });
     });
 
-    // TODO: combo & prevGraph
+    let prevGraph: IGraph | undefined = undefined;
+    if (preset?.length) {
+      prevGraph = new Graph({
+        nodes: preset,
+      });
+    }
+
     layout(g, {
-      prevGraph: null,
+      prevGraph,
       edgeLabelSpace,
       keepNodeOrder: !!nodeOrder,
       nodeOrder: nodeOrder || [],

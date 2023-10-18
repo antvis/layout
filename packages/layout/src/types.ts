@@ -229,10 +229,7 @@ export interface DagreLayoutOptions {
   nodeOrder?: string[];
   radial?: boolean; // 是否基于 dagre 进行辐射布局
   focusNode?: ID | Node | null; // radial 为 true 时生效，关注的节点
-  preset?: {
-    nodes: OutNode[];
-    edges: Edge[];
-  };
+  preset?: OutNode[];
   nodesepFunc?: (d?: Node) => number;
   ranksepFunc?: (d?: Node) => number;
 }

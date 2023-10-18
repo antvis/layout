@@ -185,8 +185,8 @@ const runLayout = (
 const inheritOrder = (currG: IGraph, prevG: IGraph) => {
   currG.getAllNodes().forEach((n) => {
     const node = currG.getNode(n.id)!;
-    const prevNode = prevG.getNode(n.id)!;
-    if (prevNode !== undefined) {
+    if (prevG.hasNode(n.id)) {
+      const prevNode = prevG.getNode(n.id)!;
       node.data.fixorder = prevNode.data._order as number;
       delete prevNode.data._order;
     } else {
