@@ -9,6 +9,13 @@ A WASM binding of `@antv/layout-rust`. We used [wasm-bindgen-rayon](https://gith
 Besides 2D, we also support force-directed layouts in 3D.
 ![3D snapshot](https://user-images.githubusercontent.com/3608471/237603139-4104b2de-edb0-4e24-93cc-a69fb0200336.png)
 
+Now we support the following layouts:
+
+- [ForceAtlas2](#ForceAtlas2)
+- [Fruchterman](#Fruchterman)
+- [Force](#Force)
+- [Dagre](#Dagre)
+
 ## Usage
 
 Since [cross origin workers are blocked](https://stackoverflow.com/questions/58098143/why-are-cross-origin-workers-blocked-and-why-is-the-workaround-ok/60015898#60015898), we do not recommand the UMD way of using it for now. You can opt to ESM usage with bundler such as [Webpack](#webpack) or [Vite](#vite).
@@ -103,7 +110,7 @@ If you can't control the server, try this hacky workaround which implemented wit
 - `maxDistance` **number** If distance is specified, sets the maximum distance between nodes over which this force is considered. If distance is not specified, returns the current maximum distance, which defaults to `Infinity`. Specifying a finite maximum distance improves performance and produces a more localized layout.
 - `dimensions` **number** Dimensions of coordinates, default to `2`.
 
-### ForceAtlas2
+### <a id='ForceAtlas2' />ForceAtlas2
 
 FA2 is a kind of force directed layout, which performs better on the convergence and compactness.
 
@@ -119,7 +126,7 @@ LayoutOptions:
 - `dissuadeHubs` **boolean** Wheather to enable hub mode. If it is `true`, the nodes with larger in-degree will be placed on the center in higher priority.
 - `barnesHut` **boolean** Whether to enable the barnes hut speedup, which is the quad-tree optimization. Due to the computation for quad-tree re-build in each iteration, we sugguest to enable it in large graph. It is `undefined` by deafult, when the number of nodes is larger than 250, it will be activated automatically. If it is set to be `false`, it will not be activated anyway.
 
-### Fruchterman
+### <a id='Fruchterman' />Fruchterman
 
 Fruchterman is a kind of force-directed layout. The implementation is according to the paper [Graph Drawing by Force-directed Placement](http://www.mathe2.uni-bayreuth.de/axel/papers/reingold:graph_drawing_by_force_directed_placement.pdf).
 
@@ -134,7 +141,7 @@ LayoutOptions:
 - `clustering` **boolean** We can also layout according to `nodeClusterBy` field in data when enable clustering.
 - `clusterGravity` The gravity of each cluster, which will affect the compactness of each cluster. The default value is `10`.
 
-### Force
+### <a id='Force' />Force
 
 Force2 implements the force-directed layout algorithm. It comes from graphin-force, supports assign different masses and center gravities for different nodes freedomly. Comparing to graphin-force, the performance is improved greatly.
 
@@ -154,6 +161,19 @@ LayoutOptions:
 - `force` **number** Coefficient for the repulsive force. Larger the number, larger the repulsive force.
 - `coulombDisScale` **number** A parameter for repulsive force between nodes. Large the number, larger the repulsion. The default value is `0.005`.
 - `gravity` **number** The gravity strength to the center for all the nodes. Larger the number, more compact the nodes. The default value is `10`.
+
+### <a id='Dagre' />Dagre
+
+Dagre is an hierarchical layout.
+
+LayoutOptions:
+
+- `begin` **[number, number]** The position for the left-top of the layout.
+- `rankdir` **'TB' | 'BT' | 'LR' | 'RL'** The layout direction, defaults to `'TB'`.
+- `align` **'UL' | 'UR' | 'DL' | 'DR'** The alignment of the nodes, defaults to `'UL'`
+- `nodesep` **number** The separation between nodes with unit px. When rankdir is 'TB' or 'BT', nodesep represents the horizontal separations between nodes; When rankdir is 'LR' or 'RL', nodesep represents the vertical separations between nodes. Defaults to `50`.
+- `ranksep` **number** The separations between adjacent levels with unit px. When rankdir is 'TB' or 'BT', ranksep represents the vertical separations between adjacent levels; when rankdir is 'LR' or 'RL', rankdir represents the horizontal separations between adjacent levels. Defaults to `50`.
+
 
 ## Benchmarks
 
