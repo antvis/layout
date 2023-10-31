@@ -1,5 +1,11 @@
 # @antv/layout-wasm
 
+## 1.4.0
+
+### Minor Changes
+
+- Support dagre layout.
+
 ## 1.3.4
 
 ### Patch Changes
