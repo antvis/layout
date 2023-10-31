@@ -4,7 +4,8 @@ import type { NodeData, EdgeData } from "@antv/layout";
 export const graphlib2WASMInput = (
   inodes: Node<NodeData>[],
   iedges: Edge<EdgeData>[],
-  dimensions: number
+  dimensions: number,
+  useWidthHeight = false
 ) => {
   const nodes: number[] = [];
   const masses: number[] = [];
@@ -13,7 +14,11 @@ export const graphlib2WASMInput = (
   const nodeIdxMap: Record<ID, number> = {};
   inodes.forEach((node, i) => {
     nodeIdxMap[node.id] = i;
-    nodes.push(node.data.x, node.data.y);
+    if (useWidthHeight) {
+      nodes.push(node.data.width || 10, node.data.height || 10);
+    } else {
+      nodes.push(node.data.x, node.data.y);
+    }
     if (dimensions === 3) {
       nodes.push(node.data.z);
     }

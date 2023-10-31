@@ -56,12 +56,24 @@ const wrapTransfer = (name, force) => {
   };
 };
 
+const wrapDagre = (dagre) => {
+  return (options) => {
+    const { nodes, edges } = dagre(options);
+    return {
+      // Little perf boost to transfer data to the main thread w/o copying.
+      nodes: Comlink.transfer(nodes, [nodes]),
+      edges: Comlink.transfer(edges, [edges]),
+    };
+  };
+};
+
 // Wrap wasm-bindgen exports (the `generate` function) to add time measurement.
-function wrapExports({ force }) {
+function wrapExports({ force, dagre }) {
   return {
     forceatlas2: wrapTransfer(0, force),
     force2: wrapTransfer(1, force),
     fruchterman: wrapTransfer(2, force),
+    dagre: wrapDagre(dagre),
   };
 }
 

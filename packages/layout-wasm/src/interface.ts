@@ -6,6 +6,21 @@ export interface Threads {
   fruchterman: (
     options: FruchtermanLayoutOptions
   ) => Promise<{ nodes: number[] }>;
+  dagre: (options: DagreLayoutOptions) => Promise<{ 
+    nodes: {
+      x: number;
+      y: number;
+      width: number;
+      height: number;
+    }[],
+    edges: {
+      x: number;
+      y: number;
+      width: number;
+      height: number;
+      points: number[];
+    }[]
+  }>;
 }
 
 export interface Forceatlas2LayoutOptions extends ForceLayoutOptions {
@@ -50,6 +65,20 @@ export interface ForceLayoutOptions {
   distance_threshold_mode?: number;
   center?: [number, number] | [number, number, number];
   max_distance?: number;
+}
+
+export interface DagreLayoutOptions {
+  nodes: number[];
+  edges: number[][];
+  masses?: number[];
+  weights?: number[];
+  nodesep?: number;      // default 50
+  edgesep?: number;           // default 20
+  ranksep?: number;           // default 50
+  marginx?: number;           // default 0
+  marginy?: number;           // default 0
+  rankdir?: 'lr' | 'tb' | 'rl' | 'bt';        // lr, rl, tb, bt // default tb
+  align?: 'ul' | 'ur' | 'dl' | 'dr';        // ul, ur, dl, dr // default ul
 }
 
 export interface WASMLayoutOptions {

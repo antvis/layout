@@ -3,9 +3,7 @@ use crate::{layout::*, util::*};
 use itertools::izip;
 use rayon::prelude::*;
 
-pub fn apply_repulsion_forceatlas2_2d_parallel(
-    layout: &mut Layout,
-) {
+pub fn apply_repulsion_forceatlas2_2d_parallel(layout: &mut Layout) {
     let kr = layout.settings.kr;
     let max_distance2 = layout.settings.max_distance * layout.settings.max_distance;
     for chunk_iter in layout.iter_par_nodes(layout.settings.chunk_size.unwrap()) {
@@ -18,7 +16,6 @@ pub fn apply_repulsion_forceatlas2_2d_parallel(
 
                     let d2 = dx * dx + dy * dy;
                     if d2 < max_distance2 {
-
                         let f = n1_mass * (*n2.mass + 1.0) / d2 * kr;
 
                         let vx = f * dx;
@@ -35,9 +32,7 @@ pub fn apply_repulsion_forceatlas2_2d_parallel(
     }
 }
 
-pub fn apply_repulsion_forceatlas2_3d_parallel(
-    layout: &mut Layout,
-) {
+pub fn apply_repulsion_forceatlas2_3d_parallel(layout: &mut Layout) {
     let kr = layout.settings.kr;
     for chunk_iter in layout.iter_par_nodes(layout.settings.chunk_size.unwrap()) {
         chunk_iter.for_each(|n1_iter| {
@@ -102,8 +97,7 @@ pub fn apply_repulsion_forceatlas2_po(layout: &mut Layout) {
             let d = d2.clone().sqrt();
             let dprime = d.clone() - node_size.clone();
 
-            let f = n1_mass.clone()
-                * (unsafe { layout.masses.get_unchecked(n2) }.clone() + 1.0)
+            let f = n1_mass.clone() * (unsafe { layout.masses.get_unchecked(n2) }.clone() + 1.0)
                 / d2
                 * if dprime < 0.0 {
                     layout.settings.kr.clone() / dprime
@@ -123,10 +117,7 @@ pub fn apply_repulsion_forceatlas2_po(layout: &mut Layout) {
     }
 }
 
-
-pub fn apply_repulsion_force2_2d_parallel(
-    layout: &mut Layout,
-) {
+pub fn apply_repulsion_force2_2d_parallel(layout: &mut Layout) {
     let factor = layout.settings.factor;
     let coulomb_dis_scale = layout.settings.coulomb_dis_scale;
     let node_strength = layout.settings.node_strength;
@@ -158,9 +149,7 @@ pub fn apply_repulsion_force2_2d_parallel(
     }
 }
 
-pub fn apply_repulsion_force2_3d_parallel(
-    layout: &mut Layout,
-) {
+pub fn apply_repulsion_force2_3d_parallel(layout: &mut Layout) {
     let factor = layout.settings.factor;
     let coulomb_dis_scale = layout.settings.coulomb_dis_scale;
     let node_strength = layout.settings.node_strength;
@@ -195,9 +184,7 @@ pub fn apply_repulsion_force2_3d_parallel(
     }
 }
 
-pub fn apply_repulsion_fruchterman_2d_parallel(
-    layout: &mut Layout,
-) {
+pub fn apply_repulsion_fruchterman_2d_parallel(layout: &mut Layout) {
     let k = layout.settings.ka;
     let k2 = k * k;
     let max_distance2 = layout.settings.max_distance * layout.settings.max_distance;
@@ -224,9 +211,7 @@ pub fn apply_repulsion_fruchterman_2d_parallel(
     }
 }
 
-pub fn apply_repulsion_fruchterman_3d_parallel(
-    layout: &mut Layout,
-) {
+pub fn apply_repulsion_fruchterman_3d_parallel(layout: &mut Layout) {
     let k = layout.settings.ka;
     let k2 = k * k;
     let max_distance2 = layout.settings.max_distance * layout.settings.max_distance;

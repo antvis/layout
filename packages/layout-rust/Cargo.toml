@@ -17,6 +17,8 @@ lto = true
 opt-level = 's'
 
 [dependencies]
+graphlib_rust = "0.0.3"
+ordered_hashmap = "0.0.3"
 itertools = "0.10.3"
 rayon = "1.5.1"
 

@@ -2,9 +2,7 @@ pub mod attraction;
 pub mod gravity;
 pub mod repulsion;
 
-use crate::{
-    layout::{Layout, Settings, LayoutType},
-};
+use crate::layout::{Layout, LayoutType, Settings};
 
 #[doc(hidden)]
 pub trait Attraction {
@@ -92,24 +90,20 @@ impl Gravity for Layout {
 impl Repulsion for Layout {
     fn choose_repulsion(settings: &Settings) -> fn(&mut Layout) {
         match settings.name {
-            LayoutType::Fruchterman => {
-                match settings.dimensions {
-                    3 => {
-                        return repulsion::apply_repulsion_fruchterman_3d_parallel;
-                    }
-                    _ => {
-                        return repulsion::apply_repulsion_fruchterman_2d_parallel;
-                    }
+            LayoutType::Fruchterman => match settings.dimensions {
+                3 => {
+                    return repulsion::apply_repulsion_fruchterman_3d_parallel;
+                }
+                _ => {
+                    return repulsion::apply_repulsion_fruchterman_2d_parallel;
                 }
             },
-            LayoutType::Force2 => {
-                match settings.dimensions {
-                    3 => {
-                        return repulsion::apply_repulsion_force2_3d_parallel;
-                    }
-                    _ => {
-                        return repulsion::apply_repulsion_force2_2d_parallel;
-                    }
+            LayoutType::Force2 => match settings.dimensions {
+                3 => {
+                    return repulsion::apply_repulsion_force2_3d_parallel;
+                }
+                _ => {
+                    return repulsion::apply_repulsion_force2_2d_parallel;
                 }
             },
             LayoutType::ForceAtlas2 => {

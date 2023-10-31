@@ -6,10 +6,7 @@ import { CANVAS_SIZE, TestName } from "./types";
 export const loadDatasets = async (dimensions = 2) => {
   const datasets: Record<any, any> = {};
 
-  const loadRandomClusters = () => {
-    const NODES = 1000;
-    const EDGES = 2000;
-
+  const loadRandomClusters = (NODES: number, EDGES: number) => {
     // Use graphology generator.
     const graph = clusters(Graph, {
       order: NODES,
@@ -23,6 +20,8 @@ export const loadDatasets = async (dimensions = 2) => {
     graph.nodes().forEach(function (node) {
       graph.setNodeAttribute(node, "x", Math.random() * CANVAS_SIZE);
       graph.setNodeAttribute(node, "y", Math.random() * CANVAS_SIZE);
+      graph.setNodeAttribute(node, "width", 10);
+      graph.setNodeAttribute(node, "height", 10);
 
       if (dimensions === 3) {
         graph.setNodeAttribute(node, "z", Math.random() * CANVAS_SIZE);
@@ -102,9 +101,12 @@ export const loadDatasets = async (dimensions = 2) => {
     };
   };
 
-  const [randomClusters, relations, netscience, eva, regions] =
+  const [randomClusters100, randomClusters1000, randomClusters2_1000, randomClusters2000, relations, netscience, eva, regions] =
     await Promise.all([
-      loadRandomClusters(),
+      loadRandomClusters(100, 100),
+      loadRandomClusters(1000, 1000),
+      loadRandomClusters(2000, 1000),
+      loadRandomClusters(2000, 2000),
       loadG6JSON(
         "https://gw.alipayobjects.com/os/antvdemo/assets/data/relations.json",
         'A small dataset of "relations" between people.'
@@ -123,7 +125,10 @@ export const loadDatasets = async (dimensions = 2) => {
       )(),
     ]);
 
-  datasets["random-clusters"] = randomClusters;
+  datasets["random-clusters-100"] = randomClusters100;
+  datasets["random-clusters-1000"] = randomClusters1000;
+  datasets["random-clusters2-1000"] = randomClusters2_1000;
+  datasets["random-clusters-2000"] = randomClusters2000;
   datasets.relations = relations;
   datasets.netscience = netscience;
   datasets.eva = eva;

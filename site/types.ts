@@ -1,3 +1,5 @@
+import { DagreAlign, DagreRankdir } from "../packages/layout";
+
 export enum TestName {
   GRAPHOLOGY = "graphology",
   ANTV_LAYOUT = "@antv/layout",
@@ -12,4 +14,11 @@ export type CommonLayoutOptions = {
   iterations: number;
   min_movement: number;
   distance_threshold_mode: "mean" | "max" | "min";
+};
+
+export type CommonDagreLayoutOptions = {
+  rankdir: DagreRankdir;
+  ranksep: number;
+  nodesep: number;
+  align: DagreAlign;
 };
