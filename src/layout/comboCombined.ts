@@ -137,6 +137,9 @@ export class ComboCombinedLayout extends Base {
     let allHaveNoPosition = true;
     this.comboTrees.forEach((cTree) => {
       const innerNode = innerGraphs[cTree.id];
+      if (!innerNode) {
+        return;
+      }
       // 代表 combo 的节点
       const oNode: Node = {
         ...cTree,
