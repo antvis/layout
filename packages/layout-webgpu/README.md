@@ -1,4 +1,4 @@
-# @antv/layout-gpu
+# @antv/layout-webgpu
 
 Accelerate some parallelizable algorithms such as Fruchterman with WebGPU which has a better performance under large amount of data.
 
@@ -8,17 +8,17 @@ Accelerate some parallelizable algorithms such as Fruchterman with WebGPU which 
 
 ```shell
 # npm
-$ npm install @antv/layout-gpu --save
+$ npm install @antv/layout-webgpu --save
 
 # yarn
-$ yarn add @antv/layout-gpu
+$ yarn add @antv/layout-webgpu
 ```
 
-Choose a layout algorithm from `@antv/layout-gpu` then.
+Choose a layout algorithm from `@antv/layout-webgpu` then.
 
 ```ts
 import { Graph } from "@antv/graphlib";
-import { FruchtermanLayout } from "@antv/layout-gpu";
+import { FruchtermanLayout } from "@antv/layout-webgpu";
 
 const graph = new Graph({ nodes: [], edges: [] });
 
@@ -34,7 +34,7 @@ const fruchtermanLayout = new FruchtermanLayout();
 
 ### UMD
 
-Import scripts in UMD version of `@antv/graphlib`, `@antv/layout` and `@antv/layout-gpu`.
+Import scripts in UMD version of `@antv/graphlib`, `@antv/layout` and `@antv/layout-webgpu`.
 
 ```html
 <script
@@ -46,16 +46,16 @@ Import scripts in UMD version of `@antv/graphlib`, `@antv/layout` and `@antv/lay
   type="application/javascript"
 ></script>
 <script
-  src="https://unpkg.com/@antv/layout-gpu"
+  src="https://unpkg.com/@antv/layout-webgpu"
   type="application/javascript"
 ></script>
 ```
 
-Use layouts under `LayoutGPU` namespace.
+Use layouts under `LayoutWebGPU` namespace.
 
 ```js
 const { Graph } = window.GraphLib;
-const { FruchtermanLayout } = window.LayoutGPU;
+const { FruchtermanLayout } = window.LayoutWebGPU;
 ```
 
 ## Documentation
@@ -67,7 +67,7 @@ We provide the following parallelizable layouts:
 
 ```js
 import { Graph } from "@antv/graphlib";
-import { FruchtermanLayout } from "@antv/layout-gpu";
+import { FruchtermanLayout } from "@antv/layout-webgpu";
 
 const graph = new Graph({ nodes: [], edges: [] });
 

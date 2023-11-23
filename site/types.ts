@@ -5,7 +5,8 @@ export enum TestName {
   ANTV_LAYOUT = "@antv/layout",
   ANTV_LAYOUT_WASM_SINGLETHREAD = "@antv/layout-wasm - singlethread",
   ANTV_LAYOUT_WASM_MULTITHREADS = "@antv/layout-wasm - multithreads",
-  ANTV_LAYOUT_GPU = "@antv/layout-gpu",
+  ANTV_LAYOUT_WEBGL = "@antv/layout-webgl",
+  ANTV_LAYOUT_WEBGPU = "@antv/layout-webgpu",
 }
 
 export const CANVAS_SIZE = 800;

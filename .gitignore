@@ -1,6 +1,7 @@
 .DS_Store
 .vscode
 .idea
+.rollup.cache
 npm-debug.log
 yarn-error.log
 yarn.lock

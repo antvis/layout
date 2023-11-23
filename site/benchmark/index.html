@@ -140,8 +140,12 @@
       
       <ul>
         <li>
-          <a href="https://github.com/antvis/layout/tree/v5/packages/layout-gpu">@antv/layout-gpu</a> uses
-      WebGL / WebGPU to implement GPGPU which has the best performance.
+          <a href="https://github.com/antvis/layout/tree/v5/packages/layout-webgl">@antv/layout-webgl</a> uses
+      WebGL to implement GPGPU which has the best performance.
+        </li>
+        <li>
+          <a href="https://github.com/antvis/layout/tree/v5/packages/layout-webgpu">@antv/layout-webgpu</a> uses
+      WebGPU to implement GPGPU which has the best performance.
         </li>
         <li>
           <a href="https://github.com/antvis/layout/tree/v5/packages/layout-wasm">@antv/layout-wasm</a> uses WebWorker multi-threaded shared memory to run
@@ -155,9 +159,9 @@
       <select name="dataset" id="dataset">
         <option value="random-clusters-100">random-clusters 100</option>
         <option value="random-clusters-1000">random-clusters 1000</option>
-        <option value="relations">relations</option>
+        <option value="relations" selected>relations</option>
         <option value="regions">regions</option>
-        <option value="netscience" selected>netscience</option>
+        <option value="netscience">netscience</option>
         <option value="eva">eva</option>
       </select>
       <p id="dataset-desc"></p>
@@ -167,13 +171,13 @@
       <legend>Choose a layout:</legend>
       <select name="layout" id="layout">
         <option value="forceatlas2">forceatlas2</option>
-        <option value="force2" selected>force2</option>
-        <option value="fruchterman">fruchterman</option>
+        <option value="force2">force2</option>
+        <option value="fruchterman" selected>fruchterman</option>
       </select>
 
       <div>
         <label for="iterations">Iterations:</label>
-        <input type="number" id="iterations" name="iterations" value="500" />
+        <input type="number" id="iterations" name="iterations" value="5" />
       </div>
       <div>
         <label for="min_movement">Min movement:</label>
@@ -244,11 +248,20 @@
       <div>
         <input
           type="checkbox"
-          id="@antv/layout-gpu_checkbox"
-          name="@antv/layout-gpu_checkbox"
+          id="@antv/layout-webgl_checkbox"
+          name="@antv/layout-webgl_checkbox"
           checked
         />
-        <label for="@antv/layout-gpu_checkbox">@antv/layout-gpu</label>
+        <label for="@antv/layout-webgl_checkbox">@antv/layout-webgl</label>
+      </div>
+      <div>
+        <input
+          type="checkbox"
+          id="@antv/layout-webgpu_checkbox"
+          name="@antv/layout-webgpu_checkbox"
+          checked
+        />
+        <label for="@antv/layout-webgpu_checkbox">@antv/layout-webgpu</label>
       </div>
     </fieldset>
 
@@ -297,8 +310,13 @@
       </figure>
 
       <figure>
-        <canvas id="@antv/layout-gpu" width="800" height="800"></canvas>
-        <figurecaption> @antv/layout-gpu <span></span></figurecaption>
+        <canvas id="@antv/layout-webgl" width="800" height="800"></canvas>
+        <figurecaption> @antv/layout-webgl <span></span></figurecaption>
+      </figure>
+
+      <figure>
+        <canvas id="@antv/layout-webgpu" width="800" height="800"></canvas>
+        <figurecaption> @antv/layout-webgpu <span></span></figurecaption>
       </figure>
     </div>
 
