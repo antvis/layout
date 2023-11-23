@@ -33,22 +33,13 @@
     "tslib": "^2.5.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.7.7",
-    "@babel/plugin-proposal-class-properties": "^7.1.0",
-    "@babel/preset-react": "^7.7.4",
-    "babel-loader": "^8.0.6",
-    "ts-loader": "^7.0.3",
-    "typescript": "^4.0.3",
-    "webpack": "^5.38.1",
-    "webpack-cli": "^5.0.2"
+    "rollup-plugin-string": "^3.0.0"
   },
   "scripts": {
-    "clean": "rimraf dist lib",
-    "dev": "webpack --config webpack.dev.config.js --mode development",
-    "build": "npm run clean && npm run build:esm && npm run build:umd",
-    "build:ci": "npm run build",
-    "build:esm": "tsc",
-    "build:umd": "webpack --config webpack.config.js --mode production",
+    "build": "npm run clean && rollup -c",
+    "clean": "rimraf dist",
+    "sync": "tnpm sync",
+    "watch": "rollup -c -w",
     "publish:alpha": "npm publish --tag alpha"
   }
 }

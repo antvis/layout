@@ -1,4 +1,4 @@
-# @antv/layout-gpu
+# @antv/layout-webgl
 
 ## 1.1.5
 

@@ -1,5 +1,6 @@
 import { FruchtermanLayout, Graph } from "../../packages/layout";
-import { FruchtermanLayout as FruchtermanGPULayout } from "../../packages/layout-gpu";
+import { FruchtermanLayout as FruchtermanGPULayout } from "../../packages/layout-webgl";
+import { FruchtermanLayout as FruchtermanWebGPULayout } from "../../packages/layout-webgpu";
 import { fruchtermanReingoldLayout } from "./graphology-layout-fruchtermanreingold";
 import { outputAntvLayout, outputGraphology } from "./util";
 import { CANVAS_SIZE, CommonLayoutOptions } from "../types";
@@ -54,6 +55,23 @@ export async function antvlayoutGPU(
   { iterations, min_movement, distance_threshold_mode }: CommonLayoutOptions
 ) {
   const fruchterman = new FruchtermanGPULayout({
+    dimensions: 2,
+    height: CANVAS_SIZE,
+    width: CANVAS_SIZE,
+    center: [CANVAS_SIZE / 2, CANVAS_SIZE / 2],
+    gravity,
+    speed,
+    maxIteration: iterations || ITERATIONS,
+  });
+  const positions = await fruchterman.execute(graphModel);
+  return outputAntvLayout(positions);
+}
+
+export async function antvlayoutWebGPU(
+  graphModel: Graph,
+  { iterations, min_movement, distance_threshold_mode }: CommonLayoutOptions
+) {
+  const fruchterman = new FruchtermanWebGPULayout({
     dimensions: 2,
     height: CANVAS_SIZE,
     width: CANVAS_SIZE,

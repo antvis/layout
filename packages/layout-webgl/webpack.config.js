@@ -5,7 +5,7 @@ module.exports = {
   output: {
     filename: "index.min.js",
     path: path.resolve(__dirname, "dist"),
-    library: "LayoutGPU",
+    library: "LayoutWebGL",
     libraryTarget: "umd",
     clean: true,
   },

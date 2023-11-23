@@ -1,6 +1,6 @@
-# @antv/layout-webgl
+# @antv/layout-webgpu
 
-Accelerate some parallelizable algorithms such as Fruchterman with WebGL which has a better performance under large amount of data.
+Accelerate some parallelizable algorithms such as Fruchterman with WebGPU which has a better performance under large amount of data.
 
 ## Usage
 
@@ -8,17 +8,17 @@ Accelerate some parallelizable algorithms such as Fruchterman with WebGL which h
 
 ```shell
 # npm
-$ npm install @antv/layout-webgl --save
+$ npm install @antv/layout-webgpu --save
 
 # yarn
-$ yarn add @antv/layout-webgl
+$ yarn add @antv/layout-webgpu
 ```
 
-Choose a layout algorithm from `@antv/layout-webgl` then.
+Choose a layout algorithm from `@antv/layout-webgpu` then.
 
 ```ts
 import { Graph } from "@antv/graphlib";
-import { FruchtermanLayout } from "@antv/layout-webgl";
+import { FruchtermanLayout } from "@antv/layout-webgpu";
 
 const graph = new Graph({ nodes: [], edges: [] });
 
@@ -34,7 +34,7 @@ const fruchtermanLayout = new FruchtermanLayout();
 
 ### UMD
 
-Import scripts in UMD version of `@antv/graphlib`, `@antv/layout` and `@antv/layout-webgl`.
+Import scripts in UMD version of `@antv/graphlib`, `@antv/layout` and `@antv/layout-webgpu`.
 
 ```html
 <script
@@ -46,16 +46,16 @@ Import scripts in UMD version of `@antv/graphlib`, `@antv/layout` and `@antv/lay
   type="application/javascript"
 ></script>
 <script
-  src="https://unpkg.com/@antv/layout-webgl"
+  src="https://unpkg.com/@antv/layout-webgpu"
   type="application/javascript"
 ></script>
 ```
 
-Use layouts under `LayoutWebGL` namespace.
+Use layouts under `LayoutWebGPU` namespace.
 
 ```js
 const { Graph } = window.GraphLib;
-const { FruchtermanLayout } = window.LayoutWebGL;
+const { FruchtermanLayout } = window.LayoutWebGPU;
 ```
 
 ## Documentation
@@ -67,7 +67,7 @@ We provide the following parallelizable layouts:
 
 ```js
 import { Graph } from "@antv/graphlib";
-import { FruchtermanLayout } from "@antv/layout-webgl";
+import { FruchtermanLayout } from "@antv/layout-webgpu";
 
 const graph = new Graph({ nodes: [], edges: [] });
 
