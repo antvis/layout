@@ -248,6 +248,9 @@ export class DagreLayout extends Base {
       if (this.layoutNode(source) && this.layoutNode(target)) {
         g.setEdge(source, target, {
           weight: edge.weight || 1,
+          labeloffset: edge.labeloffset || 0,
+          width: edge.width || 0,
+          height: edge.height || 0,
         });
       }
     });
