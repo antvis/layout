@@ -25,7 +25,11 @@ const positionY = (
     const heights = layer.map((v) => g.getNode(v).data.height!);
     const maxHeight = Math.max(...heights, 0);
     layer?.forEach((v: string) => {
-      g.getNode(v).data.y = prevY + maxHeight / 2;
+     if (['TB', 'BT'].includes(rankdir)) {
+        g.getNode(v).data.y = prevY;
+      } else {
+        g.getNode(v).data.y = prevY + maxHeight / 2;
+      }
     });
     prevY += maxHeight + ranksep;
   });
