@@ -12,6 +12,7 @@ export interface OutNode extends Node {
   comboId?: string;
   layer?: number; // dagre布局中指定的层级
   _order?: number; // dagre布局中层内排序结果，用于增量布局
+  _rank?: number; // dagre布局中层信息，用于增量布局
   layout?: boolean;
   size?: number | number[] | undefined;
 }
