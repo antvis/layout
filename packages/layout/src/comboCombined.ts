@@ -104,7 +104,7 @@ export class ComboCombinedLayout implements Layout<ComboCombinedLayoutOptions> {
     }
 
     // output nodes
-    let layoutNodes: OutNode[] = [];
+    const layoutNodes: OutNode[] = [];
 
     const nodeMap: Map<ID, Node> = new Map();
     nodes.forEach((node) => {
@@ -433,13 +433,14 @@ export class ComboCombinedLayout implements Layout<ComboCombinedLayoutOptions> {
               .getChildren(treeNode.id, treeKey)
               .map((child) => {
                 if (child.data._isCombo) {
-                  if (!comboNodes.has(child.id))
+                  if (!comboNodes.has(child.id)) {
                     comboNodes.set(child.id, {
                       id: child.id,
                       data: {
                         ...child.data,
                       },
                     });
+                  }
                   innerLayoutNodeIds.set(child.id, true);
                   return comboNodes.get(child.id);
                 }

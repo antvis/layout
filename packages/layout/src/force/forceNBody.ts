@@ -127,17 +127,17 @@ const apply = (
   if (treeNode.data?.id === node.id) return;
   const x2 = [arg1, arg2, arg3][dimensions - 1];
 
-  let dx = node.x - treeNode.x || epsilon;
-  let dy = node.y - treeNode.y || epsilon;
-  let dz = node.z - treeNode.z || epsilon;
+  const dx = node.x - treeNode.x || epsilon;
+  const dy = node.y - treeNode.y || epsilon;
+  const dz = node.z - treeNode.z || epsilon;
   const pos = [dx, dy, dz];
   const width = x2 - x1;
   let len2 = 0;
   for (let i = 0; i < dimensions; i++) {
     len2 += pos[i] * pos[i];
   }
-  let len1 = Math.sqrt(len2);
-  let len3 = len1 * len2;
+  const len1 = Math.sqrt(len2);
+  const len3 = len1 * len2;
 
   // far node, apply Barnes-Hut approximation
   if (width * width * theta2 < len2) {
