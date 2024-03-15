@@ -19,7 +19,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: "pnpm"
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm install --frozen-lockfile
       - name: lint
         run: |
           pnpm lint
