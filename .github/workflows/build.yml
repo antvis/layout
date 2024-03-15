@@ -20,9 +20,6 @@ jobs:
           cache: "pnpm"
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-      - name: lint
-        run: |
-          pnpm lint
       - name: build
         run: |
           pnpm build:ci

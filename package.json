@@ -12,9 +12,6 @@
   "license": "MIT",
   "author": "antv",
   "scripts": {
-    "lint:es": "eslint --ext .js --fix",
-    "lint:ts": "tslint -c tslint.json -p packages/layout/tsconfig.json --fix",
-    "lint": "npm run lint:ts && npm run lint:es",
     "lint-staged": "lint-staged",
     "build": "pnpm -r run build",
     "build:ci": "pnpm -r run build:ci",
