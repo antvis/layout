@@ -42,7 +42,7 @@ export class CircularLayout implements Layout<CircularLayoutOptions> {
   id = 'circular';
 
   constructor(
-    public options: CircularLayoutOptions = {} as CircularLayoutOptions
+    public options: CircularLayoutOptions = {} as CircularLayoutOptions,
   ) {
     this.options = {
       ...DEFAULTS_LAYOUT_OPTIONS,
@@ -67,17 +67,17 @@ export class CircularLayout implements Layout<CircularLayoutOptions> {
   private async genericCircularLayout(
     assign: false,
     graph: Graph,
-    options?: CircularLayoutOptions
+    options?: CircularLayoutOptions,
   ): Promise<LayoutMapping>;
   private async genericCircularLayout(
     assign: true,
     graph: Graph,
-    options?: CircularLayoutOptions
+    options?: CircularLayoutOptions,
   ): Promise<void>;
   private async genericCircularLayout(
     assign: boolean,
     graph: Graph,
-    options?: CircularLayoutOptions
+    options?: CircularLayoutOptions,
   ): Promise<LayoutMapping | void> {
     const mergedOptions = { ...this.options, ...options };
     const {
@@ -198,7 +198,7 @@ export class CircularLayout implements Layout<CircularLayoutOptions> {
 const topologyOrdering = (
   graph: Graph,
   nodes: Node[],
-  directed: boolean = false
+  directed: boolean = false,
 ) => {
   const orderedCNodes: OutNode[] = [cloneFormatData(nodes[0]) as OutNode];
   const pickFlags: { [id: string]: boolean } = {};
@@ -266,7 +266,7 @@ function degreeOrdering(graph: Graph, nodes: Node[]): OutNode[] {
   });
   orderedNodes.sort(
     (nodeA: Node, nodeB: Node) =>
-      graph.getDegree(nodeA.id, 'both') - graph.getDegree(nodeB.id, 'both')
+      graph.getDegree(nodeA.id, 'both') - graph.getDegree(nodeB.id, 'both'),
   );
   return orderedNodes;
 }
@@ -281,7 +281,7 @@ function degreeOrdering(graph: Graph, nodes: Node[]): OutNode[] {
 const calculateCenter = (
   width: number | undefined,
   height: number | undefined,
-  center: PointTuple | undefined
+  center: PointTuple | undefined,
 ): [number, number, PointTuple] => {
   let calculatedWidth = width;
   let calculatedHeight = height;
