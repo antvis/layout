@@ -1,6 +1,6 @@
 import { Graph } from '@antv/graphlib';
 import { isNumber } from '@antv/util';
-import type { Degree, Edge, Matrix, Node, OutNode, Point } from '../types';
+import type { Matrix, Edge, Node, OutNode, Point } from '../types';
 import { isArray } from './array';
 
 export const floydWarshall = (adjMatrix: Matrix[]): Matrix[] => {
@@ -85,40 +85,6 @@ export const scaleMatrix = (matrix: Matrix[], ratio: number) => {
 };
 
 /**
- * depth first traverse, from leaves to root, children in inverse order
- *  if the fn returns false, terminate the traverse
- */
-const traverseUp = <T extends { children?: T[] }>(
-  data: T,
-  fn: (param: T) => boolean,
-) => {
-  if (data && data.children) {
-    for (let i = data.children.length - 1; i >= 0; i--) {
-      if (!traverseUp(data.children[i], fn)) return;
-    }
-  }
-
-  if (!fn(data)) {
-    return false;
-  }
-  return true;
-};
-
-/**
- * depth first traverse, from leaves to root, children in inverse order
- * if the fn returns false, terminate the traverse
- */
-export const traverseTreeUp = <T extends { children?: T[] }>(
-  data: T,
-  fn: (param: T) => boolean,
-) => {
-  if (typeof fn !== 'function') {
-    return;
-  }
-  traverseUp(data, fn);
-};
-
-/**
  * calculate the bounding box for the nodes according to their x, y, and size
  * @param nodes nodes in the layout
  * @returns
@@ -150,130 +116,6 @@ export const getLayoutBBox = (nodes: OutNode[]) => {
     if (maxY < bottom) maxY = bottom;
   });
   return { minX, minY, maxX, maxY };
-};
-
-/**
- * 获取节点集合的平均位置信息
- * @param nodes 节点集合
- * @returns 平局内置
- */
-export const getAvgNodePosition = (nodes: OutNode[]) => {
-  const totalNodes = { x: 0, y: 0 };
-  nodes.forEach((node) => {
-    totalNodes.x += node.data.x || 0;
-    totalNodes.y += node.data.y || 0;
-  });
-  // 获取均值向量
-  const length = nodes.length || 1;
-  return {
-    x: totalNodes.x / length,
-    y: totalNodes.y / length,
-  };
-};
-
-// 找出指定节点关联的边的起点或终点
-const getCoreNode = (type: 'source' | 'target', node: Node, edges: Edge[]) => {
-  if (type === 'source') {
-    return (edges?.find((edge) => edge.target === node.id)?.source ||
-      {}) as Node;
-  }
-  return (edges?.find((edge) => edge.source === node.id)?.target || {}) as Node;
-};
-
-// 找出指定节点为起点或终点的所有一度叶子节点
-const getRelativeNodeIds = (
-  type: 'source' | 'target' | 'both',
-  coreNode: Node,
-  edges: Edge[],
-) => {
-  let relativeNodes: (string | number)[] = [];
-  switch (type) {
-    case 'source':
-      relativeNodes = edges
-        ?.filter((edge) => edge.source === coreNode.id)
-        .map((edge) => edge.target);
-      break;
-    case 'target':
-      relativeNodes = edges
-        ?.filter((edge) => edge.target === coreNode.id)
-        .map((edge) => edge.source);
-      break;
-    case 'both':
-      relativeNodes = edges
-        ?.filter((edge) => edge.source === coreNode.id)
-        .map((edge) => edge.target)
-        .concat(
-          edges
-            ?.filter((edge) => edge.target === coreNode.id)
-            .map((edge) => edge.source),
-        );
-      break;
-    default:
-      break;
-  }
-  // 去重
-  const set = new Set(relativeNodes);
-  return Array.from(set);
-};
-// 找出同类型的节点
-const getSameTypeNodes = (
-  type: 'leaf' | 'all',
-  nodeClusterBy: string,
-  node: Node,
-  relativeNodes: Node[],
-  degreesMap: { [id: string]: Degree },
-) => {
-  const typeName = node[nodeClusterBy as keyof Node] || '';
-  let sameTypeNodes =
-    relativeNodes?.filter(
-      (item) => item[nodeClusterBy as keyof Node] === typeName,
-    ) || [];
-  if (type === 'leaf') {
-    sameTypeNodes = sameTypeNodes.filter(
-      (node) => degreesMap[node.id]?.in === 0 || degreesMap[node.id]?.out === 0,
-    );
-  }
-  return sameTypeNodes;
-};
-
-// 找出与指定节点关联的边的起点或终点出发的所有一度叶子节点
-export const getCoreNodeAndRelativeLeafNodes = (
-  type: 'leaf' | 'all',
-  node: Node,
-  edges: Edge[],
-  nodeClusterBy: string,
-  degreesMap: { [id: string]: Degree },
-  nodeMap: { [id: string]: Node },
-) => {
-  const { in: inDegree, out: outDegree } = degreesMap[node.id];
-  let coreNode: Node = node;
-  let relativeLeafNodes: Node[] = [];
-  if (inDegree === 0) {
-    // 如果为没有出边的叶子节点，则找出与它关联的边的起点出发的所有一度节点
-    coreNode = getCoreNode('source', node, edges);
-    relativeLeafNodes = getRelativeNodeIds('both', coreNode, edges).map(
-      (nodeId) => nodeMap[nodeId],
-    );
-  } else if (outDegree === 0) {
-    // 如果为没有入边边的叶子节点，则找出与它关联的边的起点出发的所有一度节点
-    coreNode = getCoreNode('target', node, edges);
-    relativeLeafNodes = getRelativeNodeIds('both', coreNode, edges).map(
-      (nodeId) => nodeMap[nodeId],
-    );
-  }
-  relativeLeafNodes = relativeLeafNodes.filter(
-    (node) =>
-      degreesMap[node.id] &&
-      (degreesMap[node.id].in === 0 || degreesMap[node.id].out === 0),
-  );
-  const sameTypeLeafNodes = getSameTypeNodes(
-    type,
-    nodeClusterBy,
-    node,
-    relativeLeafNodes,
-    degreesMap,
-  );
-  return { coreNode, relativeLeafNodes, sameTypeLeafNodes };
 };
 
 /**

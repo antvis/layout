@@ -17,7 +17,7 @@ export interface Payload {
   edges: Edge<any>[];
 }
 
-interface SupervisorOptions {
+export interface SupervisorOptions {
   /**
    * Iterations run in algorithm such as d3force, will be passed in `tick()` later.
    */
