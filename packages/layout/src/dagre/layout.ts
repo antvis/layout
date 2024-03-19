@@ -1,8 +1,9 @@
-import { Graph, ID } from '@antv/graphlib';
+import { Edge as IEdge, Graph, ID } from '@antv/graphlib';
 import { isNil } from '@antv/util';
 import {
   DagreAlign,
   DagreRankdir,
+  EdgeData,
   Graph as IGraph,
   NodeData,
   Point,
@@ -438,7 +439,7 @@ const translateGraph = (
   });
 
   g.getAllEdges().forEach((edge) => {
-    edge.data.points?.forEach((p) => {
+    edge.data.points?.forEach((p: Point) => {
       p.x -= minX;
       p.y -= minY;
     });
@@ -553,7 +554,7 @@ const insertSelfEdges = (g: IGraph) => {
     layer?.forEach((v: ID, i: number) => {
       const node = g.getNode(v)!;
       node.data.order = i + orderShift;
-      node.data.selfEdges?.forEach((selfEdge) => {
+      node.data.selfEdges?.forEach((selfEdge: IEdge<EdgeData>) => {
         addDummyNode(
           g,
           'selfedge',

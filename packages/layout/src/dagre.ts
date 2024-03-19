@@ -192,7 +192,7 @@ export class DagreLayout implements Layout<DagreLayoutOptions> {
         if (minY > node.data.y!) minY = node.data.y!;
       });
       g.getAllEdges().forEach((edge) => {
-        edge.data.points?.forEach((point) => {
+        edge.data.points?.forEach((point: Point) => {
           if (minX > point.x) minX = point.x;
           if (minY > point.y) minY = point.y;
         });
@@ -460,7 +460,7 @@ export class DagreLayout implements Layout<DagreLayoutOptions> {
         // if (i <= -1) return;
         if (edgeLabelSpace && controlPoints && edge.data.type !== 'loop') {
           edge.data.controlPoints = getControlPoints(
-            edge.data.points?.map(({ x, y }) => ({
+            edge.data.points?.map(({ x, y }: Point) => ({
               x: x + layoutTopLeft[0],
               y: y + layoutTopLeft[1],
             })),

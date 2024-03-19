@@ -1,5 +1,5 @@
 import { Node } from '@antv/graphlib';
-import { DagreRankdir, Graph, NodeData } from '../types';
+import type { DagreRankdir, Graph, NodeData, Point } from '../types';
 
 const adjust = (g: Graph, rankdir: DagreRankdir) => {
   const rd = rankdir.toLowerCase();
@@ -41,14 +41,14 @@ const reverseY = (g: Graph) => {
   });
 
   g.getAllEdges().forEach((edge) => {
-    edge.data.points?.forEach((point) => reverseYOne(point));
+    edge.data.points?.forEach((point: Point) => reverseYOne(point));
     if (edge.data.hasOwnProperty('y')) {
       reverseYOne(edge.data);
     }
   });
 };
 
-const reverseYOne = (node: { x?: number; y?: number }) => {
+const reverseYOne = (node: any) => {
   if (node?.y) {
     node.y = -node.y;
   }
@@ -60,14 +60,14 @@ const swapXY = (g: Graph) => {
   });
 
   g.getAllEdges().forEach((edge) => {
-    edge.data.points?.forEach((point) => swapXYOne(point));
+    edge.data.points?.forEach((point: Point) => swapXYOne(point));
     if (edge.data.hasOwnProperty('x')) {
       swapXYOne(edge.data);
     }
   });
 };
 
-const swapXYOne = (node: { x?: number; y?: number }) => {
+const swapXYOne = (node: any) => {
   const x = node.x;
   node.x = node.y;
   node.y = x;

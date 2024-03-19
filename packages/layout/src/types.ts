@@ -1,69 +1,34 @@
 import {
   Edge as IEdge,
   Graph as IGraph,
-  GraphView as IGraphView,
   ID,
   Node as INode,
-  PlainObject,
 } from '@antv/graphlib';
 
-export interface NodeData extends PlainObject {
-  size?: number | number[];
-  bboxSize?: number[];
-  borderLeft?: ID | ID[];
-  borderRight?: ID | ID[];
+export interface NodeData {
   x?: number;
   y?: number;
   z?: number;
-  height?: number;
-  width?: number;
-  e?: IEdge<EdgeData>;
-  selfEdges?: IEdge<EdgeData>[];
-  rank?: number;
-  _rank?: number;
-  order?: number;
-  fixorder?: number;
-  minRank?: number;
-  maxRank?: number;
-  layout?: boolean;
-  layer?: number;
-  low?: number;
-  lim?: number;
+  size?: number | number[];
+  [key: string]: any;
+}
+
+export interface EdgeData {
+  weight?: number;
+  [keys: string]: any;
 }
 
 export interface OutNodeData extends NodeData {
   x: number;
   y: number;
-  z?: number;
 }
 
-export interface EdgeData extends PlainObject {
-  // temp edges e.g. the edge generated for releated collapsed combo
-  virtual?: boolean;
-  weight?: number;
-  x?: number;
-  y?: number;
-  height?: number;
-  width?: number;
-  points?: Point[];
-  controlPoints?: Point[];
-  minlen?: number;
-  cutvalue?: number;
-  labeloffset?: number;
-}
+export interface OutEdgeData extends EdgeData {}
 
-/** input node */
 export type Node = INode<NodeData>;
-/** output node */
-export type OutNode = INode<OutNodeData>;
-/** input and output edge */
 export type Edge = IEdge<EdgeData>;
-
-export type Degree = {
-  in: number;
-  out: number;
-  all: number;
-};
+export type OutNode = INode<OutNodeData>;
+export type OutEdge = IEdge<OutEdgeData>;
 
 // maps node's id and its index in the nodes array
 export type IndexMap = {
@@ -71,12 +36,11 @@ export type IndexMap = {
 };
 
 export type Graph = IGraph<NodeData, EdgeData>;
-export type GraphView = IGraphView<NodeData, EdgeData>;
 
 export type PointTuple = [number, number] | [number, number, number];
 export type Point = { x: number; y: number; z?: number };
 export type Matrix = number[];
-export type LayoutMapping = { nodes: OutNode[]; edges: Edge[] };
+export type LayoutMapping = { nodes: OutNode[]; edges: OutEdge[] };
 
 export interface Layout<LayoutOptions> {
   /**
@@ -117,10 +81,6 @@ export interface LayoutWithIterations<LayoutOptions>
    * @see https://github.com/d3/d3-force#simulation_tick
    */
   tick: (iterations?: number) => LayoutMapping;
-}
-
-export interface LayoutConstructor<LayoutOptions> {
-  new (options?: LayoutOptions): Layout<LayoutOptions>;
 }
 
 export interface LayoutSupervisor {

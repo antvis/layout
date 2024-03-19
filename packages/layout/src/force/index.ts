@@ -1,12 +1,13 @@
 import { Graph as IGraph } from '@antv/graphlib';
 import { isFunction, isNumber, isObject } from '@antv/util';
-import {
+import type {
   Edge,
   ForceLayoutOptions,
   Graph,
   LayoutMapping,
   LayoutWithIterations,
   Node,
+  OutEdge,
   OutNode,
   Point,
 } from '../types';
@@ -67,7 +68,7 @@ export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
 
   private running: boolean = false;
   private lastLayoutNodes: OutNode[];
-  private lastLayoutEdges: Edge[];
+  private lastLayoutEdges: OutEdge[];
   private lastAssign: boolean;
   private lastCalcGraph: IGraph<CalcNodeData, CalcEdgeData>;
   private lastGraph: Graph;

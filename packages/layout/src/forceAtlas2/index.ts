@@ -8,6 +8,8 @@ import type {
   Layout,
   LayoutMapping,
   Node,
+  OutEdge,
+  OutEdgeData,
   OutNode,
   OutNodeData,
   PointTuple,
@@ -125,8 +127,8 @@ export class ForceAtlas2Layout implements Layout<ForceAtlas2LayoutOptions> {
     const calcEdges = edges.filter((edge: Edge) => {
       const { source, target } = edge;
       return source !== target;
-    });
-    const calcGraph = new GGraph<OutNodeData, EdgeData>({
+    }) as OutEdge[];
+    const calcGraph = new GGraph<OutNodeData, OutEdgeData>({
       nodes: calcNodes,
       edges: calcEdges,
     });
