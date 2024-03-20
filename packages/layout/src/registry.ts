@@ -10,9 +10,9 @@ import { GridLayout } from './grid';
 import { MDSLayout } from './mds';
 import { RadialLayout } from './radial';
 import { RandomLayout } from './random';
-import type { LayoutConstructor } from './types';
+import type { Layout } from './types';
 
-export const registry: Record<string, LayoutConstructor<any>> = {
+export const registry: Record<string, new (...args: any) => Layout<any>> = {
   circular: CircularLayout,
   concentric: ConcentricLayout,
   mds: MDSLayout,

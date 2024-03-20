@@ -1,12 +1,13 @@
 import { isFunction, isNumber, isObject } from '@antv/util';
 import * as d3Force from 'd3-force';
-import {
+import type {
   D3ForceLayoutOptions,
   Edge,
   Graph,
   LayoutMapping,
   LayoutWithIterations,
   Node,
+  OutEdge,
   OutNode,
 } from '../types';
 import { cloneFormatData, isArray } from '../util';
@@ -62,7 +63,7 @@ export class D3ForceLayout
   private forceSimulation: d3Force.Simulation<any, any>;
 
   private lastLayoutNodes: CalcNode[];
-  private lastLayoutEdges: Edge[];
+  private lastLayoutEdges: OutEdge[];
   private lastAssign: boolean;
   private lastGraph: Graph;
 
@@ -146,7 +147,7 @@ export class D3ForceLayout
           y: node.data?.y,
         } as CalcNode),
     );
-    const layoutEdges: Edge[] = edges.map((edge) => cloneFormatData(edge));
+    const layoutEdges: OutEdge[] = edges.map((edge) => cloneFormatData(edge));
 
     // Use them later in `tick`.
     this.lastLayoutNodes = layoutNodes;

@@ -1,16 +1,17 @@
 import { Graph as IGraph } from '@antv/graphlib';
 import { isNumber } from '@antv/util';
 import type {
-  Edge,
   EdgeData,
   FruchtermanLayoutOptions,
   Graph,
   LayoutMapping,
   LayoutWithIterations,
+  OutEdge,
+  OutEdgeData,
   OutNode,
   OutNodeData,
   Point,
-  PointTuple,
+  PointTuple
 } from './types';
 import { cloneFormatData } from './util';
 
@@ -75,7 +76,7 @@ export class FruchtermanLayout
 
   private running: boolean = false;
   private lastLayoutNodes: OutNode[];
-  private lastLayoutEdges: Edge[];
+  private lastLayoutEdges: OutEdge[];
   private lastAssign: boolean;
   private lastGraph: IGraph<OutNodeData, EdgeData>;
   private lastOptions: FormattedOptions;
@@ -212,7 +213,7 @@ export class FruchtermanLayout
     const layoutNodes: OutNode[] = nodes.map(
       (node) => cloneFormatData(node, [width, height]) as OutNode,
     );
-    const calcGraph = new IGraph<OutNodeData, EdgeData>({
+    const calcGraph = new IGraph<OutNodeData, OutEdgeData>({
       nodes: layoutNodes,
       edges,
     });

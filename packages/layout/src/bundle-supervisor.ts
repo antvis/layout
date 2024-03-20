@@ -1,31 +1,10 @@
-// @ts-ignore
 import EventEmitter from '@antv/event-emitter';
-import { Edge, Graph, Node } from '@antv/graphlib';
+import { Graph } from '@antv/graphlib';
 import type { Layout, LayoutSupervisor } from './types';
 // @ts-ignore
 // Inline the worker as a Blob. @see https://github.com/developit/workerize-loader#inline
 import worker from 'workerize-loader?inline!./bundle-worker';
-// import { setupTransferableMethodsOnMain } from "@naoak/workerize-transferable";
-
-/**
- * The payload transferred from main thread to the worker.
- */
-export interface Payload {
-  layout: {
-    id: string;
-    options: any;
-    iterations: number;
-  };
-  nodes: Node<any>[];
-  edges: Edge<any>[];
-}
-
-interface SupervisorOptions {
-  /**
-   * Iterations run in algorithm such as d3force, will be passed in `tick()` later.
-   */
-  iterations: number;
-}
+import type { SupervisorOptions } from './supervisor';
 
 /**
  * @example
