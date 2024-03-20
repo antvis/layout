@@ -50,8 +50,6 @@
     "@babel/preset-env": "^7.24.0",
     "@babel/preset-typescript": "^7.23.3",
     "@changesets/cli": "^2.27.1",
-    "@types/d3-force": "^2.1.7",
-    "@types/d3-quadtree": "^2.0.6",
     "@types/jest": "latest",
     "babel-jest": "29.7.0",
     "babel-loader": "^8.3.0",
