@@ -57,9 +57,8 @@
     "clean": "rimraf dist lib tsconfig.tsbuildinfo",
     "dev": "webpack --config webpack.dev.config.js --mode development",
     "build": "npm run clean && run-p build:*",
-    "ci": "npm run build",
+    "ci": "npm run build && npm run test",
     "build:cjs": "rimraf ./lib && tsc --module commonjs --outDir lib",
-    "build:esm": "rimraf ./esm && tsc --module ESNext --outDir esm",
     "build:umd": "webpack --config webpack.config.js --mode production",
     "publish:alpha": "npm publish --tag alpha",
     "test": "jest"
