@@ -1,4 +1,4 @@
-import { DagreLayout } from './dagre';
+import { AntVDagreLayout } from './dagre';
 import { ForceLayout } from './force';
 import { ForceAtlas2Layout } from './forceatlas2';
 import { FruchtermanLayout } from './fruchterman';
@@ -12,5 +12,5 @@ export {
   FruchtermanLayout,
   ForceAtlas2Layout,
   ForceLayout,
-  DagreLayout,
+  AntVDagreLayout,
 };

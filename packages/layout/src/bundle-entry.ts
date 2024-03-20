@@ -5,7 +5,7 @@ export * from './bundle-supervisor';
 export * from './circular';
 export * from './concentric';
 export * from './d3Force';
-export * from './dagre';
+export * from './antv-dagre';
 export * from './force';
 export * from './forceAtlas2';
 export * from './fruchterman';

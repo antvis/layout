@@ -1,9 +1,4 @@
-import {
-  Edge as IEdge,
-  Graph as IGraph,
-  ID,
-  Node as INode,
-} from '@antv/graphlib';
+import { Edge as IEdge, Graph as IGraph, Node as INode } from '@antv/graphlib';
 
 export interface NodeData {
   x?: number;
@@ -163,36 +158,6 @@ export interface RadialLayoutOptions {
   strictRadial?: boolean;
   sortBy?: string;
   sortStrength?: number;
-}
-
-export type DagreRankdir =
-  | 'TB'
-  | 'BT'
-  | 'LR'
-  | 'RL'
-  | 'tb'
-  | 'lr'
-  | 'rl'
-  | 'bt';
-export type DagreAlign = 'UL' | 'UR' | 'DL' | 'DR';
-
-export interface DagreLayoutOptions {
-  rankdir?: DagreRankdir;
-  ranker?: 'network-simplex' | 'tight-tree' | 'longest-path';
-  align?: DagreAlign;
-  begin?: PointTuple;
-  nodeSize?: number | number[] | ((nodeData: Node) => number);
-  nodesep?: number;
-  ranksep?: number;
-  controlPoints?: boolean;
-  sortByCombo?: boolean;
-  edgeLabelSpace?: boolean;
-  nodeOrder?: string[];
-  radial?: boolean; // 是否基于 dagre 进行辐射布局
-  focusNode?: ID | Node | null; // radial 为 true 时生效，关注的节点
-  preset?: OutNode[];
-  nodesepFunc?: (d?: Node) => number;
-  ranksepFunc?: (d?: Node) => number;
 }
 
 export interface D3ForceLayoutOptions {
