@@ -54,10 +54,12 @@
   "scripts": {
     "clean": "rimraf dist lib tsconfig.tsbuildinfo",
     "dev": "webpack --config webpack.dev.config.js --mode development",
-    "build": "npm run clean && npm run build:esm && npm run build:umd",
-    "build:ci": "npm run build",
-    "build:esm": "tsc",
+    "build": "npm run clean && run-p build:*",
+    "ci": "npm run build",
+    "build:cjs": "rimraf ./lib && tsc --module commonjs --outDir lib",
+    "build:esm": "rimraf ./esm && tsc --module ESNext --outDir esm",
     "build:umd": "webpack --config webpack.config.js --mode production",
-    "publish:alpha": "npm publish --tag alpha"
+    "publish:alpha": "npm publish --tag alpha",
+    "test": "jest"
   }
 }
