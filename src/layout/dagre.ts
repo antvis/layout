@@ -430,6 +430,8 @@ export class DagreLayout extends Base {
           self.nodeMap[node].y = newY + dBegin[1];
           // @ts-ignore: pass layer order to data for increment layout use
           self.nodeMap[node]._order = coord._order;
+          // @ts-ignore: pass layer to data for increment layout use
+          self.nodeMap[node]._rank = coord._rank;
 
           // 找到本层最大的一个 ranksep，作为下一层与本层的间隙，叠加到下一层的半径上
           const currentNodeRanksep = ranksepfunc(self.nodeMap[node]);
@@ -455,6 +457,13 @@ export class DagreLayout extends Base {
           if (!self.nodeMap[nodeId]) return;
           self.nodeMap[nodeId].x = dBegin[0];
           self.nodeMap[nodeId].y = dBegin[1];
+
+          const coord = g.node(nodeId);
+          // @ts-ignore: pass layer order to data for increment layout use
+          self.nodeMap[nodeId]._order = coord._order;
+          // @ts-ignore: pass layer to data for increment layout use
+          self.nodeMap[nodeId]._rank = coord._rank;
+
           radiusMap[layerNodes.nodes[0]] = 0;
           radius = ranksepfunc(self.nodeMap[nodeId]);
           isFirstLevel = false;
@@ -552,6 +561,8 @@ export class DagreLayout extends Base {
         ndata.y = coord.y! + dBegin[1];
         // @ts-ignore: pass layer order to data for increment layout use
         ndata._order = coord._order;
+        // @ts-ignore: pass layer to data for increment layout use
+        ndata._rank = coord._rank;
         layerCoords.add(isHorizontal ? ndata.x : ndata.y);
       });
       const layerCoordsArr = Array.from(layerCoords).sort(layerCoordSort);
