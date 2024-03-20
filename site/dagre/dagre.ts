@@ -1,14 +1,14 @@
-import { DagreLayout } from "../../packages/layout";
-import { CANVAS_SIZE, CommonDagreLayoutOptions, CommonLayoutOptions } from "../types";
+import { Graph } from '@antv/graphlib';
+import { DagreLayout } from '../../packages/layout';
 import {
-  Threads,
   DagreLayout as DagreWASMLayout,
-} from "../../packages/layout-wasm";
-import { Graph } from "@antv/graphlib";
+  Threads,
+} from '../../packages/layout-wasm';
+import { CommonDagreLayoutOptions } from '../types';
 
 export async function antvlayout(
   graphModel: Graph<any, any>,
-  { rankdir, ranksep, nodesep, align }: CommonDagreLayoutOptions
+  { rankdir, ranksep, nodesep, align }: CommonDagreLayoutOptions,
 ) {
   const dagre = new DagreLayout({
     controlPoints: true,
@@ -26,7 +26,7 @@ export async function antvlayout(
 export async function antvlayoutWASM(
   graphModel: Graph<any, any>,
   { rankdir, ranksep, nodesep, align }: CommonDagreLayoutOptions,
-  threads: Threads
+  threads: Threads,
 ) {
   const dagre = new DagreWASMLayout({
     threads,

@@ -1,7 +1,7 @@
 export function outputGraphology(
   graph: any,
   positions: any,
-  processEachNode?: (node: any) => void
+  processEachNode?: (node: any) => void,
 ) {
   const nodes: number[] = [];
   const edges: number[] = [];
@@ -18,7 +18,7 @@ export function outputGraphology(
       positions[source].x,
       positions[source].y,
       positions[target].x,
-      positions[target].y
+      positions[target].y,
     );
   });
   return { nodes, edges };

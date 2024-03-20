@@ -1,4 +1,4 @@
-import Graph from "graphology-types";
+import Graph from 'graphology-types';
 
 export type LayoutMapping = { [key: string]: { x: number; y: number } };
 
@@ -43,7 +43,7 @@ export interface FruchtermanReingoldLayoutBaseOptions {
 }
 
 export const parseOptions = (
-  options: Partial<FruchtermanReingoldLayoutOptions>
+  options: Partial<FruchtermanReingoldLayoutOptions>,
 ): FruchtermanReingoldLayoutBaseOptions => {
   const iterations = options?.iterations || 10;
   const edgeWeightInfluence = options?.edgeWeightInfluence || 1;
@@ -68,7 +68,7 @@ export const parseOptions = (
 
 export const parseGraph = (
   graph: Graph,
-  weightAttribute = "weight"
+  weightAttribute = 'weight',
 ): [Float32Array, number, (NodeMatrix: Float32Array) => LayoutMapping] => {
   const nodeIndex = graph.nodes();
   const edges = graph.edges();

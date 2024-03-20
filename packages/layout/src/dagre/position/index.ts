@@ -1,6 +1,6 @@
-import { ID } from "@antv/graphlib";
-import { DagreAlign, Graph as IGraph } from "../../types";
-import { asNonCompoundGraph, buildLayerMatrix } from "../util";
+import { ID } from '@antv/graphlib';
+import { DagreAlign, Graph as IGraph } from '../../types';
+import { asNonCompoundGraph, buildLayerMatrix } from '../util';
 import {
   alignCoordinates,
   balance,
@@ -9,13 +9,13 @@ import {
   findType2Conflicts,
   horizontalCompaction,
   verticalAlignment,
-} from "./bk";
+} from './bk';
 
 const positionY = (
   g: IGraph,
   options?: Partial<{
     ranksep: number;
-  }>
+  }>,
 ) => {
   const { ranksep = 0 } = options || {};
   const layering = buildLayerMatrix(g);
@@ -37,36 +37,36 @@ const positionX = (
     align: DagreAlign;
     nodesep: number;
     edgesep: number;
-  }>
+  }>,
 ): Record<ID, number> => {
   const { align: graphAlign, nodesep = 0, edgesep = 0 } = options || {};
 
   const layering = buildLayerMatrix(g);
   const conflicts = Object.assign(
     findType1Conflicts(g, layering),
-    findType2Conflicts(g, layering)
+    findType2Conflicts(g, layering),
   );
 
   const xss: Record<string, Record<string, number>> = {};
   let adjustedLayering: ID[][] = [];
-  ["u", "d"].forEach((vert) => {
+  ['u', 'd'].forEach((vert) => {
     adjustedLayering =
-      vert === "u" ? layering : Object.values(layering).reverse();
-    ["l", "r"].forEach((horiz) => {
-      if (horiz === "r") {
+      vert === 'u' ? layering : Object.values(layering).reverse();
+    ['l', 'r'].forEach((horiz) => {
+      if (horiz === 'r') {
         adjustedLayering = adjustedLayering.map((inner) =>
-          Object.values(inner).reverse()
+          Object.values(inner).reverse(),
         );
       }
 
       const neighborFn = (
-        vert === "u" ? g.getPredecessors : g.getSuccessors
+        vert === 'u' ? g.getPredecessors : g.getSuccessors
       ).bind(g);
       const align = verticalAlignment(
         g,
         adjustedLayering,
         conflicts,
-        neighborFn
+        neighborFn,
       );
       const xs = horizontalCompaction(
         g,
@@ -75,9 +75,9 @@ const positionX = (
         align.align,
         nodesep,
         edgesep,
-        horiz === "r"
+        horiz === 'r',
       );
-      if (horiz === "r") {
+      if (horiz === 'r') {
         Object.keys(xs).forEach((xsKey) => (xs[xsKey] = -xs[xsKey]));
       }
       xss[vert + horiz] = xs;
@@ -96,7 +96,7 @@ export const position = (
     nodesep: number;
     edgesep: number;
     ranksep: number;
-  }>
+  }>,
 ) => {
   const ng = asNonCompoundGraph(g);
 

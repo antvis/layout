@@ -1,20 +1,20 @@
-import { Node } from "@antv/graphlib";
-import { DagreRankdir, Graph, NodeData } from "../types";
+import { Node } from '@antv/graphlib';
+import { DagreRankdir, Graph, NodeData } from '../types';
 
 const adjust = (g: Graph, rankdir: DagreRankdir) => {
   const rd = rankdir.toLowerCase();
-  if (rd === "lr" || rd === "rl") {
+  if (rd === 'lr' || rd === 'rl') {
     swapWidthHeight(g);
   }
 };
 
 const undo = (g: Graph, rankdir: DagreRankdir) => {
   const rd = rankdir.toLowerCase();
-  if (rd === "bt" || rd === "rl") {
+  if (rd === 'bt' || rd === 'rl') {
     reverseY(g);
   }
 
-  if (rd === "lr" || rd === "rl") {
+  if (rd === 'lr' || rd === 'rl') {
     swapXY(g);
     swapWidthHeight(g);
   }
@@ -42,7 +42,7 @@ const reverseY = (g: Graph) => {
 
   g.getAllEdges().forEach((edge) => {
     edge.data.points?.forEach((point) => reverseYOne(point));
-    if (edge.data.hasOwnProperty("y")) {
+    if (edge.data.hasOwnProperty('y')) {
       reverseYOne(edge.data);
     }
   });
@@ -61,7 +61,7 @@ const swapXY = (g: Graph) => {
 
   g.getAllEdges().forEach((edge) => {
     edge.data.points?.forEach((point) => swapXYOne(point));
-    if (edge.data.hasOwnProperty("x")) {
+    if (edge.data.hasOwnProperty('x')) {
       swapXYOne(edge.data);
     }
   });

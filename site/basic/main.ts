@@ -1,7 +1,7 @@
-import * as demos from './demos';
 import { Canvas } from '@antv/g';
 import { Renderer } from '@antv/g-canvas';
 import * as lil from 'lil-gui';
+import * as demos from './demos';
 
 const canvas = new Canvas({
   container: 'container',

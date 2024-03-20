@@ -1,11 +1,11 @@
 import type {
   Graph,
+  Layout,
   LayoutMapping,
   OutNode,
   PointTuple,
   RandomLayoutOptions,
-  Layout,
-} from "./types";
+} from './types';
 
 const DEFAULTS_LAYOUT_OPTIONS: Partial<RandomLayoutOptions> = {
   center: [0, 0],
@@ -29,7 +29,7 @@ const DEFAULTS_LAYOUT_OPTIONS: Partial<RandomLayoutOptions> = {
  * await layout.assign(graph, { center: [100, 100] });
  */
 export class RandomLayout implements Layout<RandomLayoutOptions> {
-  id = "random";
+  id = 'random';
 
   constructor(public options: RandomLayoutOptions = {} as RandomLayoutOptions) {
     this.options = {
@@ -54,17 +54,17 @@ export class RandomLayout implements Layout<RandomLayoutOptions> {
   private async genericRandomLayout(
     assign: false,
     graph: Graph,
-    options?: RandomLayoutOptions
+    options?: RandomLayoutOptions,
   ): Promise<LayoutMapping>;
   private async genericRandomLayout(
     assign: true,
     graph: Graph,
-    options?: RandomLayoutOptions
+    options?: RandomLayoutOptions,
   ): Promise<void>;
   private async genericRandomLayout(
     assign: boolean,
     graph: Graph,
-    options?: RandomLayoutOptions
+    options?: RandomLayoutOptions,
   ): Promise<LayoutMapping | void> {
     const mergedOptions = { ...this.options, ...options };
     const {
@@ -76,11 +76,11 @@ export class RandomLayout implements Layout<RandomLayoutOptions> {
     const nodes = graph.getAllNodes();
     const layoutScale = 0.9;
     const width =
-      !propsWidth && typeof window !== "undefined"
+      !propsWidth && typeof window !== 'undefined'
         ? window.innerWidth
         : (propsWidth as number);
     const height =
-      !propsHeight && typeof window !== "undefined"
+      !propsHeight && typeof window !== 'undefined'
         ? window.innerHeight
         : (propsHeight as number);
     const center = !propsCenter
@@ -105,7 +105,7 @@ export class RandomLayout implements Layout<RandomLayoutOptions> {
         graph.mergeNodeData(node.id, {
           x: node.data.x,
           y: node.data.y,
-        })
+        }),
       );
     }
 

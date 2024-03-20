@@ -1,25 +1,25 @@
 export interface Threads {
   forceatlas2: (
-    options: Forceatlas2LayoutOptions
+    options: Forceatlas2LayoutOptions,
   ) => Promise<{ nodes: number[] }>;
   force2: (options: Force2LayoutOptions) => Promise<{ nodes: number[] }>;
   fruchterman: (
-    options: FruchtermanLayoutOptions
+    options: FruchtermanLayoutOptions,
   ) => Promise<{ nodes: number[] }>;
-  dagre: (options: DagreLayoutOptions) => Promise<{ 
+  dagre: (options: DagreLayoutOptions) => Promise<{
     nodes: {
       x: number;
       y: number;
       width: number;
       height: number;
-    }[],
+    }[];
     edges: {
       x: number;
       y: number;
       width: number;
       height: number;
       points: number[];
-    }[]
+    }[];
   }>;
 }
 
@@ -72,13 +72,13 @@ export interface DagreLayoutOptions {
   edges: number[][];
   masses?: number[];
   weights?: number[];
-  nodesep?: number;      // default 50
-  edgesep?: number;           // default 20
-  ranksep?: number;           // default 50
-  marginx?: number;           // default 0
-  marginy?: number;           // default 0
-  rankdir?: 'lr' | 'tb' | 'rl' | 'bt';        // lr, rl, tb, bt // default tb
-  align?: 'ul' | 'ur' | 'dl' | 'dr';        // ul, ur, dl, dr // default ul
+  nodesep?: number; // default 50
+  edgesep?: number; // default 20
+  ranksep?: number; // default 50
+  marginx?: number; // default 0
+  marginy?: number; // default 0
+  rankdir?: 'lr' | 'tb' | 'rl' | 'bt'; // lr, rl, tb, bt // default tb
+  align?: 'ul' | 'ur' | 'dl' | 'dr'; // ul, ur, dl, dr // default ul
 }
 
 export interface WASMLayoutOptions {

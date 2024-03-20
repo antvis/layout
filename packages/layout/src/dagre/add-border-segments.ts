@@ -33,7 +33,7 @@ const addBorderNode = (
   prefix: string,
   sg: ID,
   sgNode: Node<NodeData>,
-  rank: number
+  rank: number,
 ) => {
   const label: NodeData = { rank, borderType: prop, width: 0, height: 0 };
   // @ts-ignore

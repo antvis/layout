@@ -10,7 +10,7 @@ export const sortSubgraph = (
   cg: Graph,
   biasRight?: boolean,
   usePrev?: boolean,
-  keepNodeOrder?: boolean
+  keepNodeOrder?: boolean,
 ) => {
   let movable = g.getChildren(v).map((n) => n.id);
   // fixorder的点不参与排序（这个方案不合适，只排了新增节点，和原来的分离）
@@ -33,7 +33,7 @@ export const sortSubgraph = (
         entry.v,
         cg,
         biasRight,
-        keepNodeOrder
+        keepNodeOrder,
       );
       subgraphs[entry.v] = subgraphResult;
       if (subgraphResult.hasOwnProperty('barycenter')) {
@@ -82,7 +82,7 @@ export const sortSubgraph = (
 
 const expandSubgraphs = (
   entries: ConflictEntry[],
-  subgraphs: Record<string, Partial<ConflictEntry>>
+  subgraphs: Record<string, Partial<ConflictEntry>>,
 ) => {
   entries?.forEach((entry) => {
     const vss = entry.vs?.map((v: string) => {
@@ -97,7 +97,7 @@ const expandSubgraphs = (
 
 const mergeBarycenters = (
   target: { weight?: number; barycenter?: number },
-  other: { weight?: number; barycenter?: number }
+  other: { weight?: number; barycenter?: number },
 ) => {
   if (target.barycenter !== undefined) {
     target.barycenter =

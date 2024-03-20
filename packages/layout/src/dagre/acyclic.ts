@@ -1,12 +1,12 @@
-import { ID, Edge } from "@antv/graphlib";
-import { Graph, EdgeData } from "../types";
-import { greedyFAS } from "./greedy-fas";
+import { Edge, ID } from '@antv/graphlib';
+import { EdgeData, Graph } from '../types';
+import { greedyFAS } from './greedy-fas';
 
 const run = (g: Graph, acyclicer: string) => {
   const weightFn = (g: Graph) => {
     return (e: Edge<EdgeData>) => e.data.weight || 1;
   };
-  const fas = acyclicer === "greedy" ? greedyFAS(g, weightFn(g)) : dfsFAS(g);
+  const fas = acyclicer === 'greedy' ? greedyFAS(g, weightFn(g)) : dfsFAS(g);
   fas?.forEach((e: Edge<EdgeData>) => {
     const label = e.data;
     g.removeEdge(e.id);
@@ -34,7 +34,7 @@ const dfsFAS = (g: Graph) => {
     }
     visited[v] = true;
     stack[v] = true;
-    g.getRelatedEdges(v, "out").forEach((e) => {
+    g.getRelatedEdges(v, 'out').forEach((e) => {
       if (stack[e.target]) {
         fas.push(e);
       } else {

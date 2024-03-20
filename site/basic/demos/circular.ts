@@ -1,8 +1,8 @@
-import { Graph } from '@antv/graphlib';
 import type { Canvas } from '@antv/g';
+import { Graph } from '@antv/graphlib';
 import type { GUI } from 'lil-gui';
-import { countries } from '../data';
 import { CircularLayout } from '../../../packages/layout';
+import { countries } from '../data';
 import { renderNodes } from '../utils';
 
 export function render(canvas: Canvas, gui: GUI) {

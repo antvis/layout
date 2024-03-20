@@ -1,7 +1,7 @@
-import { isNumber } from '@antv/util';
-import type { Matrix, Edge, Node, OutNode, Degree, Point } from '../types';
-import { isArray } from './array';
 import { Graph } from '@antv/graphlib';
+import { isNumber } from '@antv/util';
+import type { Degree, Edge, Matrix, Node, OutNode, Point } from '../types';
+import { isArray } from './array';
 
 export const floydWarshall = (adjMatrix: Matrix[]): Matrix[] => {
   // initialize
@@ -34,7 +34,7 @@ export const floydWarshall = (adjMatrix: Matrix[]): Matrix[] => {
 
 export const getAdjMatrix = (
   data: { nodes: Node[]; edges: Edge[] },
-  directed: boolean
+  directed: boolean,
 ): Matrix[] => {
   const { nodes, edges } = data;
   const matrix: Matrix[] = [];
@@ -90,7 +90,7 @@ export const scaleMatrix = (matrix: Matrix[], ratio: number) => {
  */
 const traverseUp = <T extends { children?: T[] }>(
   data: T,
-  fn: (param: T) => boolean
+  fn: (param: T) => boolean,
 ) => {
   if (data && data.children) {
     for (let i = data.children.length - 1; i >= 0; i--) {
@@ -110,7 +110,7 @@ const traverseUp = <T extends { children?: T[] }>(
  */
 export const traverseTreeUp = <T extends { children?: T[] }>(
   data: T,
-  fn: (param: T) => boolean
+  fn: (param: T) => boolean,
 ) => {
   if (typeof fn !== 'function') {
     return;
@@ -184,7 +184,7 @@ const getCoreNode = (type: 'source' | 'target', node: Node, edges: Edge[]) => {
 const getRelativeNodeIds = (
   type: 'source' | 'target' | 'both',
   coreNode: Node,
-  edges: Edge[]
+  edges: Edge[],
 ) => {
   let relativeNodes: (string | number)[] = [];
   switch (type) {
@@ -205,7 +205,7 @@ const getRelativeNodeIds = (
         .concat(
           edges
             ?.filter((edge) => edge.target === coreNode.id)
-            .map((edge) => edge.source)
+            .map((edge) => edge.source),
         );
       break;
     default:
@@ -221,16 +221,16 @@ const getSameTypeNodes = (
   nodeClusterBy: string,
   node: Node,
   relativeNodes: Node[],
-  degreesMap: { [id: string]: Degree }
+  degreesMap: { [id: string]: Degree },
 ) => {
   const typeName = node[nodeClusterBy as keyof Node] || '';
   let sameTypeNodes =
     relativeNodes?.filter(
-      (item) => item[nodeClusterBy as keyof Node] === typeName
+      (item) => item[nodeClusterBy as keyof Node] === typeName,
     ) || [];
   if (type === 'leaf') {
     sameTypeNodes = sameTypeNodes.filter(
-      (node) => degreesMap[node.id]?.in === 0 || degreesMap[node.id]?.out === 0
+      (node) => degreesMap[node.id]?.in === 0 || degreesMap[node.id]?.out === 0,
     );
   }
   return sameTypeNodes;
@@ -243,7 +243,7 @@ export const getCoreNodeAndRelativeLeafNodes = (
   edges: Edge[],
   nodeClusterBy: string,
   degreesMap: { [id: string]: Degree },
-  nodeMap: { [id: string]: Node }
+  nodeMap: { [id: string]: Node },
 ) => {
   const { in: inDegree, out: outDegree } = degreesMap[node.id];
   let coreNode: Node = node;
@@ -252,26 +252,26 @@ export const getCoreNodeAndRelativeLeafNodes = (
     // 如果为没有出边的叶子节点，则找出与它关联的边的起点出发的所有一度节点
     coreNode = getCoreNode('source', node, edges);
     relativeLeafNodes = getRelativeNodeIds('both', coreNode, edges).map(
-      (nodeId) => nodeMap[nodeId]
+      (nodeId) => nodeMap[nodeId],
     );
   } else if (outDegree === 0) {
     // 如果为没有入边边的叶子节点，则找出与它关联的边的起点出发的所有一度节点
     coreNode = getCoreNode('target', node, edges);
     relativeLeafNodes = getRelativeNodeIds('both', coreNode, edges).map(
-      (nodeId) => nodeMap[nodeId]
+      (nodeId) => nodeMap[nodeId],
     );
   }
   relativeLeafNodes = relativeLeafNodes.filter(
     (node) =>
       degreesMap[node.id] &&
-      (degreesMap[node.id].in === 0 || degreesMap[node.id].out === 0)
+      (degreesMap[node.id].in === 0 || degreesMap[node.id].out === 0),
   );
   const sameTypeLeafNodes = getSameTypeNodes(
     type,
     nodeClusterBy,
     node,
     relativeLeafNodes,
-    degreesMap
+    degreesMap,
   );
   return { coreNode, relativeLeafNodes, sameTypeLeafNodes };
 };
@@ -302,7 +302,7 @@ export const graphTreeDfs = (
   stopFns: {
     stopBranchFn?: (node: Node) => boolean;
     stopAllFn?: (node: Node) => boolean;
-  } = {}
+  } = {},
 ) => {
   if (!nodes?.length) return;
   const { stopBranchFn, stopAllFn } = stopFns;
@@ -318,7 +318,7 @@ export const graphTreeDfs = (
       fn,
       mode,
       treeKey,
-      stopFns
+      stopFns,
     );
     if (mode !== 'TB') fn(node); // Traverse from bottom to top
   }

@@ -1,42 +1,42 @@
-import Graph from "graphology-types";
-import { fruchtermanReingoldImpl } from "./fruchterman-reingold";
+import Graph from 'graphology-types';
+import { fruchtermanReingoldImpl } from './fruchterman-reingold';
 import {
   FruchtermanReingoldLayoutOptions,
   LayoutMapping,
-  parseOptions,
   parseGraph,
-} from "./utils";
+  parseOptions,
+} from './utils';
 
 interface IFruchtermanReingoldLayout {
   (
     graph: Graph,
-    options?: Partial<FruchtermanReingoldLayoutOptions>
+    options?: Partial<FruchtermanReingoldLayoutOptions>,
   ): LayoutMapping;
   assign(
     graph: Graph,
-    options?: Partial<FruchtermanReingoldLayoutOptions>
+    options?: Partial<FruchtermanReingoldLayoutOptions>,
   ): void;
 }
 
 function genericFruchtermanReingoldLayout(
   assign: false,
   graph: Graph,
-  options?: Partial<FruchtermanReingoldLayoutOptions>
+  options?: Partial<FruchtermanReingoldLayoutOptions>,
 ): LayoutMapping;
 function genericFruchtermanReingoldLayout(
   assign: true,
   graph: Graph,
-  options?: Partial<FruchtermanReingoldLayoutOptions>
+  options?: Partial<FruchtermanReingoldLayoutOptions>,
 ): void;
 function genericFruchtermanReingoldLayout(
   assign: boolean,
   graph: Graph,
-  options?: Partial<FruchtermanReingoldLayoutOptions>
+  options?: Partial<FruchtermanReingoldLayoutOptions>,
 ): void | LayoutMapping {
   const parsedOptions = parseOptions(options || {});
   const [EdgeMatrix, order, parseLayout] = parseGraph(
     graph,
-    options?.weightAttribute
+    options?.weightAttribute,
   );
 
   const updateCb = assign
@@ -46,7 +46,7 @@ function genericFruchtermanReingoldLayout(
             ...attr,
             ...parseLayout(layout)[nodeKey],
           }),
-          { attributes: ["x", "y"] }
+          { attributes: ['x', 'y'] },
         );
       }
     : undefined;
@@ -55,7 +55,7 @@ function genericFruchtermanReingoldLayout(
     order,
     EdgeMatrix,
     parsedOptions,
-    updateCb
+    updateCb,
   );
 
   if (!assign) return parseLayout(positions);
@@ -63,11 +63,11 @@ function genericFruchtermanReingoldLayout(
 
 const fruchtermanReingoldLayout: IFruchtermanReingoldLayout = (
   graph: Graph,
-  options?: Partial<FruchtermanReingoldLayoutOptions>
+  options?: Partial<FruchtermanReingoldLayoutOptions>,
 ) => genericFruchtermanReingoldLayout(false, graph, options);
 fruchtermanReingoldLayout.assign = (
   graph: Graph,
-  options?: Partial<FruchtermanReingoldLayoutOptions>
+  options?: Partial<FruchtermanReingoldLayoutOptions>,
 ) => genericFruchtermanReingoldLayout(true, graph, options);
 
 export { fruchtermanReingoldLayout };

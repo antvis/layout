@@ -1,19 +1,19 @@
-import { isFunction, isNumber, isObject } from '@antv/util';
 import { Graph as GraphCore, ID } from '@antv/graphlib';
+import { isFunction, isNumber, isObject } from '@antv/util';
+import { ConcentricLayout } from './concentric';
+import { ForceLayout } from './force';
+import { MDSLayout } from './mds';
 import type {
-  Graph,
   ComboCombinedLayoutOptions,
+  Edge,
+  Graph,
   Layout,
   LayoutMapping,
-  OutNode,
   Node,
-  Edge,
+  OutNode,
 } from './types';
-import { isArray, getLayoutBBox, graphTreeDfs } from './util';
+import { getLayoutBBox, graphTreeDfs, isArray } from './util';
 import { handleSingleNodeGraph } from './util/common';
-import { MDSLayout } from './mds';
-import { ForceLayout } from './force';
-import { ConcentricLayout } from './concentric';
 
 const FORCE_LAYOUT_TYPE_MAP: { [key: string]: boolean } = {
   gForce: true,
@@ -50,7 +50,7 @@ export class ComboCombinedLayout implements Layout<ComboCombinedLayoutOptions> {
   id = 'comboCombined';
 
   constructor(
-    public options: ComboCombinedLayoutOptions = {} as ComboCombinedLayoutOptions
+    public options: ComboCombinedLayoutOptions = {} as ComboCombinedLayoutOptions,
   ) {
     this.options = {
       ...DEFAULTS_LAYOUT_OPTIONS,
@@ -75,17 +75,17 @@ export class ComboCombinedLayout implements Layout<ComboCombinedLayoutOptions> {
   private async genericComboCombinedLayout(
     assign: false,
     graph: Graph,
-    options?: ComboCombinedLayoutOptions
+    options?: ComboCombinedLayoutOptions,
   ): Promise<LayoutMapping>;
   private async genericComboCombinedLayout(
     assign: true,
     graph: Graph,
-    options?: ComboCombinedLayoutOptions
+    options?: ComboCombinedLayoutOptions,
   ): Promise<void>;
   private async genericComboCombinedLayout(
     assign: boolean,
     graph: Graph,
-    options?: ComboCombinedLayoutOptions
+    options?: ComboCombinedLayoutOptions,
   ): Promise<LayoutMapping | void> {
     const mergedOptions = this.initVals({ ...this.options, ...options });
     const { center, treeKey, outerLayout: propsOuterLayout } = mergedOptions;
@@ -104,7 +104,7 @@ export class ComboCombinedLayout implements Layout<ComboCombinedLayoutOptions> {
     }
 
     // output nodes
-    let layoutNodes: OutNode[] = [];
+    const layoutNodes: OutNode[] = [];
 
     const nodeMap: Map<ID, Node> = new Map();
     nodes.forEach((node) => {
@@ -126,7 +126,7 @@ export class ComboCombinedLayout implements Layout<ComboCombinedLayoutOptions> {
       comboMap,
       edges,
       mergedOptions,
-      comboNodes
+      comboNodes,
     );
     await Promise.all(innerGraphLayoutPromises);
 
@@ -169,7 +169,7 @@ export class ComboCombinedLayout implements Layout<ComboCombinedLayoutOptions> {
           if (child.id !== root.id) nodeAncestorIdMap.set(child.id, root.id);
         },
         'TB',
-        treeKey
+        treeKey,
       );
     });
 
@@ -238,7 +238,7 @@ export class ComboCombinedLayout implements Layout<ComboCombinedLayoutOptions> {
       // move the combos and their child nodes
       comboNodes.forEach((comboNode: Node) => {
         const outerPosition = outerPositions.nodes.find(
-          (pos: Node) => pos.id === comboNode.id
+          (pos: Node) => pos.id === comboNode.id,
         );
         if (outerPosition) {
           // if it is one of the outer layout nodes, update the positions
@@ -368,7 +368,7 @@ export class ComboCombinedLayout implements Layout<ComboCombinedLayoutOptions> {
     comboMap: Map<ID, Node>,
     edges: Edge[],
     options: ComboCombinedLayoutOptions,
-    comboNodes: Map<ID, Node>
+    comboNodes: Map<ID, Node>,
   ): Promise<any>[] {
     const { nodeSize, comboPadding, spacing, innerLayout } = options;
 
@@ -433,13 +433,14 @@ export class ComboCombinedLayout implements Layout<ComboCombinedLayoutOptions> {
               .getChildren(treeNode.id, treeKey)
               .map((child) => {
                 if (child.data._isCombo) {
-                  if (!comboNodes.has(child.id))
+                  if (!comboNodes.has(child.id)) {
                     comboNodes.set(child.id, {
                       id: child.id,
                       data: {
                         ...child.data,
                       },
                     });
+                  }
                   innerLayoutNodeIds.set(child.id, true);
                   return comboNodes.get(child.id);
                 }
@@ -458,7 +459,7 @@ export class ComboCombinedLayout implements Layout<ComboCombinedLayoutOptions> {
               edges: edges.filter(
                 (edge) =>
                   innerLayoutNodeIds.has(edge.source) &&
-                  innerLayoutNodeIds.has(edge.target)
+                  innerLayoutNodeIds.has(edge.target),
               ),
             };
             let minNodeSize = Infinity;
@@ -480,10 +481,10 @@ export class ComboCombinedLayout implements Layout<ComboCombinedLayoutOptions> {
               const innerGraphCore = new GraphCore(innerGraphData);
               const innerLayout = await innerGraphLayout.assign(
                 innerGraphCore,
-                innerLayoutOptions
+                innerLayoutOptions,
               );
               const { minX, minY, maxX, maxY } = getLayoutBBox(
-                innerLayoutNodes as OutNode[]
+                innerLayoutNodes as OutNode[],
               );
               // move the innerGraph to [0, 0], for later controled by parent layout
               const center = { x: (maxX + minX) / 2, y: (maxY + minY) / 2 };
@@ -504,7 +505,7 @@ export class ComboCombinedLayout implements Layout<ComboCombinedLayoutOptions> {
           return true;
         },
         'BT',
-        treeKey
+        treeKey,
       );
       innerLayoutPromises.push(start);
     });

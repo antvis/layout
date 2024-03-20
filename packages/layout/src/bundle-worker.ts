@@ -1,8 +1,8 @@
-import { Graph } from "@antv/graphlib";
+import { Graph } from '@antv/graphlib';
 // import { setupTransferableMethodsOnWorker } from "@naoak/workerize-transferable";
-import { registry } from "./registry";
-import type { Payload } from "./supervisor";
-import { Layout, LayoutWithIterations, isLayoutWithIterations } from "./types";
+import { registry } from './registry';
+import type { Payload } from './supervisor';
+import { isLayoutWithIterations, Layout, LayoutWithIterations } from './types';
 
 // @see https://www.npmjs.com/package/@naoak/workerize-transferable
 // setupTransferableMethodsOnWorker({
@@ -25,7 +25,7 @@ export function stopLayout() {
 
 export async function calculateLayout(
   payload: Payload,
-  transferables: Float32Array[]
+  transferables: Float32Array[],
 ) {
   const {
     layout: { id, options, iterations },

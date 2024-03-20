@@ -1,19 +1,19 @@
-import { World } from "@antv/g-webgpu";
+import { World } from '@antv/g-webgpu';
 import {
-  Graph,
-  Node,
-  Edge,
-  LayoutMapping,
-  ForceLayoutOptions,
-  OutNode,
-  Layout,
-  PointTuple,
   cloneFormatData,
+  Edge,
+  ForceLayoutOptions,
   formatNumberFn,
-} from "@antv/layout";
-import { isNumber } from "@antv/util";
-import { aveMovementBundle, gForceBundle } from "./gforce-shader";
-import { arrayToTextureData, buildTextureDataWithTwoEdgeAttr } from "./util";
+  Graph,
+  Layout,
+  LayoutMapping,
+  Node,
+  OutNode,
+  PointTuple,
+} from '@antv/layout';
+import { isNumber } from '@antv/util';
+import { aveMovementBundle, gForceBundle } from './gforce-shader';
+import { arrayToTextureData, buildTextureDataWithTwoEdgeAttr } from './util';
 
 const DEFAULTS_LAYOUT_OPTIONS: Partial<ForceLayoutOptions> = {
   linkDistance: 1,
@@ -64,7 +64,7 @@ interface FormattedOptions extends ForceLayoutOptions {
  * await layout.assign(graph, { center: [100, 100] });
  */
 export class GForceLayout implements Layout<ForceLayoutOptions> {
-  id = "gforce";
+  id = 'gforce';
 
   constructor(public options: ForceLayoutOptions = {} as ForceLayoutOptions) {
     this.options = {
@@ -89,17 +89,17 @@ export class GForceLayout implements Layout<ForceLayoutOptions> {
   private async genericForceLayout(
     assign: false,
     graph: Graph,
-    options?: ForceLayoutOptions
+    options?: ForceLayoutOptions,
   ): Promise<LayoutMapping>;
   private async genericForceLayout(
     assign: true,
     graph: Graph,
-    options?: ForceLayoutOptions
+    options?: ForceLayoutOptions,
   ): Promise<void>;
   private async genericForceLayout(
     assign: boolean,
     graph: Graph,
-    options?: ForceLayoutOptions
+    options?: ForceLayoutOptions,
   ): Promise<LayoutMapping | void> {
     const formattedOptions = this.formatOptions(options, graph);
     const {
@@ -151,7 +151,7 @@ export class GForceLayout implements Layout<ForceLayoutOptions> {
     }
 
     const layoutNodes: OutNode[] = nodes.map(
-      (node) => cloneFormatData(node, [width, height]) as OutNode
+      (node) => cloneFormatData(node, [width, height]) as OutNode,
     );
     layoutNodes.forEach((node, i) => {
       if (!isNumber(node.data.x)) node.data.x = Math.random() * width;
@@ -165,7 +165,7 @@ export class GForceLayout implements Layout<ForceLayoutOptions> {
         layoutNodes,
         edges,
         linkDistance,
-        edgeStrength
+        edgeStrength,
       );
 
     const masses: number[] = [];
@@ -175,7 +175,7 @@ export class GForceLayout implements Layout<ForceLayoutOptions> {
     const centerGravities: number[] = [];
     const fxs: number[] = [];
     const fys: number[] = [];
-    const degrees = layoutNodes.map((node) => graph.getDegree(node.id, "both"));
+    const degrees = layoutNodes.map((node) => graph.getDegree(node.id, 'both'));
 
     layoutNodes.forEach((node, i) => {
       masses.push(getMass(node));
@@ -314,7 +314,7 @@ export class GForceLayout implements Layout<ForceLayoutOptions> {
         graph.mergeNodeData(id, {
           x: data.x,
           y: data.y,
-        })
+        }),
       );
     }
 
@@ -323,7 +323,7 @@ export class GForceLayout implements Layout<ForceLayoutOptions> {
 
   private formatOptions(
     options: ForceLayoutOptions = {},
-    graph: Graph
+    graph: Graph,
   ): FormattedOptions {
     const formattedOptions = {
       ...this.options,
@@ -333,11 +333,11 @@ export class GForceLayout implements Layout<ForceLayoutOptions> {
 
     // === formating width, height, and center =====
     formattedOptions.width =
-      !propsWidth && typeof window !== "undefined"
+      !propsWidth && typeof window !== 'undefined'
         ? window.innerWidth
         : (propsWidth as number);
     formattedOptions.height =
-      !propsHeight && typeof window !== "undefined"
+      !propsHeight && typeof window !== 'undefined'
         ? window.innerHeight
         : (propsHeight as number);
     if (!options.center) {
@@ -352,7 +352,7 @@ export class GForceLayout implements Layout<ForceLayoutOptions> {
       formattedOptions.getMass = (d?: Node) => {
         let massWeight = 1;
         if (isNumber(d?.data.mass)) massWeight = d?.data.mass as number;
-        const degree = graph.getDegree(d!.id, "both");
+        const degree = graph.getDegree(d!.id, 'both');
         return !degree || degree < 5 ? massWeight : degree * 5 * massWeight;
       };
     }

@@ -1,16 +1,16 @@
 import {
-  Graph,
-  LayoutMapping,
-  PointTuple,
-  FruchtermanLayoutOptions,
-  Layout,
-  OutNode,
   cloneFormatData,
+  FruchtermanLayoutOptions,
+  Graph,
+  Layout,
+  LayoutMapping,
+  OutNode,
   OutNodeData,
-} from "@antv/layout";
-import { isNumber } from "@antv/util";
-import type { WASMLayoutOptions } from "./interface";
-import { graphlib2WASMInput, distanceThresholdMode2Index } from "./util";
+  PointTuple,
+} from '@antv/layout';
+import { isNumber } from '@antv/util';
+import type { WASMLayoutOptions } from './interface';
+import { distanceThresholdMode2Index, graphlib2WASMInput } from './util';
 
 const DEFAULTS_LAYOUT_OPTIONS: Partial<FruchtermanLayoutOptions> = {
   maxIteration: 1000,
@@ -20,7 +20,7 @@ const DEFAULTS_LAYOUT_OPTIONS: Partial<FruchtermanLayoutOptions> = {
   clusterGravity: 10,
   width: 300,
   height: 300,
-  nodeClusterBy: "cluster",
+  nodeClusterBy: 'cluster',
   maxDistance: Infinity,
 };
 
@@ -54,10 +54,10 @@ interface FormattedOptions extends WASMFruchtermanLayoutOptions {
  * await layout.assign(graph, { center: [100, 100] });
  */
 export class FruchtermanLayout implements Layout<WASMFruchtermanLayoutOptions> {
-  id = "fruchtermanWASM";
+  id = 'fruchtermanWASM';
 
   constructor(
-    public options: WASMFruchtermanLayoutOptions = {} as WASMFruchtermanLayoutOptions
+    public options: WASMFruchtermanLayoutOptions = {} as WASMFruchtermanLayoutOptions,
   ) {
     this.options = {
       ...DEFAULTS_LAYOUT_OPTIONS,
@@ -81,17 +81,17 @@ export class FruchtermanLayout implements Layout<WASMFruchtermanLayoutOptions> {
   private async genericFruchtermanLayout(
     assign: false,
     graph: Graph,
-    options?: FruchtermanLayoutOptions
+    options?: FruchtermanLayoutOptions,
   ): Promise<LayoutMapping>;
   private async genericFruchtermanLayout(
     assign: true,
     graph: Graph,
-    options?: FruchtermanLayoutOptions
+    options?: FruchtermanLayoutOptions,
   ): Promise<void>;
   private async genericFruchtermanLayout(
     assign: boolean,
     graph: Graph,
-    options?: FruchtermanLayoutOptions
+    options?: FruchtermanLayoutOptions,
   ): Promise<LayoutMapping | void> {
     const formattedOptions = this.formatOptions(options);
     const {
@@ -123,7 +123,7 @@ export class FruchtermanLayout implements Layout<WASMFruchtermanLayoutOptions> {
         graph.mergeNodeData(nodes[0].id, {
           x: center[0],
           y: center[1],
-          z: dimensions === 3 ? center[2] : undefined
+          z: dimensions === 3 ? center[2] : undefined,
         });
       }
       return {
@@ -134,7 +134,7 @@ export class FruchtermanLayout implements Layout<WASMFruchtermanLayoutOptions> {
               ...nodes[0].data,
               x: center[0],
               y: center[1],
-              z: dimensions === 3 ? center[2] : undefined
+              z: dimensions === 3 ? center[2] : undefined,
             },
           },
         ],
@@ -143,13 +143,14 @@ export class FruchtermanLayout implements Layout<WASMFruchtermanLayoutOptions> {
     }
 
     const layoutNodes: OutNode[] = nodes.map(
-      (node) => cloneFormatData(node, [width, height]) as OutNode
+      (node) => cloneFormatData(node, [width, height]) as OutNode,
     );
     layoutNodes.forEach((node, i) => {
       if (!isNumber(node.data.x)) node.data.x = Math.random() * width;
       if (!isNumber(node.data.y)) node.data.y = Math.random() * height;
       if (dimensions === 3) {
-        if (!isNumber(node.data.z)) node.data.z = Math.random() * Math.sqrt(width * height);
+        if (!isNumber(node.data.z))
+          node.data.z = Math.random() * Math.sqrt(width * height);
       }
     });
 
@@ -164,7 +165,7 @@ export class FruchtermanLayout implements Layout<WASMFruchtermanLayoutOptions> {
       iterations: maxIteration,
       min_movement: minMovement,
       distance_threshold_mode: distanceThresholdMode2Index(
-        distanceThresholdMode
+        distanceThresholdMode,
       ),
       center,
       height,
@@ -199,7 +200,7 @@ export class FruchtermanLayout implements Layout<WASMFruchtermanLayoutOptions> {
   }
 
   private formatOptions(
-    options: FruchtermanLayoutOptions = {}
+    options: FruchtermanLayoutOptions = {},
   ): FormattedOptions {
     const mergedOptions = { ...this.options, ...options } as FormattedOptions;
     const { clustering, nodeClusterBy } = mergedOptions;
@@ -210,11 +211,11 @@ export class FruchtermanLayout implements Layout<WASMFruchtermanLayoutOptions> {
       height: propsHeight,
     } = mergedOptions;
     mergedOptions.width =
-      !propsWidth && typeof window !== "undefined"
+      !propsWidth && typeof window !== 'undefined'
         ? window.innerWidth
         : (propsWidth as number);
     mergedOptions.height =
-      !propsHeight && typeof window !== "undefined"
+      !propsHeight && typeof window !== 'undefined'
         ? window.innerHeight
         : (propsHeight as number);
     mergedOptions.center = !propsCenter

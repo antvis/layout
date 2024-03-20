@@ -1,12 +1,12 @@
-import { ID } from "@antv/graphlib";
-import { Graph } from "../../types";
+import { ID } from '@antv/graphlib';
+import { Graph } from '../../types';
 
 /**
  * TODO: The median method consistently performs better than the barycenter method and has a slight theoretical advantage
  */
 export const barycenter = (g: Graph, movable: ID[]) => {
   return movable.map((v) => {
-    const inV = g.getRelatedEdges(v, "in");
+    const inV = g.getRelatedEdges(v, 'in');
     if (!inV?.length) {
       return { v };
     }

@@ -8,9 +8,9 @@
  * @see https://github.com/dagrejs/dagre/blob/master/lib/greedy-fas.js
  */
 
-import { Edge, Graph, ID } from "@antv/graphlib";
-import { EdgeData, Graph as IGraph, NodeData } from "../types";
-import RawList from "./data/list";
+import { Edge, Graph, ID } from '@antv/graphlib';
+import { EdgeData, Graph as IGraph, NodeData } from '../types';
+import RawList from './data/list';
 
 type StateNode = {
   v: ID;
@@ -26,7 +26,7 @@ const DEFAULT_WEIGHT_FN = () => 1;
 
 export const greedyFAS = (
   g: IGraph,
-  weightFn?: (e: Edge<EdgeData>) => number
+  weightFn?: (e: Edge<EdgeData>) => number,
 ) => {
   if (g.getAllNodes().length <= 1) return [];
   const state = buildState(g, weightFn || DEFAULT_WEIGHT_FN);
@@ -34,7 +34,7 @@ export const greedyFAS = (
 
   return results
     .map((e) =>
-      g.getRelatedEdges(e.v, "out").filter(({ target }) => target === e.w)
+      g.getRelatedEdges(e.v, 'out').filter(({ target }) => target === e.w),
     )
     ?.flat();
 };
@@ -57,7 +57,7 @@ const doGreedyFAS = (g: IGraph, buckets: List[], zeroIdx: number) => {
         entry = buckets[i].dequeue();
         if (entry) {
           results = results.concat(
-            removeNode(g, buckets, zeroIdx, entry, true)!
+            removeNode(g, buckets, zeroIdx, entry, true)!,
           );
           break;
         }
@@ -73,12 +73,12 @@ const removeNode = (
   buckets: List[],
   zeroIdx: number,
   entry: StateNode,
-  collectPredecessors?: boolean
+  collectPredecessors?: boolean,
 ) => {
   const results: StateNode[] = [];
 
   if (g.hasNode(entry.v)) {
-    g.getRelatedEdges(entry.v, "in")?.forEach((edge) => {
+    g.getRelatedEdges(entry.v, 'in')?.forEach((edge) => {
       const weight = edge.data.weight!;
       const uEntry = g.getNode(edge.source)!;
 
@@ -95,7 +95,7 @@ const removeNode = (
       } as StateNode);
     });
 
-    g.getRelatedEdges(entry.v, "out")?.forEach((edge) => {
+    g.getRelatedEdges(entry.v, 'out')?.forEach((edge) => {
       const weight = edge.data.weight!;
       const w = edge.target;
       const wEntry = g.getNode(w)!;
@@ -130,7 +130,7 @@ const buildState = (g: IGraph, weightFn?: (e: Edge<EdgeData>) => number) => {
   // into a single edge for the fasGraph.
   g.getAllEdges().forEach((e) => {
     const edge = fasGraph
-      .getRelatedEdges(e.source, "out")
+      .getRelatedEdges(e.source, 'out')
       .find((edge) => edge.target === e.target);
     const weight = weightFn?.(e) || 1;
     if (!edge) {
@@ -174,9 +174,9 @@ const buildState = (g: IGraph, weightFn?: (e: Edge<EdgeData>) => number) => {
 const assignBucket = (buckets: List[], zeroIdx: number, entry: StateNode) => {
   if (!entry.out) {
     buckets[0].enqueue(entry);
-  } else if (!entry["in"]) {
+  } else if (!entry['in']) {
     buckets[buckets.length - 1].enqueue(entry);
   } else {
-    buckets[entry.out - entry["in"] + zeroIdx].enqueue(entry);
+    buckets[entry.out - entry['in'] + zeroIdx].enqueue(entry);
   }
 };

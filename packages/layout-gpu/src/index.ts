@@ -1,2 +1,2 @@
-export * from "./fruchterman";
-export * from "./gforce";
+export * from './fruchterman';
+export * from './gforce';

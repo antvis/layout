@@ -1,16 +1,16 @@
+import { World } from '@antv/g-webgpu';
 import {
-  Graph,
-  LayoutMapping,
-  PointTuple,
-  FruchtermanLayoutOptions,
-  Layout,
-  OutNode,
   cloneFormatData,
-} from "@antv/layout";
-import { World } from "@antv/g-webgpu";
-import { attributesToTextureData, buildTextureData } from "./util";
-import { clusterBundle, fruchtermanBundle } from "./fruchterman-shader";
-import { isNumber } from "@antv/util";
+  FruchtermanLayoutOptions,
+  Graph,
+  Layout,
+  LayoutMapping,
+  OutNode,
+  PointTuple,
+} from '@antv/layout';
+import { isNumber } from '@antv/util';
+import { clusterBundle, fruchtermanBundle } from './fruchterman-shader';
+import { attributesToTextureData, buildTextureData } from './util';
 
 const DEFAULTS_LAYOUT_OPTIONS: Partial<FruchtermanLayoutOptions> = {
   maxIteration: 1000,
@@ -20,7 +20,7 @@ const DEFAULTS_LAYOUT_OPTIONS: Partial<FruchtermanLayoutOptions> = {
   clusterGravity: 10,
   width: 300,
   height: 300,
-  nodeClusterBy: "cluster",
+  nodeClusterBy: 'cluster',
 };
 // const SPEED_DIVISOR = 800;
 
@@ -50,10 +50,10 @@ interface FormattedOptions extends FruchtermanLayoutOptions {
  * await layout.assign(graph, { center: [100, 100] });
  */
 export class FruchtermanLayout implements Layout<FruchtermanLayoutOptions> {
-  id = "fruchtermanGPU";
+  id = 'fruchtermanGPU';
 
   constructor(
-    public options: FruchtermanLayoutOptions = {} as FruchtermanLayoutOptions
+    public options: FruchtermanLayoutOptions = {} as FruchtermanLayoutOptions,
   ) {
     this.options = {
       ...DEFAULTS_LAYOUT_OPTIONS,
@@ -77,17 +77,17 @@ export class FruchtermanLayout implements Layout<FruchtermanLayoutOptions> {
   private async genericFruchtermanLayout(
     assign: false,
     graph: Graph,
-    options?: FruchtermanLayoutOptions
+    options?: FruchtermanLayoutOptions,
   ): Promise<LayoutMapping>;
   private async genericFruchtermanLayout(
     assign: true,
     graph: Graph,
-    options?: FruchtermanLayoutOptions
+    options?: FruchtermanLayoutOptions,
   ): Promise<void>;
   private async genericFruchtermanLayout(
     assign: boolean,
     graph: Graph,
-    options?: FruchtermanLayoutOptions
+    options?: FruchtermanLayoutOptions,
   ): Promise<LayoutMapping | void> {
     const formattedOptions = this.formatOptions(options);
     const {
@@ -132,7 +132,7 @@ export class FruchtermanLayout implements Layout<FruchtermanLayoutOptions> {
     }
 
     const layoutNodes: OutNode[] = nodes.map(
-      (node) => cloneFormatData(node, [width, height]) as OutNode
+      (node) => cloneFormatData(node, [width, height]) as OutNode,
     );
 
     const area = height * width;
@@ -158,7 +158,7 @@ export class FruchtermanLayout implements Layout<FruchtermanLayoutOptions> {
     const numParticles = layoutNodes.length;
     const { maxEdgePerVetex, array: nodesEdgesArray } = buildTextureData(
       layoutNodes,
-      edges
+      edges,
     );
 
     const world = World.create({
@@ -247,7 +247,7 @@ export class FruchtermanLayout implements Layout<FruchtermanLayoutOptions> {
         graph.mergeNodeData(id, {
           x: data.x,
           y: data.y,
-        })
+        }),
       );
     }
 
@@ -255,7 +255,7 @@ export class FruchtermanLayout implements Layout<FruchtermanLayoutOptions> {
   }
 
   private formatOptions(
-    options: FruchtermanLayoutOptions = {}
+    options: FruchtermanLayoutOptions = {},
   ): FormattedOptions {
     const mergedOptions = { ...this.options, ...options } as FormattedOptions;
     const { clustering, nodeClusterBy } = mergedOptions;
@@ -266,11 +266,11 @@ export class FruchtermanLayout implements Layout<FruchtermanLayoutOptions> {
       height: propsHeight,
     } = mergedOptions;
     mergedOptions.width =
-      !propsWidth && typeof window !== "undefined"
+      !propsWidth && typeof window !== 'undefined'
         ? window.innerWidth
         : (propsWidth as number);
     mergedOptions.height =
-      !propsHeight && typeof window !== "undefined"
+      !propsHeight && typeof window !== 'undefined'
         ? window.innerHeight
         : (propsHeight as number);
     mergedOptions.center = !propsCenter

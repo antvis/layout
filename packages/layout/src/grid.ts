@@ -1,16 +1,16 @@
-import { isString, isNumber } from "@antv/util";
-import { isArray, formatSizeFn, formatNumberFn, cloneFormatData } from "./util";
+import { isNumber, isString } from '@antv/util';
 import type {
+  Edge,
   Graph,
   GridLayoutOptions,
-  LayoutMapping,
-  PointTuple,
   Layout,
-  OutNode,
+  LayoutMapping,
   Node,
-  Edge,
-} from "./types";
-import { handleSingleNodeGraph } from "./util/common";
+  OutNode,
+  PointTuple,
+} from './types';
+import { cloneFormatData, formatNumberFn, formatSizeFn, isArray } from './util';
+import { handleSingleNodeGraph } from './util/common';
 
 type RowsAndCols = {
   rows: number;
@@ -38,7 +38,7 @@ const DEFAULTS_LAYOUT_OPTIONS: Partial<GridLayoutOptions> = {
   rows: undefined,
   cols: undefined,
   position: undefined,
-  sortBy: "degree",
+  sortBy: 'degree',
   nodeSize: 30,
   width: 300,
   height: 300,
@@ -60,7 +60,7 @@ const DEFAULTS_LAYOUT_OPTIONS: Partial<GridLayoutOptions> = {
  * await layout.assign(graph, { rows: 20 });
  */
 export class GridLayout implements Layout<GridLayoutOptions> {
-  id = "grid";
+  id = 'grid';
 
   constructor(public options: GridLayoutOptions = {} as GridLayoutOptions) {
     this.options = {
@@ -85,17 +85,17 @@ export class GridLayout implements Layout<GridLayoutOptions> {
   private async genericGridLayout(
     assign: false,
     graph: Graph,
-    options?: GridLayoutOptions
+    options?: GridLayoutOptions,
   ): Promise<LayoutMapping>;
   private async genericGridLayout(
     assign: true,
     graph: Graph,
-    options?: GridLayoutOptions
+    options?: GridLayoutOptions,
   ): Promise<void>;
   private async genericGridLayout(
     assign: boolean,
     graph: Graph,
-    options?: GridLayoutOptions
+    options?: GridLayoutOptions,
   ): Promise<LayoutMapping | void> {
     const mergedOptions = { ...this.options, ...options };
     const {
@@ -124,23 +124,23 @@ export class GridLayout implements Layout<GridLayoutOptions> {
     }
 
     const layoutNodes: OutNode[] = nodes.map(
-      (node) => cloneFormatData(node) as OutNode
+      (node) => cloneFormatData(node) as OutNode,
     );
 
     if (
       // `id` should be reserved keyword
-      sortBy !== "id" &&
+      sortBy !== 'id' &&
       (!isString(sortBy) || (layoutNodes[0] as any).data[sortBy] === undefined)
     ) {
-      sortBy = "degree";
+      sortBy = 'degree';
     }
 
-    if (sortBy === "degree") {
+    if (sortBy === 'degree') {
       layoutNodes.sort(
         (n1, n2) =>
-          graph.getDegree(n2.id, "both") - graph.getDegree(n1.id, "both")
+          graph.getDegree(n2.id, 'both') - graph.getDegree(n1.id, 'both'),
       );
-    } else if (sortBy === "id") {
+    } else if (sortBy === 'id') {
       // sort nodes by ID
       layoutNodes.sort((n1, n2) => {
         if (isNumber(n2.id) && isNumber(n1.id)) {
@@ -151,15 +151,15 @@ export class GridLayout implements Layout<GridLayoutOptions> {
     } else {
       // sort nodes by value
       layoutNodes.sort(
-        (n1, n2) => (n2 as any).data[sortBy!] - (n1 as any).data[sortBy!]
+        (n1, n2) => (n2 as any).data[sortBy!] - (n1 as any).data[sortBy!],
       );
     }
     const width =
-      !propsWidth && typeof window !== "undefined"
+      !propsWidth && typeof window !== 'undefined'
         ? window.innerWidth
         : (propsWidth as number);
     const height =
-      !propsHeight && typeof window !== "undefined"
+      !propsHeight && typeof window !== 'undefined'
         ? window.innerHeight
         : (propsHeight as number);
 
@@ -218,7 +218,7 @@ export class GridLayout implements Layout<GridLayoutOptions> {
     if (preventOverlap || paramNodeSpacing) {
       const nodeSpacing: Function = formatNumberFn(
         10,
-        paramNodeSpacing as number
+        paramNodeSpacing as number,
       );
       const nodeSize: Function = formatSizeFn(30, paramNodeSize, false);
       layoutNodes.forEach((node) => {
@@ -315,7 +315,7 @@ export class GridLayout implements Layout<GridLayoutOptions> {
 
 const small = (
   rcs: { rows: number; cols: number },
-  val?: number
+  val?: number,
 ): number | undefined => {
   let res: number | undefined;
   const rows = rcs.rows || 5;
@@ -373,7 +373,7 @@ const getPos = (
   id2manPos: IdMapRowAndCol,
   rcs: RowsAndCols,
   rc: RowAndCol,
-  cellUsed: VisitMap
+  cellUsed: VisitMap,
 ) => {
   let x: number;
   let y: number;

@@ -2,9 +2,9 @@
  * This module provides coordinate assignment based on Brandes and Köpf, "Fast
  * and Simple Horizontal Coordinate Assignment."
  */
-import { Graph, ID, Node } from "@antv/graphlib";
-import { DagreAlign, EdgeData, Graph as IGraph, NodeData } from "../../types";
-import { buildLayerMatrix, minBy } from "../util";
+import { Graph, ID, Node } from '@antv/graphlib';
+import { DagreAlign, EdgeData, Graph as IGraph, NodeData } from '../../types';
+import { buildLayerMatrix, minBy } from '../util';
 
 /*
  * Marks all edges in the graph with a type-1 conflict with the "type1Conflict"
@@ -78,7 +78,7 @@ export const findType2Conflicts = (g: IGraph, layering?: ID[][]) => {
     southPos: number,
     southEnd: number,
     prevNorthBorder: number,
-    nextNorthBorder: number
+    nextNorthBorder: number,
   ) {
     let v: string;
     for (let i = southPos; i < southEnd; i++) {
@@ -105,7 +105,7 @@ export const findType2Conflicts = (g: IGraph, layering?: ID[][]) => {
 
   function scanIfNeeded(
     params: Parameters<typeof scan>,
-    scanCache: Map<string, boolean>
+    scanCache: Map<string, boolean>,
   ) {
     const cacheKey = getScannedKey(params);
 
@@ -123,13 +123,13 @@ export const findType2Conflicts = (g: IGraph, layering?: ID[][]) => {
     const scanned = new Map<string, boolean>();
 
     south?.forEach((v: string, southLookahead: number) => {
-      if (g.getNode(v)?.data.dummy === "border") {
+      if (g.getNode(v)?.data.dummy === 'border') {
         const predecessors = g.getPredecessors(v) || [];
         if (predecessors.length) {
           nextNorthPos = g.getNode(predecessors[0].id)!.data.order!;
           scanIfNeeded(
             [south, southPos, southLookahead, prevNorthPos, nextNorthPos],
-            scanned
+            scanned,
           );
           southPos = southLookahead;
           prevNorthPos = nextNorthPos;
@@ -137,7 +137,7 @@ export const findType2Conflicts = (g: IGraph, layering?: ID[][]) => {
       }
       scanIfNeeded(
         [south, southPos, south.length, nextNorthPos, north.length],
-        scanned
+        scanned,
       );
     });
 
@@ -195,7 +195,7 @@ export const verticalAlignment = (
   g: IGraph,
   layering: ID[][],
   conflicts: Conflicts,
-  neighborFn: (v: ID) => Node<NodeData>[]
+  neighborFn: (v: ID) => Node<NodeData>[],
 ) => {
   const root: Record<ID, ID> = {};
   const align: Record<ID, ID> = {};
@@ -246,7 +246,7 @@ export const horizontalCompaction = (
   align: Record<ID, ID>,
   nodesep: number,
   edgesep: number,
-  reverseSep?: boolean
+  reverseSep?: boolean,
 ) => {
   // This portion of the algorithm differs from BK due to a number of problems.
   // Instead of their algorithm we construct a new block graph and do two
@@ -260,13 +260,13 @@ export const horizontalCompaction = (
     root,
     nodesep,
     edgesep,
-    reverseSep
+    reverseSep,
   );
-  const borderType = reverseSep ? "borderLeft" : "borderRight";
+  const borderType = reverseSep ? 'borderLeft' : 'borderRight';
 
   const iterate = (
     setXsFunc: (param: ID) => void,
-    nextNodesFunc: (param: ID) => Node<NodeData>
+    nextNodesFunc: (param: ID) => Node<NodeData>,
   ) => {
     let stack = blockG.getAllNodes();
     let elem = stack.pop();
@@ -286,21 +286,21 @@ export const horizontalCompaction = (
 
   // First pass, assign smallest coordinates
   const pass1 = (elem: ID) => {
-    xs[elem] = (blockG.getRelatedEdges(elem, "in") || []).reduce(
+    xs[elem] = (blockG.getRelatedEdges(elem, 'in') || []).reduce(
       (acc: number, e) => {
         return Math.max(acc, (xs[e.source] || 0) + e.data.weight!);
       },
-      0
+      0,
     );
   };
 
   // Second pass, assign greatest coordinates
   const pass2 = (elem: ID) => {
-    const min = (blockG.getRelatedEdges(elem, "out") || []).reduce(
+    const min = (blockG.getRelatedEdges(elem, 'out') || []).reduce(
       (acc: number, e) => {
         return Math.min(acc, (xs[e.target] || 0) - e.data.weight!);
       },
-      Number.POSITIVE_INFINITY
+      Number.POSITIVE_INFINITY,
     );
 
     const node = g.getNode(elem)!;
@@ -329,7 +329,7 @@ export const buildBlockGraph = (
   root: Record<ID, ID>,
   nodesep: number,
   edgesep: number,
-  reverseSep?: boolean
+  reverseSep?: boolean,
 ): IGraph => {
   const blockGraph = new Graph<NodeData, EdgeData>();
   const sepFn = sep(nodesep, edgesep, reverseSep as boolean);
@@ -348,7 +348,7 @@ export const buildBlockGraph = (
         const uRoot = root[u];
 
         const edge = blockGraph
-          .getRelatedEdges(uRoot, "out")
+          .getRelatedEdges(uRoot, 'out')
           .find((edge) => edge.target === vRoot);
         if (!edge) {
           blockGraph.addEdge({
@@ -377,7 +377,7 @@ export const buildBlockGraph = (
  */
 export const findSmallestWidthAlignment = (
   g: IGraph,
-  xss: Record<string, Record<string, number>>
+  xss: Record<string, Record<string, number>>,
 ) => {
   return minBy(Object.values(xss), (xs) => {
     let max = Number.NEGATIVE_INFINITY;
@@ -404,14 +404,14 @@ export const findSmallestWidthAlignment = (
  */
 export function alignCoordinates(
   xss: Record<string, Record<string, number>>,
-  alignTo: Record<string, number>
+  alignTo: Record<string, number>,
 ) {
   const alignToVals = Object.values(alignTo);
   const alignToMin = Math.min(...alignToVals);
   const alignToMax = Math.max(...alignToVals);
 
-  ["u", "d"].forEach((vert) => {
-    ["l", "r"].forEach((horiz) => {
+  ['u', 'd'].forEach((vert) => {
+    ['l', 'r'].forEach((horiz) => {
       const alignment = vert + horiz;
       const xs = xss[alignment];
       let delta: number;
@@ -419,7 +419,7 @@ export function alignCoordinates(
 
       const xsVals = Object.values(xs);
       delta =
-        horiz === "l"
+        horiz === 'l'
           ? alignToMin - Math.min(...xsVals)
           : alignToMax - Math.max(...xsVals);
 
@@ -435,7 +435,7 @@ export function alignCoordinates(
 
 export const balance = (
   xss: Record<string, Record<string, number>>,
-  align?: DagreAlign
+  align?: DagreAlign,
 ) => {
   const result: Record<string, number> = {};
   Object.keys(xss.ul).forEach((key) => {
@@ -455,36 +455,36 @@ export const positionX = (
     align: DagreAlign;
     nodesep: number;
     edgesep: number;
-  }>
+  }>,
 ) => {
   const { align: graphAlign, nodesep = 0, edgesep = 0 } = options || {};
 
   const layering = buildLayerMatrix(g);
   const conflicts = Object.assign(
     findType1Conflicts(g, layering),
-    findType2Conflicts(g, layering)
+    findType2Conflicts(g, layering),
   );
 
   const xss: Record<string, Record<ID, number>> = {};
   let adjustedLayering: ID[][];
-  ["u", "d"].forEach((vert) => {
+  ['u', 'd'].forEach((vert) => {
     adjustedLayering =
-      vert === "u" ? layering : Object.values(layering).reverse();
-    ["l", "r"].forEach((horiz) => {
-      if (horiz === "r") {
+      vert === 'u' ? layering : Object.values(layering).reverse();
+    ['l', 'r'].forEach((horiz) => {
+      if (horiz === 'r') {
         adjustedLayering = adjustedLayering.map((inner) =>
-          Object.values(inner).reverse()
+          Object.values(inner).reverse(),
         );
       }
 
       const neighborFn = (
-        vert === "u" ? g.getPredecessors : g.getSuccessors
+        vert === 'u' ? g.getPredecessors : g.getSuccessors
       ).bind(g);
       const align = verticalAlignment(
         g,
         adjustedLayering,
         conflicts,
-        neighborFn
+        neighborFn,
       );
       const xs = horizontalCompaction(
         g,
@@ -493,9 +493,9 @@ export const positionX = (
         align.align,
         nodesep,
         edgesep,
-        horiz === "r"
+        horiz === 'r',
       );
-      if (horiz === "r") {
+      if (horiz === 'r') {
         Object.keys(xs).forEach((key) => {
           xs[key] = -xs[key];
         });
@@ -517,12 +517,12 @@ export const sep = (nodeSep: number, edgeSep: number, reverseSep: boolean) => {
     let delta: number = 0;
 
     sum += vLabel.data.width! / 2;
-    if (vLabel.data.hasOwnProperty("labelpos")) {
-      switch (((vLabel.data.labelpos as string) || "").toLowerCase()) {
-        case "l":
+    if (vLabel.data.hasOwnProperty('labelpos')) {
+      switch (((vLabel.data.labelpos as string) || '').toLowerCase()) {
+        case 'l':
           delta = -vLabel.data.width! / 2;
           break;
-        case "r":
+        case 'r':
           delta = vLabel.data.width! / 2;
           break;
       }
@@ -537,11 +537,11 @@ export const sep = (nodeSep: number, edgeSep: number, reverseSep: boolean) => {
 
     sum += wLabel.data.width! / 2;
     if (wLabel.data.labelpos) {
-      switch (((wLabel.data.labelpos as string) || "").toLowerCase()) {
-        case "l":
+      switch (((wLabel.data.labelpos as string) || '').toLowerCase()) {
+        case 'l':
           delta = wLabel.data.width! / 2;
           break;
-        case "r":
+        case 'r':
           delta = -wLabel.data.width! / 2;
           break;
       }

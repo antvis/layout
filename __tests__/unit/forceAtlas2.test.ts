@@ -1,10 +1,10 @@
-import { Graph } from "@antv/graphlib";
-import { ForceAtlas2Layout } from "../../packages/layout";
-import data from "../data/test-data-1";
-import { getEuclideanDistance } from "../util";
+import { Graph } from '@antv/graphlib';
+import { ForceAtlas2Layout } from '../../packages/layout';
+import data from '../data/test-data-1';
+import { getEuclideanDistance } from '../util';
 
-describe("ForceAtlas2Layout", () => {
-  test("should return correct default config.", async () => {
+describe('ForceAtlas2Layout', () => {
+  test('should return correct default config.', async () => {
     const graph = new Graph<any, any>({
       nodes: [...data.nodes],
       edges: [...data.edges],
@@ -17,7 +17,7 @@ describe("ForceAtlas2Layout", () => {
       height: 300,
       kr: 5,
       kg: 1,
-      mode: "normal",
+      mode: 'normal',
       preventOverlap: false,
       dissuadeHubs: false,
       maxIteration: 0,
@@ -32,7 +32,7 @@ describe("ForceAtlas2Layout", () => {
     expect(positions.nodes[0].data.y).not.toBe(undefined);
   });
 
-  test("should do fa2 layout with an empty graph.", async () => {
+  test('should do fa2 layout with an empty graph.', async () => {
     const graph = new Graph<any, any>({
       nodes: [],
       edges: [],
@@ -43,9 +43,9 @@ describe("ForceAtlas2Layout", () => {
     expect(positions.nodes).not.toBe(undefined);
   });
 
-  test("should do fa2 layout with a graph which has only one node.", async () => {
+  test('should do fa2 layout with a graph which has only one node.', async () => {
     const graph = new Graph<any, any>({
-      nodes: [{ id: "node", data: {} }],
+      nodes: [{ id: 'node', data: {} }],
       edges: [],
     });
 
@@ -56,23 +56,23 @@ describe("ForceAtlas2Layout", () => {
     expect(positions.nodes[0].data.y).toBe(20);
   });
 
-  test("should do fa2 layout with diffrent kr", async () => {
+  test('should do fa2 layout with diffrent kr', async () => {
     const graph = new Graph<any, any>({
       nodes: [
         {
-          id: "node0",
+          id: 'node0',
           data: {},
         },
         {
-          id: "node1",
+          id: 'node1',
           data: {},
         },
       ],
       edges: [
         {
-          id: "edge1",
-          source: "node0",
-          target: "node1",
+          id: 'edge1',
+          source: 'node0',
+          target: 'node1',
           data: {},
         },
       ],
@@ -84,35 +84,35 @@ describe("ForceAtlas2Layout", () => {
     const positions1 = await fa21.execute(graph);
     const dist1 = getEuclideanDistance(
       positions1.nodes[0],
-      positions1.nodes[1]
+      positions1.nodes[1],
     );
 
     const fa22 = new ForceAtlas2Layout({ center: [100, 200], kr: 20 });
     const positions2 = await fa22.execute(graph);
     const dist2 = getEuclideanDistance(
       positions2.nodes[0],
-      positions2.nodes[1]
+      positions2.nodes[1],
     );
 
     expect(dist1 < dist2).toBe(true);
   });
-  test("should do fa2 layout with diffrent kg", async () => {
+  test('should do fa2 layout with diffrent kg', async () => {
     const graph = new Graph<any, any>({
       nodes: [
         {
-          id: "node0",
+          id: 'node0',
           data: {},
         },
         {
-          id: "node1",
+          id: 'node1',
           data: {},
         },
       ],
       edges: [
         {
-          id: "edge1",
-          source: "node0",
-          target: "node1",
+          id: 'edge1',
+          source: 'node0',
+          target: 'node1',
           data: {},
         },
       ],
@@ -124,35 +124,35 @@ describe("ForceAtlas2Layout", () => {
     const positions1 = await fa21.execute(graph);
     const dist1 = getEuclideanDistance(
       positions1.nodes[0],
-      positions1.nodes[1]
+      positions1.nodes[1],
     );
 
     const fa22 = new ForceAtlas2Layout({ center: [100, 200], kg: 20 });
     const positions2 = await fa22.execute(graph);
     const dist2 = getEuclideanDistance(
       positions2.nodes[0],
-      positions2.nodes[1]
+      positions2.nodes[1],
     );
 
     expect(dist1 > dist2).toBe(true);
   });
-  test("should do fa2 layout with diffrent mode", async () => {
+  test('should do fa2 layout with diffrent mode', async () => {
     const graph = new Graph<any, any>({
       nodes: [
         {
-          id: "node0",
+          id: 'node0',
           data: {},
         },
         {
-          id: "node1",
+          id: 'node1',
           data: {},
         },
       ],
       edges: [
         {
-          id: "edge1",
-          source: "node0",
-          target: "node1",
+          id: 'edge1',
+          source: 'node0',
+          target: 'node1',
           data: {},
         },
       ],
@@ -160,39 +160,39 @@ describe("ForceAtlas2Layout", () => {
 
     // normal mode is more compact than linlog mode
 
-    const fa21 = new ForceAtlas2Layout({ center: [100, 200], mode: "normal" });
+    const fa21 = new ForceAtlas2Layout({ center: [100, 200], mode: 'normal' });
     const positions1 = await fa21.execute(graph);
     const dist1 = getEuclideanDistance(
       positions1.nodes[0],
-      positions1.nodes[1]
+      positions1.nodes[1],
     );
 
-    const fa22 = new ForceAtlas2Layout({ center: [100, 200], mode: "linlog" });
+    const fa22 = new ForceAtlas2Layout({ center: [100, 200], mode: 'linlog' });
     const positions2 = await fa22.execute(graph);
     const dist2 = getEuclideanDistance(
       positions2.nodes[0],
-      positions2.nodes[1]
+      positions2.nodes[1],
     );
 
     expect(dist1 < dist2).toBe(true);
   });
-  test("should do fa2 layout with onTick", async () => {
+  test('should do fa2 layout with onTick', async () => {
     const graph = new Graph<any, any>({
       nodes: [
         {
-          id: "node0",
+          id: 'node0',
           data: {},
         },
         {
-          id: "node1",
+          id: 'node1',
           data: {},
         },
       ],
       edges: [
         {
-          id: "edge1",
-          source: "node0",
-          target: "node1",
+          id: 'edge1',
+          source: 'node0',
+          target: 'node1',
           data: {},
         },
       ],

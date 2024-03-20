@@ -1,28 +1,28 @@
-import { Graph } from "@antv/graphlib";
-import { NodeData, EdgeData } from "../../../packages/layout";
-import * as util from "../../../packages/layout/src/dagre/util";
+import { Graph } from '@antv/graphlib';
+import { EdgeData, NodeData } from '../../../packages/layout';
+import * as util from '../../../packages/layout/src/dagre/util';
 
-describe("util", function () {
-  describe("simplify", function () {
+describe('util', function () {
+  describe('simplify', function () {
     let g: Graph<NodeData, EdgeData>;
 
     beforeEach(function () {
       g = new Graph<NodeData, EdgeData>();
     });
 
-    test("copies without change a graph with no multi-edges", function () {
+    test('copies without change a graph with no multi-edges', function () {
       g.addNode({
-        id: "a",
+        id: 'a',
         data: {},
       });
       g.addNode({
-        id: "b",
+        id: 'b',
         data: {},
       });
       g.addEdge({
-        id: "e1",
-        source: "a",
-        target: "b",
+        id: 'e1',
+        source: 'a',
+        target: 'b',
         data: {
           weight: 1,
           minlen: 1,
@@ -31,33 +31,33 @@ describe("util", function () {
 
       let g2 = util.simplify(g);
       expect(
-        g2.getRelatedEdges("a", "out").find((e) => e.target === "b")!.data
+        g2.getRelatedEdges('a', 'out').find((e) => e.target === 'b')!.data,
       ).toEqual({ weight: 1, minlen: 1 });
       expect(g2.getAllEdges().length).toEqual(1);
     });
 
-    test("collapses multi-edges", function () {
+    test('collapses multi-edges', function () {
       g.addNode({
-        id: "a",
+        id: 'a',
         data: {},
       });
       g.addNode({
-        id: "b",
+        id: 'b',
         data: {},
       });
       g.addEdge({
-        id: "e1",
-        source: "a",
-        target: "b",
+        id: 'e1',
+        source: 'a',
+        target: 'b',
         data: {
           weight: 1,
           minlen: 1,
         },
       });
       g.addEdge({
-        id: "e2",
-        source: "a",
-        target: "b",
+        id: 'e2',
+        source: 'a',
+        target: 'b',
         data: {
           weight: 2,
           minlen: 2,
@@ -67,19 +67,19 @@ describe("util", function () {
       let g2 = util.simplify(g);
 
       expect(
-        g2.getRelatedEdges("a", "out").find((e) => e.target === "b")!.data
+        g2.getRelatedEdges('a', 'out').find((e) => e.target === 'b')!.data,
       ).toEqual({ weight: 3, minlen: 2 });
       expect(g2.getAllEdges().length).toEqual(1);
     });
 
-    test("copies the graph object", function () {
+    test('copies the graph object', function () {
       let g2 = util.simplify(g);
       expect(g2.getAllNodes().length).toEqual(0);
       expect(g2.getAllEdges().length).toEqual(0);
     });
   });
 
-  describe("asNonCompoundGraph", function () {
+  describe('asNonCompoundGraph', function () {
     let g: Graph<NodeData, EdgeData>;
 
     beforeEach(function () {
@@ -88,61 +88,61 @@ describe("util", function () {
       });
     });
 
-    test("copies all nodes", function () {
+    test('copies all nodes', function () {
       g.addNodes([
         {
-          id: "a",
-          data: { foo: "bar" },
+          id: 'a',
+          data: { foo: 'bar' },
         },
         {
-          id: "b",
+          id: 'b',
           data: {},
         },
       ]);
 
       let g2 = util.asNonCompoundGraph(g);
-      expect(g2.getNode("a").data).toEqual({ foo: "bar" });
-      expect(g2.hasNode("b")).toBe(true);
+      expect(g2.getNode('a').data).toEqual({ foo: 'bar' });
+      expect(g2.hasNode('b')).toBe(true);
     });
 
-    test("copies all edges", function () {
+    test('copies all edges', function () {
       g.addNodes([
         {
-          id: "a",
+          id: 'a',
           data: {},
         },
         {
-          id: "b",
+          id: 'b',
           data: {},
         },
       ]);
 
       g.addEdge({
-        id: "e1",
-        source: "a",
-        target: "b",
-        data: { foo: "bar" },
+        id: 'e1',
+        source: 'a',
+        target: 'b',
+        data: { foo: 'bar' },
       });
       g.addEdge({
-        id: "e2",
-        source: "a",
-        target: "b",
-        data: { foo: "baz" },
+        id: 'e2',
+        source: 'a',
+        target: 'b',
+        data: { foo: 'baz' },
       });
 
       let g2 = util.asNonCompoundGraph(g);
-      expect(g2.getRelatedEdges("a", "out").length).toEqual(2);
-      expect(g2.getRelatedEdges("a", "out")[0].data).toEqual({ foo: "bar" });
-      expect(g2.getRelatedEdges("a", "out")[1].data).toEqual({ foo: "baz" });
+      expect(g2.getRelatedEdges('a', 'out').length).toEqual(2);
+      expect(g2.getRelatedEdges('a', 'out')[0].data).toEqual({ foo: 'bar' });
+      expect(g2.getRelatedEdges('a', 'out')[1].data).toEqual({ foo: 'baz' });
     });
 
-    test("does not copy compound nodes", function () {
+    test('does not copy compound nodes', function () {
       g.addTree({
-        id: "sg1",
+        id: 'sg1',
         data: {},
         children: [
           {
-            id: "a",
+            id: 'a',
             data: {},
           },
         ],
@@ -150,60 +150,60 @@ describe("util", function () {
 
       let g2 = util.asNonCompoundGraph(g);
 
-      expect(g2.hasNode("a")).toBeTruthy();
-      expect(g2.hasNode("sg1")).toBeFalsy();
+      expect(g2.hasNode('a')).toBeTruthy();
+      expect(g2.hasNode('sg1')).toBeFalsy();
     });
 
-    test("copies the graph object", function () {
+    test('copies the graph object', function () {
       let g2 = util.asNonCompoundGraph(g);
       expect(g2).toBeTruthy();
     });
   });
 
-  describe("successorWeights", function () {
-    test("maps a node to its successors with associated weights", function () {
+  describe('successorWeights', function () {
+    test('maps a node to its successors with associated weights', function () {
       let g = new Graph();
       g.addNodes([
         {
-          id: "a",
+          id: 'a',
           data: {},
         },
         {
-          id: "b",
+          id: 'b',
           data: {},
         },
         {
-          id: "c",
+          id: 'c',
           data: {},
         },
         {
-          id: "d",
+          id: 'd',
           data: {},
         },
       ]);
       g.addEdges([
         {
-          id: "e1",
-          source: "a",
-          target: "b",
+          id: 'e1',
+          source: 'a',
+          target: 'b',
           data: { weight: 2 },
         },
         {
-          id: "e2",
-          source: "b",
-          target: "c",
+          id: 'e2',
+          source: 'b',
+          target: 'c',
           data: { weight: 1 },
         },
         {
-          id: "e3",
-          source: "b",
-          target: "c",
+          id: 'e3',
+          source: 'b',
+          target: 'c',
           data: { weight: 2 },
         },
         {
-          id: "e4",
-          source: "b",
-          target: "d",
+          id: 'e4',
+          source: 'b',
+          target: 'd',
           data: { weight: 1 },
         },
       ]);
@@ -215,50 +215,50 @@ describe("util", function () {
     });
   });
 
-  describe("predecessorWeights", function () {
-    test("maps a node to its predecessors with associated weights", function () {
+  describe('predecessorWeights', function () {
+    test('maps a node to its predecessors with associated weights', function () {
       let g = new Graph();
       g.addNodes([
         {
-          id: "a",
+          id: 'a',
           data: {},
         },
         {
-          id: "b",
+          id: 'b',
           data: {},
         },
         {
-          id: "c",
+          id: 'c',
           data: {},
         },
         {
-          id: "d",
+          id: 'd',
           data: {},
         },
       ]);
       g.addEdges([
         {
-          id: "e1",
-          source: "a",
-          target: "b",
+          id: 'e1',
+          source: 'a',
+          target: 'b',
           data: { weight: 2 },
         },
         {
-          id: "e2",
-          source: "b",
-          target: "c",
+          id: 'e2',
+          source: 'b',
+          target: 'c',
           data: { weight: 1 },
         },
         {
-          id: "e3",
-          source: "b",
-          target: "c",
+          id: 'e3',
+          source: 'b',
+          target: 'c',
           data: { weight: 2 },
         },
         {
-          id: "e4",
-          source: "b",
-          target: "d",
+          id: 'e4',
+          source: 'b',
+          target: 'd',
           data: { weight: 1 },
         },
       ]);
@@ -269,7 +269,7 @@ describe("util", function () {
     });
   });
 
-  describe("intersectRect", function () {
+  describe('intersectRect', function () {
     function expectIntersects(rect: any, point: any) {
       let cross = util.intersectRect(rect, point);
       if (cross.x !== point.x) {
@@ -295,7 +295,7 @@ describe("util", function () {
       expectIntersects(rect, { x: 0, y: 5 });
     });
 
-    test("touches the border of the rectangle", function () {
+    test('touches the border of the rectangle', function () {
       let rect = { x: 0, y: 0, width: 1, height: 1 };
       expectTouchesBorder(rect, { x: 2, y: 6 });
       expectTouchesBorder(rect, { x: 2, y: -6 });
@@ -305,40 +305,40 @@ describe("util", function () {
       expectTouchesBorder(rect, { x: 0, y: 5 });
     });
 
-    test("return (0, 0) if the point is at the center of the rectangle", function () {
+    test('return (0, 0) if the point is at the center of the rectangle', function () {
       let rect = { x: 0, y: 0, width: 1, height: 1 };
       expect(util.intersectRect(rect, { x: 0, y: 0 })).toEqual({ x: 0, y: 0 });
     });
   });
 
-  describe("buildLayerMatrix", function () {
-    test("creates a matrix based on rank and order of nodes in the graph", function () {
+  describe('buildLayerMatrix', function () {
+    test('creates a matrix based on rank and order of nodes in the graph', function () {
       let g = new Graph();
 
       g.addNodes([
         {
-          id: "a",
+          id: 'a',
           data: { rank: 0, order: 0 },
         },
         {
-          id: "b",
+          id: 'b',
           data: { rank: 0, order: 1 },
         },
         {
-          id: "c",
+          id: 'c',
           data: { rank: 1, order: 0 },
         },
         {
-          id: "d",
+          id: 'd',
           data: { rank: 1, order: 1 },
         },
         {
-          id: "e",
+          id: 'e',
           data: { rank: 2, order: 0 },
         },
       ]);
 
-      expect(util.buildLayerMatrix(g)).toEqual([["a", "b"], ["c", "d"], ["e"]]);
+      expect(util.buildLayerMatrix(g)).toEqual([['a', 'b'], ['c', 'd'], ['e']]);
     });
   });
 
@@ -367,59 +367,59 @@ describe("util", function () {
   //   });
   // });
 
-  describe("normalizeRanks", function () {
-    test("adjust ranks such that all are >= 0, and at least one is 0", function () {
+  describe('normalizeRanks', function () {
+    test('adjust ranks such that all are >= 0, and at least one is 0', function () {
       let g = new Graph();
       g.addNodes([
         {
-          id: "a",
+          id: 'a',
           data: { rank: 3 },
         },
         {
-          id: "b",
+          id: 'b',
           data: { rank: 2 },
         },
         {
-          id: "c",
+          id: 'c',
           data: { rank: 4 },
         },
       ]);
 
       util.normalizeRanks(g);
 
-      expect(g.getNode("a").data.rank).toEqual(1);
-      expect(g.getNode("b").data.rank).toEqual(0);
-      expect(g.getNode("c").data.rank).toEqual(2);
+      expect(g.getNode('a').data.rank).toEqual(1);
+      expect(g.getNode('b').data.rank).toEqual(0);
+      expect(g.getNode('c').data.rank).toEqual(2);
     });
 
-    test("works for negative ranks", function () {
+    test('works for negative ranks', function () {
       let g = new Graph();
       g.addNodes([
         {
-          id: "a",
+          id: 'a',
           data: { rank: -3 },
         },
         {
-          id: "b",
+          id: 'b',
           data: { rank: -2 },
         },
       ]);
 
       util.normalizeRanks(g);
 
-      expect(g.getNode("a").data.rank).toEqual(0);
-      expect(g.getNode("b").data.rank).toEqual(1);
+      expect(g.getNode('a').data.rank).toEqual(0);
+      expect(g.getNode('b').data.rank).toEqual(1);
     });
 
-    test("does not assign a rank to subgraphs", function () {
+    test('does not assign a rank to subgraphs', function () {
       let g = new Graph<any, any>({
         tree: [
           {
-            id: "sg",
+            id: 'sg',
             data: {},
             children: [
               {
-                id: "a",
+                id: 'a',
                 data: { rank: 0 },
               },
             ],
@@ -429,46 +429,46 @@ describe("util", function () {
 
       util.normalizeRanks(g);
 
-      expect(g.getNode("sg").data.hasOwnProperty("rank")).not.toBe(true);
-      expect(g.getNode("a").data.rank).toEqual(0);
+      expect(g.getNode('sg').data.hasOwnProperty('rank')).not.toBe(true);
+      expect(g.getNode('a').data.rank).toEqual(0);
     });
   });
 
-  describe("removeEmptyRanks", function () {
-    test("Removes border ranks without any nodes", function () {
+  describe('removeEmptyRanks', function () {
+    test('Removes border ranks without any nodes', function () {
       let g = new Graph<any, any>({
         nodes: [
           {
-            id: "a",
+            id: 'a',
             data: { rank: 0 },
           },
           {
-            id: "b",
+            id: 'b',
             data: { rank: 4 },
           },
         ],
       });
       util.removeEmptyRanks(g, 4);
-      expect(g.getNode("a").data.rank).toEqual(0);
-      expect(g.getNode("b").data.rank).toEqual(1);
+      expect(g.getNode('a').data.rank).toEqual(0);
+      expect(g.getNode('b').data.rank).toEqual(1);
     });
 
-    test("Does not remove non-border ranks", function () {
+    test('Does not remove non-border ranks', function () {
       let g = new Graph<any, any>({
         nodes: [
           {
-            id: "a",
+            id: 'a',
             data: { rank: 0 },
           },
           {
-            id: "b",
+            id: 'b',
             data: { rank: 8 },
           },
         ],
       });
       util.removeEmptyRanks(g, 4);
-      expect(g.getNode("a").data.rank).toEqual(0);
-      expect(g.getNode("b").data.rank).toEqual(2);
+      expect(g.getNode('a').data.rank).toEqual(0);
+      expect(g.getNode('b').data.rank).toEqual(2);
     });
   });
 });

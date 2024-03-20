@@ -1,5 +1,5 @@
-import { isNumber } from "@antv/util";
-import { Node, Edge } from "../types";
+import { isNumber } from '@antv/util';
+import { Edge, Node } from '../types';
 
 export const clone = <T>(target: T): T => {
   if (target === null) {
@@ -15,7 +15,7 @@ export const clone = <T>(target: T): T => {
     });
     return cp.map((n: any) => clone<any>(n)) as any;
   }
-  if (typeof target === "object") {
+  if (typeof target === 'object') {
     const cp = {} as { [key: string]: any };
     Object.keys(target).forEach((k) => {
       cp[k] = clone<any>((target as any)[k]);
@@ -33,7 +33,7 @@ export const clone = <T>(target: T): T => {
  */
 export const cloneFormatData = <T extends Node | Edge>(
   target: T,
-  initRange?: [number, number]
+  initRange?: [number, number],
 ): T => {
   const cloned = clone(target);
   cloned.data = cloned.data || {};

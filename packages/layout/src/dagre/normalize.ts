@@ -1,6 +1,6 @@
-import { Edge, ID } from "@antv/graphlib";
-import { EdgeData, Graph as IGraph } from "../types";
-import { addDummyNode } from "./util";
+import { Edge, ID } from '@antv/graphlib';
+import { EdgeData, Graph as IGraph } from '../types';
+import { addDummyNode } from './util';
 
 /*
  * Breaks any long edges in the graph into short segments that span 1 layer
@@ -19,8 +19,8 @@ import { addDummyNode } from "./util";
  *       the first dummy in each chain of dummy nodes produced.
  */
 
-const DUMMY_NODE_EDGE = "edge";
-const DUMMY_NODE_EDGE_LABEL = "edge-label";
+const DUMMY_NODE_EDGE = 'edge';
+const DUMMY_NODE_EDGE_LABEL = 'edge-label';
 
 const run = (g: IGraph, dummyChains: ID[]) => {
   g.getAllEdges().forEach((edge) => normalizeEdge(g, edge, dummyChains));
@@ -56,7 +56,7 @@ const normalizeEdge = (g: IGraph, e: Edge<EdgeData>, dummyChains: ID[]) => {
       rank: vRank,
     };
 
-    dummy = addDummyNode(g, DUMMY_NODE_EDGE, nodeData, "_d");
+    dummy = addDummyNode(g, DUMMY_NODE_EDGE, nodeData, '_d');
 
     if (vRank === labelRank) {
       nodeData.width = e.data.width!;

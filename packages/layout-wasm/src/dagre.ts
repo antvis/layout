@@ -1,16 +1,16 @@
 import {
-  Graph,
-  LayoutMapping,
-  DagreLayoutOptions,
-  Layout,
-  OutNode,
   cloneFormatData,
-  OutNodeData,
+  DagreLayoutOptions,
   Edge,
-} from "@antv/layout";
-import { isNumber } from "@antv/util";
-import type { WASMLayoutOptions } from "./interface";
-import { graphlib2WASMInput } from "./util";
+  Graph,
+  Layout,
+  LayoutMapping,
+  OutNode,
+  OutNodeData,
+} from '@antv/layout';
+import { isNumber } from '@antv/util';
+import type { WASMLayoutOptions } from './interface';
+import { graphlib2WASMInput } from './util';
 
 const DEFAULTS_LAYOUT_OPTIONS: Partial<DagreLayoutOptions> = {
   nodesep: 50,
@@ -22,8 +22,7 @@ interface WASMDagreLayoutOptions
   extends DagreLayoutOptions,
     WASMLayoutOptions {}
 
-interface FormattedOptions extends WASMDagreLayoutOptions {
-}
+interface FormattedOptions extends WASMDagreLayoutOptions {}
 
 /**
  * Layout with dagre
@@ -31,10 +30,10 @@ interface FormattedOptions extends WASMDagreLayoutOptions {
  * @example
  */
 export class DagreLayout implements Layout<WASMDagreLayoutOptions> {
-  id = "dagreWASM";
+  id = 'dagreWASM';
 
   constructor(
-    public options: WASMDagreLayoutOptions = {} as WASMDagreLayoutOptions
+    public options: WASMDagreLayoutOptions = {} as WASMDagreLayoutOptions,
   ) {
     this.options = {
       ...DEFAULTS_LAYOUT_OPTIONS,
@@ -58,27 +57,21 @@ export class DagreLayout implements Layout<WASMDagreLayoutOptions> {
   private async genericFruchtermanLayout(
     assign: false,
     graph: Graph,
-    options?: DagreLayoutOptions
+    options?: DagreLayoutOptions,
   ): Promise<LayoutMapping>;
   private async genericFruchtermanLayout(
     assign: true,
     graph: Graph,
-    options?: DagreLayoutOptions
+    options?: DagreLayoutOptions,
   ): Promise<void>;
   private async genericFruchtermanLayout(
     assign: boolean,
     graph: Graph,
-    options?: DagreLayoutOptions
+    options?: DagreLayoutOptions,
   ): Promise<LayoutMapping | void> {
     const formattedOptions = this.formatOptions(options);
-    const {
-      threads,
-      nodesep,
-      ranksep,
-      rankdir,
-      align,
-      begin,
-    } = formattedOptions;
+    const { threads, nodesep, ranksep, rankdir, align, begin } =
+      formattedOptions;
 
     let nodes = graph.getAllNodes();
     let edges = graph.getAllEdges();
@@ -110,14 +103,14 @@ export class DagreLayout implements Layout<WASMDagreLayoutOptions> {
     }
 
     const layoutNodes: OutNode[] = nodes.map(
-      (node) => cloneFormatData(node) as OutNode
+      (node) => cloneFormatData(node) as OutNode,
     );
     layoutNodes.forEach((node, i) => {
       if (!isNumber(node.data.x)) node.data.x = 0;
       if (!isNumber(node.data.y)) node.data.y = 0;
     });
     const layoutEdges: Edge[] = edges.map(
-      (edge) => cloneFormatData(edge) as Edge
+      (edge) => cloneFormatData(edge) as Edge,
     );
 
     const wasmInput = graphlib2WASMInput(layoutNodes, edges, 2, true);
@@ -195,9 +188,7 @@ export class DagreLayout implements Layout<WASMDagreLayoutOptions> {
     return { nodes: layoutNodes, edges: layoutEdges };
   }
 
-  private formatOptions(
-    options: DagreLayoutOptions = {}
-  ): FormattedOptions {
+  private formatOptions(options: DagreLayoutOptions = {}): FormattedOptions {
     const mergedOptions = { ...this.options, ...options } as FormattedOptions;
 
     return mergedOptions;

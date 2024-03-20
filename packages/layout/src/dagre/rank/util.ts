@@ -1,5 +1,5 @@
-import { Edge, ID } from "@antv/graphlib";
-import { EdgeData, Graph } from "../../types";
+import { Edge, ID } from '@antv/graphlib';
+import { EdgeData, Graph } from '../../types';
 
 /*
  * Initializes ranks for the input graph using the longest path algorithm. This
@@ -35,7 +35,7 @@ const longestPath = (g: Graph) => {
 
     let rank: number;
 
-    g.getRelatedEdges(v, "out")?.forEach((e) => {
+    g.getRelatedEdges(v, 'out')?.forEach((e) => {
       const wRank = dfs(e.target);
       const minLen = e.data.minlen!;
       const r = wRank - minLen;
@@ -55,7 +55,7 @@ const longestPath = (g: Graph) => {
   };
 
   g.getAllNodes()
-    .filter((n) => g.getRelatedEdges(n.id, "in").length === 0)
+    .filter((n) => g.getRelatedEdges(n.id, 'in').length === 0)
     .forEach((source) => dfs(source.id));
 };
 
@@ -74,7 +74,7 @@ const longestPathWithLayer = (g: Graph) => {
 
     let rank: number;
 
-    g.getRelatedEdges(v, "out")?.forEach((e) => {
+    g.getRelatedEdges(v, 'out')?.forEach((e) => {
       const wRank = dfs(e.target);
       const minLen = e.data.minlen!;
       const r = wRank - minLen;
@@ -98,7 +98,7 @@ const longestPathWithLayer = (g: Graph) => {
   };
 
   g.getAllNodes()
-    .filter((n) => g.getRelatedEdges(n.id, "in").length === 0)
+    .filter((n) => g.getRelatedEdges(n.id, 'in').length === 0)
     .forEach((source) => {
       if (source) dfs(source.id);
     });
@@ -125,7 +125,7 @@ const longestPathWithLayer = (g: Graph) => {
     forwardVisited[v] = true;
 
     // DFS遍历子节点
-    g.getRelatedEdges(v, "out")?.forEach((e) => {
+    g.getRelatedEdges(v, 'out')?.forEach((e) => {
       dfsForward(e.target, currRank + e.data.minlen!);
     });
   };

@@ -1,23 +1,23 @@
 import { Graph as IGraph } from '@antv/graphlib';
 import { isFunction, isNumber, isObject } from '@antv/util';
 import {
-  Graph,
-  Node,
   Edge,
-  LayoutMapping,
   ForceLayoutOptions,
-  Point,
-  OutNode,
+  Graph,
+  LayoutMapping,
   LayoutWithIterations,
+  Node,
+  OutNode,
+  Point,
 } from '../types';
 import { formatNumberFn, isArray } from '../util';
 import { forceNBody } from './forceNBody';
 import {
-  CalcNode,
   CalcEdge,
-  CalcNodeData,
   CalcEdgeData,
   CalcGraph,
+  CalcNode,
+  CalcNodeData,
   FormatedOptions,
 } from './types';
 
@@ -127,13 +127,13 @@ export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
         this.lastGraph,
         i,
         this.lastVelMap,
-        this.lastOptions
+        this.lastOptions,
       );
       this.updatePosition(
         this.lastGraph,
         this.lastCalcGraph,
         this.lastVelMap,
-        this.lastOptions
+        this.lastOptions,
       );
     }
 
@@ -148,7 +148,7 @@ export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
           x: node.data.x,
           y: node.data.y,
           z: this.options.dimensions === 3 ? node.data.z : undefined,
-        })
+        }),
       );
     }
 
@@ -158,17 +158,17 @@ export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
   private async genericForceLayout(
     assign: false,
     graph: Graph,
-    options?: ForceLayoutOptions
+    options?: ForceLayoutOptions,
   ): Promise<LayoutMapping>;
   private async genericForceLayout(
     assign: true,
     graph: Graph,
-    options?: ForceLayoutOptions
+    options?: ForceLayoutOptions,
   ): Promise<void>;
   private async genericForceLayout(
     assign: boolean,
     graph: Graph,
-    options?: ForceLayoutOptions
+    options?: ForceLayoutOptions,
   ): Promise<LayoutMapping | void> {
     const mergedOptions = { ...this.options, ...options };
 
@@ -212,7 +212,7 @@ export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
         linkDistance: linkDistance(
           edge,
           graph.getNode(edge.source),
-          graph.getNode(edge.target)
+          graph.getNode(edge.target),
         ),
       },
     }));
@@ -269,7 +269,7 @@ export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
               x: node.data.x,
               y: node.data.y,
               z: dimensions === 3 ? node.data.z : undefined,
-            })
+            }),
           );
         }
         onTick?.({
@@ -298,7 +298,7 @@ export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
    */
   private formatOptions(
     options: ForceLayoutOptions,
-    graph: Graph
+    graph: Graph,
   ): FormatedOptions {
     const formattedOptions = { ...options } as FormatedOptions;
     const {
@@ -421,7 +421,7 @@ export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
       sameTypeLeafMap = getSameTypeLeafMap(calcGraph, nodeClusterBy);
       clusters =
         Array.from(
-          new Set(calcNodes?.map((node) => node.data[nodeClusterBy] as string))
+          new Set(calcNodes?.map((node) => node.data[nodeClusterBy] as string)),
         ) || [];
       // @ts-ignore
       options.centripetalOptions = Object.assign(basicCentripetal, {
@@ -480,8 +480,8 @@ export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
       if (!clusters) {
         clusters = Array.from(
           new Set(
-            calcNodes.map((node: Node) => node.data[nodeClusterBy] as string)
-          )
+            calcNodes.map((node: Node) => node.data[nodeClusterBy] as string),
+          ),
         );
       }
       clusters = clusters.filter((item) => item !== undefined);
@@ -535,7 +535,7 @@ export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
     graph: Graph,
     iter: number,
     velMap: { [id: string]: Point },
-    options: FormatedOptions
+    options: FormatedOptions,
   ) {
     const accMap: { [id: string]: Point } = {};
     const calcNodes = calcGraph.getAllNodes();
@@ -590,7 +590,7 @@ export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
   public calRepulsive(
     calcGraph: CalcGraph,
     accMap: { [id: string]: Point },
-    options: FormatedOptions
+    options: FormatedOptions,
   ) {
     const { dimensions, factor, coulombDisScale } = options;
     forceNBody(
@@ -598,7 +598,7 @@ export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
       factor,
       coulombDisScale * coulombDisScale,
       accMap,
-      dimensions
+      dimensions,
     );
   }
 
@@ -610,7 +610,7 @@ export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
   public calAttractive(
     calcGraph: CalcGraph,
     accMap: { [id: string]: Point },
-    options: FormatedOptions
+    options: FormatedOptions,
   ) {
     const { dimensions, nodeSize } = options;
     calcGraph.getAllEdges().forEach((edge, i) => {
@@ -665,7 +665,7 @@ export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
     calcGraph: CalcGraph,
     graph: Graph,
     accMap: { [id: string]: Point },
-    options: FormatedOptions
+    options: FormatedOptions,
   ) {
     const { getCenter } = options;
     const calcNodes = calcGraph.getAllNodes();
@@ -778,7 +778,7 @@ export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
     calcGraph: CalcGraph,
     accMap: { [id: string]: Point },
     velMap: { [id: string]: Point },
-    options: FormatedOptions
+    options: FormatedOptions,
   ) {
     const { damping, maxSpeed, interval, dimensions } = options;
     const calcNodes = calcGraph.getAllNodes();
@@ -818,7 +818,7 @@ export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
     graph: Graph,
     calcGraph: CalcGraph,
     velMap: { [id: string]: Point },
-    options: FormatedOptions
+    options: FormatedOptions,
   ) {
     const { distanceThresholdMode, interval, dimensions } = options;
     const calcNodes = calcGraph.getAllNodes();
@@ -851,7 +851,7 @@ export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
       });
 
       const distanceMagnitude = Math.sqrt(
-        distX * distX + distY * distY + distZ * distZ
+        distX * distX + distY * distY + distZ * distZ,
       );
       switch (distanceThresholdMode) {
         case 'max':
@@ -891,7 +891,7 @@ type SameTypeLeafMap = {
  */
 const getSameTypeLeafMap = (
   calcGraph: CalcGraph,
-  nodeClusterBy: string
+  nodeClusterBy: string,
 ): SameTypeLeafMap => {
   const calcNodes = calcGraph.getAllNodes();
   if (!calcNodes?.length) return {};
@@ -903,7 +903,7 @@ const getSameTypeLeafMap = (
         calcGraph,
         'leaf',
         node,
-        nodeClusterBy
+        nodeClusterBy,
       );
     }
   });
@@ -922,7 +922,7 @@ const getCoreNodeAndSiblingLeaves = (
   calcGraph: CalcGraph,
   type: 'leaf' | 'all',
   node: Node,
-  nodeClusterBy: string
+  nodeClusterBy: string,
 ): {
   coreNode: Node;
   siblingLeaves: Node[];
@@ -946,14 +946,14 @@ const getCoreNodeAndSiblingLeaves = (
   siblingLeaves = siblingLeaves.filter(
     (node) =>
       calcGraph.getDegree(node.id, 'in') === 0 ||
-      calcGraph.getDegree(node.id, 'out') === 0
+      calcGraph.getDegree(node.id, 'out') === 0,
   );
   const sameTypeLeaves = getSameTypeNodes(
     calcGraph,
     type,
     nodeClusterBy,
     node,
-    siblingLeaves
+    siblingLeaves,
   );
   return { coreNode, siblingLeaves, sameTypeLeaves };
 };
@@ -972,7 +972,7 @@ const getSameTypeNodes = (
   type: 'leaf' | 'all',
   nodeClusterBy: string,
   node: Node,
-  relativeNodes: Node[]
+  relativeNodes: Node[],
 ) => {
   const typeName = node.data[nodeClusterBy] || '';
   let sameTypeNodes =
@@ -982,7 +982,7 @@ const getSameTypeNodes = (
     sameTypeNodes = sameTypeNodes.filter(
       (item) =>
         calcGraph.getDegree(item.id, 'in') === 0 ||
-        calcGraph.getDegree(item.id, 'out') === 0
+        calcGraph.getDegree(item.id, 'out') === 0,
     );
   }
   return sameTypeNodes;

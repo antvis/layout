@@ -1,13 +1,13 @@
 import { isFunction, isNumber, isObject, isString } from '@antv/util';
 import type {
+  ConcentricLayoutOptions,
   Graph,
-  Node,
+  IndexMap,
+  Layout,
   LayoutMapping,
+  Node,
   OutNode,
   PointTuple,
-  ConcentricLayoutOptions,
-  Layout,
-  IndexMap,
 } from './types';
 import { cloneFormatData, isArray } from './util';
 import { handleSingleNodeGraph } from './util/common';
@@ -43,7 +43,7 @@ export class ConcentricLayout implements Layout<ConcentricLayoutOptions> {
   id = 'concentric';
 
   constructor(
-    public options: ConcentricLayoutOptions = {} as ConcentricLayoutOptions
+    public options: ConcentricLayoutOptions = {} as ConcentricLayoutOptions,
   ) {
     this.options = {
       ...DEFAULTS_LAYOUT_OPTIONS,
@@ -67,17 +67,17 @@ export class ConcentricLayout implements Layout<ConcentricLayoutOptions> {
   private async genericConcentricLayout(
     assign: false,
     graph: Graph,
-    options?: ConcentricLayoutOptions
+    options?: ConcentricLayoutOptions,
   ): Promise<LayoutMapping>;
   private async genericConcentricLayout(
     assign: true,
     graph: Graph,
-    options?: ConcentricLayoutOptions
+    options?: ConcentricLayoutOptions,
   ): Promise<void>;
   private async genericConcentricLayout(
     assign: boolean,
     graph: Graph,
-    options?: ConcentricLayoutOptions
+    options?: ConcentricLayoutOptions,
   ): Promise<LayoutMapping | void> {
     const mergedOptions = { ...this.options, ...options };
     const {
@@ -145,7 +145,7 @@ export class ConcentricLayout implements Layout<ConcentricLayoutOptions> {
       } else if (isObject(data.size)) {
         nodeSize = Math.max(
           (data.size as any).width,
-          (data.size as any).height
+          (data.size as any).height,
         );
       }
       maxNodeSize = Math.max(maxNodeSize, nodeSize);
@@ -172,13 +172,13 @@ export class ConcentricLayout implements Layout<ConcentricLayoutOptions> {
     if (sortBy === 'degree') {
       layoutNodes.sort(
         (n1: Node, n2: Node) =>
-          graph.getDegree(n2.id, 'both') - graph.getDegree(n1.id, 'both')
+          graph.getDegree(n2.id, 'both') - graph.getDegree(n1.id, 'both'),
       );
     } else {
       // sort nodes by value
       layoutNodes.sort(
         (n1: Node, n2: Node) =>
-          (n2 as any).data[sortBy] - (n1 as any).data[sortBy]
+          (n2 as any).data[sortBy] - (n1 as any).data[sortBy],
       );
     }
 
@@ -202,11 +202,11 @@ export class ConcentricLayout implements Layout<ConcentricLayoutOptions> {
           sortBy === 'degree'
             ? Math.abs(
                 graph.getDegree(currentLevel.nodes[0].id, 'both') -
-                  graph.getDegree(node.id, 'both')
+                  graph.getDegree(node.id, 'both'),
               )
             : Math.abs(
                 (currentLevel.nodes[0].data[sortBy] as number) -
-                  (node as any).data[sortBy]
+                  (node as any).data[sortBy],
               );
 
         if (maxLevelDiff && diff >= maxLevelDiff) {
@@ -243,7 +243,7 @@ export class ConcentricLayout implements Layout<ConcentricLayoutOptions> {
         const dcos = Math.cos(level.dTheta) - Math.cos(0);
         const dsin = Math.sin(level.dTheta) - Math.sin(0);
         const rMin = Math.sqrt(
-          (minDist * minDist) / (dcos * dcos + dsin * dsin)
+          (minDist * minDist) / (dcos * dcos + dsin * dsin),
         ); // s.t. no nodes overlapping
 
         r = Math.max(rMin, r);
@@ -286,7 +286,7 @@ export class ConcentricLayout implements Layout<ConcentricLayoutOptions> {
         graph.mergeNodeData(node.id, {
           x: node.data.x,
           y: node.data.y,
-        })
+        }),
       );
     }
 

@@ -1,6 +1,6 @@
-import { threads } from "wasm-feature-detect";
-import * as Comlink from "comlink";
-import type { Threads } from "./interface";
+import * as Comlink from 'comlink';
+import { threads } from 'wasm-feature-detect';
+import type { Threads } from './interface';
 
 /**
  * [Not all browsers](https://webassembly.org/roadmap/) support WebAssembly threads yet,
@@ -17,9 +17,9 @@ export async function supportsThreads() {
 export async function initThreads(useMultiThread = true): Promise<Threads> {
   const initHandlers = Comlink.wrap(
     // @ts-ignore
-    new Worker(new URL("./wasm-worker.js", import.meta.url), {
-      type: "module",
-    })
+    new Worker(new URL('./wasm-worker.js', import.meta.url), {
+      type: 'module',
+    }),
   );
 
   // @ts-ignore

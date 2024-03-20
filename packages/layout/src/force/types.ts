@@ -1,13 +1,13 @@
-import { Graph as IGraph, Node as INode, Edge as IEdge } from "@antv/graphlib";
+import { Edge as IEdge, Graph as IGraph, Node as INode } from '@antv/graphlib';
 import {
   CentripetalOptions,
   Edge,
-  Node,
   EdgeData,
   ForceLayoutOptions,
+  Node,
   NodeData,
   PointTuple,
-} from "../types";
+} from '../types';
 
 export interface CalcNodeData extends NodeData {
   x: number;

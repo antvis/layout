@@ -1,28 +1,28 @@
-import { isString } from "@antv/util";
+import { isString } from '@antv/util';
 import type {
   Graph,
-  Node,
+  Layout,
   LayoutMapping,
   Matrix,
+  Node,
   OutNode,
+  Point,
   PointTuple,
   RadialLayoutOptions,
-  Layout,
-  Point,
-} from "../types";
+} from '../types';
 import {
   cloneFormatData,
   floydWarshall,
+  formatNodeSize,
   getAdjMatrix,
   getEuclideanDistance,
-  formatNodeSize,
-} from "../util";
-import { handleSingleNodeGraph } from "../util/common";
-import { mds } from "./mds";
+} from '../util';
+import { handleSingleNodeGraph } from '../util/common';
+import { mds } from './mds';
 import {
   radialNonoverlapForce,
   RadialNonoverlapForceOptions,
-} from "./radial-nonoverlap-force";
+} from './radial-nonoverlap-force';
 
 const DEFAULTS_LAYOUT_OPTIONS: Partial<RadialLayoutOptions> = {
   maxIteration: 1000,
@@ -51,7 +51,7 @@ const DEFAULTS_LAYOUT_OPTIONS: Partial<RadialLayoutOptions> = {
  * await layout.assign(graph, { focusNode: 'node0' });
  */
 export class RadialLayout implements Layout<RadialLayoutOptions> {
-  id = "radial";
+  id = 'radial';
 
   constructor(public options: RadialLayoutOptions = {} as RadialLayoutOptions) {
     this.options = {
@@ -76,17 +76,17 @@ export class RadialLayout implements Layout<RadialLayoutOptions> {
   private async genericRadialLayout(
     assign: false,
     graph: Graph,
-    options?: RadialLayoutOptions
+    options?: RadialLayoutOptions,
   ): Promise<LayoutMapping>;
   private async genericRadialLayout(
     assign: true,
     graph: Graph,
-    options?: RadialLayoutOptions
+    options?: RadialLayoutOptions,
   ): Promise<void>;
   private async genericRadialLayout(
     assign: boolean,
     graph: Graph,
-    options?: RadialLayoutOptions
+    options?: RadialLayoutOptions,
   ): Promise<LayoutMapping | void> {
     const mergedOptions = { ...this.options, ...options };
     const {
@@ -110,11 +110,11 @@ export class RadialLayout implements Layout<RadialLayoutOptions> {
     const edges = graph.getAllEdges();
 
     const width =
-      !propsWidth && typeof window !== "undefined"
+      !propsWidth && typeof window !== 'undefined'
         ? window.innerWidth
         : propsWidth!;
     const height =
-      !propsHeight && typeof window !== "undefined"
+      !propsHeight && typeof window !== 'undefined'
         ? window.innerHeight
         : propsHeight!;
     const center = (
@@ -176,7 +176,7 @@ export class RadialLayout implements Layout<RadialLayoutOptions> {
       radii,
       unitRadius,
       sortBy,
-      sortStrength
+      sortStrength,
     );
     // the weight matrix, Wij = 1 / dij^(-2)
     const weights = getWeightMatrix(idealDistances);
@@ -198,7 +198,7 @@ export class RadialLayout implements Layout<RadialLayoutOptions> {
       weights,
       idealDistances,
       radii,
-      focusIndex
+      focusIndex,
     );
     let nodeSizeFunc;
     // stagger the overlapped nodes
@@ -232,7 +232,7 @@ export class RadialLayout implements Layout<RadialLayoutOptions> {
         graph.mergeNodeData(node.id, {
           x: node.data.x,
           y: node.data.y,
-        })
+        }),
       );
     }
 
@@ -249,7 +249,7 @@ export class RadialLayout implements Layout<RadialLayoutOptions> {
     weights: Matrix[],
     idealDistances: Matrix[],
     radii: number[],
-    focusIndex: number
+    focusIndex: number,
   ) {
     for (let i = 0; i <= maxIteration; i++) {
       const param = i / maxIteration;
@@ -259,7 +259,7 @@ export class RadialLayout implements Layout<RadialLayoutOptions> {
         radii,
         idealDistances,
         weights,
-        focusIndex
+        focusIndex,
       );
     }
   }
@@ -269,7 +269,7 @@ export class RadialLayout implements Layout<RadialLayoutOptions> {
     radii: number[],
     distances: Matrix[],
     weights: Matrix[],
-    focusIndex: number
+    focusIndex: number,
   ) {
     const vparam = 1 - param;
     positions.forEach((v: Point, i: number) => {
@@ -320,7 +320,7 @@ const eIdealDisMatrix = (
   radii: number[],
   unitRadius: number,
   sortBy: string | undefined,
-  sortStrength: number
+  sortStrength: number,
 ): Matrix[] => {
   if (!nodes) return [];
   const result: Matrix[] = [];
@@ -336,10 +336,10 @@ const eIdealDisMatrix = (
           newRow.push(0);
         } else if (radii[i] === radii[j]) {
           // i and j are on the same circle
-          if (sortBy === "data") {
+          if (sortBy === 'data') {
             // sort the nodes on the same circle according to the ordering of the data
             newRow.push(
-              (v * (Math.abs(i - j) * sortStrength)) / (radii[i] / unitRadius)
+              (v * (Math.abs(i - j) * sortStrength)) / (radii[i] / unitRadius),
             );
           } else if (sortBy) {
             // sort the nodes on the same circle according to the attributes
@@ -349,7 +349,7 @@ const eIdealDisMatrix = (
               iValue = sortValueCache[nodes[i].id];
             } else {
               const value =
-                (sortBy === "id"
+                (sortBy === 'id'
                   ? nodes[i].id
                   : (nodes[i].data?.[sortBy] as number | string)) || 0;
               if (isString(value)) {
@@ -364,7 +364,7 @@ const eIdealDisMatrix = (
               jValue = sortValueCache[nodes[j].id];
             } else {
               const value =
-                (sortBy === "id"
+                (sortBy === 'id'
                   ? nodes[j].id
                   : (nodes[j].data?.[sortBy] as number | string)) || 0;
               if (isString(value)) {
@@ -376,7 +376,7 @@ const eIdealDisMatrix = (
             }
             newRow.push(
               (v * (Math.abs(iValue - jValue) * sortStrength)) /
-                (radii[i] / unitRadius)
+                (radii[i] / unitRadius),
             );
           } else {
             newRow.push((v * linkDistance) / (radii[i] / unitRadius));

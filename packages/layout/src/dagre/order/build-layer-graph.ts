@@ -34,7 +34,7 @@ import { EdgeData, Graph as IGraph, NodeData } from '../../types';
 export const buildLayerGraph = (
   g: IGraph,
   rank: number,
-  direction: 'in' | 'out'
+  direction: 'in' | 'out',
 ) => {
   const root = createRootNode(g);
   const result = new Graph<NodeData, EdgeData>({

@@ -72,7 +72,7 @@ const dfs = (
   weight: number,
   height: number,
   depths: Record<string, number>,
-  v: ID
+  v: ID,
 ) => {
   const children = g.getChildren(v);
   if (!children?.length) {
