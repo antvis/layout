@@ -12,9 +12,9 @@ import {
   initLowLimValues,
   leaveEdge,
   networkSimplex,
-} from '../../../../packages/layout/src/dagre/rank/network-simplex';
-import { longestPath } from '../../../../packages/layout/src/dagre/rank/util';
-import { normalizeRanks } from '../../../../packages/layout/src/dagre/util';
+} from '../../../../packages/layout/src/antv-dagre/rank/network-simplex';
+import { longestPath } from '../../../../packages/layout/src/antv-dagre/rank/util';
+import { normalizeRanks } from '../../../../packages/layout/src/antv-dagre/util';
 
 describe('network simplex', function () {
   let g: Graph<NodeData, EdgeData>;

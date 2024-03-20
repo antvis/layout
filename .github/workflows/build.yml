@@ -23,7 +23,7 @@ jobs:
 
       - name: build
         run: |
-          pnpm ci
+          pnpm run ci
           
       - name: test
         run: |

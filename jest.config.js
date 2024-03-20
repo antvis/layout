@@ -10,18 +10,19 @@
 
 /** @type {import('ts-jest').JestConfigWithTsJest} */
 module.exports = {
-  testEnvironment: "jsdom",
-  testRegex: "__tests__/.*test\\.ts?$",
-  moduleDirectories: ["node_modules", "src", "es"],
-  moduleFileExtensions: ["js", "ts", "json"],
+  testEnvironment: 'jsdom',
+  testRegex: '__tests__/.*test\\.ts?$',
+  moduleDirectories: ['node_modules', 'src', 'es'],
+  moduleFileExtensions: ['js', 'ts', 'json'],
+  modulePathIgnorePatterns: ['<rootDir>/packages'],
   moduleNameMapper: {
-    "@antv/layout/(.*)": "<rootDir>/src/$1",
+    '@antv/layout/(.*)': '<rootDir>/src/$1',
   },
   transform: {
     // '^.+\\.[tj]sx?$' to process js/ts with `ts-jest`
     // '^.+\\.m?[tj]sx?$' to process js/ts/mjs/mts with `ts-jest`
-    "^.+\\.tsx?$": [
-      "ts-jest",
+    '^.+\\.tsx?$': [
+      'ts-jest',
       {
         diagnostics: false,
       },

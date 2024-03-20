@@ -1,4 +1,4 @@
-import { sort } from '../../../../packages/layout/src/dagre/order/sort';
+import { sort } from '../../../../packages/layout/src/antv-dagre/order/sort';
 
 describe('sort', function () {
   test('sorts nodes by barycenter', function () {
