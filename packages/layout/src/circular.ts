@@ -1,14 +1,14 @@
 import type {
-  Graph,
   CircularLayoutOptions,
+  Edge,
+  Graph,
   Layout,
   LayoutMapping,
-  PointTuple,
-  OutNode,
   Node,
-  Edge,
+  OutNode,
+  PointTuple,
 } from './types';
-import { formatSizeFn, formatNumberFn, cloneFormatData } from './util';
+import { cloneFormatData, formatNumberFn, formatSizeFn } from './util';
 import { handleSingleNodeGraph } from './util/common';
 
 const DEFAULTS_LAYOUT_OPTIONS: Partial<CircularLayoutOptions> = {

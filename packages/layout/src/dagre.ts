@@ -2,18 +2,18 @@ import { Graph, ID } from '@antv/graphlib';
 import { isNumber } from '@antv/util';
 import { layout } from './dagre/layout';
 import type {
+  DagreLayoutOptions,
+  Edge,
+  EdgeData,
   Graph as IGraph,
   Layout,
   LayoutMapping,
-  OutNode,
   Node,
-  Edge,
-  DagreLayoutOptions,
   NodeData,
-  EdgeData,
+  OutNode,
   Point,
 } from './types';
-import { cloneFormatData, formatNumberFn, formatNodeSize } from './util';
+import { cloneFormatData, formatNodeSize, formatNumberFn } from './util';
 
 const DEFAULTS_LAYOUT_OPTIONS: Partial<DagreLayoutOptions> = {
   rankdir: 'TB',
@@ -68,17 +68,17 @@ export class DagreLayout implements Layout<DagreLayoutOptions> {
   private async genericDagreLayout(
     assign: false,
     graph: IGraph,
-    options?: DagreLayoutOptions
+    options?: DagreLayoutOptions,
   ): Promise<LayoutMapping>;
   private async genericDagreLayout(
     assign: true,
     graph: IGraph,
-    options?: DagreLayoutOptions
+    options?: DagreLayoutOptions,
   ): Promise<void>;
   private async genericDagreLayout(
     assign: boolean,
     graph: IGraph,
-    options?: DagreLayoutOptions
+    options?: DagreLayoutOptions,
   ): Promise<LayoutMapping | void> {
     const mergedOptions = { ...this.options, ...options };
     const {
@@ -469,7 +469,7 @@ export class DagreLayout implements Layout<DagreLayoutOptions> {
             layerCoordsArr,
             isHorizontal,
             isDifferentLayer,
-            filterControlPointsOutOfBoundary
+            filterControlPointsOutOfBoundary,
           );
         }
       });
@@ -525,8 +525,8 @@ const getControlPoints = (
   filterControlPointsOutOfBoundary: (
     ps: Point[],
     point1: Point,
-    point2: Point
-  ) => Point[]
+    point2: Point,
+  ) => Point[],
 ) => {
   let controlPoints = points?.slice(1, points.length - 1) || []; // 去掉头尾
   // 酌情增加控制点，使折线不穿过跨层的节点
@@ -575,7 +575,7 @@ const getControlPoints = (
         controlPoints = filterControlPointsOutOfBoundary(
           controlPoints,
           sourceNode.data as Point,
-          targetNode.data as Point
+          targetNode.data as Point,
         );
         // one controlPoint at least
         if (!controlPoints.length) {
@@ -588,7 +588,7 @@ const getControlPoints = (
               : {
                   x: sourceX,
                   y: (sourceY! + targetY!) / 2,
-                }) as Point
+                }) as Point,
           );
         }
       } else if (layerDiff > 1) {

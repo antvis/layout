@@ -15,9 +15,9 @@
  * This algorithm is derived from Barth, et al., "Bilayer Cross Counting."
  */
 
-import { ID } from "@antv/graphlib";
-import { Graph } from "../../types";
-import { zipObject } from "../util";
+import { ID } from '@antv/graphlib';
+import { Graph } from '../../types';
+import { zipObject } from '../util';
 
 const twoLayerCrossCount = (g: Graph, northLayer: ID[], southLayer: ID[]) => {
   // Sort all of the edges between the north and south layers by their position
@@ -25,10 +25,10 @@ const twoLayerCrossCount = (g: Graph, northLayer: ID[], southLayer: ID[]) => {
   // their head in the south layer.
   const southPos = zipObject(
     southLayer,
-    southLayer.map((v, i) => i)
+    southLayer.map((v, i) => i),
   );
   const unflat = northLayer.map((v) => {
-    const unsort = g.getRelatedEdges(v, "out").map((e) => {
+    const unsort = g.getRelatedEdges(v, 'out').map((e) => {
       return { pos: southPos[e.target] || 0, weight: e.data.weight };
     });
     return unsort?.sort((a, b) => a.pos - b.pos);

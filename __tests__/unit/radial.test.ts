@@ -1,40 +1,40 @@
-import { Graph } from "@antv/graphlib";
-import { RadialLayout } from "../../packages/layout";
-import { getEuclideanDistance, mathEqual } from "../util";
+import { Graph } from '@antv/graphlib';
+import { RadialLayout } from '../../packages/layout';
+import { getEuclideanDistance, mathEqual } from '../util';
 
 const data: any = {
   nodes: [
-    { id: "0", label: "0", data: {} },
-    { id: "1", label: "1", data: {} },
-    { id: "2", label: "2", data: {} },
-    { id: "3", label: "3", data: {} },
-    { id: "4", label: "4", data: {} },
-    { id: "5", label: "5", data: {} },
+    { id: '0', label: '0', data: {} },
+    { id: '1', label: '1', data: {} },
+    { id: '2', label: '2', data: {} },
+    { id: '3', label: '3', data: {} },
+    { id: '4', label: '4', data: {} },
+    { id: '5', label: '5', data: {} },
   ],
   edges: [
     {
-      id: "edge0",
-      source: "0",
-      target: "1",
+      id: 'edge0',
+      source: '0',
+      target: '1',
       data: {},
     },
     {
-      id: "edge1",
-      source: "0",
-      target: "2",
+      id: 'edge1',
+      source: '0',
+      target: '2',
       data: {},
     },
     {
-      id: "edge2",
-      source: "3",
-      target: "4",
+      id: 'edge2',
+      source: '3',
+      target: '4',
       data: {},
     },
   ],
 };
 
-describe("RadialLayout", () => {
-  test("should return correct default config.", async () => {
+describe('RadialLayout', () => {
+  test('should return correct default config.', async () => {
     const graph = new Graph<any, any>({
       nodes: [...data.nodes],
       edges: [...data.edges],
@@ -62,7 +62,7 @@ describe("RadialLayout", () => {
     expect(positions.nodes[0].data.y).toBe(expectCenter[1]);
   });
 
-  test("should do radial layout with an empty graph.", async () => {
+  test('should do radial layout with an empty graph.', async () => {
     const graph = new Graph<any, any>({
       nodes: [],
       edges: [],
@@ -73,9 +73,9 @@ describe("RadialLayout", () => {
     expect(positions.nodes).not.toBe(undefined);
   });
 
-  test("should do radial layout with a graph which has only one node.", async () => {
+  test('should do radial layout with a graph which has only one node.', async () => {
     const graph = new Graph<any, any>({
-      nodes: [{ id: "node", data: {} }],
+      nodes: [{ id: 'node', data: {} }],
       edges: [],
     });
 
@@ -86,7 +86,7 @@ describe("RadialLayout", () => {
     expect(positions.nodes[0].data.y).toBe(20);
   });
 
-  test("should do radial layout with unitRadius and linkDistance", async () => {
+  test('should do radial layout with unitRadius and linkDistance', async () => {
     const graph = new Graph<any, any>({
       nodes: [...data.nodes],
       edges: [...data.edges],
@@ -127,13 +127,13 @@ describe("RadialLayout", () => {
     expect(mathEqual(distToDescreteNode3, 4 * unitRadius)).toEqual(true);
   });
 
-  test("should do radial layout with focusNode which is a descrete node", async () => {
+  test('should do radial layout with focusNode which is a descrete node', async () => {
     const graph = new Graph<any, any>({
       nodes: [...data.nodes],
       edges: [...data.edges],
     });
     const unitRadius = 100;
-    const focusNodeId = "5";
+    const focusNodeId = '5';
 
     const radial = new RadialLayout({
       focusNode: focusNodeId,
@@ -158,13 +158,13 @@ describe("RadialLayout", () => {
     expect(mathEqual(distToDescreteNode4, 2 * unitRadius)).toEqual(true);
   });
 
-  test("should do radial layout with preventOverlap, number nodeSpacing, and array nodeSize", async () => {
+  test('should do radial layout with preventOverlap, number nodeSpacing, and array nodeSize', async () => {
     const graph = new Graph<any, any>({
       nodes: [...data.nodes],
       edges: [...data.edges],
     });
     const unitRadius = 100;
-    const focusNodeId = "5";
+    const focusNodeId = '5';
     const nodeSize = [40, 20];
     const nodeSpacing = 10;
 
@@ -185,7 +185,7 @@ describe("RadialLayout", () => {
     expect(dist > nodeSpacing + Math.max(...nodeSize)).toEqual(true);
   });
 
-  test("should do radial layout with preventOverlap, function nodeSpacing, and size in data", async () => {
+  test('should do radial layout with preventOverlap, function nodeSpacing, and size in data', async () => {
     const graph = new Graph<any, any>({
       nodes: data.nodes.map((node: any) => ({
         ...node,
@@ -197,7 +197,7 @@ describe("RadialLayout", () => {
       edges: [...data.edges],
     });
     const unitRadius = 100;
-    const focusNodeId = "5";
+    const focusNodeId = '5';
     const nodeSpacing = (d: any) => {
       return 5;
     };
@@ -222,11 +222,11 @@ describe("RadialLayout", () => {
       nodes: [...data.nodes],
       edges: [...data.edges],
     });
-    const focusNodeId = "5";
+    const focusNodeId = '5';
 
     const radial = new RadialLayout({
       focusNode: focusNodeId,
-      sortBy: "data",
+      sortBy: 'data',
     });
     const positions = await radial.execute(graph);
     // keeps relative order in data.nodes
@@ -248,11 +248,11 @@ describe("RadialLayout", () => {
       })),
       edges: [...data.edges],
     });
-    const focusNodeId = "5";
+    const focusNodeId = '5';
 
     const radial = new RadialLayout({
       focusNode: focusNodeId,
-      sortBy: "sortProperty",
+      sortBy: 'sortProperty',
       sortStrength: 1000,
       preventOverlap: true,
       maxPreventOverlapIteration: 2000,
@@ -262,29 +262,29 @@ describe("RadialLayout", () => {
 
     const sameClusterNodeDist = getEuclideanDistance(
       positions.nodes[4],
-      positions.nodes[2]
+      positions.nodes[2],
     );
     const differentClusterNodeDist1 = getEuclideanDistance(
       positions.nodes[2],
-      positions.nodes[1]
+      positions.nodes[1],
     );
     const differentClusterNodeDist2 = getEuclideanDistance(
       positions.nodes[4],
-      positions.nodes[1]
+      positions.nodes[1],
     );
     expect(mathEqual(sameClusterNodeDist, 50)).toBe(true);
     expect(sameClusterNodeDist < differentClusterNodeDist1).toBe(true);
     expect(sameClusterNodeDist < differentClusterNodeDist2).toBe(true);
   });
 
-  test("should not do radial layout with inexistent focusNode", async () => {
+  test('should not do radial layout with inexistent focusNode', async () => {
     const graph = new Graph<any, any>({
       nodes: [...data.nodes],
       edges: [...data.edges],
     });
 
     const radial = new RadialLayout({
-      focusNode: "id-inexistent",
+      focusNode: 'id-inexistent',
       center: [10, 20],
     });
     const positions = await radial.execute(graph);

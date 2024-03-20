@@ -1,22 +1,22 @@
-import { isFunction, isNumber, isObject } from "@antv/util";
-import { Graph as GGraph } from "@antv/graphlib";
+import { Graph as GGraph } from '@antv/graphlib';
+import { isFunction, isNumber, isObject } from '@antv/util';
 import type {
+  Edge,
+  EdgeData,
+  ForceAtlas2LayoutOptions,
   Graph,
+  Layout,
   LayoutMapping,
   Node,
-  Edge,
   OutNode,
-  PointTuple,
-  ForceAtlas2LayoutOptions,
   OutNodeData,
-  EdgeData,
-  Layout,
-} from "../types";
-import { cloneFormatData, isArray } from "../util";
-import { handleSingleNodeGraph } from "../util/common";
-import Body from "./body";
-import Quad from "./quad";
-import QuadTree from "./quadTree";
+  PointTuple,
+} from '../types';
+import { cloneFormatData, isArray } from '../util';
+import { handleSingleNodeGraph } from '../util/common';
+import Body from './body';
+import Quad from './quad';
+import QuadTree from './quadTree';
 
 const DEFAULTS_LAYOUT_OPTIONS: Partial<ForceAtlas2LayoutOptions> = {
   center: [0, 0],
@@ -24,7 +24,7 @@ const DEFAULTS_LAYOUT_OPTIONS: Partial<ForceAtlas2LayoutOptions> = {
   height: 300,
   kr: 5,
   kg: 1,
-  mode: "normal",
+  mode: 'normal',
   preventOverlap: false,
   dissuadeHubs: false,
   maxIteration: 0,
@@ -69,10 +69,10 @@ type CalcGraph = GGraph<OutNodeData, EdgeData>;
  * await layout.assign(graph, { center: [100, 100] });
  */
 export class ForceAtlas2Layout implements Layout<ForceAtlas2LayoutOptions> {
-  id = "forceAtlas2";
+  id = 'forceAtlas2';
 
   constructor(
-    public options: ForceAtlas2LayoutOptions = {} as ForceAtlas2LayoutOptions
+    public options: ForceAtlas2LayoutOptions = {} as ForceAtlas2LayoutOptions,
   ) {
     this.options = {
       ...DEFAULTS_LAYOUT_OPTIONS,
@@ -96,17 +96,17 @@ export class ForceAtlas2Layout implements Layout<ForceAtlas2LayoutOptions> {
   private async genericForceAtlas2Layout(
     assign: false,
     graph: Graph,
-    options?: ForceAtlas2LayoutOptions
+    options?: ForceAtlas2LayoutOptions,
   ): Promise<LayoutMapping>;
   private async genericForceAtlas2Layout(
     assign: true,
     graph: Graph,
-    options?: ForceAtlas2LayoutOptions
+    options?: ForceAtlas2LayoutOptions,
   ): Promise<void>;
   private async genericForceAtlas2Layout(
     assign: boolean,
     graph: Graph,
-    options?: ForceAtlas2LayoutOptions
+    options?: ForceAtlas2LayoutOptions,
   ): Promise<LayoutMapping | void> {
     const edges = graph.getAllEdges();
     const nodes = graph.getAllNodes();
@@ -120,7 +120,7 @@ export class ForceAtlas2Layout implements Layout<ForceAtlas2LayoutOptions> {
     }
 
     const calcNodes = nodes.map(
-      (node) => cloneFormatData(node, [width, height]) as OutNode
+      (node) => cloneFormatData(node, [width, height]) as OutNode,
     );
     const calcEdges = edges.filter((edge: Edge) => {
       const { source, target } = edge;
@@ -179,7 +179,7 @@ export class ForceAtlas2Layout implements Layout<ForceAtlas2LayoutOptions> {
   private getSizes(
     calcGraph: CalcGraph,
     graph: Graph,
-    nodeSize?: number | number[] | ((d?: Node) => number)
+    nodeSize?: number | number[] | ((d?: Node) => number),
   ): SizeMap {
     const nodes = calcGraph.getAllNodes();
     const sizes: SizeMap = {};
@@ -219,15 +219,15 @@ export class ForceAtlas2Layout implements Layout<ForceAtlas2LayoutOptions> {
    */
   private formatOptions(
     options: ForceAtlas2LayoutOptions = {},
-    nodeNum: number
+    nodeNum: number,
   ): FormattedOptions {
     const mergedOptions = { ...this.options, ...options } as FormattedOptions;
     const { center, width, height, barnesHut, prune, maxIteration, kr, kg } =
       mergedOptions;
     mergedOptions.width =
-      !width && typeof window !== "undefined" ? window.innerWidth : width;
+      !width && typeof window !== 'undefined' ? window.innerWidth : width;
     mergedOptions.height =
-      !height && typeof window !== "undefined" ? window.innerHeight : height;
+      !height && typeof window !== 'undefined' ? window.innerHeight : height;
     mergedOptions.center = !center
       ? [mergedOptions.width / 2, mergedOptions.height / 2]
       : center;
@@ -275,7 +275,7 @@ export class ForceAtlas2Layout implements Layout<ForceAtlas2LayoutOptions> {
     iteration: number,
     sizes: SizeMap,
     assign: boolean,
-    options: FormattedOptions
+    options: FormattedOptions,
   ) {
     const { kr, barnesHut, onTick } = options;
     const calcNodes = calcGraph.getAllNodes();
@@ -315,7 +315,7 @@ export class ForceAtlas2Layout implements Layout<ForceAtlas2LayoutOptions> {
           bodies,
           sizes,
         },
-        options
+        options,
       );
       iter--;
       onTick?.({
@@ -352,7 +352,7 @@ export class ForceAtlas2Layout implements Layout<ForceAtlas2LayoutOptions> {
       bodies: BodyMap;
       sizes: SizeMap;
     },
-    options: FormattedOptions
+    options: FormattedOptions,
   ) {
     const { iter, preventOverlapIters, krPrime, sg, preForces, bodies, sizes } =
       params;
@@ -371,7 +371,7 @@ export class ForceAtlas2Layout implements Layout<ForceAtlas2LayoutOptions> {
       preventOverlapIters,
       sizes,
       forces,
-      options
+      options,
     );
 
     // repulsive forces and Gravity, existing on every node pair
@@ -389,7 +389,7 @@ export class ForceAtlas2Layout implements Layout<ForceAtlas2LayoutOptions> {
         forces,
         krPrime,
         sizes,
-        options
+        options,
       );
     }
     // update the positions
@@ -412,7 +412,7 @@ export class ForceAtlas2Layout implements Layout<ForceAtlas2LayoutOptions> {
     preventOverlapIters: number,
     sizes: SizeMap,
     forces: ForceMap,
-    options: FormattedOptions
+    options: FormattedOptions,
   ): ForceMap {
     const { preventOverlap, dissuadeHubs, mode, prune } = options;
     const edges = graph.getAllEdges();
@@ -439,7 +439,7 @@ export class ForceAtlas2Layout implements Layout<ForceAtlas2LayoutOptions> {
       }
       let fa1 = eucliDis;
       let fa2 = fa1;
-      if (mode === "linlog") {
+      if (mode === 'linlog') {
         fa1 = Math.log(1 + eucliDis);
         fa2 = fa1;
       }
@@ -474,7 +474,7 @@ export class ForceAtlas2Layout implements Layout<ForceAtlas2LayoutOptions> {
     graph: CalcGraph,
     forces: ForceMap,
     bodies: BodyMap,
-    options: FormattedOptions
+    options: FormattedOptions,
   ) {
     const { kg, center, prune } = options;
     const nodes = graph.getAllNodes();
@@ -554,7 +554,7 @@ export class ForceAtlas2Layout implements Layout<ForceAtlas2LayoutOptions> {
     forces: ForceMap,
     krPrime: number,
     sizes: SizeMap,
-    options: FormattedOptions
+    options: FormattedOptions,
   ): ForceMap {
     const { preventOverlap, kr, kg, center, prune } = options;
     const nodes = graph.getAllNodes();
@@ -627,7 +627,7 @@ export class ForceAtlas2Layout implements Layout<ForceAtlas2LayoutOptions> {
     forces: ForceMap,
     preForces: ForceMap,
     sg: number,
-    options: FormattedOptions
+    options: FormattedOptions,
   ): number {
     const { ks, tao, prune, ksmax } = options;
     const nodes = graph.getAllNodes();

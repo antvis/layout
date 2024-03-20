@@ -1,5 +1,5 @@
-import { Edge, Graph, ID } from "@antv/graphlib";
-import { Graph as IGraph, NodeData, EdgeData } from "../../packages/layout";
+import { ID } from '@antv/graphlib';
+import { Graph as IGraph } from '../../packages/layout';
 
 export function mathEqual(a: number, b: number) {
   return Math.abs(a - b) < 1;
@@ -19,7 +19,7 @@ export function getEuclideanDistance(p1: any, p2: any) {
   const { data: p1d } = p1;
   const { data: p2d } = p2;
   return Math.sqrt(
-    (p1d.x - p2d.x) * (p1d.x - p2d.x) + (p1d.y - p2d.y) * (p1d.y - p2d.y)
+    (p1d.x - p2d.x) * (p1d.x - p2d.x) + (p1d.y - p2d.y) * (p1d.y - p2d.y),
   );
 }
 
@@ -88,8 +88,8 @@ export const findCycles = (graph: IGraph) => {
       cmpt.length > 1 ||
       (cmpt.length === 1 &&
         !!graph
-          .getRelatedEdges(cmpt[0], "out")
-          .find((e) => e.target === cmpt[0]))
+          .getRelatedEdges(cmpt[0], 'out')
+          .find((e) => e.target === cmpt[0])),
   );
 };
 

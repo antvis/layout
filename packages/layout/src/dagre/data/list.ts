@@ -1,5 +1,5 @@
 const filterOutLinks = (k: string, v: string) => {
-  if (k !== "next" && k !== "prev") {
+  if (k !== 'next' && k !== 'prev') {
     return v;
   }
 };
@@ -55,6 +55,6 @@ export default class List<T> {
       strs.push(JSON.stringify(curr, filterOutLinks));
       curr = curr?.prev;
     }
-    return `[${strs.join(", ")}]`;
+    return `[${strs.join(', ')}]`;
   }
 }

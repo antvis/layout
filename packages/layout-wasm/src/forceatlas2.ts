@@ -1,16 +1,16 @@
 import {
-  Graph,
-  LayoutMapping,
-  PointTuple,
-  ForceAtlas2LayoutOptions,
-  Layout,
-  OutNode,
   cloneFormatData,
+  ForceAtlas2LayoutOptions,
+  Graph,
+  Layout,
+  LayoutMapping,
+  OutNode,
   OutNodeData,
-} from "@antv/layout";
-import { isNumber } from "@antv/util";
-import type { WASMLayoutOptions } from "./interface";
-import { graphlib2WASMInput, distanceThresholdMode2Index } from "./util";
+  PointTuple,
+} from '@antv/layout';
+import { isNumber } from '@antv/util';
+import type { WASMLayoutOptions } from './interface';
+import { distanceThresholdMode2Index, graphlib2WASMInput } from './util';
 
 const DEFAULTS_LAYOUT_OPTIONS: Partial<ForceAtlas2LayoutOptions> = {
   center: [0, 0],
@@ -18,7 +18,7 @@ const DEFAULTS_LAYOUT_OPTIONS: Partial<ForceAtlas2LayoutOptions> = {
   height: 300,
   kr: 5,
   kg: 1,
-  mode: "normal",
+  mode: 'normal',
   preventOverlap: false,
   dissuadeHubs: false,
   maxIteration: 0,
@@ -69,10 +69,10 @@ interface FormattedOptions extends WASMForceAtlas2LayoutOptions {
  * await layout.assign(graph, { center: [100, 100] });
  */
 export class ForceAtlas2Layout implements Layout<WASMForceAtlas2LayoutOptions> {
-  id = "forceAtlas2WASM";
+  id = 'forceAtlas2WASM';
 
   constructor(
-    public options: WASMForceAtlas2LayoutOptions = {} as WASMForceAtlas2LayoutOptions
+    public options: WASMForceAtlas2LayoutOptions = {} as WASMForceAtlas2LayoutOptions,
   ) {
     this.options = {
       ...DEFAULTS_LAYOUT_OPTIONS,
@@ -96,17 +96,17 @@ export class ForceAtlas2Layout implements Layout<WASMForceAtlas2LayoutOptions> {
   private async genericForceAtlas2Layout(
     assign: false,
     graph: Graph,
-    options?: ForceAtlas2LayoutOptions
+    options?: ForceAtlas2LayoutOptions,
   ): Promise<LayoutMapping>;
   private async genericForceAtlas2Layout(
     assign: true,
     graph: Graph,
-    options?: ForceAtlas2LayoutOptions
+    options?: ForceAtlas2LayoutOptions,
   ): Promise<void>;
   private async genericForceAtlas2Layout(
     assign: boolean,
     graph: Graph,
-    options?: ForceAtlas2LayoutOptions
+    options?: ForceAtlas2LayoutOptions,
   ): Promise<LayoutMapping | void> {
     const formattedOptions = this.formatOptions(options);
     const {
@@ -139,7 +139,7 @@ export class ForceAtlas2Layout implements Layout<WASMForceAtlas2LayoutOptions> {
         graph.mergeNodeData(nodes[0].id, {
           x: center[0],
           y: center[1],
-          z: dimensions === 3 ? center[2] : undefined
+          z: dimensions === 3 ? center[2] : undefined,
         });
       }
       return {
@@ -150,7 +150,7 @@ export class ForceAtlas2Layout implements Layout<WASMForceAtlas2LayoutOptions> {
               ...nodes[0].data,
               x: center[0],
               y: center[1],
-              z: dimensions === 3 ? center[2] : undefined
+              z: dimensions === 3 ? center[2] : undefined,
             },
           },
         ],
@@ -159,13 +159,14 @@ export class ForceAtlas2Layout implements Layout<WASMForceAtlas2LayoutOptions> {
     }
 
     const layoutNodes: OutNode[] = nodes.map(
-      (node) => cloneFormatData(node, [width, height]) as OutNode
+      (node) => cloneFormatData(node, [width, height]) as OutNode,
     );
     layoutNodes.forEach((node, i) => {
       if (!isNumber(node.data.x)) node.data.x = Math.random() * width;
       if (!isNumber(node.data.y)) node.data.y = Math.random() * height;
       if (dimensions === 3) {
-        if (!isNumber(node.data.z)) node.data.z = Math.random() * Math.sqrt(width * height);
+        if (!isNumber(node.data.z))
+          node.data.z = Math.random() * Math.sqrt(width * height);
       }
     });
 
@@ -180,7 +181,7 @@ export class ForceAtlas2Layout implements Layout<WASMForceAtlas2LayoutOptions> {
       iterations: maxIteration,
       min_movement: minMovement,
       distance_threshold_mode: distanceThresholdMode2Index(
-        distanceThresholdMode
+        distanceThresholdMode,
       ),
       center,
       ka: 1.0,
@@ -191,9 +192,9 @@ export class ForceAtlas2Layout implements Layout<WASMForceAtlas2LayoutOptions> {
       node_radius: 10,
       kr_prime: 10,
       strong_gravity: false,
-      lin_log: mode === "linlog",
+      lin_log: mode === 'linlog',
       dissuade_hubs: dissuadeHubs,
-      max_distance: maxDistance
+      max_distance: maxDistance,
     });
 
     layoutNodes.forEach((node, i) => {
@@ -227,15 +228,15 @@ export class ForceAtlas2Layout implements Layout<WASMForceAtlas2LayoutOptions> {
    * @returns formatted options
    */
   private formatOptions(
-    options: ForceAtlas2LayoutOptions = {}
+    options: ForceAtlas2LayoutOptions = {},
   ): FormattedOptions {
     const mergedOptions = { ...this.options, ...options } as FormattedOptions;
     const { center, width, height, barnesHut, prune, maxIteration, kr, kg } =
       mergedOptions;
     mergedOptions.width =
-      !width && typeof window !== "undefined" ? window.innerWidth : width;
+      !width && typeof window !== 'undefined' ? window.innerWidth : width;
     mergedOptions.height =
-      !height && typeof window !== "undefined" ? window.innerHeight : height;
+      !height && typeof window !== 'undefined' ? window.innerHeight : height;
     mergedOptions.center = !center
       ? [mergedOptions.width / 2, mergedOptions.height / 2]
       : center;

@@ -1,4 +1,4 @@
-import { OutNode, Edge, IndexMap } from "../types";
+import { Edge, IndexMap, OutNode } from '../types';
 
 /**
  * 将节点和边数据转换为 GPU 可读的数组。并返回 maxEdgePerVetex，每个节点上最多的边数
@@ -8,7 +8,7 @@ import { OutNode, Edge, IndexMap } from "../types";
  */
 export const buildTextureData = (
   nodes: OutNode[],
-  edges: Edge[]
+  edges: Edge[],
 ): {
   array: Float32Array;
   maxEdgePerVetex: number;
@@ -124,7 +124,7 @@ export const buildTextureDataWithTwoEdgeAttr = (
   nodes: OutNode[],
   edges: Edge[],
   attrs1: Function,
-  attrs2: Function
+  attrs2: Function,
 ): {
   array: Float32Array;
   maxEdgePerVetex: number;
@@ -189,7 +189,7 @@ export const buildTextureDataWithTwoEdgeAttr = (
  */
 export const attributesToTextureData = (
   attributeNames: string[],
-  items: any[]
+  items: any[],
 ): { array: Float32Array; count: number } => {
   const dataArray: any[] = [];
   const attributeNum = attributeNames.length;
@@ -197,9 +197,8 @@ export const attributesToTextureData = (
   items.forEach((item: any) => {
     attributeNames.forEach((name: string, i) => {
       if (attributteStringMap[item[name]] === undefined) {
-        attributteStringMap[item[name]] = Object.keys(
-          attributteStringMap
-        ).length;
+        attributteStringMap[item[name]] =
+          Object.keys(attributteStringMap).length;
       }
       dataArray.push(attributteStringMap[item[name]]);
       // insure each node's attributes take inter number of grids

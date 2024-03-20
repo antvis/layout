@@ -26,7 +26,7 @@ export default class Body {
   public mass: number;
   public degree: number;
   public g: number;
-  
+
   constructor(params: BodyProps) {
     /**
      * the id of this body, the same with the node id
@@ -91,8 +91,8 @@ export default class Body {
     dist = dist < 0.0001 ? 0.0001 : dist;
     // the repulsive defined by force atlas 2
     const F = (this.g * (this.degree + 1) * (b.degree + 1)) / dist;
-    this.fx += F * dx / dist;
-    this.fy += F * dy / dist;
+    this.fx += (F * dx) / dist;
+    this.fy += (F * dy) / dist;
   }
   // if quad contains this body
   in(quad: Quad) {
@@ -108,7 +108,7 @@ export default class Body {
       rx: x,
       ry: y,
       mass: nenwMass,
-      degree: dg
+      degree: dg,
     };
     return new Body(params);
   }

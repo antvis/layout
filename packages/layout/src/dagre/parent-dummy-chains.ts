@@ -24,7 +24,7 @@ const findPath = (
   g: IGraph,
   postorderNums: Record<ID, OrderItem>,
   v: ID,
-  w: ID
+  w: ID,
 ) => {
   const vPath: ID[] = [];
   const wPath: ID[] = [];
@@ -66,7 +66,7 @@ export const parentDummyChains = (g: IGraph, dummyChains: ID[]) => {
       g,
       postorderNums,
       originalEdge.source,
-      originalEdge.target
+      originalEdge.target,
     );
     const path = pathData.path;
     const lca = pathData.lca;

@@ -1,7 +1,7 @@
-import { Graph as IGraph } from "../../types";
-import { longestPath, longestPathWithLayer } from "./util";
-import { feasibleTreeWithLayer as feasibleTree } from "./feasible-tree";
-import { networkSimplex } from "./network-simplex";
+import { Graph as IGraph } from '../../types';
+import { feasibleTreeWithLayer as feasibleTree } from './feasible-tree';
+import { networkSimplex } from './network-simplex';
+import { longestPath, longestPathWithLayer } from './util';
 
 /*
  * Assigns a rank to each node in the input graph that respects the "minlen"
@@ -24,16 +24,16 @@ import { networkSimplex } from "./network-simplex";
  */
 export const rank = (
   g: IGraph,
-  ranker: "network-simplex" | "tight-tree" | "longest-path"
+  ranker: 'network-simplex' | 'tight-tree' | 'longest-path',
 ) => {
   switch (ranker) {
-    case "network-simplex":
+    case 'network-simplex':
       networkSimplexRanker(g);
       break;
-    case "tight-tree":
+    case 'tight-tree':
       tightTreeRanker(g);
       break;
-    case "longest-path":
+    case 'longest-path':
       longestPathRanker(g);
       break;
     // default: networkSimplexRanker(g);

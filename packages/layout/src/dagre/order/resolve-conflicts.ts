@@ -24,8 +24,8 @@
  *    elements in `vs`.
  */
 
-import { ID } from "@antv/graphlib";
-import { Graph } from "../../types";
+import { ID } from '@antv/graphlib';
+import { Graph } from '../../types';
 
 export type ConflictEntry = {
   i: number;
@@ -46,7 +46,7 @@ const resolveConflicts = (
     barycenter?: number;
     weight?: number;
   }[],
-  cg: Graph
+  cg: Graph,
 ) => {
   const mappedEntries: Record<string, ConflictEntry> = {};
   entries?.forEach((entry, i: number) => {
@@ -74,7 +74,7 @@ const resolveConflicts = (
   });
 
   const sourceSet = Object.values(mappedEntries).filter?.(
-    (entry: ConflictEntry) => !entry.indegree
+    (entry: ConflictEntry) => !entry.indegree,
   );
 
   return doResolveConflicts(sourceSet);
@@ -98,7 +98,7 @@ const doResolveConflicts = (sourceSet: ConflictEntry[]) => {
 
   const handleOut = (vEntry: ConflictEntry) => {
     return (wEntry: ConflictEntry) => {
-      wEntry["in"]!.push(vEntry);
+      wEntry['in']!.push(vEntry);
       if (--wEntry.indegree! === 0) {
         sourceSet.push(wEntry);
       }
@@ -108,16 +108,16 @@ const doResolveConflicts = (sourceSet: ConflictEntry[]) => {
   while (sourceSet?.length) {
     const entry = sourceSet.pop()!;
     entries.push(entry);
-    entry["in"]!.reverse()?.forEach((e: ConflictEntry) => handleIn(entry)(e));
+    entry['in']!.reverse()?.forEach((e: ConflictEntry) => handleIn(entry)(e));
     entry.out?.forEach((e: ConflictEntry) => handleOut(entry)(e));
   }
 
   const filtered = entries.filter((entry) => !entry.merged);
-  const keys: ("vs" | "i" | "barycenter" | "weight")[] = [
-    "vs",
-    "i",
-    "barycenter",
-    "weight",
+  const keys: ('vs' | 'i' | 'barycenter' | 'weight')[] = [
+    'vs',
+    'i',
+    'barycenter',
+    'weight',
   ];
   return filtered.map((entry) => {
     const picked: Record<string, any> = {};

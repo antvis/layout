@@ -1,11 +1,11 @@
-import { render } from "./render";
+import { initThreads } from '../../packages/layout-wasm';
+import { loadDatasets } from '../datasets';
+import { CommonDagreLayoutOptions, TestName } from '../types';
 import {
   antvlayout as antvlayoutDagre,
   antvlayoutWASM as antvlayoutWASMDagre,
-} from "./dagre";
-import { loadDatasets } from "../datasets";
-import { CommonDagreLayoutOptions, CommonLayoutOptions, TestName } from "../types";
-import { initThreads } from "../../packages/layout-wasm";
+} from './dagre';
+import { render } from './render';
 
 /**
  * We compare graphology, @antv/layout and its WASM versions.
@@ -22,33 +22,33 @@ const TestsConfig = [
   // },
 ];
 
-const $mask = document.getElementById("mask") as HTMLSelectElement;
-const $ranksep = document.getElementById("ranksep") as HTMLInputElement;
-const $nodesep = document.getElementById("nodesep") as HTMLInputElement;
-const $rankdir = document.getElementById("rankdir") as HTMLSelectElement;
-const $align = document.getElementById("align") as HTMLSelectElement;
-const $dataset = document.getElementById("dataset") as HTMLSelectElement;
-const $datasetDesc = document.getElementById("dataset-desc") as HTMLSpanElement;
-const $layout = document.getElementById("layout") as HTMLSelectElement;
-const $run = document.getElementById("run") as HTMLButtonElement;
+const $mask = document.getElementById('mask') as HTMLSelectElement;
+const $ranksep = document.getElementById('ranksep') as HTMLInputElement;
+const $nodesep = document.getElementById('nodesep') as HTMLInputElement;
+const $rankdir = document.getElementById('rankdir') as HTMLSelectElement;
+const $align = document.getElementById('align') as HTMLSelectElement;
+const $dataset = document.getElementById('dataset') as HTMLSelectElement;
+const $datasetDesc = document.getElementById('dataset-desc') as HTMLSpanElement;
+const $layout = document.getElementById('layout') as HTMLSelectElement;
+const $run = document.getElementById('run') as HTMLButtonElement;
 const contexts = TestsConfig.map(({ name }) => {
-  return (document.getElementById(name) as HTMLCanvasElement).getContext("2d");
+  return (document.getElementById(name) as HTMLCanvasElement).getContext('2d');
 });
 const $labels = TestsConfig.map((_, i) => {
-  return contexts[i]!.canvas.parentElement!.querySelector("span");
+  return contexts[i]!.canvas.parentElement!.querySelector('span');
 });
 const $checkboxes = TestsConfig.map(({ name }, i) => {
   const $checkbox = document.getElementById(
-    name + "_checkbox"
+    name + '_checkbox',
   ) as HTMLInputElement;
   $checkbox.onchange = () => {
     contexts[i]!.canvas.parentElement!.style.display = $checkbox.checked
-      ? "block"
-      : "none";
+      ? 'block'
+      : 'none';
   };
   return $checkbox;
 });
-const $scaling = document.getElementById("scaling") as HTMLInputElement;
+const $scaling = document.getElementById('scaling') as HTMLInputElement;
 
 const initThreadsPool = async () => {
   const singleThread = await initThreads(false);
@@ -57,7 +57,6 @@ const initThreadsPool = async () => {
   return [singleThread, multiThreads];
 };
 
-
 const doLayout = async (
   context: CanvasRenderingContext2D,
   $label: HTMLSpanElement,
@@ -65,7 +64,7 @@ const doLayout = async (
   model: any,
   options: CommonDagreLayoutOptions,
   wasmMethod: any,
-  scaling: number
+  scaling: number,
 ) => {
   const start = performance.now();
   const { nodes, edges } = await layout(model, options, wasmMethod);
@@ -76,16 +75,16 @@ const doLayout = async (
 (async () => {
   $run.innerHTML = 'Loading...';
   $run.disabled = true;
-  console.time("Load datasets");
+  console.time('Load datasets');
   const datasets = await loadDatasets();
   $dataset.onchange = () => {
     $datasetDesc.innerHTML = datasets[$dataset.value].desc;
   };
-  console.timeEnd("Load datasets");
+  console.timeEnd('Load datasets');
 
-  console.time("Init WASM threads");
+  console.time('Init WASM threads');
   const [forceSingleThread, forceMultiThreads] = await initThreadsPool();
-  console.timeEnd("Init WASM threads");
+  console.timeEnd('Init WASM threads');
   $run.innerHTML = 'Run layouts';
   $run.disabled = false;
 
@@ -111,7 +110,7 @@ const doLayout = async (
   ];
 
   $run.onclick = async () => {
-    $mask.style.display = "flex";
+    $mask.style.display = 'flex';
 
     const dataset = datasets[$dataset.value];
     const layoutName = $layout.value;
@@ -133,20 +132,20 @@ const doLayout = async (
             name === TestName.ANTV_LAYOUT_WASM_MULTITHREADS
               ? forceMultiThreads
               : forceSingleThread,
-            Number($scaling.value)
+            Number($scaling.value),
           );
         } else {
           contexts[i]!.clearRect(
             0,
             0,
             contexts[i]!.canvas.width,
-            contexts[i]!.canvas.height
+            contexts[i]!.canvas.height,
           );
           $labels[i]!.innerHTML = `not implemented.`;
         }
-      })
+      }),
     );
 
-    $mask.style.display = "none";
+    $mask.style.display = 'none';
   };
 })();

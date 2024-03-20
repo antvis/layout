@@ -1,12 +1,12 @@
-import { FruchtermanLayout, Graph } from "../../packages/layout";
-import { FruchtermanLayout as FruchtermanGPULayout } from "../../packages/layout-gpu";
-import { fruchtermanReingoldLayout } from "./graphology-layout-fruchtermanreingold";
-import { outputAntvLayout, outputGraphology } from "./util";
-import { CANVAS_SIZE, CommonLayoutOptions } from "../types";
+import { FruchtermanLayout, Graph } from '../../packages/layout';
+import { FruchtermanLayout as FruchtermanGPULayout } from '../../packages/layout-gpu';
 import {
-  Threads,
   FruchtermanLayout as FruchtermanWASMLayout,
-} from "../../packages/layout-wasm";
+  Threads,
+} from '../../packages/layout-wasm';
+import { CANVAS_SIZE, CommonLayoutOptions } from '../types';
+import { fruchtermanReingoldLayout } from './graphology-layout-fruchtermanreingold';
+import { outputAntvLayout, outputGraphology } from './util';
 
 const speed = 5;
 const gravity = 1;
@@ -14,7 +14,7 @@ const ITERATIONS = 5000;
 
 export async function graphology(
   graph: any,
-  { iterations }: CommonLayoutOptions
+  { iterations }: CommonLayoutOptions,
 ) {
   const positions = fruchtermanReingoldLayout(graph, {
     height: CANVAS_SIZE,
@@ -34,7 +34,7 @@ export async function graphology(
 
 export async function antvlayout(
   graphModel: Graph,
-  { iterations, min_movement, distance_threshold_mode }: CommonLayoutOptions
+  { iterations, min_movement, distance_threshold_mode }: CommonLayoutOptions,
 ) {
   const fruchterman = new FruchtermanLayout({
     dimensions: 2,
@@ -51,7 +51,7 @@ export async function antvlayout(
 
 export async function antvlayoutGPU(
   graphModel: Graph,
-  { iterations, min_movement, distance_threshold_mode }: CommonLayoutOptions
+  { iterations, min_movement, distance_threshold_mode }: CommonLayoutOptions,
 ) {
   const fruchterman = new FruchtermanGPULayout({
     dimensions: 2,
@@ -69,7 +69,7 @@ export async function antvlayoutGPU(
 export async function antvlayoutWASM(
   graphModel: Graph,
   { iterations, min_movement, distance_threshold_mode }: CommonLayoutOptions,
-  threads: Threads
+  threads: Threads,
 ) {
   const fruchterman = new FruchtermanWASMLayout({
     threads,

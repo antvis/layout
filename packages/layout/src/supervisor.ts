@@ -1,8 +1,8 @@
 import EventEmitter from '@antv/event-emitter';
-import { Graph, Node, Edge } from '@antv/graphlib';
+import { Edge, Graph, Node } from '@antv/graphlib';
+import { isFunction } from '@antv/util';
 import * as Comlink from 'comlink';
 import type { Layout, LayoutSupervisor } from './types';
-import { isFunction } from '@antv/util';
 
 /**
  * The payload transferred from main thread to the worker.
@@ -48,7 +48,7 @@ export class Supervisor extends EventEmitter implements LayoutSupervisor {
   constructor(
     private graph: Graph<any, any>,
     private layout: Layout<any>,
-    private options?: Partial<SupervisorOptions>
+    private options?: Partial<SupervisorOptions>,
   ) {
     super();
 
@@ -58,7 +58,7 @@ export class Supervisor extends EventEmitter implements LayoutSupervisor {
   spawnWorker() {
     this.proxy = Comlink.wrap(
       // @ts-ignore
-      new Worker(new URL('./worker.js', import.meta.url), { type: 'module' })
+      new Worker(new URL('./worker.js', import.meta.url), { type: 'module' }),
     );
 
     if (this.running) {

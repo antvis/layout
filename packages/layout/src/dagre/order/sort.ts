@@ -1,21 +1,21 @@
-import { ID } from "@antv/graphlib";
-import { partition } from "../util";
-import { ConflictEntry } from "./resolve-conflicts";
+import { ID } from '@antv/graphlib';
+import { partition } from '../util';
+import { ConflictEntry } from './resolve-conflicts';
 
 export const sort = (
   entries: ConflictEntry[],
   biasRight?: boolean,
   usePrev?: boolean,
-  keepNodeOrder?: boolean
+  keepNodeOrder?: boolean,
 ) => {
   const parts = partition(entries, (entry) => {
     const hasFixOrder =
-      entry.hasOwnProperty("fixorder") && !isNaN(entry.fixorder!);
+      entry.hasOwnProperty('fixorder') && !isNaN(entry.fixorder!);
     if (keepNodeOrder) {
-      return !hasFixOrder && entry.hasOwnProperty("barycenter");
+      return !hasFixOrder && entry.hasOwnProperty('barycenter');
     }
     // NOTE: 有fixorder的也可以排
-    return hasFixOrder || entry.hasOwnProperty("barycenter");
+    return hasFixOrder || entry.hasOwnProperty('barycenter');
   });
   const sortable = parts.lhs;
   const unsortable = parts.rhs.sort((a, b) => -a.i - -b.i);
@@ -49,7 +49,7 @@ export const sort = (
 const consumeUnsortable = (
   vs: ID[][],
   unsortable: ConflictEntry[],
-  index: number
+  index: number,
 ) => {
   let iindex = index;
   let last;

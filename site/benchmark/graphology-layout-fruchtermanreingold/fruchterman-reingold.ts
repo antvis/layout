@@ -1,10 +1,10 @@
-import { FruchtermanReingoldLayoutBaseOptions } from "./utils";
+import { FruchtermanReingoldLayoutBaseOptions } from './utils';
 
 export function fruchtermanReingoldImpl(
   order: number,
   EdgeMatrix: Float32Array,
   options: FruchtermanReingoldLayoutBaseOptions,
-  cb?: (layout: Float32Array, i: number) => void
+  cb?: (layout: Float32Array, i: number) => void,
 ): Float32Array {
   /**
    * Calculate the length of a vector with arbitrary dimensions.
@@ -27,7 +27,7 @@ export function fruchtermanReingoldImpl(
   const positions = new Float32Array(order * 2).map((_, i) =>
     i % 2 === 0
       ? (Math.random() * w - w / 2) / 2
-      : (Math.random() * l - l / 2) / 2
+      : (Math.random() * l - l / 2) / 2,
   );
 
   let t = w / 10.0;

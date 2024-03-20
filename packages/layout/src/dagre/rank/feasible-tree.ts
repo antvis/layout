@@ -1,7 +1,7 @@
-import { slack } from "./util";
-import { minBy } from "../util";
-import { Edge, Graph, ID } from "@antv/graphlib";
-import { EdgeData, Graph as IGraph } from "../../types";
+import { Edge, Graph, ID } from '@antv/graphlib';
+import { EdgeData, Graph as IGraph } from '../../types';
+import { minBy } from '../util';
+import { slack } from './util';
 
 /*
  * Constructs a spanning tree with tight edges and adjusted the input node's
@@ -55,7 +55,7 @@ const feasibleTree = (g: IGraph) => {
  */
 const tightTree = (t: IGraph, g: IGraph) => {
   const dfs = (v: ID) => {
-    g.getRelatedEdges(v, "both").forEach((e) => {
+    g.getRelatedEdges(v, 'both').forEach((e) => {
       const edgeV = e.source;
       const w = v === edgeV ? e.target : edgeV;
       if (!t.hasNode(w) && !slack(g, e)) {
@@ -128,7 +128,7 @@ const feasibleTreeWithLayer = (g: IGraph) => {
  */
 const tightTreeWithLayer = (t: IGraph, g: IGraph) => {
   const dfs = (v: ID) => {
-    g.getRelatedEdges(v, "both")?.forEach((e) => {
+    g.getRelatedEdges(v, 'both')?.forEach((e) => {
       const edgeV = e.source;
       const w = v === edgeV ? e.target : edgeV;
       // 对于指定layer的，直接加入tight-tree，不参与调整

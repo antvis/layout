@@ -1,4 +1,4 @@
-import { ID, Graph, Node } from '@antv/graphlib';
+import { Graph, ID, Node } from '@antv/graphlib';
 import { isNumber } from '@antv/util';
 import { EdgeData, Graph as IGraph, NodeData } from '../types';
 
@@ -13,7 +13,7 @@ export const addDummyNode = (
   g: IGraph,
   type: string,
   data: NodeData,
-  name: string
+  name: string,
 ): ID => {
   let v: ID;
   do {
@@ -112,7 +112,7 @@ export const predecessorWeights = (g: IGraph) => {
   });
   return zipObject(
     nodes.map((n) => n.id),
-    weightMap
+    weightMap,
   );
 };
 
@@ -122,7 +122,7 @@ export const predecessorWeights = (g: IGraph) => {
  */
 export const intersectRect = (
   rect: { x?: number; y?: number; width?: number; height?: number },
-  point: { x?: number; y?: number }
+  point: { x?: number; y?: number },
 ) => {
   const x = Number(rect.x);
   const y = Number(rect.y);
@@ -182,7 +182,7 @@ export const buildLayerMatrix = (g: IGraph) => {
 
   for (let i = 0; i < rankMax; i++) {
     layeringNodes[i] = layeringNodes[i].sort((va: ID, vb: ID) =>
-      safeSort(g.getNode(va).data.order!, g.getNode(vb).data.order!)
+      safeSort(g.getNode(va).data.order!, g.getNode(vb).data.order!),
     );
   }
 
@@ -248,7 +248,7 @@ export const addBorderNode = (
   g: IGraph,
   prefix: string,
   rank?: number,
-  order?: number
+  order?: number,
 ) => {
   const node: NodeData = {
     width: 0,
@@ -285,7 +285,7 @@ export const maxRank = (g: IGraph) => {
  */
 export const partition = <T = any>(
   collection: T[],
-  fn: (val: T) => boolean
+  fn: (val: T) => boolean,
 ) => {
   const result = { lhs: [] as T[], rhs: [] as T[] };
   collection?.forEach((value) => {
@@ -312,7 +312,7 @@ const doDFS = (
   postorder: boolean,
   visited: ID[],
   navigator: (n: ID) => Node<NodeData>[],
-  result: ID[]
+  result: ID[],
 ) => {
   if (!visited.includes(node.id)) {
     visited.push(node.id);
@@ -320,7 +320,7 @@ const doDFS = (
       result.push(node.id);
     }
     navigator(node.id).forEach((n) =>
-      doDFS(graph, n, postorder, visited, navigator, result)
+      doDFS(graph, n, postorder, visited, navigator, result),
     );
     if (postorder) {
       result.push(node.id);
@@ -336,7 +336,7 @@ export const dfs = (
   graph: IGraph,
   node: Node<NodeData> | Node<NodeData>[],
   order: 'pre' | 'post',
-  isDirected: boolean
+  isDirected: boolean,
 ) => {
   const nodes = Array.isArray(node) ? node : [node];
   const navigator = (n: ID) =>

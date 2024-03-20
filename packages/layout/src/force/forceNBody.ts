@@ -24,7 +24,7 @@ export function forceNBody(
   factor: number,
   coulombDisScale2: number,
   accMap: { [id: string]: Point },
-  dimensions: number = 2
+  dimensions: number = 2,
 ) {
   const weightParam = factor / coulombDisScale2;
   const calcNodes = calcGraph.getAllNodes();
@@ -49,13 +49,13 @@ export function forceNBody(
       ? quadtree(
           data,
           (d: any) => d.x,
-          (d: any) => d.y
+          (d: any) => d.y,
         )
       : octree(
           data,
           (d: any) => d.x,
           (d: any) => d.y,
-          (d: any) => d.z
+          (d: any) => d.z,
         )
   ).visitAfter(accumulate); // init internal node
 
@@ -122,7 +122,7 @@ const apply = (
   arg2: number,
   arg3: number,
   node: InternalNode,
-  dimensions: number
+  dimensions: number,
 ) => {
   if (treeNode.data?.id === node.id) return;
   const x2 = [arg1, arg2, arg3][dimensions - 1];
@@ -164,6 +164,6 @@ const apply = (
 function computeForce(node: InternalNode, tree: any, dimensions: number) {
   // @ts-ignore
   tree.visit((treeNode, x1, y1, x2, y2) =>
-    apply(treeNode, x1, y1, x2, y2, node, dimensions)
+    apply(treeNode, x1, y1, x2, y2, node, dimensions),
   );
 }

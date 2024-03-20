@@ -8,29 +8,29 @@ import {
   Point,
 } from '../types';
 import { run as runAcyclic, undo as undoAcyclic } from './acyclic';
-import { run as runNormalize, undo as undoNormalize } from './normalize';
-import { rank } from './rank';
-import {
-  normalizeRanks,
-  removeEmptyRanks,
-  asNonCompoundGraph,
-  addDummyNode,
-  intersectRect,
-  buildLayerMatrix,
-} from './util';
-import { parentDummyChains } from './parent-dummy-chains';
-import {
-  run as runNestingGraph,
-  cleanup as cleanupNestingGraph,
-} from './nesting-graph';
 import { addBorderSegments } from './add-border-segments';
 import {
   adjust as adjustCoordinateSystem,
   undo as undoCoordinateSystem,
 } from './coordinate-system';
+import {
+  cleanup as cleanupNestingGraph,
+  run as runNestingGraph,
+} from './nesting-graph';
+import { run as runNormalize, undo as undoNormalize } from './normalize';
 import { order } from './order';
-import { position } from './position';
 import { initDataOrder } from './order/init-data-order';
+import { parentDummyChains } from './parent-dummy-chains';
+import { position } from './position';
+import { rank } from './rank';
+import {
+  addDummyNode,
+  asNonCompoundGraph,
+  buildLayerMatrix,
+  intersectRect,
+  normalizeRanks,
+  removeEmptyRanks,
+} from './util';
 
 // const graphNumAttrs = ["nodesep", "edgesep", "ranksep", "marginx", "marginy"];
 // const graphDefaults = { ranksep: 50, edgesep: 20, nodesep: 50, rankdir: "tb" };
@@ -50,7 +50,7 @@ export const layout = (
     nodeOrder: ID[];
     ranker: 'network-simplex' | 'tight-tree' | 'longest-path';
     rankdir: DagreRankdir;
-  }
+  },
 ) => {
   const { edgeLabelSpace, keepNodeOrder, prevGraph, rankdir, ranksep } =
     options;
@@ -78,7 +78,7 @@ export const layout = (
     ) {
       console.error(
         "The following error may be caused by improper layer setting, please make sure your manual layer setting does not violate the graph's structure:\n",
-        e
+        e,
       );
       return;
     }
@@ -100,7 +100,7 @@ const runLayout = (
     nodesep?: number;
     edgesep?: number;
     ranksep?: number;
-  }
+  },
 ) => {
   const {
     acyclicer,
@@ -299,7 +299,7 @@ const buildLayoutGraph = (inputGraph: IGraph) => {
         {},
         edgeDefaults,
         selectNumberAttrs(edge, edgeNumAttrs),
-        pickedProperties
+        pickedProperties,
       ),
     });
   });
@@ -320,7 +320,7 @@ const makeSpaceForEdgeLabels = (
   options: {
     ranksep?: number;
     rankdir: string;
-  }
+  },
 ) => {
   const { ranksep = 0, rankdir } = options;
   g.getAllNodes().forEach((node) => {
@@ -389,7 +389,7 @@ const translateGraph = (
   options?: {
     marginx: number;
     marginy: number;
-  }
+  },
 ) => {
   let minX: number;
   let maxX = 0;
@@ -511,12 +511,12 @@ const removeBorderNodes = (g: IGraph) => {
       const l = g.getNode(
         (node.data.borderLeft as ID[])[
           (node.data.borderLeft as ID[])?.length - 1
-        ]
+        ],
       );
       const r = g.getNode(
         (node.data.borderRight as ID[])[
           (node.data.borderRight as ID[])?.length - 1
-        ]
+        ],
       );
 
       node.data.width = Math.abs(r?.data.x! - l?.data.x!) || 10;
@@ -564,7 +564,7 @@ const insertSelfEdges = (g: IGraph) => {
             order: i + ++orderShift,
             e: selfEdge,
           },
-          '_se'
+          '_se',
         );
       });
       delete node.data.selfEdges;

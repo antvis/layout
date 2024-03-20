@@ -1,10 +1,10 @@
-import { FruchtermanLayout, Graph } from "../../packages/layout";
-import { outputAntvLayout } from "./util";
-import { CANVAS_SIZE, CommonLayoutOptions } from "../types";
+import { FruchtermanLayout, Graph } from '../../packages/layout';
 import {
-  Threads,
   FruchtermanLayout as FruchtermanWASMLayout,
-} from "../../packages/layout-wasm";
+  Threads,
+} from '../../packages/layout-wasm';
+import { CANVAS_SIZE, CommonLayoutOptions } from '../types';
+import { outputAntvLayout } from './util';
 
 const speed = 5;
 const gravity = 1;
@@ -12,7 +12,7 @@ const ITERATIONS = 5000;
 
 export async function antvlayout(
   graphModel: Graph,
-  { iterations, min_movement, distance_threshold_mode }: CommonLayoutOptions
+  { iterations, min_movement, distance_threshold_mode }: CommonLayoutOptions,
 ) {
   const fruchterman = new FruchtermanLayout({
     dimensions: 3,
@@ -30,7 +30,7 @@ export async function antvlayout(
 export async function antvlayoutWASM(
   graphModel: Graph,
   { iterations, min_movement, distance_threshold_mode }: CommonLayoutOptions,
-  threads: Threads
+  threads: Threads,
 ) {
   const fruchterman = new FruchtermanWASMLayout({
     threads,

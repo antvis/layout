@@ -1,203 +1,203 @@
 export default {
   nodes: [
     {
-      id: "Argentina",
+      id: 'Argentina',
       data: {
-        name: "Argentina",
+        name: 'Argentina',
       },
     },
     {
-      id: "Australia",
+      id: 'Australia',
       data: {
-        name: "Australia",
+        name: 'Australia',
       },
     },
     {
-      id: "Belgium",
+      id: 'Belgium',
       data: {
-        name: "Belgium",
+        name: 'Belgium',
       },
     },
     {
-      id: "Brazil",
+      id: 'Brazil',
       data: {
-        name: "Brazil",
+        name: 'Brazil',
       },
     },
     {
-      id: "Colombia",
+      id: 'Colombia',
       data: {
-        name: "Colombia",
+        name: 'Colombia',
       },
     },
     {
-      id: "Costa Rica",
+      id: 'Costa Rica',
       data: {
-        name: "Costa Rica",
+        name: 'Costa Rica',
       },
     },
     {
-      id: "Croatia",
+      id: 'Croatia',
       data: {
-        name: "Croatia",
+        name: 'Croatia',
       },
     },
     {
-      id: "Denmark",
+      id: 'Denmark',
       data: {
-        name: "Denmark",
+        name: 'Denmark',
       },
     },
     {
-      id: "Egypt",
+      id: 'Egypt',
       data: {
-        name: "Egypt",
+        name: 'Egypt',
       },
     },
     {
-      id: "England",
+      id: 'England',
       data: {
-        name: "England",
+        name: 'England',
       },
     },
     {
-      id: "France",
+      id: 'France',
       data: {
-        name: "France",
+        name: 'France',
       },
     },
     {
-      id: "Germany",
+      id: 'Germany',
       data: {
-        name: "Germany",
+        name: 'Germany',
       },
     },
     {
-      id: "Iceland",
+      id: 'Iceland',
       data: {
-        name: "Iceland",
+        name: 'Iceland',
       },
     },
     {
-      id: "IR Iran",
+      id: 'IR Iran',
       data: {
-        name: "IR Iran",
+        name: 'IR Iran',
       },
     },
     {
-      id: "Japan",
+      id: 'Japan',
       data: {
-        name: "Japan",
+        name: 'Japan',
       },
     },
     {
-      id: "Korea Republic",
+      id: 'Korea Republic',
       data: {
-        name: "Korea Republic",
+        name: 'Korea Republic',
       },
     },
     {
-      id: "Mexico",
+      id: 'Mexico',
       data: {
-        name: "Mexico",
+        name: 'Mexico',
       },
     },
     {
-      id: "Morocco",
+      id: 'Morocco',
       data: {
-        name: "Morocco",
+        name: 'Morocco',
       },
     },
     {
-      id: "Nigeria",
+      id: 'Nigeria',
       data: {
-        name: "Nigeria",
+        name: 'Nigeria',
       },
     },
     {
-      id: "Panama",
+      id: 'Panama',
       data: {
-        name: "Panama",
+        name: 'Panama',
       },
     },
     {
-      id: "Peru",
+      id: 'Peru',
       data: {
-        name: "Peru",
+        name: 'Peru',
       },
     },
     {
-      id: "Poland",
+      id: 'Poland',
       data: {
-        name: "Poland",
+        name: 'Poland',
       },
     },
     {
-      id: "Portugal",
+      id: 'Portugal',
       data: {
-        name: "Portugal",
+        name: 'Portugal',
       },
     },
     {
-      id: "Russia",
+      id: 'Russia',
       data: {
-        name: "Russia",
+        name: 'Russia',
       },
     },
     {
-      id: "Saudi Arabia",
+      id: 'Saudi Arabia',
       data: {
-        name: "Saudi Arabia",
+        name: 'Saudi Arabia',
       },
     },
     {
-      id: "Senegal",
+      id: 'Senegal',
       data: {
-        name: "Senegal",
+        name: 'Senegal',
       },
     },
     {
-      id: "Serbia",
+      id: 'Serbia',
       data: {
-        name: "Serbia",
+        name: 'Serbia',
       },
     },
     {
-      id: "Spain",
+      id: 'Spain',
       data: {
-        name: "Spain",
+        name: 'Spain',
       },
     },
     {
-      id: "Sweden",
+      id: 'Sweden',
       data: {
-        name: "Sweden",
+        name: 'Sweden',
       },
     },
     {
-      id: "Switzerland",
+      id: 'Switzerland',
       data: {
-        name: "Switzerland",
+        name: 'Switzerland',
       },
     },
     {
-      id: "Tunisia",
+      id: 'Tunisia',
       data: {
-        name: "Tunisia",
+        name: 'Tunisia',
       },
     },
     {
-      id: "Uruguay",
+      id: 'Uruguay',
       data: {
-        name: "Uruguay",
+        name: 'Uruguay',
       },
     },
   ],
   edges: [
     {
-      id: "0",
-      target: "Russia",
-      source: "Saudi Arabia",
+      id: '0',
+      target: 'Russia',
+      source: 'Saudi Arabia',
       data: {
         target_score: 5,
         source_score: 0,
@@ -205,9 +205,9 @@ export default {
       },
     },
     {
-      id: "1",
-      target: "Uruguay",
-      source: "Egypt",
+      id: '1',
+      target: 'Uruguay',
+      source: 'Egypt',
       data: {
         target_score: 1,
         source_score: 0,
@@ -215,9 +215,9 @@ export default {
       },
     },
     {
-      id: "2",
-      target: "Russia",
-      source: "Egypt",
+      id: '2',
+      target: 'Russia',
+      source: 'Egypt',
       data: {
         target_score: 3,
         source_score: 1,
@@ -225,9 +225,9 @@ export default {
       },
     },
     {
-      id: "3",
-      target: "Uruguay",
-      source: "Saudi Arabia",
+      id: '3',
+      target: 'Uruguay',
+      source: 'Saudi Arabia',
       data: {
         target_score: 1,
         source_score: 0,
@@ -235,9 +235,9 @@ export default {
       },
     },
     {
-      id: "4",
-      target: "Uruguay",
-      source: "Russia",
+      id: '4',
+      target: 'Uruguay',
+      source: 'Russia',
       data: {
         target_score: 3,
         source_score: 0,
@@ -245,9 +245,9 @@ export default {
       },
     },
     {
-      id: "5",
-      target: "Saudi Arabia",
-      source: "Egypt",
+      id: '5',
+      target: 'Saudi Arabia',
+      source: 'Egypt',
       data: {
         target_score: 2,
         source_score: 1,
@@ -255,9 +255,9 @@ export default {
       },
     },
     {
-      id: "6",
-      target: "IR Iran",
-      source: "Morocco",
+      id: '6',
+      target: 'IR Iran',
+      source: 'Morocco',
       data: {
         target_score: 1,
         source_score: 0,
@@ -265,9 +265,9 @@ export default {
       },
     },
     {
-      id: "7",
-      target: "Portugal",
-      source: "Spain",
+      id: '7',
+      target: 'Portugal',
+      source: 'Spain',
       data: {
         target_score: 3,
         source_score: 3,
@@ -275,9 +275,9 @@ export default {
       },
     },
     {
-      id: "8",
-      target: "Portugal",
-      source: "Morocco",
+      id: '8',
+      target: 'Portugal',
+      source: 'Morocco',
       data: {
         target_score: 1,
         source_score: 0,
@@ -285,9 +285,9 @@ export default {
       },
     },
     {
-      id: "9",
-      target: "Spain",
-      source: "IR Iran",
+      id: '9',
+      target: 'Spain',
+      source: 'IR Iran',
       data: {
         target_score: 1,
         source_score: 0,
@@ -295,9 +295,9 @@ export default {
       },
     },
     {
-      id: "10",
-      target: "IR Iran",
-      source: "Portugal",
+      id: '10',
+      target: 'IR Iran',
+      source: 'Portugal',
       data: {
         target_score: 1,
         source_score: 1,
@@ -305,9 +305,9 @@ export default {
       },
     },
     {
-      id: "11",
-      target: "Spain",
-      source: "Morocco",
+      id: '11',
+      target: 'Spain',
+      source: 'Morocco',
       data: {
         target_score: 2,
         source_score: 2,
@@ -315,9 +315,9 @@ export default {
       },
     },
     {
-      id: "12",
-      target: "France",
-      source: "Australia",
+      id: '12',
+      target: 'France',
+      source: 'Australia',
       data: {
         target_score: 2,
         source_score: 1,
@@ -325,9 +325,9 @@ export default {
       },
     },
     {
-      id: "13",
-      target: "Denmark",
-      source: "Peru",
+      id: '13',
+      target: 'Denmark',
+      source: 'Peru',
       data: {
         target_score: 1,
         source_score: 0,
@@ -335,9 +335,9 @@ export default {
       },
     },
     {
-      id: "14",
-      target: "Denmark",
-      source: "Australia",
+      id: '14',
+      target: 'Denmark',
+      source: 'Australia',
       data: {
         target_score: 1,
         source_score: 1,
@@ -345,9 +345,9 @@ export default {
       },
     },
     {
-      id: "15",
-      target: "France",
-      source: "Peru",
+      id: '15',
+      target: 'France',
+      source: 'Peru',
       data: {
         target_score: 1,
         source_score: 0,
@@ -355,9 +355,9 @@ export default {
       },
     },
     {
-      id: "16",
-      target: "Denmark",
-      source: "France",
+      id: '16',
+      target: 'Denmark',
+      source: 'France',
       data: {
         target_score: 0,
         source_score: 0,
@@ -365,9 +365,9 @@ export default {
       },
     },
     {
-      id: "17",
-      target: "Peru",
-      source: "Australia",
+      id: '17',
+      target: 'Peru',
+      source: 'Australia',
       data: {
         target_score: 2,
         source_score: 0,
@@ -375,18 +375,18 @@ export default {
       },
     },
     {
-      id: "18",
-      target: "Argentina",
-      source: "Iceland",
+      id: '18',
+      target: 'Argentina',
+      source: 'Iceland',
       data: {
         target_score: 1,
         source_score: 1,
       },
     },
     {
-      id: "19",
-      target: "Croatia",
-      source: "Nigeria",
+      id: '19',
+      target: 'Croatia',
+      source: 'Nigeria',
       data: {
         target_score: 2,
         source_score: 0,
@@ -394,9 +394,9 @@ export default {
       },
     },
     {
-      id: "20",
-      target: "Croatia",
-      source: "Argentina",
+      id: '20',
+      target: 'Croatia',
+      source: 'Argentina',
       data: {
         target_score: 3,
         source_score: 0,
@@ -404,9 +404,9 @@ export default {
       },
     },
     {
-      id: "21",
-      target: "Nigeria",
-      source: "Iceland",
+      id: '21',
+      target: 'Nigeria',
+      source: 'Iceland',
       data: {
         target_score: 2,
         source_score: 0,
@@ -414,9 +414,9 @@ export default {
       },
     },
     {
-      id: "22",
-      target: "Argentina",
-      source: "Nigeria",
+      id: '22',
+      target: 'Argentina',
+      source: 'Nigeria',
       data: {
         target_score: 2,
         source_score: 1,
@@ -424,9 +424,9 @@ export default {
       },
     },
     {
-      id: "23",
-      target: "Croatia",
-      source: "Iceland",
+      id: '23',
+      target: 'Croatia',
+      source: 'Iceland',
       data: {
         target_score: 2,
         source_score: 1,
@@ -434,9 +434,9 @@ export default {
       },
     },
     {
-      id: "24",
-      target: "Serbia",
-      source: "Costa Rica",
+      id: '24',
+      target: 'Serbia',
+      source: 'Costa Rica',
       data: {
         target_score: 1,
         source_score: 0,
@@ -444,9 +444,9 @@ export default {
       },
     },
     {
-      id: "25",
-      target: "Brazil",
-      source: "Switzerland",
+      id: '25',
+      target: 'Brazil',
+      source: 'Switzerland',
       data: {
         target_score: 1,
         source_score: 1,
@@ -454,9 +454,9 @@ export default {
       },
     },
     {
-      id: "26",
-      target: "Brazil",
-      source: "Costa Rica",
+      id: '26',
+      target: 'Brazil',
+      source: 'Costa Rica',
       data: {
         target_score: 2,
         source_score: 0,
@@ -464,9 +464,9 @@ export default {
       },
     },
     {
-      id: "27",
-      target: "Switzerland",
-      source: "Serbia",
+      id: '27',
+      target: 'Switzerland',
+      source: 'Serbia',
       data: {
         target_score: 2,
         source_score: 1,
@@ -474,9 +474,9 @@ export default {
       },
     },
     {
-      id: "28",
-      target: "Brazil",
-      source: "Serbia",
+      id: '28',
+      target: 'Brazil',
+      source: 'Serbia',
       data: {
         target_score: 2,
         source_score: 0,
@@ -484,9 +484,9 @@ export default {
       },
     },
     {
-      id: "29",
-      target: "Switzerland",
-      source: "Costa Rica",
+      id: '29',
+      target: 'Switzerland',
+      source: 'Costa Rica',
       data: {
         target_score: 2,
         source_score: 2,
@@ -494,9 +494,9 @@ export default {
       },
     },
     {
-      id: "30",
-      target: "Mexico",
-      source: "Germany",
+      id: '30',
+      target: 'Mexico',
+      source: 'Germany',
       data: {
         target_score: 1,
         source_score: 0,
@@ -504,9 +504,9 @@ export default {
       },
     },
     {
-      id: "31",
-      target: "Sweden",
-      source: "Korea Republic",
+      id: '31',
+      target: 'Sweden',
+      source: 'Korea Republic',
       data: {
         target_score: 1,
         source_score: 0,
@@ -514,9 +514,9 @@ export default {
       },
     },
     {
-      id: "32",
-      target: "Mexico",
-      source: "Korea Republic",
+      id: '32',
+      target: 'Mexico',
+      source: 'Korea Republic',
       data: {
         target_score: 1,
         source_score: 0,
@@ -524,9 +524,9 @@ export default {
       },
     },
     {
-      id: "33",
-      target: "Germany",
-      source: "Sweden",
+      id: '33',
+      target: 'Germany',
+      source: 'Sweden',
       data: {
         target_score: 2,
         source_score: 1,
@@ -534,9 +534,9 @@ export default {
       },
     },
     {
-      id: "34",
-      target: "Korea Republic",
-      source: "Germany",
+      id: '34',
+      target: 'Korea Republic',
+      source: 'Germany',
       data: {
         target_score: 2,
         source_score: 0,
@@ -544,9 +544,9 @@ export default {
       },
     },
     {
-      id: "35",
-      target: "Sweden",
-      source: "Mexico",
+      id: '35',
+      target: 'Sweden',
+      source: 'Mexico',
       data: {
         target_score: 3,
         source_score: 0,
@@ -554,9 +554,9 @@ export default {
       },
     },
     {
-      id: "36",
-      target: "Belgium",
-      source: "Panama",
+      id: '36',
+      target: 'Belgium',
+      source: 'Panama',
       data: {
         target_score: 3,
         source_score: 0,
@@ -564,9 +564,9 @@ export default {
       },
     },
     {
-      id: "37",
-      target: "England",
-      source: "Tunisia",
+      id: '37',
+      target: 'England',
+      source: 'Tunisia',
       data: {
         target_score: 2,
         source_score: 1,
@@ -574,9 +574,9 @@ export default {
       },
     },
     {
-      id: "38",
-      target: "Belgium",
-      source: "Tunisia",
+      id: '38',
+      target: 'Belgium',
+      source: 'Tunisia',
       data: {
         target_score: 5,
         source_score: 2,
@@ -584,9 +584,9 @@ export default {
       },
     },
     {
-      id: "39",
-      target: "England",
-      source: "Panama",
+      id: '39',
+      target: 'England',
+      source: 'Panama',
       data: {
         target_score: 6,
         source_score: 1,
@@ -594,9 +594,9 @@ export default {
       },
     },
     {
-      id: "40",
-      target: "Belgium",
-      source: "England",
+      id: '40',
+      target: 'Belgium',
+      source: 'England',
       data: {
         target_score: 1,
         source_score: 0,
@@ -604,9 +604,9 @@ export default {
       },
     },
     {
-      id: "41",
-      target: "Tunisia",
-      source: "Panama",
+      id: '41',
+      target: 'Tunisia',
+      source: 'Panama',
       data: {
         target_score: 2,
         source_score: 1,
@@ -614,9 +614,9 @@ export default {
       },
     },
     {
-      id: "42",
-      target: "Japan",
-      source: "Colombia",
+      id: '42',
+      target: 'Japan',
+      source: 'Colombia',
       data: {
         target_score: 2,
         source_score: 1,
@@ -624,9 +624,9 @@ export default {
       },
     },
     {
-      id: "43",
-      target: "Senegal",
-      source: "Poland",
+      id: '43',
+      target: 'Senegal',
+      source: 'Poland',
       data: {
         target_score: 2,
         source_score: 1,
@@ -634,9 +634,9 @@ export default {
       },
     },
     {
-      id: "44",
-      target: "Japan",
-      source: "Senegal",
+      id: '44',
+      target: 'Japan',
+      source: 'Senegal',
       data: {
         target_score: 2,
         source_score: 2,
@@ -644,9 +644,9 @@ export default {
       },
     },
     {
-      id: "45",
-      target: "Colombia",
-      source: "Poland",
+      id: '45',
+      target: 'Colombia',
+      source: 'Poland',
       data: {
         target_score: 3,
         source_score: 0,
@@ -654,9 +654,9 @@ export default {
       },
     },
     {
-      id: "46",
-      target: "Poland",
-      source: "Japan",
+      id: '46',
+      target: 'Poland',
+      source: 'Japan',
       data: {
         target_score: 1,
         source_score: 0,
@@ -664,9 +664,9 @@ export default {
       },
     },
     {
-      id: "47",
-      target: "Colombia",
-      source: "Senegal",
+      id: '47',
+      target: 'Colombia',
+      source: 'Senegal',
       data: {
         target_score: 1,
         source_score: 0,
@@ -674,9 +674,9 @@ export default {
       },
     },
     {
-      id: "48",
-      target: "Uruguay",
-      source: "Portugal",
+      id: '48',
+      target: 'Uruguay',
+      source: 'Portugal',
       data: {
         target_score: 2,
         source_score: 1,
@@ -684,9 +684,9 @@ export default {
       },
     },
     {
-      id: "49",
-      target: "France",
-      source: "Argentina",
+      id: '49',
+      target: 'France',
+      source: 'Argentina',
       data: {
         target_score: 4,
         source_score: 3,
@@ -694,9 +694,9 @@ export default {
       },
     },
     {
-      id: "50",
-      target: "Russia",
-      source: "Spain",
+      id: '50',
+      target: 'Russia',
+      source: 'Spain',
       data: {
         target_score: 5,
         source_score: 4,
@@ -704,9 +704,9 @@ export default {
       },
     },
     {
-      id: "51",
-      target: "Croatia",
-      source: "Denmark",
+      id: '51',
+      target: 'Croatia',
+      source: 'Denmark',
       data: {
         target_score: 4,
         source_score: 3,
@@ -714,9 +714,9 @@ export default {
       },
     },
     {
-      id: "52",
-      target: "Brazil",
-      source: "Mexico",
+      id: '52',
+      target: 'Brazil',
+      source: 'Mexico',
       data: {
         target_score: 2,
         source_score: 0,
@@ -724,9 +724,9 @@ export default {
       },
     },
     {
-      id: "53",
-      target: "Belgium",
-      source: "Japan",
+      id: '53',
+      target: 'Belgium',
+      source: 'Japan',
       data: {
         target_score: 3,
         source_score: 2,
@@ -734,9 +734,9 @@ export default {
       },
     },
     {
-      id: "54",
-      target: "Sweden",
-      source: "Switzerland",
+      id: '54',
+      target: 'Sweden',
+      source: 'Switzerland',
       data: {
         target_score: 1,
         source_score: 0,
@@ -744,9 +744,9 @@ export default {
       },
     },
     {
-      id: "55",
-      target: "England",
-      source: "Colombia",
+      id: '55',
+      target: 'England',
+      source: 'Colombia',
       data: {
         target_score: 4,
         source_score: 3,
@@ -754,9 +754,9 @@ export default {
       },
     },
     {
-      id: "56",
-      target: "France",
-      source: "Uruguay",
+      id: '56',
+      target: 'France',
+      source: 'Uruguay',
       data: {
         target_score: 2,
         source_score: 0,
@@ -764,9 +764,9 @@ export default {
       },
     },
     {
-      id: "57",
-      target: "Belgium",
-      source: "Brazil",
+      id: '57',
+      target: 'Belgium',
+      source: 'Brazil',
       data: {
         target_score: 2,
         source_score: 1,
@@ -774,9 +774,9 @@ export default {
       },
     },
     {
-      id: "58",
-      target: "Croatia",
-      source: "Russia",
+      id: '58',
+      target: 'Croatia',
+      source: 'Russia',
       data: {
         target_score: 6,
         source_score: 5,
@@ -784,9 +784,9 @@ export default {
       },
     },
     {
-      id: "59",
-      target: "England",
-      source: "Sweden",
+      id: '59',
+      target: 'England',
+      source: 'Sweden',
       data: {
         target_score: 2,
         source_score: 0,
@@ -794,9 +794,9 @@ export default {
       },
     },
     {
-      id: "60",
-      target: "France",
-      source: "Belgium",
+      id: '60',
+      target: 'France',
+      source: 'Belgium',
       data: {
         target_score: 1,
         source_score: 0,
@@ -804,9 +804,9 @@ export default {
       },
     },
     {
-      id: "61",
-      target: "Croatia",
-      source: "England",
+      id: '61',
+      target: 'Croatia',
+      source: 'England',
       data: {
         target_score: 2,
         source_score: 1,
@@ -814,9 +814,9 @@ export default {
       },
     },
     {
-      id: "62",
-      target: "Belgium",
-      source: "England",
+      id: '62',
+      target: 'Belgium',
+      source: 'England',
       data: {
         target_score: 2,
         source_score: 0,
@@ -824,9 +824,9 @@ export default {
       },
     },
     {
-      id: "63",
-      target: "France",
-      source: "Croatia",
+      id: '63',
+      target: 'France',
+      source: 'Croatia',
       data: {
         target_score: 4,
         source_score: 2,

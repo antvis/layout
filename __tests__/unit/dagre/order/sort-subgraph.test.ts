@@ -1,8 +1,8 @@
-import { Graph } from "@antv/graphlib";
-import { NodeData, EdgeData } from "../../../../packages/layout";
-import { sortSubgraph } from "../../../../packages/layout/src/dagre/order/sort-subgraph";
+import { Graph } from '@antv/graphlib';
+import { EdgeData, NodeData } from '../../../../packages/layout';
+import { sortSubgraph } from '../../../../packages/layout/src/dagre/order/sort-subgraph';
 
-describe("order/sortSubgraph", function () {
+describe('order/sortSubgraph', function () {
   let g: Graph<NodeData, EdgeData>;
   let cg: Graph<NodeData, EdgeData>;
 
@@ -24,520 +24,520 @@ describe("order/sortSubgraph", function () {
     cg = new Graph();
   });
 
-  test("sorts a flat subgraph based on barycenter", function () {
+  test('sorts a flat subgraph based on barycenter', function () {
     g.addTree({
-      id: "movable",
+      id: 'movable',
       data: {},
       children: [
         {
-          id: "x",
+          id: 'x',
           data: {},
           children: [],
         },
         {
-          id: "y",
+          id: 'y',
           data: {},
         },
       ],
     });
 
     g.addEdge({
-      id: "e1",
-      source: "3",
-      target: "x",
+      id: 'e1',
+      source: '3',
+      target: 'x',
       data: { weight: 1 },
     });
     g.addEdge({
-      id: "e2",
-      source: "1",
-      target: "y",
+      id: 'e2',
+      source: '1',
+      target: 'y',
       data: { weight: 2 },
     });
     g.addEdge({
-      id: "e3",
-      source: "4",
-      target: "y",
+      id: 'e3',
+      source: '4',
+      target: 'y',
       data: { weight: 1 },
     });
 
-    expect(sortSubgraph(g, "movable", cg).vs).toEqual(["y", "x"]);
+    expect(sortSubgraph(g, 'movable', cg).vs).toEqual(['y', 'x']);
   });
 
-  test("preserves the pos of a node (y) w/o neighbors in a flat subgraph", function () {
+  test('preserves the pos of a node (y) w/o neighbors in a flat subgraph', function () {
     g.addTree({
-      id: "movable",
+      id: 'movable',
       data: {},
       children: [
         {
-          id: "x",
+          id: 'x',
           data: {},
           children: [],
         },
         {
-          id: "y",
+          id: 'y',
           data: {},
         },
         {
-          id: "z",
+          id: 'z',
           data: {},
         },
       ],
     });
     g.addEdge({
-      id: "e1",
-      source: "3",
-      target: "x",
+      id: 'e1',
+      source: '3',
+      target: 'x',
       data: {
         weight: 1,
       },
     });
     g.addEdge({
-      id: "e2",
-      source: "1",
-      target: "z",
+      id: 'e2',
+      source: '1',
+      target: 'z',
       data: {
         weight: 2,
       },
     });
     g.addEdge({
-      id: "e3",
-      source: "4",
-      target: "z",
+      id: 'e3',
+      source: '4',
+      target: 'z',
       data: {
         weight: 1,
       },
     });
 
-    expect(sortSubgraph(g, "movable", cg).vs).toEqual(["z", "y", "x"]);
+    expect(sortSubgraph(g, 'movable', cg).vs).toEqual(['z', 'y', 'x']);
   });
 
-  test("biases to the left without reverse bias", function () {
+  test('biases to the left without reverse bias', function () {
     g.addTree({
-      id: "movable",
+      id: 'movable',
       data: {},
       children: [
         {
-          id: "x",
+          id: 'x',
           data: {},
           children: [],
         },
         {
-          id: "y",
+          id: 'y',
           data: {},
         },
       ],
     });
     g.addEdge({
-      id: "e1",
-      source: "1",
-      target: "x",
+      id: 'e1',
+      source: '1',
+      target: 'x',
       data: {
         weight: 1,
       },
     });
     g.addEdge({
-      id: "e2",
-      source: "1",
-      target: "y",
+      id: 'e2',
+      source: '1',
+      target: 'y',
       data: {
         weight: 1,
       },
     });
 
-    expect(sortSubgraph(g, "movable", cg).vs).toEqual(["x", "y"]);
+    expect(sortSubgraph(g, 'movable', cg).vs).toEqual(['x', 'y']);
   });
 
-  test("biases to the right with reverse bias", function () {
+  test('biases to the right with reverse bias', function () {
     g.addTree({
-      id: "movable",
+      id: 'movable',
       data: {},
       children: [
         {
-          id: "x",
+          id: 'x',
           data: {},
           children: [],
         },
         {
-          id: "y",
+          id: 'y',
           data: {},
         },
       ],
     });
     g.addEdge({
-      id: "e1",
-      source: "1",
-      target: "x",
+      id: 'e1',
+      source: '1',
+      target: 'x',
       data: {
         weight: 1,
       },
     });
     g.addEdge({
-      id: "e2",
-      source: "1",
-      target: "y",
+      id: 'e2',
+      source: '1',
+      target: 'y',
       data: {
         weight: 1,
       },
     });
 
-    expect(sortSubgraph(g, "movable", cg, true).vs).toEqual(["y", "x"]);
+    expect(sortSubgraph(g, 'movable', cg, true).vs).toEqual(['y', 'x']);
   });
 
-  test("aggregates stats about the subgraph", function () {
+  test('aggregates stats about the subgraph', function () {
     g.addTree({
-      id: "movable",
+      id: 'movable',
       data: {},
       children: [
         {
-          id: "x",
+          id: 'x',
           data: {},
           children: [],
         },
         {
-          id: "y",
+          id: 'y',
           data: {},
         },
       ],
     });
 
     g.addEdge({
-      id: "e1",
-      source: "3",
-      target: "x",
+      id: 'e1',
+      source: '3',
+      target: 'x',
       data: { weight: 1 },
     });
     g.addEdge({
-      id: "e2",
-      source: "1",
-      target: "y",
+      id: 'e2',
+      source: '1',
+      target: 'y',
       data: { weight: 2 },
     });
     g.addEdge({
-      id: "e3",
-      source: "4",
-      target: "y",
+      id: 'e3',
+      source: '4',
+      target: 'y',
       data: { weight: 1 },
     });
 
-    let results = sortSubgraph(g, "movable", cg);
+    let results = sortSubgraph(g, 'movable', cg);
     expect(results.barycenter).toEqual(2.25);
     expect(results.weight).toEqual(4);
   });
 
-  test("can sort a nested subgraph with no barycenter", function () {
+  test('can sort a nested subgraph with no barycenter', function () {
     g.addTree({
-      id: "movable",
+      id: 'movable',
       data: {},
       children: [
         {
-          id: "x",
+          id: 'x',
           data: {},
           children: [],
         },
         {
-          id: "y",
+          id: 'y',
           data: {},
           children: [
             {
-              id: "a",
+              id: 'a',
               data: {},
             },
             {
-              id: "b",
+              id: 'b',
               data: {},
             },
             {
-              id: "c",
+              id: 'c',
               data: {},
             },
           ],
         },
         {
-          id: "z",
+          id: 'z',
           data: {},
         },
       ],
     });
 
     g.addEdge({
-      id: "e1",
-      source: "0",
-      target: "x",
+      id: 'e1',
+      source: '0',
+      target: 'x',
       data: { weight: 1 },
     });
 
     g.addEdge({
-      id: "e2",
-      source: "1",
-      target: "z",
+      id: 'e2',
+      source: '1',
+      target: 'z',
       data: { weight: 1 },
     });
 
     g.addEdge({
-      id: "e3",
-      source: "2",
-      target: "y",
+      id: 'e3',
+      source: '2',
+      target: 'y',
       data: { weight: 1 },
     });
 
-    expect(sortSubgraph(g, "movable", cg).vs).toEqual([
-      "x",
-      "z",
-      "a",
-      "b",
-      "c",
+    expect(sortSubgraph(g, 'movable', cg).vs).toEqual([
+      'x',
+      'z',
+      'a',
+      'b',
+      'c',
     ]);
   });
 
-  test("can sort a nested subgraph with a barycenter", function () {
+  test('can sort a nested subgraph with a barycenter', function () {
     g.addTree({
-      id: "movable",
+      id: 'movable',
       data: {},
       children: [
         {
-          id: "x",
+          id: 'x',
           data: {},
           children: [],
         },
         {
-          id: "y",
+          id: 'y',
           data: {},
           children: [
             {
-              id: "a",
+              id: 'a',
               data: {},
             },
             {
-              id: "b",
+              id: 'b',
               data: {},
             },
             {
-              id: "c",
+              id: 'c',
               data: {},
             },
           ],
         },
         {
-          id: "z",
+          id: 'z',
           data: {},
         },
       ],
     });
 
     g.addEdge({
-      id: "e0",
-      source: "0",
-      target: "a",
+      id: 'e0',
+      source: '0',
+      target: 'a',
       data: { weight: 3 },
     });
 
     g.addEdge({
-      id: "e1",
-      source: "0",
-      target: "x",
+      id: 'e1',
+      source: '0',
+      target: 'x',
       data: { weight: 1 },
     });
 
     g.addEdge({
-      id: "e2",
-      source: "1",
-      target: "z",
+      id: 'e2',
+      source: '1',
+      target: 'z',
       data: { weight: 1 },
     });
 
     g.addEdge({
-      id: "e3",
-      source: "2",
-      target: "y",
+      id: 'e3',
+      source: '2',
+      target: 'y',
       data: { weight: 1 },
     });
 
-    expect(sortSubgraph(g, "movable", cg).vs).toEqual([
-      "x",
-      "a",
-      "b",
-      "c",
-      "z",
+    expect(sortSubgraph(g, 'movable', cg).vs).toEqual([
+      'x',
+      'a',
+      'b',
+      'c',
+      'z',
     ]);
   });
 
-  test("can sort a nested subgraph with no in-edges", function () {
+  test('can sort a nested subgraph with no in-edges', function () {
     g.addTree({
-      id: "movable",
+      id: 'movable',
       data: {},
       children: [
         {
-          id: "x",
+          id: 'x',
           data: {},
           children: [],
         },
         {
-          id: "y",
+          id: 'y',
           data: {},
           children: [
             {
-              id: "a",
+              id: 'a',
               data: {},
             },
             {
-              id: "b",
+              id: 'b',
               data: {},
             },
             {
-              id: "c",
+              id: 'c',
               data: {},
             },
           ],
         },
         {
-          id: "z",
+          id: 'z',
           data: {},
         },
       ],
     });
 
     g.addEdge({
-      id: "e0",
-      source: "0",
-      target: "a",
+      id: 'e0',
+      source: '0',
+      target: 'a',
       data: { weight: 1 },
     });
 
     g.addEdge({
-      id: "e1",
-      source: "1",
-      target: "b",
+      id: 'e1',
+      source: '1',
+      target: 'b',
       data: { weight: 1 },
     });
 
     g.addEdge({
-      id: "e2",
-      source: "0",
-      target: "x",
+      id: 'e2',
+      source: '0',
+      target: 'x',
       data: { weight: 1 },
     });
 
     g.addEdge({
-      id: "e3",
-      source: "1",
-      target: "z",
+      id: 'e3',
+      source: '1',
+      target: 'z',
       data: { weight: 1 },
     });
 
-    expect(sortSubgraph(g, "movable", cg).vs).toEqual([
-      "x",
-      "a",
-      "b",
-      "c",
-      "z",
+    expect(sortSubgraph(g, 'movable', cg).vs).toEqual([
+      'x',
+      'a',
+      'b',
+      'c',
+      'z',
     ]);
   });
 
-  test("sorts border nodes to the extremes of the subgraph", function () {
+  test('sorts border nodes to the extremes of the subgraph', function () {
     g.addTree({
-      id: "sg1",
+      id: 'sg1',
       data: {
-        borderLeft: "bl",
-        borderRight: "br",
+        borderLeft: 'bl',
+        borderRight: 'br',
       },
       children: [
         {
-          id: "x",
+          id: 'x',
           data: {},
         },
         {
-          id: "y",
+          id: 'y',
           data: {},
         },
         {
-          id: "z",
+          id: 'z',
           data: {},
         },
         {
-          id: "bl",
+          id: 'bl',
           data: {},
         },
         {
-          id: "br",
+          id: 'br',
           data: {},
         },
       ],
     });
 
     g.addEdge({
-      id: "e0",
-      source: "0",
-      target: "x",
+      id: 'e0',
+      source: '0',
+      target: 'x',
       data: { weight: 1 },
     });
     g.addEdge({
-      id: "e1",
-      source: "1",
-      target: "y",
+      id: 'e1',
+      source: '1',
+      target: 'y',
       data: { weight: 1 },
     });
     g.addEdge({
-      id: "e2",
-      source: "2",
-      target: "z",
+      id: 'e2',
+      source: '2',
+      target: 'z',
       data: { weight: 1 },
     });
 
-    expect(sortSubgraph(g, "sg1", cg).vs).toEqual(["bl", "x", "y", "z", "br"]);
+    expect(sortSubgraph(g, 'sg1', cg).vs).toEqual(['bl', 'x', 'y', 'z', 'br']);
   });
 
-  test("assigns a barycenter to a subgraph based on previous border nodes", function () {
+  test('assigns a barycenter to a subgraph based on previous border nodes', function () {
     g.addTree({
-      id: "sg",
+      id: 'sg',
       data: {
-        borderLeft: "bl2",
-        borderRight: "br2",
+        borderLeft: 'bl2',
+        borderRight: 'br2',
       },
       children: [
         {
-          id: "bl2",
+          id: 'bl2',
           data: {},
         },
         {
-          id: "br2",
+          id: 'br2',
           data: {},
         },
       ],
     });
 
     g.addNode({
-      id: "bl1",
+      id: 'bl1',
       data: {
         order: 0,
       },
     });
     g.addNode({
-      id: "br1",
+      id: 'br1',
       data: {
         order: 1,
       },
     });
     g.addEdge({
-      id: "e1",
-      source: "bl1",
-      target: "bl2",
+      id: 'e1',
+      source: 'bl1',
+      target: 'bl2',
       data: {
         weight: 1,
       },
     });
     g.addEdge({
-      id: "e2",
-      source: "br1",
-      target: "br2",
+      id: 'e2',
+      source: 'br1',
+      target: 'br2',
       data: {
         weight: 1,
       },
     });
 
-    expect(sortSubgraph(g, "sg", cg)).toEqual({
+    expect(sortSubgraph(g, 'sg', cg)).toEqual({
       barycenter: 0.5,
       weight: 2,
-      vs: ["bl2", "br2"],
+      vs: ['bl2', 'br2'],
     });
   });
 });

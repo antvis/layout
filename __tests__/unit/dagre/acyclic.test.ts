@@ -1,10 +1,10 @@
-import { Edge, Graph } from "@antv/graphlib";
-import { Graph as IGraph, NodeData, EdgeData } from "../../../packages/layout";
-import { run, undo } from "../../../packages/layout/src/dagre/acyclic";
-import { findCycles } from "../../util";
+import { Edge, Graph } from '@antv/graphlib';
+import { EdgeData, NodeData } from '../../../packages/layout';
+import { run, undo } from '../../../packages/layout/src/dagre/acyclic';
+import { findCycles } from '../../util';
 
-describe("acyclic", function () {
-  let ACYCLICERS = ["greedy", "dfs", "unknown-should-still-work"];
+describe('acyclic', function () {
+  let ACYCLICERS = ['greedy', 'dfs', 'unknown-should-still-work'];
 
   let g: Graph<NodeData, EdgeData>;
 
@@ -14,58 +14,58 @@ describe("acyclic", function () {
 
   ACYCLICERS.forEach(function (acyclicer) {
     describe(acyclicer, function () {
-      describe("run", function () {
+      describe('run', function () {
         test(`${acyclicer} does not change an already acyclic graph`, function () {
           g.addNodes([
             {
-              id: "a",
+              id: 'a',
               data: {},
             },
             {
-              id: "b",
+              id: 'b',
               data: {},
             },
             {
-              id: "c",
+              id: 'c',
               data: {},
             },
             {
-              id: "d",
+              id: 'd',
               data: {},
             },
           ]);
           g.addEdges([
             {
-              id: "e1",
-              source: "a",
-              target: "b",
+              id: 'e1',
+              source: 'a',
+              target: 'b',
               data: {
                 minlen: 1,
                 weight: 1,
               },
             },
             {
-              id: "e2",
-              source: "b",
-              target: "d",
+              id: 'e2',
+              source: 'b',
+              target: 'd',
               data: {
                 minlen: 1,
                 weight: 1,
               },
             },
             {
-              id: "e3",
-              source: "a",
-              target: "c",
+              id: 'e3',
+              source: 'a',
+              target: 'c',
               data: {
                 minlen: 1,
                 weight: 1,
               },
             },
             {
-              id: "e4",
-              source: "c",
-              target: "d",
+              id: 'e4',
+              source: 'c',
+              target: 'd',
               data: {
                 minlen: 1,
                 weight: 1,
@@ -79,36 +79,36 @@ describe("acyclic", function () {
 
           expect(results).toEqual([
             {
-              id: "e1",
-              source: "a",
-              target: "b",
+              id: 'e1',
+              source: 'a',
+              target: 'b',
               data: {
                 minlen: 1,
                 weight: 1,
               },
             },
             {
-              id: "e2",
-              source: "b",
-              target: "d",
+              id: 'e2',
+              source: 'b',
+              target: 'd',
               data: {
                 minlen: 1,
                 weight: 1,
               },
             },
             {
-              id: "e3",
-              source: "a",
-              target: "c",
+              id: 'e3',
+              source: 'a',
+              target: 'c',
               data: {
                 minlen: 1,
                 weight: 1,
               },
             },
             {
-              id: "e4",
-              source: "c",
-              target: "d",
+              id: 'e4',
+              source: 'c',
+              target: 'd',
               data: {
                 minlen: 1,
                 weight: 1,
@@ -120,54 +120,54 @@ describe("acyclic", function () {
         test(`${acyclicer} breaks cycles in the input graph`, function () {
           g.addNodes([
             {
-              id: "a",
+              id: 'a',
               data: {},
             },
             {
-              id: "b",
+              id: 'b',
               data: {},
             },
             {
-              id: "c",
+              id: 'c',
               data: {},
             },
             {
-              id: "d",
+              id: 'd',
               data: {},
             },
           ]);
           g.addEdges([
             {
-              id: "e1",
-              source: "a",
-              target: "b",
+              id: 'e1',
+              source: 'a',
+              target: 'b',
               data: {
                 minlen: 1,
                 weight: 1,
               },
             },
             {
-              id: "e2",
-              source: "b",
-              target: "c",
+              id: 'e2',
+              source: 'b',
+              target: 'c',
               data: {
                 minlen: 1,
                 weight: 1,
               },
             },
             {
-              id: "e3",
-              source: "c",
-              target: "d",
+              id: 'e3',
+              source: 'c',
+              target: 'd',
               data: {
                 minlen: 1,
                 weight: 1,
               },
             },
             {
-              id: "e4",
-              source: "d",
-              target: "a",
+              id: 'e4',
+              source: 'd',
+              target: 'a',
               data: {
                 minlen: 1,
                 weight: 1,
@@ -183,28 +183,28 @@ describe("acyclic", function () {
         test(`${acyclicer} creates a multi-edge where necessary`, function () {
           g.addNodes([
             {
-              id: "a",
+              id: 'a',
               data: {},
             },
             {
-              id: "b",
+              id: 'b',
               data: {},
             },
           ]);
           g.addEdges([
             {
-              id: "e1",
-              source: "a",
-              target: "b",
+              id: 'e1',
+              source: 'a',
+              target: 'b',
               data: {
                 minlen: 1,
                 weight: 1,
               },
             },
             {
-              id: "e2",
-              source: "b",
-              target: "a",
+              id: 'e2',
+              source: 'b',
+              target: 'a',
               data: {
                 minlen: 1,
                 weight: 1,
@@ -216,37 +216,37 @@ describe("acyclic", function () {
           run(g, acyclicer);
           expect(findCycles(g)).toEqual([]);
           if (
-            !!g.getRelatedEdges("a", "out").filter((e) => e.target === "b")
+            !!g.getRelatedEdges('a', 'out').filter((e) => e.target === 'b')
               .length
           ) {
             expect(
-              g.getRelatedEdges("a", "out").filter((e) => e.target === "b")
+              g.getRelatedEdges('a', 'out').filter((e) => e.target === 'b'),
             ).toHaveLength(2);
           } else {
             expect(
-              g.getRelatedEdges("b", "out").filter((e) => e.target === "a")
+              g.getRelatedEdges('b', 'out').filter((e) => e.target === 'a'),
             ).toHaveLength(2);
           }
           expect(g.getAllEdges().length).toEqual(2);
         });
       });
 
-      describe("undo", function () {
-        test("does not change edges where the original graph was acyclic", function () {
+      describe('undo', function () {
+        test('does not change edges where the original graph was acyclic', function () {
           g.addNodes([
             {
-              id: "a",
+              id: 'a',
               data: {},
             },
             {
-              id: "b",
+              id: 'b',
               data: {},
             },
           ]);
           g.addEdge({
-            id: "e1",
-            source: "a",
-            target: "b",
+            id: 'e1',
+            source: 'a',
+            target: 'b',
             data: { minlen: 2, weight: 3 },
           });
 
@@ -254,33 +254,33 @@ describe("acyclic", function () {
           run(g, acyclicer);
           undo(g);
           expect(
-            g.getRelatedEdges("a", "out").find((e) => e.target === "b")!.data
+            g.getRelatedEdges('a', 'out').find((e) => e.target === 'b')!.data,
           ).toEqual({ minlen: 2, weight: 3 });
           expect(g.getAllEdges()).toHaveLength(1);
         });
 
-        test("can restore previosuly reversed edges", function () {
+        test('can restore previosuly reversed edges', function () {
           g.addNodes([
             {
-              id: "a",
+              id: 'a',
               data: {},
             },
             {
-              id: "b",
+              id: 'b',
               data: {},
             },
           ]);
           g.addEdges([
             {
-              id: "e1",
-              source: "a",
-              target: "b",
+              id: 'e1',
+              source: 'a',
+              target: 'b',
               data: { minlen: 2, weight: 3 },
             },
             {
-              id: "e2",
-              source: "b",
-              target: "a",
+              id: 'e2',
+              source: 'b',
+              target: 'a',
               data: { minlen: 3, weight: 4 },
             },
           ]);
@@ -290,10 +290,10 @@ describe("acyclic", function () {
           undo(g);
 
           expect(
-            g.getRelatedEdges("a", "out").find((e) => e.target === "b")!.data
+            g.getRelatedEdges('a', 'out').find((e) => e.target === 'b')!.data,
           ).toEqual({ minlen: 2, weight: 3 });
           expect(
-            g.getRelatedEdges("b", "out").find((e) => e.target === "a")!.data
+            g.getRelatedEdges('b', 'out').find((e) => e.target === 'a')!.data,
           ).toEqual({ minlen: 3, weight: 4 });
           expect(g.getAllEdges()).toHaveLength(2);
         });
@@ -301,58 +301,58 @@ describe("acyclic", function () {
     });
   });
 
-  describe("greedy-specific functionality", function () {
-    test("prefers to break cycles at low-weight edges", function () {
+  describe('greedy-specific functionality', function () {
+    test('prefers to break cycles at low-weight edges', function () {
       g.addNodes([
         {
-          id: "a",
+          id: 'a',
           data: {},
         },
         {
-          id: "b",
+          id: 'b',
           data: {},
         },
         {
-          id: "c",
+          id: 'c',
           data: {},
         },
         {
-          id: "d",
+          id: 'd',
           data: {},
         },
       ]);
       g.addEdges([
         {
-          id: "e1",
-          source: "a",
-          target: "b",
+          id: 'e1',
+          source: 'a',
+          target: 'b',
           data: {
             minlen: 1,
             weight: 2,
           },
         },
         {
-          id: "e2",
-          source: "b",
-          target: "c",
+          id: 'e2',
+          source: 'b',
+          target: 'c',
           data: {
             minlen: 1,
             weight: 2,
           },
         },
         {
-          id: "e3",
-          source: "c",
-          target: "d",
+          id: 'e3',
+          source: 'c',
+          target: 'd',
           data: {
             minlen: 1,
             weight: 1,
           },
         },
         {
-          id: "e4",
-          source: "d",
-          target: "a",
+          id: 'e4',
+          source: 'd',
+          target: 'a',
           data: {
             minlen: 1,
             weight: 2,
@@ -360,11 +360,11 @@ describe("acyclic", function () {
         },
       ]);
 
-      run(g, "greedy");
+      run(g, 'greedy');
       expect(findCycles(g)).toEqual([]);
 
       expect(
-        !!g.getRelatedEdges("c", "out").find((e) => e.target === "d")
+        !!g.getRelatedEdges('c', 'out').find((e) => e.target === 'd'),
       ).toBe(false);
     });
   });

@@ -1,10 +1,10 @@
 // @ts-ignore
-import EventEmitter from "@antv/event-emitter";
-import { Graph, Node, Edge } from "@antv/graphlib";
-import type { Layout, LayoutSupervisor } from "./types";
+import EventEmitter from '@antv/event-emitter';
+import { Edge, Graph, Node } from '@antv/graphlib';
+import type { Layout, LayoutSupervisor } from './types';
 // @ts-ignore
 // Inline the worker as a Blob. @see https://github.com/developit/workerize-loader#inline
-import worker from "workerize-loader?inline!./bundle-worker";
+import worker from 'workerize-loader?inline!./bundle-worker';
 // import { setupTransferableMethodsOnMain } from "@naoak/workerize-transferable";
 
 /**
@@ -51,7 +51,7 @@ export class Supervisor extends EventEmitter implements LayoutSupervisor {
   constructor(
     private graph: Graph<any, any>,
     private layout: Layout<any>,
-    private options?: Partial<SupervisorOptions>
+    private options?: Partial<SupervisorOptions>,
   ) {
     super();
 

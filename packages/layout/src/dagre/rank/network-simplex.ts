@@ -1,8 +1,8 @@
-import { Edge, ID, Node } from "@antv/graphlib";
-import { EdgeData, Graph as IGraph, NodeData } from "../../types";
-import { feasibleTree } from "./feasible-tree";
-import { slack, longestPath as initRank } from "./util";
-import { dfs, minBy, simplify } from "../util";
+import { Edge, ID, Node } from '@antv/graphlib';
+import { EdgeData, Graph as IGraph, NodeData } from '../../types';
+import { dfs, minBy, simplify } from '../util';
+import { feasibleTree } from './feasible-tree';
+import { longestPath as initRank, slack } from './util';
 
 /*
  * The network simplex algorithm assigns ranks to each node in the input graph
@@ -56,7 +56,7 @@ export const networkSimplex = (og: IGraph) => {
  * Initializes cut values for all edges in the tree.
  */
 export const initCutValues = (t: IGraph, g: IGraph) => {
-  let vs = dfs(t, t.getAllNodes(), "post", false);
+  let vs = dfs(t, t.getAllNodes(), 'post', false);
   vs = vs.slice(0, vs?.length - 1);
   vs.forEach((v: ID) => {
     assignCutValue(t, g, v);
@@ -69,7 +69,7 @@ const assignCutValue = (t: IGraph, g: IGraph, child: ID) => {
 
   // FIXME: use undirected edge?
   const edge = t
-    .getRelatedEdges(child, "both")
+    .getRelatedEdges(child, 'both')
     .find((e) => e.target === parent || e.source === parent)!;
   edge.data.cutvalue = calcCutValue(t, g, child);
 };
@@ -86,7 +86,7 @@ export const calcCutValue = (t: IGraph, g: IGraph, child: ID) => {
   // The graph's view of the tree edge we're inspecting
 
   let graphEdge = g
-    .getRelatedEdges(child, "out")
+    .getRelatedEdges(child, 'out')
     .find((e) => e.target === parent)!;
   // The accumulated cut value for the edge between this node and its parent
   let cutValue = 0;
@@ -94,13 +94,13 @@ export const calcCutValue = (t: IGraph, g: IGraph, child: ID) => {
   if (!graphEdge) {
     childIsTail = false;
     graphEdge = g
-      .getRelatedEdges(parent, "out")
+      .getRelatedEdges(parent, 'out')
       .find((e) => e.target === child)!;
   }
 
   cutValue = graphEdge.data.weight!;
 
-  g.getRelatedEdges(child, "both").forEach((e) => {
+  g.getRelatedEdges(child, 'both').forEach((e) => {
     const isOutEdge = e.source === child;
     const other = isOutEdge ? e.target : e.source;
 
@@ -112,7 +112,7 @@ export const calcCutValue = (t: IGraph, g: IGraph, child: ID) => {
       if (isTreeEdge(t, child, other)) {
         // FIXME: use undirected edge?
         const otherCutValue = t
-          .getRelatedEdges(child, "both")
+          .getRelatedEdges(child, 'both')
           .find((e) => e.source === other || e.target === other)!.data
           .cutvalue!;
         cutValue += pointsToHead ? -otherCutValue : otherCutValue;
@@ -125,7 +125,7 @@ export const calcCutValue = (t: IGraph, g: IGraph, child: ID) => {
 
 export const initLowLimValues = (
   tree: IGraph,
-  root: ID = tree.getAllNodes()[0].id
+  root: ID = tree.getAllNodes()[0].id,
 ) => {
   dfsAssignLowLim(tree, {}, 1, root);
 };
@@ -135,7 +135,7 @@ const dfsAssignLowLim = (
   visited: Record<ID, boolean>,
   nextLim: number,
   v: ID,
-  parent?: ID
+  parent?: ID,
 ) => {
   const low = nextLim;
   let useNextLim = nextLim;
@@ -173,7 +173,7 @@ export const enterEdge = (t: IGraph, g: IGraph, edge: Edge<EdgeData>) => {
   // For the rest of this function we assume that v is the tail and w is the
   // head, so if we don't have this edge in the graph we should flip it to
   // match the correct orientation.
-  if (!g.getRelatedEdges(v, "out").find((e) => e.target === w)) {
+  if (!g.getRelatedEdges(v, 'out').find((e) => e.target === w)) {
     v = edge.target;
     w = edge.source;
   }
@@ -213,11 +213,11 @@ export const exchangeEdges = (
   t: IGraph,
   g: IGraph,
   e: Edge<EdgeData>,
-  f: Edge<EdgeData>
+  f: Edge<EdgeData>,
 ) => {
   // FIXME: use undirected edge?
   const existed = t
-    .getRelatedEdges(e.source, "both")
+    .getRelatedEdges(e.source, 'both')
     .find((edge) => edge.source === e.target || edge.target === e.target);
   if (existed) {
     t.removeEdge(existed.id);
@@ -240,17 +240,17 @@ const updateRanks = (t: IGraph, g: IGraph) => {
     return !v.data.parent;
   })!;
 
-  let vs = dfs(t, root, "pre", false);
+  let vs = dfs(t, root, 'pre', false);
   vs = vs.slice(1);
   vs.forEach((v: ID) => {
     const parent = t.getNode(v).data.parent as ID;
-    let edge = g.getRelatedEdges(v, "out").find((e) => e.target === parent);
+    let edge = g.getRelatedEdges(v, 'out').find((e) => e.target === parent);
     // let edge = g.edgeFromArgs(v, parent);
     let flipped = false;
 
     if (!edge && g.hasNode(parent)) {
       // edge = g.edgeFromArgs(parent, v)!;
-      edge = g.getRelatedEdges(parent, "out").find((e) => e.target === v);
+      edge = g.getRelatedEdges(parent, 'out').find((e) => e.target === v);
       flipped = true;
     }
 
@@ -266,7 +266,7 @@ const updateRanks = (t: IGraph, g: IGraph) => {
 const isTreeEdge = (tree: IGraph, u: ID, v: ID) => {
   // FIXME: use undirected edge?
   return tree
-    .getRelatedEdges(u, "both")
+    .getRelatedEdges(u, 'both')
     .find((e) => e.source === v || e.target === v);
 };
 

@@ -1,10 +1,10 @@
 import {
-  Graph as IGraph,
-  Node as INode,
   Edge as IEdge,
-  PlainObject,
+  Graph as IGraph,
   GraphView as IGraphView,
   ID,
+  Node as INode,
+  PlainObject,
 } from '@antv/graphlib';
 
 export interface NodeData extends PlainObject {
@@ -98,7 +98,7 @@ export interface Layout<LayoutOptions> {
 }
 
 export function isLayoutWithIterations(
-  layout: any
+  layout: any,
 ): layout is LayoutWithIterations<any> {
   return !!layout.tick && !!layout.stop;
 }
@@ -270,7 +270,7 @@ export interface CentripetalOptions {
     nodes: Node[],
     edges: Edge[],
     width: number,
-    height: number
+    height: number,
   ) => {
     x: number;
     y: number;

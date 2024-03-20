@@ -1,7 +1,11 @@
 import { Matrix as MLMatrix, SingularValueDecomposition } from 'ml-matrix';
-import type { PointTuple, Matrix } from '../types';
+import type { Matrix, PointTuple } from '../types';
 
-export const mds = (dimension: number, distances: Matrix[], linkDistance: number): PointTuple[] => {
+export const mds = (
+  dimension: number,
+  distances: Matrix[],
+  linkDistance: number,
+): PointTuple[] => {
   try {
     // square distances
     const M = MLMatrix.mul(MLMatrix.pow(distances, 2), -0.5);
@@ -17,7 +21,9 @@ export const mds = (dimension: number, distances: Matrix[], linkDistance: number
     const ret = new SingularValueDecomposition(M);
     const eigenValues = MLMatrix.sqrt(ret.diagonalMatrix).diagonal();
     return ret.leftSingularVectors.toJSON().map((row: number[]) => {
-      return MLMatrix.mul([row], [eigenValues]).toJSON()[0].splice(0, dimension) as PointTuple;
+      return MLMatrix.mul([row], [eigenValues])
+        .toJSON()[0]
+        .splice(0, dimension) as PointTuple;
     });
   } catch {
     const res: PointTuple[] = [];

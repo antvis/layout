@@ -1,23 +1,23 @@
 import { Canvas } from '@antv/g';
-import { Renderer } from '@antv/g-webgl';
 import { Plugin as Plugin3D } from '@antv/g-plugin-3d';
 import { Plugin as PluginControl } from '@antv/g-plugin-control';
-import { render } from "./render";
-import {
-  antvlayout as antvlayoutForceatlas2,
-  antvlayoutWASM as antvlayoutWASMForceatlas2,
-} from "./forceatlas2";
+import { Renderer } from '@antv/g-webgl';
+import { initThreads } from '../../packages/layout-wasm';
+import { loadDatasets } from '../datasets';
+import { CommonLayoutOptions, TestName } from '../types';
 import {
   antvlayout as antvlayoutForce2,
   antvlayoutWASM as antvlayoutWASMForce2,
-} from "./force2";
+} from './force2';
+import {
+  antvlayout as antvlayoutForceatlas2,
+  antvlayoutWASM as antvlayoutWASMForceatlas2,
+} from './forceatlas2';
 import {
   antvlayout as antvlayoutFruchterman,
   antvlayoutWASM as antvlayoutWASMFruchterman,
-} from "./fruchterman";
-import { loadDatasets } from "../datasets";
-import { CommonLayoutOptions, TestName } from "../types";
-import { initThreads } from "../../packages/layout-wasm";
+} from './fruchterman';
+import { render } from './render';
 
 /**
  * We compare graphology, @antv/layout and its WASM versions.
@@ -34,20 +34,20 @@ const TestsConfig = [
   },
 ];
 
-const $mask = document.getElementById("mask") as HTMLSelectElement;
-const $iterations = document.getElementById("iterations") as HTMLInputElement;
+const $mask = document.getElementById('mask') as HTMLSelectElement;
+const $iterations = document.getElementById('iterations') as HTMLInputElement;
 const $min_movement = document.getElementById(
-  "min_movement"
+  'min_movement',
 ) as HTMLInputElement;
 const $distance_threshold_mode = document.getElementById(
-  "distance_threshold_mode"
+  'distance_threshold_mode',
 ) as HTMLInputElement;
-const $dataset = document.getElementById("dataset") as HTMLSelectElement;
-const $datasetDesc = document.getElementById("dataset-desc") as HTMLSpanElement;
-const $layout = document.getElementById("layout") as HTMLSelectElement;
-const $run = document.getElementById("run") as HTMLButtonElement;
+const $dataset = document.getElementById('dataset') as HTMLSelectElement;
+const $datasetDesc = document.getElementById('dataset-desc') as HTMLSpanElement;
+const $layout = document.getElementById('layout') as HTMLSelectElement;
+const $run = document.getElementById('run') as HTMLButtonElement;
 const $canvases = TestsConfig.map(({ name }) => {
-  return (document.getElementById(name) as HTMLCanvasElement);
+  return document.getElementById(name) as HTMLCanvasElement;
 });
 const canvasesAndRenderers = $canvases.map<[Canvas, Renderer]>(($canvas) => {
   const renderer = new Renderer();
@@ -67,20 +67,20 @@ const canvasesAndRenderers = $canvases.map<[Canvas, Renderer]>(($canvas) => {
   return [canvas, renderer];
 });
 const $labels = TestsConfig.map((_, i) => {
-  return $canvases[i].parentElement!.querySelector("span");
+  return $canvases[i].parentElement!.querySelector('span');
 });
 const $checkboxes = TestsConfig.map(({ name }, i) => {
   const $checkbox = document.getElementById(
-    name + "_checkbox"
+    name + '_checkbox',
   ) as HTMLInputElement;
   $checkbox.onchange = () => {
     $canvases[i].parentElement!.style.display = $checkbox.checked
-      ? "block"
-      : "none";
+      ? 'block'
+      : 'none';
   };
   return $checkbox;
 });
-const $scaling = document.getElementById("scaling") as HTMLInputElement;
+const $scaling = document.getElementById('scaling') as HTMLInputElement;
 
 const initThreadsPool = async () => {
   const singleThread = await initThreads(false);
@@ -88,7 +88,6 @@ const initThreadsPool = async () => {
 
   return [singleThread, multiThreads];
 };
-
 
 const doLayout = async (
   canvas: Canvas,
@@ -98,7 +97,7 @@ const doLayout = async (
   model: any,
   options: CommonLayoutOptions,
   wasmMethod: any,
-  scaling: number
+  scaling: number,
 ) => {
   await canvas.ready;
 
@@ -115,16 +114,16 @@ const doLayout = async (
 (async () => {
   $run.innerHTML = 'Loading...';
   $run.disabled = true;
-  console.time("Load datasets");
+  console.time('Load datasets');
   const datasets = await loadDatasets(3);
   $dataset.onchange = () => {
     $datasetDesc.innerHTML = datasets[$dataset.value].desc;
   };
-  console.timeEnd("Load datasets");
+  console.timeEnd('Load datasets');
 
-  console.time("Init WASM threads");
+  console.time('Init WASM threads');
   const [forceSingleThread, forceMultiThreads] = await initThreadsPool();
-  console.timeEnd("Init WASM threads");
+  console.timeEnd('Init WASM threads');
   $run.innerHTML = 'Run layouts';
   $run.disabled = false;
 
@@ -156,7 +155,7 @@ const doLayout = async (
   ];
 
   $run.onclick = async () => {
-    $mask.style.display = "flex";
+    $mask.style.display = 'flex';
 
     const dataset = datasets[$dataset.value];
     const layoutName = $layout.value;
@@ -174,19 +173,19 @@ const doLayout = async (
               iterations: parseInt($iterations.value),
               min_movement: parseFloat($min_movement.value),
               distance_threshold_mode: $distance_threshold_mode.value as
-                | "mean"
-                | "max"
-                | "min",
+                | 'mean'
+                | 'max'
+                | 'min',
             },
             name === TestName.ANTV_LAYOUT_WASM_MULTITHREADS
               ? forceMultiThreads
               : forceSingleThread,
-            Number($scaling.value)
+            Number($scaling.value),
           );
         }
-      })
+      }),
     );
 
-    $mask.style.display = "none";
+    $mask.style.display = 'none';
   };
 })();

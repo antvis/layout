@@ -1,8 +1,8 @@
-import { Node, Edge, IndexMap } from "@antv/layout";
+import { Edge, IndexMap, Node } from '@antv/layout';
 
 export const attributesToTextureData = (
   attributeNames: string[],
-  items: any[]
+  items: any[],
 ): { array: Float32Array; count: number } => {
   const dataArray: any[] = [];
   const attributeNum = attributeNames.length;
@@ -36,7 +36,7 @@ export const attributesToTextureData = (
  */
 export const buildTextureData = (
   nodes: Node[],
-  edges: Edge[]
+  edges: Edge[],
 ): {
   array: Float32Array;
   maxEdgePerVetex: number;
@@ -91,7 +91,7 @@ export const buildTextureDataWithTwoEdgeAttr = (
   nodes: Node[],
   edges: Edge[],
   attrs1: (e: Edge) => number,
-  attrs2: (e: Edge) => number
+  attrs2: (e: Edge) => number,
 ): {
   array: Float32Array;
   maxEdgePerVetex: number;

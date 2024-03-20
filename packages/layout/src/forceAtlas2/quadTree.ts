@@ -52,7 +52,8 @@ export default class QuadTree {
       this.body = this.body.add(bo);
       // insert body into quadrant
       this._putBody(bo);
-    } else { // external node
+    } else {
+      // external node
       // divide this region into four children
       if (this.quad) {
         this.NW = new QuadTree(this.quad.NW());
@@ -66,7 +67,6 @@ export default class QuadTree {
       this._putBody(bo);
       // update the mass info
       this.body = this.body.add(bo);
-
     }
   }
   // inserts bo into a quad
@@ -75,13 +75,15 @@ export default class QuadTree {
     if (!this.quad) return;
     if (bo.in(this.quad.NW()) && this.NW) this.NW.insert(bo);
     else if (bo.in(this.quad.NE()) && this.NE) this.NE.insert(bo);
-    else if (bo.in(this.quad.SW()) && this.SW )this.SW.insert(bo);
+    else if (bo.in(this.quad.SW()) && this.SW) this.SW.insert(bo);
     else if (bo.in(this.quad.SE()) && this.SE) this.SE.insert(bo);
   }
   // tslint:disable-next-line
   _isExternal() {
     // four children are null
-    return (this.NW == null && this.NE == null && this.SW == null && this.SE == null);
+    return (
+      this.NW == null && this.NE == null && this.SW == null && this.SE == null
+    );
   }
   // update the forces
   updateForce(bo: Body) {
@@ -95,7 +97,7 @@ export default class QuadTree {
       const s = this.quad ? this.quad.getLength() : 0;
       const d = this.body.distanceTo(bo);
       // b is far enough
-      if ((s / d) < this.theta) bo.addForce(this.body);
+      if (s / d < this.theta) bo.addForce(this.body);
       else {
         this.NW && this.NW.updateForce(bo);
         this.NE && this.NE.updateForce(bo);

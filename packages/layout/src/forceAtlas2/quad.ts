@@ -1,4 +1,4 @@
-import { PointTuple } from "../types";
+import { PointTuple } from '../types';
 
 /**
  * @fileOverview quad
@@ -51,10 +51,12 @@ export default class Quad {
   }
   contains(x: number, y: number) {
     const halfLen = this.length / 2;
-    return (x <= this.xmid + halfLen &&
+    return (
+      x <= this.xmid + halfLen &&
       x >= this.xmid - halfLen &&
       y <= this.ymid + halfLen &&
-      y >= this.ymid - halfLen);
+      y >= this.ymid - halfLen
+    );
   }
   // northwest quadrant
   // tslint:disable-next-line
@@ -65,7 +67,7 @@ export default class Quad {
     const params: QuadProps = {
       xmid: x,
       ymid: y,
-      length: len
+      length: len,
     };
     const NW = new Quad(params);
     return NW;
@@ -79,7 +81,7 @@ export default class Quad {
     const params = {
       xmid: x,
       ymid: y,
-      length: len
+      length: len,
     };
     const NE = new Quad(params);
     return NE;
@@ -93,7 +95,7 @@ export default class Quad {
     const params = {
       xmid: x,
       ymid: y,
-      length: len
+      length: len,
     };
     const SW = new Quad(params);
     return SW;
@@ -107,7 +109,7 @@ export default class Quad {
     const params = {
       xmid: x,
       ymid: y,
-      length: len
+      length: len,
     };
     const SE = new Quad(params);
     return SE;

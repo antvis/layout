@@ -1,20 +1,20 @@
-import { Matrix as MLMatrix, SingularValueDecomposition } from "ml-matrix";
+import { Matrix as MLMatrix, SingularValueDecomposition } from 'ml-matrix';
 import type {
   Graph,
+  Layout,
   LayoutMapping,
+  Matrix,
+  MDSLayoutOptions,
   OutNode,
   PointTuple,
-  MDSLayoutOptions,
-  Layout,
-  Matrix,
-} from "./types";
+} from './types';
 import {
   cloneFormatData,
   floydWarshall,
   getAdjMatrix,
   scaleMatrix,
-} from "./util";
-import { handleSingleNodeGraph } from "./util/common";
+} from './util';
+import { handleSingleNodeGraph } from './util/common';
 
 const DEFAULTS_LAYOUT_OPTIONS: Partial<MDSLayoutOptions> = {
   center: [0, 0],
@@ -37,7 +37,7 @@ const DEFAULTS_LAYOUT_OPTIONS: Partial<MDSLayoutOptions> = {
  * await layout.assign(graph, { center: [100, 100] });
  */
 export class MDSLayout implements Layout<MDSLayoutOptions> {
-  id = "mds";
+  id = 'mds';
 
   constructor(public options: MDSLayoutOptions = {} as MDSLayoutOptions) {
     this.options = {
@@ -62,17 +62,17 @@ export class MDSLayout implements Layout<MDSLayoutOptions> {
   private async genericMDSLayout(
     assign: false,
     graph: Graph,
-    options?: MDSLayoutOptions
+    options?: MDSLayoutOptions,
   ): Promise<LayoutMapping>;
   private async genericMDSLayout(
     assign: true,
     graph: Graph,
-    options?: MDSLayoutOptions
+    options?: MDSLayoutOptions,
   ): Promise<void>;
   private async genericMDSLayout(
     assign: boolean,
     graph: Graph,
-    options?: MDSLayoutOptions
+    options?: MDSLayoutOptions,
   ): Promise<LayoutMapping | void> {
     const mergedOptions = { ...this.options, ...options };
     const { center = [0, 0], linkDistance = 50 } = mergedOptions;
@@ -107,7 +107,7 @@ export class MDSLayout implements Layout<MDSLayoutOptions> {
         graph.mergeNodeData(node.id, {
           x: node.data.x,
           y: node.data.y,
-        })
+        }),
       );
     }
 
@@ -152,8 +152,8 @@ const runMDS = (distances: Matrix[]): PointTuple[] => {
   const M = MLMatrix.mul(MLMatrix.pow(distances, 2), -0.5);
 
   // double centre the rows/columns
-  const rowMeans = M.mean("row");
-  const colMeans = M.mean("column");
+  const rowMeans = M.mean('row');
+  const colMeans = M.mean('column');
   const totalMean = M.mean();
   M.add(totalMean).subRowVector(rowMeans).subColumnVector(colMeans);
 

@@ -1,4 +1,4 @@
-import { PointTuple, Graph } from "../types";
+import { Graph, PointTuple } from '../types';
 
 /**
  * Assign or only return the result for the graph who has no nodes or only one node.
@@ -10,7 +10,7 @@ import { PointTuple, Graph } from "../types";
 export const handleSingleNodeGraph = (
   graph: Graph,
   assign: boolean,
-  center: PointTuple
+  center: PointTuple,
 ) => {
   const nodes = graph.getAllNodes();
   const edges = graph.getAllEdges();

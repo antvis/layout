@@ -1,11 +1,11 @@
-import { ID, Node, Edge } from "@antv/graphlib";
-import type { NodeData, EdgeData } from "@antv/layout";
+import { Edge, ID, Node } from '@antv/graphlib';
+import type { EdgeData, NodeData } from '@antv/layout';
 
 export const graphlib2WASMInput = (
   inodes: Node<NodeData>[],
   iedges: Edge<EdgeData>[],
   dimensions: number,
-  useWidthHeight = false
+  useWidthHeight = false,
 ) => {
   const nodes: number[] = [];
   const masses: number[] = [];
@@ -47,7 +47,9 @@ export const graphlib2WASMInput = (
   };
 };
 
-export function distanceThresholdMode2Index(mode: 'mean' | 'min' | 'max'): number {
+export function distanceThresholdMode2Index(
+  mode: 'mean' | 'min' | 'max',
+): number {
   return {
     mean: 0,
     min: 1,

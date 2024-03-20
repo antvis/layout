@@ -1,10 +1,10 @@
-import { ForceLayout, Graph } from "../../packages/layout";
-import { outputAntvLayout } from "./util";
-import { CANVAS_SIZE, CommonLayoutOptions } from "../types";
+import { ForceLayout, Graph } from '../../packages/layout';
 import {
-  Threads,
   ForceLayout as ForceWASMLayout,
-} from "../../packages/layout-wasm";
+  Threads,
+} from '../../packages/layout-wasm';
+import { CANVAS_SIZE, CommonLayoutOptions } from '../types';
+import { outputAntvLayout } from './util';
 
 const ITERATIONS = 100;
 const gravity = 10;
@@ -19,7 +19,7 @@ const interval = 0.02;
 
 export async function antvlayout(
   graphModel: Graph,
-  { iterations, min_movement, distance_threshold_mode }: CommonLayoutOptions
+  { iterations, min_movement, distance_threshold_mode }: CommonLayoutOptions,
 ) {
   const force2 = new ForceLayout({
     dimensions: 2,
@@ -49,7 +49,7 @@ export async function antvlayout(
 export async function antvlayoutWASM(
   graphModel: Graph,
   { iterations, min_movement, distance_threshold_mode }: CommonLayoutOptions,
-  threads: Threads
+  threads: Threads,
 ) {
   const force = new ForceWASMLayout({
     threads,

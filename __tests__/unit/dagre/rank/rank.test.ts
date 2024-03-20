@@ -1,13 +1,13 @@
-import { Graph } from "@antv/graphlib";
-import { NodeData, EdgeData } from "../../../../packages/layout";
-import { rank } from "../../../../packages/layout/src/dagre/rank";
+import { Graph } from '@antv/graphlib';
+import { EdgeData, NodeData } from '../../../../packages/layout';
+import { rank } from '../../../../packages/layout/src/dagre/rank';
 
-describe("rank", function () {
+describe('rank', function () {
   let RANKERS = [
-    "longest-path",
-    "tight-tree",
-    "network-simplex",
-    "unknown-should-still-work",
+    'longest-path',
+    'tight-tree',
+    'network-simplex',
+    'unknown-should-still-work',
   ];
 
   let g: Graph<NodeData, EdgeData>;
@@ -16,115 +16,115 @@ describe("rank", function () {
     g = new Graph<NodeData, EdgeData>({
       nodes: [
         {
-          id: "a",
+          id: 'a',
           data: {},
         },
         {
-          id: "b",
+          id: 'b',
           data: {},
         },
         {
-          id: "c",
+          id: 'c',
           data: {},
         },
         {
-          id: "d",
+          id: 'd',
           data: {},
         },
         {
-          id: "e",
+          id: 'e',
           data: {},
         },
         {
-          id: "f",
+          id: 'f',
           data: {},
         },
         {
-          id: "g",
+          id: 'g',
           data: {},
         },
         {
-          id: "h",
+          id: 'h',
           data: {},
         },
       ],
       edges: [
         {
-          id: "e1",
-          source: "a",
-          target: "b",
+          id: 'e1',
+          source: 'a',
+          target: 'b',
           data: {
             minlen: 1,
             weight: 1,
           },
         },
         {
-          id: "e2",
-          source: "b",
-          target: "c",
+          id: 'e2',
+          source: 'b',
+          target: 'c',
           data: {
             minlen: 1,
             weight: 1,
           },
         },
         {
-          id: "e3",
-          source: "c",
-          target: "d",
+          id: 'e3',
+          source: 'c',
+          target: 'd',
           data: {
             minlen: 1,
             weight: 1,
           },
         },
         {
-          id: "e4",
-          source: "d",
-          target: "h",
+          id: 'e4',
+          source: 'd',
+          target: 'h',
           data: {
             minlen: 1,
             weight: 1,
           },
         },
         {
-          id: "e5",
-          source: "a",
-          target: "e",
+          id: 'e5',
+          source: 'a',
+          target: 'e',
           data: {
             minlen: 1,
             weight: 1,
           },
         },
         {
-          id: "e6",
-          source: "e",
-          target: "g",
+          id: 'e6',
+          source: 'e',
+          target: 'g',
           data: {
             minlen: 1,
             weight: 1,
           },
         },
         {
-          id: "e7",
-          source: "g",
-          target: "h",
+          id: 'e7',
+          source: 'g',
+          target: 'h',
           data: {
             minlen: 1,
             weight: 1,
           },
         },
         {
-          id: "e8",
-          source: "a",
-          target: "f",
+          id: 'e8',
+          source: 'a',
+          target: 'f',
           data: {
             minlen: 1,
             weight: 1,
           },
         },
         {
-          id: "e9",
-          source: "f",
-          target: "g",
+          id: 'e9',
+          source: 'f',
+          target: 'g',
           data: {
             minlen: 1,
             weight: 1,
@@ -150,7 +150,7 @@ describe("rank", function () {
         let g = new Graph({
           nodes: [
             {
-              id: "a",
+              id: 'a',
               data: {},
             },
           ],
@@ -159,7 +159,7 @@ describe("rank", function () {
         // @ts-ignore
         rank(g, ranker);
         // @ts-ignore
-        expect(g.getNode("a").data.rank).toEqual(0);
+        expect(g.getNode('a').data.rank).toEqual(0);
       });
     });
   });

@@ -1,18 +1,18 @@
-import { isNumber } from "@antv/util";
-import { Graph as IGraph } from "@antv/graphlib";
+import { Graph as IGraph } from '@antv/graphlib';
+import { isNumber } from '@antv/util';
 import type {
-  Graph,
-  LayoutMapping,
-  OutNode,
-  PointTuple,
-  FruchtermanLayoutOptions,
-  OutNodeData,
   Edge,
   EdgeData,
-  Point,
+  FruchtermanLayoutOptions,
+  Graph,
+  LayoutMapping,
   LayoutWithIterations,
-} from "./types";
-import { cloneFormatData } from "./util";
+  OutNode,
+  OutNodeData,
+  Point,
+  PointTuple,
+} from './types';
+import { cloneFormatData } from './util';
 
 const DEFAULTS_LAYOUT_OPTIONS: Partial<FruchtermanLayoutOptions> = {
   maxIteration: 1000,
@@ -22,7 +22,7 @@ const DEFAULTS_LAYOUT_OPTIONS: Partial<FruchtermanLayoutOptions> = {
   clusterGravity: 10,
   width: 300,
   height: 300,
-  nodeClusterBy: "cluster",
+  nodeClusterBy: 'cluster',
 };
 const SPEED_DIVISOR = 800;
 
@@ -69,7 +69,7 @@ interface FormattedOptions extends FruchtermanLayoutOptions {
 export class FruchtermanLayout
   implements LayoutWithIterations<FruchtermanLayoutOptions>
 {
-  id = "fruchterman";
+  id = 'fruchterman';
 
   private timeInterval: number = 0;
 
@@ -83,7 +83,7 @@ export class FruchtermanLayout
   private lastResult: LayoutMapping;
 
   constructor(
-    public options: FruchtermanLayoutOptions = {} as FruchtermanLayoutOptions
+    public options: FruchtermanLayoutOptions = {} as FruchtermanLayoutOptions,
   ) {
     this.options = {
       ...DEFAULTS_LAYOUT_OPTIONS,
@@ -108,7 +108,7 @@ export class FruchtermanLayout
    * Stop simulation immediately.
    */
   stop() {
-    if (this.timeInterval && typeof window !== "undefined") {
+    if (this.timeInterval && typeof window !== 'undefined') {
       window.clearInterval(this.timeInterval);
     }
     this.running = false;
@@ -137,8 +137,8 @@ export class FruchtermanLayout
         this.lastGraph.mergeNodeData(node.id, {
           x: node.data.x,
           y: node.data.y,
-          z: this.options.dimensions === 3 ? node.data.z : undefined
-        })
+          z: this.options.dimensions === 3 ? node.data.z : undefined,
+        }),
       );
     }
 
@@ -148,17 +148,17 @@ export class FruchtermanLayout
   private async genericFruchtermanLayout(
     assign: false,
     graph: Graph,
-    options?: FruchtermanLayoutOptions
+    options?: FruchtermanLayoutOptions,
   ): Promise<LayoutMapping>;
   private async genericFruchtermanLayout(
     assign: true,
     graph: Graph,
-    options?: FruchtermanLayoutOptions
+    options?: FruchtermanLayoutOptions,
   ): Promise<void>;
   private async genericFruchtermanLayout(
     assign: boolean,
     graph: Graph,
-    options?: FruchtermanLayoutOptions
+    options?: FruchtermanLayoutOptions,
   ): Promise<LayoutMapping | void> {
     if (this.running) return;
 
@@ -188,7 +188,7 @@ export class FruchtermanLayout
         graph.mergeNodeData(nodes[0].id, {
           x: center[0],
           y: center[1],
-          z: dimensions === 3 ? center[2] : undefined
+          z: dimensions === 3 ? center[2] : undefined,
         });
       }
       const result = {
@@ -199,7 +199,7 @@ export class FruchtermanLayout
               ...nodes[0].data,
               x: center[0],
               y: center[1],
-              z: dimensions === 3 ? center[2] : undefined
+              z: dimensions === 3 ? center[2] : undefined,
             },
           },
         ],
@@ -210,7 +210,7 @@ export class FruchtermanLayout
     }
 
     const layoutNodes: OutNode[] = nodes.map(
-      (node) => cloneFormatData(node, [width, height]) as OutNode
+      (node) => cloneFormatData(node, [width, height]) as OutNode,
     );
     const calcGraph = new IGraph<OutNodeData, EdgeData>({
       nodes: layoutNodes,
@@ -241,7 +241,7 @@ export class FruchtermanLayout
     this.lastOptions = formattedOptions;
     this.lastClusterMap = clusterMap;
 
-    if (typeof window === "undefined") return;
+    if (typeof window === 'undefined') return;
     let iter = 0;
 
     return new Promise((resolve) => {
@@ -258,8 +258,8 @@ export class FruchtermanLayout
             graph.mergeNodeData(id, {
               x: data.x,
               y: data.y,
-              z: dimensions === 3 ? data.z : undefined
-            })
+              z: dimensions === 3 ? data.z : undefined,
+            }),
           );
         }
         onTick?.({
@@ -277,7 +277,7 @@ export class FruchtermanLayout
   }
 
   private formatOptions(
-    options: FruchtermanLayoutOptions = {}
+    options: FruchtermanLayoutOptions = {},
   ): FormattedOptions {
     const mergedOptions = { ...this.options, ...options } as FormattedOptions;
     const { clustering, nodeClusterBy } = mergedOptions;
@@ -288,11 +288,11 @@ export class FruchtermanLayout
       height: propsHeight,
     } = mergedOptions;
     mergedOptions.width =
-      !propsWidth && typeof window !== "undefined"
+      !propsWidth && typeof window !== 'undefined'
         ? window.innerWidth
         : (propsWidth as number);
     mergedOptions.height =
-      !propsHeight && typeof window !== "undefined"
+      !propsHeight && typeof window !== 'undefined'
         ? window.innerHeight
         : (propsHeight as number);
     mergedOptions.center = !propsCenter
@@ -307,7 +307,7 @@ export class FruchtermanLayout
   private runOneStep(
     calcGraph: CalcGraph,
     clusterMap: ClusterMap,
-    options: FormattedOptions
+    options: FormattedOptions,
   ) {
     const {
       dimensions,
@@ -360,7 +360,7 @@ export class FruchtermanLayout
         if (!isNumber(data.x) || !isNumber(data.y)) return;
         const c = clusterMap[data[nodeClusterBy] as string];
         const distLength = Math.sqrt(
-          (data.x - c.cx) * (data.x - c.cx) + (data.y - c.cy) * (data.y - c.cy)
+          (data.x - c.cx) * (data.x - c.cx) + (data.y - c.cy) * (data.y - c.cy),
         );
         const gravityForce = k * clusterGravity;
         displacements[id].x -= (gravityForce * (data.x - c.cx)) / distLength;
@@ -394,18 +394,22 @@ export class FruchtermanLayout
       if (!isNumber(data.x) || !isNumber(data.y)) return;
       const distLength = Math.sqrt(
         displacements[id].x * displacements[id].x +
-          displacements[id].y * displacements[id].y + (dimensions === 3 ? displacements[id].z * displacements[id].z : 0)
+          displacements[id].y * displacements[id].y +
+          (dimensions === 3 ? displacements[id].z * displacements[id].z : 0),
       );
       if (distLength > 0) {
         // && !n.isFixed()
         const limitedDist = Math.min(
           maxDisplace * (speed / SPEED_DIVISOR),
-          distLength
+          distLength,
         );
         calcGraph.mergeNodeData(id, {
           x: data.x + (displacements[id].x / distLength) * limitedDist,
           y: data.y + (displacements[id].y / distLength) * limitedDist,
-          z: dimensions === 3 ? data.z + (displacements[id].z / distLength) * limitedDist : undefined
+          z:
+            dimensions === 3
+              ? data.z + (displacements[id].z / distLength) * limitedDist
+              : undefined,
         });
       }
     });
@@ -414,7 +418,7 @@ export class FruchtermanLayout
     calcGraph: CalcGraph,
     displacements: DisplacementMap,
     k: number,
-    k2: number
+    k2: number,
   ) {
     this.calRepulsive(calcGraph, displacements, k2);
     this.calAttractive(calcGraph, displacements, k);
@@ -423,7 +427,7 @@ export class FruchtermanLayout
   private calRepulsive(
     calcGraph: CalcGraph,
     displacements: DisplacementMap,
-    k2: number
+    k2: number,
   ) {
     const nodes = calcGraph.getAllNodes();
     nodes.forEach(({ data: v, id: vid }, i) => {
@@ -468,7 +472,7 @@ export class FruchtermanLayout
   private calAttractive(
     calcGraph: CalcGraph,
     displacements: DisplacementMap,
-    k: number
+    k: number,
   ) {
     const edges = calcGraph.getAllEdges();
     edges.forEach((e) => {

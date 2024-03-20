@@ -1,15 +1,15 @@
 import {
-  Graph,
-  LayoutMapping,
+  cloneFormatData,
   ForceLayoutOptions,
+  Graph,
   Layout,
+  LayoutMapping,
   OutNode,
   OutNodeData,
-  cloneFormatData,
-} from "@antv/layout";
-import { isNumber } from "@antv/util";
-import type { WASMLayoutOptions } from "./interface";
-import { graphlib2WASMInput, distanceThresholdMode2Index } from "./util";
+} from '@antv/layout';
+import { isNumber } from '@antv/util';
+import type { WASMLayoutOptions } from './interface';
+import { distanceThresholdMode2Index, graphlib2WASMInput } from './util';
 
 const DEFAULTS_LAYOUT_OPTIONS: Partial<ForceLayoutOptions> = {
   maxIteration: 500,
@@ -25,7 +25,7 @@ const DEFAULTS_LAYOUT_OPTIONS: Partial<ForceLayoutOptions> = {
   linkDistance: 200,
   clusterNodeStrength: 20,
   preventOverlap: true,
-  distanceThresholdMode: "mean",
+  distanceThresholdMode: 'mean',
   maxDistance: Infinity,
 };
 
@@ -49,10 +49,10 @@ interface WASMForceLayoutOptions
  * await layout.assign(graph, { center: [100, 100] });
  */
 export class ForceLayout implements Layout<WASMForceLayoutOptions> {
-  id = "forceWASM";
+  id = 'forceWASM';
 
   constructor(
-    public options: WASMForceLayoutOptions = {} as WASMForceLayoutOptions
+    public options: WASMForceLayoutOptions = {} as WASMForceLayoutOptions,
   ) {
     this.options = {
       ...DEFAULTS_LAYOUT_OPTIONS,
@@ -76,17 +76,17 @@ export class ForceLayout implements Layout<WASMForceLayoutOptions> {
   private async genericForceLayout(
     assign: false,
     graph: Graph,
-    options?: WASMForceLayoutOptions
+    options?: WASMForceLayoutOptions,
   ): Promise<LayoutMapping>;
   private async genericForceLayout(
     assign: true,
     graph: Graph,
-    options?: WASMForceLayoutOptions
+    options?: WASMForceLayoutOptions,
   ): Promise<void>;
   private async genericForceLayout(
     assign: boolean,
     graph: Graph,
-    options?: WASMForceLayoutOptions
+    options?: WASMForceLayoutOptions,
   ): Promise<LayoutMapping | void> {
     const formattedOptions = this.formatOptions(options);
     const {
@@ -122,7 +122,7 @@ export class ForceLayout implements Layout<WASMForceLayoutOptions> {
         graph.mergeNodeData(nodes[0].id, {
           x: center[0],
           y: center[1],
-          z: dimensions === 3 ? center[2] : undefined
+          z: dimensions === 3 ? center[2] : undefined,
         });
       }
       return {
@@ -133,7 +133,7 @@ export class ForceLayout implements Layout<WASMForceLayoutOptions> {
               ...nodes[0].data,
               x: center[0],
               y: center[1],
-              z: dimensions === 3 ? center[2] : undefined
+              z: dimensions === 3 ? center[2] : undefined,
             },
           },
         ],
@@ -142,13 +142,14 @@ export class ForceLayout implements Layout<WASMForceLayoutOptions> {
     }
 
     const layoutNodes: OutNode[] = nodes.map(
-      (node) => cloneFormatData(node, [width, height]) as OutNode
+      (node) => cloneFormatData(node, [width, height]) as OutNode,
     );
     layoutNodes.forEach((node) => {
       if (!isNumber(node.data.x)) node.data.x = Math.random() * width;
       if (!isNumber(node.data.y)) node.data.y = Math.random() * height;
       if (dimensions === 3) {
-        if (!isNumber(node.data.z)) node.data.z = Math.random() * Math.sqrt(width * height);
+        if (!isNumber(node.data.z))
+          node.data.z = Math.random() * Math.sqrt(width * height);
       }
     });
 
@@ -163,7 +164,7 @@ export class ForceLayout implements Layout<WASMForceLayoutOptions> {
       iterations: maxIteration,
       min_movement: minMovement,
       distance_threshold_mode: distanceThresholdMode2Index(
-        distanceThresholdMode
+        distanceThresholdMode,
       ),
       center,
       edge_strength: edgeStrength as number,
@@ -209,7 +210,7 @@ export class ForceLayout implements Layout<WASMForceLayoutOptions> {
    * @returns formatted options
    */
   private formatOptions(
-    options: ForceLayoutOptions = {}
+    options: ForceLayoutOptions = {},
   ): WASMForceLayoutOptions {
     const mergedOptions = {
       ...this.options,
@@ -217,9 +218,9 @@ export class ForceLayout implements Layout<WASMForceLayoutOptions> {
     } as WASMForceLayoutOptions;
     const { center, width, height } = mergedOptions;
     mergedOptions.width =
-      !width && typeof window !== "undefined" ? window.innerWidth : width;
+      !width && typeof window !== 'undefined' ? window.innerWidth : width;
     mergedOptions.height =
-      !height && typeof window !== "undefined" ? window.innerHeight : height;
+      !height && typeof window !== 'undefined' ? window.innerHeight : height;
     mergedOptions.center = !center
       ? [mergedOptions.width / 2, mergedOptions.height / 2]
       : center;

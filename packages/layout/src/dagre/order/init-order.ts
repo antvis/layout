@@ -27,7 +27,7 @@ export const initOrder = (g: Graph) => {
   }
 
   const orderedVs = simpleNodes.sort(
-    (a, b) => g.getNode(a.id).data.rank! - g.getNode(b.id).data.rank!
+    (a, b) => g.getNode(a.id).data.rank! - g.getNode(b.id).data.rank!,
   );
   // const orderedVs = _.sortBy(simpleNodes, function(v) { return g.node(v)!.rank; });
 
@@ -36,7 +36,7 @@ export const initOrder = (g: Graph) => {
     return g.getNode(n.id).data.fixorder !== undefined;
   });
   const fixOrderNodes = beforeSort.sort(
-    (a, b) => g.getNode(a.id).data.fixorder! - g.getNode(b.id).data.fixorder!
+    (a, b) => g.getNode(a.id).data.fixorder! - g.getNode(b.id).data.fixorder!,
   );
   fixOrderNodes?.forEach((n) => {
     if (!isNaN(g.getNode(n.id).data.rank!)) {
@@ -52,7 +52,7 @@ export const initOrder = (g: Graph) => {
       if (!isNaN(node.data.rank!)) {
         layers[node.data.rank!].push(node.id);
       }
-    })
+    }),
   );
 
   return layers;

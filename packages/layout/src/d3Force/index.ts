@@ -1,16 +1,16 @@
-import * as d3Force from "d3-force";
-import { isFunction, isNumber, isObject } from "@antv/util";
+import { isFunction, isNumber, isObject } from '@antv/util';
+import * as d3Force from 'd3-force';
 import {
-  Graph,
-  Node,
-  LayoutMapping,
-  OutNode,
   D3ForceLayoutOptions,
   Edge,
+  Graph,
+  LayoutMapping,
   LayoutWithIterations,
-} from "../types";
-import { cloneFormatData, isArray } from "../util";
-import forceInBox from "./forceInBox";
+  Node,
+  OutNode,
+} from '../types';
+import { cloneFormatData, isArray } from '../util';
+import forceInBox from './forceInBox';
 
 /**
  * D3 writes x and y as the first level properties
@@ -57,7 +57,7 @@ const DEFAULTS_LAYOUT_OPTIONS: Partial<D3ForceLayoutOptions> = {
 export class D3ForceLayout
   implements LayoutWithIterations<D3ForceLayoutOptions>
 {
-  id = "d3force";
+  id = 'd3force';
 
   private forceSimulation: d3Force.Simulation<any, any>;
 
@@ -67,7 +67,7 @@ export class D3ForceLayout
   private lastGraph: Graph;
 
   constructor(
-    public options: D3ForceLayoutOptions = {} as D3ForceLayoutOptions
+    public options: D3ForceLayoutOptions = {} as D3ForceLayoutOptions,
   ) {
     this.options = {
       ...DEFAULTS_LAYOUT_OPTIONS,
@@ -112,7 +112,7 @@ export class D3ForceLayout
         this.lastGraph.mergeNodeData(node.id, {
           x: node.data.x,
           y: node.data.y,
-        })
+        }),
       );
     }
 
@@ -122,17 +122,17 @@ export class D3ForceLayout
   private async genericForceLayout(
     assign: false,
     graph: Graph,
-    options?: D3ForceLayoutOptions
+    options?: D3ForceLayoutOptions,
   ): Promise<LayoutMapping>;
   private async genericForceLayout(
     assign: true,
     graph: Graph,
-    options?: D3ForceLayoutOptions
+    options?: D3ForceLayoutOptions,
   ): Promise<void>;
   private async genericForceLayout(
     assign: boolean,
     graph: Graph,
-    options?: D3ForceLayoutOptions
+    options?: D3ForceLayoutOptions,
   ): Promise<LayoutMapping | void> {
     const mergedOptions = { ...this.options, ...options };
 
@@ -144,7 +144,7 @@ export class D3ForceLayout
           ...cloneFormatData(node),
           x: node.data?.x,
           y: node.data?.y,
-        } as CalcNode)
+        } as CalcNode),
     );
     const layoutEdges: Edge[] = edges.map((edge) => cloneFormatData(edge));
 
@@ -191,7 +191,7 @@ export class D3ForceLayout
             clusterForce
               .centerX(center[0])
               .centerY(center[1])
-              .template("force")
+              .template('force')
               .strength(clusterFociStrength);
             if (layoutEdges) {
               clusterForce.links(layoutEdges);
@@ -205,11 +205,11 @@ export class D3ForceLayout
               .forceCharge(clusterNodeStrength)
               .forceNodeSize(clusterNodeSize);
 
-            forceSimulation.force("group", clusterForce);
+            forceSimulation.force('group', clusterForce);
           }
           forceSimulation
-            .force("center", d3Force.forceCenter(center[0], center[1]))
-            .force("charge", nodeForce)
+            .force('center', d3Force.forceCenter(center[0], center[1]))
+            .force('charge', nodeForce)
             .alpha(alpha)
             .alphaDecay(alphaDecay)
             .alphaMin(alphaMin);
@@ -234,11 +234,11 @@ export class D3ForceLayout
             if (linkDistance) {
               edgeForce.distance(linkDistance as any);
             }
-            forceSimulation.force("link", edgeForce);
+            forceSimulation.force('link', edgeForce);
           }
 
           forceSimulation
-            .on("tick", () => {
+            .on('tick', () => {
               const outNodes = formatOutNodes(layoutNodes);
               onTick?.({
                 nodes: outNodes,
@@ -250,11 +250,11 @@ export class D3ForceLayout
                   graph.mergeNodeData(node.id, {
                     x: node.data.x,
                     y: node.data.y,
-                  })
+                  }),
                 );
               }
             })
-            .on("end", () => {
+            .on('end', () => {
               const outNodes = formatOutNodes(layoutNodes);
 
               if (assign) {
@@ -262,7 +262,7 @@ export class D3ForceLayout
                   graph.mergeNodeData(node.id, {
                     x: node.data.x,
                     y: node.data.y,
-                  })
+                  }),
                 );
               }
 
@@ -294,7 +294,7 @@ export class D3ForceLayout
           if (linkDistance) {
             edgeForce.distance(linkDistance as any);
           }
-          forceSimulation.force("link", edgeForce);
+          forceSimulation.force('link', edgeForce);
         }
         if (preventOverlap) {
           this.overlapProcess(forceSimulation, {
@@ -314,7 +314,7 @@ export class D3ForceLayout
             graph.mergeNodeData(node.id, {
               x: node.data.x,
               y: node.data.y,
-            })
+            }),
           );
         }
 
@@ -338,7 +338,7 @@ export class D3ForceLayout
       nodeSize: number | number[] | ((d?: Node) => number) | undefined;
       nodeSpacing: number | number[] | ((d?: Node) => number) | undefined;
       collideStrength: number;
-    }
+    },
   ) {
     const { nodeSize, nodeSpacing, collideStrength } = options;
     let nodeSizeFunc: (d: any) => number;
@@ -386,8 +386,8 @@ export class D3ForceLayout
 
     // forceCollide's parameter is a radius
     simulation.force(
-      "collisionForce",
-      d3Force.forceCollide(nodeSizeFunc).strength(collideStrength)
+      'collisionForce',
+      d3Force.forceCollide(nodeSizeFunc).strength(collideStrength),
     );
   }
 }

@@ -1,7 +1,7 @@
-import { Graph } from '@antv/graphlib';
 import type { Canvas } from '@antv/g';
-import { countries } from '../data';
+import { Graph } from '@antv/graphlib';
 import { ConcentricLayout } from '../../../packages/layout';
+import { countries } from '../data';
 import { renderNodes } from '../utils';
 
 export function render(canvas: Canvas) {

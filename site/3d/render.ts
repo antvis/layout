@@ -1,12 +1,17 @@
-import { Canvas, Line } from "@antv/g";
-import { DirectionalLight, Mesh, MeshPhongMaterial, SphereGeometry } from "@antv/g-plugin-3d";
+import { Canvas, Line } from '@antv/g';
+import {
+  DirectionalLight,
+  Mesh,
+  MeshPhongMaterial,
+  SphereGeometry,
+} from '@antv/g-plugin-3d';
 
 export function render(
   canvas: Canvas,
   device: any,
   nodes: number[],
   edges: number[],
-  scaling: number
+  scaling: number,
 ) {
   // clear
   canvas.document.documentElement.removeChildren();
@@ -23,20 +28,20 @@ export function render(
   canvas.appendChild(light);
 
   // if (!canvas.sphereGeometry) {
-    // create a sphere geometry
-    const sphereGeometry = new SphereGeometry(device, {
-      radius: 10,
-      latitudeBands: 32,
-      longitudeBands: 32,
-    });
+  // create a sphere geometry
+  const sphereGeometry = new SphereGeometry(device, {
+    radius: 10,
+    latitudeBands: 32,
+    longitudeBands: 32,
+  });
   //   canvas.sphereGeometry = sphereGeometry;
   // }
 
   // if (!canvas.material) {
-    // create a material with Phong lighting model
-    const material = new MeshPhongMaterial(device, {
-      shininess: 30,
-    });
+  // create a material with Phong lighting model
+  const material = new MeshPhongMaterial(device, {
+    shininess: 30,
+  });
   //   canvas.material = material;
   // }
 
@@ -50,7 +55,7 @@ export function render(
         y2: edges[i + 4],
         z2: edges[i + 5],
         lineWidth: 1,
-        stroke: "grey",
+        stroke: 'grey',
         isBillboard: true,
       },
     });

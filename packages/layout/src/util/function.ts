@@ -9,7 +9,7 @@ import { Node } from '../types';
  */
 export function formatNumberFn<T = unknown>(
   defaultValue: number,
-  value: number | ((d?: T) => number) | undefined
+  value: number | ((d?: T) => number) | undefined,
 ): (d?: T | undefined) => number {
   let resultFunc;
   if (isFunction(value)) {
@@ -39,7 +39,7 @@ export function formatSizeFn<T extends Node>(
     | { width: number; height: number }
     | ((d?: T) => number)
     | undefined,
-  resultIsNumber: boolean = true
+  resultIsNumber: boolean = true,
 ): (d: T) => number | number[] {
   if (!value && value !== 0) {
     return (d) => {
@@ -91,7 +91,7 @@ export function formatSizeFn<T extends Node>(
  */
 export const formatNodeSize = (
   nodeSize: number | number[] | ((nodeData: Node) => number) | undefined,
-  nodeSpacing: number | Function | undefined
+  nodeSpacing: number | Function | undefined,
 ): ((nodeData: Node) => number) => {
   let nodeSizeFunc;
   let nodeSpacingFunc: Function;

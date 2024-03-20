@@ -1,10 +1,10 @@
-import { Graph } from "@antv/graphlib";
-import { FruchtermanLayout } from "../../packages/layout";
-import data from "../data/test-data-1";
-import { getEuclideanDistance } from "../util";
+import { Graph } from '@antv/graphlib';
+import { FruchtermanLayout } from '../../packages/layout';
+import data from '../data/test-data-1';
+import { getEuclideanDistance } from '../util';
 
-describe("FruchtermanLayout", () => {
-  test("should return correct default config.", () => {
+describe('FruchtermanLayout', () => {
+  test('should return correct default config.', () => {
     const graph = new Graph<any, any>({
       nodes: [...data.nodes],
       edges: [...data.edges],
@@ -19,7 +19,7 @@ describe("FruchtermanLayout", () => {
       clusterGravity: 10,
       width: 300,
       height: 300,
-      nodeClusterBy: "cluster",
+      nodeClusterBy: 'cluster',
     });
 
     fruchterman.execute(graph);
@@ -30,7 +30,7 @@ describe("FruchtermanLayout", () => {
     expect(nodes[0].data.y).not.toBe(undefined);
   });
 
-  test("should do fruchterman layout with an empty graph.", async () => {
+  test('should do fruchterman layout with an empty graph.', async () => {
     const graph = new Graph<any, any>({
       nodes: [],
       edges: [],
@@ -40,12 +40,12 @@ describe("FruchtermanLayout", () => {
     await fruchterman.execute(graph);
     fruchterman.stop();
     const positions = fruchterman.tick(1000);
-    expect(JSON.stringify(positions.nodes)).toBe("[]");
+    expect(JSON.stringify(positions.nodes)).toBe('[]');
   });
 
-  test("should do fruchterman layout with a graph which has only one node.", () => {
+  test('should do fruchterman layout with a graph which has only one node.', () => {
     const graph = new Graph<any, any>({
-      nodes: [{ id: "node", data: {} }],
+      nodes: [{ id: 'node', data: {} }],
       edges: [],
     });
 
@@ -61,21 +61,21 @@ describe("FruchtermanLayout", () => {
     expect(positions.nodes[0].data.y).toBe(20);
   });
 
-  test("should do fruchterman layout with clustering and nodeClusterBy.", () => {
+  test('should do fruchterman layout with clustering and nodeClusterBy.', () => {
     const graph = new Graph<any, any>({
       nodes: [
-        { id: "node0", data: { clusterField: "a" } },
-        { id: "node1", data: { clusterField: "c" } },
-        { id: "node2", data: { clusterField: "b" } },
-        { id: "node3", data: { clusterField: "a" } },
-        { id: "node4", data: { clusterField: "c" } },
-        { id: "node5", data: { clusterField: "b" } },
+        { id: 'node0', data: { clusterField: 'a' } },
+        { id: 'node1', data: { clusterField: 'c' } },
+        { id: 'node2', data: { clusterField: 'b' } },
+        { id: 'node3', data: { clusterField: 'a' } },
+        { id: 'node4', data: { clusterField: 'c' } },
+        { id: 'node5', data: { clusterField: 'b' } },
       ],
       edges: [],
     });
     const fruchterman = new FruchtermanLayout({
       clustering: true,
-      nodeClusterBy: "clusterField",
+      nodeClusterBy: 'clusterField',
     });
     fruchterman.execute(graph);
     fruchterman.stop();
@@ -83,27 +83,27 @@ describe("FruchtermanLayout", () => {
 
     const aClusterDist = getEuclideanDistance(
       positions.nodes[0],
-      positions.nodes[3]
+      positions.nodes[3],
     );
     const bClusterDist = getEuclideanDistance(
       positions.nodes[2],
-      positions.nodes[5]
+      positions.nodes[5],
     );
     const cClusterDist = getEuclideanDistance(
       positions.nodes[1],
-      positions.nodes[4]
+      positions.nodes[4],
     );
     const abClusterDist = getEuclideanDistance(
       positions.nodes[0],
-      positions.nodes[2]
+      positions.nodes[2],
     );
     const acClusterDist = getEuclideanDistance(
       positions.nodes[0],
-      positions.nodes[1]
+      positions.nodes[1],
     );
     const bcClusterDist = getEuclideanDistance(
       positions.nodes[2],
-      positions.nodes[1]
+      positions.nodes[1],
     );
     // distances intra a cluster are smaller than distances inter clusters
     expect(aClusterDist < abClusterDist).toBe(true);
@@ -117,7 +117,7 @@ describe("FruchtermanLayout", () => {
     expect(cClusterDist < acClusterDist).toBe(true);
   });
 
-  test("should do fruchterman layout with onTick.", async () => {
+  test('should do fruchterman layout with onTick.', async () => {
     const graph = new Graph<any, any>({
       nodes: [...data.nodes],
       edges: [...data.edges],
@@ -142,25 +142,25 @@ describe("FruchtermanLayout", () => {
     expect(tick).toBe(10);
   });
 
-  test("should do fruchterman layout with overlapped nodes and loop edge.", () => {
+  test('should do fruchterman layout with overlapped nodes and loop edge.', () => {
     const graph = new Graph<any, any>({
       nodes: [
         {
-          id: "node0",
+          id: 'node0',
           data: { x: 100, y: 100 },
         },
         {
-          id: "node1",
+          id: 'node1',
           data: { x: 100, y: 100 },
         },
         {
-          id: "node2",
+          id: 'node2',
           data: { x: 150, y: 120 },
         },
       ],
       edges: [
-        { id: "edge0", source: "node2", target: "node2", data: {} },
-        { id: "edge1", source: "node1", target: "node1", data: {} },
+        { id: 'edge0', source: 'node2', target: 'node2', data: {} },
+        { id: 'edge1', source: 'node1', target: 'node1', data: {} },
       ],
     });
     const fruchterman = new FruchtermanLayout();
@@ -171,12 +171,12 @@ describe("FruchtermanLayout", () => {
     expect(positions.nodes[0].data.y).not.toEqual(positions.nodes[1].data.y);
   });
 
-  test("should do fruchterman layout with different gravities.", () => {
+  test('should do fruchterman layout with different gravities.', () => {
     const graph = new Graph<any, any>({
       nodes: [
-        { id: "node0", data: { x: 10, y: 10 } },
-        { id: "node1", data: { x: 100, y: 10 } },
-        { id: "node2", data: { x: 10, y: 100 } },
+        { id: 'node0', data: { x: 10, y: 10 } },
+        { id: 'node1', data: { x: 100, y: 10 } },
+        { id: 'node2', data: { x: 10, y: 100 } },
       ],
       edges: [],
     });
@@ -199,28 +199,28 @@ describe("FruchtermanLayout", () => {
     const virtualCenterNode = { data: { x: 10, y: 20 } };
     const layout1DistToCenter1 = getEuclideanDistance(
       positions1.nodes[0],
-      virtualCenterNode
+      virtualCenterNode,
     );
     const layout1DistToCenter2 = getEuclideanDistance(
       positions1.nodes[1],
-      virtualCenterNode
+      virtualCenterNode,
     );
     const layout1DistToCenter3 = getEuclideanDistance(
       positions1.nodes[2],
-      virtualCenterNode
+      virtualCenterNode,
     );
 
     const layout2DistToCenter1 = getEuclideanDistance(
       positions2.nodes[0],
-      virtualCenterNode
+      virtualCenterNode,
     );
     const layout2DistToCenter2 = getEuclideanDistance(
       positions2.nodes[1],
-      virtualCenterNode
+      virtualCenterNode,
     );
     const layout2DistToCenter3 = getEuclideanDistance(
       positions2.nodes[2],
-      virtualCenterNode
+      virtualCenterNode,
     );
 
     expect(layout1DistToCenter1 > layout2DistToCenter1).toBe(true);
