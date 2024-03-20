@@ -1,4 +1,5 @@
 export * from './antv-dagre';
+export type { DagreAlign, DagreRankdir } from './antv-dagre/types';
 export * from './circular';
 export * from './comboCombined';
 export * from './concentric';

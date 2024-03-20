@@ -1,6 +1,6 @@
 import { Graph } from '@antv/graphlib';
-import { EdgeData, NodeData } from '../../../../packages/layout/lib';
-import { sortSubgraph } from '../../../../packages/layout/src/dagre/order/sort-subgraph';
+import { EdgeData, NodeData } from '../../../../packages/layout';
+import { sortSubgraph } from '../../../../packages/layout/src/antv-dagre/order/sort-subgraph';
 
 describe('order/sortSubgraph', function () {
   let g: Graph<NodeData, EdgeData>;

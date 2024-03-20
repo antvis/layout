@@ -1,6 +1,6 @@
 import { Edge, Graph } from '@antv/graphlib';
-import { EdgeData, NodeData } from '../../../packages/layout/lib';
-import { run, undo } from '../../../packages/layout/src/dagre/acyclic';
+import { EdgeData, NodeData } from '../../../packages/layout';
+import { run, undo } from '../../../packages/layout/src/antv-dagre/acyclic';
 import { findCycles } from '../../util';
 
 describe('acyclic', function () {

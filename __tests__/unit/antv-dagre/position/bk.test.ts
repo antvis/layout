@@ -1,7 +1,7 @@
 import { Graph, ID } from '@antv/graphlib';
-import { EdgeData, NodeData } from '../../../../packages/layout/lib';
-import * as bk from '../../../../packages/layout/src/dagre/position/bk';
-import { buildLayerMatrix } from '../../../../packages/layout/src/dagre/util';
+import { EdgeData, NodeData } from '../../../../packages/layout';
+import * as bk from '../../../../packages/layout/src/antv-dagre/position/bk';
+import { buildLayerMatrix } from '../../../../packages/layout/src/antv-dagre/util';
 
 let findType1Conflicts = bk.findType1Conflicts;
 let findType2Conflicts = bk.findType2Conflicts;

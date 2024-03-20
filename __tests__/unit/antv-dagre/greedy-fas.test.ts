@@ -1,6 +1,6 @@
 import { Edge, Graph } from '@antv/graphlib';
-import { EdgeData, Graph as IGraph, NodeData } from '../../../packages/layout/lib';
-import { greedyFAS } from '../../../packages/layout/src/dagre/greedy-fas';
+import { EdgeData, Graph as IGraph, NodeData } from '../../../packages/layout';
+import { greedyFAS } from '../../../packages/layout/src/antv-dagre/greedy-fas';
 import { findCycles } from '../../util';
 
 describe('greedyFAS', function () {

@@ -1,6 +1,6 @@
 import { Graph } from '@antv/graphlib';
-import { EdgeData, NodeData } from '../../../packages/layout/lib';
-import * as util from '../../../packages/layout/src/dagre/util';
+import { EdgeData, NodeData } from '../../../packages/layout';
+import * as util from '../../../packages/layout/src/antv-dagre/util';
 
 describe('util', function () {
   describe('simplify', function () {

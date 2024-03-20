@@ -1,7 +1,7 @@
 import { Graph } from '@antv/graphlib';
-import { EdgeData, NodeData } from '../../../../packages/layout/lib';
-import { longestPath } from '../../../../packages/layout/src/dagre/rank/util';
-import { normalizeRanks } from '../../../../packages/layout/src/dagre/util';
+import { EdgeData, NodeData } from '../../../../packages/layout';
+import { longestPath } from '../../../../packages/layout/src/antv-dagre/rank/util';
+import { normalizeRanks } from '../../../../packages/layout/src/antv-dagre/util';
 
 describe('rank/util', function () {
   describe('longestPath', function () {

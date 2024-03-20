@@ -1,6 +1,6 @@
 import { Graph } from '@antv/graphlib';
-import { EdgeData, NodeData } from '../../../packages/layout/lib';
-import { position } from '../../../packages/layout/src/dagre/position';
+import { EdgeData, NodeData } from '../../../packages/layout';
+import { position } from '../../../packages/layout/src/antv-dagre/position';
 
 describe('position', function () {
   let g: Graph<NodeData, EdgeData>;

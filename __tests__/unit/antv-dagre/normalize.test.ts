@@ -1,6 +1,6 @@
 import { Edge, Graph, ID } from '@antv/graphlib';
-import { EdgeData, NodeData } from '../../../packages/layout/lib';
-import { run, undo } from '../../../packages/layout/src/dagre/normalize';
+import { EdgeData, NodeData } from '../../../packages/layout';
+import { run, undo } from '../../../packages/layout/src/antv-dagre/normalize';
 
 describe('normalize', function () {
   let g: Graph<NodeData, EdgeData>;

@@ -1,6 +1,6 @@
 import { Graph, ID } from '@antv/graphlib';
-import { EdgeData, NodeData } from '../../../packages/layout/lib';
-import { cleanup, run } from '../../../packages/layout/src/dagre/nesting-graph';
+import { EdgeData, NodeData } from '../../../packages/layout';
+import { cleanup, run } from '../../../packages/layout/src/antv-dagre/nesting-graph';
 import { components } from '../../util';
 
 describe('rank/nestingGraph', function () {

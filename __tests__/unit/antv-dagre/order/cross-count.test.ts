@@ -1,6 +1,6 @@
 import { Graph } from '@antv/graphlib';
-import { EdgeData, NodeData } from '../../../../packages/layout/lib';
-import { crossCount } from '../../../../packages/layout/src/dagre/order/cross-count';
+import { EdgeData, NodeData } from '../../../../packages/layout';
+import { crossCount } from '../../../../packages/layout/src/antv-dagre/order/cross-count';
 
 describe('crossCount', function () {
   let g: Graph<NodeData, EdgeData>;

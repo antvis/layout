@@ -1,6 +1,6 @@
 import { Graph } from '@antv/graphlib';
-import { EdgeData, NodeData } from '../../../packages/layout/lib';
-import { addBorderSegments } from '../../../packages/layout/src/dagre/add-border-segments';
+import { EdgeData, NodeData } from '../../../packages/layout';
+import { addBorderSegments } from '../../../packages/layout/src/antv-dagre/add-border-segments';
 
 describe('addBorderSegments', function () {
   let g: Graph<NodeData, EdgeData>;

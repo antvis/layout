@@ -1,6 +1,6 @@
 import { Graph } from '@antv/graphlib';
-import { EdgeData, NodeData } from '../../../../packages/layout/lib';
-import { addSubgraphConstraints } from '../../../../packages/layout/src/dagre/order/add-subgraph-constraints';
+import { EdgeData, NodeData } from '../../../../packages/layout';
+import { addSubgraphConstraints } from '../../../../packages/layout/src/antv-dagre/order/add-subgraph-constraints';
 
 describe('order/addSubgraphConstraints', function () {
   let g: Graph<NodeData, EdgeData>;

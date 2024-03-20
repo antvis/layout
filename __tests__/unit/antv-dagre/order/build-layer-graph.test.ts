@@ -3,8 +3,8 @@ import {
   EdgeData,
   Graph as IGraph,
   NodeData,
-} from '../../../../packages/layout/lib';
-import { buildLayerGraph } from '../../../../packages/layout/src/dagre/order/build-layer-graph';
+} from '../../../../packages/layout';
+import { buildLayerGraph } from '../../../../packages/layout/src/antv-dagre/order/build-layer-graph';
 
 describe('order/buildLayerGraph', function () {
   let g: Graph<NodeData, EdgeData>;

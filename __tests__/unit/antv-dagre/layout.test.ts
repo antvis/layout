@@ -4,8 +4,9 @@ import {
   EdgeData,
   Graph as IGraph,
   NodeData,
-} from '../../../packages/layout/lib';
-import { layout } from '../../../packages/layout/src/dagre/layout';
+  Point,
+} from '../../../packages/layout';
+import { layout } from '../../../packages/layout/src/antv-dagre/layout';
 
 describe.skip('layout', function () {
   let g: Graph<NodeData, EdgeData>;
@@ -411,7 +412,7 @@ describe.skip('layout', function () {
         let points = g.getEdge('e1').data.points!;
         expect(points).toHaveLength(7);
 
-        points.forEach(function (point) {
+        points.forEach(function (point: Point) {
           if (rankdir !== 'LR' && rankdir !== 'RL') {
             expect(point.x).toBeGreaterThan(nodeA.data.x!);
             expect(Math.abs(point.y - nodeA.data.y!)).toBeLessThanOrEqual(

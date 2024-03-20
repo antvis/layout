@@ -1,6 +1,6 @@
 import { Graph } from '@antv/graphlib';
-import { EdgeData, NodeData } from '../../../../packages/layout/lib';
-import { rank } from '../../../../packages/layout/src/dagre/rank';
+import { EdgeData, NodeData } from '../../../../packages/layout';
+import { rank } from '../../../../packages/layout/src/antv-dagre/rank';
 
 describe('rank', function () {
   let RANKERS = [

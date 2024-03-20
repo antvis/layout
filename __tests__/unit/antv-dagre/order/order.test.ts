@@ -1,8 +1,8 @@
 import { Graph } from '@antv/graphlib';
-import { EdgeData, NodeData } from '../../../../packages/layout/lib';
-import { order } from '../../../../packages/layout/src/dagre/order';
-import { crossCount } from '../../../../packages/layout/src/dagre/order/cross-count';
-import * as util from '../../../../packages/layout/src/dagre/util';
+import { EdgeData, NodeData } from '../../../../packages/layout';
+import { order } from '../../../../packages/layout/src/antv-dagre/order';
+import { crossCount } from '../../../../packages/layout/src/antv-dagre/order/cross-count';
+import * as util from '../../../../packages/layout/src/antv-dagre/util';
 
 describe('order', function () {
   let g: Graph<NodeData, EdgeData>;

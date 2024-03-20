@@ -1,9 +1,9 @@
 import { Graph } from '@antv/graphlib';
-import { EdgeData, NodeData } from '../../../packages/layout/lib';
+import { EdgeData, NodeData } from '../../../packages/layout';
 import {
   adjust,
   undo,
-} from '../../../packages/layout/src/dagre/coordinate-system';
+} from '../../../packages/layout/src/antv-dagre/coordinate-system';
 
 describe('coordinateSystem', function () {
   let g: Graph<NodeData, EdgeData>;

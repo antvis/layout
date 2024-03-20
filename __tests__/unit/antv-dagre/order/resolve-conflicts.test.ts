@@ -1,6 +1,6 @@
 import { Graph } from '@antv/graphlib';
-import { Graph as IGraph } from '../../../../packages/layout/lib';
-import resolveConflicts from '../../../../packages/layout/src/dagre/order/resolve-conflicts';
+import { Graph as IGraph } from '../../../../packages/layout';
+import resolveConflicts from '../../../../packages/layout/src/antv-dagre/order/resolve-conflicts';
 
 describe('order/resolveConflicts', function () {
   let cg: IGraph;

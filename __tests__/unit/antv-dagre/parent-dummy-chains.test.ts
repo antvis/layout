@@ -1,6 +1,6 @@
 import { Graph } from '@antv/graphlib';
-import { EdgeData, NodeData } from '../../../packages/layout/lib';
-import { parentDummyChains } from '../../../packages/layout/src/dagre/parent-dummy-chains';
+import { EdgeData, NodeData } from '../../../packages/layout';
+import { parentDummyChains } from '../../../packages/layout/src/antv-dagre/parent-dummy-chains';
 
 describe('parentDummyChains', function () {
   let g: Graph<NodeData, EdgeData>;

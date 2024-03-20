@@ -1,6 +1,6 @@
 import { Graph } from '@antv/graphlib';
-import { EdgeData, NodeData } from '../../../../packages/layout/lib';
-import { feasibleTree } from '../../../../packages/layout/src/dagre/rank/feasible-tree';
+import { EdgeData, NodeData } from '../../../../packages/layout';
+import { feasibleTree } from '../../../../packages/layout/src/antv-dagre/rank/feasible-tree';
 
 describe('feasibleTree', function () {
   let g: Graph<NodeData, EdgeData>;
