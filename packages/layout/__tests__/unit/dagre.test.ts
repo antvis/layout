@@ -39,7 +39,7 @@ describe('DagreLayout', () => {
 
     const dagre = new DagreLayout({});
 
-    const positions = await dagre.execute(graph, { width: 100, height: 100 });
+    const positions = await dagre.execute(graph);
 
     expect(positions).toEqual({
       nodes: [
@@ -160,6 +160,19 @@ describe('DagreLayout', () => {
           },
         },
       ],
+    });
+  });
+
+  test('nodeSize', async () => {
+    const graph = new Graph<NodeData, EdgeData>(data);
+
+    const dagre = new DagreLayout({});
+
+    const { nodes } = await dagre.execute(graph, { nodeSize: 100 });
+
+    nodes.forEach((node) => {
+      expect(node.data.width).toBe(100);
+      expect(node.data.height).toBe(100);
     });
   });
 });
