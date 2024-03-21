@@ -1,3 +1,4 @@
+import { AntVDagreLayout } from './antv-dagre';
 import { CircularLayout } from './circular';
 import { ComboCombinedLayout } from './comboCombined';
 import { ConcentricLayout } from './concentric';
@@ -24,5 +25,6 @@ export const registry: Record<string, new (...args: any) => Layout<any>> = {
   fruchterman: FruchtermanLayout,
   forceAtlas2: ForceAtlas2Layout,
   dagre: DagreLayout,
+  antvDagre: AntVDagreLayout,
   comboCombined: ComboCombinedLayout,
 };

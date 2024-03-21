@@ -20,9 +20,11 @@ jobs:
 
       - name: Install Dependencies
         run: pnpm install --no-frozen-lockfile
+
       - name: build
         run: |
-          pnpm build:ci
+          pnpm run ci
+          
       - name: test
         run: |
           pnpm test

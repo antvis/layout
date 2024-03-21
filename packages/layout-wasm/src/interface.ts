@@ -6,7 +6,7 @@ export interface Threads {
   fruchterman: (
     options: FruchtermanLayoutOptions,
   ) => Promise<{ nodes: number[] }>;
-  dagre: (options: DagreLayoutOptions) => Promise<{
+  dagre: (options: AntVDagreLayoutOptions) => Promise<{
     nodes: {
       x: number;
       y: number;
@@ -67,7 +67,7 @@ export interface ForceLayoutOptions {
   max_distance?: number;
 }
 
-export interface DagreLayoutOptions {
+export interface AntVDagreLayoutOptions {
   nodes: number[];
   edges: number[][];
   masses?: number[];

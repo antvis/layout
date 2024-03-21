@@ -1,6 +1,6 @@
 import {
   cloneFormatData,
-  DagreLayoutOptions,
+  AntVDagreLayoutOptions,
   Edge,
   Graph,
   Layout,
@@ -12,28 +12,28 @@ import { isNumber } from '@antv/util';
 import type { WASMLayoutOptions } from './interface';
 import { graphlib2WASMInput } from './util';
 
-const DEFAULTS_LAYOUT_OPTIONS: Partial<DagreLayoutOptions> = {
+const DEFAULTS_LAYOUT_OPTIONS: Partial<AntVDagreLayoutOptions> = {
   nodesep: 50,
   ranksep: 50,
   rankdir: 'tb',
 };
 
-interface WASMDagreLayoutOptions
-  extends DagreLayoutOptions,
+interface WASMAntVDagreLayoutOptions
+  extends AntVDagreLayoutOptions,
     WASMLayoutOptions {}
 
-interface FormattedOptions extends WASMDagreLayoutOptions {}
+interface FormattedOptions extends WASMAntVDagreLayoutOptions {}
 
 /**
  * Layout with dagre
  *
  * @example
  */
-export class DagreLayout implements Layout<WASMDagreLayoutOptions> {
+export class AntVDagreLayout implements Layout<WASMAntVDagreLayoutOptions> {
   id = 'dagreWASM';
 
   constructor(
-    public options: WASMDagreLayoutOptions = {} as WASMDagreLayoutOptions,
+    public options: WASMAntVDagreLayoutOptions = {} as WASMAntVDagreLayoutOptions,
   ) {
     this.options = {
       ...DEFAULTS_LAYOUT_OPTIONS,
@@ -44,30 +44,30 @@ export class DagreLayout implements Layout<WASMDagreLayoutOptions> {
   /**
    * Return the positions of nodes and edges(if needed).
    */
-  async execute(graph: Graph, options?: DagreLayoutOptions) {
+  async execute(graph: Graph, options?: AntVDagreLayoutOptions) {
     return this.genericFruchtermanLayout(false, graph, options);
   }
   /**
    * To directly assign the positions to the nodes.
    */
-  async assign(graph: Graph, options?: DagreLayoutOptions) {
+  async assign(graph: Graph, options?: AntVDagreLayoutOptions) {
     this.genericFruchtermanLayout(true, graph, options);
   }
 
   private async genericFruchtermanLayout(
     assign: false,
     graph: Graph,
-    options?: DagreLayoutOptions,
+    options?: AntVDagreLayoutOptions,
   ): Promise<LayoutMapping>;
   private async genericFruchtermanLayout(
     assign: true,
     graph: Graph,
-    options?: DagreLayoutOptions,
+    options?: AntVDagreLayoutOptions,
   ): Promise<void>;
   private async genericFruchtermanLayout(
     assign: boolean,
     graph: Graph,
-    options?: DagreLayoutOptions,
+    options?: AntVDagreLayoutOptions,
   ): Promise<LayoutMapping | void> {
     const formattedOptions = this.formatOptions(options);
     const { threads, nodesep, ranksep, rankdir, align, begin } =
@@ -188,7 +188,7 @@ export class DagreLayout implements Layout<WASMDagreLayoutOptions> {
     return { nodes: layoutNodes, edges: layoutEdges };
   }
 
-  private formatOptions(options: DagreLayoutOptions = {}): FormattedOptions {
+  private formatOptions(options: AntVDagreLayoutOptions = {}): FormattedOptions {
     const mergedOptions = { ...this.options, ...options } as FormattedOptions;
 
     return mergedOptions;

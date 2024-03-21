@@ -14,7 +14,7 @@
   "scripts": {
     "lint-staged": "lint-staged",
     "build": "pnpm -r run build",
-    "build:ci": "pnpm -r run build:ci",
+    "ci": "pnpm -r run ci",
     "watch": "pnpm --parallel -r run watch",
     "prepare": "husky install",
     "test": "jest",
