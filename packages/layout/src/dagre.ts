@@ -44,7 +44,7 @@ export class DagreLayout implements Layout<DagreLayoutOptions> {
   ) {
     const { nodeSize } = options;
     const g = new graphlib.Graph();
-    g.setGraph({});
+    g.setGraph(options);
     g.setDefaultEdgeLabel(() => ({}));
 
     const nodes = graph.getAllNodes();
@@ -71,7 +71,7 @@ export class DagreLayout implements Layout<DagreLayoutOptions> {
       g.setEdge(source.toString(), target.toString(), { id });
     });
 
-    dagre.layout(g, options);
+    dagre.layout(g);
 
     const mapping: LayoutMapping = { nodes: [], edges: [] };
 

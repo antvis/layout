@@ -6,7 +6,7 @@
       name="viewport"
       content="width=device-width,initial-scale=1,shrink-to-fit=no"
     />
-    <title>Dagre</title>
+    <title>AntV Dagre</title>
     <style>
       * {
         box-sizing: border-box;
@@ -46,119 +46,122 @@
     ></script>
     <script>
       const { Graph } = window.GraphLib;
-      const { DagreLayout } = window.Layout;
+      const { AntVDagreLayout } = window.Layout;
 
       const data = {
         nodes: [
           {
-            id: '1',
+            id: "1",
             data: {
-              name: 'alps_file1',
+              name: "alps_file1",
             },
           },
           {
-            id: '2',
+            id: "2",
             data: {
-              name: 'alps_file2',
+              name: "alps_file2",
             },
           },
           {
-            id: '3',
+            id: "3",
             data: {
-              name: 'alps_file3',
+              name: "alps_file3",
             },
           },
           {
-            id: '4',
+            id: "4",
             data: {
-              name: 'sql_file1',
+              name: "sql_file1",
             },
           },
           {
-            id: '5',
+            id: "5",
             data: {
-              name: 'sql_file2',
+              name: "sql_file2",
             },
           },
           {
-            id: '6',
+            id: "6",
             data: {
-              name: 'feature_etl_1',
+              name: "feature_etl_1",
             },
           },
           {
-            id: '7',
+            id: "7",
             data: {
-              name: 'feature_etl_1',
+              name: "feature_etl_1",
             },
           },
           {
-            id: '8',
+            id: "8",
             data: {
-              name: 'feature_extractor',
+              name: "feature_extractor",
             },
           },
         ],
         edges: [
           {
-            id: 'e1',
+            id: "e1",
             data: {},
-            source: '1',
-            target: '2',
+            source: "1",
+            target: "2",
           },
           {
-            id: 'e2',
+            id: "e2",
             data: {},
-            source: '1',
-            target: '3',
+            source: "1",
+            target: "3",
           },
           {
-            id: 'e3',
+            id: "e3",
             data: {},
-            source: '2',
-            target: '4',
+            source: "2",
+            target: "4",
           },
           {
-            id: 'e4',
+            id: "e4",
             data: {},
-            source: '3',
-            target: '4',
+            source: "3",
+            target: "4",
           },
           {
-            id: 'e5',
+            id: "e5",
             data: {},
-            source: '4',
-            target: '5',
+            source: "4",
+            target: "5",
           },
           {
-            id: 'e6',
+            id: "e6",
             data: {},
-            source: '5',
-            target: '6',
+            source: "5",
+            target: "6",
           },
           {
-            id: '7',
+            id: "7",
             data: {},
-            source: '6',
-            target: '7',
+            source: "6",
+            target: "7",
           },
           {
-            id: 'e8',
+            id: "e8",
             data: {},
-            source: '6',
-            target: '8',
+            source: "6",
+            target: "8",
           },
         ],
       };
 
-      const graph = new Graph(data);
+      const graph = new Graph({
+        nodes: data.nodes,
+        edges: data.edges,
+      });
 
-      const dagre = new DagreLayout({
-        nodeSize: 20,
-        nodesep: 50,
+      const dagre = new AntVDagreLayout({
+        nodeSize: 10,
         ranksep: 70,
-        rankdir: 'TB',
-        align: 'UR',
+        controlPoints: true,
+        begin: [100, 100],
+        align: "UR",
       });
 
       (async () => {
@@ -171,7 +174,7 @@
 
         // create a canvas
         const canvas = new Canvas({
-          container: 'container',
+          container: "container",
           width: 500,
           height: 500,
           renderer: canvasRenderer,
@@ -179,17 +182,15 @@
 
         canvas.document.documentElement.scale(0.5);
 
-        const [ox, oy] = [100, 100];
-
-        canvas.addEventListener('ready', () => {
+        canvas.addEventListener("ready", () => {
           positions.nodes.forEach((node) => {
             const circle = new Circle({
               style: {
-                cx: node.data.x + ox,
-                cy: node.data.y + oy,
+                cx: node.data.x,
+                cy: node.data.y,
                 r: 10,
-                fill: '#1890FF',
-                stroke: '#F04864',
+                fill: "#1890FF",
+                stroke: "#F04864",
                 lineWidth: 4,
               },
             });
@@ -197,18 +198,18 @@
           });
 
           positions.edges.forEach((edge) => {
-            const { points } = edge.data;
+            const { controlPoints } = edge.data;
             const source = positions.nodes.find(({ id }) => id === edge.source);
             const target = positions.nodes.find(({ id }) => id === edge.target);
             const polyline = new Polyline({
               style: {
-                stroke: '#F04864',
+                stroke: "#F04864",
                 strokeWidth: 4,
                 points: [
                   [source.data.x, source.data.y],
-                  ...points.map(({ x, y }) => [x, y]),
+                  ...controlPoints.map(({ x, y }) => [x, y]),
                   [target.data.x, target.data.y],
-                ].map(([x, y]) => [x + ox, y + oy]),
+                ],
                 // markerEnd: true,
               },
             });
