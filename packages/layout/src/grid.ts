@@ -1,4 +1,4 @@
-import { isNumber, isString } from '@antv/util';
+import { isFunction, isNumber, isString } from '@antv/util';
 import type {
   Edge,
   Graph,
@@ -127,33 +127,36 @@ export class GridLayout implements Layout<GridLayoutOptions> {
       (node) => cloneFormatData(node) as OutNode,
     );
 
-    if (
-      // `id` should be reserved keyword
-      sortBy !== 'id' &&
-      (!isString(sortBy) || (layoutNodes[0] as any).data[sortBy] === undefined)
-    ) {
-      sortBy = 'degree';
-    }
-
-    if (sortBy === 'degree') {
+    if (isString(sortBy)) {
+      if (sortBy === 'id') {
+        // sort nodes by ID
+        layoutNodes.sort(({ id: id1 }, { id: id2 }) =>
+          isNumber(id2) && isNumber(id1)
+            ? id2 - id1
+            : `${id1}`.localeCompare(`${id2}`),
+        );
+      } else if (sortBy === 'degree') {
+        layoutNodes.sort(
+          (n1, n2) =>
+            graph.getDegree(n2.id, 'both') - graph.getDegree(n1.id, 'both'),
+        );
+      } else {
+        // sort nodes by value
+        layoutNodes.sort(
+          (n1, n2) => n2.data[sortBy as string] - n1.data[sortBy as string],
+        );
+      }
+    } else if (isFunction(sortBy)) {
+      // sort by custom function
+      layoutNodes.sort(sortBy);
+    } else {
+      // sort nodes by degree
       layoutNodes.sort(
         (n1, n2) =>
           graph.getDegree(n2.id, 'both') - graph.getDegree(n1.id, 'both'),
       );
-    } else if (sortBy === 'id') {
-      // sort nodes by ID
-      layoutNodes.sort((n1, n2) => {
-        if (isNumber(n2.id) && isNumber(n1.id)) {
-          return n2.id - n1.id;
-        }
-        return `${n1.id}`.localeCompare(`${n2.id}`);
-      });
-    } else {
-      // sort nodes by value
-      layoutNodes.sort(
-        (n1, n2) => (n2 as any).data[sortBy!] - (n1 as any).data[sortBy!],
-      );
     }
+
     const width =
       !propsWidth && typeof window !== 'undefined'
         ? window.innerWidth

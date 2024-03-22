@@ -112,7 +112,7 @@ export interface GridLayoutOptions {
   condense?: boolean;
   rows?: number;
   cols?: number;
-  sortBy?: string;
+  sortBy?: string | ((n1: any, n2: any) => number);
   position?: (node?: Node) => { row?: number; col?: number };
   nodeSpacing?: ((node?: Node) => number) | number;
 }
