@@ -3,6 +3,8 @@ export type { DagreAlign, DagreRankdir } from './antv-dagre/types';
 export * from './circular';
 export * from './comboCombined';
 export * from './concentric';
+export { D3Force3DLayout } from './d3-force-3d';
+export type { D3Force3DLayoutOptions } from './d3-force-3d/types';
 export * from './d3Force';
 export * from './dagre';
 export * from './force';

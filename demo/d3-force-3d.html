@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1,shrink-to-fit=no"
+    />
+    <title>D3Force</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      html,
+      body {
+        height: 100%;
+      }
+
+      #container {
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="container"></div>
+    <script
+      src="https://unpkg.com/@antv/g"
+      type="application/javascript"
+    ></script>
+    <script
+      src="https://unpkg.com/@antv/g-webgl"
+      type="application/javascript"
+    ></script>
+    <script
+      src="https://unpkg.com/@antv/g-plugin-3d"
+      type="application/javascript"
+    ></script>
+    <script
+      src="https://unpkg.com/@antv/g-plugin-control"
+      type="application/javascript"
+    ></script>
+    <script
+      src="https://unpkg.com/@antv/graphlib@2.0.0"
+      type="application/javascript"
+    ></script>
+    <script
+      src="../packages/layout/dist/index.min.js"
+      type="application/javascript"
+    ></script>
+    <script>
+      const { Graph } = window.GraphLib;
+      const { D3Force3DLayout } = window.Layout;
+      const { Line, Canvas } = window.G;
+      const { SphereGeometry, MeshPhongMaterial, Mesh, DirectionalLight } =
+        window.G['3D'];
+
+      const spectral = [
+        'rgb(158, 1, 66)',
+        'rgb(213, 62, 79)',
+        'rgb(244, 109, 67)',
+        'rgb(253, 174, 97)',
+        'rgb(254, 224, 139)',
+        'rgb(255, 255, 191)',
+        'rgb(230, 245, 152)',
+        'rgb(171, 221, 164)',
+        'rgb(102, 194, 165)',
+        'rgb(50, 136, 189)',
+        'rgb(94, 79, 162)',
+      ];
+
+      fetch('https://assets.antv.antgroup.com/g6/d3-force-3d.json')
+        .then((res) => res.json())
+        .then((data) => {
+          const renderer = new window.G.WebGL.Renderer();
+          const plugin = new window.G.Control.Plugin();
+          renderer.registerPlugin(plugin);
+
+          const width = 500;
+          const height = 500;
+
+          // create a canvas
+          const canvas = new Canvas({
+            container: 'container',
+            width: 500,
+            height: 500,
+            renderer: renderer,
+          });
+
+          canvas.appendChild(
+            new DirectionalLight({
+              style: {
+                fill: 'white',
+                direction: [-1, 0, 1],
+              },
+            }),
+          );
+          const camera = canvas.getCamera();
+          camera.setPerspective(0.1, 5000, 45, 1);
+
+          const graph = new Graph({
+            nodes: data.nodes,
+            edges: data.edges.map((edge, i) => ({ id: i, ...edge })),
+          });
+
+          const force = new D3Force3DLayout();
+
+          let rendered = false;
+          const nodes = [];
+          const edges = [];
+
+          const createNodesEdges = (positions) => {
+            positions.edges.forEach(({ source, target }, i) => {
+              const sourceNode = positions.nodes.find(
+                ({ id }) => id === source,
+              );
+              const targetNode = positions.nodes.find(
+                ({ id }) => id === target,
+              );
+              const line = new Line({
+                style: {
+                  x1: sourceNode.data.x,
+                  y1: sourceNode.data.y,
+                  z1: sourceNode.data.z,
+                  x2: targetNode.data.x,
+                  y2: targetNode.data.y,
+                  z2: targetNode.data.z,
+                  lineWidth: 1,
+                  stroke: 'grey',
+                  isBillboard: true,
+                },
+              });
+              canvas.appendChild(line);
+              edges.push(line);
+            });
+
+            const plugin = renderer.getPlugin('device-renderer');
+            const device = plugin.getDevice();
+
+            const geometry = new SphereGeometry(device, {
+              radius: 5,
+              latitudeBands: 32,
+              longitudeBands: 32,
+            });
+            const material = new MeshPhongMaterial(device, {
+              shininess: 30,
+            });
+
+            positions.nodes.forEach((node, i) => {
+              const sphere = new Mesh({
+                style: {
+                  x: node.data.x,
+                  y: node.data.y,
+                  z: node.data.z,
+                  fill: spectral[node.data.group],
+                  opacity: 1,
+                  geometry,
+                  material,
+                  cursor: 'pointer',
+                },
+              });
+
+              canvas.appendChild(sphere);
+              nodes.push(sphere);
+            });
+          };
+
+          const updateNodesEdges = (positions) => {
+            positions.edges.forEach(({ source, target }, i) => {
+              const sourceNode = positions.nodes.find(
+                ({ id }) => id === source,
+              );
+              const targetNode = positions.nodes.find(
+                ({ id }) => id === target,
+              );
+
+              edges[i].attr({
+                x1: sourceNode.data.x,
+                y1: sourceNode.data.y,
+                z1: sourceNode.data.z,
+                x2: targetNode.data.x,
+                y2: targetNode.data.y,
+                z2: targetNode.data.z,
+              });
+            });
+
+            positions.nodes.forEach((node, i) => {
+              nodes[i].attr({
+                x: node.data.x,
+                y: node.data.y,
+                z: node.data.z,
+              });
+            });
+          };
+
+          (async () => {
+            await force.assign(graph, {
+              nodeSize: 20,
+              center: {
+                x: width / 2,
+                y: height / 2,
+                z: 0,
+              },
+              onTick: (positions) => {
+                if (!rendered) {
+                  createNodesEdges(positions);
+                  rendered = true;
+                } else {
+                  updateNodesEdges(positions);
+                }
+              },
+            });
+          })();
+        });
+    </script>
+  </body>
+</html>
