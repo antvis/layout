@@ -53,132 +53,132 @@
       const { D3ForceLayout } = window.Layout;
 
       fetch(
-        "https://gw.alipayobjects.com/os/antvdemo/assets/data/relations.json"
+        'https://gw.alipayobjects.com/os/antvdemo/assets/data/relations.json',
       )
         .then((res) => res.json())
         .then((d) => {
           const data = {
             nodes: [
               {
-                id: "0",
+                id: '0',
                 data: {
-                  label: "0",
+                  label: '0',
                 },
               },
               {
-                id: "1",
+                id: '1',
                 data: {
-                  label: "1",
+                  label: '1',
                 },
               },
               {
-                id: "2",
+                id: '2',
                 data: {
-                  label: "2",
+                  label: '2',
                 },
               },
               {
-                id: "3",
+                id: '3',
                 data: {
-                  label: "3",
+                  label: '3',
                 },
               },
               {
-                id: "4",
+                id: '4',
                 data: {
-                  label: "4",
+                  label: '4',
                 },
               },
               {
-                id: "5",
+                id: '5',
                 data: {
-                  label: "5",
+                  label: '5',
                 },
               },
               {
-                id: "6",
+                id: '6',
                 data: {
-                  label: "6",
+                  label: '6',
                 },
               },
               {
-                id: "7",
+                id: '7',
                 data: {
-                  label: "7",
+                  label: '7',
                 },
               },
               {
-                id: "8",
+                id: '8',
                 data: {
-                  label: "8",
+                  label: '8',
                 },
               },
               {
-                id: "9",
+                id: '9',
                 data: {
-                  label: "9",
+                  label: '9',
                 },
               },
             ],
             edges: [
               {
-                source: "0",
-                target: "1",
+                source: '0',
+                target: '1',
                 data: {},
               },
               {
-                source: "0",
-                target: "2",
+                source: '0',
+                target: '2',
                 data: {},
               },
               {
-                source: "0",
-                target: "3",
+                source: '0',
+                target: '3',
                 data: {},
               },
               {
-                source: "0",
-                target: "4",
+                source: '0',
+                target: '4',
                 data: {},
               },
               {
-                source: "0",
-                target: "5",
+                source: '0',
+                target: '5',
                 data: {},
               },
               {
-                source: "0",
-                target: "7",
+                source: '0',
+                target: '7',
                 data: {},
               },
               {
-                source: "0",
-                target: "8",
+                source: '0',
+                target: '8',
                 data: {},
               },
               {
-                source: "0",
-                target: "9",
+                source: '0',
+                target: '9',
                 data: {},
               },
               {
-                source: "2",
-                target: "3",
+                source: '2',
+                target: '3',
                 data: {},
               },
               {
-                source: "4",
-                target: "5",
+                source: '4',
+                target: '5',
                 data: {},
               },
               {
-                source: "4",
-                target: "6",
+                source: '4',
+                target: '6',
                 data: {},
               },
               {
-                source: "5",
-                target: "6",
+                source: '5',
+                target: '6',
                 data: {},
               },
             ],
@@ -192,7 +192,7 @@
 
           // create a canvas
           const canvas = new Canvas({
-            container: "container",
+            container: 'container',
             width: 500,
             height: 500,
             renderer: canvasRenderer,
@@ -212,10 +212,10 @@
           const createNodesEdges = (positions) => {
             positions.edges.forEach(({ source, target }, i) => {
               const sourceNode = positions.nodes.find(
-                ({ id }) => id === source
+                ({ id }) => id === source,
               );
               const targetNode = positions.nodes.find(
-                ({ id }) => id === target
+                ({ id }) => id === target,
               );
               const line = new Line({
                 style: {
@@ -224,7 +224,7 @@
                   x2: targetNode.data.x,
                   y2: targetNode.data.y,
                   lineWidth: 1,
-                  stroke: "grey",
+                  stroke: 'grey',
                 },
               });
               canvas.appendChild(line);
@@ -237,8 +237,8 @@
                   cx: node.data.x,
                   cy: node.data.y,
                   r: 6,
-                  fill: "#1890FF",
-                  stroke: "#F04864",
+                  fill: '#1890FF',
+                  stroke: '#F04864',
                   lineWidth: 2,
                   draggable: true,
                 },
@@ -263,14 +263,14 @@
                 });
               }
 
-              circle.addEventListener("dragstart", function (e) {
+              circle.addEventListener('dragstart', function (e) {
                 const [x, y] = e.target.getPosition();
                 shiftX = e.canvasX - x;
                 shiftY = e.canvasY - y;
 
                 moveAt(e.target, e.canvasX, e.canvasY);
               });
-              circle.addEventListener("drag", function (e) {
+              circle.addEventListener('drag', function (e) {
                 moveAt(e.target, e.canvasX, e.canvasY);
               });
               nodes.push(circle);
@@ -280,10 +280,10 @@
           const updateNodesEdges = (positions) => {
             positions.edges.forEach(({ source, target }, i) => {
               const sourceNode = positions.nodes.find(
-                ({ id }) => id === source
+                ({ id }) => id === source,
               );
               const targetNode = positions.nodes.find(
-                ({ id }) => id === target
+                ({ id }) => id === target,
               );
 
               edges[i].attr({
@@ -304,8 +304,10 @@
 
           (async () => {
             await force.assign(graph, {
-              center: [200, 200], // The center of the graph by default
-              preventOverlap: true,
+              center: {
+                x: 250,
+                y: 250,
+              },
               nodeSize: 20,
               onTick: (positions) => {
                 if (!rendered) {
