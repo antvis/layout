@@ -11,7 +11,9 @@ export interface D3ForceLayoutOptions {
    *
    * <en/> Node size, default is 10
    */
-  nodeSize?: number | ((node: NodeDatum) => number);
+  nodeSize?:
+    | number
+    | ((node: NodeDatum, index: number, nodes: NodeDatum[]) => number);
   /**
    * <zh/> 每次迭代执行回调
    *
@@ -41,72 +43,106 @@ export interface D3ForceLayoutOptions {
    * <zh/> 中心力
    * <en/> Center force
    */
-  center?: {
-    x?: number;
-    y?: number;
-    strength?: number;
-  };
+  center?:
+    | false
+    | {
+        x?: number;
+        y?: number;
+        strength?: number;
+      };
   /**
    * <zh/> 碰撞力
    *
    * <en/> Collision force
    */
-  collide?: {
-    radius?: number | ((node: NodeDatum) => number);
-    strength?: number;
-    iterations?: number;
-  };
+  collide?:
+    | false
+    | {
+        radius?:
+          | number
+          | ((node: NodeDatum, index: number, nodes: NodeDatum[]) => number);
+        strength?: number;
+        iterations?: number;
+      };
   /**
    * <zh/> 多体力
    *
    * <en/> Many body force
    */
-  manyBody?: {
-    strength?: number;
-    theta?: number;
-    distanceMin?: number;
-    distanceMax?: number;
-  };
+  manyBody?:
+    | false
+    | {
+        strength?:
+          | number
+          | ((node: NodeDatum, index: number, nodes: NodeDatum[]) => number);
+        theta?: number;
+        distanceMin?: number;
+        distanceMax?: number;
+      };
   /**
    * <zh/> 链接力
    *
    * <en/> Link force
    */
-  link?: {
-    id?: (edge: EdgeDatum) => string;
-    distance?: number | ((edge: EdgeDatum) => number);
-    strength?: number | ((edge: EdgeDatum) => number);
-    iterations?: number;
-  };
+  link?:
+    | false
+    | {
+        id?: (edge: EdgeDatum, index: number, edges: EdgeDatum[]) => string;
+        distance?:
+          | number
+          | ((edge: EdgeDatum, index: number, edges: EdgeDatum[]) => number);
+        strength?:
+          | number
+          | ((edge: EdgeDatum, index: number, edges: EdgeDatum[]) => number);
+        iterations?: number;
+      };
   /**
    * <zh/> 径向力
    *
    * <en/> Radial force
    */
-  radial?: {
-    strength?: number | ((node: NodeDatum) => number);
-    radius?: number | ((node: NodeDatum) => number);
-    x?: number;
-    y?: number;
-  };
+  radial?:
+    | false
+    | {
+        strength?:
+          | number
+          | ((node: NodeDatum, index: number, nodes: NodeDatum[]) => number);
+        radius?:
+          | number
+          | ((node: NodeDatum, index: number, nodes: NodeDatum[]) => number);
+        x?: number;
+        y?: number;
+      };
   /**
    * <zh/> X 轴力
    *
    * <en/> X axis force
    */
-  x?: {
-    strength?: number | ((node: NodeDatum) => number);
-    x?: number | ((node: NodeDatum) => number);
-  };
+  x?:
+    | false
+    | {
+        strength?:
+          | number
+          | ((node: NodeDatum, index: number, nodes: NodeDatum[]) => number);
+        x?:
+          | number
+          | ((node: NodeDatum, index: number, nodes: NodeDatum[]) => number);
+      };
   /**
    * <zh/> Y 轴力
    *
    * <en/> Y axis force
    */
-  y?: {
-    strength?: number | ((node: NodeDatum) => number);
-    y?: number | ((node: NodeDatum) => number);
-  };
+  y?:
+    | false
+    | {
+        strength?:
+          | number
+          | ((node: NodeDatum, index: number, nodes: NodeDatum[]) => number);
+        y?:
+          | number
+          | ((node: NodeDatum, index: number, nodes: NodeDatum[]) => number);
+      };
 }
 
 export interface NodeDatum extends NodeData, SimulationNodeDatum {}
