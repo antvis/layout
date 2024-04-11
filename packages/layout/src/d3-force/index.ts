@@ -1,3 +1,4 @@
+import type { ID } from '@antv/graphlib';
 import { deepMix, pick } from '@antv/util';
 import type { Simulation } from 'd3-force';
 import {
@@ -20,7 +21,7 @@ export class D3ForceLayout<
 {
   public id = 'd3-force';
 
-  protected simulation: Simulation<NodeDatum, EdgeDatum>;
+  public simulation: Simulation<NodeDatum, EdgeDatum>;
 
   protected resolver: (value: LayoutMapping) => void;
 
@@ -72,10 +73,11 @@ export class D3ForceLayout<
     edges: [],
   };
 
-  constructor(options: Partial<T> = {}) {
-    const { forceSimulation, ..._ } = options;
-    deepMix(this.options, _);
-    if (forceSimulation) this.simulation = forceSimulation;
+  constructor(options?: Partial<T>) {
+    deepMix(this.options, options);
+    if (this.options.forceSimulation) {
+      this.simulation = this.options.forceSimulation;
+    }
   }
 
   public async execute(graph: Graph, options?: T): Promise<LayoutMapping> {
@@ -99,11 +101,23 @@ export class D3ForceLayout<
     this.simulation.restart();
   }
 
+  public setFixedPosition(id: ID, position: (number | null)[]) {
+    const node = this.context.nodes.find((n) => n.id === id);
+    if (!node) return;
+    position.forEach((value, index) => {
+      if (typeof value === 'number' || value === null) {
+        const key = ['fx', 'fy', 'fz'][index];
+        node[key] = value;
+      }
+    });
+  }
+
   protected getOptions(options: Partial<T>): T {
-    const _ = { ...this.options, ...options };
+    const _ = deepMix({}, this.options, options) as T;
     // process nodeSize
-    if (_.collide?.radius === undefined) {
+    if (_.collide && _.collide?.radius === undefined) {
       _.collide = _.collide || {};
+      // @ts-ignore
       _.collide.radius = _.nodeSize ?? 10;
     }
     // process iterations
@@ -199,7 +213,7 @@ export class D3ForceLayout<
 
     Object.entries(this.forceMap).forEach(([name, Ctor]) => {
       const forceName = name;
-      if (name in options) {
+      if (options[name as keyof T]) {
         let force = simulation.force(forceName);
         if (!force) {
           force = Ctor();
