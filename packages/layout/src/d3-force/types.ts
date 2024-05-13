@@ -8,11 +8,9 @@ import type { EdgeData, LayoutMapping, NodeData } from '../types';
 export interface D3ForceLayoutOptions {
   /**
    * <zh/> 节点大小（直径）。用于防止节点重叠时的碰撞检测
-   * - number:固定大小
-   * - ((node: NodeDatum, index: number, nodes: NodeDatum[]) => number):根据节点数据设置节点大小
+   *
    * <en/> Node size (diameter). Used for collision detection when nodes overlap
-   * - number:fixed size
-   * - ((node: NodeDatum, index: number, nodes: NodeDatum[]) => number):set node size according to node data
+   *
    * @defaultValue 10
    */
   nodeSize?:
