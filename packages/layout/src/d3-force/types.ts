@@ -7,9 +7,11 @@ import type { EdgeData, LayoutMapping, NodeData } from '../types';
 
 export interface D3ForceLayoutOptions {
   /**
-   * <zh/> 节点尺寸，默认为 10
+   * <zh/> 节点大小（直径）。用于防止节点重叠时的碰撞检测
    *
-   * <en/> Node size, default is 10
+   * <en/> Node size (diameter). Used for collision detection when nodes overlap
+   *
+   * @defaultValue 10
    */
   nodeSize?:
     | number
@@ -31,16 +33,52 @@ export interface D3ForceLayoutOptions {
    * <en/> The number of iterations of the force, not the layout
    */
   iterations?: number;
+  /**
+   * <zh/> 自定义 force 方法，若不指定，则使用 d3.js 的方法
+   *
+   * <en/> Custom force method, if not specified, use d3.js method
+   */
   forceSimulation?: Simulation<NodeDatum, EdgeDatum>;
-
+  /**
+   * <zh/> 当前的迭代收敛阈值
+   *
+   * <en/> Convergence threshold of the current iteration
+   */
   alpha?: number;
+  /**
+   * <zh/> 停止迭代的阈值
+   *
+   * <en/> Convergence threshold of the current iteration
+   */
   alphaMin?: number;
+  /**
+   * <zh/> 迭代阈值的衰减率。范围 [0, 1]。0.028 对应迭代数为 300
+   *
+   * <en/> Convergence threshold of the current iteration
+   */
   alphaDecay?: number;
+  /**
+   * <zh/> 设置目标迭代收敛阈值
+   *
+   * <en/> Set the target convergence threshold of the current iteration
+   */
   alphaTarget?: number;
+  /**
+   * <zh/> 指定衰减因子
+   *
+   * <en/> Specify the decay factor
+   */
   velocityDecay?: number;
+  /**
+   * <zh/> 设置用于生成随机数的函数
+   *
+   * <en/> Set the function for generating random numbers
+   * @returns <zh/> 随机数 | <en/> Random number
+   */
   randomSource?: () => number;
   /**
    * <zh/> 中心力
+   *
    * <en/> Center force
    */
   center?:
