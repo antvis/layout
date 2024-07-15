@@ -1,12 +1,13 @@
 import {
-  cloneFormatData,
   AntVDagreLayoutOptions,
+  cloneFormatData,
   Edge,
   Graph,
   Layout,
   LayoutMapping,
   OutNode,
   OutNodeData,
+  Point,
 } from '@antv/layout';
 import { isNumber } from '@antv/util';
 import type { WASMLayoutOptions } from './interface';
@@ -51,7 +52,7 @@ export class AntVDagreLayout implements Layout<WASMAntVDagreLayoutOptions> {
    * To directly assign the positions to the nodes.
    */
   async assign(graph: Graph, options?: AntVDagreLayoutOptions) {
-    this.genericFruchtermanLayout(true, graph, options);
+    await this.genericFruchtermanLayout(true, graph, options);
   }
 
   private async genericFruchtermanLayout(
@@ -155,7 +156,7 @@ export class AntVDagreLayout implements Layout<WASMAntVDagreLayoutOptions> {
         if (minY > node.data.y!) minY = node.data.y!;
       });
       layoutEdges.forEach((edge) => {
-        edge.data.controlPoints?.forEach((point) => {
+        edge.data.controlPoints?.forEach((point: Point) => {
           if (minX > point.x) minX = point.x;
           if (minY > point.y) minY = point.y;
         });
@@ -168,7 +169,7 @@ export class AntVDagreLayout implements Layout<WASMAntVDagreLayoutOptions> {
         node.data.y! += layoutTopLeft[1];
       });
       layoutEdges.forEach((edge) => {
-        edge.data.controlPoints?.forEach((point) => {
+        edge.data.controlPoints?.forEach((point: Point) => {
           point.x += layoutTopLeft[0];
           point.y += layoutTopLeft[1];
         });
@@ -188,7 +189,9 @@ export class AntVDagreLayout implements Layout<WASMAntVDagreLayoutOptions> {
     return { nodes: layoutNodes, edges: layoutEdges };
   }
 
-  private formatOptions(options: AntVDagreLayoutOptions = {}): FormattedOptions {
+  private formatOptions(
+    options: AntVDagreLayoutOptions = {},
+  ): FormattedOptions {
     const mergedOptions = { ...this.options, ...options } as FormattedOptions;
 
     return mergedOptions;

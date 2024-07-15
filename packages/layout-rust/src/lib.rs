@@ -1,6 +1,6 @@
-#![feature(drain_filter)]
+// #![feature(drain_filter)]
 #![feature(specialization)]
-#![feature(stdsimd)]
+// #![feature(stdsimd)]
 #![feature(trait_alias)]
 #![allow(incomplete_features)]
 #![feature(core_intrinsics)]

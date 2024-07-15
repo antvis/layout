@@ -75,7 +75,7 @@ export class FruchtermanLayout implements Layout<WASMFruchtermanLayoutOptions> {
    * To directly assign the positions to the nodes.
    */
   async assign(graph: Graph, options?: FruchtermanLayoutOptions) {
-    this.genericFruchtermanLayout(true, graph, options);
+   await this.genericFruchtermanLayout(true, graph, options);
   }
 
   private async genericFruchtermanLayout(

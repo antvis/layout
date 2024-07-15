@@ -70,7 +70,7 @@ export class RadialLayout implements Layout<RadialLayoutOptions> {
    * To directly assign the positions to the nodes.
    */
   async assign(graph: Graph, options?: RadialLayoutOptions) {
-    this.genericRadialLayout(true, graph, options);
+   await this.genericRadialLayout(true, graph, options);
   }
 
   private async genericRadialLayout(

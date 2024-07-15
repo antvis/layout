@@ -79,7 +79,7 @@ export class GridLayout implements Layout<GridLayoutOptions> {
    * To directly assign the positions to the nodes.
    */
   async assign(graph: Graph, options?: GridLayoutOptions) {
-    this.genericGridLayout(true, graph, options);
+   await this.genericGridLayout(true, graph, options);
   }
 
   private async genericGridLayout(

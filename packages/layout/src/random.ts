@@ -48,7 +48,7 @@ export class RandomLayout implements Layout<RandomLayoutOptions> {
    * To directly assign the positions to the nodes.
    */
   async assign(graph: Graph, options?: RandomLayoutOptions) {
-    this.genericRandomLayout(true, graph, options);
+   await this.genericRandomLayout(true, graph, options);
   }
 
   private async genericRandomLayout(

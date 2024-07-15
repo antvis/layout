@@ -56,7 +56,7 @@ export class MDSLayout implements Layout<MDSLayoutOptions> {
    * To directly assign the positions to the nodes.
    */
   async assign(graph: Graph, options?: MDSLayoutOptions) {
-    this.genericMDSLayout(true, graph, options);
+   await this.genericMDSLayout(true, graph, options);
   }
 
   private async genericMDSLayout(

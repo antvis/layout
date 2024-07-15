@@ -95,7 +95,7 @@ export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
    * To directly assign the positions to the nodes.
    */
   async assign(graph: Graph, options?: ForceLayoutOptions) {
-    this.genericForceLayout(true, graph, options);
+   await this.genericForceLayout(true, graph, options);
   }
 
   /**
