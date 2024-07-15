@@ -459,7 +459,7 @@ export class Force2Layout extends Base {
       const sourceNode = nodeMap[edge.source];
       const targetNode = nodeMap[edge.target];
       if (!sourceNode || !targetNode) {
-        elf.edgeInfos.push({});
+        self.edgeInfos.push({});
       } else {
         self.edgeInfos.push({
           edgeStrength: self.edgeStrength(edge),
