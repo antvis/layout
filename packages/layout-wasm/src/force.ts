@@ -70,7 +70,7 @@ export class ForceLayout implements Layout<WASMForceLayoutOptions> {
    * To directly assign the positions to the nodes.
    */
   async assign(graph: Graph, options?: WASMForceLayoutOptions) {
-    this.genericForceLayout(true, graph, options);
+   await this.genericForceLayout(true, graph, options);
   }
 
   private async genericForceLayout(

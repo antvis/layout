@@ -61,7 +61,7 @@ export class ConcentricLayout implements Layout<ConcentricLayoutOptions> {
    * To directly assign the positions to the nodes.
    */
   async assign(graph: Graph, options?: ConcentricLayoutOptions) {
-    this.genericConcentricLayout(true, graph, options);
+   await this.genericConcentricLayout(true, graph, options);
   }
 
   private async genericConcentricLayout(

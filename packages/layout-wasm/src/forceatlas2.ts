@@ -90,7 +90,7 @@ export class ForceAtlas2Layout implements Layout<WASMForceAtlas2LayoutOptions> {
    * To directly assign the positions to the nodes.
    */
   async assign(graph: Graph, options?: ForceAtlas2LayoutOptions) {
-    this.genericForceAtlas2Layout(true, graph, options);
+   await this.genericForceAtlas2Layout(true, graph, options);
   }
 
   private async genericForceAtlas2Layout(
