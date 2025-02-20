@@ -13,6 +13,7 @@
   "types": "lib/index.d.ts",
   "unpkg": "dist/index.min.js",
   "files": [
+    "src",
     "package.json",
     "dist",
     "lib",
