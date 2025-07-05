@@ -5,6 +5,7 @@ import { ConcentricLayout } from './concentric';
 import { D3ForceLayout } from './d3-force';
 import { D3Force3DLayout } from './d3-force-3d';
 import { DagreLayout } from './dagre';
+import { Dagre2Layout } from './dagre2';
 import { ForceLayout } from './force';
 import { ForceAtlas2Layout } from './force-atlas2';
 import { FruchtermanLayout } from './fruchterman';
@@ -27,6 +28,7 @@ export const registry: Record<string, new (...args: any) => Layout<any>> = {
   fruchterman: FruchtermanLayout,
   forceAtlas2: ForceAtlas2Layout,
   dagre: DagreLayout,
+  dagre2: Dagre2Layout,
   antvDagre: AntVDagreLayout,
   comboCombined: ComboCombinedLayout,
 };
