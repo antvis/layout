@@ -20,9 +20,7 @@ export class Dagre2Layout implements Layout<Dagre2LayoutOptions> {
 
   public id = 'dagre2';
 
-  public options: Partial<Dagre2LayoutOptions> = {
-    preLayout: true,
-  };
+  public options: Partial<Dagre2LayoutOptions> = {};
 
   constructor(options: Partial<Dagre2LayoutOptions>) {
     Object.assign(this.options, Dagre2Layout.defaultOptions, options);
