@@ -56,3 +56,24 @@ export function distanceThresholdMode2Index(
     max: 2,
   }[mode];
 }
+
+
+export function parsePathToPoints(pathStr: string): { x: number; y: number }[] {
+  // 步骤1：提取所有数字（包括负号和小数点）
+  const numbers = pathStr.match(/[-+]?\d+\.\d+|\d+\.\d+|[-+]?\d+/g);
+  const points = [];
+
+  // 步骤2：每两个数字组成一个点对象
+  for (let i = 0; i < numbers.length; i += 2) {
+    if (i + 1 >= numbers.length) break; // 防止最后一个孤立的数字
+    points.push({
+      x: parseFloat(numbers[i]),
+      y: parseFloat(numbers[i + 1]),
+    });
+  }
+  return points;
+}
+
+export function px2Inch(px: number): number {
+  return parseFloat((px / 72).toFixed(2));
+}
