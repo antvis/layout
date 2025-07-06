@@ -32,8 +32,7 @@
     "build:esm": "tsc",
     "build:umd": "webpack --config webpack.config.js --mode production",
     "build": "npm run clean && npm run build:wasm && npm run build:esm && npm run build:umd",
-    "clean": "rimraf dist pkg pkg-parallel pkg-node",
-    "test": "jest"
+    "clean": "rimraf dist pkg pkg-parallel pkg-node"
   },
   "dependencies": {
     "@antv/layout": "workspace:*",
