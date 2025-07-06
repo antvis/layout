@@ -1,4 +1,5 @@
 import { AntVDagreLayout } from './dagre';
+import { GraphvizDotLayout } from './graphviz';
 import { ForceLayout } from './force';
 import { ForceAtlas2Layout } from './forceatlas2';
 import { FruchtermanLayout } from './fruchterman';
@@ -13,4 +14,5 @@ export {
   ForceAtlas2Layout,
   ForceLayout,
   AntVDagreLayout,
+  GraphvizDotLayout
 };

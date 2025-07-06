@@ -39,7 +39,8 @@
     "@antv/util": "^3.3.2",
     "comlink": "^4.3.1",
     "wasm-feature-detect": "^1.2.10",
-    "tslib": "^2.5.0"
+    "tslib": "^2.5.0",
+    "@hpcc-js/wasm-graphviz": "1.7.0"
   },
   "devDependencies": {
     "ts-loader": "^7.0.3",
