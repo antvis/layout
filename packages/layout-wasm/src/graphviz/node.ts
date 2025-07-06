@@ -1,7 +1,8 @@
 import { px2Inch } from '../util';
-import { type TProcessData } from './types';
+import { GraphvizDotLayoutOptions, type TProcessData } from './types';
 
 export class Node {
+  options: GraphvizDotLayoutOptions;
   node: TProcessData['nodes'][0];
   attrs: {
     width?: number;
@@ -12,8 +13,9 @@ export class Node {
     position?: { x: number; y: number };
     size?: { width: number; height: number };
   } = {};
-  constructor(n: TProcessData['nodes'][0]) {
+  constructor(n: TProcessData['nodes'][0], options: GraphvizDotLayoutOptions) {
     this.node = n;
+    this.options = options;
     this.attrs.shape = 'box';
     this.attrs.width = parseFloat(px2Inch(this.node.data.width).toFixed(2));
     this.attrs.height = parseFloat(px2Inch(this.node.data.height).toFixed(2));

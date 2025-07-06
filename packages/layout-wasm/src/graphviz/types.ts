@@ -9,14 +9,7 @@ export interface IGraphvizAttrs {
   nclimit?: number;
   mclimit?: number;
   splines?: boolean;
-}
-export interface IAttrs {
-  // layout: string;
-  leftToRight?: boolean;
-  nodeSpacing?: number;
-  rankSpacing?: number;
-  simpleMode?: boolean;
-  getWeight?: (edge: EdgeData) => number;
+  rankdir?: 'LR' | 'TB';
 }
 
 export interface IObj {
@@ -29,9 +22,10 @@ export type TProcessData = {
   edges: EdgeData[];
 };
 
-export interface GraphvizDotLayoutOptions extends IAttrs {
+export interface GraphvizDotLayoutOptions extends IGraphvizAttrs {
   nodeSize?: Size | ((node: AntvNode) => Size);
   preLayout?: boolean;
+  iterations?: number;
   getWeight?: (edge: EdgeData) => number;
 }
 

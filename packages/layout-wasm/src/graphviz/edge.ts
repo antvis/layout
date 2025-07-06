@@ -1,5 +1,5 @@
 import { px2Inch } from '../util';
-import { type TProcessData } from './types';
+import { GraphvizDotLayoutOptions, type TProcessData } from './types';
 
 export class Edge {
   edge: TProcessData['edges'][0];
@@ -17,7 +17,7 @@ export class Edge {
     path?: any;
     labelPosition?: any;
   } = {};
-  constructor(e: TProcessData['edges'][0], options: { getWeight?: (e: TProcessData['edges'][0]) => number }) {
+  constructor(e: TProcessData['edges'][0], options: GraphvizDotLayoutOptions) {
     this.edge = e;
     this.source = e.source;
     this.target = e.target;

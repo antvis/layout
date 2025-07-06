@@ -1,4 +1,4 @@
-import { Graph, Layout, LayoutMapping, EdgeData, NodeData, parseSize } from '@antv/layout';
+import { type Graph, type Layout, type LayoutMapping, type EdgeData, type NodeData, parseSize } from '@antv/layout';
 import { Graphviz } from '@hpcc-js/wasm-graphviz';
 
 import { Dot } from './dot';
@@ -26,17 +26,17 @@ export class GraphvizDotLayout implements Layout<GraphvizDotLayoutOptions> {
   }
 
   async execute(graph: Graph, options?: GraphvizDotLayoutOptions): Promise<LayoutMapping> {
-    return this.generateLayout(false, graph, {
+    return this.generateLayout(graph, {
       ...this.options,
       ...options,
     });
   }
 
   async assign(graph: Graph, options?: GraphvizDotLayoutOptions): Promise<void> {
-    await this.generateLayout(true, graph, { ...this.options, ...options });
+    await this.generateLayout(graph, { ...this.options, ...options });
   }
 
-  private async generateLayout(assign: boolean, graph: Graph, options: GraphvizDotLayoutOptions) {
+  private async generateLayout(graph: Graph, options: GraphvizDotLayoutOptions) {
     const graphviz = await this.gp;
 
     const nodes = graph.getAllNodes();
