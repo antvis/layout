@@ -26,7 +26,6 @@ export class Edge {
       weight: options.getWeight?.(this.edge),
     };
   }
-  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   public setLayout(path: any, labelPosition: any): void {
     this.layout = {
       path,

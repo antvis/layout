@@ -47,7 +47,6 @@ export class Dot {
   private writeEdges(graph: Graph, nodesEdgesMap: TNodesEdgesMap, idsMap: TIdsMap) {
     return graph.edges
       .map((edge) => {
-        // eslint-disable-next-line no-param-reassign
         edge.attrs.class = `edge_${nodesEdgesMap.length}`;
         nodesEdgesMap.push(edge);
         return `${this.findIndex(

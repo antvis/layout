@@ -2,6 +2,7 @@ import { Edge } from './edge';
 import { Node } from './node';
 import { type TNodesEdgesMap } from './types';
 
+// 用于匹配 antv 数据渲染
 export class Mapping {
   outputMap: TNodesEdgesMap;
   graphSize: {
