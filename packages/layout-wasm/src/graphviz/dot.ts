@@ -81,16 +81,22 @@ export class Dot {
   }
   private findIndex(idsMap: TIdsMap, node?: Node) {
     // 1. 如果传入的节点不存在，直接返回-1
-    if (!node) return -1;
+    if (!node) {
+      return -1;
+    }
 
     // 2. 在idsMap数组中查找与当前节点匹配的项
-    const foundItem = idsMap.find((item) => item.node === node);
+    const foundItem = idsMap.find(item => item.node === node);
 
     // 3. 如果未找到匹配项，返回-1
-    if (foundItem == null) return -1;
+    if (!foundItem) {
+      return -1;
+    }
 
     // 4. 如果找到项的index值为null/undefined，返回-1
-    if (foundItem.index == null) return -1;
+    if (foundItem.index === null) {
+      return -1;
+    }
 
     // 5. 返回有效的index值
     return foundItem.index;
