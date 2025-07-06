@@ -15,6 +15,7 @@ Now we support the following layouts:
 - [Fruchterman](#Fruchterman)
 - [Force](#Force)
 - [Dagre](#Dagre)
+- [Graphviz](#Graphviz)
 
 ## Usage
 
@@ -173,6 +174,13 @@ LayoutOptions:
 - `align` **'UL' | 'UR' | 'DL' | 'DR'** The alignment of the nodes, defaults to `'UL'`
 - `nodesep` **number** The separation between nodes with unit px. When rankdir is 'TB' or 'BT', nodesep represents the horizontal separations between nodes; When rankdir is 'LR' or 'RL', nodesep represents the vertical separations between nodes. Defaults to `50`.
 - `ranksep` **number** The separations between adjacent levels with unit px. When rankdir is 'TB' or 'BT', ranksep represents the vertical separations between adjacent levels; when rankdir is 'LR' or 'RL', rankdir represents the horizontal separations between adjacent levels. Defaults to `50`.
+
+### <a id='Graphviz' />Graphviz
+- `rankdir` **'TB' | 'BT' | 'LR' | 'RL'** The layout direction, defaults to `'TB'`.
+- `nodesep` **number** The separation between nodes with unit px. When rankdir is 'TB' or 'BT', nodesep represents the horizontal separations between nodes; When rankdir is 'LR' or 'RL', nodesep represents the vertical separations between nodes. Defaults to `50`.
+- `ranksep` **number** The separations between adjacent levels with unit px. When rankdir is 'TB' or 'BT', ranksep represents the vertical separations between adjacent levels; when rankdir is 'LR' or 'RL', rankdir represents the horizontal separations between adjacent levels. Defaults to `50`.
+- `iterations` **number** The number of iterations(`nclimit` & `mclimit`). Defaults to `undefined` which means unset.
+- `getWeight` **(edge: EdgeData) => number** The weight of the edge. Defaults to `undefined` which means unset.
 
 
 ## Benchmarks

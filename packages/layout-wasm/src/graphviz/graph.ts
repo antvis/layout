@@ -44,8 +44,8 @@ export class Graph {
   static getDefaultAttrs(): GraphvizDotLayoutOptions {
     return {
       rankdir: 'TB',
-      nodesep: px2Inch(56),
-      ranksep: px2Inch(60),
+      nodesep: px2Inch(50),
+      ranksep: px2Inch(50),
     };
   }
 }
