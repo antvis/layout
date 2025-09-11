@@ -14,6 +14,7 @@ import type {
   PointTuple
 } from './types';
 import { cloneFormatData } from './util';
+import { DEFAULT_LAYOUT_SIZE } from './util/size';
 
 const DEFAULTS_LAYOUT_OPTIONS: Partial<FruchtermanLayoutOptions> = {
   maxIteration: 1000,
@@ -58,8 +59,7 @@ interface FormattedOptions extends FruchtermanLayoutOptions {
  * <en/> Fruchterman force-directed layout
  */
 export class FruchtermanLayout
-  implements LayoutWithIterations<FruchtermanLayoutOptions>
-{
+  implements LayoutWithIterations<FruchtermanLayoutOptions> {
   id = 'fruchterman';
 
   private timeInterval: number = 0;
@@ -92,7 +92,7 @@ export class FruchtermanLayout
    * To directly assign the positions to the nodes.
    */
   async assign(graph: Graph, options?: FruchtermanLayoutOptions) {
-   await this.genericFruchtermanLayout(true, graph, options);
+    await this.genericFruchtermanLayout(true, graph, options);
   }
 
   /**
@@ -281,11 +281,11 @@ export class FruchtermanLayout
     mergedOptions.width =
       !propsWidth && typeof window !== 'undefined'
         ? window.innerWidth
-        : (propsWidth as number);
+        : propsWidth || DEFAULT_LAYOUT_SIZE[0];
     mergedOptions.height =
       !propsHeight && typeof window !== 'undefined'
         ? window.innerHeight
-        : (propsHeight as number);
+        : propsHeight || DEFAULT_LAYOUT_SIZE[1];
     mergedOptions.center = !propsCenter
       ? [mergedOptions.width / 2, mergedOptions.height / 2]
       : (propsCenter as PointTuple);
@@ -385,8 +385,8 @@ export class FruchtermanLayout
       if (!isNumber(data.x) || !isNumber(data.y)) return;
       const distLength = Math.sqrt(
         displacements[id].x * displacements[id].x +
-          displacements[id].y * displacements[id].y +
-          (dimensions === 3 ? displacements[id].z * displacements[id].z : 0),
+        displacements[id].y * displacements[id].y +
+        (dimensions === 3 ? displacements[id].z * displacements[id].z : 0),
       );
       if (distLength > 0) {
         // && !n.isFixed()

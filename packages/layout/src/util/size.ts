@@ -10,3 +10,5 @@ export function parseSize(size?: Size): STDSize {
   const [x, y = x, z = x] = size;
   return [x, y, z];
 }
+
+export const DEFAULT_LAYOUT_SIZE: [number, number] = [1000, 1000];

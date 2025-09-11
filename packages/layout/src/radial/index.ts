@@ -18,6 +18,7 @@ import {
   getEuclideanDistance,
 } from '../util';
 import { handleSingleNodeGraph } from '../util/common';
+import { DEFAULT_LAYOUT_SIZE } from '../util/size';
 import { mds } from './mds';
 import {
   radialNonoverlapForce,
@@ -60,7 +61,7 @@ export class RadialLayout implements Layout<RadialLayoutOptions> {
    * To directly assign the positions to the nodes.
    */
   async assign(graph: Graph, options?: RadialLayoutOptions) {
-   await this.genericRadialLayout(true, graph, options);
+    await this.genericRadialLayout(true, graph, options);
   }
 
   private async genericRadialLayout(
@@ -102,11 +103,11 @@ export class RadialLayout implements Layout<RadialLayoutOptions> {
     const width =
       !propsWidth && typeof window !== 'undefined'
         ? window.innerWidth
-        : propsWidth!;
+        : propsWidth || DEFAULT_LAYOUT_SIZE[0];
     const height =
       !propsHeight && typeof window !== 'undefined'
         ? window.innerHeight
-        : propsHeight!;
+        : propsHeight || DEFAULT_LAYOUT_SIZE[1];
     const center = (
       !propsCenter ? [width / 2, height / 2] : propsCenter
     ) as PointTuple;
@@ -366,7 +367,7 @@ const eIdealDisMatrix = (
             }
             newRow.push(
               (v * (Math.abs(iValue - jValue) * sortStrength)) /
-                (radii[i] / unitRadius),
+              (radii[i] / unitRadius),
             );
           } else {
             newRow.push((v * linkDistance) / (radii[i] / unitRadius));

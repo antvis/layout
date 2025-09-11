@@ -192,13 +192,13 @@ export class ConcentricLayout implements Layout<ConcentricLayoutOptions> {
         const diff =
           sortBy === 'degree'
             ? Math.abs(
-                graph.getDegree(currentLevel.nodes[0].id, 'both') -
-                  graph.getDegree(node.id, 'both'),
-              )
+              graph.getDegree(currentLevel.nodes[0].id, 'both') -
+              graph.getDegree(node.id, 'both'),
+            )
             : Math.abs(
-                (currentLevel.nodes[0].data[sortBy] as number) -
-                  (node as any).data[sortBy],
-              );
+              (currentLevel.nodes[0].data[sortBy] as number) -
+              (node as any).data[sortBy],
+            );
 
         if (maxLevelDiff && diff >= maxLevelDiff) {
           currentLevel = { nodes: [] };

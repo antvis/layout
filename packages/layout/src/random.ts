@@ -6,6 +6,7 @@ import type {
   PointTuple,
   RandomLayoutOptions,
 } from './types';
+import { DEFAULT_LAYOUT_SIZE } from './util/size';
 
 const DEFAULTS_LAYOUT_OPTIONS: Partial<RandomLayoutOptions> = {
   center: [0, 0],
@@ -38,7 +39,7 @@ export class RandomLayout implements Layout<RandomLayoutOptions> {
    * To directly assign the positions to the nodes.
    */
   async assign(graph: Graph, options?: RandomLayoutOptions) {
-   await this.genericRandomLayout(true, graph, options);
+    await this.genericRandomLayout(true, graph, options);
   }
 
   private async genericRandomLayout(
@@ -68,11 +69,11 @@ export class RandomLayout implements Layout<RandomLayoutOptions> {
     const width =
       !propsWidth && typeof window !== 'undefined'
         ? window.innerWidth
-        : (propsWidth as number);
+        : propsWidth || DEFAULT_LAYOUT_SIZE[0];
     const height =
       !propsHeight && typeof window !== 'undefined'
         ? window.innerHeight
-        : (propsHeight as number);
+        : propsHeight || DEFAULT_LAYOUT_SIZE[1];
     const center = !propsCenter
       ? [width / 2, height / 2]
       : (propsCenter as PointTuple);

@@ -11,7 +11,7 @@ import type {
 } from './types';
 import { cloneFormatData, formatNumberFn, formatSizeFn } from './util';
 import { handleSingleNodeGraph } from './util/common';
-import { parseSize } from './util/size';
+import { DEFAULT_LAYOUT_SIZE, parseSize } from './util/size';
 
 type RowsAndCols = {
   rows: number;
@@ -148,11 +148,11 @@ export class GridLayout implements Layout<GridLayoutOptions> {
     const width =
       !propsWidth && typeof window !== 'undefined'
         ? window.innerWidth
-        : (propsWidth as number);
+        : propsWidth || DEFAULT_LAYOUT_SIZE[0];
     const height =
       !propsHeight && typeof window !== 'undefined'
         ? window.innerHeight
-        : (propsHeight as number);
+        : propsHeight || DEFAULT_LAYOUT_SIZE[1];
 
     const cells = n;
     const rcs = { rows: propsRows, cols: propsCols } as RowsAndCols;

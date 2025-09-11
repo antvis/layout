@@ -21,6 +21,7 @@ import {
   CalcNodeData,
   FormatedOptions,
 } from './types';
+import { DEFAULT_LAYOUT_SIZE } from '../util/size';
 
 const DEFAULTS_LAYOUT_OPTIONS: Partial<ForceLayoutOptions> = {
   dimensions: 2,
@@ -298,11 +299,11 @@ export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
     formattedOptions.width =
       !propsWidth && typeof window !== 'undefined'
         ? window.innerWidth
-        : (propsWidth as number);
+        : propsWidth || DEFAULT_LAYOUT_SIZE[0];
     formattedOptions.height =
       !propsHeight && typeof window !== 'undefined'
         ? window.innerHeight
-        : (propsHeight as number);
+        : propsHeight || DEFAULT_LAYOUT_SIZE[1];
     if (!options.center) {
       formattedOptions.center = [
         formattedOptions.width / 2,
@@ -330,12 +331,12 @@ export class ForceLayout implements LayoutWithIterations<ForceLayoutOptions> {
     const linkDistanceFn = options.linkDistance
       ? formatNumberFn(1, options.linkDistance)
       : (edge?: Edge) => {
-          return (
-            1 +
-            formattedOptions.nodeSize(graph.getNode(edge!.source)) +
-            formattedOptions.nodeSize(graph.getNode(edge!.target))
-          );
-        };
+        return (
+          1 +
+          formattedOptions.nodeSize(graph.getNode(edge!.source)) +
+          formattedOptions.nodeSize(graph.getNode(edge!.target))
+        );
+      };
     formattedOptions.linkDistance = linkDistanceFn;
     formattedOptions.nodeStrength = formatNumberFn(1, options.nodeStrength);
     formattedOptions.edgeStrength = formatNumberFn(1, options.edgeStrength);
