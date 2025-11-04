@@ -60,7 +60,7 @@
     "dev": "webpack --config webpack.dev.config.js --mode development",
     "build": "npm run clean && run-p build:*",
     "ci": "npm run build && npm run test",
-    "build:esm": "tsc",
+    "build:esm": "webpack --config webpack.esm.config.js --mode production",
     "build:umd": "webpack --config webpack.config.js --mode production",
     "publish:alpha": "npm publish --tag alpha",
     "test": "jest",
