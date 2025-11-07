@@ -7,7 +7,6 @@ const canvas = new Canvas({
   container: 'container',
   width: 500,
   height: 500,
-  // @ts-ignore
   renderer: new Renderer(),
 });
 
@@ -31,17 +30,17 @@ const options = Object.keys(demos).map((d) => {
 });
 options.forEach((d) => select.append(d));
 
-const initialValue = new URL(location as any).searchParams.get(
-  'name',
-) as string;
-if ((demos as any)[initialValue]) select.value = initialValue;
+const initialValue = new URL(window.location.href).searchParams.get('name');
+if (initialValue && initialValue in demos) {
+  select.value = initialValue;
+}
 
 render();
 
 function render() {
   canvas.removeChildren();
 
-  const demo = (demos as any)[select.value];
+  const demo = demos[select.value as keyof typeof demos];
   demo(canvas, gui);
 }
 
