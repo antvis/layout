@@ -19,7 +19,13 @@ module.exports = {
     rules: [
       {
         test: /\.tsx?$/,
-        use: "ts-loader",
+        use: {
+          loader: 'ts-loader',
+          options: {
+            transpileOnly: true, // 禁用类型检查
+            experimentalWatchApi: true,
+          }
+        },
         exclude: /node_modules/,
       },
     ],
