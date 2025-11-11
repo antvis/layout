@@ -29,11 +29,7 @@ jobs:
       # 👇 只运行 packages/layout 的测试并生成 coverage
       - name: Run layout tests with coverage
         working-directory: packages/layout
-        run: |
-          npx jest --coverage \
-            --coverageDirectory=../../coverage/layout \
-            --coverageReporters="json-summary" \
-            --coverageReporters="text-summary"
+        run: npx jest --coverage
 
       # 👇 用社区 Action 输出覆盖率评论
       - name: Comment Jest coverage report
