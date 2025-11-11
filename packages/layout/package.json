@@ -62,15 +62,17 @@
     "xmlserializer": "^0.6.1"
   },
   "scripts": {
-    "clean": "rimraf dist lib tsconfig.build.tsbuildinfo",
-    "dev": "vite",
-    "build": "npm run clean && run-p build:*",
-    "ci": "npm run build && npm run test",
     "build:esm": "tsc -p tsconfig.build.json",
     "build:umd": "webpack --config webpack.config.js --mode production",
+    "build": "npm run clean && run-p build:*",
+    "ci": "npm run build && npm run test",
+    "clean": "rimraf dist lib tsconfig.build.tsbuildinfo",
+    "test:coverage:open": "open coverage/lcov-report/index.html",
+    "test:coverage": "jest --coverage",
+    "dev": "vite",
+    "prepublishOnly": "npm run build",
     "publish:alpha": "npm publish --tag alpha",
-    "test": "jest",
-    "prepublishOnly": "npm run build"
+    "test": "jest"
   },
   "publishConfig": {
     "access": "public",

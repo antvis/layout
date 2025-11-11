@@ -6,7 +6,8 @@
     "graphlib",
     "nodesep",
     "rankdir",
-    "ranksep"
+    "ranksep",
+    "relayout"
   ],
   "rust-analyzer.linkedProjects": ["./packages/layout-rust/Cargo.toml"]
 }

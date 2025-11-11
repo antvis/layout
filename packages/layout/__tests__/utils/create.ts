@@ -3,14 +3,14 @@ import { Renderer as SVGRenderer } from '@antv/g-svg';
 import { OffscreenCanvasContext } from './offscreen-canvas-context';
 
 /**
- * Create graph canvas with config.
+ * Create canvas with config.
  * @param dom - dom
  * @param width - width
  * @param height - height
  * @param options - options
  * @returns instance
  */
-export function createGraphCanvas(
+export function createCanvas(
   dom?: null | HTMLElement,
   width: number = 500,
   height: number = 500,

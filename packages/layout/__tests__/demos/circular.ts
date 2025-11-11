@@ -34,53 +34,64 @@ export function render(canvas: Canvas, gui?: GUI) {
       endAngle: 2 * Math.PI,
       clockwise: true,
       divisions: 1,
+      ordering: 'original',
     };
     folder.add(config, 'centerX', 0, 500).onChange((centerX: number) => {
-      relayout({ center: [centerX, config.centerY] });
+      relayout({ ...config, center: [centerX, config.centerY] });
     });
 
     folder.add(config, 'centerY', 0, 500).onChange((centerY: number) => {
-      relayout({ center: [config.centerX, centerY] });
+      relayout({ ...config, center: [config.centerX, centerY] });
     });
 
     folder.add(config, 'radius', 0, 500).onChange((radius: number) => {
-      relayout({ radius });
+      relayout({ ...config, radius });
     });
 
     folder
       .add(config, 'startRadius', 0, 500)
       .onChange((startRadius: number) => {
-        relayout({ radius: 0, startRadius, endRadius: config.endRadius });
+        relayout({ ...config, radius: 0, startRadius });
       });
 
     folder.add(config, 'endRadius', 0, 500).onChange((endRadius: number) => {
-      relayout({ radius: 0, endRadius, startRadius: config.startRadius });
+      relayout({ ...config, radius: 0, endRadius });
     });
 
     folder
       .add(config, 'startAngle', 0, 2 * Math.PI)
       .onChange((startAngle: number) => {
-        relayout({ startAngle });
+        relayout({ ...config, startAngle });
       });
 
     folder
       .add(config, 'endAngle', 0, 2 * Math.PI)
       .onChange((endAngle: number) => {
-        relayout({ endAngle });
+        relayout({ ...config, endAngle });
       });
 
     folder.add(config, 'clockwise').onChange((clockwise: boolean) => {
       relayout({
+        ...config,
         clockwise,
         radius: 0,
-        endRadius: config.endRadius,
-        startRadius: config.startRadius,
       });
     });
 
     folder.add(config, 'divisions', 0, 10).onChange((divisions: number) => {
-      relayout({ divisions });
+      relayout({ ...config, divisions });
     });
+
+    folder
+      .add(config, 'ordering', [
+        'original',
+        'degree',
+        'topology',
+        'topology-directed',
+      ])
+      .onChange((ordering) => {
+        relayout({ ...config, ordering });
+      });
   }
 
   return canvas;
