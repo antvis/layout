@@ -1,0 +1,774 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="500" height="500" color-interpolation-filters="sRGB" style="background: transparent;">
+  <g transform="matrix(1 0 0 1 0 0)">
+    <g fill="none" stroke="none" stroke-dashoffset="0" font-family="sans-serif" font-size="16" font-style="normal" font-variant="normal" font-weight="normal" text-anchor="left" transform="matrix(1 0 0 1 0 0)" visibility="visible">
+      <g transform="matrix(1 0 0 1 75 325)">
+        <line x1="0" x2="150" y1="50" y2="0" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 75 175)">
+        <line x1="0" x2="150" y1="0" y2="250" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 75 175)">
+        <line x1="0" x2="150" y1="0" y2="150" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 75 375)">
+        <line x1="0" x2="150" y1="0" y2="50" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 225 325)">
+        <line x1="0" x2="0" y1="0" y2="100" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 75 175)">
+        <line x1="0" x2="0" y1="0" y2="200" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 125 225)">
+        <line x1="0" x2="0" y1="50" y2="0" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 175 325)">
+        <line x1="50" x2="0" y1="50" y2="0" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 125 275)">
+        <line x1="0" x2="50" y1="0" y2="50" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 125 225)">
+        <line x1="0" x2="100" y1="0" y2="150" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 125 225)">
+        <line x1="50" x2="0" y1="100" y2="0" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 125 275)">
+        <line x1="0" x2="100" y1="0" y2="100" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 125 75)">
+        <line x1="0" x2="50" y1="0" y2="100" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 75 125)">
+        <line x1="0" x2="150" y1="200" y2="0" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 125 75)">
+        <line x1="0" x2="100" y1="0" y2="50" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 75 175)">
+        <line x1="0" x2="100" y1="150" y2="0" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 175 125)">
+        <line x1="0" x2="50" y1="50" y2="0" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 75 75)">
+        <line x1="50" x2="0" y1="0" y2="250" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 75 75)">
+        <line x1="0" x2="0" y1="150" y2="0" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 175 125)">
+        <line x1="0" x2="0" y1="150" y2="0" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 75 75)">
+        <line x1="0" x2="100" y1="0" y2="50" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 75 225)">
+        <line x1="0" x2="100" y1="0" y2="50" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 75 75)">
+        <line x1="100" x2="0" y1="200" y2="0" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 75 125)">
+        <line x1="0" x2="100" y1="100" y2="0" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 125 125)">
+        <line x1="0" x2="50" y1="0" y2="250" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 125 75)">
+        <line x1="0" x2="100" y1="350" y2="0" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 125 75)">
+        <line x1="0" x2="100" y1="50" y2="0" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 125 375)">
+        <line x1="50" x2="0" y1="0" y2="50" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 175 75)">
+        <line x1="0" x2="50" y1="300" y2="0" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 125 125)">
+        <line x1="0" x2="0" y1="0" y2="300" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 75 175)">
+        <line x1="150" x2="0" y1="0" y2="100" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 75 225)">
+        <line x1="150" x2="0" y1="0" y2="200" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 75 225)">
+        <line x1="150" x2="0" y1="0" y2="50" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 75 175)">
+        <line x1="0" x2="150" y1="250" y2="0" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 225 175)">
+        <line x1="0" x2="0" y1="0" y2="50" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 75 275)">
+        <line x1="0" x2="0" y1="0" y2="150" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 175 75)">
+        <line x1="50" x2="0" y1="200" y2="0" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 125 175)">
+        <line x1="50" x2="0" y1="250" y2="0" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 175 75)">
+        <line x1="0" x2="0" y1="350" y2="0" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 125 175)">
+        <line x1="100" x2="0" y1="100" y2="0" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 125 75)">
+        <line x1="0" x2="50" y1="100" y2="0" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 175 275)">
+        <line x1="50" x2="0" y1="0" y2="150" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 75 125)">
+        <line x1="0" x2="100" y1="0" y2="100" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 125 325)">
+        <line x1="0" x2="0" y1="0" y2="50" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 125 225)">
+        <line x1="0" x2="50" y1="150" y2="0" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 75 125)">
+        <line x1="50" x2="0" y1="200" y2="0" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 125 225)">
+        <line x1="50" x2="0" y1="0" y2="100" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 75 125)">
+        <line x1="50" x2="0" y1="250" y2="0" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 175 325)">
+        <line x1="0" x2="50" y1="0" y2="100" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 75 75)">
+        <line x1="0" x2="100" y1="0" y2="100" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 225 325)">
+        <line x1="0" x2="0" y1="50" y2="0" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 175 125)">
+        <line x1="50" x2="0" y1="0" y2="0" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 75 75)">
+        <line x1="0" x2="150" y1="200" y2="0" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 175 75)">
+        <line x1="0" x2="0" y1="150" y2="0" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 75 425)">
+        <line x1="50" x2="0" y1="0" y2="0" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 75 125)">
+        <line x1="0" x2="50" y1="0" y2="50" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 175 175)">
+        <line x1="50" x2="0" y1="250" y2="0" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 175 75)">
+        <line x1="50" x2="0" y1="0" y2="0" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 175 125)">
+        <line x1="50" x2="0" y1="200" y2="0" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 75 175)">
+        <line x1="0" x2="50" y1="250" y2="0" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 175 75)">
+        <line x1="0" x2="0" y1="0" y2="100" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 125 125)">
+        <line x1="0" x2="50" y1="50" y2="0" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 125 75)">
+        <line x1="0" x2="50" y1="100" y2="0" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 175 125)">
+        <line x1="0" x2="0" y1="0" y2="50" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g stroke-width="2" transform="matrix(1 0 0 1 175 75)">
+        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+      </g>
+      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 175 75)">
+        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Belgium</text>
+      </g>
+      <g stroke-width="2" transform="matrix(1 0 0 1 175 125)">
+        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+      </g>
+      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 175 125)">
+        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Croatia</text>
+      </g>
+      <g stroke-width="2" transform="matrix(1 0 0 1 125 175)">
+        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+      </g>
+      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 125 175)">
+        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">England</text>
+      </g>
+      <g stroke-width="2" transform="matrix(1 0 0 1 175 175)">
+        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+      </g>
+      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 175 175)">
+        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">France</text>
+      </g>
+      <g stroke-width="2" transform="matrix(1 0 0 1 225 75)">
+        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+      </g>
+      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 225 75)">
+        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Brazil</text>
+      </g>
+      <g stroke-width="2" transform="matrix(1 0 0 1 225 325)">
+        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+      </g>
+      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 225 325)">
+        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Russia</text>
+      </g>
+      <g stroke-width="2" transform="matrix(1 0 0 1 75 425)">
+        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+      </g>
+      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 75 425)">
+        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Sweden</text>
+      </g>
+      <g stroke-width="2" transform="matrix(1 0 0 1 225 425)">
+        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+      </g>
+      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 225 425)">
+        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Uruguay</text>
+      </g>
+      <g stroke-width="2" transform="matrix(1 0 0 1 75 75)">
+        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+      </g>
+      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 75 75)">
+        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Argentina</text>
+      </g>
+      <g stroke-width="2" transform="matrix(1 0 0 1 75 125)">
+        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+      </g>
+      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 75 125)">
+        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Colombia</text>
+      </g>
+      <g stroke-width="2" transform="matrix(1 0 0 1 225 125)">
+        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+      </g>
+      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 225 125)">
+        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Denmark</text>
+      </g>
+      <g stroke-width="2" transform="matrix(1 0 0 1 175 225)">
+        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+      </g>
+      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 175 225)">
+        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Japan</text>
+      </g>
+      <g stroke-width="2" transform="matrix(1 0 0 1 75 275)">
+        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+      </g>
+      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 75 275)">
+        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Mexico</text>
+      </g>
+      <g stroke-width="2" transform="matrix(1 0 0 1 175 325)">
+        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+      </g>
+      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 175 325)">
+        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Portugal</text>
+      </g>
+      <g stroke-width="2" transform="matrix(1 0 0 1 225 375)">
+        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+      </g>
+      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 225 375)">
+        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Spain</text>
+      </g>
+      <g stroke-width="2" transform="matrix(1 0 0 1 125 425)">
+        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+      </g>
+      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 125 425)">
+        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Switzerland</text>
+      </g>
+      <g stroke-width="2" transform="matrix(1 0 0 1 125 75)">
+        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+      </g>
+      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 125 75)">
+        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Australia</text>
+      </g>
+      <g stroke-width="2" transform="matrix(1 0 0 1 125 125)">
+        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+      </g>
+      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 125 125)">
+        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Costa Rica</text>
+      </g>
+      <g stroke-width="2" transform="matrix(1 0 0 1 75 175)">
+        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+      </g>
+      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 75 175)">
+        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Egypt</text>
+      </g>
+      <g stroke-width="2" transform="matrix(1 0 0 1 225 175)">
+        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+      </g>
+      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 225 175)">
+        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Germany</text>
+      </g>
+      <g stroke-width="2" transform="matrix(1 0 0 1 75 225)">
+        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+      </g>
+      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 75 225)">
+        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Iceland</text>
+      </g>
+      <g stroke-width="2" transform="matrix(1 0 0 1 125 225)">
+        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+      </g>
+      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 125 225)">
+        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">IR Iran</text>
+      </g>
+      <g stroke-width="2" transform="matrix(1 0 0 1 225 225)">
+        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+      </g>
+      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 225 225)">
+        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Korea Republic</text>
+      </g>
+      <g stroke-width="2" transform="matrix(1 0 0 1 125 275)">
+        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+      </g>
+      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 125 275)">
+        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Morocco</text>
+      </g>
+      <g stroke-width="2" transform="matrix(1 0 0 1 175 275)">
+        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+      </g>
+      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 175 275)">
+        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Nigeria</text>
+      </g>
+      <g stroke-width="2" transform="matrix(1 0 0 1 225 275)">
+        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+      </g>
+      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 225 275)">
+        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Panama</text>
+      </g>
+      <g stroke-width="2" transform="matrix(1 0 0 1 75 325)">
+        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+      </g>
+      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 75 325)">
+        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Peru</text>
+      </g>
+      <g stroke-width="2" transform="matrix(1 0 0 1 125 325)">
+        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+      </g>
+      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 125 325)">
+        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Poland</text>
+      </g>
+      <g stroke-width="2" transform="matrix(1 0 0 1 75 375)">
+        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+      </g>
+      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 75 375)">
+        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Saudi Arabia</text>
+      </g>
+      <g stroke-width="2" transform="matrix(1 0 0 1 125 375)">
+        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+      </g>
+      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 125 375)">
+        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Senegal</text>
+      </g>
+      <g stroke-width="2" transform="matrix(1 0 0 1 175 375)">
+        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+      </g>
+      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 175 375)">
+        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Serbia</text>
+      </g>
+      <g stroke-width="2" transform="matrix(1 0 0 1 175 425)">
+        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+      </g>
+      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 175 425)">
+        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Tunisia</text>
+      </g>
+      <g transform="matrix(1 0 0 1 75 325)">
+        <line x1="0" x2="150" y1="50" y2="0" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 75 175)">
+        <line x1="0" x2="150" y1="0" y2="250" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 75 175)">
+        <line x1="0" x2="150" y1="0" y2="150" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 75 375)">
+        <line x1="0" x2="150" y1="0" y2="50" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 225 325)">
+        <line x1="0" x2="0" y1="0" y2="100" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 75 175)">
+        <line x1="0" x2="0" y1="0" y2="200" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 125 225)">
+        <line x1="0" x2="0" y1="50" y2="0" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 175 325)">
+        <line x1="50" x2="0" y1="50" y2="0" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 125 275)">
+        <line x1="0" x2="50" y1="0" y2="50" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 125 225)">
+        <line x1="0" x2="100" y1="0" y2="150" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 125 225)">
+        <line x1="50" x2="0" y1="100" y2="0" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 125 275)">
+        <line x1="0" x2="100" y1="0" y2="100" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 125 75)">
+        <line x1="0" x2="50" y1="0" y2="100" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 75 125)">
+        <line x1="0" x2="150" y1="200" y2="0" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 125 75)">
+        <line x1="0" x2="100" y1="0" y2="50" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 75 175)">
+        <line x1="0" x2="100" y1="150" y2="0" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 175 125)">
+        <line x1="0" x2="50" y1="50" y2="0" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 75 75)">
+        <line x1="50" x2="0" y1="0" y2="250" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 75 75)">
+        <line x1="0" x2="0" y1="150" y2="0" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 175 125)">
+        <line x1="0" x2="0" y1="150" y2="0" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 75 75)">
+        <line x1="0" x2="100" y1="0" y2="50" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 75 225)">
+        <line x1="0" x2="100" y1="0" y2="50" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 75 75)">
+        <line x1="100" x2="0" y1="200" y2="0" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 75 125)">
+        <line x1="0" x2="100" y1="100" y2="0" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 125 125)">
+        <line x1="0" x2="50" y1="0" y2="250" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 125 75)">
+        <line x1="0" x2="100" y1="350" y2="0" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 125 75)">
+        <line x1="0" x2="100" y1="50" y2="0" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 125 375)">
+        <line x1="50" x2="0" y1="0" y2="50" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 175 75)">
+        <line x1="0" x2="50" y1="300" y2="0" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 125 125)">
+        <line x1="0" x2="0" y1="0" y2="300" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 75 175)">
+        <line x1="150" x2="0" y1="0" y2="100" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 75 225)">
+        <line x1="150" x2="0" y1="0" y2="200" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 75 225)">
+        <line x1="150" x2="0" y1="0" y2="50" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 75 175)">
+        <line x1="0" x2="150" y1="250" y2="0" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 225 175)">
+        <line x1="0" x2="0" y1="0" y2="50" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 75 275)">
+        <line x1="0" x2="0" y1="0" y2="150" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 175 75)">
+        <line x1="50" x2="0" y1="200" y2="0" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 125 175)">
+        <line x1="50" x2="0" y1="250" y2="0" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 175 75)">
+        <line x1="0" x2="0" y1="350" y2="0" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 125 175)">
+        <line x1="100" x2="0" y1="100" y2="0" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 125 75)">
+        <line x1="0" x2="50" y1="100" y2="0" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 175 275)">
+        <line x1="50" x2="0" y1="0" y2="150" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 75 125)">
+        <line x1="0" x2="100" y1="0" y2="100" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 125 325)">
+        <line x1="0" x2="0" y1="0" y2="50" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 125 225)">
+        <line x1="0" x2="50" y1="150" y2="0" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 75 125)">
+        <line x1="50" x2="0" y1="200" y2="0" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 125 225)">
+        <line x1="50" x2="0" y1="0" y2="100" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 75 125)">
+        <line x1="50" x2="0" y1="250" y2="0" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 175 325)">
+        <line x1="0" x2="50" y1="0" y2="100" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 75 75)">
+        <line x1="0" x2="100" y1="0" y2="100" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 225 325)">
+        <line x1="0" x2="0" y1="50" y2="0" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 175 125)">
+        <line x1="50" x2="0" y1="0" y2="0" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 75 75)">
+        <line x1="0" x2="150" y1="200" y2="0" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 175 75)">
+        <line x1="0" x2="0" y1="150" y2="0" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 75 425)">
+        <line x1="50" x2="0" y1="0" y2="0" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 75 125)">
+        <line x1="0" x2="50" y1="0" y2="50" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 175 175)">
+        <line x1="50" x2="0" y1="250" y2="0" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 175 75)">
+        <line x1="50" x2="0" y1="0" y2="0" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 175 125)">
+        <line x1="50" x2="0" y1="200" y2="0" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 75 175)">
+        <line x1="0" x2="50" y1="250" y2="0" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 175 75)">
+        <line x1="0" x2="0" y1="0" y2="100" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 125 125)">
+        <line x1="0" x2="50" y1="50" y2="0" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 125 75)">
+        <line x1="0" x2="50" y1="100" y2="0" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 175 125)">
+        <line x1="0" x2="0" y1="0" y2="50" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g stroke-width="2" transform="matrix(1 0 0 1 175 75)">
+        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+      </g>
+      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 175 75)">
+        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Belgium</text>
+      </g>
+      <g stroke-width="2" transform="matrix(1 0 0 1 175 125)">
+        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+      </g>
+      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 175 125)">
+        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Croatia</text>
+      </g>
+      <g stroke-width="2" transform="matrix(1 0 0 1 125 175)">
+        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+      </g>
+      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 125 175)">
+        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">England</text>
+      </g>
+      <g stroke-width="2" transform="matrix(1 0 0 1 175 175)">
+        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+      </g>
+      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 175 175)">
+        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">France</text>
+      </g>
+      <g stroke-width="2" transform="matrix(1 0 0 1 225 75)">
+        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+      </g>
+      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 225 75)">
+        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Brazil</text>
+      </g>
+      <g stroke-width="2" transform="matrix(1 0 0 1 225 325)">
+        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+      </g>
+      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 225 325)">
+        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Russia</text>
+      </g>
+      <g stroke-width="2" transform="matrix(1 0 0 1 75 425)">
+        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+      </g>
+      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 75 425)">
+        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Sweden</text>
+      </g>
+      <g stroke-width="2" transform="matrix(1 0 0 1 225 425)">
+        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+      </g>
+      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 225 425)">
+        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Uruguay</text>
+      </g>
+      <g stroke-width="2" transform="matrix(1 0 0 1 75 75)">
+        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+      </g>
+      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 75 75)">
+        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Argentina</text>
+      </g>
+      <g stroke-width="2" transform="matrix(1 0 0 1 75 125)">
+        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+      </g>
+      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 75 125)">
+        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Colombia</text>
+      </g>
+      <g stroke-width="2" transform="matrix(1 0 0 1 225 125)">
+        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+      </g>
+      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 225 125)">
+        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Denmark</text>
+      </g>
+      <g stroke-width="2" transform="matrix(1 0 0 1 175 225)">
+        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+      </g>
+      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 175 225)">
+        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Japan</text>
+      </g>
+      <g stroke-width="2" transform="matrix(1 0 0 1 75 275)">
+        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+      </g>
+      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 75 275)">
+        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Mexico</text>
+      </g>
+      <g stroke-width="2" transform="matrix(1 0 0 1 175 325)">
+        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+      </g>
+      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 175 325)">
+        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Portugal</text>
+      </g>
+      <g stroke-width="2" transform="matrix(1 0 0 1 225 375)">
+        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+      </g>
+      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 225 375)">
+        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Spain</text>
+      </g>
+      <g stroke-width="2" transform="matrix(1 0 0 1 125 425)">
+        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+      </g>
+      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 125 425)">
+        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Switzerland</text>
+      </g>
+      <g stroke-width="2" transform="matrix(1 0 0 1 125 75)">
+        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+      </g>
+      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 125 75)">
+        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Australia</text>
+      </g>
+      <g stroke-width="2" transform="matrix(1 0 0 1 125 125)">
+        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+      </g>
+      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 125 125)">
+        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Costa Rica</text>
+      </g>
+      <g stroke-width="2" transform="matrix(1 0 0 1 75 175)">
+        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+      </g>
+      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 75 175)">
+        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Egypt</text>
+      </g>
+      <g stroke-width="2" transform="matrix(1 0 0 1 225 175)">
+        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+      </g>
+      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 225 175)">
+        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Germany</text>
+      </g>
+      <g stroke-width="2" transform="matrix(1 0 0 1 75 225)">
+        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+      </g>
+      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 75 225)">
+        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Iceland</text>
+      </g>
+      <g stroke-width="2" transform="matrix(1 0 0 1 125 225)">
+        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+      </g>
+      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 125 225)">
+        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">IR Iran</text>
+      </g>
+      <g stroke-width="2" transform="matrix(1 0 0 1 225 225)">
+        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+      </g>
+      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 225 225)">
+        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Korea Republic</text>
+      </g>
+      <g stroke-width="2" transform="matrix(1 0 0 1 125 275)">
+        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+      </g>
+      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 125 275)">
+        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Morocco</text>
+      </g>
+      <g stroke-width="2" transform="matrix(1 0 0 1 175 275)">
+        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+      </g>
+      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 175 275)">
+        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Nigeria</text>
+      </g>
+      <g stroke-width="2" transform="matrix(1 0 0 1 225 275)">
+        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+      </g>
+      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 225 275)">
+        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Panama</text>
+      </g>
+      <g stroke-width="2" transform="matrix(1 0 0 1 75 325)">
+        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+      </g>
+      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 75 325)">
+        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Peru</text>
+      </g>
+      <g stroke-width="2" transform="matrix(1 0 0 1 125 325)">
+        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+      </g>
+      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 125 325)">
+        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Poland</text>
+      </g>
+      <g stroke-width="2" transform="matrix(1 0 0 1 75 375)">
+        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+      </g>
+      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 75 375)">
+        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Saudi Arabia</text>
+      </g>
+      <g stroke-width="2" transform="matrix(1 0 0 1 125 375)">
+        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+      </g>
+      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 125 375)">
+        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Senegal</text>
+      </g>
+      <g stroke-width="2" transform="matrix(1 0 0 1 175 375)">
+        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+      </g>
+      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 175 375)">
+        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Serbia</text>
+      </g>
+      <g stroke-width="2" transform="matrix(1 0 0 1 175 425)">
+        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+      </g>
+      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 175 425)">
+        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Tunisia</text>
+      </g>
+    </g>
+  </g>
+</svg>
