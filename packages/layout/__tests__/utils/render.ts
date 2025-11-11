@@ -5,29 +5,32 @@ export async function renderNodesAndEdges(
   canvas: Canvas,
   positions: LayoutMapping,
   showLabel: boolean = false,
+  nodeStyle = {},
 ) {
   await canvas.ready;
   canvas.removeChildren();
 
   displayEdges(canvas, positions);
-  displayNodes(canvas, positions, showLabel);
+  displayNodes(canvas, positions, showLabel, nodeStyle);
 }
 
 export async function renderNodes(
   canvas: Canvas,
   positions: LayoutMapping,
   showLabel: boolean = false,
+  nodeStyle = {},
 ) {
   await canvas.ready;
   canvas.removeChildren();
 
-  displayNodes(canvas, positions, showLabel);
+  displayNodes(canvas, positions, showLabel, nodeStyle);
 }
 
 const displayNodes = async (
   canvas: Canvas,
   positions: LayoutMapping,
   showLabel: boolean = false,
+  nodeStyle = {},
 ) => {
   positions.nodes.forEach((node) => {
     const circle = new Circle({
@@ -38,6 +41,7 @@ const displayNodes = async (
         fill: 'rgb(207,226,252)',
         stroke: 'rgb(118,145,241)',
         lineWidth: 2,
+        ...nodeStyle,
       },
     });
     canvas.appendChild(circle);
