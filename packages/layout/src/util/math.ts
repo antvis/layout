@@ -1,6 +1,6 @@
 import { Graph } from '@antv/graphlib';
 import { isNumber } from '@antv/util';
-import type { Matrix, Edge, Node, OutNode, Point } from '../types';
+import type { Edge, Matrix, Node, OutNode, Point } from '../types';
 import { isArray } from './array';
 
 export const floydWarshall = (adjMatrix: Matrix[]): Matrix[] => {
@@ -98,10 +98,10 @@ export const getLayoutBBox = (nodes: OutNode[]) => {
     let size = node.data.size;
     if (isArray(size)) {
       if (size.length === 1) size = [size[0], size[0]];
-    } else if (isNumber(size)) {
-      size = [size, size];
     } else if (size === undefined || isNaN(size as any)) {
       size = [30, 30];
+    } else if (isNumber(size)) {
+      size = [size, size];
     }
 
     const halfSize = [size[0] / 2, size[1] / 2];
