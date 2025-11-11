@@ -1,3 +1,3 @@
 export { createCanvas } from './create';
-export { renderNodes } from './render';
+export { renderNodes, renderNodesAndEdges } from './render';
 export { sleep } from './sleep';
