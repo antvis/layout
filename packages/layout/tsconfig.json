@@ -1,25 +1,32 @@
 {
-  "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "rootDir": "./src",
-    "composite": true,
-    "module": "esnext",
-    "declaration": true,
-    "sourceMap": true,
-    "target": "es6",
-    "outDir": "lib",
-    "jsx": "react",
-    "importHelpers": true,
-    "moduleResolution": "node",
+    "baseUrl": ".",
     "allowSyntheticDefaultImports": true,
-    "resolveJsonModule": true,
-    "esModuleInterop": true,
-    "lib": ["esnext", "dom"],
-    "experimentalDecorators": false /* Enables experimental support for ES7 decorators. */,
-    // "emitDecoratorMetadata": true, /* Enables experimental support for emitting type metadata for decorators. */
+    "composite": true,
+    "declaration": true,
     "downlevelIteration": true,
-    "skipLibCheck": true
+    "esModuleInterop": true,
+    "experimentalDecorators": false /* Enables experimental support for ES7 decorators. */,
+    "forceConsistentCasingInFileNames": true,
+    "importHelpers": true,
+    "isolatedModules": true,
+    "jsx": "react",
+    "lib": ["esnext", "dom"],
+    "module": "esnext",
+    "moduleResolution": "node",
+    "outDir": "lib",
+    "pretty": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "sourceMap": true,
+    "sourceRoot": "src",
+    "target": "es6",
+    "types": ["@types/jest", "node"],
+    "paths": {
+      "@/*": ["./*"],
+      "@@/*": ["__tests__/*"]
+    }
   },
-  "include": ["src/**/*"],
-  "exclude": ["src/**/*.spec.ts"]
+  "exclude": ["node_modules", "dist", "lib", "esm"],
+  "include": ["src/**/*", "__tests__/**/*"]
 }

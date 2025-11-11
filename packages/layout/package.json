@@ -42,6 +42,9 @@
     "tslib": "^2.5.0"
   },
   "devDependencies": {
+    "@antv/g": "^5.18.25",
+    "@antv/g-canvas": "^1.11.27",
+    "@antv/g-svg": "^1.10.28",
     "@babel/core": "^7.7.7",
     "@babel/plugin-proposal-class-properties": "^7.1.0",
     "@babel/preset-react": "^7.7.4",
@@ -49,18 +52,21 @@
     "@types/d3-quadtree": "^2.0.6",
     "@types/dagre": "^0.7.52",
     "babel-loader": "^8.0.6",
+    "jest-canvas-mock": "^2.5.2",
+    "svgo": "^4.0.0",
     "ts-loader": "^7.0.3",
     "typescript": "^4.0.3",
     "webpack": "^5.38.1",
     "webpack-cli": "^5.0.2",
-    "workerize-loader": "^2.0.2"
+    "workerize-loader": "^2.0.2",
+    "xmlserializer": "^0.6.1"
   },
   "scripts": {
-    "clean": "rimraf dist lib tsconfig.tsbuildinfo",
-    "dev": "webpack --config webpack.dev.config.js --mode development",
+    "clean": "rimraf dist lib tsconfig.build.tsbuildinfo",
+    "dev": "vite",
     "build": "npm run clean && run-p build:*",
     "ci": "npm run build && npm run test",
-    "build:esm": "tsc",
+    "build:esm": "tsc -p tsconfig.build.json",
     "build:umd": "webpack --config webpack.config.js --mode production",
     "publish:alpha": "npm publish --tag alpha",
     "test": "jest",

@@ -21,4 +21,5 @@ pkg-parallel
 *.lock
 Cargo.lock
 tsconfig.tsbuildinfo
+tsconfig.build.tsbuildinfo
 pnpm-lock.yaml
