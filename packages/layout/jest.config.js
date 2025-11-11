@@ -23,7 +23,7 @@ module.exports = {
   collectCoverageFrom: ['src/**/*.ts'],
   coveragePathIgnorePatterns: [],
   moduleFileExtensions: ['ts', 'tsx', 'js', 'json'],
-  collectCoverage: false,
+  collectCoverage: true,
   testRegex: '(/__tests__/.*\\.(test|spec))\\.(ts|tsx|js)$',
   transformIgnorePatterns: [`<rootDir>/node_modules/.pnpm/(?!(${esm}))`],
   testPathIgnorePatterns: ['/(lib|esm)/__tests__/'],
