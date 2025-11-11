@@ -1,6 +1,6 @@
 # Circular
 
-Circular layout arranges the node on a circle. By tuning the configurations, user can adjust the node ordering method, division number, radial layout, and so on. We implements it according to the paper: [A framework and algorithms for circular drawings of graphs](https://www.sciencedirect.com/science/article/pii/S1570866705000031).
+Circular layout arranges nodes on a circle. By tuning the configurations, user can adjust the node ordering method, division number, radial layout, and so on. We implement it according to the paper: [A framework and algorithms for circular drawings of graphs](https://www.sciencedirect.com/science/article/pii/S1570866705000031).
 
 <p align="center">
   <img width="300" src="https://gw.alipayobjects.com/mdn/rms_f8c6a0/afts/img/A*D85cS7-yqNEAAAAAAAAAAABkARQnAQ" />
