@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="500" height="500" color-interpolation-filters="sRGB" style="background: transparent;">
+  <g transform="matrix(1 0 0 1 0 0)">
+    <g fill="none" stroke="none" stroke-dashoffset="0" font-family="sans-serif" font-size="16" font-style="normal" font-variant="normal" font-weight="normal" text-anchor="left" transform="matrix(1 0 0 1 0 0)" visibility="visible">
+      <g transform="matrix(1 0 0 1 -64.7415 14.7615)">
+        <line x1="26.5036" x2="0" y1="0" y2="17.4698" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 44.9959 -38.1365)">
+        <line x1="0" x2="12.9877" y1="0" y2="29.2802" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g stroke-width="2" transform="matrix(1 0 0 1 -38.238 14.7615)">
+        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+      </g>
+      <g stroke-width="2" transform="matrix(1 0 0 1 -64.7415 32.2313)">
+        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+      </g>
+      <g stroke-width="2" transform="matrix(1 0 0 1 44.9959 -38.1365)">
+        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+      </g>
+      <g stroke-width="2" transform="matrix(1 0 0 1 57.9836 -8.8563)">
+        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 -64.7415 14.7615)">
+        <line x1="26.5036" x2="0" y1="0" y2="17.4698" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 44.9959 -38.1365)">
+        <line x1="0" x2="12.9877" y1="0" y2="29.2802" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g stroke-width="2" transform="matrix(1 0 0 1 -38.238 14.7615)">
+        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+      </g>
+      <g stroke-width="2" transform="matrix(1 0 0 1 -64.7415 32.2313)">
+        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+      </g>
+      <g stroke-width="2" transform="matrix(1 0 0 1 44.9959 -38.1365)">
+        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+      </g>
+      <g stroke-width="2" transform="matrix(1 0 0 1 57.9836 -8.8563)">
+        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+      </g>
+    </g>
+  </g>
+</svg>

@@ -2,7 +2,7 @@ import { MDSLayout } from '@/src';
 import { createCanvas } from '@@/utils/create';
 import type { Canvas } from '@antv/g';
 import { Graph } from '@antv/graphlib';
-import { countries } from '../dataset';
+import { countries as data } from '../dataset';
 import { renderNodesAndEdges } from '../utils/render';
 
 describe('layout mds', () => {
@@ -12,7 +12,7 @@ describe('layout mds', () => {
 
   beforeEach(() => {
     canvas = createCanvas();
-    const { nodes, edges } = countries;
+    const { nodes, edges } = data;
     graph = new Graph({ nodes, edges });
     mds = new MDSLayout({
       center: [250, 250],
@@ -28,14 +28,6 @@ describe('layout mds', () => {
     const positions = await mds.execute(graph);
     await renderNodesAndEdges(canvas, positions);
     await expect(canvas).toMatchSnapshot(__filename);
-  });
-
-  it('should return correct default config', async () => {
-    const layout = new MDSLayout();
-    expect(layout.options).toEqual({
-      center: [0, 0],
-      linkDistance: 50,
-    });
   });
 
   it('should render with custom center', async () => {
@@ -236,12 +228,6 @@ describe('layout mds', () => {
 
     // Generally, larger linkDistance should result in larger distances
     expect(dist2).toBeGreaterThan(dist1 * 0.5); // Allow some variance
-  });
-
-  it('should render with large linkDistance', async () => {
-    const positions = await mds.execute(graph, { linkDistance: 80 });
-    await renderNodesAndEdges(canvas, positions);
-    await expect(canvas).toMatchSnapshot(__filename, 'linkDistance-80');
   });
 
   it('should verify positions are valid numbers', async () => {

@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="1000" color-interpolation-filters="sRGB" style="background: transparent;">
+  <g transform="matrix(1 0 0 1 0 0)">
+    <g fill="none" stroke="none" stroke-dashoffset="0" font-family="sans-serif" font-size="16" font-style="normal" font-variant="normal" font-weight="normal" text-anchor="left" transform="matrix(1 0 0 1 0 0)" visibility="visible">
+      <g transform="matrix(1 0 0 1 436.2117 323.5094)">
+        <line x1="0" x2="0" y1="0" y2="0" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 436.2117 323.5094)">
+        <line x1="0" x2="159.057" y1="0" y2="121.2472" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g stroke-width="2" transform="matrix(1 0 0 1 436.2117 323.5094)">
+        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+      </g>
+      <g stroke-width="2" transform="matrix(1 0 0 1 595.2687 444.7566)">
+        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 436.2117 323.5094)">
+        <line x1="0" x2="0" y1="0" y2="0" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 436.2117 323.5094)">
+        <line x1="0" x2="159.057" y1="0" y2="121.2472" fill="none" stroke="rgba(128,128,128,1)"/>
+      </g>
+      <g stroke-width="2" transform="matrix(1 0 0 1 436.2117 323.5094)">
+        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+      </g>
+      <g stroke-width="2" transform="matrix(1 0 0 1 595.2687 444.7566)">
+        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+      </g>
+    </g>
+  </g>
+</svg>
