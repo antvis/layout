@@ -1,3 +1,4 @@
+import type { ID } from '@antv/graphlib';
 import type {
   CircularLayoutOptions,
   Edge,
@@ -6,10 +7,11 @@ import type {
   LayoutMapping,
   Node,
   OutNode,
-  PointTuple,
 } from './types';
 import { cloneFormatData, formatNumberFn, formatSizeFn } from './util';
 import { handleSingleNodeGraph } from './util/common';
+import { getMaxNodeSize } from './util/node';
+import { calculateCenter } from './util/view';
 
 const DEFAULTS_LAYOUT_OPTIONS: Partial<CircularLayoutOptions> = {
   radius: null,
@@ -90,22 +92,18 @@ export class CircularLayout implements Layout<CircularLayoutOptions> {
     // Calculate center according to `window` if not provided.
     const [calculatedWidth, calculatedHeight, calculatedCenter] =
       calculateCenter(width, height, center);
+
+    // handle empty graph or single node graph
     const n = nodes?.length;
     if (!n || n === 1) {
       return handleSingleNodeGraph(graph, assign, calculatedCenter);
     }
 
-    const angleStep = (endAngle - startAngle) / n;
-
     let { radius, startRadius, endRadius } = mergedOptions;
     if (paramNodeSpacing) {
-      const nodeSpacing: Function = formatNumberFn(10, paramNodeSpacing);
-      const nodeSize: Function = formatSizeFn(10, paramNodeSize);
-      let maxNodeSize = -Infinity;
-      nodes.forEach((node) => {
-        const nSize = nodeSize(node);
-        if (maxNodeSize < nSize) maxNodeSize = nSize;
-      });
+      const nodeSpacing = formatNumberFn(10, paramNodeSpacing);
+      const nodeSize = formatSizeFn(10, paramNodeSize);
+      const maxNodeSize = getMaxNodeSize(nodes, nodeSize);
       let perimeter = 0;
       nodes.forEach((node, i) => {
         if (i === 0) perimeter += maxNodeSize || 10;
@@ -119,7 +117,6 @@ export class CircularLayout implements Layout<CircularLayoutOptions> {
     } else if (startRadius && !endRadius) {
       endRadius = startRadius;
     }
-    const astep = angleStep * angleRatio!;
 
     // calculated nodes as temporary result
     let layoutNodes: OutNode[] = [];
@@ -137,6 +134,8 @@ export class CircularLayout implements Layout<CircularLayoutOptions> {
       layoutNodes = nodes.map((node) => cloneFormatData(node) as OutNode);
     }
 
+    const angleStep = (endAngle - startAngle) / n;
+    const astep = angleStep * angleRatio!;
     const divN = Math.ceil(n / divisions!); // node number in each division
     for (let i = 0; i < n; ++i) {
       let r = radius;
@@ -146,16 +145,13 @@ export class CircularLayout implements Layout<CircularLayoutOptions> {
       if (!r) {
         r = 10 + (i * 100) / (n - 1);
       }
-      let angle =
-        startAngle +
+
+      const theta =
         (i % divN) * astep +
         ((2 * Math.PI) / divisions!) * Math.floor(i / divN);
-      if (!clockwise) {
-        angle =
-          endAngle -
-          (i % divN) * astep -
-          ((2 * Math.PI) / divisions!) * Math.floor(i / divN);
-      }
+      let angle = startAngle + theta;
+      if (!clockwise) angle = endAngle - theta;
+
       layoutNodes[i].data.x = calculatedCenter[0] + Math.cos(angle) * r;
       layoutNodes[i].data.y = calculatedCenter[1] + Math.sin(angle) * r;
     }
@@ -260,30 +256,3 @@ function degreeOrdering(graph: Graph, nodes: Node[]): OutNode[] {
   );
   return orderedNodes;
 }
-
-/**
- * format the invalide width and height, and get the center position
- * @param width
- * @param height
- * @param center
- * @returns
- */
-const calculateCenter = (
-  width: number | undefined,
-  height: number | undefined,
-  center: PointTuple | undefined,
-): [number, number, PointTuple] => {
-  let calculatedWidth = width;
-  let calculatedHeight = height;
-  let calculatedCenter = center;
-  if (!calculatedWidth && typeof window !== 'undefined') {
-    calculatedWidth = window.innerWidth;
-  }
-  if (!calculatedHeight && typeof window !== 'undefined') {
-    calculatedHeight = window.innerHeight;
-  }
-  if (!calculatedCenter) {
-    calculatedCenter = [calculatedWidth! / 2, calculatedHeight! / 2];
-  }
-  return [calculatedWidth!, calculatedHeight!, calculatedCenter];
-};

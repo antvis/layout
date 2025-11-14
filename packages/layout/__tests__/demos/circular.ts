@@ -3,7 +3,7 @@ import type { Canvas } from '@antv/g';
 import { Graph } from '@antv/graphlib';
 import type { GUI } from 'lil-gui';
 import { countries } from '../dataset';
-import { renderNodes } from '../utils';
+import { renderNodesAndEdges } from '../utils';
 
 export function render(canvas: Canvas, gui?: GUI) {
   const { nodes, edges } = countries;
@@ -17,7 +17,7 @@ export function render(canvas: Canvas, gui?: GUI) {
 
   const relayout = async (options = {}) => {
     const positions = await circular.execute(graph, options);
-    await renderNodes(canvas, positions);
+    await renderNodesAndEdges(canvas, positions, true, { lineWidth: 0 });
   };
 
   relayout();

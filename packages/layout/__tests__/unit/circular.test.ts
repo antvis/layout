@@ -25,6 +25,21 @@ describe('layout circular', () => {
     canvas.destroy();
   });
 
+  it('should return correct default config', () => {
+    const layout = new CircularLayout();
+    expect(layout.options).toEqual({
+      radius: null,
+      startRadius: null,
+      endRadius: null,
+      startAngle: 0,
+      endAngle: 2 * Math.PI,
+      clockwise: true,
+      divisions: 1,
+      ordering: null,
+      angleRatio: 1,
+    });
+  });
+
   it('should render with default config', async () => {
     const positions = await circular.execute(graph);
     await renderNodes(canvas, positions);

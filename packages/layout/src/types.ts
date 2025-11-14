@@ -1,5 +1,5 @@
 import { Edge as IEdge, Graph as IGraph, Node as INode } from '@antv/graphlib';
-import type { Size } from './util/size';
+import { Size } from './types/size';
 
 /**
  * <zh/> 节点数据
