@@ -2,40 +2,40 @@
   <g transform="matrix(1 0 0 1 0 0)">
     <g fill="none" stroke="none" stroke-dashoffset="0" font-family="sans-serif" font-size="16" font-style="normal" font-variant="normal" font-weight="normal" text-anchor="left" transform="matrix(1 0 0 1 0 0)" visibility="visible">
       <g transform="matrix(1 0 0 1 513.2278 250.686)">
-        <line x1="0" x2="149.9706" y1="0" y2="138.6336" fill="none" stroke="rgba(128,128,128,1)"/>
+        <line x1="0" x2="149.9706" y1="0" y2="138.6336" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
       <g transform="matrix(1 0 0 1 339.6486 381.882)">
-        <line x1="0" x2="143.7298" y1="0" y2="146.7109" fill="none" stroke="rgba(128,128,128,1)"/>
+        <line x1="0" x2="143.7298" y1="0" y2="146.7109" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
       <g stroke-width="2" transform="matrix(1 0 0 1 513.2278 250.686)">
-        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+        <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
       </g>
       <g stroke-width="2" transform="matrix(1 0 0 1 663.1984 389.3195)">
-        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+        <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
       </g>
       <g stroke-width="2" transform="matrix(1 0 0 1 339.6486 381.882)">
-        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+        <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
       </g>
       <g stroke-width="2" transform="matrix(1 0 0 1 483.3785 528.5928)">
-        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+        <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
       </g>
       <g transform="matrix(1 0 0 1 513.2278 250.686)">
-        <line x1="0" x2="149.9706" y1="0" y2="138.6336" fill="none" stroke="rgba(128,128,128,1)"/>
+        <line x1="0" x2="149.9706" y1="0" y2="138.6336" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
       <g transform="matrix(1 0 0 1 339.6486 381.882)">
-        <line x1="0" x2="143.7298" y1="0" y2="146.7109" fill="none" stroke="rgba(128,128,128,1)"/>
+        <line x1="0" x2="143.7298" y1="0" y2="146.7109" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
       <g stroke-width="2" transform="matrix(1 0 0 1 513.2278 250.686)">
-        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+        <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
       </g>
       <g stroke-width="2" transform="matrix(1 0 0 1 663.1984 389.3195)">
-        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+        <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
       </g>
       <g stroke-width="2" transform="matrix(1 0 0 1 339.6486 381.882)">
-        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+        <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
       </g>
       <g stroke-width="2" transform="matrix(1 0 0 1 483.3785 528.5928)">
-        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+        <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
       </g>
     </g>
   </g>

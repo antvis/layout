@@ -3,7 +3,6 @@ import { createCanvas } from '@@/utils/create';
 import type { Canvas } from '@antv/g';
 import { Graph } from '@antv/graphlib';
 import { countries } from '../dataset';
-import { renderNodes } from '../utils';
 import { renderNodesAndEdges } from '../utils/render';
 
 describe('layout circular', () => {
@@ -42,13 +41,13 @@ describe('layout circular', () => {
 
   it('should render with default config', async () => {
     const positions = await circular.execute(graph);
-    await renderNodes(canvas, positions);
+    await renderNodesAndEdges(canvas, positions);
     await expect(canvas).toMatchSnapshot(__filename);
   });
 
   it('should render with custom radius', async () => {
     const positions = await circular.execute(graph, { radius: 180 });
-    await renderNodes(canvas, positions);
+    await renderNodesAndEdges(canvas, positions);
     await expect(canvas).toMatchSnapshot(__filename, 'radius-180');
   });
 
@@ -58,7 +57,7 @@ describe('layout circular', () => {
       startRadius: 100,
       endRadius: 200,
     });
-    await renderNodes(canvas, positions);
+    await renderNodesAndEdges(canvas, positions);
     await expect(canvas).toMatchSnapshot(
       __filename,
       'startRadius-100-endRadius-200',
@@ -70,7 +69,7 @@ describe('layout circular', () => {
       startAngle: Math.PI,
       endAngle: Math.PI * 2,
     });
-    await renderNodes(canvas, positions);
+    await renderNodesAndEdges(canvas, positions);
     await expect(canvas).toMatchSnapshot(
       __filename,
       'startAngle-PI-endAngle-2PI',
@@ -84,7 +83,7 @@ describe('layout circular', () => {
       startRadius: 100,
       endRadius: 200,
     });
-    await renderNodes(canvas, positions);
+    await renderNodesAndEdges(canvas, positions);
     await expect(canvas).toMatchSnapshot(
       __filename,
       'counterclockwise-radius-range',
@@ -98,7 +97,7 @@ describe('layout circular', () => {
       startAngle: Math.PI / 4,
       endAngle: Math.PI,
     });
-    await renderNodes(canvas, positions);
+    await renderNodesAndEdges(canvas, positions);
     await expect(canvas).toMatchSnapshot(__filename, 'divisions-5');
   });
 
@@ -106,7 +105,7 @@ describe('layout circular', () => {
     const positions = await circular.execute(graph, {
       center: [300, 300],
     });
-    await renderNodes(canvas, positions);
+    await renderNodesAndEdges(canvas, positions);
     await expect(canvas).toMatchSnapshot(__filename, 'custom-center');
   });
 
@@ -200,7 +199,7 @@ describe('layout circular', () => {
       nodeSpacing: () => 5,
       nodeSize: () => 20,
     } as any);
-    await renderNodes(canvas, positions);
+    await renderNodesAndEdges(canvas, positions);
     await expect(canvas).toMatchSnapshot(__filename, 'nodeSize-nodeSpacing-fn');
   });
 
@@ -209,7 +208,7 @@ describe('layout circular', () => {
       startRadius: 150,
       endRadius: undefined,
     });
-    await renderNodes(canvas, positions);
+    await renderNodesAndEdges(canvas, positions);
     await expect(canvas).toMatchSnapshot(__filename, 'startRadius-only');
   });
 
@@ -218,7 +217,7 @@ describe('layout circular', () => {
       startRadius: undefined,
       endRadius: 150,
     });
-    await renderNodes(canvas, positions);
+    await renderNodesAndEdges(canvas, positions);
     await expect(canvas).toMatchSnapshot(__filename, 'endRadius-only');
   });
 

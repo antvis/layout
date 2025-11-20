@@ -2,97 +2,97 @@
   <g transform="matrix(1 0 0 1 0 0)">
     <g fill="none" stroke="none" stroke-dashoffset="0" font-family="sans-serif" font-size="16" font-style="normal" font-variant="normal" font-weight="normal" text-anchor="left" transform="matrix(1 0 0 1 0 0)" visibility="visible">
       <g stroke-width="2" transform="matrix(1 0 0 1 200 200)">
-        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+        <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
       </g>
       <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 200 200)">
         <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">manual1</text>
       </g>
       <g stroke-width="2" transform="matrix(1 0 0 1 300 100)">
-        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+        <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
       </g>
       <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 300 100)">
         <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">manual2</text>
       </g>
       <g stroke-width="2" transform="matrix(1 0 0 1 100 100)">
-        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+        <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
       </g>
       <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 100 100)">
         <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">auto1</text>
       </g>
       <g stroke-width="2" transform="matrix(1 0 0 1 100 300)">
-        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+        <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
       </g>
       <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 100 300)">
         <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">manual3</text>
       </g>
       <g stroke-width="2" transform="matrix(1 0 0 1 200 100)">
-        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+        <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
       </g>
       <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 200 100)">
         <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">auto2</text>
       </g>
       <g stroke-width="2" transform="matrix(1 0 0 1 100 200)">
-        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+        <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
       </g>
       <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 100 200)">
         <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">auto3</text>
       </g>
       <g stroke-width="2" transform="matrix(1 0 0 1 300 200)">
-        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+        <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
       </g>
       <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 300 200)">
         <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">manual4</text>
       </g>
       <g stroke-width="2" transform="matrix(1 0 0 1 200 300)">
-        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+        <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
       </g>
       <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 200 300)">
         <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">auto4</text>
       </g>
       <g stroke-width="2" transform="matrix(1 0 0 1 200 200)">
-        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+        <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
       </g>
       <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 200 200)">
         <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">manual1</text>
       </g>
       <g stroke-width="2" transform="matrix(1 0 0 1 300 100)">
-        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+        <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
       </g>
       <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 300 100)">
         <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">manual2</text>
       </g>
       <g stroke-width="2" transform="matrix(1 0 0 1 100 100)">
-        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+        <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
       </g>
       <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 100 100)">
         <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">auto1</text>
       </g>
       <g stroke-width="2" transform="matrix(1 0 0 1 100 300)">
-        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+        <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
       </g>
       <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 100 300)">
         <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">manual3</text>
       </g>
       <g stroke-width="2" transform="matrix(1 0 0 1 200 100)">
-        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+        <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
       </g>
       <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 200 100)">
         <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">auto2</text>
       </g>
       <g stroke-width="2" transform="matrix(1 0 0 1 100 200)">
-        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+        <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
       </g>
       <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 100 200)">
         <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">auto3</text>
       </g>
       <g stroke-width="2" transform="matrix(1 0 0 1 300 200)">
-        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+        <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
       </g>
       <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 300 200)">
         <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">manual4</text>
       </g>
       <g stroke-width="2" transform="matrix(1 0 0 1 200 300)">
-        <circle cx="10" cy="10" r="10" fill="rgba(207,226,252,1)" stroke="rgba(118,145,241,1)" transform="translate(-10 -10)"/>
+        <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
       </g>
       <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 200 300)">
         <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">auto4</text>

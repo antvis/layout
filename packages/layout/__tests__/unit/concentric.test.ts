@@ -14,8 +14,9 @@ describe('layout concentric', () => {
     canvas = createCanvas();
     const { nodes, edges } = data as any;
     graph = new Graph({ nodes, edges });
+    const { width, height } = canvas.getConfig();
     concentricLayout = new ConcentricLayout({
-      center: [500, 500],
+      center: [width / 2, height / 2],
     });
   });
 
@@ -217,8 +218,7 @@ describe('layout concentric', () => {
 
   it('returns empty result for empty graph', async () => {
     const graph = new Graph({ nodes: [], edges: [] });
-    const layout = new ConcentricLayout({ center: [0, 0] });
-    const positions = await layout.execute(graph, {} as any);
+    const positions = await concentricLayout.execute(graph, {} as any);
     expect(positions.nodes).toHaveLength(0);
     expect(positions.edges).toHaveLength(0);
   });
@@ -268,11 +268,9 @@ describe('layout concentric', () => {
       nodes: nodesWithSize as any,
       edges: graph.getAllEdges() as any,
     });
-    const layout = new ConcentricLayout({
-      center: [500, 500],
+    const positions = await concentricLayout.execute(graphWithSize, {
       preventOverlap: true,
     });
-    const positions = await layout.execute(graphWithSize);
     await renderNodesAndEdges(canvas, positions, false, { r: 15 });
     await expect(canvas).toMatchSnapshot(__filename, 'node-size-from-data');
   });
@@ -286,11 +284,9 @@ describe('layout concentric', () => {
       nodes: nodesWithSize as any,
       edges: graph.getAllEdges() as any,
     });
-    const layout = new ConcentricLayout({
-      center: [500, 500],
+    const positions = await concentricLayout.execute(graphWithSize, {
       preventOverlap: true,
     });
-    const positions = await layout.execute(graphWithSize);
     await renderNodesAndEdges(canvas, positions);
     await expect(canvas).toMatchSnapshot(__filename, 'node-size-object-data');
   });
@@ -309,10 +305,7 @@ describe('layout concentric', () => {
       nodes: nodes as any,
       edges: edges as any,
     });
-    const layout = new ConcentricLayout({
-      center: [500, 500],
-    });
-    const positions = await layout.execute(minimalGraph);
+    const positions = await concentricLayout.execute(minimalGraph);
     await renderNodesAndEdges(canvas, positions);
     await expect(canvas).toMatchSnapshot(__filename, 'minimal-graph');
   });
@@ -344,12 +337,10 @@ describe('layout concentric', () => {
       nodes: nodesWithNumberSize as any,
       edges: graph.getAllEdges() as any,
     });
-    const layout = new ConcentricLayout({
-      center: [500, 500],
+    const positions = await concentricLayout.execute(graphWithNumberSize, {
       preventOverlap: true,
       nodeSpacing: 10,
     });
-    const positions = await layout.execute(graphWithNumberSize);
 
     // Verify all nodes have positions
     positions.nodes.forEach((node) => {
@@ -382,11 +373,9 @@ describe('layout concentric', () => {
       nodes: nodesMixedSize as any,
       edges: graph.getAllEdges() as any,
     });
-    const layout = new ConcentricLayout({
-      center: [500, 500],
+    const positions = await concentricLayout.execute(graphMixedSize, {
       preventOverlap: true,
     });
-    const positions = await layout.execute(graphMixedSize);
 
     await renderNodesAndEdges(canvas, positions);
     await expect(canvas).toMatchSnapshot(__filename, 'node-mixed-size-types');
@@ -409,11 +398,9 @@ describe('layout concentric', () => {
       nodes: nodesWithCustomValue as any,
       edges: edges as any,
     });
-    const layout = new ConcentricLayout({
-      center: [500, 500],
+    const positions = await concentricLayout.execute(customGraph, {
       sortBy: 'priority',
     });
-    const positions = await layout.execute(customGraph);
 
     // Verify nodes are sorted by priority in descending order
     // The highest priority should be at center (first in layout)
@@ -440,11 +427,9 @@ describe('layout concentric', () => {
       nodes: nodesWithNegativeValues as any,
       edges: edges as any,
     });
-    const layout = new ConcentricLayout({
-      center: [500, 500],
+    const positions = await concentricLayout.execute(negativeGraph, {
       sortBy: 'score',
     });
-    const positions = await layout.execute(negativeGraph);
 
     // Verify sorting: 20, 15, 0, -5, -10
     expect(positions.nodes[0].id).toBe('b'); // score: 20
@@ -469,11 +454,9 @@ describe('layout concentric', () => {
       nodes: nodesWithEqualValues as any,
       edges: edges as any,
     });
-    const layout = new ConcentricLayout({
-      center: [500, 500],
+    const positions = await concentricLayout.execute(equalGraph, {
       sortBy: 'rank',
     });
-    const positions = await layout.execute(equalGraph);
 
     // First node should have highest rank
     expect(positions.nodes[0].id).toBe('c'); // rank: 200
@@ -503,12 +486,8 @@ describe('layout concentric', () => {
       expect(node.data.y).toBeUndefined();
     });
 
-    const layout = new ConcentricLayout({
-      center: [500, 500],
-    });
-
     // Call assign
-    await layout.assign(testGraph, {});
+    await concentricLayout.assign(testGraph, {});
 
     // After assign, nodes should have x, y
     const afterNodes = testGraph.getAllNodes();

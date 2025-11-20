@@ -38,8 +38,8 @@ const displayNodes = async (
         cx: node.data.x,
         cy: node.data.y,
         r: 10,
-        fill: 'rgb(207,226,252)',
-        stroke: 'rgb(118,145,241)',
+        fill: '#41C9E2',
+        stroke: '#fff',
         lineWidth: 2,
         ...nodeStyle,
       },
@@ -74,7 +74,7 @@ const displayEdges = async (canvas: Canvas, positions: LayoutMapping) => {
         x2: targetNode.data.x,
         y2: targetNode.data.y,
         lineWidth: 1,
-        stroke: 'grey',
+        stroke: '#bebebe',
       },
     });
     canvas.appendChild(line);
