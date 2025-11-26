@@ -3,7 +3,7 @@ import { createCanvas } from '@@/utils/create';
 import type { Canvas } from '@antv/g';
 import { Graph } from '@antv/graphlib';
 import { clear as clearMockRandom, mock as mockRandom } from 'jest-random-mock';
-import { countries } from '../dataset';
+import { countries as data } from '../dataset';
 import { renderNodesAndEdges } from '../utils/render';
 
 describe('layout random', () => {
@@ -14,7 +14,7 @@ describe('layout random', () => {
   beforeEach(() => {
     mockRandom();
     canvas = createCanvas();
-    const { nodes, edges } = countries;
+    const { nodes, edges } = data;
     graph = new Graph({ nodes, edges });
     random = new RandomLayout({
       center: [250, 250],
@@ -30,6 +30,12 @@ describe('layout random', () => {
 
   it('should render with default config', async () => {
     const positions = await random.execute(graph);
+    await renderNodesAndEdges(canvas, positions);
+    await expect(canvas).toMatchSnapshot(__filename);
+  });
+
+  it('should render with pure data', async () => {
+    const positions = await random.execute(data);
     await renderNodesAndEdges(canvas, positions);
     await expect(canvas).toMatchSnapshot(__filename);
   });

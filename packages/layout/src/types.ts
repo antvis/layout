@@ -1,4 +1,5 @@
 import { Edge as IEdge, Graph as IGraph, Node as INode } from '@antv/graphlib';
+import type { GraphData } from './types/data';
 import { Size } from './types/size';
 
 /**
@@ -77,7 +78,7 @@ export interface Layout<LayoutOptions> {
    * @param options - <zh/> 布局配置 | <en/> Layout options
    * @returns Promise<void>
    */
-  assign(graph: Graph, options?: LayoutOptions): Promise<void>;
+  assign(graph: Graph | GraphData, options?: LayoutOptions): Promise<void>;
   /**
    * <zh/> 传入数据并执行布局计算，且结果不写入原始数据，作为返回值
    *
@@ -86,7 +87,10 @@ export interface Layout<LayoutOptions> {
    * @param options - <zh/> 布局配置 | <en/> Layout options
    * @returns <zh/> 布局结果 | <en/> Layout result
    */
-  execute(graph: Graph, options?: LayoutOptions): Promise<LayoutMapping>;
+  execute(
+    graph: Graph | GraphData,
+    options?: LayoutOptions,
+  ): Promise<LayoutMapping>;
   /**
    * <zh/> 布局计算的配置项
    *
