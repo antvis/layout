@@ -1,101 +1,101 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="500" height="500" color-interpolation-filters="sRGB" style="background: transparent;">
   <g transform="matrix(1 0 0 1 0 0)">
     <g fill="none" stroke="none" stroke-dashoffset="0" font-family="sans-serif" font-size="16" font-style="normal" font-variant="normal" font-weight="normal" text-anchor="left" transform="matrix(1 0 0 1 0 0)" visibility="visible">
-      <g stroke-width="2" transform="matrix(1 0 0 1 200 200)">
-        <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
+      <g stroke-width="2" transform="matrix(1 0 0 1 250 250)">
+        <circle cx="15" cy="15" r="15" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-15 -15)"/>
       </g>
-      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 200 200)">
-        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">manual1</text>
+      <g font-family="Roboto" font-size="11" font-weight="bolder" text-anchor="middle" transform="matrix(1 0 0 1 250 250)">
+        <text fill="rgba(255,255,255,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">M1-1</text>
       </g>
-      <g stroke-width="2" transform="matrix(1 0 0 1 300 100)">
-        <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
+      <g stroke-width="2" transform="matrix(1 0 0 1 416.6667 83.3333)">
+        <circle cx="15" cy="15" r="15" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-15 -15)"/>
       </g>
-      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 300 100)">
-        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">manual2</text>
+      <g font-family="Roboto" font-size="11" font-weight="bolder" text-anchor="middle" transform="matrix(1 0 0 1 416.6667 83.3333)">
+        <text fill="rgba(255,255,255,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">M0-2</text>
       </g>
-      <g stroke-width="2" transform="matrix(1 0 0 1 100 100)">
-        <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
+      <g stroke-width="2" transform="matrix(1 0 0 1 83.3333 83.3333)">
+        <circle cx="15" cy="15" r="15" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-15 -15)"/>
       </g>
-      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 100 100)">
-        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">auto1</text>
+      <g font-family="Roboto" font-size="11" font-weight="bolder" text-anchor="middle" transform="matrix(1 0 0 1 83.3333 83.3333)">
+        <text fill="rgba(255,255,255,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">A1</text>
       </g>
-      <g stroke-width="2" transform="matrix(1 0 0 1 100 300)">
-        <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
+      <g stroke-width="2" transform="matrix(1 0 0 1 83.3333 416.6667)">
+        <circle cx="15" cy="15" r="15" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-15 -15)"/>
       </g>
-      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 100 300)">
-        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">manual3</text>
+      <g font-family="Roboto" font-size="11" font-weight="bolder" text-anchor="middle" transform="matrix(1 0 0 1 83.3333 416.6667)">
+        <text fill="rgba(255,255,255,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">M2-0</text>
       </g>
-      <g stroke-width="2" transform="matrix(1 0 0 1 200 100)">
-        <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
+      <g stroke-width="2" transform="matrix(1 0 0 1 250 83.3333)">
+        <circle cx="15" cy="15" r="15" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-15 -15)"/>
       </g>
-      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 200 100)">
-        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">auto2</text>
+      <g font-family="Roboto" font-size="11" font-weight="bolder" text-anchor="middle" transform="matrix(1 0 0 1 250 83.3333)">
+        <text fill="rgba(255,255,255,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">A2</text>
       </g>
-      <g stroke-width="2" transform="matrix(1 0 0 1 100 200)">
-        <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
+      <g stroke-width="2" transform="matrix(1 0 0 1 83.3333 250)">
+        <circle cx="15" cy="15" r="15" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-15 -15)"/>
       </g>
-      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 100 200)">
-        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">auto3</text>
+      <g font-family="Roboto" font-size="11" font-weight="bolder" text-anchor="middle" transform="matrix(1 0 0 1 83.3333 250)">
+        <text fill="rgba(255,255,255,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">A3</text>
       </g>
-      <g stroke-width="2" transform="matrix(1 0 0 1 300 200)">
-        <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
+      <g stroke-width="2" transform="matrix(1 0 0 1 416.6667 250)">
+        <circle cx="15" cy="15" r="15" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-15 -15)"/>
       </g>
-      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 300 200)">
-        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">manual4</text>
+      <g font-family="Roboto" font-size="11" font-weight="bolder" text-anchor="middle" transform="matrix(1 0 0 1 416.6667 250)">
+        <text fill="rgba(255,255,255,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">M1-2</text>
       </g>
-      <g stroke-width="2" transform="matrix(1 0 0 1 200 300)">
-        <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
+      <g stroke-width="2" transform="matrix(1 0 0 1 250 416.6667)">
+        <circle cx="15" cy="15" r="15" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-15 -15)"/>
       </g>
-      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 200 300)">
-        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">auto4</text>
+      <g font-family="Roboto" font-size="11" font-weight="bolder" text-anchor="middle" transform="matrix(1 0 0 1 250 416.6667)">
+        <text fill="rgba(255,255,255,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">A4</text>
       </g>
-      <g stroke-width="2" transform="matrix(1 0 0 1 200 200)">
-        <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
+      <g stroke-width="2" transform="matrix(1 0 0 1 250 250)">
+        <circle cx="15" cy="15" r="15" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-15 -15)"/>
       </g>
-      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 200 200)">
-        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">manual1</text>
+      <g font-family="Roboto" font-size="11" font-weight="bolder" text-anchor="middle" transform="matrix(1 0 0 1 250 250)">
+        <text fill="rgba(255,255,255,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">M1-1</text>
       </g>
-      <g stroke-width="2" transform="matrix(1 0 0 1 300 100)">
-        <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
+      <g stroke-width="2" transform="matrix(1 0 0 1 416.6667 83.3333)">
+        <circle cx="15" cy="15" r="15" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-15 -15)"/>
       </g>
-      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 300 100)">
-        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">manual2</text>
+      <g font-family="Roboto" font-size="11" font-weight="bolder" text-anchor="middle" transform="matrix(1 0 0 1 416.6667 83.3333)">
+        <text fill="rgba(255,255,255,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">M0-2</text>
       </g>
-      <g stroke-width="2" transform="matrix(1 0 0 1 100 100)">
-        <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
+      <g stroke-width="2" transform="matrix(1 0 0 1 83.3333 83.3333)">
+        <circle cx="15" cy="15" r="15" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-15 -15)"/>
       </g>
-      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 100 100)">
-        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">auto1</text>
+      <g font-family="Roboto" font-size="11" font-weight="bolder" text-anchor="middle" transform="matrix(1 0 0 1 83.3333 83.3333)">
+        <text fill="rgba(255,255,255,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">A1</text>
       </g>
-      <g stroke-width="2" transform="matrix(1 0 0 1 100 300)">
-        <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
+      <g stroke-width="2" transform="matrix(1 0 0 1 83.3333 416.6667)">
+        <circle cx="15" cy="15" r="15" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-15 -15)"/>
       </g>
-      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 100 300)">
-        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">manual3</text>
+      <g font-family="Roboto" font-size="11" font-weight="bolder" text-anchor="middle" transform="matrix(1 0 0 1 83.3333 416.6667)">
+        <text fill="rgba(255,255,255,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">M2-0</text>
       </g>
-      <g stroke-width="2" transform="matrix(1 0 0 1 200 100)">
-        <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
+      <g stroke-width="2" transform="matrix(1 0 0 1 250 83.3333)">
+        <circle cx="15" cy="15" r="15" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-15 -15)"/>
       </g>
-      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 200 100)">
-        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">auto2</text>
+      <g font-family="Roboto" font-size="11" font-weight="bolder" text-anchor="middle" transform="matrix(1 0 0 1 250 83.3333)">
+        <text fill="rgba(255,255,255,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">A2</text>
       </g>
-      <g stroke-width="2" transform="matrix(1 0 0 1 100 200)">
-        <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
+      <g stroke-width="2" transform="matrix(1 0 0 1 83.3333 250)">
+        <circle cx="15" cy="15" r="15" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-15 -15)"/>
       </g>
-      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 100 200)">
-        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">auto3</text>
+      <g font-family="Roboto" font-size="11" font-weight="bolder" text-anchor="middle" transform="matrix(1 0 0 1 83.3333 250)">
+        <text fill="rgba(255,255,255,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">A3</text>
       </g>
-      <g stroke-width="2" transform="matrix(1 0 0 1 300 200)">
-        <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
+      <g stroke-width="2" transform="matrix(1 0 0 1 416.6667 250)">
+        <circle cx="15" cy="15" r="15" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-15 -15)"/>
       </g>
-      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 300 200)">
-        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">manual4</text>
+      <g font-family="Roboto" font-size="11" font-weight="bolder" text-anchor="middle" transform="matrix(1 0 0 1 416.6667 250)">
+        <text fill="rgba(255,255,255,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">M1-2</text>
       </g>
-      <g stroke-width="2" transform="matrix(1 0 0 1 200 300)">
-        <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
+      <g stroke-width="2" transform="matrix(1 0 0 1 250 416.6667)">
+        <circle cx="15" cy="15" r="15" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-15 -15)"/>
       </g>
-      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 200 300)">
-        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">auto4</text>
+      <g font-family="Roboto" font-size="11" font-weight="bolder" text-anchor="middle" transform="matrix(1 0 0 1 250 416.6667)">
+        <text fill="rgba(255,255,255,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">A4</text>
       </g>
     </g>
   </g>
