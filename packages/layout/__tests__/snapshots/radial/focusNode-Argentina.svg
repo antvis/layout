@@ -196,194 +196,194 @@
       <g stroke-width="2" transform="matrix(1 0 0 1 250 250)">
         <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
       </g>
-      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 250 250)">
-        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Argentina</text>
+      <g font-family="Roboto" font-size="11" font-weight="bolder" text-anchor="middle" transform="matrix(1 0 0 1 250 250)">
+        <text fill="rgba(255,255,255,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Argentina</text>
       </g>
       <g stroke-width="2" transform="matrix(1 0 0 1 264.361 348.9634)">
         <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
       </g>
-      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 264.361 348.9634)">
-        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Australia</text>
+      <g font-family="Roboto" font-size="11" font-weight="bolder" text-anchor="middle" transform="matrix(1 0 0 1 264.361 348.9634)">
+        <text fill="rgba(255,255,255,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Australia</text>
       </g>
       <g stroke-width="2" transform="matrix(1 0 0 1 184.9159 325.9214)">
         <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
       </g>
-      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 184.9159 325.9214)">
-        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Belgium</text>
+      <g font-family="Roboto" font-size="11" font-weight="bolder" text-anchor="middle" transform="matrix(1 0 0 1 184.9159 325.9214)">
+        <text fill="rgba(255,255,255,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Belgium</text>
       </g>
       <g stroke-width="2" transform="matrix(1 0 0 1 111.1522 306.7563)">
         <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
       </g>
-      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 111.1522 306.7563)">
-        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Brazil</text>
+      <g font-family="Roboto" font-size="11" font-weight="bolder" text-anchor="middle" transform="matrix(1 0 0 1 111.1522 306.7563)">
+        <text fill="rgba(255,255,255,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Brazil</text>
       </g>
       <g stroke-width="2" transform="matrix(1 0 0 1 122.6305 329.2276)">
         <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
       </g>
-      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 122.6305 329.2276)">
-        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Colombia</text>
+      <g font-family="Roboto" font-size="11" font-weight="bolder" text-anchor="middle" transform="matrix(1 0 0 1 122.6305 329.2276)">
+        <text fill="rgba(255,255,255,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Colombia</text>
       </g>
       <g stroke-width="2" transform="matrix(1 0 0 1 50.337 261.6052)">
         <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
       </g>
-      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 50.337 261.6052)">
-        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Costa Rica</text>
+      <g font-family="Roboto" font-size="11" font-weight="bolder" text-anchor="middle" transform="matrix(1 0 0 1 50.337 261.6052)">
+        <text fill="rgba(255,255,255,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Costa Rica</text>
       </g>
       <g stroke-width="2" transform="matrix(1 0 0 1 207.3687 276.1262)">
         <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
       </g>
-      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 207.3687 276.1262)">
-        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Croatia</text>
+      <g font-family="Roboto" font-size="11" font-weight="bolder" text-anchor="middle" transform="matrix(1 0 0 1 207.3687 276.1262)">
+        <text fill="rgba(255,255,255,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Croatia</text>
       </g>
       <g stroke-width="2" transform="matrix(1 0 0 1 247.7555 349.9748)">
         <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
       </g>
-      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 247.7555 349.9748)">
-        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Denmark</text>
+      <g font-family="Roboto" font-size="11" font-weight="bolder" text-anchor="middle" transform="matrix(1 0 0 1 247.7555 349.9748)">
+        <text fill="rgba(255,255,255,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Denmark</text>
       </g>
       <g stroke-width="2" transform="matrix(1 0 0 1 191.9211 388.2998)">
         <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
       </g>
-      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 191.9211 388.2998)">
-        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Egypt</text>
+      <g font-family="Roboto" font-size="11" font-weight="bolder" text-anchor="middle" transform="matrix(1 0 0 1 191.9211 388.2998)">
+        <text fill="rgba(255,255,255,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Egypt</text>
       </g>
       <g stroke-width="2" transform="matrix(1 0 0 1 169.2856 309.0355)">
         <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
       </g>
-      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 169.2856 309.0355)">
-        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">England</text>
+      <g font-family="Roboto" font-size="11" font-weight="bolder" text-anchor="middle" transform="matrix(1 0 0 1 169.2856 309.0355)">
+        <text fill="rgba(255,255,255,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">England</text>
       </g>
       <g stroke-width="2" transform="matrix(1 0 0 1 237.6701 298.4559)">
         <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
       </g>
-      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 237.6701 298.4559)">
-        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">France</text>
+      <g font-family="Roboto" font-size="11" font-weight="bolder" text-anchor="middle" transform="matrix(1 0 0 1 237.6701 298.4559)">
+        <text fill="rgba(255,255,255,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">France</text>
       </g>
       <g stroke-width="2" transform="matrix(1 0 0 1 54.942 294.1858)">
         <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
       </g>
-      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 54.942 294.1858)">
-        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Germany</text>
+      <g font-family="Roboto" font-size="11" font-weight="bolder" text-anchor="middle" transform="matrix(1 0 0 1 54.942 294.1858)">
+        <text fill="rgba(255,255,255,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Germany</text>
       </g>
       <g stroke-width="2" transform="matrix(1 0 0 1 227.1376 205.533)">
         <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
       </g>
-      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 227.1376 205.533)">
-        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Iceland</text>
+      <g font-family="Roboto" font-size="11" font-weight="bolder" text-anchor="middle" transform="matrix(1 0 0 1 227.1376 205.533)">
+        <text fill="rgba(255,255,255,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Iceland</text>
       </g>
       <g stroke-width="2" transform="matrix(1 0 0 1 84.9545 362.96)">
         <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
       </g>
-      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 84.9545 362.96)">
-        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">IR Iran</text>
+      <g font-family="Roboto" font-size="11" font-weight="bolder" text-anchor="middle" transform="matrix(1 0 0 1 84.9545 362.96)">
+        <text fill="rgba(255,255,255,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">IR Iran</text>
       </g>
       <g stroke-width="2" transform="matrix(1 0 0 1 130.4102 340.5444)">
         <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
       </g>
-      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 130.4102 340.5444)">
-        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Japan</text>
+      <g font-family="Roboto" font-size="11" font-weight="bolder" text-anchor="middle" transform="matrix(1 0 0 1 130.4102 340.5444)">
+        <text fill="rgba(255,255,255,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Japan</text>
       </g>
       <g stroke-width="2" transform="matrix(1 0 0 1 52.8866 283.8572)">
         <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
       </g>
-      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 52.8866 283.8572)">
-        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Korea Republic</text>
+      <g font-family="Roboto" font-size="11" font-weight="bolder" text-anchor="middle" transform="matrix(1 0 0 1 52.8866 283.8572)">
+        <text fill="rgba(255,255,255,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Korea Republic</text>
       </g>
       <g stroke-width="2" transform="matrix(1 0 0 1 53.746 288.5271)">
         <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
       </g>
-      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 53.746 288.5271)">
-        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Mexico</text>
+      <g font-family="Roboto" font-size="11" font-weight="bolder" text-anchor="middle" transform="matrix(1 0 0 1 53.746 288.5271)">
+        <text fill="rgba(255,255,255,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Mexico</text>
       </g>
       <g stroke-width="2" transform="matrix(1 0 0 1 91.4563 371.9176)">
         <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
       </g>
-      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 91.4563 371.9176)">
-        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Morocco</text>
+      <g font-family="Roboto" font-size="11" font-weight="bolder" text-anchor="middle" transform="matrix(1 0 0 1 91.4563 371.9176)">
+        <text fill="rgba(255,255,255,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Morocco</text>
       </g>
       <g stroke-width="2" transform="matrix(1 0 0 1 209.0781 221.2702)">
         <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
       </g>
-      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 209.0781 221.2702)">
-        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Nigeria</text>
+      <g font-family="Roboto" font-size="11" font-weight="bolder" text-anchor="middle" transform="matrix(1 0 0 1 209.0781 221.2702)">
+        <text fill="rgba(255,255,255,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Nigeria</text>
       </g>
       <g stroke-width="2" transform="matrix(1 0 0 1 129.0565 338.7281)">
         <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
       </g>
-      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 129.0565 338.7281)">
-        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Panama</text>
+      <g font-family="Roboto" font-size="11" font-weight="bolder" text-anchor="middle" transform="matrix(1 0 0 1 129.0565 338.7281)">
+        <text fill="rgba(255,255,255,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Panama</text>
       </g>
       <g stroke-width="2" transform="matrix(1 0 0 1 276.8924 346.3161)">
         <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
       </g>
-      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 276.8924 346.3161)">
-        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Peru</text>
+      <g font-family="Roboto" font-size="11" font-weight="bolder" text-anchor="middle" transform="matrix(1 0 0 1 276.8924 346.3161)">
+        <text fill="rgba(255,255,255,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Peru</text>
       </g>
       <g stroke-width="2" transform="matrix(1 0 0 1 64.7605 325.4077)">
         <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
       </g>
-      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 64.7605 325.4077)">
-        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Poland</text>
+      <g font-family="Roboto" font-size="11" font-weight="bolder" text-anchor="middle" transform="matrix(1 0 0 1 64.7605 325.4077)">
+        <text fill="rgba(255,255,255,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Poland</text>
       </g>
       <g stroke-width="2" transform="matrix(1 0 0 1 168.4247 375.8788)">
         <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
       </g>
-      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 168.4247 375.8788)">
-        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Portugal</text>
+      <g font-family="Roboto" font-size="11" font-weight="bolder" text-anchor="middle" transform="matrix(1 0 0 1 168.4247 375.8788)">
+        <text fill="rgba(255,255,255,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Portugal</text>
       </g>
       <g stroke-width="2" transform="matrix(1 0 0 1 210.341 341.7996)">
         <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
       </g>
-      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 210.341 341.7996)">
-        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Russia</text>
+      <g font-family="Roboto" font-size="11" font-weight="bolder" text-anchor="middle" transform="matrix(1 0 0 1 210.341 341.7996)">
+        <text fill="rgba(255,255,255,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Russia</text>
       </g>
       <g stroke-width="2" transform="matrix(1 0 0 1 181.6303 383.5125)">
         <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
       </g>
-      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 181.6303 383.5125)">
-        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Saudi Arabia</text>
+      <g font-family="Roboto" font-size="11" font-weight="bolder" text-anchor="middle" transform="matrix(1 0 0 1 181.6303 383.5125)">
+        <text fill="rgba(255,255,255,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Saudi Arabia</text>
       </g>
       <g stroke-width="2" transform="matrix(1 0 0 1 61.481 316.7878)">
         <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
       </g>
-      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 61.481 316.7878)">
-        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Senegal</text>
+      <g font-family="Roboto" font-size="11" font-weight="bolder" text-anchor="middle" transform="matrix(1 0 0 1 61.481 316.7878)">
+        <text fill="rgba(255,255,255,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Senegal</text>
       </g>
       <g stroke-width="2" transform="matrix(1 0 0 1 50.637 265.9506)">
         <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
       </g>
-      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 50.637 265.9506)">
-        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Serbia</text>
+      <g font-family="Roboto" font-size="11" font-weight="bolder" text-anchor="middle" transform="matrix(1 0 0 1 50.637 265.9506)">
+        <text fill="rgba(255,255,255,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Serbia</text>
       </g>
       <g stroke-width="2" transform="matrix(1 0 0 1 159.1295 369.3422)">
         <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
       </g>
-      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 159.1295 369.3422)">
-        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Spain</text>
+      <g font-family="Roboto" font-size="11" font-weight="bolder" text-anchor="middle" transform="matrix(1 0 0 1 159.1295 369.3422)">
+        <text fill="rgba(255,255,255,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Spain</text>
       </g>
       <g stroke-width="2" transform="matrix(1 0 0 1 113.5573 312.317)">
         <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
       </g>
-      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 113.5573 312.317)">
-        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Sweden</text>
+      <g font-family="Roboto" font-size="11" font-weight="bolder" text-anchor="middle" transform="matrix(1 0 0 1 113.5573 312.317)">
+        <text fill="rgba(255,255,255,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Sweden</text>
       </g>
       <g stroke-width="2" transform="matrix(1 0 0 1 51.3608 273.2908)">
         <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
       </g>
-      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 51.3608 273.2908)">
-        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Switzerland</text>
+      <g font-family="Roboto" font-size="11" font-weight="bolder" text-anchor="middle" transform="matrix(1 0 0 1 51.3608 273.2908)">
+        <text fill="rgba(255,255,255,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Switzerland</text>
       </g>
       <g stroke-width="2" transform="matrix(1 0 0 1 137.9 349.6674)">
         <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
       </g>
-      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 137.9 349.6674)">
-        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Tunisia</text>
+      <g font-family="Roboto" font-size="11" font-weight="bolder" text-anchor="middle" transform="matrix(1 0 0 1 137.9 349.6674)">
+        <text fill="rgba(255,255,255,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Tunisia</text>
       </g>
       <g stroke-width="2" transform="matrix(1 0 0 1 227.7402 347.491)">
         <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
       </g>
-      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 227.7402 347.491)">
-        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Uruguay</text>
+      <g font-family="Roboto" font-size="11" font-weight="bolder" text-anchor="middle" transform="matrix(1 0 0 1 227.7402 347.491)">
+        <text fill="rgba(255,255,255,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Uruguay</text>
       </g>
       <g transform="matrix(1 0 0 1 181.6303 341.7996)">
         <line x1="0" x2="28.7106" y1="41.713" y2="0" fill="none" stroke="rgba(190,190,190,1)"/>
@@ -580,194 +580,194 @@
       <g stroke-width="2" transform="matrix(1 0 0 1 250 250)">
         <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
       </g>
-      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 250 250)">
-        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Argentina</text>
+      <g font-family="Roboto" font-size="11" font-weight="bolder" text-anchor="middle" transform="matrix(1 0 0 1 250 250)">
+        <text fill="rgba(255,255,255,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Argentina</text>
       </g>
       <g stroke-width="2" transform="matrix(1 0 0 1 264.361 348.9634)">
         <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
       </g>
-      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 264.361 348.9634)">
-        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Australia</text>
+      <g font-family="Roboto" font-size="11" font-weight="bolder" text-anchor="middle" transform="matrix(1 0 0 1 264.361 348.9634)">
+        <text fill="rgba(255,255,255,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Australia</text>
       </g>
       <g stroke-width="2" transform="matrix(1 0 0 1 184.9159 325.9214)">
         <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
       </g>
-      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 184.9159 325.9214)">
-        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Belgium</text>
+      <g font-family="Roboto" font-size="11" font-weight="bolder" text-anchor="middle" transform="matrix(1 0 0 1 184.9159 325.9214)">
+        <text fill="rgba(255,255,255,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Belgium</text>
       </g>
       <g stroke-width="2" transform="matrix(1 0 0 1 111.1522 306.7563)">
         <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
       </g>
-      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 111.1522 306.7563)">
-        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Brazil</text>
+      <g font-family="Roboto" font-size="11" font-weight="bolder" text-anchor="middle" transform="matrix(1 0 0 1 111.1522 306.7563)">
+        <text fill="rgba(255,255,255,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Brazil</text>
       </g>
       <g stroke-width="2" transform="matrix(1 0 0 1 122.6305 329.2276)">
         <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
       </g>
-      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 122.6305 329.2276)">
-        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Colombia</text>
+      <g font-family="Roboto" font-size="11" font-weight="bolder" text-anchor="middle" transform="matrix(1 0 0 1 122.6305 329.2276)">
+        <text fill="rgba(255,255,255,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Colombia</text>
       </g>
       <g stroke-width="2" transform="matrix(1 0 0 1 50.337 261.6052)">
         <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
       </g>
-      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 50.337 261.6052)">
-        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Costa Rica</text>
+      <g font-family="Roboto" font-size="11" font-weight="bolder" text-anchor="middle" transform="matrix(1 0 0 1 50.337 261.6052)">
+        <text fill="rgba(255,255,255,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Costa Rica</text>
       </g>
       <g stroke-width="2" transform="matrix(1 0 0 1 207.3687 276.1262)">
         <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
       </g>
-      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 207.3687 276.1262)">
-        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Croatia</text>
+      <g font-family="Roboto" font-size="11" font-weight="bolder" text-anchor="middle" transform="matrix(1 0 0 1 207.3687 276.1262)">
+        <text fill="rgba(255,255,255,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Croatia</text>
       </g>
       <g stroke-width="2" transform="matrix(1 0 0 1 247.7555 349.9748)">
         <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
       </g>
-      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 247.7555 349.9748)">
-        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Denmark</text>
+      <g font-family="Roboto" font-size="11" font-weight="bolder" text-anchor="middle" transform="matrix(1 0 0 1 247.7555 349.9748)">
+        <text fill="rgba(255,255,255,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Denmark</text>
       </g>
       <g stroke-width="2" transform="matrix(1 0 0 1 191.9211 388.2998)">
         <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
       </g>
-      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 191.9211 388.2998)">
-        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Egypt</text>
+      <g font-family="Roboto" font-size="11" font-weight="bolder" text-anchor="middle" transform="matrix(1 0 0 1 191.9211 388.2998)">
+        <text fill="rgba(255,255,255,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Egypt</text>
       </g>
       <g stroke-width="2" transform="matrix(1 0 0 1 169.2856 309.0355)">
         <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
       </g>
-      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 169.2856 309.0355)">
-        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">England</text>
+      <g font-family="Roboto" font-size="11" font-weight="bolder" text-anchor="middle" transform="matrix(1 0 0 1 169.2856 309.0355)">
+        <text fill="rgba(255,255,255,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">England</text>
       </g>
       <g stroke-width="2" transform="matrix(1 0 0 1 237.6701 298.4559)">
         <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
       </g>
-      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 237.6701 298.4559)">
-        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">France</text>
+      <g font-family="Roboto" font-size="11" font-weight="bolder" text-anchor="middle" transform="matrix(1 0 0 1 237.6701 298.4559)">
+        <text fill="rgba(255,255,255,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">France</text>
       </g>
       <g stroke-width="2" transform="matrix(1 0 0 1 54.942 294.1858)">
         <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
       </g>
-      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 54.942 294.1858)">
-        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Germany</text>
+      <g font-family="Roboto" font-size="11" font-weight="bolder" text-anchor="middle" transform="matrix(1 0 0 1 54.942 294.1858)">
+        <text fill="rgba(255,255,255,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Germany</text>
       </g>
       <g stroke-width="2" transform="matrix(1 0 0 1 227.1376 205.533)">
         <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
       </g>
-      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 227.1376 205.533)">
-        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Iceland</text>
+      <g font-family="Roboto" font-size="11" font-weight="bolder" text-anchor="middle" transform="matrix(1 0 0 1 227.1376 205.533)">
+        <text fill="rgba(255,255,255,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Iceland</text>
       </g>
       <g stroke-width="2" transform="matrix(1 0 0 1 84.9545 362.96)">
         <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
       </g>
-      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 84.9545 362.96)">
-        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">IR Iran</text>
+      <g font-family="Roboto" font-size="11" font-weight="bolder" text-anchor="middle" transform="matrix(1 0 0 1 84.9545 362.96)">
+        <text fill="rgba(255,255,255,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">IR Iran</text>
       </g>
       <g stroke-width="2" transform="matrix(1 0 0 1 130.4102 340.5444)">
         <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
       </g>
-      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 130.4102 340.5444)">
-        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Japan</text>
+      <g font-family="Roboto" font-size="11" font-weight="bolder" text-anchor="middle" transform="matrix(1 0 0 1 130.4102 340.5444)">
+        <text fill="rgba(255,255,255,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Japan</text>
       </g>
       <g stroke-width="2" transform="matrix(1 0 0 1 52.8866 283.8572)">
         <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
       </g>
-      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 52.8866 283.8572)">
-        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Korea Republic</text>
+      <g font-family="Roboto" font-size="11" font-weight="bolder" text-anchor="middle" transform="matrix(1 0 0 1 52.8866 283.8572)">
+        <text fill="rgba(255,255,255,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Korea Republic</text>
       </g>
       <g stroke-width="2" transform="matrix(1 0 0 1 53.746 288.5271)">
         <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
       </g>
-      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 53.746 288.5271)">
-        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Mexico</text>
+      <g font-family="Roboto" font-size="11" font-weight="bolder" text-anchor="middle" transform="matrix(1 0 0 1 53.746 288.5271)">
+        <text fill="rgba(255,255,255,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Mexico</text>
       </g>
       <g stroke-width="2" transform="matrix(1 0 0 1 91.4563 371.9176)">
         <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
       </g>
-      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 91.4563 371.9176)">
-        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Morocco</text>
+      <g font-family="Roboto" font-size="11" font-weight="bolder" text-anchor="middle" transform="matrix(1 0 0 1 91.4563 371.9176)">
+        <text fill="rgba(255,255,255,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Morocco</text>
       </g>
       <g stroke-width="2" transform="matrix(1 0 0 1 209.0781 221.2702)">
         <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
       </g>
-      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 209.0781 221.2702)">
-        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Nigeria</text>
+      <g font-family="Roboto" font-size="11" font-weight="bolder" text-anchor="middle" transform="matrix(1 0 0 1 209.0781 221.2702)">
+        <text fill="rgba(255,255,255,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Nigeria</text>
       </g>
       <g stroke-width="2" transform="matrix(1 0 0 1 129.0565 338.7281)">
         <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
       </g>
-      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 129.0565 338.7281)">
-        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Panama</text>
+      <g font-family="Roboto" font-size="11" font-weight="bolder" text-anchor="middle" transform="matrix(1 0 0 1 129.0565 338.7281)">
+        <text fill="rgba(255,255,255,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Panama</text>
       </g>
       <g stroke-width="2" transform="matrix(1 0 0 1 276.8924 346.3161)">
         <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
       </g>
-      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 276.8924 346.3161)">
-        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Peru</text>
+      <g font-family="Roboto" font-size="11" font-weight="bolder" text-anchor="middle" transform="matrix(1 0 0 1 276.8924 346.3161)">
+        <text fill="rgba(255,255,255,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Peru</text>
       </g>
       <g stroke-width="2" transform="matrix(1 0 0 1 64.7605 325.4077)">
         <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
       </g>
-      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 64.7605 325.4077)">
-        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Poland</text>
+      <g font-family="Roboto" font-size="11" font-weight="bolder" text-anchor="middle" transform="matrix(1 0 0 1 64.7605 325.4077)">
+        <text fill="rgba(255,255,255,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Poland</text>
       </g>
       <g stroke-width="2" transform="matrix(1 0 0 1 168.4247 375.8788)">
         <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
       </g>
-      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 168.4247 375.8788)">
-        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Portugal</text>
+      <g font-family="Roboto" font-size="11" font-weight="bolder" text-anchor="middle" transform="matrix(1 0 0 1 168.4247 375.8788)">
+        <text fill="rgba(255,255,255,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Portugal</text>
       </g>
       <g stroke-width="2" transform="matrix(1 0 0 1 210.341 341.7996)">
         <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
       </g>
-      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 210.341 341.7996)">
-        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Russia</text>
+      <g font-family="Roboto" font-size="11" font-weight="bolder" text-anchor="middle" transform="matrix(1 0 0 1 210.341 341.7996)">
+        <text fill="rgba(255,255,255,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Russia</text>
       </g>
       <g stroke-width="2" transform="matrix(1 0 0 1 181.6303 383.5125)">
         <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
       </g>
-      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 181.6303 383.5125)">
-        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Saudi Arabia</text>
+      <g font-family="Roboto" font-size="11" font-weight="bolder" text-anchor="middle" transform="matrix(1 0 0 1 181.6303 383.5125)">
+        <text fill="rgba(255,255,255,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Saudi Arabia</text>
       </g>
       <g stroke-width="2" transform="matrix(1 0 0 1 61.481 316.7878)">
         <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
       </g>
-      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 61.481 316.7878)">
-        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Senegal</text>
+      <g font-family="Roboto" font-size="11" font-weight="bolder" text-anchor="middle" transform="matrix(1 0 0 1 61.481 316.7878)">
+        <text fill="rgba(255,255,255,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Senegal</text>
       </g>
       <g stroke-width="2" transform="matrix(1 0 0 1 50.637 265.9506)">
         <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
       </g>
-      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 50.637 265.9506)">
-        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Serbia</text>
+      <g font-family="Roboto" font-size="11" font-weight="bolder" text-anchor="middle" transform="matrix(1 0 0 1 50.637 265.9506)">
+        <text fill="rgba(255,255,255,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Serbia</text>
       </g>
       <g stroke-width="2" transform="matrix(1 0 0 1 159.1295 369.3422)">
         <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
       </g>
-      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 159.1295 369.3422)">
-        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Spain</text>
+      <g font-family="Roboto" font-size="11" font-weight="bolder" text-anchor="middle" transform="matrix(1 0 0 1 159.1295 369.3422)">
+        <text fill="rgba(255,255,255,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Spain</text>
       </g>
       <g stroke-width="2" transform="matrix(1 0 0 1 113.5573 312.317)">
         <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
       </g>
-      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 113.5573 312.317)">
-        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Sweden</text>
+      <g font-family="Roboto" font-size="11" font-weight="bolder" text-anchor="middle" transform="matrix(1 0 0 1 113.5573 312.317)">
+        <text fill="rgba(255,255,255,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Sweden</text>
       </g>
       <g stroke-width="2" transform="matrix(1 0 0 1 51.3608 273.2908)">
         <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
       </g>
-      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 51.3608 273.2908)">
-        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Switzerland</text>
+      <g font-family="Roboto" font-size="11" font-weight="bolder" text-anchor="middle" transform="matrix(1 0 0 1 51.3608 273.2908)">
+        <text fill="rgba(255,255,255,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Switzerland</text>
       </g>
       <g stroke-width="2" transform="matrix(1 0 0 1 137.9 349.6674)">
         <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
       </g>
-      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 137.9 349.6674)">
-        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Tunisia</text>
+      <g font-family="Roboto" font-size="11" font-weight="bolder" text-anchor="middle" transform="matrix(1 0 0 1 137.9 349.6674)">
+        <text fill="rgba(255,255,255,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Tunisia</text>
       </g>
       <g stroke-width="2" transform="matrix(1 0 0 1 227.7402 347.491)">
         <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
       </g>
-      <g font-size="12" text-anchor="middle" transform="matrix(1 0 0 1 227.7402 347.491)">
-        <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Uruguay</text>
+      <g font-family="Roboto" font-size="11" font-weight="bolder" text-anchor="middle" transform="matrix(1 0 0 1 227.7402 347.491)">
+        <text fill="rgba(255,255,255,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">Uruguay</text>
       </g>
     </g>
   </g>
