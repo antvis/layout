@@ -1,6 +1,6 @@
 import EventEmitter from '@antv/event-emitter';
 import type { Graph as IGraph, ID } from '@antv/graphlib';
-import { isNumber } from '@antv/util';
+import { isNil } from '@antv/util';
 import type {
   EdgeData,
   OutEdge,
@@ -186,7 +186,7 @@ export class Simulation extends EventEmitter {
    * Determines whether a node is fixed (has fx and fy defined).
    */
   private isNodeFixed(data: OutNodeData): boolean {
-    return isNumber(data.fx) && isNumber(data.fy);
+    return !isNil(data.fx) && !isNil(data.fy);
   }
 
   /**
@@ -245,18 +245,9 @@ export class Simulation extends EventEmitter {
         const dispU = this.displacements.get(nodeU.id)!;
         const uFixed = this.isNodeFixed(u);
 
-        if (
-          !isNumber(v.x) ||
-          !isNumber(v.y) ||
-          !isNumber(u.x) ||
-          !isNumber(u.y)
-        ) {
-          continue;
-        }
-
         let vecX = v.x - u.x;
         let vecY = v.y - u.y;
-        let vecZ = is3D && isNumber(v.z) && isNumber(u.z) ? v.z - u.z : 0;
+        let vecZ = is3D ? v.z - u.z : 0;
 
         let lengthSqr = vecX * vecX + vecY * vecY + vecZ * vecZ;
 
@@ -316,15 +307,6 @@ export class Simulation extends EventEmitter {
       const u = graph.getNode(source).data;
       const v = graph.getNode(target).data;
 
-      if (
-        !isNumber(v.x) ||
-        !isNumber(v.y) ||
-        !isNumber(u.x) ||
-        !isNumber(u.y)
-      ) {
-        return;
-      }
-
       const dispSource = this.displacements.get(source)!;
       const dispTarget = this.displacements.get(target)!;
       const fixedU = this.isNodeFixed(u);
@@ -332,7 +314,7 @@ export class Simulation extends EventEmitter {
 
       const vecX = v.x - u.x;
       const vecY = v.y - u.y;
-      const vecZ = is3D && isNumber(v.z) && isNumber(u.z) ? v.z - u.z : 0;
+      const vecZ = is3D ? v.z - u.z : 0;
 
       const length = Math.sqrt(vecX * vecX + vecY * vecY + vecZ * vecZ);
 
@@ -411,9 +393,9 @@ export class Simulation extends EventEmitter {
 
       if (!cluster) return;
 
-      if (isNumber(data.x)) cluster.cx += data.x;
-      if (isNumber(data.y)) cluster.cy += data.y;
-      if (is3D && isNumber(data.z)) cluster.cz += data.z;
+      cluster.cx += data.x;
+      cluster.cy += data.y;
+      if (is3D) cluster.cz += data.z;
       cluster.count++;
     });
 
@@ -431,8 +413,6 @@ export class Simulation extends EventEmitter {
       // 固定节点不应用聚类重力
       if (this.isNodeFixed(data)) return;
 
-      if (!isNumber(data.x) || !isNumber(data.y)) return;
-
       const clusterKey = nodeClusterBy(node);
       const cluster = this.clusterMap.get(clusterKey);
       if (!cluster) return;
@@ -441,7 +421,7 @@ export class Simulation extends EventEmitter {
 
       const vecX = data.x - cluster.cx;
       const vecY = data.y - cluster.cy;
-      const vecZ = is3D && isNumber(data.z) ? data.z - cluster.cz : 0;
+      const vecZ = is3D ? data.z - cluster.cz : 0;
 
       const distLength = Math.sqrt(vecX * vecX + vecY * vecY + vecZ * vecZ);
 
@@ -470,14 +450,12 @@ export class Simulation extends EventEmitter {
       // 固定节点不应用全局重力
       if (this.isNodeFixed(data)) return;
 
-      if (!isNumber(data.x) || !isNumber(data.y)) return;
-
       const disp = this.displacements.get(id)!;
 
       disp.x -= gravityForce * (data.x - center[0]);
       disp.y -= gravityForce * (data.y - center[1]);
 
-      if (is3D && isNumber(data.z)) {
+      if (is3D) {
         disp.z -= gravityForce * (data.z - (center[2] || 0));
       }
     });
@@ -498,8 +476,6 @@ export class Simulation extends EventEmitter {
         return;
       }
 
-      if (!isNumber(data.x) || !isNumber(data.y)) return;
-
       const disp = this.displacements.get(id)!;
 
       const distLength = Math.sqrt(
@@ -517,7 +493,7 @@ export class Simulation extends EventEmitter {
       const updateData: any = {
         x: data.x + disp.x * ratio,
         y: data.y + disp.y * ratio,
-        ...(is3D && isNumber(data.z) ? { z: data.z + disp.z * ratio } : {}),
+        ...(is3D ? { z: data.z + disp.z * ratio } : {}),
       };
 
       graph.mergeNodeData(id, updateData);
