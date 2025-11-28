@@ -261,6 +261,7 @@ export class Simulation extends EventEmitter {
         const dispZ = vecZ * common;
 
         if (!vFixed && !uFixed) {
+          // 两个都不固定：正常分配
           dispV.x += dispX;
           dispV.y += dispY;
           dispU.x -= dispX;
@@ -270,18 +271,21 @@ export class Simulation extends EventEmitter {
             dispU.z -= dispZ;
           }
         } else if (vFixed && !uFixed) {
+          // V 固定，U 不固定：U 承受双倍位移
           dispU.x -= dispX * 2;
           dispU.y -= dispY * 2;
           if (is3D) {
             dispU.z -= dispZ * 2;
           }
         } else if (!vFixed && uFixed) {
+          // U 固定，V 不固定：V 承受双倍位移
           dispV.x += dispX * 2;
           dispV.y += dispY * 2;
           if (is3D) {
             dispV.z += dispZ * 2;
           }
         }
+        // 如果两个都固定，则都不移动（不添加位移）
       }
     }
   }
@@ -328,6 +332,7 @@ export class Simulation extends EventEmitter {
       const dispZ = vecZ * common;
 
       if (!fixedU && !fixedV) {
+        // 两个都不固定：正常分配
         dispSource.x += dispX;
         dispSource.y += dispY;
         dispTarget.x -= dispX;
@@ -337,18 +342,21 @@ export class Simulation extends EventEmitter {
           dispTarget.z -= dispZ;
         }
       } else if (fixedU && !fixedV) {
+        // V 固定，U 不固定：U 承受双倍位移
         dispTarget.x -= dispX * 2;
         dispTarget.y -= dispY * 2;
         if (is3D) {
           dispTarget.z -= dispZ * 2;
         }
       } else if (!fixedU && fixedV) {
+        // U 固定，V 不固定：V 承受双倍位移
         dispSource.x += dispX * 2;
         dispSource.y += dispY * 2;
         if (is3D) {
           dispSource.z += dispZ * 2;
         }
       }
+      // 如果两个都固定，则都不移动（不添加位移）
     });
   }
 
@@ -407,6 +415,8 @@ export class Simulation extends EventEmitter {
 
     nodes.forEach((node) => {
       const { id, data } = node;
+
+      // 固定节点不应用聚类重力
       if (this.isNodeFixed(data)) return;
 
       if (!isNumber(data.x) || !isNumber(data.y)) return;
@@ -445,6 +455,7 @@ export class Simulation extends EventEmitter {
     nodes.forEach((node) => {
       const { id, data } = node;
 
+      // 固定节点不应用全局重力
       if (this.isNodeFixed(data)) return;
 
       if (!isNumber(data.x) || !isNumber(data.y)) return;
