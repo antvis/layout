@@ -52,6 +52,7 @@ export function applySingleNodeLayout(
   assign: boolean,
   graph: Graph,
   center: PointTuple,
+  dimensions: 2 | 3 = 2,
 ): LayoutMapping | void {
   const nodes = graph.getAllNodes();
   const edges = graph.getAllEdges();
@@ -65,6 +66,7 @@ export function applySingleNodeLayout(
     graph.mergeNodeData(nodes[0].id, {
       x: center[0],
       y: center[1],
+      ...(dimensions === 3 ? { z: center[2] } : {}),
     });
     return;
   }
@@ -77,6 +79,7 @@ export function applySingleNodeLayout(
           ...nodes[0].data,
           x: center[0],
           y: center[1],
+          ...(dimensions === 3 ? { z: center[2] } : {}),
         },
       },
     ],
