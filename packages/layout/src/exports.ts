@@ -10,7 +10,10 @@ export type { D3ForceLayoutOptions } from './d3-force/types';
 export * from './dagre';
 export * from './force';
 export * from './force-atlas2';
-export * from './fruchterman';
+export {
+  FruchtermanLayout,
+  type FruchtermanLayoutOptions,
+} from './fruchterman';
 export { GridLayout, type GridLayoutOptions } from './grid';
 export * from './mds';
 export * from './radial';

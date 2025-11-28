@@ -52,6 +52,7 @@
     "@types/d3-quadtree": "^2.0.6",
     "@types/dagre": "^0.7.52",
     "babel-loader": "^8.0.6",
+    "interactjs": "^1.10.27",
     "jest-canvas-mock": "^2.5.2",
     "jest-random-mock": "^1.0.0",
     "svgo": "^4.0.0",

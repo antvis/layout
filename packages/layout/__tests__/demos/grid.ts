@@ -1,13 +1,15 @@
-import { GridLayout, GridLayoutOptions } from '@/src';
-import type { Canvas } from '@antv/g';
+import { GridLayout } from '@/src';
 import type { GUI } from 'lil-gui';
 import { grid as data } from '../dataset';
-import { renderNodesAndEdges } from '../utils';
+import { GraphRenderer } from '../utils/renderer';
 
-export function render(canvas: Canvas, gui?: GUI) {
-  const defaultOptions: GridLayoutOptions = {
-    width: canvas.getConfig().width,
-    height: canvas.getConfig().height,
+export function render(gui?: GUI) {
+  const renderer = new GraphRenderer();
+  const { width, height } = renderer.getCanvasSize();
+
+  const defaultOptions = {
+    width,
+    height,
     beginX: 0,
     beginY: 0,
     preventOverlap: true,
@@ -51,8 +53,12 @@ export function render(canvas: Canvas, gui?: GUI) {
       nodeSpacing: options.nodeSpacing,
     };
     const positions = await layout.execute(data, layout.options);
-    await renderNodesAndEdges(canvas, positions, true, {
-      r: options.nodeSize / 2,
+    renderer.render(positions, {
+      showLabel: true,
+      nodeRadius: options.nodeSize / 2,
+      labelStyle: {
+        fill: '#fff',
+      },
     });
   };
 
@@ -133,5 +139,5 @@ export function render(canvas: Canvas, gui?: GUI) {
     folder.open();
   }
 
-  return canvas;
+  return renderer.getCanvas();
 }
