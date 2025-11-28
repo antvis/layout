@@ -1,18 +1,9 @@
-import { Canvas } from '@antv/g';
-import { Renderer } from '@antv/g-canvas';
 import * as lil from 'lil-gui';
 import * as demos from './demos';
 
-const canvas = new Canvas({
-  container: 'container',
-  width: 500,
-  height: 500,
-  renderer: new Renderer(),
-});
-
 // GUI
 const $container = document.getElementById('container');
-const gui = new lil.GUI({ autoPlace: false });
+let gui = new lil.GUI({ autoPlace: false });
 $container.appendChild(gui.domElement);
 
 const select = document.createElement('select');
@@ -38,14 +29,19 @@ if (initialValue && initialValue in demos) {
 render();
 
 function render() {
-  canvas.removeChildren();
-
   const demo = demos[select.value as keyof typeof demos];
-  demo(canvas, gui);
+  if (gui) {
+    gui.destroy();
+    gui = new lil.GUI({ autoPlace: false });
+    $container.appendChild(gui.domElement);
+  }
+
+  demo(gui);
 }
 
 function onChange() {
   const { value } = select;
   history.pushState({ value }, '', `?name=${value}`);
+
   render();
 }
