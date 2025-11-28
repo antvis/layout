@@ -52,6 +52,8 @@ export class Simulation extends EventEmitter {
   private animationFrameId: number | null = null;
   private iterationsPerFrame: number = 10;
 
+  private isDestroyed: boolean = false;
+
   private context: {
     nodes: OutNode[];
     edges: OutEdge[];
@@ -88,6 +90,11 @@ export class Simulation extends EventEmitter {
    * If *iterations* is not specified, it defaults to 1 (single step).
    */
   public tick(iterations: number = 1): this {
+    if (this.isDestroyed) {
+      console.warn('Simulation has already been destroyed.');
+      return;
+    }
+
     this.isRunning = true;
 
     for (let i = 0; i < iterations; i++) {
@@ -127,6 +134,11 @@ export class Simulation extends EventEmitter {
    * Restart the simulation's animation timer and returns the simulation.
    */
   public restart(): this {
+    if (this.isDestroyed) {
+      console.warn('Simulation has already been destroyed.');
+      return;
+    }
+
     this.isRunning = true;
 
     const loop = () => {
@@ -510,5 +522,37 @@ export class Simulation extends EventEmitter {
 
       graph.mergeNodeData(id, updateData);
     });
+  }
+
+  public destroy(): void {
+    if (this.isDestroyed) {
+      console.warn('Simulation has already been destroyed.');
+      return;
+    }
+
+    this.stop();
+
+    if (this.displacements) {
+      this.displacements.clear();
+      this.displacements = null;
+    }
+
+    if (this.clusterMap) {
+      this.clusterMap.clear();
+      this.clusterMap = null;
+    }
+    this.context.nodes = [];
+    this.context.edges = [];
+    this.context.graph = undefined;
+    this.context.options = {};
+
+    this.off('tick');
+    this.off('end');
+
+    this.currentIteration = 0;
+    this.isRunning = false;
+    this.animationFrameId = null;
+
+    this.isDestroyed = true;
   }
 }

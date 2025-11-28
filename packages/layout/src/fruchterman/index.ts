@@ -201,4 +201,23 @@ export class FruchtermanLayout
 
     return { nodes: nodesResult, edges };
   }
+
+  public destroy(): void {
+    this.stop();
+
+    if (this.simulation) {
+      this.simulation.destroy();
+      this.simulation = null;
+    }
+
+    this.calcGraph = null;
+    this.context = {
+      nodes: [],
+      edges: [],
+      assign: false,
+      graph: null,
+      options: {},
+    };
+    this.resolver = undefined;
+  }
 }
