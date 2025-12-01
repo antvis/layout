@@ -117,17 +117,18 @@ describe('data', () => {
   });
 
   describe('extractFieldValues', () => {
-    const inputNodeAttributes = [
-      'id',
-      'x',
-      'y',
-      'z',
-    ] as (keyof NodeFieldMapping)[];
-    const inputEdgeAttributes = [
-      'source',
-      'target',
-      'controlPoints',
-    ] as (keyof EdgeFieldMapping)[];
+    const nodeFields = {
+      id: 'id',
+      x: 'data.x',
+      y: 'data.y',
+      z: 'data.z',
+    } as NodeFieldMapping;
+    const edgeFields = {
+      id: 'id',
+      source: 'source',
+      target: 'target',
+      controlPoints: 'data.controlPoints',
+    } as EdgeFieldMapping;
 
     test('should extract default fields from nodes', () => {
       const data: GraphData = {
@@ -138,11 +139,7 @@ describe('data', () => {
         edges: [],
       };
 
-      const result = extractFieldValues(
-        data,
-        inputNodeAttributes,
-        inputEdgeAttributes,
-      );
+      const result = extractFieldValues(data, nodeFields, edgeFields);
 
       expect(result.nodes.size).toBe(2);
       const node1 = result.nodes.get('node1');
@@ -164,12 +161,11 @@ describe('data', () => {
 
       const result = extractFieldValues(
         data,
-        inputNodeAttributes,
-        inputEdgeAttributes,
         {
           x: 'customX',
           y: 'customY',
         },
+        edgeFields,
       );
 
       const node = result.nodes.get('node1');
@@ -190,12 +186,11 @@ describe('data', () => {
 
       const result = extractFieldValues(
         data,
-        inputNodeAttributes,
-        inputEdgeAttributes,
         {
           x: 'position.x',
           y: 'position.y',
         },
+        edgeFields,
       );
 
       const node = result.nodes.get('node1');
@@ -209,11 +204,7 @@ describe('data', () => {
         edges: [],
       };
 
-      const result = extractFieldValues(
-        data,
-        inputNodeAttributes,
-        inputEdgeAttributes,
-      );
+      const result = extractFieldValues(data, nodeFields, edgeFields);
       const node = result.nodes.get('node1');
 
       expect(node?._original).toBe(data.nodes[0]);
@@ -238,11 +229,7 @@ describe('data', () => {
         ],
       };
 
-      const result = extractFieldValues(
-        data,
-        inputNodeAttributes,
-        inputEdgeAttributes,
-      );
+      const result = extractFieldValues(data, nodeFields, edgeFields);
 
       expect(result.edges.size).toBe(1);
       const edge = result.edges.get('edge1') as any;
@@ -260,11 +247,7 @@ describe('data', () => {
         edges: [{ source: 'node1', target: 'node2' } as any],
       };
 
-      const result = extractFieldValues(
-        data,
-        inputNodeAttributes,
-        inputEdgeAttributes,
-      );
+      const result = extractFieldValues(data, nodeFields, edgeFields);
 
       expect(result.edges.size).toBe(1);
       const edge = Array.from(result.edges.values())[0];
@@ -276,11 +259,7 @@ describe('data', () => {
         nodes: [{ id: 'node1', data: {} }],
       };
 
-      const result = extractFieldValues(
-        data,
-        inputNodeAttributes,
-        inputEdgeAttributes,
-      );
+      const result = extractFieldValues(data, nodeFields, edgeFields);
 
       expect(result.edges.size).toBe(0);
     });
@@ -291,9 +270,9 @@ describe('data', () => {
         edges: [],
       };
 
-      expect(() =>
-        extractFieldValues(data, inputNodeAttributes, inputEdgeAttributes),
-      ).toThrow('Node is missing id field "id"');
+      expect(() => extractFieldValues(data, nodeFields, edgeFields)).toThrow(
+        'Node is missing id field "id"',
+      );
     });
 
     test('should throw error for edge missing source or target', () => {
@@ -302,9 +281,9 @@ describe('data', () => {
         edges: [{ source: 'node1' } as any],
       };
 
-      expect(() =>
-        extractFieldValues(data, inputNodeAttributes, inputEdgeAttributes),
-      ).toThrow('Edge is missing source or target field');
+      expect(() => extractFieldValues(data, nodeFields, edgeFields)).toThrow(
+        'Edge is missing source or target field',
+      );
     });
   });
 

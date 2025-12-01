@@ -4,6 +4,7 @@ import type { ID } from '../types/id';
 import type { LayoutEdge, LayoutNode } from '../types/layout';
 import { extractFieldValues } from './data';
 import { clone, setNestedValue } from './object';
+import { normalizeViewport } from './viewport';
 
 export interface LayoutModelOptions<
   N extends NodeData = NodeData,
@@ -13,6 +14,10 @@ export interface LayoutModelOptions<
   nodeFields?: NodeFieldMapping;
   /** 边字段映射 */
   edgeFields?: EdgeFieldMapping;
+  /** 布局区域宽度 */
+  width?: number;
+  /** 布局区域高度 */
+  height?: number;
 }
 
 const getEdgeId = (edge: EdgeData): string => {
@@ -46,18 +51,27 @@ export class LayoutModel<
   private readonly options: Required<LayoutModelOptions<N, E>>;
 
   constructor(data: GraphData<N, E>, options: LayoutModelOptions<N, E> = {}) {
-    this.options = {
-      nodeFields: options.nodeFields || {},
-      edgeFields: options.edgeFields || {},
-    };
+    const nodeFields = normalizeFieldMapping<NodeFieldMapping>(
+      this.config.inputNodeAttrs,
+      options.nodeFields || {},
+    );
+
+    const edgeFields = normalizeFieldMapping<EdgeFieldMapping>(
+      this.config.inputEdgeAttrs,
+      options.edgeFields || {},
+    );
 
     const { nodes, edges } = extractFieldValues<N, E>(
       data,
-      this.config.inputNodeAttrs as (keyof NodeFieldMapping)[],
-      this.config.inputEdgeAttrs as (keyof EdgeFieldMapping)[],
-      this.options.nodeFields,
-      this.options.edgeFields,
+      nodeFields,
+      edgeFields,
     );
+
+    this.options = {
+      nodeFields,
+      edgeFields,
+      ...normalizeViewport(options),
+    };
 
     this.original = data;
     this.nodeMap = nodes;
@@ -66,8 +80,8 @@ export class LayoutModel<
 
   public init(): void {
     this.nodeMap.forEach((node) => {
-      if (node.x === undefined) node.x = Math.random();
-      if (node.y === undefined) node.y = Math.random();
+      if (node.x === undefined) node.x = Math.random() * this.options.width;
+      if (node.y === undefined) node.y = Math.random() * this.options.height;
       if (node.z === undefined) node.z = 0;
     });
   }
@@ -292,4 +306,18 @@ export class LayoutModel<
     this.nodeMap.clear();
     this.edgeMap.clear();
   }
+}
+
+function normalizeFieldMapping<T>(fields: string[], mapping: T): T {
+  const normalized = {};
+
+  const topFields = ['id', 'source', 'target'];
+
+  for (const field of fields) {
+    const value = mapping[field as keyof typeof mapping];
+    normalized[field] =
+      value || (topFields.includes(field) ? field : `data.${field}`);
+  }
+
+  return normalized as T;
 }

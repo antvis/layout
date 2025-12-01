@@ -56,22 +56,20 @@ export function extractFieldValues<
   E extends EdgeData = EdgeData,
 >(
   data: GraphData<N, E>,
-  nodeFields: (keyof NodeFieldMapping)[],
-  edgeFields: (keyof EdgeFieldMapping)[],
-  nodeFieldMapping?: NodeFieldMapping,
-  edgeFieldMapping?: EdgeFieldMapping,
+  nodeFields: NodeFieldMapping,
+  edgeFields: EdgeFieldMapping,
 ): LayoutData<N, E> {
   const nodes = new Map<ID, LayoutNode<N>>();
 
   data.nodes.forEach((node) => {
-    const nodeData = toNodeData<N>(node, nodeFields, nodeFieldMapping);
+    const nodeData = toNodeData<N>(node, nodeFields);
     nodes.set(nodeData.id, nodeData);
   });
 
   const edges = new Map<ID, any>();
 
   data.edges?.forEach((edge) => {
-    const edgeData = toEdgeData<E>(edge, edgeFields, edgeFieldMapping);
+    const edgeData = toEdgeData<E>(edge, edgeFields);
     edges.set(edgeData.id, edgeData);
   });
 
@@ -81,10 +79,9 @@ export function extractFieldValues<
 /** 转换单个节点，提取 id/x/y/z，如果没有坐标会保留 _original */
 function toNodeData<N extends NodeData>(
   node: N,
-  nodeFields: (keyof NodeFieldMapping)[],
-  nodeFieldMapping?: NodeFieldMapping,
+  nodeFields: NodeFieldMapping,
 ): LayoutNode<N> {
-  const idField = nodeFieldMapping?.id || 'id';
+  const idField = nodeFields?.id || 'id';
   const id = getNestedValue(node, idField);
 
   if (id === undefined || id === null) {
@@ -93,12 +90,10 @@ function toNodeData<N extends NodeData>(
 
   const result: LayoutNode<N> = { id, _original: node } as LayoutNode<N>;
 
-  nodeFields.forEach((field) => {
-    if (field === 'id') {
-      return;
-    }
-    const fieldPath = nodeFieldMapping?.[field] || 'data.' + field;
+  Object.keys(nodeFields).forEach((field) => {
+    if (field === 'id') return;
 
+    const fieldPath = nodeFields[field];
     const value = getNestedValue(node, fieldPath);
     if (value !== undefined) {
       result[field] = value;
@@ -109,11 +104,10 @@ function toNodeData<N extends NodeData>(
 
 function toEdgeData<E extends EdgeData>(
   edge: E,
-  edgeFields: (keyof EdgeFieldMapping)[],
-  edgeFieldMapping: EdgeFieldMapping = {},
+  edgeFields: EdgeFieldMapping = {},
 ): LayoutEdge<E> {
-  const sourceField = edgeFieldMapping?.source || 'source';
-  const targetField = edgeFieldMapping?.target || 'target';
+  const sourceField = edgeFields?.source || 'source';
+  const targetField = edgeFields?.target || 'target';
 
   const source = getNestedValue(edge, sourceField);
   const target = getNestedValue(edge, targetField);
@@ -133,11 +127,11 @@ function toEdgeData<E extends EdgeData>(
     _original: edge,
   } as LayoutEdge<E>;
 
-  edgeFields.forEach((field) => {
+  Object.keys(edgeFields).forEach((field) => {
     if (field === 'source' || field === 'target' || field === 'id') {
       return;
     }
-    const fieldPath = edgeFieldMapping?.[field] || 'data.' + field;
+    const fieldPath = edgeFields[field];
     const value = getNestedValue(edge, fieldPath);
     if (value !== undefined) {
       result[field] = value;

@@ -67,6 +67,8 @@ export abstract class BaseLayout<
     this.model = new LayoutModel(data, {
       nodeFields: this.options.nodeFields,
       edgeFields: this.options.edgeFields,
+      width: this.options.width,
+      height: this.options.height,
     });
 
     try {
