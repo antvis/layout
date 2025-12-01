@@ -1,6 +1,11 @@
 import { Graph } from '@antv/graphlib';
+import { isNil } from '@antv/util';
+import { EdgeFieldMapping, NodeFieldMapping } from '../base-layout/types';
 import { Graph as IGraph } from '../types';
-import type { GraphData } from '../types/data';
+import type { EdgeData, GraphData, NodeData } from '../types/data';
+import { ID } from '../types/id';
+import { LayoutData, LayoutEdge, LayoutNode } from '../types/layout';
+import { getNestedValue } from './object';
 
 /**
  * Convert GraphData to Graph instance to use `@antv/graphlib` functionalities
@@ -44,4 +49,108 @@ export function validateData(data: GraphData): void {
       }
     });
   }
+}
+
+export function extractFieldValues<
+  N extends NodeData = NodeData,
+  E extends EdgeData = EdgeData,
+>(
+  data: GraphData<N, E>,
+  nodeFields: (keyof NodeFieldMapping)[],
+  edgeFields: (keyof EdgeFieldMapping)[],
+  nodeFieldMapping?: NodeFieldMapping,
+  edgeFieldMapping?: EdgeFieldMapping,
+): LayoutData<N, E> {
+  const nodes = new Map<ID, LayoutNode<N>>();
+
+  data.nodes.forEach((node) => {
+    const nodeData = toNodeData<N>(node, nodeFields, nodeFieldMapping);
+    nodes.set(nodeData.id, nodeData);
+  });
+
+  const edges = new Map<ID, any>();
+
+  data.edges?.forEach((edge) => {
+    const edgeData = toEdgeData<E>(edge, edgeFields, edgeFieldMapping);
+    edges.set(edgeData.id, edgeData);
+  });
+
+  return { nodes, edges };
+}
+
+/** 转换单个节点，提取 id/x/y/z，如果没有坐标会保留 _original */
+function toNodeData<N extends NodeData>(
+  node: N,
+  nodeFields: (keyof NodeFieldMapping)[],
+  nodeFieldMapping?: NodeFieldMapping,
+): LayoutNode<N> {
+  const idField = nodeFieldMapping?.id || 'id';
+  const id = getNestedValue(node, idField);
+
+  if (id === undefined || id === null) {
+    throw new Error(`Node is missing id field "${idField}"`);
+  }
+
+  const result: LayoutNode<N> = { id, _original: node } as LayoutNode<N>;
+
+  nodeFields.forEach((field) => {
+    if (field === 'id') {
+      return;
+    }
+    const fieldPath = nodeFieldMapping?.[field] || 'data.' + field;
+
+    const value = getNestedValue(node, fieldPath);
+    if (value !== undefined) {
+      result[field] = value;
+    }
+  });
+  return result;
+}
+
+function toEdgeData<E extends EdgeData>(
+  edge: E,
+  edgeFields: (keyof EdgeFieldMapping)[],
+  edgeFieldMapping: EdgeFieldMapping = {},
+): LayoutEdge<E> {
+  const sourceField = edgeFieldMapping?.source || 'source';
+  const targetField = edgeFieldMapping?.target || 'target';
+
+  const source = getNestedValue(edge, sourceField);
+  const target = getNestedValue(edge, targetField);
+
+  if (isNil(source) || isNil(target)) {
+    throw new Error(
+      `Edge is missing source or target field "${sourceField}" or "${targetField}"`,
+    );
+  }
+
+  const id = getNestedValue(edge, 'id');
+
+  const result = {
+    source,
+    target,
+    id: id || getEdgeId({ source, target }),
+    _original: edge,
+  } as LayoutEdge<E>;
+
+  edgeFields.forEach((field) => {
+    if (field === 'source' || field === 'target' || field === 'id') {
+      return;
+    }
+    const fieldPath = edgeFieldMapping?.[field] || 'data.' + field;
+    const value = getNestedValue(edge, fieldPath);
+    if (value !== undefined) {
+      result[field] = value;
+    }
+  });
+
+  return result;
+}
+
+export function getNodeId(node: NodeData): ID {
+  return node.id;
+}
+
+export function getEdgeId(edge: EdgeData): ID {
+  return edge.id || `${edge.source}-${edge.target}`;
 }

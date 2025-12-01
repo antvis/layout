@@ -1,5 +1,5 @@
 import { isFunction, isNumber, isObject } from '@antv/util';
-import type { Node } from '../types';
+import type { NodeData } from '../types/data';
 import type { Size } from '../types/size';
 import { parseSize } from './size';
 
@@ -9,7 +9,7 @@ import { parseSize } from './size';
  * @param defaultValue The default value when value is invalid
  * @returns A function that returns a number
  */
-export function formatNumberFn<T = unknown>(
+export function formatNumberFn<T = NodeData>(
   value: number | ((d?: T) => number) | undefined,
   defaultValue: number,
 ): (d?: T) => number {
@@ -34,11 +34,11 @@ export function formatNumberFn<T = unknown>(
  * @param resultIsNumber Whether to return a number (max of width/height) or size array
  * @returns A function that returns a size
  */
-export function formatSizeFn<T extends Node>(
-  value?: Size | { width: number; height: number } | ((d: T) => Size),
+export function formatSizeFn<T extends NodeData>(
+  value?: Size | { width: number; height: number } | ((d?: T) => Size),
   defaultValue: number = 10,
   resultIsNumber: boolean = true,
-): (d: T) => Size {
+): (d?: T) => Size {
   // If value is not provided, return default value
   if (!value) {
     return () => defaultValue;
@@ -111,14 +111,14 @@ export function formatSizeFn<T extends Node>(
  * @returns A function that returns the total size (node size + spacing)
  */
 export const formatNodeSizeWithSpacingFn = (
-  nodeSize: Size | ((node: Node) => Size) | undefined,
-  nodeSpacing: number | ((node: Node) => number) | undefined,
+  nodeSize: Size | ((node?: NodeData) => Size) | undefined,
+  nodeSpacing: number | ((node?: NodeData) => number) | undefined,
   defaultNodeSize: number = 10,
-): ((node: Node) => number) => {
+): ((node?: NodeData) => number) => {
   const nodeSpacingFunc = formatNumberFn(nodeSpacing, 0);
   const nodeSizeFunc = formatSizeFn(nodeSize, defaultNodeSize);
 
-  return (node: Node) => {
+  return (node?: NodeData) => {
     const size = nodeSizeFunc(node);
     const spacing = nodeSpacingFunc(node);
     return Math.max(...parseSize(size)) + spacing;

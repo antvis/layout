@@ -1,9 +1,13 @@
-import { Edge as IEdge, Node as INode, PlainObject } from '@antv/graphlib';
+import type { PlainObject } from './common';
+
+export interface NodeData extends PlainObject {}
+
+export interface EdgeData extends PlainObject {}
 
 export interface GraphData<
-  N extends PlainObject = PlainObject,
-  E extends PlainObject = PlainObject,
+  N extends NodeData = NodeData,
+  E extends EdgeData = EdgeData,
 > {
-  nodes: (Pick<INode<N>, 'id'> & N)[];
-  edges?: (Pick<IEdge<E>, 'source' | 'target'> & E)[];
+  nodes: N[];
+  edges?: E[];
 }

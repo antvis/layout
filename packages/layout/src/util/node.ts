@@ -16,5 +16,3 @@ export function getMaxNodeSize<T extends Node>(
   });
   return maxNodeSize;
 }
-
-export function computePerimeter() {}

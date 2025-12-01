@@ -3,6 +3,7 @@ export * from './common';
 export * from './data';
 export * from './function';
 export * from './math';
+export * from './node';
 export * from './object';
 export * from './order';
 export * from './size';

@@ -1,62 +1,67 @@
-import { isNumber } from '@antv/util';
-import type { Graph, Node } from '../types';
-import { cloneFormatData } from './object';
+import type { PlainObject } from '../types/common';
+import type { NodeData } from '../types/data';
+import type { LayoutNode } from '../types/layout';
+import type { LayoutModel } from './model';
+
+export type SortComparator<N extends PlainObject = PlainObject> = (
+  nodeA: LayoutNode<N>,
+  nodeB: LayoutNode<N>,
+  nodes: LayoutNode<N>[],
+) => -1 | 0 | 1;
 
 /**
- * Order nodes by their degree (from small to large)
+ * 通用排序核心函数
  */
-export function orderByDegree<T extends Node = Node>(
-  nodes: T[],
-  graph: Graph,
-): T[] {
-  const orderedNodes = nodes.map((node) => cloneFormatData(node));
+function sort<N extends PlainObject = PlainObject>(
+  model: LayoutModel<N>,
+  compareFn: (a: LayoutNode<N>, b: LayoutNode<N>) => number,
+): LayoutModel<N> {
+  const nodes = model.nodes();
 
-  orderedNodes.sort((nodeA, nodeB) => {
-    const degreeA = graph.getDegree(nodeA.id, 'both');
-    const degreeB = graph.getDegree(nodeB.id, 'both');
+  nodes.sort(compareFn);
+  model.nodeMap.clear();
+
+  nodes.forEach((node) => {
+    model.nodeMap.set(node.id, node);
+  });
+
+  return model;
+}
+
+export function orderByDegree<N extends PlainObject = PlainObject>(model: LayoutModel<N>): LayoutModel<N> {
+  return sort(model, (nodeA, nodeB) => {
+    const degreeA = model.degree(nodeA.id);
+    const degreeB = model.degree(nodeB.id);
     return degreeA - degreeB;
   });
-
-  return orderedNodes;
 }
 
 /**
- * Order nodes by their id (from small to large)
+ * 按 ID 排序
  */
-export function orderById<T extends Node = Node>(nodes: T[]): T[] {
-  const orderedNodes = nodes.map((node) => cloneFormatData(node));
+export function orderById<N = any>(model: LayoutModel<N>): LayoutModel<N> {
+  return sort(model, (nodeA, nodeB) => {
+    const idA = nodeA.id;
+    const idB = nodeB.id;
 
-  orderedNodes.sort((nodeA, nodeB) => {
-    if (isNumber(nodeA.id) && isNumber(nodeB.id)) {
-      return nodeA.id - nodeB.id;
+    if (typeof idA === 'number' && typeof idB === 'number') {
+      return idA - idB;
     }
-    return String(nodeA.id).localeCompare(String(nodeB.id));
-  });
 
-  return orderedNodes;
+    return String(idA).localeCompare(String(idB));
+  });
 }
 
 /**
- * Keep the original order of nodes
+ * 按自定义比较函数排序
  */
-export function orderByOriginal<T extends Node = Node>(nodes: T[]): T[] {
-  return nodes.map((node) => cloneFormatData(node));
-}
-
-/**
- * Order nodes by a specified value in their data (from small to large)
- */
-export function orderByValue<T extends Node = Node>(
-  nodes: T[],
-  valueKey: string,
-): T[] {
-  const orderedNodes = nodes.map((node) => cloneFormatData(node));
-
-  orderedNodes.sort((nodeA, nodeB) => {
-    const valueA = (nodeA.data as any)[valueKey];
-    const valueB = (nodeB.data as any)[valueKey];
-    return valueA - valueB;
+export function orderBySorter<N = any>(
+  model: LayoutModel<N>,
+  sorter: (a: NodeData, b: NodeData) => -1 | 0 | 1,
+): LayoutModel<N> {
+  return sort(model, (nodeA, nodeB) => {
+    const a = model.originalNode(nodeA.id);
+    const b = model.originalNode(nodeB.id);
+    return sorter(a!, b!);
   });
-
-  return orderedNodes;
 }
