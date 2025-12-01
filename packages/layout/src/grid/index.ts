@@ -1,42 +1,18 @@
-import { isString } from '@antv/util';
-import type {
-  Graph,
-  Layout,
-  LayoutMapping,
-  Node,
-  OutNode,
-  PointTuple,
-} from '../types';
-import type { GraphData } from '../types/data';
-import {
-  applySingleNodeLayout,
-  normalizeViewport,
-  parseSize,
-  toGraph,
-} from '../util';
+import { BaseLayout } from '../base-layout';
+import type { PointTuple } from '../types';
+import { LayoutNode } from '../types/layout';
+import { applySingleNodeLayout, normalizeViewport, parseSize } from '../util';
 import { formatNumberFn, formatSizeFn } from '../util/format';
-import { orderByDegree, orderById, orderByValue } from '../util/order';
+import { LayoutModel } from '../util/model';
+import { orderByDegree, orderById, orderBySorter } from '../util/order';
 import type {
   GridLayoutOptions,
   IdMapRowAndCol,
+  NormalizedGridLayoutOptions,
   RowAndCol,
   RowsAndCols,
   VisitMap,
 } from './types';
-
-const DEFAULTS_LAYOUT_OPTIONS: Partial<GridLayoutOptions> = {
-  begin: [0, 0],
-  preventOverlap: true,
-  preventOverlapPadding: 10,
-  condense: false,
-  rows: undefined,
-  cols: undefined,
-  position: undefined,
-  sortBy: 'degree',
-  nodeSize: 30,
-  width: 300,
-  height: 300,
-};
 
 export type { GridLayoutOptions };
 
@@ -45,46 +21,35 @@ export type { GridLayoutOptions };
  *
  * <en/> Grid layout
  */
-export class GridLayout implements Layout<GridLayoutOptions> {
+export class GridLayout extends BaseLayout<GridLayoutOptions> {
   id = 'grid';
 
-  constructor(public options: GridLayoutOptions = {} as GridLayoutOptions) {
-    this.options = {
-      ...DEFAULTS_LAYOUT_OPTIONS,
-      ...options,
+  protected getDefaultOptions(): Partial<GridLayoutOptions> {
+    return {
+      begin: [0, 0],
+      preventOverlap: true,
+      preventOverlapPadding: 10,
+      condense: false,
+      rows: undefined,
+      cols: undefined,
+      position: undefined,
+      sortBy: 'degree',
+      nodeSize: 30,
+      width: 300,
+      height: 300,
     };
   }
 
-  /**
-   * Return the positions of nodes and edges(if needed).
-   */
-  async execute(graph: GraphData | Graph, options?: GridLayoutOptions) {
-    return this.genericGridLayout(false, toGraph(graph), options);
-  }
-  /**
-   * To directly assign the positions to the nodes.
-   */
-  async assign(graph: GraphData | Graph, options?: GridLayoutOptions) {
-    await this.genericGridLayout(true, toGraph(graph), options);
-  }
+  private normalizeOptions(
+    options: Partial<GridLayoutOptions> = {},
+    model: LayoutModel,
+  ): NormalizedGridLayoutOptions {
+    const { rows: propRows, cols: propCols } = options;
 
-  private getOptions(options: Partial<GridLayoutOptions> = {}, nodes: Node[]) {
-    const mergedOptions = { ...this.options, ...options };
-    const { rows: propRows, cols: propCols } = mergedOptions;
-    let sortBy = mergedOptions.sortBy;
-    if (
-      // `id` should be reserved keyword
-      sortBy !== 'id' &&
-      (!isString(sortBy) || (nodes[0] as any).data[sortBy] === undefined)
-    ) {
-      sortBy = 'degree';
-    }
-
-    const { width, height } = normalizeViewport(mergedOptions);
-    let rows = mergedOptions.rows;
-    let cols = mergedOptions.cols;
-    const cells = nodes.length;
-
+    const { width, height, center } = normalizeViewport(options);
+    let rows = options.rows;
+    let cols = options.cols;
+    const cells = model.nodeCount();
     // if rows or columns were set in self, use those values
     if (propRows != null && propCols != null) {
       rows = propRows;
@@ -105,61 +70,7 @@ export class GridLayout implements Layout<GridLayoutOptions> {
     rows = Math.max(rows, 1);
     cols = Math.max(cols, 1);
 
-    return {
-      ...mergedOptions,
-      rcs: { rows, cols },
-      width,
-      height,
-      sortBy,
-    };
-  }
-
-  private async genericGridLayout(
-    assign: false,
-    graph: Graph,
-    options?: GridLayoutOptions,
-  ): Promise<LayoutMapping>;
-  private async genericGridLayout(
-    assign: true,
-    graph: Graph,
-    options?: GridLayoutOptions,
-  ): Promise<void>;
-  private async genericGridLayout(
-    assign: boolean,
-    graph: Graph,
-    options?: GridLayoutOptions,
-  ): Promise<LayoutMapping | void> {
-    const mergedOptions = { ...this.options, ...options };
-    const {
-      begin = [0, 0],
-      condense,
-      preventOverlapPadding,
-      preventOverlap,
-      nodeSpacing: paramNodeSpacing,
-      nodeSize: paramNodeSize,
-      position,
-    } = mergedOptions;
-
-    const nodes: Node[] = graph.getAllNodes();
-
-    if (!nodes.length || nodes.length === 1) {
-      return applySingleNodeLayout(assign, graph, begin);
-    }
-
-    const cells = nodes.length;
-    const { rcs, sortBy, width, height } = this.getOptions(
-      mergedOptions,
-      nodes,
-    );
-
-    let layoutNodes: OutNode[] = [];
-    if (sortBy === 'degree') {
-      layoutNodes = orderByDegree(nodes, graph) as OutNode[];
-    } else if (sortBy === 'id') {
-      layoutNodes = orderById(nodes) as OutNode[];
-    } else {
-      layoutNodes = orderByValue(nodes, sortBy) as OutNode[];
-    }
+    const rcs = { rows, cols };
 
     if (rcs.cols * rcs.rows > cells) {
       // otherwise use the automatic values and adjust accordingly
@@ -188,24 +99,68 @@ export class GridLayout implements Layout<GridLayoutOptions> {
       }
     }
 
+    const preventOverlap =
+      options.preventOverlap || options.nodeSpacing !== undefined;
+    const nodeSpacing = formatNumberFn(options.nodeSpacing, 10);
+    const nodeSize = formatSizeFn(options.nodeSize, 30, false);
+
+    return {
+      ...options,
+      begin: options.begin || [0, 0],
+      sortBy: options.sortBy || 'degree',
+      preventOverlapPadding: options.preventOverlapPadding ?? 0,
+      preventOverlap,
+      nodeSpacing,
+      nodeSize,
+      rcs,
+      center,
+      width,
+      height,
+    };
+  }
+
+  protected async layout(): Promise<void> {
+    const {
+      begin,
+      rcs,
+      sortBy,
+      width,
+      height,
+      condense,
+      preventOverlapPadding,
+      preventOverlap,
+      nodeSpacing,
+      nodeSize,
+      position,
+    } = this.normalizeOptions(this.options, this.model);
+
+    const n = this.model.nodeCount();
+
+    if (!n || n === 1) {
+      applySingleNodeLayout(this.model, begin);
+      return;
+    }
+
+    if (sortBy === 'degree') {
+      orderByDegree(this.model);
+    } else if (sortBy === 'id') {
+      orderById(this.model);
+    } else {
+      orderBySorter(this.model, sortBy);
+    }
+
     let cellWidth = condense ? 0 : width / rcs.cols;
     let cellHeight = condense ? 0 : height / rcs.rows;
 
-    if (preventOverlap || paramNodeSpacing) {
-      const nodeSpacing: Function = formatNumberFn(paramNodeSpacing, 10);
-      const nodeSize: Function = formatSizeFn(paramNodeSize, 30, false);
-      layoutNodes.forEach((node) => {
-        if (!node.data.x || !node.data.y) {
-          // for bb
-          node.data.x = 0;
-          node.data.y = 0;
-        }
-
-        const oNode = graph.getNode(node.id);
-        const [nodeW, nodeH] = parseSize(nodeSize(oNode) || 30);
+    if (preventOverlap) {
+      this.model.nodes().forEach((node) => {
+        const nodeData = this.model.originalNode(node.id);
+        const [nodeW, nodeH] = parseSize(nodeSize(nodeData) || 30);
 
         const p =
-          nodeSpacing !== undefined ? nodeSpacing(node) : preventOverlapPadding;
+          nodeSpacing !== undefined
+            ? nodeSpacing(nodeData)
+            : preventOverlapPadding;
 
         const w = nodeW + p;
         const h = nodeH + p;
@@ -222,12 +177,13 @@ export class GridLayout implements Layout<GridLayoutOptions> {
 
     // get a cache of all the manual positions
     const id2manPos: IdMapRowAndCol = {};
-    for (let i = 0; i < layoutNodes.length; i++) {
-      const node = layoutNodes[i];
+
+    this.model.nodes().forEach((node) => {
+      const nodeData = this.model.originalNode(node.id)!;
+
       let rcPos;
       if (position) {
-        // TODO: not sure the api name
-        rcPos = position(graph.getNode(node.id));
+        rcPos = position(nodeData);
       }
 
       if (rcPos && (rcPos.row !== undefined || rcPos.col !== undefined)) {
@@ -257,21 +213,7 @@ export class GridLayout implements Layout<GridLayoutOptions> {
         use(cellUsed, pos);
       }
       getPos(node, begin, cellWidth, cellHeight, id2manPos, rcs, rc, cellUsed);
-    }
-    const result = {
-      nodes: layoutNodes,
-      edges: graph.getAllEdges(),
-    };
-
-    if (assign) {
-      layoutNodes.forEach((node) => {
-        graph.mergeNodeData(node.id, {
-          x: node.data.x,
-          y: node.data.y,
-        });
-      });
-    }
-    return result;
+    });
   }
 }
 
@@ -328,7 +270,7 @@ const moveToNextCell = (rcs: RowsAndCols, rc: RowAndCol) => {
 };
 
 const getPos = (
-  node: OutNode,
+  node: LayoutNode,
   begin: PointTuple,
   cellWidth: number,
   cellHeight: number,
@@ -358,6 +300,7 @@ const getPos = (
 
     moveToNextCell(rcs, rc);
   }
-  node.data.x = x;
-  node.data.y = y;
+
+  node.x = x;
+  node.y = y;
 };
