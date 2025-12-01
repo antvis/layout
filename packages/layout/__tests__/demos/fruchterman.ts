@@ -3,7 +3,7 @@ import type { GUI } from 'lil-gui';
 import { fruchterman as data } from '../dataset';
 import { GraphRenderer, preprocessGraphData } from '../utils';
 
-export function render(gui?: GUI) {
+export async function render(gui?: GUI) {
   const renderer = new GraphRenderer();
   const { width, height } = renderer.getCanvasSize();
 
@@ -32,7 +32,7 @@ export function render(gui?: GUI) {
     },
 
     onDragEnd: (nodeId) => {
-      layout.setFixedPosition(nodeId, [null, null]);
+      layout.setFixedPosition(nodeId, null);
     },
   });
 
@@ -70,6 +70,5 @@ export function render(gui?: GUI) {
         renderer.setDraggable(enabled);
       });
   }
-
   return renderer.getCanvas();
 }

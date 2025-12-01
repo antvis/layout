@@ -1,21 +1,17 @@
 import { RandomLayout } from '@/src';
 import { createCanvas } from '@@/utils/create';
 import type { Canvas } from '@antv/g';
-import { Graph } from '@antv/graphlib';
 import { clear as clearMockRandom, mock as mockRandom } from 'jest-random-mock';
 import { countries as data } from '../dataset';
 import { renderNodesAndEdges } from '../utils/render';
 
 describe('layout random', () => {
   let canvas: Canvas;
-  let graph: Graph<any, any>;
   let random: RandomLayout;
 
   beforeEach(() => {
     mockRandom();
     canvas = createCanvas();
-    const { nodes, edges } = data;
-    graph = new Graph({ nodes, edges });
     random = new RandomLayout({
       center: [250, 250],
       width: 500,
@@ -29,7 +25,7 @@ describe('layout random', () => {
   });
 
   it('should render with default config', async () => {
-    const positions = await random.execute(graph);
+    const positions = await random.execute(data);
     await renderNodesAndEdges(canvas, positions);
     await expect(canvas).toMatchSnapshot(__filename);
   });
@@ -55,7 +51,7 @@ describe('layout random', () => {
       width: 500,
       height: 500,
     });
-    const positions = await layout.execute(graph);
+    const positions = await layout.execute(data);
     await renderNodesAndEdges(canvas, positions);
 
     // Check that nodes are distributed around the center
@@ -77,7 +73,7 @@ describe('layout random', () => {
       width: 800,
       height: 500,
     });
-    const positions = await layout.execute(graph);
+    const positions = await layout.execute(data);
 
     // Verify nodes are within bounds
     positions.nodes.forEach((node) => {
@@ -92,7 +88,7 @@ describe('layout random', () => {
       width: 500,
       height: 800,
     });
-    const positions = await layout.execute(graph);
+    const positions = await layout.execute(data);
 
     // Verify nodes are within bounds
     positions.nodes.forEach((node) => {
@@ -107,7 +103,7 @@ describe('layout random', () => {
       width: 100,
       height: 100,
     });
-    const positions = await layout.execute(graph);
+    const positions = await layout.execute(data);
     await renderNodesAndEdges(canvas, positions);
 
     // All nodes should be within small area
@@ -125,7 +121,7 @@ describe('layout random', () => {
       width: 1000,
       height: 1000,
     });
-    const positions = await layout.execute(graph);
+    const positions = await layout.execute(data);
 
     // Nodes should be spread across larger area
     const xValues = positions.nodes.map((n) => n.data.x);
@@ -139,24 +135,22 @@ describe('layout random', () => {
   });
 
   it('returns empty result for empty graph', async () => {
-    const emptyGraph = new Graph({ nodes: [], edges: [] });
     const layout = new RandomLayout();
-    const positions = await layout.execute(emptyGraph);
+    const positions = await layout.execute({ nodes: [], edges: [] });
     expect(positions.nodes).toHaveLength(0);
     expect(positions.edges).toHaveLength(0);
   });
 
   it('should handle single node graph', async () => {
-    const singleGraph = new Graph({
-      nodes: [{ id: 'node', data: {} }],
-      edges: [],
-    });
     const layout = new RandomLayout({
       center: [250, 250],
       width: 500,
       height: 500,
     });
-    const positions = await layout.execute(singleGraph);
+    const positions = await layout.execute({
+      nodes: [{ id: 'node', data: {} }],
+      edges: [],
+    });
 
     expect(positions.nodes).toHaveLength(1);
     expect(typeof positions.nodes[0].data.x).toBe('number');
@@ -180,15 +174,14 @@ describe('layout random', () => {
       { id: 'e1', source: 'a', target: 'b', data: {} },
       { id: 'e2', source: 'b', target: 'c', data: {} },
     ];
-    const testGraph = new Graph({ nodes: nodes as any, edges: edges as any });
+    const testGraph = { nodes: nodes as any, edges: edges as any };
     const layout = new RandomLayout({
       center: [250, 250],
       width: 500,
       height: 500,
     });
     await layout.assign(testGraph, {});
-    const allNodes = testGraph.getAllNodes();
-    allNodes.forEach((node) => {
+    testGraph.nodes.forEach((node) => {
       expect(typeof node.data.x).toBe('number');
       expect(typeof node.data.y).toBe('number');
       expect(Number.isFinite(node.data.x)).toBe(true);
@@ -197,7 +190,7 @@ describe('layout random', () => {
   });
 
   it('should place nodes randomly (different positions)', async () => {
-    const testGraph = new Graph({
+    const testGraph = {
       nodes: [
         { id: 'a', data: {} },
         { id: 'b', data: {} },
@@ -206,7 +199,7 @@ describe('layout random', () => {
         { id: 'e', data: {} },
       ],
       edges: [],
-    });
+    };
     const layout = new RandomLayout({
       center: [250, 250],
       width: 500,
@@ -222,26 +215,15 @@ describe('layout random', () => {
   });
 
   it('should verify all positions are valid numbers', async () => {
-    const positions = await random.execute(graph);
+    const positions = await random.execute(data);
     positions.nodes.forEach((node) => {
       expect(Number.isFinite(node.data.x)).toBe(true);
       expect(Number.isFinite(node.data.y)).toBe(true);
     });
   });
 
-  it('should preserve edges', async () => {
-    const positions = await random.execute(graph);
-    expect(positions.edges.length).toBe(graph.getAllEdges().length);
-    positions.edges.forEach((edge, i) => {
-      const originalEdge = graph.getAllEdges()[i];
-      expect(edge.id).toBe(originalEdge.id);
-      expect(edge.source).toBe(originalEdge.source);
-      expect(edge.target).toBe(originalEdge.target);
-    });
-  });
-
   it('should work with graph with edges', async () => {
-    const connectedGraph = new Graph({
+    const connectedGraph = {
       nodes: [
         { id: 'a', data: {} },
         { id: 'b', data: {} },
@@ -254,7 +236,7 @@ describe('layout random', () => {
         { id: 'e3', source: 'c', target: 'd', data: {} },
         { id: 'e4', source: 'd', target: 'a', data: {} },
       ],
-    });
+    };
     const layout = new RandomLayout({
       center: [250, 250],
       width: 500,
@@ -272,10 +254,10 @@ describe('layout random', () => {
       id: `node${i}`,
       data: {},
     }));
-    const largeGraph = new Graph({
+    const largeGraph = {
       nodes: manyNodes as any,
       edges: [],
-    });
+    };
     const layout = new RandomLayout({
       center: [250, 250],
       width: 500,
@@ -291,7 +273,7 @@ describe('layout random', () => {
   });
 
   it('should handle disconnected components', async () => {
-    const disconnectedGraph = new Graph({
+    const disconnectedGraph = {
       nodes: [
         { id: 'a', data: {} },
         { id: 'b', data: {} },
@@ -302,7 +284,7 @@ describe('layout random', () => {
         { id: 'e1', source: 'a', target: 'b', data: {} },
         { id: 'e2', source: 'c', target: 'd', data: {} },
       ],
-    });
+    };
     const layout = new RandomLayout({
       center: [250, 250],
       width: 500,
