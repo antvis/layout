@@ -1,7 +1,6 @@
 import { isFunction, isNumber, isObject } from '@antv/util';
+import { parseSize, Size } from './size';
 import type { Node } from '../types';
-import type { Size } from '../types/size';
-import { parseSize } from './size';
 
 /**
  * Format value with multiple types into a function returns number.

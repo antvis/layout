@@ -5,6 +5,10 @@ import {
   getNodeId,
   validateData,
 } from '@/src/util/data';
+import {
+  EdgeFieldMapping,
+  NodeFieldMapping,
+} from '../../../src/base-layout/types';
 
 describe('data', () => {
   describe('validateData', () => {
@@ -113,6 +117,18 @@ describe('data', () => {
   });
 
   describe('extractFieldValues', () => {
+    const inputNodeAttributes = [
+      'id',
+      'x',
+      'y',
+      'z',
+    ] as (keyof NodeFieldMapping)[];
+    const inputEdgeAttributes = [
+      'source',
+      'target',
+      'controlPoints',
+    ] as (keyof EdgeFieldMapping)[];
+
     test('should extract default fields from nodes', () => {
       const data: GraphData = {
         nodes: [
@@ -122,7 +138,11 @@ describe('data', () => {
         edges: [],
       };
 
-      const result = extractFieldValues(data);
+      const result = extractFieldValues(
+        data,
+        inputNodeAttributes,
+        inputEdgeAttributes,
+      );
 
       expect(result.nodes.size).toBe(2);
       const node1 = result.nodes.get('node1');
@@ -142,10 +162,15 @@ describe('data', () => {
         edges: [],
       };
 
-      const result = extractFieldValues(data, {
-        x: 'customX',
-        y: 'customY',
-      });
+      const result = extractFieldValues(
+        data,
+        inputNodeAttributes,
+        inputEdgeAttributes,
+        {
+          x: 'customX',
+          y: 'customY',
+        },
+      );
 
       const node = result.nodes.get('node1');
       expect(node?.x).toBe(100);
@@ -163,10 +188,15 @@ describe('data', () => {
         edges: [],
       };
 
-      const result = extractFieldValues(data, {
-        x: 'position.x',
-        y: 'position.y',
-      });
+      const result = extractFieldValues(
+        data,
+        inputNodeAttributes,
+        inputEdgeAttributes,
+        {
+          x: 'position.x',
+          y: 'position.y',
+        },
+      );
 
       const node = result.nodes.get('node1');
       expect(node?.x).toBe(10);
@@ -179,7 +209,11 @@ describe('data', () => {
         edges: [],
       };
 
-      const result = extractFieldValues(data);
+      const result = extractFieldValues(
+        data,
+        inputNodeAttributes,
+        inputEdgeAttributes,
+      );
       const node = result.nodes.get('node1');
 
       expect(node?._original).toBe(data.nodes[0]);
@@ -197,15 +231,21 @@ describe('data', () => {
             id: 'edge1',
             source: 'node1',
             target: 'node2',
-            controlPoints: [{ x: 50, y: 50 }],
+            data: {
+              controlPoints: [{ x: 50, y: 50 }],
+            },
           },
         ],
       };
 
-      const result = extractFieldValues(data);
+      const result = extractFieldValues(
+        data,
+        inputNodeAttributes,
+        inputEdgeAttributes,
+      );
 
       expect(result.edges.size).toBe(1);
-      const edge = result.edges.get('edge1');
+      const edge = result.edges.get('edge1') as any;
       expect(edge?.source).toBe('node1');
       expect(edge?.target).toBe('node2');
       expect(edge?.controlPoints).toEqual([{ x: 50, y: 50 }]);
@@ -220,7 +260,11 @@ describe('data', () => {
         edges: [{ source: 'node1', target: 'node2' } as any],
       };
 
-      const result = extractFieldValues(data);
+      const result = extractFieldValues(
+        data,
+        inputNodeAttributes,
+        inputEdgeAttributes,
+      );
 
       expect(result.edges.size).toBe(1);
       const edge = Array.from(result.edges.values())[0];
@@ -232,7 +276,11 @@ describe('data', () => {
         nodes: [{ id: 'node1', data: {} }],
       };
 
-      const result = extractFieldValues(data);
+      const result = extractFieldValues(
+        data,
+        inputNodeAttributes,
+        inputEdgeAttributes,
+      );
 
       expect(result.edges.size).toBe(0);
     });
@@ -243,9 +291,9 @@ describe('data', () => {
         edges: [],
       };
 
-      expect(() => extractFieldValues(data)).toThrow(
-        'Node is missing id field "id"',
-      );
+      expect(() =>
+        extractFieldValues(data, inputNodeAttributes, inputEdgeAttributes),
+      ).toThrow('Node is missing id field "id"');
     });
 
     test('should throw error for edge missing source or target', () => {
@@ -254,9 +302,9 @@ describe('data', () => {
         edges: [{ source: 'node1' } as any],
       };
 
-      expect(() => extractFieldValues(data)).toThrow(
-        'Edge is missing source or target field',
-      );
+      expect(() =>
+        extractFieldValues(data, inputNodeAttributes, inputEdgeAttributes),
+      ).toThrow('Edge is missing source or target field');
     });
   });
 
