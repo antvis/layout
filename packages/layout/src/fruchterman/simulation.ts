@@ -1,27 +1,28 @@
 import EventEmitter from '@antv/event-emitter';
-import type { Graph as IGraph, ID } from '@antv/graphlib';
+import type { ID } from '@antv/graphlib';
 import { isNil } from '@antv/util';
-import type {
-  EdgeData,
-  OutEdge,
-  OutNode,
-  OutNodeData,
-  Point,
-  PointTuple,
-} from '../types';
+import type { Point } from '../types';
+import type { LayoutNode } from '../types/data';
+import type { Position } from '../types/position';
+import type { LayoutModel } from '../util/model';
+import type { NormalizedFruchtermanLayoutOptions } from './types';
 
-interface SimulationOptions {
-  width: number;
-  height: number;
-  center: PointTuple;
-  gravity: number;
-  speed: number;
-  clustering: boolean;
-  clusterGravity: number;
-  nodeClusterBy: (node: OutNode) => string;
-  dimensions: 2 | 3;
-  maxIteration: number;
-}
+interface SimulationOptions
+  extends Required<
+    Pick<
+      NormalizedFruchtermanLayoutOptions,
+      | 'width'
+      | 'height'
+      | 'center'
+      | 'gravity'
+      | 'speed'
+      | 'clustering'
+      | 'clusterGravity'
+      | 'nodeClusterBy'
+      | 'dimensions'
+      | 'maxIteration'
+    >
+  > {}
 
 interface ClusterInfo {
   name: string;
@@ -44,8 +45,8 @@ export class Simulation extends EventEmitter {
   private k2: number;
   private maxDisplace: number;
 
-  private displacements: DisplacementMap;
-  private clusterMap: ClusterMap;
+  private displacements: DisplacementMap | null = null;
+  private clusterMap: ClusterMap | null = null;
   private currentIteration: number = 0;
 
   private isRunning: boolean = false;
@@ -55,30 +56,17 @@ export class Simulation extends EventEmitter {
   private isDestroyed: boolean = false;
 
   private context: {
-    nodes: OutNode[];
-    edges: OutEdge[];
-    graph?: IGraph<OutNodeData, EdgeData>;
-    options: Partial<SimulationOptions>;
-  } = {
-    nodes: [],
-    edges: [],
-    graph: undefined,
-    options: {},
+    model: LayoutModel;
+    options: SimulationOptions;
   };
 
-  constructor(
-    graph: IGraph<OutNodeData, EdgeData>,
-    options: SimulationOptions,
-  ) {
+  constructor(model: LayoutModel, options: SimulationOptions) {
     super();
 
+    this.context = { model, options };
     const { width, height } = options;
-    const nodes = graph.getAllNodes();
-    const edges = graph.getAllEdges();
-    this.context = { nodes, edges, graph, options };
-
     const area = height * width;
-    this.k2 = area / (nodes.length + 1);
+    this.k2 = area / (model.nodeCount() + 1);
     this.k = Math.sqrt(this.k2);
     this.maxDisplace = Math.sqrt(area) / 10;
 
@@ -92,7 +80,7 @@ export class Simulation extends EventEmitter {
   public tick(iterations: number = 1): this {
     if (this.isDestroyed) {
       console.warn('Simulation has already been destroyed.');
-      return;
+      return this;
     }
 
     this.isRunning = true;
@@ -136,7 +124,7 @@ export class Simulation extends EventEmitter {
   public restart(): this {
     if (this.isDestroyed) {
       console.warn('Simulation has already been destroyed.');
-      return;
+      return this;
     }
 
     this.isRunning = true;
@@ -164,18 +152,26 @@ export class Simulation extends EventEmitter {
   /**
    * Fixes the position of the node with the given id to the specified position.
    */
-  public setFixedPosition(id: ID, position: (number | null)[]): this {
-    const node = this.context.graph?.getNode(id);
+  public setFixedPosition(id: ID, position: Position | null): this {
+    const node = this.context.model.node(id);
     if (!node) return this;
 
     const keys = ['fx', 'fy', 'fz'] as const;
+
+    if (position === null) {
+      // Unset fixed position
+      keys.forEach((key) => {
+        delete node[key];
+      });
+      return this;
+    }
 
     position.forEach((value, index) => {
       if (
         index < keys.length &&
         (typeof value === 'number' || value === null)
       ) {
-        (node.data as any)[keys[index]] = value;
+        node[keys[index]] = value;
       }
     });
 
@@ -185,28 +181,24 @@ export class Simulation extends EventEmitter {
   /**
    * Determines whether a node is fixed (has fx and fy defined).
    */
-  private isNodeFixed(data: OutNodeData): boolean {
-    return !isNil(data.fx) && !isNil(data.fy);
+  private isNodeFixed(node: LayoutNode): boolean {
+    return !isNil(node.fx) && !isNil(node.fy);
   }
 
   /**
    * Synchronizes fixed node positions (fx/fy -> x/y)
    */
   private syncFixedPositions(): void {
-    const { nodes, graph, options } = this.context;
+    const { model, options } = this.context;
     const is3D = options.dimensions === 3;
 
-    nodes.forEach((node) => {
-      const { id, data } = node;
-
-      if (this.isNodeFixed(data)) {
-        const updateData: any = {
-          x: data.fx,
-          y: data.fy,
-          ...(is3D ? { z: data.fz } : {}),
-        };
-
-        graph.mergeNodeData(id, updateData);
+    model.forEachNode((node) => {
+      if (this.isNodeFixed(node)) {
+        node.x = node.fx!;
+        node.y = node.fy!;
+        if (is3D && node.fz !== undefined) {
+          node.z = node.fz!;
+        }
       }
     });
   }
@@ -214,8 +206,8 @@ export class Simulation extends EventEmitter {
   private initDisplacements(): void {
     if (!this.displacements) {
       this.displacements = new Map();
-      this.context.nodes.forEach((node) => {
-        this.displacements.set(node.id, { x: 0, y: 0, z: 0 });
+      this.context.model.forEachNode((node) => {
+        this.displacements!.set(node.id, { x: 0, y: 0, z: 0 });
       });
     }
 
@@ -230,24 +222,24 @@ export class Simulation extends EventEmitter {
    * Calculates repulsive forces
    */
   private calculateRepulsive(): void {
-    const { nodes, options } = this.context;
+    const { model, options } = this.context;
     const is3D = options.dimensions === 3;
+
+    const nodes = model.nodes();
 
     for (let i = 0; i < nodes.length; i++) {
       const nodeV = nodes[i];
-      const v = nodeV.data;
-      const dispV = this.displacements.get(nodeV.id)!;
-      const vFixed = this.isNodeFixed(v);
+      const dispV = this.displacements!.get(nodeV.id)!;
+      const vFixed = this.isNodeFixed(nodeV);
 
       for (let j = i + 1; j < nodes.length; j++) {
         const nodeU = nodes[j];
-        const u = nodeU.data;
-        const dispU = this.displacements.get(nodeU.id)!;
-        const uFixed = this.isNodeFixed(u);
+        const dispU = this.displacements!.get(nodeU.id)!;
+        const uFixed = this.isNodeFixed(nodeU);
 
-        let vecX = v.x - u.x;
-        let vecY = v.y - u.y;
-        let vecZ = is3D ? v.z - u.z : 0;
+        let vecX = nodeV.x - nodeU.x;
+        let vecY = nodeV.y - nodeU.y;
+        let vecZ = is3D ? nodeV.z! - nodeU.z! : 0;
 
         let lengthSqr = vecX * vecX + vecY * vecY + vecZ * vecZ;
 
@@ -270,22 +262,22 @@ export class Simulation extends EventEmitter {
           dispU.x -= dispX;
           dispU.y -= dispY;
           if (is3D) {
-            dispV.z += dispZ;
-            dispU.z -= dispZ;
+            dispV.z! += dispZ;
+            dispU.z! -= dispZ;
           }
         } else if (vFixed && !uFixed) {
           // V 固定，U 不固定：U 承受双倍位移
           dispU.x -= dispX * 2;
           dispU.y -= dispY * 2;
           if (is3D) {
-            dispU.z -= dispZ * 2;
+            dispU.z! -= dispZ * 2;
           }
         } else if (!vFixed && uFixed) {
           // U 固定，V 不固定：V 承受双倍位移
           dispV.x += dispX * 2;
           dispV.y += dispY * 2;
           if (is3D) {
-            dispV.z += dispZ * 2;
+            dispV.z! += dispZ * 2;
           }
         }
         // 如果两个都固定，则都不移动（不添加位移）
@@ -294,27 +286,27 @@ export class Simulation extends EventEmitter {
   }
 
   private calculateAttractive(): void {
-    const { edges, graph, options } = this.context;
+    const { model, options } = this.context;
     const is3D = options.dimensions === 3;
 
-    edges.forEach((edge) => {
+    model.forEachEdge((edge) => {
       const { source, target } = edge;
 
       if (!source || !target || source === target) {
         return;
       }
 
-      const u = graph.getNode(source).data;
-      const v = graph.getNode(target).data;
+      const u = model.node(source)!;
+      const v = model.node(target)!;
 
-      const dispSource = this.displacements.get(source)!;
-      const dispTarget = this.displacements.get(target)!;
+      const dispSource = this.displacements!.get(source)!;
+      const dispTarget = this.displacements!.get(target)!;
       const fixedU = this.isNodeFixed(u);
       const fixedV = this.isNodeFixed(v);
 
       const vecX = v.x - u.x;
       const vecY = v.y - u.y;
-      const vecZ = is3D ? v.z - u.z : 0;
+      const vecZ = is3D ? v.z! - u.z! : 0;
 
       const length = Math.sqrt(vecX * vecX + vecY * vecY + vecZ * vecZ);
 
@@ -332,22 +324,22 @@ export class Simulation extends EventEmitter {
         dispTarget.x -= dispX;
         dispTarget.y -= dispY;
         if (is3D) {
-          dispSource.z += dispZ;
-          dispTarget.z -= dispZ;
+          dispSource.z! += dispZ;
+          dispTarget.z! -= dispZ;
         }
       } else if (fixedU && !fixedV) {
         // V 固定，U 不固定：U 承受双倍位移
         dispTarget.x -= dispX * 2;
         dispTarget.y -= dispY * 2;
         if (is3D) {
-          dispTarget.z -= dispZ * 2;
+          dispTarget.z! -= dispZ * 2;
         }
       } else if (!fixedU && fixedV) {
         // U 固定，V 不固定：V 承受双倍位移
         dispSource.x += dispX * 2;
         dispSource.y += dispY * 2;
         if (is3D) {
-          dispSource.z += dispZ * 2;
+          dispSource.z! += dispZ * 2;
         }
       }
       // 如果两个都固定，则都不移动（不添加位移）
@@ -355,17 +347,18 @@ export class Simulation extends EventEmitter {
   }
 
   private applyClusterGravity(): void {
-    const { nodes, options } = this.context;
+    const { model, options } = this.context;
     const { nodeClusterBy, clusterGravity, dimensions, clustering } = options;
 
     if (!clustering) return;
 
     if (!this.clusterMap) {
       this.clusterMap = new Map();
-      nodes.forEach((node) => {
-        const clusterKey = nodeClusterBy(node);
-        if (!this.clusterMap.has(clusterKey)) {
-          this.clusterMap.set(clusterKey, {
+
+      model.forEachNode((node) => {
+        const clusterKey = nodeClusterBy(model.originalNode(node.id)!);
+        if (!this.clusterMap!.has(clusterKey)) {
+          this.clusterMap!.set(clusterKey, {
             name: clusterKey,
             cx: 0,
             cy: 0,
@@ -386,16 +379,15 @@ export class Simulation extends EventEmitter {
       cluster.count = 0;
     });
 
-    nodes.forEach((node) => {
-      const { data } = node;
-      const clusterKey = nodeClusterBy(node);
-      const cluster = this.clusterMap.get(clusterKey);
+    model.forEachNode((node) => {
+      const clusterKey = nodeClusterBy(model.originalNode(node.id)!);
+      const cluster = this.clusterMap!.get(clusterKey);
 
       if (!cluster) return;
 
-      cluster.cx += data.x;
-      cluster.cy += data.y;
-      if (is3D) cluster.cz += data.z;
+      cluster.cx += node.x;
+      cluster.cy += node.y;
+      if (is3D) cluster.cz += node.z!;
       cluster.count++;
     });
 
@@ -407,21 +399,20 @@ export class Simulation extends EventEmitter {
       }
     });
 
-    nodes.forEach((node) => {
-      const { id, data } = node;
-
+    model.forEachNode((node) => {
+      const { id } = node;
       // 固定节点不应用聚类重力
-      if (this.isNodeFixed(data)) return;
+      if (this.isNodeFixed(node)) return;
 
-      const clusterKey = nodeClusterBy(node);
-      const cluster = this.clusterMap.get(clusterKey);
+      const clusterKey = nodeClusterBy(model.originalNode(id)!);
+      const cluster = this.clusterMap!.get(clusterKey);
       if (!cluster) return;
 
-      const disp = this.displacements.get(id)!;
+      const disp = this.displacements!.get(id)!;
 
-      const vecX = data.x - cluster.cx;
-      const vecY = data.y - cluster.cy;
-      const vecZ = is3D ? data.z - cluster.cz : 0;
+      const vecX = node.x - cluster.cx;
+      const vecY = node.y - cluster.cy;
+      const vecZ = is3D ? node.z! - cluster.cz : 0;
 
       const distLength = Math.sqrt(vecX * vecX + vecY * vecY + vecZ * vecZ);
 
@@ -432,31 +423,31 @@ export class Simulation extends EventEmitter {
       disp.y -= (gravityForce * vecY) / distLength;
 
       if (is3D) {
-        disp.z -= (gravityForce * vecZ) / distLength;
+        disp.z! -= (gravityForce * vecZ) / distLength;
       }
     });
   }
 
   private applyGlobalGravity(): void {
-    const { nodes, options } = this.context;
+    const { model, options } = this.context;
     const { gravity, center, dimensions } = options;
 
     const is3D = dimensions === 3;
     const gravityForce = 0.01 * this.k * gravity;
 
-    nodes.forEach((node) => {
-      const { id, data } = node;
+    model.forEachNode((node) => {
+      const { id } = node;
 
       // 固定节点不应用全局重力
-      if (this.isNodeFixed(data)) return;
+      if (this.isNodeFixed(node)) return;
 
-      const disp = this.displacements.get(id)!;
+      const disp = this.displacements!.get(id)!;
 
-      disp.x -= gravityForce * (data.x - center[0]);
-      disp.y -= gravityForce * (data.y - center[1]);
+      disp.x -= gravityForce * (node.x - center[0]);
+      disp.y -= gravityForce * (node.y - center[1]);
 
       if (is3D) {
-        disp.z -= gravityForce * (data.z - (center[2] || 0));
+        disp.z! -= gravityForce * (node.z! - (center[2] || 0));
       }
     });
   }
@@ -465,21 +456,21 @@ export class Simulation extends EventEmitter {
    * Updates node positions based on calculated displacements
    */
   private updatePositions(): void {
-    const { nodes, graph, options } = this.context;
+    const { model, options } = this.context;
     const { speed, dimensions } = options;
     const is3D = dimensions === 3;
 
-    nodes.forEach((node) => {
-      const { id, data } = node;
+    model.forEachNode((node) => {
+      const { id } = node;
 
-      if (this.isNodeFixed(data)) {
+      if (this.isNodeFixed(node)) {
         return;
       }
 
-      const disp = this.displacements.get(id)!;
+      const disp = this.displacements!.get(id)!;
 
       const distLength = Math.sqrt(
-        disp.x * disp.x + disp.y * disp.y + (is3D ? disp.z * disp.z : 0),
+        disp.x * disp.x + disp.y * disp.y + (is3D ? disp.z! * disp.z! : 0),
       );
 
       if (distLength === 0) return;
@@ -490,13 +481,12 @@ export class Simulation extends EventEmitter {
       );
 
       const ratio = limitedDist / distLength;
-      const updateData: any = {
-        x: data.x + disp.x * ratio,
-        y: data.y + disp.y * ratio,
-        ...(is3D ? { z: data.z + disp.z * ratio } : {}),
-      };
 
-      graph.mergeNodeData(id, updateData);
+      node.x = node.x + disp.x * ratio;
+      node.y = node.y + disp.y * ratio;
+      if (is3D) {
+        node.z = node.z! + disp.z! * ratio;
+      }
     });
   }
 
@@ -517,13 +507,12 @@ export class Simulation extends EventEmitter {
       this.clusterMap.clear();
       this.clusterMap = null;
     }
-    this.context.nodes = [];
-    this.context.edges = [];
-    this.context.graph = undefined;
-    this.context.options = {};
 
     this.off('tick');
     this.off('end');
+
+    // @ts-ignore
+    this.context = null;
 
     this.currentIteration = 0;
     this.isRunning = false;

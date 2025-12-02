@@ -1,12 +1,17 @@
 {
   "cSpell.words": [
     "acyclicer",
+    "antv",
+    "antvgraph",
+    "antvlayout",
     "edgesep",
     "Fruchterman",
     "graphlib",
     "nodesep",
+    "puregraph",
     "rankdir",
     "ranksep",
+    "Reingold",
     "relayout"
   ],
   "rust-analyzer.linkedProjects": ["./packages/layout-rust/Cargo.toml"]

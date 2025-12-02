@@ -1,0 +1,282 @@
+import { isNil } from '@antv/util';
+import type { LayoutModelOptions } from '../base-layout/types';
+import type {
+  EdgeData,
+  GraphData,
+  LayoutEdge,
+  LayoutNode,
+  NodeData,
+} from '../types/data';
+import type { ID } from '../types/id';
+
+const getEdgeId = (edge: EdgeData): string => {
+  return edge.id || `$${edge.source}-$${edge.target}`;
+};
+
+export class LayoutModel<
+  N extends NodeData = NodeData,
+  E extends EdgeData = EdgeData,
+> {
+  public readonly nodeMap: Map<ID, LayoutNode<N>>;
+  public readonly edgeMap: Map<ID, LayoutEdge<E>>;
+
+  private degreeCache?: Map<ID, { in: number; out: number; both: number }>;
+
+  private inAdjacencyCache?: Map<ID, Set<ID>>;
+  private outAdjacencyCache?: Map<ID, Set<ID>>;
+  private bothAdjacencyCache?: Map<ID, Set<ID>>;
+
+  constructor(data: GraphData<N, E>, options: LayoutModelOptions<N, E> = {}) {
+    this.nodeMap = extractNodeData<N>(data.nodes, options.node);
+    this.edgeMap = extractEdgeData<E>(data.edges || [], options.edge);
+  }
+
+  public nodes(): LayoutNode<N>[] {
+    return Array.from(this.nodeMap.values());
+  }
+
+  public node(id: ID): LayoutNode<N> | undefined {
+    return this.nodeMap.get(id);
+  }
+
+  public forEachNode(callback: (node: LayoutNode<N>) => void): void {
+    this.nodeMap.forEach(callback);
+  }
+
+  public originalNode(id: ID): N | undefined {
+    const node = this.nodeMap.get(id);
+    return node?._original;
+  }
+
+  public nodeCount(): number {
+    return this.nodeMap.size;
+  }
+
+  public edges(): LayoutEdge<E>[] {
+    return Array.from(this.edgeMap.values());
+  }
+
+  public edge(id: ID): LayoutEdge<E> | undefined {
+    return this.edgeMap.get(id);
+  }
+
+  public forEachEdge(callback: (edge: LayoutEdge<E>) => void): void {
+    this.edgeMap.forEach(callback);
+  }
+
+  public originalEdge(id: ID): E | undefined {
+    const edge = this.edgeMap.get(id);
+    return edge?._original;
+  }
+
+  public edgeCount(): number {
+    return this.edgeMap.size;
+  }
+
+  public degree(nodeId: ID, direction: 'in' | 'out' | 'both' = 'both'): number {
+    if (!this.degreeCache) {
+      this.buildDegreeCache();
+    }
+
+    const degree = this.degreeCache!.get(nodeId);
+    if (!degree) return 0;
+
+    return degree[direction];
+  }
+
+  public neighbors(
+    nodeId: ID,
+    direction: 'in' | 'out' | 'both' = 'both',
+  ): ID[] {
+    if (!this.outAdjacencyCache || !this.inAdjacencyCache) {
+      this.buildAdjacencyCache();
+    }
+
+    if (direction === 'out') {
+      return Array.from(this.outAdjacencyCache!.get(nodeId) || []);
+    }
+
+    if (direction === 'in') {
+      return Array.from(this.inAdjacencyCache!.get(nodeId) || []);
+    }
+
+    if (this.bothAdjacencyCache) {
+      return Array.from(this.bothAdjacencyCache.get(nodeId) || []);
+    }
+
+    const inSet = this.inAdjacencyCache!.get(nodeId);
+    const outSet = this.outAdjacencyCache!.get(nodeId);
+
+    if (!inSet && !outSet) return [];
+    if (!inSet) return Array.from(outSet!);
+    if (!outSet) return Array.from(inSet);
+
+    return Array.from(new Set([...inSet, ...outSet]));
+  }
+
+  public successors(nodeId: ID): ID[] {
+    return this.neighbors(nodeId, 'out');
+  }
+
+  public predecessors(nodeId: ID): ID[] {
+    return this.neighbors(nodeId, 'in');
+  }
+
+  public clearCache(): void {
+    this.degreeCache = undefined;
+    this.inAdjacencyCache = undefined;
+    this.outAdjacencyCache = undefined;
+    this.bothAdjacencyCache = undefined;
+  }
+
+  private buildDegreeCache(): void {
+    this.degreeCache = new Map();
+
+    for (const edge of this.edgeMap.values()) {
+      const { source, target } = edge;
+
+      if (edge.source === edge.target) continue;
+
+      if (!this.degreeCache.has(source)) {
+        this.degreeCache.set(source, { in: 0, out: 0, both: 0 });
+      }
+      const sourceDeg = this.degreeCache.get(edge.source);
+      if (sourceDeg) {
+        sourceDeg.out++;
+        sourceDeg.both++;
+      }
+
+      if (!this.degreeCache.has(target)) {
+        this.degreeCache.set(target, { in: 0, out: 0, both: 0 });
+      }
+      const targetDeg = this.degreeCache.get(edge.target);
+      if (targetDeg) {
+        targetDeg.in++;
+        targetDeg.both++;
+      }
+    }
+  }
+
+  private buildAdjacencyCache(): void {
+    this.inAdjacencyCache = new Map();
+    this.outAdjacencyCache = new Map();
+
+    for (const edge of this.edgeMap.values()) {
+      if (!this.nodeMap.has(edge.source) || !this.nodeMap.has(edge.target))
+        continue;
+
+      if (!this.outAdjacencyCache!.has(edge.source)) {
+        this.outAdjacencyCache!.set(edge.source, new Set());
+      }
+      this.outAdjacencyCache.get(edge.source)!.add(edge.target);
+
+      if (!this.inAdjacencyCache!.has(edge.target)) {
+        this.inAdjacencyCache!.set(edge.target, new Set());
+      }
+      this.inAdjacencyCache.get(edge.target)!.add(edge.source);
+    }
+  }
+
+  public destroy(): void {
+    this.clearCache();
+    this.nodeMap.clear();
+    this.edgeMap.clear();
+  }
+}
+
+function extractNodeData<N extends NodeData = NodeData>(
+  nodes: N[],
+  node?: (datum: N) => LayoutNode,
+): Map<ID, LayoutNode<N>> {
+  if (!nodes) {
+    throw new Error('Data.nodes is required');
+  }
+
+  const result = new Map<ID, LayoutNode<N>>();
+  const fields = ['id', 'x', 'y', 'z', 'vx', 'vy', 'vz', 'fx', 'fy', 'fz'];
+
+  for (const datum of nodes) {
+    const nodeData: LayoutNode<N> = { _original: datum } as LayoutNode<N>;
+
+    for (const field of fields) {
+      const value = datum[field];
+      if (isNil(value)) continue;
+      nodeData[field] = value;
+    }
+
+    if (node) {
+      const customFields = node(datum);
+      for (const key in customFields) {
+        const value = customFields[key];
+        if (isNil(value)) continue;
+        nodeData[key] = value;
+      }
+    }
+
+    if (isNil(nodeData.id)) {
+      throw new Error(`Node is missing id field`);
+    }
+
+    result.set(nodeData.id, nodeData);
+  }
+
+  return result;
+}
+
+function extractEdgeData<E extends EdgeData = EdgeData>(
+  edges: E[],
+  edge?: (datum: E) => LayoutEdge,
+): Map<ID, LayoutEdge<E>> {
+  const result = new Map<ID, LayoutEdge<E>>();
+  const fields = ['id', 'source', 'target', 'controlPoints'];
+
+  for (const datum of edges) {
+    const edgeData: LayoutEdge<E> = { _original: datum } as LayoutEdge<E>;
+
+    for (const field of fields) {
+      const value = datum[field];
+      if (isNil(value)) continue;
+      edgeData[field] = value;
+    }
+
+    if (edge) {
+      const customFields = edge(datum);
+      for (const key in customFields) {
+        const value = customFields[key];
+        if (isNil(value)) continue;
+        edgeData[key] = value;
+      }
+    }
+
+    if (isNil(edgeData.source) || isNil(edgeData.target)) {
+      throw new Error(`Edge is missing source or target field`);
+    }
+
+    if (isNil(edgeData.id)) {
+      edgeData.id = getEdgeId(datum);
+    }
+
+    result.set(edgeData.id, edgeData);
+  }
+
+  return result;
+}
+
+export function initModelNodePosition<N extends NodeData = NodeData>(
+  model: LayoutModel<N>,
+  width: number,
+  height: number,
+  dimensions: 2 | 3 = 2,
+): void {
+  model.forEachNode((node) => {
+    if (isNil(node.x)) {
+      node.x = Math.random() * width;
+    }
+    if (isNil(node.y)) {
+      node.y = Math.random() * height;
+    }
+    if (dimensions === 3 && isNil(node.z)) {
+      node.z = Math.random() * Math.min(width, height);
+    }
+  });
+}

@@ -1,223 +1,134 @@
-import { Graph as IGraph, ID } from '@antv/graphlib';
-import type {
-  EdgeData,
-  Graph,
-  LayoutMapping,
-  LayoutWithIterations,
-  OutEdge,
-  OutNode,
-  OutNodeData,
-} from '../types';
-import type { GraphData } from '../types/data';
+import { BaseLayoutWithIterations } from '../base-layout';
+import type { NodeData } from '../types/data';
+import type { ID } from '../types/id';
+import type { Position } from '../types/position';
 import {
   applySingleNodeLayout,
-  cloneFormatData,
+  getNestedValue,
   normalizeViewport,
-  toGraph,
 } from '../util';
+import { initModelNodePosition, LayoutModel } from '../util/model';
 import { Simulation } from './simulation';
-import { FruchtermanLayoutOptions } from './types';
-
-const DEFAULTS_LAYOUT_OPTIONS: Partial<FruchtermanLayoutOptions> = {
-  maxIteration: 1000,
-  gravity: 10,
-  speed: 5,
-  clustering: false,
-  clusterGravity: 10,
-  width: 300,
-  height: 300,
-  nodeClusterBy: 'cluster',
-  dimensions: 2,
-};
+import type {
+  FruchtermanLayoutOptions,
+  NormalizedFruchtermanLayoutOptions,
+} from './types';
 
 export type { FruchtermanLayoutOptions };
 
-export class FruchtermanLayout
-  implements LayoutWithIterations<FruchtermanLayoutOptions>
-{
+export class FruchtermanLayout extends BaseLayoutWithIterations<FruchtermanLayoutOptions> {
   public id = 'fruchterman';
-  public options: Partial<FruchtermanLayoutOptions> = {};
+
   private simulation: Simulation | null = null;
 
-  private resolver?: (value: LayoutMapping) => void;
-
-  private calcGraph: IGraph<OutNodeData, EdgeData> | null = null;
-
-  protected context: {
-    assign: boolean;
-    graph: Graph | null;
-    nodes: OutNode[];
-    edges: OutEdge[];
-    options: any;
-  } = {
-    nodes: [],
-    edges: [],
-    assign: false,
-    graph: null,
-    options: {},
-  };
-
-  constructor(options?: Partial<FruchtermanLayoutOptions>) {
-    this.options = { ...DEFAULTS_LAYOUT_OPTIONS, ...options };
+  protected getDefaultOptions(): Partial<FruchtermanLayoutOptions> {
+    return {
+      maxIteration: 1000,
+      gravity: 10,
+      speed: 5,
+      clustering: false,
+      clusterGravity: 10,
+      width: 300,
+      height: 300,
+      nodeClusterBy: 'data.cluster',
+      dimensions: 2,
+      animate: true,
+    };
   }
 
-  public async execute(
-    graph: GraphData | Graph,
-    options?: FruchtermanLayoutOptions,
-  ): Promise<LayoutMapping> {
-    return this.genericLayout(false, toGraph(graph), options);
+  protected normalizeOptions(
+    options: FruchtermanLayoutOptions,
+  ): NormalizedFruchtermanLayoutOptions {
+    const { clustering, nodeClusterBy } = options;
+    const clusteringEnabled = clustering && !!nodeClusterBy;
+    const nodeClusterByFunc =
+      typeof nodeClusterBy === 'string'
+        ? (node: NodeData) => getNestedValue(node, nodeClusterBy)
+        : nodeClusterBy!;
+
+    return {
+      ...options,
+      ...normalizeViewport(options),
+      clustering: clusteringEnabled,
+      nodeClusterBy: nodeClusterByFunc,
+    } as NormalizedFruchtermanLayoutOptions;
   }
 
-  public async assign(
-    graph: GraphData | Graph,
-    options?: FruchtermanLayoutOptions,
-  ): Promise<void> {
-    await this.genericLayout(true, toGraph(graph), options);
+  protected async layout(): Promise<void> {
+    const opts = this.normalizeOptions(this.options);
+    this.options = opts;
+
+    const { dimensions, center, animate, maxIteration } = opts;
+
+    const n = this.model.nodeCount();
+    if (!n || n === 1) {
+      applySingleNodeLayout(this.model, center, dimensions);
+      return;
+    }
+
+    const { width, height } = opts;
+    initModelNodePosition(this.model, width, height, dimensions);
+
+    const simulation = this.setSimulation(this.model, opts);
+
+    if (animate) {
+      return new Promise<void>((resolve) => {
+        simulation.restart();
+        simulation.once('end', () => resolve());
+      });
+    } else {
+      simulation.tick(maxIteration);
+    }
+  }
+
+  private setSimulation(
+    model: LayoutModel,
+    options: NormalizedFruchtermanLayoutOptions,
+  ): Simulation {
+    if (this.simulation) {
+      this.simulation.off('tick');
+    }
+
+    const simulation = this.simulation || new Simulation(model, options);
+
+    this.simulation = simulation.on('tick', () => this.options.onTick?.(this));
+
+    return simulation;
   }
 
   public restart(): void {
-    if (this.simulation) this.simulation.restart();
+    if (!this.simulation) {
+      console.warn('Simulation instance does not exist.');
+      return;
+    }
+
+    this.simulation.restart();
   }
 
   public stop(): void {
     if (this.simulation) this.simulation.stop();
   }
 
-  public tick(iterations: number = 1): LayoutMapping {
-    if (this.simulation) this.simulation.tick(iterations);
-
-    return this.getResult();
-  }
-
-  public setFixedPosition(id: ID, position: (number | null)[]): void {
-    if (this.simulation) this.simulation.setFixedPosition(id, position);
-  }
-
-  private getOptions(options?: Partial<FruchtermanLayoutOptions>): any {
-    const mergedOptions = { ...this.options, ...options };
-    const normalized = normalizeViewport(mergedOptions);
-
-    const { clustering, nodeClusterBy } = mergedOptions;
-    const clusteringEnabled = clustering && !!nodeClusterBy;
-    const clusterByFunc =
-      typeof nodeClusterBy === 'string'
-        ? (node) => node.data?.[nodeClusterBy]
-        : nodeClusterBy;
-
-    return {
-      ...DEFAULTS_LAYOUT_OPTIONS,
-      ...mergedOptions,
-      ...normalized,
-      clustering: clusteringEnabled,
-      nodeClusterBy: clusterByFunc,
-    };
-  }
-
-  private async genericLayout(
-    assign: true,
-    graph: Graph,
-    options?: FruchtermanLayoutOptions,
-  ): Promise<void>;
-  private async genericLayout(
-    assign: false,
-    graph: Graph,
-    options?: FruchtermanLayoutOptions,
-  ): Promise<LayoutMapping>;
-  private async genericLayout(
-    assign: boolean,
-    graph: Graph,
-    options?: FruchtermanLayoutOptions,
-  ): Promise<LayoutMapping | void> {
-    const opts = this.getOptions(options);
-    const { dimensions, width, height, center } = opts;
-
-    const nodes = graph.getAllNodes();
-    const edges = graph.getAllEdges();
-
-    if (!nodes?.length || nodes.length === 1) {
-      applySingleNodeLayout(assign, graph, center, dimensions);
+  public tick(iterations: number = 1): void {
+    if (this.simulation) {
+      this.simulation.tick(iterations);
     }
-
-    this.context = {
-      assign,
-      graph,
-      nodes: nodes.map((node) =>
-        cloneFormatData(node, [width, height]),
-      ) as OutNode[],
-      edges: edges,
-      options: opts,
-    };
-
-    this.calcGraph = new IGraph<OutNodeData, EdgeData>({
-      nodes: this.context.nodes,
-      edges: this.context.edges,
-    });
-
-    const simulation = this.setSimulation();
-    simulation.restart();
-
-    return new Promise<LayoutMapping>((resolver) => {
-      this.resolver = resolver;
-    });
   }
 
-  private setSimulation(): Simulation {
-    const simulation =
-      this.simulation || new Simulation(this.calcGraph, this.context.options);
-
-    if (!this.simulation) {
-      this.simulation = simulation
-        .on('tick', () => this.context.options.onTick?.(this.getResult()))
-        .on('end', () => this.resolver?.(this.getResult()));
+  public setFixedPosition(id: ID, position: Position | null): void {
+    if (this.simulation) {
+      this.simulation.setFixedPosition(id, position);
     }
-
-    return simulation;
-  }
-
-  private getResult(): LayoutMapping {
-    const { nodes, graph, assign, edges, options } = this.context;
-    const is3D = options.dimensions === 3;
-
-    const nodesResult = nodes.map((node) => {
-      const data: any = {
-        ...node.data,
-        x: node.data.x,
-        y: node.data.y,
-        ...(is3D ? { z: node.data.z } : {}),
-      };
-
-      return { ...node, data };
-    });
-
-    if (assign) {
-      nodesResult.forEach(({ id, data }) => {
-        graph.mergeNodeData(id, {
-          x: data.x,
-          y: data.y,
-          ...(is3D ? { z: data.z } : {}),
-        });
-      });
-    }
-
-    return { nodes: nodesResult, edges };
   }
 
   public destroy(): void {
+    super.destroy();
+
     this.stop();
 
     if (this.simulation) {
       this.simulation.destroy();
       this.simulation = null;
     }
-
-    this.calcGraph = null;
-    this.context = {
-      nodes: [],
-      edges: [],
-      assign: false,
-      graph: null,
-      options: {},
-    };
-    this.resolver = undefined;
   }
 }

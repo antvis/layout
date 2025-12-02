@@ -1,4 +1,5 @@
-import { Graph, LayoutMapping, PointTuple } from '../types';
+import { Graph, PointTuple } from '../types';
+import { LayoutModel } from './model';
 
 /**
  * Assign or only return the result for the graph who has no nodes or only one node.
@@ -49,40 +50,18 @@ export const handleSingleNodeGraph = (
  * @returns layout result
  */
 export function applySingleNodeLayout(
-  assign: boolean,
-  graph: Graph,
+  model: LayoutModel,
   center: PointTuple,
   dimensions: 2 | 3 = 2,
-): LayoutMapping | void {
-  const nodes = graph.getAllNodes();
-  const edges = graph.getAllEdges();
+) {
+  const n = model.nodeCount();
 
-  if (!nodes?.length) {
-    if (assign) return;
-    return { nodes: [], edges };
+  if (n === 1) {
+    const first = model.nodes()[0];
+    first.x = center[0];
+    first.y = center[1];
+    if (dimensions === 3) {
+      first.z = center[2] || 0;
+    }
   }
-
-  if (assign) {
-    graph.mergeNodeData(nodes[0].id, {
-      x: center[0],
-      y: center[1],
-      ...(dimensions === 3 ? { z: center[2] } : {}),
-    });
-    return;
-  }
-
-  return {
-    nodes: [
-      {
-        ...nodes[0],
-        data: {
-          ...nodes[0].data,
-          x: center[0],
-          y: center[1],
-          ...(dimensions === 3 ? { z: center[2] } : {}),
-        },
-      },
-    ],
-    edges,
-  };
 }

@@ -16,11 +16,11 @@ export function numberEqual(a: number, b: number, gap?: number) {
  * @returns
  */
 export function getEuclideanDistance(p1: any, p2: any) {
-  const { data: p1d } = p1;
-  const { data: p2d } = p2;
-  return Math.sqrt(
-    (p1d.x - p2d.x) * (p1d.x - p2d.x) + (p1d.y - p2d.y) * (p1d.y - p2d.y),
-  );
+  const p1x = p1.data?.x || p1.x;
+  const p1y = p1.data?.y || p1.y;
+  const p2x = p2.data?.x || p2.x;
+  const p2y = p2.data?.y || p2.y;
+  return Math.sqrt((p1x - p2x) * (p1x - p2x) + (p1y - p2y) * (p1y - p2y));
 }
 
 type Entry = {

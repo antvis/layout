@@ -1,29 +1,9 @@
-import type { Node, PointTuple } from '../types';
+import type { BaseLayoutOptions } from '../base-layout';
+import { NodeData } from '../types/data';
+import { Point } from '../types/point';
 import type { Size } from '../types/size';
 
-export interface GridLayoutOptions {
-  /**
-   * <zh/> 网格布局的总宽度
-   *
-   * <en/> Total width of grid layout
-   * @remarks
-   * <zh/> 在 G6 中使用当前容器的宽度作为 grid 布局 width 的默认值。单独使用此布局时默认值为 300
-   *
-   * <en/> The width of the grid layout is the default value of the current container width in G6. The default value is 300 when this layout is used alone
-   * @defaultValue 300
-   */
-  width?: number;
-  /**
-   * <zh/> 网格布局的总高度
-   *
-   * <en/> Total height of grid layout
-   * @remarks
-   * <zh/> 在 G6 中使用当前容器的高度作为 grid 布局 height 的默认值。单独使用此布局时默认值为 300
-   *
-   * <en/> The height of the grid layout is the default value of the current container height in G6. The default value is 300 when this layout is used alone
-   * @defaultValue 300
-   */
-  height?: number;
+export interface GridLayoutOptions extends BaseLayoutOptions {
   /**
    * <zh/> 网格开始位置（左上角）
    *
@@ -31,7 +11,7 @@ export interface GridLayoutOptions {
    * @defaultValue [0, 0]
    *
    */
-  begin?: PointTuple;
+  begin?: Point;
   /**
    * <zh/> 是否防止重叠
    *
@@ -48,13 +28,13 @@ export interface GridLayoutOptions {
    *
    * <en/> Node size (diameter). Used for collision detection when nodes overlap
    */
-  nodeSize?: Size | ((node?: Node) => Size);
+  nodeSize?: Size | ((node?: NodeData) => Size);
   /**
    * <zh/> 环与环之间最小间距，用于调整半径
    *
    * <en/> Minimum spacing between rings, used to adjust the radius
    */
-  nodeSpacing?: number | ((node?: Node) => number);
+  nodeSpacing?: number | ((node?: NodeData) => number);
   /**
    * <zh/> 避免重叠时节点的间距 padding。preventOverlap 为 true 时生效
    *
@@ -89,14 +69,38 @@ export interface GridLayoutOptions {
    * <en/> Specify the basis for sorting (node attribute name). The higher the value, the more the node will be placed in the center. If it is undefined, the degree of the node will be calculated, and the higher the degree, the more the node will be placed in the center
    * @defaultValue undefined
    */
-  sortBy?: 'id' | 'degree' | string;
+  sortBy?: 'id' | 'degree' | ((nodeA: NodeData, nodeB: NodeData) => -1 | 0 | 1);
   /**
    * <zh/> 指定每个节点所在的行和列
    *
    * <en/> Specify the row and column where each node is located
    * @defaultValue undefined
    */
-  position?: (node: Node) => { row?: number; col?: number };
+  position?: (node: NodeData) => { row?: number; col?: number };
+}
+
+export interface NormalizedGridLayoutOptions
+  extends Omit<
+    GridLayoutOptions,
+    | 'begin'
+    | 'nodeSize'
+    | 'nodeSpacing'
+    | 'preventOverlap'
+    | 'preventOverlapPadding'
+    | 'sortBy'
+    | 'rows'
+    | 'cols'
+  > {
+  width: number;
+  height: number;
+  center: Point;
+  begin: Point;
+  rcs: { rows: number; cols: number };
+  nodeSize: (node?: NodeData) => Size;
+  nodeSpacing: (node?: NodeData) => number;
+  preventOverlap: boolean;
+  preventOverlapPadding: number;
+  sortBy: 'id' | 'degree' | ((nodeA: NodeData, nodeB: NodeData) => -1 | 0 | 1);
 }
 
 export type RowsAndCols = {

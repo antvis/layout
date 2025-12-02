@@ -28,15 +28,14 @@ if (initialValue && initialValue in demos) {
 
 render();
 
-function render() {
+async function render() {
   const demo = demos[select.value as keyof typeof demos];
   if (gui) {
     gui.destroy();
     gui = new lil.GUI({ autoPlace: false });
     $container.appendChild(gui.domElement);
   }
-
-  demo(gui);
+  await demo(gui);
 }
 
 function onChange() {

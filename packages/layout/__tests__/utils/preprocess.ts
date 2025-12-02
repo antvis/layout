@@ -49,7 +49,7 @@ export function initializeNodePositions(
   let vertiGap = height / (vertiNum - 1);
 
   if (!isFinite(horiGap) || !horiGap) horiGap = 0;
-  if (!isFinite(vertiGap) || !vertiGap) vertiGap = 0;
+  if (!isFinite(vertiGap) || !horiGap) vertiGap = 0;
 
   const beginX = 0;
   const beginY = 0;

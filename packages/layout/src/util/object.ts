@@ -1,4 +1,4 @@
-import { isNumber } from '@antv/util';
+import { get, isNumber, set } from '@antv/util';
 import { Edge, Node } from '../types';
 
 export const clone = <T>(target: T): T => {
@@ -43,3 +43,25 @@ export const cloneFormatData = <T extends Node | Edge>(
   }
   return cloned;
 };
+
+/**
+ * Get nested property value
+ * For example: getNestedValue(obj, 'a.b.c') will return obj.a.b.c
+ */
+export function getNestedValue<T>(obj: T, path: keyof T | string): any {
+  const keys = String(path).split('.');
+  return get(obj, keys);
+}
+
+/**
+ * Set nested property value
+ * For example: setNestedValue(obj, 'a.b.c', value) will set obj.a.b.c = value
+ */
+export function setNestedValue<T>(
+  obj: T,
+  path: keyof T | string,
+  value: any,
+): void {
+  const keys = String(path).split('.');
+  set(obj, keys, value);
+}

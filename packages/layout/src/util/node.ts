@@ -1,5 +1,5 @@
 import type { Node } from '../types';
-import type { Size } from '../types/size';
+import type { Size } from '../util/size';
 
 /**
  * Get the maximum size of nodes
@@ -16,5 +16,3 @@ export function getMaxNodeSize<T extends Node>(
   });
   return maxNodeSize;
 }
-
-export function computePerimeter() {}

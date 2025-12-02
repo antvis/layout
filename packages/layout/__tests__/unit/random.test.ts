@@ -1,21 +1,20 @@
 import { RandomLayout } from '@/src';
 import { createCanvas } from '@@/utils/create';
 import type { Canvas } from '@antv/g';
-import { Graph } from '@antv/graphlib';
 import { clear as clearMockRandom, mock as mockRandom } from 'jest-random-mock';
 import { countries as data } from '../dataset';
-import { renderNodesAndEdges } from '../utils/render';
+import {
+  calculatePositions,
+  renderNodesAndEdges,
+} from '../utils/render-update';
 
 describe('layout random', () => {
   let canvas: Canvas;
-  let graph: Graph<any, any>;
   let random: RandomLayout;
 
   beforeEach(() => {
     mockRandom();
     canvas = createCanvas();
-    const { nodes, edges } = data;
-    graph = new Graph({ nodes, edges });
     random = new RandomLayout({
       center: [250, 250],
       width: 500,
@@ -29,14 +28,14 @@ describe('layout random', () => {
   });
 
   it('should render with default config', async () => {
-    const positions = await random.execute(graph);
-    await renderNodesAndEdges(canvas, positions);
+    await random.execute(data);
+    await renderNodesAndEdges(canvas, random);
     await expect(canvas).toMatchSnapshot(__filename);
   });
 
   it('should render with pure data', async () => {
-    const positions = await random.execute(data);
-    await renderNodesAndEdges(canvas, positions);
+    await random.execute(data);
+    await renderNodesAndEdges(canvas, random);
     await expect(canvas).toMatchSnapshot(__filename);
   });
 
@@ -55,16 +54,15 @@ describe('layout random', () => {
       width: 500,
       height: 500,
     });
-    const positions = await layout.execute(graph);
-    await renderNodesAndEdges(canvas, positions);
+    await layout.execute(data);
+    await renderNodesAndEdges(canvas, layout);
 
+    const positions = calculatePositions(layout);
     // Check that nodes are distributed around the center
     const avgX =
-      positions.nodes.reduce((sum, n) => sum + n.data.x, 0) /
-      positions.nodes.length;
+      positions.nodes.reduce((sum, n) => sum + n.x, 0) / positions.nodes.length;
     const avgY =
-      positions.nodes.reduce((sum, n) => sum + n.data.y, 0) /
-      positions.nodes.length;
+      positions.nodes.reduce((sum, n) => sum + n.y, 0) / positions.nodes.length;
 
     // Should be roughly centered (allowing for randomness)
     expect(Math.abs(avgX - 300)).toBeLessThan(100);
@@ -77,12 +75,13 @@ describe('layout random', () => {
       width: 800,
       height: 500,
     });
-    const positions = await layout.execute(graph);
+    await layout.execute(data);
 
+    const positions = calculatePositions(layout);
     // Verify nodes are within bounds
     positions.nodes.forEach((node) => {
-      expect(node.data.x).toBeGreaterThanOrEqual(250 - (800 * 0.9) / 2);
-      expect(node.data.x).toBeLessThanOrEqual(250 + (800 * 0.9) / 2);
+      expect(node.x).toBeGreaterThanOrEqual(250 - (800 * 0.9) / 2);
+      expect(node.x).toBeLessThanOrEqual(250 + (800 * 0.9) / 2);
     });
   });
 
@@ -92,12 +91,13 @@ describe('layout random', () => {
       width: 500,
       height: 800,
     });
-    const positions = await layout.execute(graph);
+    await layout.execute(data);
 
+    const positions = calculatePositions(layout);
     // Verify nodes are within bounds
     positions.nodes.forEach((node) => {
-      expect(node.data.y).toBeGreaterThanOrEqual(250 - (800 * 0.9) / 2);
-      expect(node.data.y).toBeLessThanOrEqual(250 + (800 * 0.9) / 2);
+      expect(node.y).toBeGreaterThanOrEqual(250 - (800 * 0.9) / 2);
+      expect(node.y).toBeLessThanOrEqual(250 + (800 * 0.9) / 2);
     });
   });
 
@@ -107,15 +107,16 @@ describe('layout random', () => {
       width: 100,
       height: 100,
     });
-    const positions = await layout.execute(graph);
-    await renderNodesAndEdges(canvas, positions);
+    await layout.execute(data);
+    await renderNodesAndEdges(canvas, layout);
 
+    const positions = calculatePositions(layout);
     // All nodes should be within small area
     positions.nodes.forEach((node) => {
-      expect(node.data.x).toBeGreaterThanOrEqual(250 - (100 * 0.9) / 2);
-      expect(node.data.x).toBeLessThanOrEqual(250 + (100 * 0.9) / 2);
-      expect(node.data.y).toBeGreaterThanOrEqual(250 - (100 * 0.9) / 2);
-      expect(node.data.y).toBeLessThanOrEqual(250 + (100 * 0.9) / 2);
+      expect(node.x).toBeGreaterThanOrEqual(250 - (100 * 0.9) / 2);
+      expect(node.x).toBeLessThanOrEqual(250 + (100 * 0.9) / 2);
+      expect(node.y).toBeGreaterThanOrEqual(250 - (100 * 0.9) / 2);
+      expect(node.y).toBeLessThanOrEqual(250 + (100 * 0.9) / 2);
     });
   });
 
@@ -125,11 +126,12 @@ describe('layout random', () => {
       width: 1000,
       height: 1000,
     });
-    const positions = await layout.execute(graph);
+    await layout.execute(data);
 
+    const positions = calculatePositions(layout);
     // Nodes should be spread across larger area
-    const xValues = positions.nodes.map((n) => n.data.x);
-    const yValues = positions.nodes.map((n) => n.data.y);
+    const xValues = positions.nodes.map((n) => n.x);
+    const yValues = positions.nodes.map((n) => n.y);
     const xRange = Math.max(...xValues) - Math.min(...xValues);
     const yRange = Math.max(...yValues) - Math.min(...yValues);
 
@@ -139,65 +141,34 @@ describe('layout random', () => {
   });
 
   it('returns empty result for empty graph', async () => {
-    const emptyGraph = new Graph({ nodes: [], edges: [] });
     const layout = new RandomLayout();
-    const positions = await layout.execute(emptyGraph);
+    await layout.execute({ nodes: [], edges: [] });
+    const positions = calculatePositions(layout);
     expect(positions.nodes).toHaveLength(0);
     expect(positions.edges).toHaveLength(0);
   });
 
   it('should handle single node graph', async () => {
-    const singleGraph = new Graph({
+    const layout = new RandomLayout({
+      center: [250, 250],
+      width: 500,
+      height: 500,
+    });
+    await layout.execute({
       nodes: [{ id: 'node', data: {} }],
       edges: [],
     });
-    const layout = new RandomLayout({
-      center: [250, 250],
-      width: 500,
-      height: 500,
-    });
-    const positions = await layout.execute(singleGraph);
-
+    const positions = calculatePositions(layout);
     expect(positions.nodes).toHaveLength(1);
-    expect(typeof positions.nodes[0].data.x).toBe('number');
-    expect(typeof positions.nodes[0].data.y).toBe('number');
+    expect(typeof positions.nodes[0].x).toBe('number');
+    expect(typeof positions.nodes[0].y).toBe('number');
     // Should be within bounds
-    expect(positions.nodes[0].data.x).toBeGreaterThanOrEqual(
-      250 - (500 * 0.9) / 2,
-    );
-    expect(positions.nodes[0].data.x).toBeLessThanOrEqual(
-      250 + (500 * 0.9) / 2,
-    );
-  });
-
-  it('assign mode should directly modify graph node positions', async () => {
-    const nodes = [
-      { id: 'a', data: {} },
-      { id: 'b', data: {} },
-      { id: 'c', data: {} },
-    ];
-    const edges = [
-      { id: 'e1', source: 'a', target: 'b', data: {} },
-      { id: 'e2', source: 'b', target: 'c', data: {} },
-    ];
-    const testGraph = new Graph({ nodes: nodes as any, edges: edges as any });
-    const layout = new RandomLayout({
-      center: [250, 250],
-      width: 500,
-      height: 500,
-    });
-    await layout.assign(testGraph, {});
-    const allNodes = testGraph.getAllNodes();
-    allNodes.forEach((node) => {
-      expect(typeof node.data.x).toBe('number');
-      expect(typeof node.data.y).toBe('number');
-      expect(Number.isFinite(node.data.x)).toBe(true);
-      expect(Number.isFinite(node.data.y)).toBe(true);
-    });
+    expect(positions.nodes[0].x).toBeGreaterThanOrEqual(250 - (500 * 0.9) / 2);
+    expect(positions.nodes[0].x).toBeLessThanOrEqual(250 + (500 * 0.9) / 2);
   });
 
   it('should place nodes randomly (different positions)', async () => {
-    const testGraph = new Graph({
+    const testGraph = {
       nodes: [
         { id: 'a', data: {} },
         { id: 'b', data: {} },
@@ -206,42 +177,31 @@ describe('layout random', () => {
         { id: 'e', data: {} },
       ],
       edges: [],
-    });
+    };
     const layout = new RandomLayout({
       center: [250, 250],
       width: 500,
       height: 500,
     });
-    const positions = await layout.execute(testGraph);
+    await layout.execute(testGraph);
 
+    const positions = calculatePositions(layout);
     // All nodes should have different positions (with high probability)
-    const posSet = new Set(
-      positions.nodes.map((n) => `${n.data.x},${n.data.y}`),
-    );
+    const posSet = new Set(positions.nodes.map((n) => `${n.x},${n.y}`));
     expect(posSet.size).toBe(positions.nodes.length);
   });
 
   it('should verify all positions are valid numbers', async () => {
-    const positions = await random.execute(graph);
+    await random.execute(data);
+    const positions = calculatePositions(random);
     positions.nodes.forEach((node) => {
-      expect(Number.isFinite(node.data.x)).toBe(true);
-      expect(Number.isFinite(node.data.y)).toBe(true);
-    });
-  });
-
-  it('should preserve edges', async () => {
-    const positions = await random.execute(graph);
-    expect(positions.edges.length).toBe(graph.getAllEdges().length);
-    positions.edges.forEach((edge, i) => {
-      const originalEdge = graph.getAllEdges()[i];
-      expect(edge.id).toBe(originalEdge.id);
-      expect(edge.source).toBe(originalEdge.source);
-      expect(edge.target).toBe(originalEdge.target);
+      expect(Number.isFinite(node.x)).toBe(true);
+      expect(Number.isFinite(node.y)).toBe(true);
     });
   });
 
   it('should work with graph with edges', async () => {
-    const connectedGraph = new Graph({
+    const connectedGraph = {
       nodes: [
         { id: 'a', data: {} },
         { id: 'b', data: {} },
@@ -254,15 +214,16 @@ describe('layout random', () => {
         { id: 'e3', source: 'c', target: 'd', data: {} },
         { id: 'e4', source: 'd', target: 'a', data: {} },
       ],
-    });
+    };
     const layout = new RandomLayout({
       center: [250, 250],
       width: 500,
       height: 500,
     });
-    const positions = await layout.execute(connectedGraph);
-    await renderNodesAndEdges(canvas, positions);
+    await layout.execute(connectedGraph);
+    await renderNodesAndEdges(canvas, layout);
 
+    const positions = calculatePositions(layout);
     expect(positions.nodes).toHaveLength(4);
     expect(positions.edges).toHaveLength(4);
   });
@@ -272,26 +233,27 @@ describe('layout random', () => {
       id: `node${i}`,
       data: {},
     }));
-    const largeGraph = new Graph({
+    const largeGraph = {
       nodes: manyNodes as any,
       edges: [],
-    });
+    };
     const layout = new RandomLayout({
       center: [250, 250],
       width: 500,
       height: 500,
     });
-    const positions = await layout.execute(largeGraph);
+    await layout.execute(largeGraph);
 
+    const positions = calculatePositions(layout);
     expect(positions.nodes).toHaveLength(100);
     positions.nodes.forEach((node) => {
-      expect(Number.isFinite(node.data.x)).toBe(true);
-      expect(Number.isFinite(node.data.y)).toBe(true);
+      expect(Number.isFinite(node.x)).toBe(true);
+      expect(Number.isFinite(node.y)).toBe(true);
     });
   });
 
   it('should handle disconnected components', async () => {
-    const disconnectedGraph = new Graph({
+    const disconnectedGraph = {
       nodes: [
         { id: 'a', data: {} },
         { id: 'b', data: {} },
@@ -302,14 +264,15 @@ describe('layout random', () => {
         { id: 'e1', source: 'a', target: 'b', data: {} },
         { id: 'e2', source: 'c', target: 'd', data: {} },
       ],
-    });
+    };
     const layout = new RandomLayout({
       center: [250, 250],
       width: 500,
       height: 500,
     });
-    const positions = await layout.execute(disconnectedGraph);
-    await renderNodesAndEdges(canvas, positions);
+
+    await layout.execute(disconnectedGraph);
+    await renderNodesAndEdges(canvas, layout);
     await expect(canvas).toMatchSnapshot(__filename, 'disconnected-graph');
   });
 });
