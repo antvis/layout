@@ -1,5 +1,5 @@
 import { BaseLayoutWithIterations } from '../base-layout';
-import type { GraphData, NodeData } from '../types/data';
+import type { NodeData } from '../types/data';
 import type { ID } from '../types/id';
 import type { Position } from '../types/position';
 import {
@@ -7,7 +7,7 @@ import {
   getNestedValue,
   normalizeViewport,
 } from '../util';
-import { LayoutModel } from '../util/model';
+import { initModelNodePosition, LayoutModel } from '../util/model';
 import { Simulation } from './simulation';
 import type {
   FruchtermanLayoutOptions,
@@ -55,8 +55,6 @@ export class FruchtermanLayout extends BaseLayoutWithIterations<FruchtermanLayou
   }
 
   protected async layout(): Promise<void> {
-    this.model.init();
-
     const opts = this.normalizeOptions(this.options);
     this.options = opts;
 
@@ -67,6 +65,9 @@ export class FruchtermanLayout extends BaseLayoutWithIterations<FruchtermanLayou
       applySingleNodeLayout(this.model, center, dimensions);
       return;
     }
+
+    const { width, height } = opts;
+    initModelNodePosition(this.model, width, height);
 
     const simulation = this.setSimulation(this.model, opts);
 
@@ -84,17 +85,15 @@ export class FruchtermanLayout extends BaseLayoutWithIterations<FruchtermanLayou
     model: LayoutModel,
     options: NormalizedFruchtermanLayoutOptions,
   ): Simulation {
+    if (this.simulation) {
+      this.simulation.off('tick');
+    }
+
     const simulation = this.simulation || new Simulation(model, options);
 
-    this.simulation = simulation.on('tick', () =>
-      this.options.onTick?.(this.getResult()),
-    );
+    this.simulation = simulation.on('tick', () => this.options.onTick?.(this));
 
     return simulation;
-  }
-
-  private getResult(): GraphData {
-    return this.model.getGraphData();
   }
 
   public restart(): void {
@@ -110,12 +109,10 @@ export class FruchtermanLayout extends BaseLayoutWithIterations<FruchtermanLayou
     if (this.simulation) this.simulation.stop();
   }
 
-  public tick(iterations: number = 1): GraphData {
+  public tick(iterations: number = 1): void {
     if (this.simulation) {
       this.simulation.tick(iterations);
     }
-
-    return this.getResult();
   }
 
   public setFixedPosition(id: ID, position: Position | null): void {

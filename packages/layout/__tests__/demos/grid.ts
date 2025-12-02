@@ -52,8 +52,9 @@ export function render(gui?: GUI) {
       nodeSize: options.nodeSize,
       nodeSpacing: options.nodeSpacing,
     };
-    const positions = await layout.execute(data, layout.options);
-    renderer.render(positions, {
+    await layout.execute(data, layout.options);
+
+    renderer.render(layout, {
       showLabel: true,
       nodeRadius: options.nodeSize / 2,
       labelStyle: {

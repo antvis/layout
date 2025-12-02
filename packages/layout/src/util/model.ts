@@ -1,24 +1,15 @@
-import { EdgeFieldMapping, NodeFieldMapping } from '../base-layout/types';
-import type { EdgeData, GraphData, NodeData } from '../types/data';
+import { isNil } from '@antv/util';
+import type { LayoutModelOptions } from '../base-layout/types';
+import type {
+  EdgeData,
+  GraphData,
+  LayoutEdge,
+  LayoutNode,
+  ModelEdge,
+  ModelNode,
+  NodeData,
+} from '../types/data';
 import type { ID } from '../types/id';
-import type { LayoutEdge, LayoutNode } from '../types/layout';
-import { extractFieldValues } from './data';
-import { clone, setNestedValue } from './object';
-import { normalizeViewport } from './viewport';
-
-export interface LayoutModelOptions<
-  N extends NodeData = NodeData,
-  E extends EdgeData = EdgeData,
-> {
-  /** 节点字段映射 */
-  nodeFields?: NodeFieldMapping;
-  /** 边字段映射 */
-  edgeFields?: EdgeFieldMapping;
-  /** 布局区域宽度 */
-  width?: number;
-  /** 布局区域高度 */
-  height?: number;
-}
 
 const getEdgeId = (edge: EdgeData): string => {
   return edge.id || `$${edge.source}-$${edge.target}`;
@@ -28,16 +19,8 @@ export class LayoutModel<
   N extends NodeData = NodeData,
   E extends EdgeData = EdgeData,
 > {
-  public readonly original: GraphData<N, E>;
-  public readonly nodeMap: Map<ID, LayoutNode<N>>;
-  public readonly edgeMap: Map<ID, LayoutEdge<E>>;
-
-  protected config = {
-    inputNodeAttrs: ['id', 'x', 'y', 'z', 'vx', 'vy', 'vz', 'fx', 'fy', 'fz'],
-    outputNodeAttrs: ['x', 'y', 'z', 'vx', 'vy', 'vz'],
-    inputEdgeAttrs: ['id', 'source', 'target', 'controlPoints'],
-    outputEdgeAttrs: ['controlPoints'],
-  };
+  public readonly nodeMap: Map<ID, ModelNode<N>>;
+  public readonly edgeMap: Map<ID, ModelEdge<E>>;
 
   private degreeCache?: Map<ID, { in: number; out: number; both: number }>;
 
@@ -45,126 +28,21 @@ export class LayoutModel<
   private outAdjacencyCache?: Map<ID, Set<ID>>;
   private bothAdjacencyCache?: Map<ID, Set<ID>>;
 
-  /** 缓存的结果对象，用于避免每次 tick 都创建新对象 */
-  private resultCache?: GraphData<N, E>;
-
-  private readonly options: Required<LayoutModelOptions<N, E>>;
-
   constructor(data: GraphData<N, E>, options: LayoutModelOptions<N, E> = {}) {
-    const nodeFields = normalizeFieldMapping<NodeFieldMapping>(
-      this.config.inputNodeAttrs,
-      options.nodeFields || {},
-    );
-
-    const edgeFields = normalizeFieldMapping<EdgeFieldMapping>(
-      this.config.inputEdgeAttrs,
-      options.edgeFields || {},
-    );
-
-    const { nodes, edges } = extractFieldValues<N, E>(
-      data,
-      nodeFields,
-      edgeFields,
-    );
-
-    this.options = {
-      nodeFields,
-      edgeFields,
-      ...normalizeViewport(options),
-    };
-
-    this.original = data;
-    this.nodeMap = nodes;
-    this.edgeMap = edges;
+    this.nodeMap = extractNodeData<N>(data.nodes, options.node);
+    this.edgeMap = extractEdgeData<E>(data.edges || [], options.edge);
   }
 
-  public init(): void {
-    this.nodeMap.forEach((node) => {
-      if (node.x === undefined) node.x = Math.random() * this.options.width;
-      if (node.y === undefined) node.y = Math.random() * this.options.height;
-      if (node.z === undefined) node.z = 0;
-    });
-  }
-
-  /**
-   * 将布局计算结果（x, y, z, controlPoints）同步到原始数据中
-   * @returns 原始数据对象（已修改）
-   */
-  public syncToGraphData(): GraphData<N, E> {
-    this.syncPositions(this.original);
-    return this.original;
-  }
-
-  /**
-   * 获取当前布局结果，返回缓存的对象引用，不修改原始数据
-   * @returns 缓存的结果对象（每次调用返回同一引用）
-   */
-  public getGraphData(): GraphData<N, E> {
-    if (!this.resultCache) {
-      if (typeof structuredClone === 'function') {
-        this.resultCache = structuredClone(this.original);
-      } else {
-        this.resultCache = {
-          nodes: this.original.nodes.map((node) => clone(node)),
-          edges: this.original.edges?.map((edge) => clone(edge)),
-        };
-      }
-    }
-
-    this.syncPositions(this.resultCache);
-    return this.resultCache;
-  }
-
-  /**
-   * 将布局节点的位置信息同步到目标数据对象中
-   */
-  private syncPositions(target: GraphData<N, E>): void {
-    const { nodes, edges } = target;
-    const fields: Record<string, string> = {};
-
-    [...this.config.outputNodeAttrs, ...this.config.outputEdgeAttrs].forEach(
-      (attr) => {
-        fields[attr] =
-          this.options.nodeFields?.[attr as keyof NodeFieldMapping] ||
-          `data.${attr}`;
-      },
-    );
-
-    nodes.forEach((node) => {
-      const layoutNode = this.nodeMap.get(node.id);
-      if (!layoutNode) return;
-
-      this.config.outputNodeAttrs.forEach((attr: string) => {
-        const value = layoutNode[attr as keyof LayoutNode<N>];
-        if (value === undefined) return;
-
-        setNestedValue(node, fields?.[attr], value);
-      });
-    });
-
-    if (edges) {
-      edges.forEach((edge) => {
-        const edgeId = getEdgeId(edge);
-        const layoutEdge = this.edgeMap.get(edgeId);
-
-        if (!layoutEdge) return;
-
-        this.config.outputEdgeAttrs.forEach((attr: string) => {
-          const value = layoutEdge[attr as keyof LayoutEdge<E>];
-          if (value === undefined) return;
-
-          setNestedValue(edge, fields?.[attr], value);
-        });
-      });
-    }
-  }
-
-  public nodes(): LayoutNode<N>[] {
+  public nodes(): ModelNode<N>[] {
     return Array.from(this.nodeMap.values());
   }
 
-  public node(id: ID): LayoutNode<N> | undefined {
+  public node(id: ID): ModelNode<N> | undefined {
     return this.nodeMap.get(id);
+  }
+
+  public forEachNode(callback: (node: ModelNode<N>) => void): void {
+    this.nodeMap.forEach(callback);
   }
 
   public originalNode(id: ID): N | undefined {
@@ -176,12 +54,16 @@ export class LayoutModel<
     return this.nodeMap.size;
   }
 
-  public edges(): LayoutEdge<E>[] {
+  public edges(): ModelEdge<E>[] {
     return Array.from(this.edgeMap.values());
   }
 
-  public edge(id: ID): LayoutEdge<E> | undefined {
+  public edge(id: ID): ModelEdge<E> | undefined {
     return this.edgeMap.get(id);
+  }
+
+  public forEachEdge(callback: (edge: ModelEdge<E>) => void): void {
+    this.edgeMap.forEach(callback);
   }
 
   public originalEdge(id: ID): E | undefined {
@@ -247,29 +129,28 @@ export class LayoutModel<
     this.inAdjacencyCache = undefined;
     this.outAdjacencyCache = undefined;
     this.bothAdjacencyCache = undefined;
-    this.resultCache = undefined;
   }
 
   private buildDegreeCache(): void {
     this.degreeCache = new Map();
 
-    // 初始化，确保孤立节点度数为 0
-    for (const id of this.nodeMap.keys()) {
-      this.degreeCache.set(id, { in: 0, out: 0, both: 0 });
-    }
-
     for (const edge of this.edgeMap.values()) {
-      if (edge.source === edge.target) {
-        // 自环处理：通常算作 1 in + 1 out，度数贡献视具体定义而定
-        // 这里保持简单累加
-      }
+      const { source, target } = edge;
 
+      if (edge.source === edge.target) continue;
+
+      if (!this.degreeCache.has(source)) {
+        this.degreeCache.set(source, { in: 0, out: 0, both: 0 });
+      }
       const sourceDeg = this.degreeCache.get(edge.source);
       if (sourceDeg) {
         sourceDeg.out++;
         sourceDeg.both++;
       }
 
+      if (!this.degreeCache.has(target)) {
+        this.degreeCache.set(target, { in: 0, out: 0, both: 0 });
+      }
       const targetDeg = this.degreeCache.get(edge.target);
       if (targetDeg) {
         targetDeg.in++;
@@ -281,22 +162,19 @@ export class LayoutModel<
   private buildAdjacencyCache(): void {
     this.inAdjacencyCache = new Map();
     this.outAdjacencyCache = new Map();
-    // 不默认构建 bothAdjacencyCache，节省内存
-
-    // 初始化 Set
-    for (const id of this.nodeMap.keys()) {
-      this.inAdjacencyCache.set(id, new Set());
-      this.outAdjacencyCache.set(id, new Set());
-    }
 
     for (const edge of this.edgeMap.values()) {
-      // 过滤掉悬挂边（source 或 target 不在节点列表中）
-      // 如果 extractFieldValues 保证了数据完整性，这里可以直接断言
-      if (!this.nodeMap.has(edge.source) || !this.nodeMap.has(edge.target)) {
+      if (!this.nodeMap.has(edge.source) || !this.nodeMap.has(edge.target))
         continue;
-      }
 
+      if (!this.outAdjacencyCache!.has(edge.source)) {
+        this.outAdjacencyCache!.set(edge.source, new Set());
+      }
       this.outAdjacencyCache.get(edge.source)!.add(edge.target);
+
+      if (!this.inAdjacencyCache!.has(edge.target)) {
+        this.inAdjacencyCache!.set(edge.target, new Set());
+      }
       this.inAdjacencyCache.get(edge.target)!.add(edge.source);
     }
   }
@@ -308,16 +186,95 @@ export class LayoutModel<
   }
 }
 
-function normalizeFieldMapping<T>(fields: string[], mapping: T): T {
-  const normalized = {};
-
-  const topFields = ['id', 'source', 'target'];
-
-  for (const field of fields) {
-    const value = mapping[field as keyof typeof mapping];
-    normalized[field] =
-      value || (topFields.includes(field) ? field : `data.${field}`);
+function extractNodeData<N extends NodeData = NodeData>(
+  nodes: N[],
+  node?: (datum: N) => LayoutNode,
+): Map<ID, ModelNode<N>> {
+  if (!nodes) {
+    throw new Error('Data.nodes is required');
   }
 
-  return normalized as T;
+  const result = new Map<ID, ModelNode<N>>();
+  const fields = ['id', 'x', 'y', 'z', 'vx', 'vy', 'vz', 'fx', 'fy', 'fz'];
+
+  for (const datum of nodes) {
+    const nodeData: ModelNode<N> = { _original: datum } as ModelNode<N>;
+
+    for (const field of fields) {
+      const value = datum[field];
+      if (isNil(value)) continue;
+      nodeData[field] = value;
+    }
+
+    if (node) {
+      const customFields = node(datum);
+      for (const key in customFields) {
+        const value = customFields[key];
+        if (isNil(value)) continue;
+        nodeData[key] = value;
+      }
+    }
+
+    if (isNil(nodeData.id)) {
+      throw new Error(`Node is missing id field`);
+    }
+
+    result.set(nodeData.id, nodeData);
+  }
+
+  return result;
+}
+
+function extractEdgeData<E extends EdgeData = EdgeData>(
+  edges: E[],
+  edge?: (datum: E) => LayoutEdge,
+): Map<ID, ModelEdge<E>> {
+  const result = new Map<ID, ModelEdge<E>>();
+  const fields = ['id', 'source', 'target', 'controlPoints'];
+
+  for (const datum of edges) {
+    const edgeData: ModelEdge<E> = { _original: datum } as ModelEdge<E>;
+
+    for (const field of fields) {
+      const value = datum[field];
+      if (isNil(value)) continue;
+      edgeData[field] = value;
+    }
+
+    if (edge) {
+      const customFields = edge(datum);
+      for (const key in customFields) {
+        const value = customFields[key];
+        if (isNil(value)) continue;
+        edgeData[key] = value;
+      }
+    }
+
+    if (isNil(edgeData.source) || isNil(edgeData.target)) {
+      throw new Error(`Edge is missing source or target field`);
+    }
+
+    if (isNil(edgeData.id)) {
+      edgeData.id = getEdgeId(datum);
+    }
+
+    result.set(edgeData.id, edgeData);
+  }
+
+  return result;
+}
+
+export function initModelNodePosition<N extends NodeData = NodeData>(
+  model: LayoutModel<N>,
+  width: number,
+  height: number,
+): void {
+  model.forEachNode((node) => {
+    if (isNil(node.x)) {
+      node.x = Math.random() * width;
+    }
+    if (isNil(node.y)) {
+      node.y = Math.random() * height;
+    }
+  });
 }

@@ -25,7 +25,7 @@ export class RandomLayout extends BaseLayout<RandomLayoutOptions> {
     const randomCoord = (size: number) =>
       (Math.random() - 0.5) * layoutScale * size;
 
-    this.model.nodes().forEach((node) => {
+    this.model.forEachNode((node) => {
       node.x = randomCoord(width) + center[0];
       node.y = randomCoord(height) + center[1];
     });

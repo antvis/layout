@@ -512,11 +512,12 @@ export class Simulation extends EventEmitter {
       this.clusterMap.clear();
       this.clusterMap = null;
     }
-    this.context.model.destroy();
-    this.context.options = null as unknown as SimulationOptions;
 
     this.off('tick');
     this.off('end');
+
+    // @ts-ignore
+    this.context = null;
 
     this.currentIteration = 0;
     this.isRunning = false;

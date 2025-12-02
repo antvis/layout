@@ -153,8 +153,8 @@ export class GridLayout extends BaseLayout<GridLayoutOptions> {
     let cellHeight = condense ? 0 : height / rcs.rows;
 
     if (preventOverlap) {
-      this.model.nodes().forEach((node) => {
-        const nodeData = this.model.originalNode(node.id);
+      this.model.forEachNode((node) => {
+        const nodeData = node._original;
         const [nodeW, nodeH] = parseSize(nodeSize(nodeData) || 30);
 
         const p =
@@ -178,8 +178,8 @@ export class GridLayout extends BaseLayout<GridLayoutOptions> {
     // get a cache of all the manual positions
     const id2manPos: IdMapRowAndCol = {};
 
-    this.model.nodes().forEach((node) => {
-      const nodeData = this.model.originalNode(node.id)!;
+    this.model.forEachNode((node) => {
+      const nodeData = node._original;
 
       let rcPos;
       if (position) {

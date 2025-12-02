@@ -1,5 +1,6 @@
 import type { BaseLayoutOptions } from '../base-layout';
-import type { GraphData, NodeData } from '../types/data';
+import { Layout } from '../base-layout/types';
+import type { NodeData } from '../types/data';
 
 /**
  * <zh/> Fruchterman 力导布局配置项
@@ -62,7 +63,7 @@ export interface FruchtermanLayoutOptions extends BaseLayoutOptions {
    * <en/> The callback function for each iteration
    * @param data - <zh/> 当前迭代的布局数据 | <en/> Current layout data
    */
-  onTick?: (data: GraphData) => void;
+  onTick?: (layout: Layout<FruchtermanLayoutOptions>) => void;
   /**
    * <zh/> 是否使用动画自动运行迭代。为 false 时，需要手动调用 tick() 方法来驱动迭代
    *

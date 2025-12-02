@@ -15,8 +15,8 @@ export function render(gui?: GUI) {
   });
 
   const relayout = async (options = {}) => {
-    const positions = await random.execute(data, options);
-    renderer.render(positions);
+    await random.execute(data, options);
+    renderer.render(random);
   };
 
   relayout();

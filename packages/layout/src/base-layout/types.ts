@@ -1,43 +1,35 @@
-import type { EdgeData, GraphData, NodeData } from '../types/data';
+import type {
+  EdgeData,
+  GraphData,
+  LayoutEdge,
+  LayoutNode,
+  NodeData,
+} from '../types/data';
 import type { Point } from '../types/point';
 
-export interface NodeFieldMapping {
-  /** 支持嵌套路径，如 'id' 或 'data.id' */
-  id?: string;
-  x?: string;
-  y?: string;
-  z?: string;
-  fx?: string;
-  fy?: string;
-  fz?: string;
-  vx?: string;
-  vy?: string;
-  vz?: string;
-}
+export interface LayoutModelOptions<
+  N extends NodeData = NodeData,
+  E extends EdgeData = EdgeData,
+> {
+  /**
+   * <zh/> 自定义节点属性映射
+   *
+   * <en/> Custom node field mapping
+   */
+  node?: (datum: N) => LayoutNode;
 
-export interface EdgeFieldMapping {
-  id?: string;
-  source?: string;
-  target?: string;
-  controlPoints?: string;
+  /**
+   * <zh/> 自定义边属性映射
+   *
+   * <en/> Custom edge field mapping
+   */
+  edge?: (datum: E) => LayoutEdge;
 }
 
 export interface BaseLayoutOptions<
   N extends NodeData = NodeData,
   E extends EdgeData = EdgeData,
-> {
-  /**
-   * <zh/> 节点字段映射
-   * <en/> Node field mapping
-   */
-  nodeFields?: NodeFieldMapping;
-
-  /**
-   * <zh/> 边字段映射
-   * <en/> Edge field mapping
-   */
-  edgeFields?: EdgeFieldMapping;
-
+> extends LayoutModelOptions<N, E> {
   /**
    * <zh/> 布局中心
    * <en/> Layout center
@@ -59,23 +51,23 @@ export interface BaseLayoutOptions<
 
 export interface Layout<LayoutOptions> {
   /**
-   * <zh/> 传入数据并执行布局计算,结果写入原始数据
+   * <zh/> 执行布局计算
    *
-   * <en/> Passes in the data and performs the layout calculation, modifying the original data
-   * @param graph - <zh/> 规范化数据 | <en/> Normalized data
-   * @param options - <zh/> 布局配置 | <en/> Layout options
-   * @returns Promise<void>
+   * <en/> Execute layout calculation
    */
-  assign(graph: GraphData, options?: LayoutOptions): Promise<void>;
+  execute(graph: GraphData, options?: LayoutOptions): Promise<void>;
   /**
-   * <zh/> 传入数据并执行布局计算，且结果不写入原始数据，作为返回值
+   * <zh/> 遍历节点布局结果
    *
-   * <en/> Passes in the data and performs the layout calculation, and the result is not written to the original data, but returned as a value
-   * @param graph - <zh/> 规范化数据 | <en/> Normalized data
-   * @param options - <zh/> 布局配置 | <en/> Layout options
-   * @returns <zh/> 布局结果 | <en/> Layout result
+   * <en/> Iterate over node layout results
    */
-  execute(graph: GraphData, options?: LayoutOptions): Promise<GraphData>;
+  forEachNode(callback: (node: LayoutNode) => void): void;
+  /**
+   * <zh/> 遍历边布局结果
+   *
+   * <en/> Iterate over edge layout results
+   */
+  forEachEdge(callback: (edge: LayoutEdge) => void): void;
   /**
    * <zh/> 布局计算的配置项
    *
@@ -103,11 +95,11 @@ export interface LayoutWithIterations<LayoutOptions>
    * This method is useful for running the simulation manually.
    * @see https://github.com/d3/d3-force#simulation_stop
    */
-  stop: () => void;
+  stop(): void;
 
   /**
    * Manually steps the simulation by the specified number of iterations.
    * @see https://github.com/d3/d3-force#simulation_tick
    */
-  tick: (iterations?: number) => GraphData;
+  tick(iterations?: number): void;
 }

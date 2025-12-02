@@ -15,8 +15,13 @@ export async function render(gui?: GUI) {
   const layout = new FruchtermanLayout({
     width,
     height,
-    onTick: (positions: any) => {
-      renderer.handleTick(positions, { nodeRadius: 10, showLabel: true });
+    node: (d) => ({
+      id: d.id,
+      x: d.data.x,
+      y: d.data.y,
+    }),
+    onTick: (layout) => {
+      renderer.handleTick(layout, { nodeRadius: 10, showLabel: true });
     },
   });
 

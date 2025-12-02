@@ -2,6 +2,8 @@ import { Canvas, Circle, Line, Text } from '@antv/g';
 import { Renderer } from '@antv/g-canvas';
 import { deepMix } from '@antv/util';
 import interact from 'interactjs';
+import { Layout } from '../../src/base-layout/types';
+import { LayoutEdge, LayoutNode } from '../../src/types';
 
 export interface GraphNode {
   id: string | number;
@@ -120,19 +122,19 @@ export class GraphRenderer {
    * @param data 图数据
    * @param options 渲染选项
    */
-  render(data: GraphData, options: RenderOptions = {}): void {
+  render(layout: Layout<any>, options: RenderOptions = {}): void {
     const opts = deepMix({}, this.defaultOptions, options);
-    this.currentData = data;
+    // this.currentData = data;
 
     if (opts.clearCanvas) {
       this.clear();
     }
 
     if (!this.isInitialized) {
-      this.createElements(data, opts);
+      this.createElements(layout, opts);
       this.isInitialized = true;
     } else {
-      this.updateElements(data);
+      this.updateElements(layout);
     }
   }
 
@@ -141,20 +143,22 @@ export class GraphRenderer {
    * @param data 图数据
    * @param options 渲染选项
    */
-  handleTick(data: GraphData, options: RenderOptions = {}): void {
-    this.render(data, options);
+  handleTick(layout: Layout<any>, options: RenderOptions = {}): void {
+    this.render(layout, options);
   }
 
   /**
    * 创建节点和边的图形元素
    */
   private createElements(
-    data: GraphData,
+    layout: Layout<any>,
     options: Required<RenderOptions>,
   ): void {
     // 先创建边（在底层）
-    data.edges?.forEach((edge) => {
-      const line = this.createEdge(edge, data.nodes, options);
+
+    // layout.forEachEdge((edge: LayoutEdge) => {}
+    layout.forEachEdge((edge) => {
+      const line = this.createEdge(edge, options);
       if (line) {
         this.canvas.appendChild(line);
         this.edgeElements.set(this.getEdgeId(edge), line);
@@ -162,7 +166,7 @@ export class GraphRenderer {
     });
 
     // 再创建节点（在上层）
-    data.nodes.forEach((node) => {
+    layout.forEachNode((node) => {
       const circle = this.createNode(node, options);
       this.canvas.appendChild(circle);
       this.nodeElements.set(node.id, circle);
@@ -178,23 +182,15 @@ export class GraphRenderer {
    * 创建边元素
    */
   private createEdge(
-    edge: GraphEdge,
-    nodes: GraphNode[],
+    edge: LayoutEdge,
     options: Required<RenderOptions>,
   ): Line | null {
-    const sourceNode = nodes.find((n) => n.id === edge.source);
-    const targetNode = nodes.find((n) => n.id === edge.target);
-
-    if (!sourceNode || !targetNode) {
-      return null;
-    }
-
     return new Line({
       style: {
-        x1: sourceNode.data.x,
-        y1: sourceNode.data.y,
-        x2: targetNode.data.x,
-        y2: targetNode.data.y,
+        x1: edge.sourceNode.x,
+        y1: edge.sourceNode.y,
+        x2: edge.targetNode.x,
+        y2: edge.targetNode.y,
         ...options.edgeStyle,
         pointerEvents: 'none', // 边不响应鼠标事件
       },
@@ -205,14 +201,14 @@ export class GraphRenderer {
    * 创建节点元素
    */
   private createNode(
-    node: GraphNode,
+    node: LayoutNode,
     options: Required<RenderOptions>,
   ): Circle {
     const circle = new Circle({
       id: `node-${node.id}`,
       style: {
-        cx: node.data.x,
-        cy: node.data.y,
+        cx: node.x,
+        cy: node.y,
         r: options.nodeRadius,
         fill: node.style?.fill || options.nodeStyle.fill,
         stroke: node.style?.stroke || options.nodeStyle.stroke,
@@ -364,30 +360,29 @@ export class GraphRenderer {
   /**
    * 更新节点和边的位置
    */
-  private updateElements(data: GraphData): void {
+  private updateElements(layout: Layout<any>): void {
     // 更新边
-    data.edges?.forEach((edge) => {
+    layout.forEachEdge((edge) => {
       const element = this.edgeElements.get(this.getEdgeId(edge));
-      const sourceNode = data.nodes.find((n) => n.id === edge.source);
-      const targetNode = data.nodes.find((n) => n.id === edge.target);
+      const { sourceNode, targetNode } = edge;
 
       if (element && sourceNode && targetNode) {
         element.attr({
-          x1: sourceNode.data.x,
-          y1: sourceNode.data.y,
-          x2: targetNode.data.x,
-          y2: targetNode.data.y,
+          x1: sourceNode.x,
+          y1: sourceNode.y,
+          x2: targetNode.x,
+          y2: targetNode.y,
         });
       }
     });
 
     // 更新节点
-    data.nodes.forEach((node) => {
+    layout.forEachNode((node) => {
       const element = this.nodeElements.get(node.id);
       if (element) {
         element.attr({
-          cx: node.data.x,
-          cy: node.data.y,
+          cx: node.x,
+          cy: node.y,
         });
       }
     });
