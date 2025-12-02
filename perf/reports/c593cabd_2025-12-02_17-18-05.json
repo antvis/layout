@@ -1,0 +1,449 @@
+{
+  "version": "1.0",
+  "device": {
+    "os": {
+      "arch": "arm64",
+      "distro": "macOS",
+      "serial": "c593cabd957ebdc6590100bbf43ec8c3af85670501a9e3f1a8d29795b0477de9"
+    },
+    "cpu": {
+      "manufacturer": "Apple",
+      "brand": "M2",
+      "speed": 2.4,
+      "cores": 8
+    },
+    "memory": {
+      "total": 16384,
+      "free": 128.828125
+    },
+    "gpu": {
+      "vendor": "Apple",
+      "model": "Apple M2",
+      "cores": "10"
+    }
+  },
+  "repo": "5b460f12932b267aaa886dc34164d9d5a5dd5b17",
+  "client": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/141.0.7390.37 Safari/537.36",
+  "reports": {
+    "circularAntvDevJsLarge": {
+      "time": [
+        {
+          "min": 15.600000023841858,
+          "max": 23.30000001192093,
+          "median": 21.900000005960464,
+          "avg": 20.7944444467624,
+          "variance": 3.706080255681351,
+          "reliable": true,
+          "key": "circular-antv-dev-js (large: 20000 nodes, 20000 edges)"
+        }
+      ],
+      "status": "passed"
+    },
+    "circularAntvDevJsMedium": {
+      "time": [
+        {
+          "min": 6.899999976158142,
+          "max": 14.899999976158142,
+          "median": 10.099999994039536,
+          "avg": 9.955555553237597,
+          "variance": 5.072469117118988,
+          "reliable": true,
+          "key": "circular-antv-dev-js (medium: 10000 nodes, 10000 edges)"
+        }
+      ],
+      "status": "passed"
+    },
+    "circularAntvDevJsSmall": {
+      "time": [
+        {
+          "min": 1.2999999821186066,
+          "max": 8.800000011920929,
+          "median": 3.5,
+          "avg": 3.5000000016556845,
+          "variance": 2.3277777691682178,
+          "reliable": false,
+          "key": "circular-antv-dev-js (small: 2000 nodes, 2000 edges)"
+        }
+      ],
+      "status": "passed"
+    },
+    "circularAntvDevJsTiny": {
+      "time": [
+        {
+          "min": 0.30000001192092896,
+          "max": 3.300000011920929,
+          "median": 0.800000011920929,
+          "avg": 0.888888892200258,
+          "variance": 0.17320987535847573,
+          "reliable": false,
+          "key": "circular-antv-dev-js (tiny: 500 nodes, 500 edges)"
+        }
+      ],
+      "status": "passed"
+    },
+    "circularAntvDevJsXlarge": {
+      "time": [
+        {
+          "min": 42.70000001788139,
+          "max": 75.90000000596046,
+          "median": 53.900000005960464,
+          "avg": 56.86666666136848,
+          "variance": 96.73333334470236,
+          "reliable": true,
+          "key": "circular-antv-dev-js (xlarge: 50000 nodes, 50000 edges)"
+        }
+      ],
+      "status": "passed"
+    },
+    "circularAntvNpmJsLarge": {
+      "time": [
+        {
+          "min": 14.300000011920929,
+          "max": 46.5,
+          "median": 21.599999994039536,
+          "avg": 21.877777780095737,
+          "variance": 11.669506164995243,
+          "reliable": true,
+          "key": "circular-antv-1.2.14_beta_8-js (large: 20000 nodes, 20000 edges)"
+        }
+      ],
+      "status": "passed"
+    },
+    "circularAntvNpmJsMedium": {
+      "time": [
+        {
+          "min": 5.699999988079071,
+          "max": 16.900000005960464,
+          "median": 10.700000017881393,
+          "avg": 11.249999998344315,
+          "variance": 8.82027775913477,
+          "reliable": true,
+          "key": "circular-antv-1.2.14_beta_8-js (medium: 10000 nodes, 10000 edges)"
+        }
+      ],
+      "status": "passed"
+    },
+    "circularAntvNpmJsSmall": {
+      "time": [
+        {
+          "min": 1.199999988079071,
+          "max": 6.699999988079071,
+          "median": 2.5,
+          "avg": 2.8499999990065894,
+          "variance": 1.7180555504229333,
+          "reliable": false,
+          "key": "circular-antv-1.2.14_beta_8-js (small: 2000 nodes, 2000 edges)"
+        }
+      ],
+      "status": "passed"
+    },
+    "circularAntvNpmJsTiny": {
+      "time": [
+        {
+          "min": 0.29999998211860657,
+          "max": 4.700000017881393,
+          "median": 0.800000011920929,
+          "avg": 0.9777777774466409,
+          "variance": 0.2695061684537818,
+          "reliable": false,
+          "key": "circular-antv-1.2.14_beta_8-js (tiny: 500 nodes, 500 edges)"
+        }
+      ],
+      "status": "passed"
+    },
+    "circularAntvNpmJsXlarge": {
+      "time": [
+        {
+          "min": 42.099999994039536,
+          "max": 69,
+          "median": 46.79999998211861,
+          "avg": 47.96111110846201,
+          "variance": 18.82126545103244,
+          "reliable": true,
+          "key": "circular-antv-1.2.14_beta_8-js (xlarge: 50000 nodes, 50000 edges)"
+        }
+      ],
+      "status": "passed"
+    },
+    "gridAntvDevJsLarge": {
+      "time": [
+        {
+          "min": 15,
+          "max": 25.099999994039536,
+          "median": 20.69999998807907,
+          "avg": 19.87777777512868,
+          "variance": 6.44395062054381,
+          "reliable": true,
+          "key": "grid-antv-dev-js (large: 20000 nodes, 20000 edges)"
+        }
+      ],
+      "status": "passed"
+    },
+    "gridAntvDevJsMedium": {
+      "time": [
+        {
+          "min": 7.5999999940395355,
+          "max": 19.5,
+          "median": 11.599999994039536,
+          "avg": 12.199999998013178,
+          "variance": 8.701111126542092,
+          "reliable": true,
+          "key": "grid-antv-dev-js (medium: 10000 nodes, 10000 edges)"
+        }
+      ],
+      "status": "passed"
+    },
+    "gridAntvDevJsSmall": {
+      "time": [
+        {
+          "min": 2.7000000178813934,
+          "max": 6.800000011920929,
+          "median": 4.699999988079071,
+          "avg": 4.611111112766796,
+          "variance": 0.3832098747182776,
+          "reliable": false,
+          "key": "grid-antv-dev-js (small: 2000 nodes, 2000 edges)"
+        }
+      ],
+      "status": "passed"
+    },
+    "gridAntvDevJsTiny": {
+      "time": [
+        {
+          "min": 1.4000000059604645,
+          "max": 4.899999976158142,
+          "median": 2,
+          "avg": 2.005555553568734,
+          "variance": 0.13274691598650862,
+          "reliable": false,
+          "key": "grid-antv-dev-js (tiny: 500 nodes, 500 edges)"
+        }
+      ],
+      "status": "passed"
+    },
+    "gridAntvDevJsXlarge": {
+      "time": [
+        {
+          "min": 37.20000001788139,
+          "max": 54.900000005960464,
+          "median": 41.5,
+          "avg": 42.38888889054457,
+          "variance": 25.497654271817503,
+          "reliable": true,
+          "key": "grid-antv-dev-js (xlarge: 50000 nodes, 50000 edges)"
+        }
+      ],
+      "status": "passed"
+    },
+    "gridAntvNpmJsLarge": {
+      "time": [
+        {
+          "min": 31.69999998807907,
+          "max": 76.5,
+          "median": 37.900000005960464,
+          "avg": 40.7111111101177,
+          "variance": 53.71209873492335,
+          "reliable": true,
+          "key": "grid-antv-1.2.14_beta_8-js (large: 20000 nodes, 20000 edges)"
+        }
+      ],
+      "status": "passed"
+    },
+    "gridAntvNpmJsMedium": {
+      "time": [
+        {
+          "min": 11.700000017881393,
+          "max": 46.5,
+          "median": 18.599999994039536,
+          "avg": 19.16111111144225,
+          "variance": 19.179043200564237,
+          "reliable": true,
+          "key": "grid-antv-1.2.14_beta_8-js (medium: 10000 nodes, 10000 edges)"
+        }
+      ],
+      "status": "passed"
+    },
+    "gridAntvNpmJsSmall": {
+      "time": [
+        {
+          "min": 2.4000000059604645,
+          "max": 9.599999994039536,
+          "median": 5.4000000059604645,
+          "avg": 5.250000003311369,
+          "variance": 1.9858333332008788,
+          "reliable": false,
+          "key": "grid-antv-1.2.14_beta_8-js (small: 2000 nodes, 2000 edges)"
+        }
+      ],
+      "status": "passed"
+    },
+    "gridAntvNpmJsTiny": {
+      "time": [
+        {
+          "min": 1.0999999940395355,
+          "max": 5,
+          "median": 2.9000000059604645,
+          "avg": 2.911111111442248,
+          "variance": 0.42765432541753057,
+          "reliable": false,
+          "key": "grid-antv-1.2.14_beta_8-js (tiny: 500 nodes, 500 edges)"
+        }
+      ],
+      "status": "passed"
+    },
+    "gridAntvNpmJsXlarge": {
+      "time": [
+        {
+          "min": 87.5,
+          "max": 241.40000000596046,
+          "median": 116.90000000596046,
+          "avg": 126.42222222189109,
+          "variance": 1280.6806169765377,
+          "reliable": true,
+          "key": "grid-antv-1.2.14_beta_8-js (xlarge: 50000 nodes, 50000 edges)"
+        }
+      ],
+      "status": "passed"
+    },
+    "randomAntvDevJsLarge": {
+      "time": [
+        {
+          "min": 5.4000000059604645,
+          "max": 13.200000017881393,
+          "median": 7.5999999940395355,
+          "avg": 8.01666667064031,
+          "variance": 3.0625000112586553,
+          "reliable": true,
+          "key": "random-antv-dev-js (large: 20000 nodes, 20000 edges)"
+        }
+      ],
+      "status": "passed"
+    },
+    "randomAntvDevJsMedium": {
+      "time": [
+        {
+          "min": 2.5999999940395355,
+          "max": 7.0999999940395355,
+          "median": 3.399999976158142,
+          "avg": 3.7777777827448316,
+          "variance": 1.1117283830304205,
+          "reliable": false,
+          "key": "random-antv-dev-js (medium: 10000 nodes, 10000 edges)"
+        }
+      ],
+      "status": "passed"
+    },
+    "randomAntvDevJsSmall": {
+      "time": [
+        {
+          "min": 0.5999999940395355,
+          "max": 7.4000000059604645,
+          "median": 1.800000011920929,
+          "avg": 1.8777777784400516,
+          "variance": 0.21506172862317843,
+          "reliable": false,
+          "key": "random-antv-dev-js (small: 2000 nodes, 2000 edges)"
+        }
+      ],
+      "status": "passed"
+    },
+    "randomAntvDevJsTiny": {
+      "time": [
+        {
+          "min": 0.09999999403953552,
+          "max": 2.5999999940395355,
+          "median": 0.5,
+          "avg": 0.5333333379692502,
+          "variance": 0.1377777801178121,
+          "reliable": false,
+          "key": "random-antv-dev-js (tiny: 500 nodes, 500 edges)"
+        }
+      ],
+      "status": "passed"
+    },
+    "randomAntvDevJsXlarge": {
+      "time": [
+        {
+          "min": 12.799999982118607,
+          "max": 22.80000001192093,
+          "median": 15,
+          "avg": 14.75555555191305,
+          "variance": 2.6880246951403444,
+          "reliable": true,
+          "key": "random-antv-dev-js (xlarge: 50000 nodes, 50000 edges)"
+        }
+      ],
+      "status": "passed"
+    },
+    "randomAntvNpmJsLarge": {
+      "time": [
+        {
+          "min": 8.900000005960464,
+          "max": 13.699999988079071,
+          "median": 11.5,
+          "avg": 11.322222221228811,
+          "variance": 0.8995061797050785,
+          "reliable": true,
+          "key": "random-antv-1.2.14_beta_8-js (large: 20000 nodes, 20000 edges)"
+        }
+      ],
+      "status": "passed"
+    },
+    "randomAntvNpmJsMedium": {
+      "time": [
+        {
+          "min": 5.5,
+          "max": 12.200000017881393,
+          "median": 9.199999988079071,
+          "avg": 9.005555555224419,
+          "variance": 3.3671913513394047,
+          "reliable": true,
+          "key": "random-antv-1.2.14_beta_8-js (medium: 10000 nodes, 10000 edges)"
+        }
+      ],
+      "status": "passed"
+    },
+    "randomAntvNpmJsSmall": {
+      "time": [
+        {
+          "min": 0.9000000059604645,
+          "max": 6.0999999940395355,
+          "median": 2.199999988079071,
+          "avg": 2.233333334326744,
+          "variance": 0.9122222184472614,
+          "reliable": false,
+          "key": "random-antv-1.2.14_beta_8-js (small: 2000 nodes, 2000 edges)"
+        }
+      ],
+      "status": "passed"
+    },
+    "randomAntvNpmJsTiny": {
+      "time": [
+        {
+          "min": 0.19999998807907104,
+          "max": 4,
+          "median": 0.5999999940395355,
+          "avg": 0.6944444444444444,
+          "variance": 0.10385802204226281,
+          "reliable": false,
+          "key": "random-antv-1.2.14_beta_8-js (tiny: 500 nodes, 500 edges)"
+        }
+      ],
+      "status": "passed"
+    },
+    "randomAntvNpmJsXlarge": {
+      "time": [
+        {
+          "min": 27.200000017881393,
+          "max": 75.80000001192093,
+          "median": 39.69999998807907,
+          "avg": 39.03333333465788,
+          "variance": 76.91555547533214,
+          "reliable": true,
+          "key": "random-antv-1.2.14_beta_8-js (xlarge: 50000 nodes, 50000 edges)"
+        }
+      ],
+      "status": "passed"
+    }
+  }
+}
