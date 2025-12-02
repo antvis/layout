@@ -192,8 +192,7 @@ export class Simulation extends EventEmitter {
     const { model, options } = this.context;
     const is3D = options.dimensions === 3;
 
-    const nodes = model.nodes();
-    nodes.forEach((node) => {
+    model.forEachNode((node) => {
       if (this.isNodeFixed(node)) {
         node.x = node.fx!;
         node.y = node.fy!;
@@ -207,7 +206,7 @@ export class Simulation extends EventEmitter {
   private initDisplacements(): void {
     if (!this.displacements) {
       this.displacements = new Map();
-      this.context.model.nodes().forEach((node) => {
+      this.context.model.forEachNode((node) => {
         this.displacements!.set(node.id, { x: 0, y: 0, z: 0 });
       });
     }
@@ -290,8 +289,7 @@ export class Simulation extends EventEmitter {
     const { model, options } = this.context;
     const is3D = options.dimensions === 3;
 
-    const edges = model.edges();
-    edges.forEach((edge) => {
+    model.forEachEdge((edge) => {
       const { source, target } = edge;
 
       if (!source || !target || source === target) {
@@ -356,8 +354,8 @@ export class Simulation extends EventEmitter {
 
     if (!this.clusterMap) {
       this.clusterMap = new Map();
-      const nodes = model.nodes();
-      nodes.forEach((node) => {
+
+      model.forEachNode((node) => {
         const clusterKey = nodeClusterBy(model.originalNode(node.id)!);
         if (!this.clusterMap!.has(clusterKey)) {
           this.clusterMap!.set(clusterKey, {
@@ -381,8 +379,7 @@ export class Simulation extends EventEmitter {
       cluster.count = 0;
     });
 
-    const nodes = model.nodes();
-    nodes.forEach((node) => {
+    model.forEachNode((node) => {
       const clusterKey = nodeClusterBy(model.originalNode(node.id)!);
       const cluster = this.clusterMap!.get(clusterKey);
 
@@ -402,7 +399,7 @@ export class Simulation extends EventEmitter {
       }
     });
 
-    nodes.forEach((node) => {
+    model.forEachNode((node) => {
       const { id } = node;
       // 固定节点不应用聚类重力
       if (this.isNodeFixed(node)) return;
@@ -438,8 +435,7 @@ export class Simulation extends EventEmitter {
     const is3D = dimensions === 3;
     const gravityForce = 0.01 * this.k * gravity;
 
-    const nodes = model.nodes();
-    nodes.forEach((node) => {
+    model.forEachNode((node) => {
       const { id } = node;
 
       // 固定节点不应用全局重力
@@ -464,8 +460,7 @@ export class Simulation extends EventEmitter {
     const { speed, dimensions } = options;
     const is3D = dimensions === 3;
 
-    const nodes = model.nodes();
-    nodes.forEach((node) => {
+    model.forEachNode((node) => {
       const { id } = node;
 
       if (this.isNodeFixed(node)) {

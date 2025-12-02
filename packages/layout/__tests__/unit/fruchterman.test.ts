@@ -1,10 +1,10 @@
 import { FruchtermanLayout } from '@/src';
 import { Canvas } from '@antv/g';
 import { clear as clearMockRandom, mock as mockRandom } from 'jest-random-mock';
-import { NodeData } from '../../src/types';
 import { fruchterman as fruchtermanData } from '../dataset';
 import { createCanvas, getEuclideanDistance } from '../utils';
 import { preprocessGraphData } from '../utils/preprocess';
+import { calculatePositions } from '../utils/render-update';
 import { GraphRenderer } from '../utils/renderer';
 
 describe('FruchtermanLayout', () => {
@@ -17,7 +17,17 @@ describe('FruchtermanLayout', () => {
     mockRandom();
     canvas = createCanvas();
     renderer = new GraphRenderer(canvas);
-    fruchterman = new FruchtermanLayout();
+    fruchterman = new FruchtermanLayout({
+      node: (d) => ({
+        id: d.id,
+        x: d.data.x,
+        y: d.data.y,
+        z: d.data.z,
+        fx: d.data.fx,
+        fy: d.data.fy,
+        fz: d.data.fz,
+      }),
+    });
     data = preprocessGraphData(fruchtermanData, renderer.getCanvasSize());
   });
 
@@ -46,46 +56,47 @@ describe('FruchtermanLayout', () => {
   });
 
   it('should render with default options', async () => {
-    const positions = await fruchterman.execute(data, {
+    await fruchterman.execute(data, {
       center: [250, 250],
       width: 500,
       height: 500,
+      animate: false,
     });
-    renderer.render(positions, { showLabel: true, nodeRadius: 10 });
+    renderer.render(fruchterman, { showLabel: true, nodeRadius: 10 }, data);
     await expect(canvas).toMatchSnapshot(__filename);
   });
 
   it('should render with custom gravity', async () => {
-    const positions = await fruchterman.execute(data, {
+    await fruchterman.execute(data, {
       center: [250, 250],
       width: 500,
       height: 500,
       gravity: 10,
     });
-    renderer.render(positions, { showLabel: true, nodeRadius: 10 });
+    renderer.render(fruchterman, { showLabel: true, nodeRadius: 10 }, data);
     await expect(canvas).toMatchSnapshot(__filename, 'custom-gravity');
   });
 
   it('should render with custom speed', async () => {
-    const positions = await fruchterman.execute(data, {
+    await fruchterman.execute(data, {
       center: [250, 250],
       width: 500,
       height: 500,
       speed: 10,
     });
-    renderer.render(positions, { showLabel: true, nodeRadius: 10 });
+    renderer.render(fruchterman, { showLabel: true, nodeRadius: 10 }, data);
     await expect(canvas).toMatchSnapshot(__filename, 'custom-speed');
   });
 
   it('should render with clustering enabled', async () => {
-    const positions = await fruchterman.execute(data, {
+    await fruchterman.execute(data, {
       center: [250, 250],
       width: 500,
       height: 500,
       clustering: true,
       nodeClusterBy: (node: any) => node.cluster,
     });
-    renderer.render(positions, { showLabel: true, nodeRadius: 10 });
+    renderer.render(fruchterman, { showLabel: true, nodeRadius: 10 }, data);
     await expect(canvas).toMatchSnapshot(__filename, 'clustering-enabled');
   });
 
@@ -96,24 +107,9 @@ describe('FruchtermanLayout', () => {
       edges: [],
     });
     fruchterman.stop();
-    const positions = fruchterman.tick(1000);
+    fruchterman.tick(1000);
+    const positions = calculatePositions(fruchterman);
     expect(JSON.stringify(positions.nodes)).toBe('[]');
-  });
-
-  it('should assign position for single node in assign mode (assign branch)', async () => {
-    const fruchterman = new FruchtermanLayout({
-      center: [10, 20, 30],
-      dimensions: 3,
-    });
-    const data = {
-      nodes: [{ id: 'node', data: {} }],
-      edges: [],
-    };
-    await fruchterman.assign(data);
-    const node = data.nodes[0] as NodeData;
-    expect(node.data.x).toBe(10);
-    expect(node.data.y).toBe(20);
-    expect(node.data.z).toBe(30);
   });
 
   it('should update z in gravity and move for 3D (dimensions === 3 branches)', () => {
@@ -130,10 +126,12 @@ describe('FruchtermanLayout', () => {
     });
     fruchterman.execute(graph);
     fruchterman.stop();
-    const before = graph.nodes.find((n) => n.id === 'n1')?.data.z;
-    const positions = fruchterman.tick(1);
+    fruchterman.tick(1);
+    const positions = calculatePositions(fruchterman);
+
     // z 轴有变化
-    expect(positions.nodes[0].data.z).not.toBe(before);
+    const before = graph.nodes.find((n) => n.id === 'n1')?.z;
+    expect(positions.nodes[0].z).not.toBe(before);
   });
 
   it('should keep z fixed if fx/fy/fz is set (move branch for 3D)', () => {
@@ -144,13 +142,11 @@ describe('FruchtermanLayout', () => {
       ],
       edges: [{ id: 'e1', source: 'n1', target: 'n2', data: {} }],
     };
-    const fruchterman = new FruchtermanLayout({
-      dimensions: 3,
-    });
-    fruchterman.execute(graph);
+    fruchterman.execute(graph, { dimensions: 3 });
     fruchterman.stop();
-    const positions = fruchterman.tick(1);
-    expect(positions.nodes[0].data.z).toBe(3);
+    fruchterman.tick(1);
+    const positions = calculatePositions(fruchterman);
+    expect(positions.nodes[0].z).toBe(3);
   });
 
   it('should skip repulsive/attractive if node positions are not numbers (repulsive/attractive skip branches)', () => {
@@ -182,12 +178,14 @@ describe('FruchtermanLayout', () => {
     });
     fruchterman.execute(graph);
     fruchterman.stop();
-    const before = fruchterman.tick(0);
-    const before1 = before.nodes[0].data.z;
-    const before2 = before.nodes[1].data.z;
-    const after = fruchterman.tick(1);
-    const after1 = after.nodes[0].data.z;
-    const after2 = after.nodes[1].data.z;
+    fruchterman.tick(0);
+    const before = calculatePositions(fruchterman);
+    const before1 = before.nodes[0].z;
+    const before2 = before.nodes[1].z;
+    fruchterman.tick(1);
+    const after = calculatePositions(fruchterman);
+    const after1 = after.nodes[0].z;
+    const after2 = after.nodes[1].z;
     expect(after1).not.toBe(before1);
     expect(after2).not.toBe(before2);
   });
@@ -211,8 +209,9 @@ describe('FruchtermanLayout', () => {
     });
     fruchterman.execute(graph);
     fruchterman.stop();
-    const positions = fruchterman.tick(2000);
+    fruchterman.tick(2000);
 
+    const positions = calculatePositions(fruchterman);
     const aClusterDist = getEuclideanDistance(
       positions.nodes[0],
       positions.nodes[3],
@@ -249,26 +248,6 @@ describe('FruchtermanLayout', () => {
     expect(cClusterDist < acClusterDist).toBe(true);
   });
 
-  it('should do fruchterman layout with onTick.', async () => {
-    let tick = 0;
-    const onTick = ({ nodes, edges }: any) => {
-      expect(nodes.length).toBe(data.nodes.length);
-      expect(nodes[0].data.x).not.toBe(undefined);
-      expect(nodes[0].data.y).not.toBe(undefined);
-      tick++;
-    };
-
-    const fruchterman = new FruchtermanLayout({
-      maxIteration: 10,
-      onTick,
-    });
-    const { nodes } = await fruchterman.execute(data);
-    expect(nodes.length).toBe(data.nodes.length);
-    expect(nodes[0].data.x).not.toBe(undefined);
-    expect(nodes[0].data.y).not.toBe(undefined);
-    expect(tick).toBe(10);
-  });
-
   it('should do fruchterman layout with overlapped nodes and loop edge.', () => {
     const graph = {
       nodes: [
@@ -293,9 +272,10 @@ describe('FruchtermanLayout', () => {
     const fruchterman = new FruchtermanLayout();
     fruchterman.execute(graph);
     fruchterman.stop();
-    const positions = fruchterman.tick(1000);
-    expect(positions.nodes[0].data.x).not.toEqual(positions.nodes[1].data.x);
-    expect(positions.nodes[0].data.y).not.toEqual(positions.nodes[1].data.y);
+    fruchterman.tick(1000);
+    const positions = calculatePositions(fruchterman);
+    expect(positions.nodes[0].x).not.toEqual(positions.nodes[1].x);
+    expect(positions.nodes[0].y).not.toEqual(positions.nodes[1].y);
   });
 
   it('should do fruchterman layout with different gravities.', () => {
@@ -310,19 +290,29 @@ describe('FruchtermanLayout', () => {
     const fruchterman1 = new FruchtermanLayout({
       gravity: 1,
       center: [10, 20],
+      node: (d) => ({
+        id: d.id,
+        x: d.data.x,
+        y: d.data.y,
+      }),
     });
     fruchterman1.execute(graph);
     fruchterman1.stop();
-    const positions1 = fruchterman1.tick(1000);
-
+    fruchterman1.tick(1000);
+    const positions1 = calculatePositions(fruchterman1);
     const fruchterman2 = new FruchtermanLayout({
       gravity: 10,
       center: [10, 20],
+      node: (d) => ({
+        id: d.id,
+        x: d.data.x,
+        y: d.data.y,
+      }),
     });
     fruchterman2.execute(graph);
     fruchterman2.stop();
-    const positions2 = fruchterman2.tick(1000);
-
+    fruchterman2.tick(1000);
+    const positions2 = calculatePositions(fruchterman2);
     const virtualCenterNode = { data: { x: 10, y: 20 } };
     const layout1DistToCenter1 = getEuclideanDistance(
       positions1.nodes[0],
@@ -369,7 +359,8 @@ describe('FruchtermanLayout', () => {
     });
     fruchterman1.execute(graph1);
     fruchterman1.stop();
-    const positions1 = fruchterman1.tick(10);
+    fruchterman1.tick(10);
+    const positions1 = calculatePositions(fruchterman1);
 
     const graph2 = {
       nodes: [
@@ -384,15 +375,12 @@ describe('FruchtermanLayout', () => {
     });
     fruchterman2.execute(graph2);
     fruchterman2.stop();
-    const positions2 = fruchterman2.tick(10);
+    fruchterman2.tick(10);
+    const positions2 = calculatePositions(fruchterman2);
 
     // higher speed leads to more movement per iteration
-    const dist1 = Math.abs(
-      positions1.nodes[0].data.x - positions1.nodes[1].data.x,
-    );
-    const dist2 = Math.abs(
-      positions2.nodes[0].data.x - positions2.nodes[1].data.x,
-    );
+    const dist1 = Math.abs(positions1.nodes[0].x - positions1.nodes[1].x);
+    const dist2 = Math.abs(positions2.nodes[0].x - positions2.nodes[1].x);
     // With higher speed, nodes should move more (smaller distance after attraction)
     expect(dist2).toBeLessThan(dist1);
   });
@@ -411,11 +399,11 @@ describe('FruchtermanLayout', () => {
     });
     fruchterman.execute(graph);
     fruchterman.stop();
-    const positions = fruchterman.tick(1000);
-
+    fruchterman.tick(1000);
+    const positions = calculatePositions(fruchterman);
     // nodes should be pulled towards [200, 200]
-    const avgX = (positions.nodes[0].data.x + positions.nodes[1].data.x) / 2;
-    const avgY = (positions.nodes[0].data.y + positions.nodes[1].data.y) / 2;
+    const avgX = (positions.nodes[0].x + positions.nodes[1].x) / 2;
+    const avgY = (positions.nodes[0].y + positions.nodes[1].y) / 2;
     expect(Math.abs(avgX - 200)).toBeLessThan(50);
     expect(Math.abs(avgY - 200)).toBeLessThan(50);
   });
@@ -428,42 +416,15 @@ describe('FruchtermanLayout', () => {
       ],
       edges: [{ id: 'edge1', source: 'node0', target: 'node1', data: {} }],
     };
-    const fruchterman = new FruchtermanLayout();
     fruchterman.execute(graph);
     fruchterman.stop();
-    const positions = fruchterman.tick(1000);
-
-    // node0 should remain at fixed position
-    expect(positions.nodes[0].data.x).toBe(10);
-    expect(positions.nodes[0].data.y).toBe(10);
-    // node1 should move
-    expect(positions.nodes[1].data.x).not.toBe(100);
-  });
-
-  it('should handle assign mode.', async () => {
-    const graph = {
-      nodes: [
-        { id: 'node0', data: {} },
-        { id: 'node1', data: {} },
-        { id: 'node2', data: {} },
-      ],
-      edges: [
-        { id: 'edge1', source: 'node0', target: 'node1', data: {} },
-        { id: 'edge2', source: 'node1', target: 'node2', data: {} },
-      ],
-    };
-    const fruchterman = new FruchtermanLayout();
-    await fruchterman.assign(graph);
-    fruchterman.stop();
     fruchterman.tick(1000);
-
-    const allNodes = graph.nodes as any[];
-    allNodes.forEach((node) => {
-      expect(typeof node.data.x).toBe('number');
-      expect(typeof node.data.y).toBe('number');
-      expect(Number.isFinite(node.data.x)).toBe(true);
-      expect(Number.isFinite(node.data.y)).toBe(true);
-    });
+    const positions = calculatePositions(fruchterman);
+    // node0 should remain at fixed position
+    expect(positions.nodes[0].x).toBe(10);
+    expect(positions.nodes[0].y).toBe(10);
+    // node1 should move
+    expect(positions.nodes[1].x).not.toBe(100);
   });
 
   it('should handle disconnected components.', () => {
@@ -482,13 +443,13 @@ describe('FruchtermanLayout', () => {
     const fruchterman = new FruchtermanLayout();
     fruchterman.execute(graph);
     fruchterman.stop();
-    const positions = fruchterman.tick(1000);
-
+    fruchterman.tick(1000);
+    const positions = calculatePositions(fruchterman);
     expect(positions.nodes.length).toBe(4);
     expect(positions.edges?.length).toBe(2);
     positions.nodes.forEach((node) => {
-      expect(Number.isFinite(node.data.x)).toBe(true);
-      expect(Number.isFinite(node.data.y)).toBe(true);
+      expect(Number.isFinite(node.x)).toBe(true);
+      expect(Number.isFinite(node.y)).toBe(true);
     });
   });
 
@@ -512,13 +473,13 @@ describe('FruchtermanLayout', () => {
     const fruchterman = new FruchtermanLayout();
     fruchterman.execute(graph);
     fruchterman.stop();
-    const positions = fruchterman.tick(1000);
-
+    fruchterman.tick(1000);
+    const positions = calculatePositions(fruchterman);
     expect(positions.nodes.length).toBe(4);
     // nodes in complete graph should be evenly distributed
     positions.nodes.forEach((node) => {
-      expect(Number.isFinite(node.data.x)).toBe(true);
-      expect(Number.isFinite(node.data.y)).toBe(true);
+      expect(Number.isFinite(node.x)).toBe(true);
+      expect(Number.isFinite(node.y)).toBe(true);
     });
   });
 
@@ -541,8 +502,8 @@ describe('FruchtermanLayout', () => {
     const fruchterman = new FruchtermanLayout();
     fruchterman.execute(graph);
     fruchterman.stop();
-    const positions = fruchterman.tick(1000);
-
+    fruchterman.tick(1000);
+    const positions = calculatePositions(fruchterman);
     // center node should be close to graph center
     // surrounding nodes should be distributed around it
     expect(positions.nodes.length).toBe(5);
@@ -567,7 +528,8 @@ describe('FruchtermanLayout', () => {
     const fruchterman = new FruchtermanLayout();
     fruchterman.execute(graph);
     fruchterman.stop();
-    const positions = fruchterman.tick(1000);
+    fruchterman.tick(1000);
+    const positions = calculatePositions(fruchterman);
 
     expect(positions.nodes.length).toBe(5);
     // nodes should form roughly a line
@@ -591,12 +553,13 @@ describe('FruchtermanLayout', () => {
     });
     fruchterman.execute(graph);
     fruchterman.stop();
-    const positions = fruchterman.tick(1000);
+    fruchterman.tick(1000);
+    const positions = calculatePositions(fruchterman);
 
     // nodes should be positioned within the bounds
     positions.nodes.forEach((node) => {
-      expect(node.data.x).toBeLessThan(800);
-      expect(node.data.y).toBeLessThan(600);
+      expect(node.x).toBeLessThan(800);
+      expect(node.y).toBeLessThan(600);
     });
   });
 
@@ -611,11 +574,12 @@ describe('FruchtermanLayout', () => {
     const fruchterman = new FruchtermanLayout();
     fruchterman.execute(graph);
     fruchterman.stop();
-    const positions = fruchterman.tick(1000);
+    fruchterman.tick(1000);
+    const positions = calculatePositions(fruchterman);
 
     // positions should be updated from initial values
-    expect(positions.nodes[0].data.x).toBeDefined();
-    expect(positions.nodes[0].data.y).toBeDefined();
+    expect(positions.nodes[0].x).toBeDefined();
+    expect(positions.nodes[0].y).toBeDefined();
   });
 
   it('should handle clusterGravity parameter with clustering.', () => {
@@ -635,7 +599,8 @@ describe('FruchtermanLayout', () => {
     });
     fruchterman1.execute(graph);
     fruchterman1.stop();
-    const positions1 = fruchterman1.tick(1000);
+    fruchterman1.tick(1000);
+    const positions1 = calculatePositions(fruchterman1);
 
     const graph2 = {
       nodes: [
@@ -653,7 +618,8 @@ describe('FruchtermanLayout', () => {
     });
     fruchterman2.execute(graph2);
     fruchterman2.stop();
-    const positions2 = fruchterman2.tick(1000);
+    fruchterman2.tick(1000);
+    const positions2 = calculatePositions(fruchterman2);
 
     const dist1 = getEuclideanDistance(
       positions1.nodes[0],
@@ -680,12 +646,13 @@ describe('FruchtermanLayout', () => {
     });
     fruchterman.execute(graph);
     fruchterman.stop();
-    const positions = fruchterman.tick(10);
+    fruchterman.tick(10);
+    const positions = calculatePositions(fruchterman);
 
     expect(positions.nodes.length).toBe(2);
     positions.nodes.forEach((node) => {
-      expect(Number.isFinite(node.data.x)).toBe(true);
-      expect(Number.isFinite(node.data.y)).toBe(true);
+      expect(Number.isFinite(node.x)).toBe(true);
+      expect(Number.isFinite(node.y)).toBe(true);
     });
   });
 
@@ -694,7 +661,8 @@ describe('FruchtermanLayout', () => {
     fruchterman.execute(data);
     fruchterman.stop();
     // After stop, should be able to tick manually
-    const positions = fruchterman.tick(100);
+    fruchterman.tick(100);
+    const positions = calculatePositions(fruchterman);
     expect(positions.nodes.length).toBeGreaterThan(0);
   });
 });

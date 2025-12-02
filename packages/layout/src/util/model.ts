@@ -268,6 +268,7 @@ export function initModelNodePosition<N extends NodeData = NodeData>(
   model: LayoutModel<N>,
   width: number,
   height: number,
+  dimensions: 2 | 3 = 2,
 ): void {
   model.forEachNode((node) => {
     if (isNil(node.x)) {
@@ -275,6 +276,9 @@ export function initModelNodePosition<N extends NodeData = NodeData>(
     }
     if (isNil(node.y)) {
       node.y = Math.random() * height;
+    }
+    if (dimensions === 3 && isNil(node.z)) {
+      node.z = Math.random() * Math.min(width, height);
     }
   });
 }

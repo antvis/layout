@@ -12,6 +12,9 @@ export async function render(gui?: GUI) {
     height,
   });
 
+  processedData.nodes[0].data.fx = width / 2;
+  processedData.nodes[0].data.fy = height / 2;
+
   const layout = new FruchtermanLayout({
     width,
     height,
@@ -19,9 +22,15 @@ export async function render(gui?: GUI) {
       id: d.id,
       x: d.data.x,
       y: d.data.y,
+      fx: d.data.fx,
+      fy: d.data.fy,
     }),
     onTick: (layout) => {
-      renderer.handleTick(layout, { nodeRadius: 10, showLabel: true });
+      renderer.handleTick(
+        layout,
+        { nodeRadius: 10, showLabel: true },
+        processedData as any,
+      );
     },
   });
 

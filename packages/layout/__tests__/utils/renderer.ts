@@ -122,7 +122,11 @@ export class GraphRenderer {
    * @param data 图数据
    * @param options 渲染选项
    */
-  render(layout: Layout<any>, options: RenderOptions = {}): void {
+  render(
+    layout: Layout<any>,
+    options: RenderOptions = {},
+    data?: GraphData,
+  ): void {
     const opts = deepMix({}, this.defaultOptions, options);
     // this.currentData = data;
 
@@ -131,7 +135,7 @@ export class GraphRenderer {
     }
 
     if (!this.isInitialized) {
-      this.createElements(layout, opts);
+      this.createElements(layout, opts, data);
       this.isInitialized = true;
     } else {
       this.updateElements(layout);
@@ -143,8 +147,12 @@ export class GraphRenderer {
    * @param data 图数据
    * @param options 渲染选项
    */
-  handleTick(layout: Layout<any>, options: RenderOptions = {}): void {
-    this.render(layout, options);
+  handleTick(
+    layout: Layout<any>,
+    options: RenderOptions = {},
+    data?: GraphData,
+  ): void {
+    this.render(layout, options, data);
   }
 
   /**
@@ -153,10 +161,9 @@ export class GraphRenderer {
   private createElements(
     layout: Layout<any>,
     options: Required<RenderOptions>,
+    data?: GraphData,
   ): void {
     // 先创建边（在底层）
-
-    // layout.forEachEdge((edge: LayoutEdge) => {}
     layout.forEachEdge((edge) => {
       const line = this.createEdge(edge, options);
       if (line) {
@@ -167,7 +174,7 @@ export class GraphRenderer {
 
     // 再创建节点（在上层）
     layout.forEachNode((node) => {
-      const circle = this.createNode(node, options);
+      const circle = this.createNode(node, options, data);
       this.canvas.appendChild(circle);
       this.nodeElements.set(node.id, circle);
 
@@ -203,7 +210,12 @@ export class GraphRenderer {
   private createNode(
     node: LayoutNode,
     options: Required<RenderOptions>,
+    data?: GraphData,
   ): Circle {
+    const nodeData = data?.nodes.find((n) => n.id === node.id);
+    Object.assign(node, {
+      style: nodeData?.style,
+    });
     const circle = new Circle({
       id: `node-${node.id}`,
       style: {

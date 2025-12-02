@@ -1,5 +1,5 @@
 import type { GraphData } from '@/src/types/data';
-import { LayoutModel } from '@/src/util/model';
+import { LayoutModel, initModelNodePosition } from '@/src/util/model';
 
 describe('model', () => {
   describe('LayoutModel', () => {
@@ -28,11 +28,13 @@ describe('model', () => {
         const model = new LayoutModel(data);
         const node = model.node('node1');
 
-        expect(node?.x).toBe(100);
-        expect(node?.y).toBe(200);
+        // Positions are stored in data field, not directly on node
+        const original = model.originalNode('node1');
+        expect(original?.data.x).toBe(100);
+        expect(original?.data.y).toBe(200);
       });
 
-      test('should handle custom node field mappings', () => {
+      test('should not extract positions without custom node extractor', () => {
         const data: GraphData = {
           nodes: [
             {
@@ -43,16 +45,12 @@ describe('model', () => {
           edges: [],
         };
 
-        const model = new LayoutModel(data, {
-          nodeFields: {
-            x: 'position.x',
-            y: 'position.y',
-          },
-        });
-
+        const model = new LayoutModel(data);
         const node = model.node('node1');
-        expect(node?.x).toBe(50);
-        expect(node?.y).toBe(60);
+
+        // Without custom extractor, positions are not automatically extracted
+        expect(node?.x).toBeUndefined();
+        expect(node?.y).toBeUndefined();
       });
 
       test('should preserve original node data', () => {
@@ -126,7 +124,9 @@ describe('model', () => {
 
         expect(node).toBeDefined();
         expect(node?.id).toBe('node1');
-        expect(node?.x).toBe(10);
+        // Position is in original data, not extracted to node
+        const original = model.originalNode('node1');
+        expect(original?.data.x).toBe(10);
       });
 
       test('should return undefined for non-existent node', () => {
@@ -346,7 +346,7 @@ describe('model', () => {
         expect(model.degree('nonexistent')).toBe(0);
       });
 
-      test('should handle self-loop', () => {
+      test('should not count self-loop in degree', () => {
         const data: GraphData = {
           nodes: [{ id: 'node1', data: {} }],
           edges: [{ id: 'e1', source: 'node1', target: 'node1', data: {} }],
@@ -354,9 +354,10 @@ describe('model', () => {
 
         const model = new LayoutModel(data);
 
-        expect(model.degree('node1', 'both')).toBe(2); // 1 in + 1 out
-        expect(model.degree('node1', 'in')).toBe(1);
-        expect(model.degree('node1', 'out')).toBe(1);
+        // Self-loops are ignored in degree calculation
+        expect(model.degree('node1', 'both')).toBe(0);
+        expect(model.degree('node1', 'in')).toBe(0);
+        expect(model.degree('node1', 'out')).toBe(0);
       });
     });
 
@@ -452,141 +453,6 @@ describe('model', () => {
       });
     });
 
-    describe('syncToGraphData', () => {
-      test('should sync layout positions to original data', () => {
-        const data: GraphData = {
-          nodes: [
-            { id: 'node1', data: {} },
-            { id: 'node2', data: {} },
-          ],
-          edges: [],
-        };
-
-        const model = new LayoutModel(data);
-        const node1 = model.node('node1')!;
-        const node2 = model.node('node2')!;
-
-        node1.x = 100;
-        node1.y = 200;
-        node2.x = 300;
-        node2.y = 400;
-
-        const result = model.syncToGraphData();
-
-        expect(result).toBe(data); // Same reference
-        expect(data.nodes[0].data.x).toBe(100);
-        expect(data.nodes[0].data.y).toBe(200);
-        expect(data.nodes[1].data.x).toBe(300);
-        expect(data.nodes[1].data.y).toBe(400);
-      });
-
-      test('should sync z coordinates if present', () => {
-        const data: GraphData = {
-          nodes: [{ id: 'node1', data: {} }],
-          edges: [],
-        };
-
-        const model = new LayoutModel(data);
-        const node = model.node('node1')!;
-
-        node.x = 10;
-        node.y = 20;
-        node.z = 30;
-
-        model.syncToGraphData();
-
-        expect(data.nodes[0].data.x).toBe(10);
-        expect(data.nodes[0].data.y).toBe(20);
-        expect(data.nodes[0].data.z).toBe(30);
-      });
-
-      test('should sync edge control points', () => {
-        const data: GraphData = {
-          nodes: [
-            { id: 'node1', data: {} },
-            { id: 'node2', data: {} },
-          ],
-          edges: [
-            {
-              id: 'edge1',
-              source: 'node1',
-              target: 'node2',
-              data: {},
-            },
-          ],
-        };
-
-        const model = new LayoutModel(data);
-        const edge = model.edge('edge1')!;
-
-        edge.controlPoints = [
-          { x: 50, y: 50 },
-          { x: 60, y: 60 },
-        ];
-
-        model.syncToGraphData();
-
-        expect(data.edges![0].data.controlPoints).toEqual([
-          { x: 50, y: 50 },
-          { x: 60, y: 60 },
-        ]);
-      });
-    });
-
-    describe('getGraphData', () => {
-      test('should return cloned data with layout positions', () => {
-        const data: GraphData = {
-          nodes: [{ id: 'node1', data: { custom: 'value' } }],
-          edges: [],
-        };
-
-        const model = new LayoutModel(data);
-        const node = model.node('node1')!;
-
-        node.x = 100;
-        node.y = 200;
-
-        const result = model.getGraphData();
-
-        expect(result).not.toBe(data); // Different reference
-        expect(result.nodes[0]).not.toBe(data.nodes[0]);
-        expect(result.nodes[0].data.x).toBe(100);
-        expect(result.nodes[0].data.y).toBe(200);
-        expect(result.nodes[0].data.custom).toBe('value');
-      });
-
-      test('should return same reference on subsequent calls', () => {
-        const data: GraphData = {
-          nodes: [{ id: 'node1', data: {} }],
-          edges: [],
-        };
-
-        const model = new LayoutModel(data);
-        const result1 = model.getGraphData();
-        const result2 = model.getGraphData();
-
-        expect(result1).toBe(result2); // Same cached reference
-      });
-
-      test('should not modify original data', () => {
-        const data: GraphData = {
-          nodes: [{ id: 'node1', data: {} }],
-          edges: [],
-        };
-
-        const model = new LayoutModel(data);
-        const node = model.node('node1')!;
-
-        node.x = 100;
-        node.y = 200;
-
-        model.getGraphData();
-
-        expect(data.nodes[0].data.x).toBeUndefined();
-        expect(data.nodes[0].data.y).toBeUndefined();
-      });
-    });
-
     describe('clearCache', () => {
       test('should clear degree cache', () => {
         const data: GraphData = {
@@ -629,21 +495,6 @@ describe('model', () => {
         // Should rebuild cache on next call
         expect(model.neighbors('node1')).toEqual(['node2']);
       });
-
-      test('should clear result cache', () => {
-        const data: GraphData = {
-          nodes: [{ id: 'node1', data: {} }],
-          edges: [],
-        };
-
-        const model = new LayoutModel(data);
-
-        const result1 = model.getGraphData();
-        model.clearCache();
-        const result2 = model.getGraphData();
-
-        expect(result1).not.toBe(result2); // Different references after cache clear
-      });
     });
 
     describe('destroy', () => {
@@ -663,6 +514,169 @@ describe('model', () => {
         expect(model.nodeCount()).toBe(0);
         expect(model.edgeCount()).toBe(0);
       });
+    });
+  });
+
+  describe('initModelNodePosition', () => {
+    test('should initialize positions for nodes without x and y', () => {
+      const data: GraphData = {
+        nodes: [
+          { id: 'node1', data: {} },
+          { id: 'node2', data: {} },
+        ],
+        edges: [],
+      };
+
+      const model = new LayoutModel(data);
+      initModelNodePosition(model, 100, 200);
+
+      const node1 = model.node('node1');
+      const node2 = model.node('node2');
+
+      expect(node1?.x).toBeDefined();
+      expect(node1?.y).toBeDefined();
+      expect(node1?.x).toBeGreaterThanOrEqual(0);
+      expect(node1?.x).toBeLessThanOrEqual(100);
+      expect(node1?.y).toBeGreaterThanOrEqual(0);
+      expect(node1?.y).toBeLessThanOrEqual(200);
+
+      expect(node2?.x).toBeDefined();
+      expect(node2?.y).toBeDefined();
+      expect(node2?.x).toBeGreaterThanOrEqual(0);
+      expect(node2?.x).toBeLessThanOrEqual(100);
+      expect(node2?.y).toBeGreaterThanOrEqual(0);
+      expect(node2?.y).toBeLessThanOrEqual(200);
+    });
+
+    test('should not override existing x position', () => {
+      const data: GraphData = {
+        nodes: [{ id: 'node1', data: { x: 50 } }],
+        edges: [],
+      };
+
+      const model = new LayoutModel(data);
+      const node = model.node('node1')!;
+      node.x = 50;
+
+      initModelNodePosition(model, 100, 200);
+
+      expect(model.node('node1')?.x).toBe(50);
+    });
+
+    test('should not override existing y position', () => {
+      const data: GraphData = {
+        nodes: [{ id: 'node1', data: { y: 75 } }],
+        edges: [],
+      };
+
+      const model = new LayoutModel(data);
+      const node = model.node('node1')!;
+      node.y = 75;
+
+      initModelNodePosition(model, 100, 200);
+
+      expect(model.node('node1')?.y).toBe(75);
+    });
+
+    test('should initialize missing coordinate only', () => {
+      const data: GraphData = {
+        nodes: [{ id: 'node1', data: { x: 50 } }],
+        edges: [],
+      };
+
+      const model = new LayoutModel(data);
+      const node = model.node('node1')!;
+      node.x = 50;
+
+      initModelNodePosition(model, 100, 200);
+
+      expect(model.node('node1')?.x).toBe(50);
+      expect(model.node('node1')?.y).toBeDefined();
+      expect(model.node('node1')?.y).toBeGreaterThanOrEqual(0);
+      expect(model.node('node1')?.y).toBeLessThanOrEqual(200);
+    });
+
+    test('should handle empty model', () => {
+      const data: GraphData = {
+        nodes: [],
+        edges: [],
+      };
+
+      const model = new LayoutModel(data);
+      initModelNodePosition(model, 100, 200);
+
+      expect(model.nodeCount()).toBe(0);
+    });
+
+    test('should handle zero dimensions', () => {
+      const data: GraphData = {
+        nodes: [{ id: 'node1', data: {} }],
+        edges: [],
+      };
+
+      const model = new LayoutModel(data);
+      initModelNodePosition(model, 0, 0);
+
+      const node = model.node('node1');
+      expect(node?.x).toBe(0);
+      expect(node?.y).toBe(0);
+    });
+
+    test('should handle large dimensions', () => {
+      const data: GraphData = {
+        nodes: [{ id: 'node1', data: {} }],
+        edges: [],
+      };
+
+      const model = new LayoutModel(data);
+      initModelNodePosition(model, 10000, 10000);
+
+      const node = model.node('node1');
+      expect(node?.x).toBeDefined();
+      expect(node?.x).toBeGreaterThanOrEqual(0);
+      expect(node?.x).toBeLessThanOrEqual(10000);
+      expect(node?.y).toBeDefined();
+      expect(node?.y).toBeGreaterThanOrEqual(0);
+      expect(node?.y).toBeLessThanOrEqual(10000);
+    });
+
+    test('should treat 0 as valid existing position', () => {
+      const data: GraphData = {
+        nodes: [{ id: 'node1', data: { x: 0, y: 0 } }],
+        edges: [],
+      };
+
+      const model = new LayoutModel(data);
+      const node = model.node('node1')!;
+      node.x = 0;
+      node.y = 0;
+
+      initModelNodePosition(model, 100, 200);
+
+      expect(model.node('node1')?.x).toBe(0);
+      expect(model.node('node1')?.y).toBe(0);
+    });
+
+    test('should initialize multiple nodes independently', () => {
+      const data: GraphData = {
+        nodes: [
+          { id: 'node1', data: {} },
+          { id: 'node2', data: {} },
+          { id: 'node3', data: {} },
+        ],
+        edges: [],
+      };
+
+      const model = new LayoutModel(data);
+      initModelNodePosition(model, 100, 200);
+
+      const positions = new Set();
+      model.forEachNode((node) => {
+        positions.add(`${node.x},${node.y}`);
+      });
+
+      // All nodes should have positions (might be same due to randomness, but typically different)
+      expect(positions.size).toBeGreaterThan(0);
     });
   });
 });

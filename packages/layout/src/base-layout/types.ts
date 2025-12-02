@@ -49,7 +49,9 @@ export interface BaseLayoutOptions<
   height?: number;
 }
 
-export interface Layout<LayoutOptions> {
+export interface Layout<
+  LayoutOptions extends BaseLayoutOptions = BaseLayoutOptions,
+> {
   /**
    * <zh/> 执行布局计算
    *

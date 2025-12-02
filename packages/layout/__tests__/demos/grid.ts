@@ -1,6 +1,5 @@
 import { GridLayout } from '@/src';
 import type { GUI } from 'lil-gui';
-import { grid as data } from '../dataset';
 import { GraphRenderer } from '../utils/renderer';
 
 export function render(gui?: GUI) {
@@ -52,7 +51,19 @@ export function render(gui?: GUI) {
       nodeSize: options.nodeSize,
       nodeSpacing: options.nodeSpacing,
     };
-    await layout.execute(data, layout.options);
+    const nodes = [
+      { id: 'a', data: { row: 0, col: 0 } }, // Manually positioned
+      { id: 'b', data: {} }, // Auto positioned, should skip (0,0)
+      { id: 'c', data: { row: 0, col: 1 } }, // Manually positioned
+      { id: 'd', data: {} }, // Auto positioned, should skip (0,0) and (0,1)
+      { id: 'e', data: {} }, // Auto positioned
+    ];
+    const edges: any[] = [];
+    const graphWithUsedCells = {
+      nodes: nodes as any,
+      edges: edges as any,
+    };
+    await layout.execute(graphWithUsedCells, layout.options);
 
     renderer.render(layout, {
       showLabel: true,

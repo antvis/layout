@@ -67,7 +67,7 @@ export class FruchtermanLayout extends BaseLayoutWithIterations<FruchtermanLayou
     }
 
     const { width, height } = opts;
-    initModelNodePosition(this.model, width, height);
+    initModelNodePosition(this.model, width, height, dimensions);
 
     const simulation = this.setSimulation(this.model, opts);
 
