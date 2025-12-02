@@ -41,20 +41,14 @@ export abstract class BaseLayout<
   protected abstract layout(): Promise<void>;
 
   public forEachNode(callback: (node: LayoutNode) => void) {
-    this.model.nodeMap.forEach((datum) => {
-      const { _original, ...node } = datum;
-      callback(node);
-    });
+    this.model.nodeMap.forEach(callback);
   }
 
   public forEachEdge(callback: (edge: LayoutEdge) => void) {
-    this.model.edgeMap.forEach((datum) => {
-      const { _original, ...edge } = datum;
-      callback({
-        ...edge,
-        sourceNode: this.model.nodeMap.get(datum.source),
-        targetNode: this.model.nodeMap.get(datum.target),
-      });
+    this.model.edgeMap.forEach((edge) => {
+      edge.sourceNode = this.model.nodeMap.get(edge.source);
+      edge.targetNode = this.model.nodeMap.get(edge.target);
+      callback(edge);
     });
   }
 
