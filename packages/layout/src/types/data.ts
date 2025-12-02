@@ -19,7 +19,7 @@ export interface LayoutData {
   edges: Map<ID, LayoutEdge>;
 }
 
-export interface LayoutNode {
+export interface LayoutNode<N extends NodeData = NodeData> {
   id: ID;
   x: number;
   y: number;
@@ -30,29 +30,15 @@ export interface LayoutNode {
   vx?: number;
   vy?: number;
   vz?: number;
+  _original?: N;
 }
 
-export interface LayoutEdge {
+export interface LayoutEdge<E extends EdgeData = EdgeData> {
   id: ID;
   source: ID;
   target: ID;
   sourceNode?: LayoutNode;
   targetNode?: LayoutNode;
   controlPoints?: Point[];
-}
-
-export interface ModelData<
-  N extends NodeData = NodeData,
-  E extends EdgeData = EdgeData,
-> {
-  nodes: Map<ID, ModelNode<N>>;
-  edges: Map<ID, ModelEdge<E>>;
-}
-
-export interface ModelNode<N extends NodeData = NodeData> extends LayoutNode {
-  _original?: N;
-}
-
-export interface ModelEdge<E extends EdgeData = EdgeData> extends LayoutEdge {
   _original?: E;
 }

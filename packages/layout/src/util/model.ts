@@ -5,8 +5,6 @@ import type {
   GraphData,
   LayoutEdge,
   LayoutNode,
-  ModelEdge,
-  ModelNode,
   NodeData,
 } from '../types/data';
 import type { ID } from '../types/id';
@@ -19,8 +17,8 @@ export class LayoutModel<
   N extends NodeData = NodeData,
   E extends EdgeData = EdgeData,
 > {
-  public readonly nodeMap: Map<ID, ModelNode<N>>;
-  public readonly edgeMap: Map<ID, ModelEdge<E>>;
+  public readonly nodeMap: Map<ID, LayoutNode<N>>;
+  public readonly edgeMap: Map<ID, LayoutEdge<E>>;
 
   private degreeCache?: Map<ID, { in: number; out: number; both: number }>;
 
@@ -33,15 +31,15 @@ export class LayoutModel<
     this.edgeMap = extractEdgeData<E>(data.edges || [], options.edge);
   }
 
-  public nodes(): ModelNode<N>[] {
+  public nodes(): LayoutNode<N>[] {
     return Array.from(this.nodeMap.values());
   }
 
-  public node(id: ID): ModelNode<N> | undefined {
+  public node(id: ID): LayoutNode<N> | undefined {
     return this.nodeMap.get(id);
   }
 
-  public forEachNode(callback: (node: ModelNode<N>) => void): void {
+  public forEachNode(callback: (node: LayoutNode<N>) => void): void {
     this.nodeMap.forEach(callback);
   }
 
@@ -54,15 +52,15 @@ export class LayoutModel<
     return this.nodeMap.size;
   }
 
-  public edges(): ModelEdge<E>[] {
+  public edges(): LayoutEdge<E>[] {
     return Array.from(this.edgeMap.values());
   }
 
-  public edge(id: ID): ModelEdge<E> | undefined {
+  public edge(id: ID): LayoutEdge<E> | undefined {
     return this.edgeMap.get(id);
   }
 
-  public forEachEdge(callback: (edge: ModelEdge<E>) => void): void {
+  public forEachEdge(callback: (edge: LayoutEdge<E>) => void): void {
     this.edgeMap.forEach(callback);
   }
 
@@ -189,16 +187,16 @@ export class LayoutModel<
 function extractNodeData<N extends NodeData = NodeData>(
   nodes: N[],
   node?: (datum: N) => LayoutNode,
-): Map<ID, ModelNode<N>> {
+): Map<ID, LayoutNode<N>> {
   if (!nodes) {
     throw new Error('Data.nodes is required');
   }
 
-  const result = new Map<ID, ModelNode<N>>();
+  const result = new Map<ID, LayoutNode<N>>();
   const fields = ['id', 'x', 'y', 'z', 'vx', 'vy', 'vz', 'fx', 'fy', 'fz'];
 
   for (const datum of nodes) {
-    const nodeData: ModelNode<N> = { _original: datum } as ModelNode<N>;
+    const nodeData: LayoutNode<N> = { _original: datum } as LayoutNode<N>;
 
     for (const field of fields) {
       const value = datum[field];
@@ -228,12 +226,12 @@ function extractNodeData<N extends NodeData = NodeData>(
 function extractEdgeData<E extends EdgeData = EdgeData>(
   edges: E[],
   edge?: (datum: E) => LayoutEdge,
-): Map<ID, ModelEdge<E>> {
-  const result = new Map<ID, ModelEdge<E>>();
+): Map<ID, LayoutEdge<E>> {
+  const result = new Map<ID, LayoutEdge<E>>();
   const fields = ['id', 'source', 'target', 'controlPoints'];
 
   for (const datum of edges) {
-    const edgeData: ModelEdge<E> = { _original: datum } as ModelEdge<E>;
+    const edgeData: LayoutEdge<E> = { _original: datum } as LayoutEdge<E>;
 
     for (const field of fields) {
       const value = datum[field];

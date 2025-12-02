@@ -2,7 +2,7 @@ import EventEmitter from '@antv/event-emitter';
 import type { ID } from '@antv/graphlib';
 import { isNil } from '@antv/util';
 import type { Point } from '../types';
-import type { LayoutNode } from '../types/layout';
+import type { LayoutNode } from '../types/data';
 import type { Position } from '../types/position';
 import type { LayoutModel } from '../util/model';
 import type { NormalizedFruchtermanLayoutOptions } from './types';

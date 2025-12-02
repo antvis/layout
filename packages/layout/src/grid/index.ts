@@ -1,6 +1,6 @@
 import { BaseLayout } from '../base-layout';
 import type { PointTuple } from '../types';
-import { LayoutNode } from '../types/layout';
+import { LayoutNode } from '../types/data';
 import { applySingleNodeLayout, normalizeViewport, parseSize } from '../util';
 import { formatNumberFn, formatSizeFn } from '../util/format';
 import { LayoutModel } from '../util/model';

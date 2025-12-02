@@ -3,7 +3,7 @@ import { Renderer } from '@antv/g-canvas';
 import { deepMix } from '@antv/util';
 import interact from 'interactjs';
 import { Layout } from '../../src/base-layout/types';
-import { LayoutEdge, LayoutNode } from '../../src/types';
+import { LayoutEdge, LayoutNode } from '../../src/types/data';
 
 export interface GraphNode {
   id: string | number;

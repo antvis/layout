@@ -1,6 +1,5 @@
 import type { PlainObject } from '../types/common';
-import type { NodeData } from '../types/data';
-import type { LayoutNode } from '../types/layout';
+import type { LayoutNode, NodeData } from '../types/data';
 import type { LayoutModel } from './model';
 
 export type SortComparator<N extends PlainObject = PlainObject> = (
@@ -28,7 +27,9 @@ function sort<N extends PlainObject = PlainObject>(
   return model;
 }
 
-export function orderByDegree<N extends PlainObject = PlainObject>(model: LayoutModel<N>): LayoutModel<N> {
+export function orderByDegree<N extends PlainObject = PlainObject>(
+  model: LayoutModel<N>,
+): LayoutModel<N> {
   return sort(model, (nodeA, nodeB) => {
     const degreeA = model.degree(nodeA.id);
     const degreeB = model.degree(nodeB.id);
