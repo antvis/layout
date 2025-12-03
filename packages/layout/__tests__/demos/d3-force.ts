@@ -1,4 +1,4 @@
-import { D3Force3DLayout, D3ForceLayout } from '@/src';
+import { D3Force3DLayout } from '@/src';
 import { Canvas } from '@antv/g';
 import { Renderer } from '@antv/g-canvas';
 import type { GUI } from 'lil-gui';
@@ -61,7 +61,7 @@ export async function render(gui?: GUI) {
       enableDrag: true,
     };
 
-    const layoutFolder = gui.addFolder('Fruchterman Layout');
+    const layoutFolder = gui.addFolder('D3 Force Layout');
     layoutFolder.add(controls, 'stop').name('Stop');
     layoutFolder.add(controls, 'tick').name('Tick 5 Iterations');
     layoutFolder.add(controls, 'restart').name('Restart');

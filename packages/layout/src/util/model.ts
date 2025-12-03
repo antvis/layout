@@ -194,6 +194,7 @@ export class LayoutModel<
     this.clearCache();
     this.nodeMap.clear();
     this.edgeMap.clear();
+    this.edgeIdCounter.clear();
   }
 }
 
