@@ -69,9 +69,6 @@ async function loadReportList() {
       throw new Error('未找到 JSON 文件');
     }
   } catch (e) {
-    // 显示提示信息
-    document.getElementById('serverHint').style.display = 'block';
-
     REPORT_LIST = [];
   }
 }
@@ -86,21 +83,6 @@ async function loadReport(filename) {
     render();
   } catch (e) {
     console.error('加载报告失败:', e);
-
-    // 显示详细错误信息
-    const errorMsg = `
-      ❌ 读取失败：${filename}
-
-      原因：${e.message || '网络错误'}
-
-      解决方法：
-      1. 请使用本地 HTTP 服务器访问此页面
-      2. 推荐使用：python3 -m http.server 8080
-      3. 或使用：npx serve
-      4. 然后访问：http://localhost:8080/perf/report-viewer.html
-    `;
-
-    alert(errorMsg);
 
     // 更新 UI 显示错误
     document.getElementById('deviceDetails').textContent =
