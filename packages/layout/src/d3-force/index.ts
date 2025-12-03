@@ -105,6 +105,7 @@ export class D3ForceLayout<
         delete node[key];
         delete d3Node[key];
       });
+      return;
     }
 
     position.forEach((value, index) => {

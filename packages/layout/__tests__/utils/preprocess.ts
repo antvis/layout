@@ -56,12 +56,10 @@ export function initializeNodePositions(
 
   data.nodes.forEach((node: any, i) => {
     if (isNaN(+node.x!)) {
-      node.data ||= {};
-      node.data.x = (i % horiNum) * horiGap + beginX;
+      node.x = (i % horiNum) * horiGap + beginX;
     }
     if (isNaN(+node.y!)) {
-      node.data ||= {};
-      node.data.y = Math.floor(i / horiNum) * vertiGap + beginY;
+      node.y = Math.floor(i / horiNum) * vertiGap + beginY;
     }
   });
 }

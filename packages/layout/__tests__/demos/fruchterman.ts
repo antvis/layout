@@ -12,19 +12,9 @@ export async function render(gui?: GUI) {
     height,
   });
 
-  processedData.nodes[0].data.fx = width / 2;
-  processedData.nodes[0].data.fy = height / 2;
-
   const layout = new FruchtermanLayout({
     width,
     height,
-    node: (d) => ({
-      id: d.id,
-      x: d.data.x,
-      y: d.data.y,
-      fx: d.data.fx,
-      fy: d.data.fy,
-    }),
     onTick: (layout) => {
       renderer.handleTick(
         layout,
@@ -41,6 +31,7 @@ export async function render(gui?: GUI) {
     },
 
     onDrag: (nodeId, position) => {
+      console.log(`🚚 Dragging node: ${position}`);
       layout.setFixedPosition(nodeId, [position.x, position.y]);
       layout.tick(10);
     },

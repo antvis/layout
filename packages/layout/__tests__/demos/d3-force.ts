@@ -1,4 +1,4 @@
-import { D3ForceLayout } from '@/src';
+import { D3Force3DLayout, D3ForceLayout } from '@/src';
 import { Canvas } from '@antv/g';
 import { Renderer } from '@antv/g-canvas';
 import type { GUI } from 'lil-gui';
@@ -16,7 +16,7 @@ export async function render(gui?: GUI) {
   const renderer = new GraphRenderer(canvas);
   const { width, height } = renderer.getCanvasSize();
 
-  const layout = new D3ForceLayout({});
+  const layout = new D3Force3DLayout({});
 
   layout.execute(data, {
     center: {

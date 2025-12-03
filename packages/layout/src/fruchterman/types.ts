@@ -1,5 +1,5 @@
 import type { BaseLayoutOptions } from '../base-layout';
-import { Layout } from '../base-layout/types';
+import type { Layout, ViewportOptions } from '../base-layout/types';
 import type { NodeData } from '../types/data';
 
 /**
@@ -7,7 +7,9 @@ import type { NodeData } from '../types/data';
  *
  * <en/> Fruchterman force layout configuration
  */
-export interface FruchtermanLayoutOptions extends BaseLayoutOptions {
+export interface FruchtermanLayoutOptions
+  extends BaseLayoutOptions,
+    ViewportOptions {
   /**
    * <zh/> 布局的维度，2D 渲染时指定为 2；若为 3D 渲染可指定为 3，则将多计算 z 轴的布局
    *

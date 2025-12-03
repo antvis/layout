@@ -1,6 +1,6 @@
 import type {
   D3ForceLayoutOptions,
-  EdgeDatum,
+  EdgeDatum as _EdgeDatum,
   NodeDatum as _NodeDatum,
 } from '../d3-force/types';
 
@@ -61,4 +61,7 @@ export interface NodeDatum extends _NodeDatum {
   vz: number;
 }
 
-export type { EdgeDatum };
+export interface EdgeDatum extends _EdgeDatum {
+  source: NodeDatum | string | number;
+  target: NodeDatum | string | number;
+}
