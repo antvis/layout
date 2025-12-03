@@ -1,10 +1,8 @@
 import type { ID } from '@antv/graphlib';
-import { deepMix, pick } from '@antv/util';
-import type { Simulation } from 'd3-force';
+import type { Force, ForceLink, Simulation } from 'd3-force';
 import {
   forceCenter,
   forceCollide,
-  ForceLink,
   forceLink,
   forceManyBody,
   forceRadial,
@@ -12,22 +10,27 @@ import {
   forceX,
   forceY,
 } from 'd3-force';
-import type { Graph, LayoutMapping, LayoutWithIterations } from '../types';
+import { BaseLayoutWithIterations } from '../base-layout';
+import type { LayoutWithIterations } from '../base-layout/types';
+import type { Position } from '../types/position';
 import type { D3ForceLayoutOptions, EdgeDatum, NodeDatum } from './types';
 
+export type { D3ForceLayoutOptions };
+
 export class D3ForceLayout<
-  T extends D3ForceLayoutOptions = D3ForceLayoutOptions,
-> implements LayoutWithIterations<T>
+    T extends D3ForceLayoutOptions = D3ForceLayoutOptions,
+  >
+  extends BaseLayoutWithIterations<T>
+  implements LayoutWithIterations<T>
 {
   public id = 'd3-force';
 
   public simulation: Simulation<NodeDatum, EdgeDatum>;
 
-  protected resolver: (value: LayoutMapping) => void;
+  private d3Nodes: NodeDatum[] = [];
+  private d3Edges: EdgeDatum[] = [];
 
   protected config = {
-    inputNodeAttrs: ['x', 'y', 'vx', 'vy', 'fx', 'fy'],
-    outputNodeAttrs: ['x', 'y', 'vx', 'vy'],
     simulationAttrs: [
       'alpha',
       'alphaMin',
@@ -48,72 +51,75 @@ export class D3ForceLayout<
     y: forceY,
   };
 
-  // @ts-ignore
-  public options: Partial<T> = {
-    link: {
-      id: (edge) => edge.id,
-    },
-    manyBody: {},
-    center: {
-      x: 0,
-      y: 0,
-    },
-  };
-
-  protected context: {
-    assign: boolean;
-    options: Partial<T>;
-    nodes: NodeDatum[];
-    edges: EdgeDatum[];
-    graph?: Graph;
-  } = {
-    options: {},
-    assign: false,
-    nodes: [],
-    edges: [],
-  };
+  protected getDefaultOptions(): Partial<T> {
+    return {
+      link: {
+        id: (d) => String(d.id),
+      },
+      manyBody: {},
+      center: {
+        x: 0,
+        y: 0,
+      },
+    } as unknown as Partial<T>;
+  }
 
   constructor(options?: Partial<T>) {
-    deepMix(this.options, options);
+    super(options);
+
     if (this.options.forceSimulation) {
       this.simulation = this.options.forceSimulation;
     }
   }
 
-  public async execute(graph: Graph, options?: T): Promise<LayoutMapping> {
-    return this.genericLayout(false, graph, options);
-  }
-
-  public async assign(graph: Graph, options?: T): Promise<void> {
-    await this.genericLayout(true, graph, options);
-  }
-
   public stop() {
-    this.simulation.stop();
+    if (this.simulation) {
+      this.simulation.stop();
+    }
   }
 
-  public tick(iterations?: number): LayoutMapping {
-    this.simulation.tick(iterations);
-    return this.getResult();
+  public tick(iterations?: number): void {
+    if (this.simulation) {
+      this.simulation.tick(iterations);
+      this.syncPositionsFromD3();
+      this.options.onTick?.(this);
+    }
   }
 
   public restart() {
-    this.simulation.restart();
+    if (this.simulation) {
+      this.simulation.restart();
+    }
   }
 
-  public setFixedPosition(id: ID, position: (number | null)[]) {
-    const node = this.context.nodes.find((n) => n.id === id);
-    if (!node) return;
+  public setFixedPosition(id: ID, position: Position | null[] | null): void {
+    const d3Node = this.d3Nodes.find((n) => n.id === id);
+    const node = this.model.node(id);
+    if (!node || !d3Node) return;
+
+    const keys = ['fx', 'fy', 'fz'] as const;
+
+    if (position === null) {
+      // Unset fixed position
+      keys.forEach((key) => {
+        delete node[key];
+        delete d3Node[key];
+      });
+    }
+
     position.forEach((value, index) => {
-      if (typeof value === 'number' || value === null) {
-        const key = ['fx', 'fy', 'fz'][index];
-        node[key] = value;
+      if (
+        index < keys.length &&
+        (typeof value === 'number' || value === null)
+      ) {
+        node[keys[index]] = value;
+        d3Node[keys[index]] = value;
       }
     });
   }
 
   protected getOptions(options: Partial<T>): T {
-    const _ = deepMix({}, this.options, options) as T;
+    const _ = options;
     // process nodeSize
     if (_.collide && _.collide?.radius === undefined) {
       _.collide = _.collide || {};
@@ -130,63 +136,59 @@ export class D3ForceLayout<
       }
     }
 
-    // assign to context
-    this.context.options = _;
     return _ as T;
   }
 
-  protected async genericLayout(
-    assign: boolean,
-    graph: Graph,
-    options?: T,
-  ): Promise<LayoutMapping> {
-    const _options = this.getOptions(options);
+  protected async layout(): Promise<void> {
+    const options = this.getOptions(this.options || {});
+    this.options = options;
 
-    const nodes = graph.getAllNodes().map(({ id, data }) => ({
-      id,
-      ...data,
-      ...pick(data.data, this.config.inputNodeAttrs),
-    }));
+    this.createD3Copies();
 
-    const edges = graph.getAllEdges().map((edge) => ({ ...edge }));
+    const simulation = this.setSimulation(options);
 
-    Object.assign(this.context, { assign, nodes, edges, graph });
+    simulation.nodes(this.d3Nodes);
+    simulation
+      .force<ForceLink<NodeDatum, EdgeDatum>>('link')
+      ?.links(this.d3Edges);
 
-    const promise = new Promise<LayoutMapping>((resolver) => {
-      this.resolver = resolver;
+    return new Promise<void>((resolve) => {
+      simulation.on('end', () => {
+        this.syncPositionsFromD3();
+        resolve();
+      });
     });
-
-    const simulation = this.setSimulation(_options);
-
-    simulation.nodes(nodes);
-    simulation.force<ForceLink<NodeDatum, EdgeDatum>>('link')?.links(edges);
-
-    return promise;
   }
 
-  protected getResult(): LayoutMapping {
-    const { assign, nodes, edges, graph } = this.context;
+  private createD3Copies() {
+    this.d3Nodes = [];
+    this.d3Edges = [];
 
-    const nodesResult = nodes.map((node) => ({
-      id: node.id,
-      data: {
-        ...node.data,
-        ...(pick<any>(node, this.config.outputNodeAttrs) as any),
-      },
-    }));
+    this.model.forEachNode((node) => {
+      this.d3Nodes.push({ ...node });
+    });
+    this.model.forEachEdge((edge) => {
+      this.d3Edges.push({ ...edge });
+    });
+  }
 
-    const edgeResult = edges.map(({ id, source, target, data }) => ({
-      id,
-      source: typeof source === 'object' ? source.id : source,
-      target: typeof target === 'object' ? target.id : target,
-      data,
-    }));
-
-    if (assign) {
-      nodesResult.forEach((node) => graph.mergeNodeData(node.id, node.data));
-    }
-
-    return { nodes: nodesResult, edges: edgeResult };
+  private syncPositionsFromD3() {
+    this.d3Nodes.forEach((d3Node) => {
+      const node = this.model.node(d3Node.id);
+      if (node) {
+        node.x = d3Node.x;
+        node.y = d3Node.y;
+        if (d3Node.z !== undefined) node.z = d3Node.z;
+        // 同步固定位置属性
+        if (d3Node.fx !== undefined) node.fx = d3Node.fx;
+        if (d3Node.fy !== undefined) node.fy = d3Node.fy;
+        if (d3Node.fz !== undefined) node.fz = d3Node.fz;
+        // 同步速度属性
+        if (d3Node.vx !== undefined) node.vx = d3Node.vx;
+        if (d3Node.vy !== undefined) node.vy = d3Node.vy;
+        if (d3Node.vz !== undefined) node.vz = d3Node.vz;
+      }
+    });
   }
 
   protected initSimulation() {
@@ -198,9 +200,10 @@ export class D3ForceLayout<
       this.simulation || this.options.forceSimulation || this.initSimulation();
 
     if (!this.simulation) {
-      this.simulation = simulation
-        .on('tick', () => options.onTick?.(this.getResult()))
-        .on('end', () => this.resolver?.(this.getResult()));
+      this.simulation = simulation.on('tick', () => {
+        this.syncPositionsFromD3();
+        options.onTick?.(this);
+      });
     }
 
     apply(
@@ -217,9 +220,9 @@ export class D3ForceLayout<
         let force = simulation.force(forceName);
         if (!force) {
           force = Ctor();
-          simulation.force(forceName, force);
+          simulation.force(forceName, force as Force<NodeDatum, EdgeDatum>);
         }
-        apply(force, Object.entries(options[forceName as keyof T]));
+        apply(force, Object.entries(options[forceName as keyof T] as object));
       } else simulation.force(forceName, null);
     });
 

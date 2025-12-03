@@ -9,8 +9,17 @@ import type {
 } from '../types/data';
 import type { ID } from '../types/id';
 
-const getEdgeId = (edge: EdgeData): string => {
-  return edge.id || `$${edge.source}-$${edge.target}`;
+const edgeIdCounter = new Map<string, number>();
+
+export const getEdgeId = (edge: EdgeData): string => {
+  if (edge.id) return edge.id;
+
+  const baseId = `${edge.source}-${edge.target}`;
+  const count = edgeIdCounter.get(baseId) || 0;
+  const id = count === 0 ? baseId : `${baseId}-${count}`;
+  edgeIdCounter.set(baseId, count + 1);
+
+  return id;
 };
 
 export class LayoutModel<

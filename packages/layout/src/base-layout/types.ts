@@ -26,10 +26,7 @@ export interface LayoutModelOptions<
   edge?: (datum: E) => LayoutEdge;
 }
 
-export interface BaseLayoutOptions<
-  N extends NodeData = NodeData,
-  E extends EdgeData = EdgeData,
-> extends LayoutModelOptions<N, E> {
+export interface ViewportOptions {
   /**
    * <zh/> 布局中心
    * <en/> Layout center
@@ -48,6 +45,11 @@ export interface BaseLayoutOptions<
    */
   height?: number;
 }
+
+export interface BaseLayoutOptions<
+  N extends NodeData = NodeData,
+  E extends EdgeData = EdgeData,
+> extends LayoutModelOptions<N, E> {}
 
 export interface Layout<
   LayoutOptions extends BaseLayoutOptions = BaseLayoutOptions,

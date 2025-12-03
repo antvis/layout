@@ -1,3 +1,4 @@
+import { deepMix } from '@antv/util';
 import type { GraphData, LayoutEdge, LayoutNode } from '../types/data';
 import { LayoutModel } from '../util/model';
 import type { BaseLayoutOptions, Layout, LayoutWithIterations } from './types';
@@ -20,11 +21,11 @@ export abstract class BaseLayout<
   protected abstract getDefaultOptions(): Partial<O>;
 
   constructor(options?: Partial<O>) {
-    this.options = Object.assign({}, this.getDefaultOptions(), options) as O;
+    this.options = deepMix({}, this.getDefaultOptions(), options) as O;
   }
 
   public async execute(data: GraphData, options?: Partial<O>): Promise<void> {
-    Object.assign(this.options, options);
+    this.options = deepMix({}, this.options, options) as O;
 
     this.model = new LayoutModel(data, {
       node: this.options.node,
