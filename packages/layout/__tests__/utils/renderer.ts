@@ -168,7 +168,7 @@ export class GraphRenderer {
       const line = this.createEdge(edge, options);
       if (line) {
         this.canvas.appendChild(line);
-        this.edgeElements.set(this.getEdgeId(edge), line);
+        this.edgeElements.set(edge.id, line);
       }
     });
 
@@ -247,10 +247,6 @@ export class GraphRenderer {
     }
 
     return circle;
-  }
-
-  private getEdgeId(edge: any): string {
-    return `edge-${edge.source}-to-${edge.target}`;
   }
 
   /**
@@ -357,7 +353,7 @@ export class GraphRenderer {
     if (!this.currentData) return;
 
     this.currentData.edges?.forEach((edge) => {
-      const edgeElement = this.edgeElements.get(this.getEdgeId(edge));
+      const edgeElement = this.edgeElements.get(edge.id);
       if (!edgeElement) return;
 
       if (edge.source === nodeId) {
@@ -375,7 +371,7 @@ export class GraphRenderer {
   private updateElements(layout: Layout<any>): void {
     // 更新边
     layout.forEachEdge((edge) => {
-      const element = this.edgeElements.get(this.getEdgeId(edge));
+      const element = this.edgeElements.get(edge.id);
       const { sourceNode, targetNode } = edge;
 
       if (element && sourceNode && targetNode) {

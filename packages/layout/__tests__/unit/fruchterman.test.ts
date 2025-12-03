@@ -100,6 +100,34 @@ describe('FruchtermanLayout', () => {
     await expect(canvas).toMatchSnapshot(__filename, 'clustering-enabled');
   });
 
+  it('should fix node position in 2D', async () => {
+    await fruchterman.execute({
+      nodes: [{ id: 'n1' }, { id: 'n2' }],
+    });
+    fruchterman.setFixedPosition('n1', [100, 200]);
+    fruchterman.tick(10);
+    const positions = calculatePositions(fruchterman);
+    const node = positions.nodes.find((node) => node.id === 'n1');
+    expect(node.data.x).toBe(100);
+    expect(node.data.y).toBe(200);
+  });
+
+  it('should fix node position in 3D', async () => {
+    await fruchterman.execute(
+      {
+        nodes: [{ id: 'n1' }, { id: 'n2' }],
+      },
+      { dimensions: 3 },
+    );
+    fruchterman.setFixedPosition('n1', [100, 200, 300]);
+    fruchterman.tick(10);
+    const positions = calculatePositions(fruchterman);
+    const node = positions.nodes.find((node) => node.id === 'n1');
+    expect(node.data.x).toBe(100);
+    expect(node.data.y).toBe(200);
+    expect(node.data.z).toBe(300);
+  });
+
   it('should do fruchterman layout with an empty graph.', async () => {
     const fruchterman = new FruchtermanLayout();
     await fruchterman.execute({
