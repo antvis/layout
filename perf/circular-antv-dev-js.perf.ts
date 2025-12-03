@@ -1,7 +1,5 @@
 import { CircularLayout } from '@antv/layout';
-import type { Test } from 'iperf';
-import { CANVAS_SIZE } from './utils';
-import { DataFormat, runPerfTest, TestScale } from './utils/createPerfTests';
+import { createTest, DataFormat, TestScale } from './utils';
 
 const commonConfig = {
   layoutName: 'circular',
@@ -10,34 +8,22 @@ const commonConfig = {
   implementation: 'js',
   LayoutClass: CircularLayout,
   dataFormat: DataFormat.GRAPHLIB,
-  layoutOptions: {
-    height: CANVAS_SIZE,
-    width: CANVAS_SIZE,
-  },
+  layoutOptions: {},
   shouldRender: true,
 };
 
-export const circularAntvDevJsTiny: Test = async (context) => {
-  await runPerfTest(context, { ...commonConfig, scale: TestScale.TINY });
-};
-circularAntvDevJsTiny.iteration = 20;
+export const circularAntvDevJsTiny = createTest(commonConfig, TestScale.TINY);
 
-export const circularAntvDevJsSmall: Test = async (context) => {
-  await runPerfTest(context, { ...commonConfig, scale: TestScale.SMALL });
-};
-circularAntvDevJsSmall.iteration = 20;
+export const circularAntvDevJsSmall = createTest(commonConfig, TestScale.SMALL);
 
-export const circularAntvDevJsMedium: Test = async (context) => {
-  await runPerfTest(context, { ...commonConfig, scale: TestScale.MEDIUM });
-};
-circularAntvDevJsMedium.iteration = 20;
+export const circularAntvDevJsMedium = createTest(
+  commonConfig,
+  TestScale.MEDIUM,
+);
 
-export const circularAntvDevJsLarge: Test = async (context) => {
-  await runPerfTest(context, { ...commonConfig, scale: TestScale.LARGE });
-};
-circularAntvDevJsLarge.iteration = 20;
+export const circularAntvDevJsLarge = createTest(commonConfig, TestScale.LARGE);
 
-export const circularAntvDevJsXlarge: Test = async (context) => {
-  await runPerfTest(context, { ...commonConfig, scale: TestScale.XLARGE });
-};
-circularAntvDevJsXlarge.iteration = 20;
+export const circularAntvDevJsXlarge = createTest(
+  commonConfig,
+  TestScale.XLARGE,
+);

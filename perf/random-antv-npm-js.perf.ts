@@ -1,7 +1,5 @@
 import { RandomLayout } from '@antv/layout-npm';
-import type { Test } from 'iperf';
-import { CANVAS_SIZE } from './utils';
-import { DataFormat, runPerfTest, TestScale } from './utils/createPerfTests';
+import { createTest, DataFormat, TestScale } from './utils';
 
 const commonConfig = {
   layoutName: 'random',
@@ -10,34 +8,16 @@ const commonConfig = {
   implementation: 'js',
   LayoutClass: RandomLayout,
   dataFormat: DataFormat.GRAPHLIB,
-  layoutOptions: {
-    height: CANVAS_SIZE,
-    width: CANVAS_SIZE,
-  },
+  layoutOptions: {},
   shouldRender: true,
 };
 
-export const randomAntvNpmJsTiny: Test = async (context) => {
-  await runPerfTest(context, { ...commonConfig, scale: TestScale.TINY });
-};
-randomAntvNpmJsTiny.iteration = 20;
+export const randomAntvNpmJsTiny = createTest(commonConfig, TestScale.TINY);
 
-export const randomAntvNpmJsSmall: Test = async (context) => {
-  await runPerfTest(context, { ...commonConfig, scale: TestScale.SMALL });
-};
-randomAntvNpmJsSmall.iteration = 20;
+export const randomAntvNpmJsSmall = createTest(commonConfig, TestScale.SMALL);
 
-export const randomAntvNpmJsMedium: Test = async (context) => {
-  await runPerfTest(context, { ...commonConfig, scale: TestScale.MEDIUM });
-};
-randomAntvNpmJsMedium.iteration = 20;
+export const randomAntvNpmJsMedium = createTest(commonConfig, TestScale.MEDIUM);
 
-export const randomAntvNpmJsLarge: Test = async (context) => {
-  await runPerfTest(context, { ...commonConfig, scale: TestScale.LARGE });
-};
-randomAntvNpmJsLarge.iteration = 20;
+export const randomAntvNpmJsLarge = createTest(commonConfig, TestScale.LARGE);
 
-export const randomAntvNpmJsXlarge: Test = async (context) => {
-  await runPerfTest(context, { ...commonConfig, scale: TestScale.XLARGE });
-};
-randomAntvNpmJsXlarge.iteration = 20;
+export const randomAntvNpmJsXlarge = createTest(commonConfig, TestScale.XLARGE);

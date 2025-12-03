@@ -1,5 +1,6 @@
 import { Graph } from '@antv/graphlib';
 import type { LayoutMapping } from '@antv/layout';
+import { Test } from 'iperf';
 import { CANVAS_SIZE } from './constants';
 import { loadRandomClusters } from './datasets';
 
@@ -74,11 +75,11 @@ export interface CreatePerfTestsConfig<T = any> {
  * 默认测试数量级配置
  */
 export const DEFAULT_SCALES: Record<TestScale, ITestScale> = {
-  [TestScale.TINY]: { name: 'tiny', nodeCount: 500, edgeCount: 500 },
-  [TestScale.SMALL]: { name: 'small', nodeCount: 2000, edgeCount: 2000 },
-  [TestScale.MEDIUM]: { name: 'medium', nodeCount: 10000, edgeCount: 10000 },
-  [TestScale.LARGE]: { name: 'large', nodeCount: 20000, edgeCount: 20000 },
-  [TestScale.XLARGE]: { name: 'xlarge', nodeCount: 50000, edgeCount: 50000 },
+  [TestScale.TINY]: { name: 'tiny', nodeCount: 100, edgeCount: 100 },
+  [TestScale.SMALL]: { name: 'small', nodeCount: 500, edgeCount: 500 },
+  [TestScale.MEDIUM]: { name: 'medium', nodeCount: 2000, edgeCount: 2000 },
+  [TestScale.LARGE]: { name: 'large', nodeCount: 10000, edgeCount: 10000 },
+  [TestScale.XLARGE]: { name: 'xlarge', nodeCount: 20000, edgeCount: 20000 },
 };
 
 /**
@@ -156,7 +157,12 @@ export async function runPerfTest<T = any>(
   const scaleConfig = DEFAULT_SCALES[scale];
   let graph = loadRandomClusters(scaleConfig.nodeCount, scaleConfig.edgeCount);
 
-  const layout = new LayoutClass(layoutOptions);
+  const layout = new LayoutClass({
+    width: CANVAS_SIZE,
+    height: CANVAS_SIZE,
+    center: [CANVAS_SIZE / 2, CANVAS_SIZE / 2],
+    ...layoutOptions,
+  });
 
   let result: LayoutMapping;
 
@@ -219,4 +225,12 @@ export function parseLayoutFileName(fileName: string) {
 
   const [, layoutName, source, version, implementation] = match;
   return { layoutName, source, version, implementation };
+}
+
+export function createTest(config: any, scale: TestScale): Test {
+  const test: Test = async (context) => {
+    await runPerfTest(context, { ...config, scale });
+  };
+  test.iteration = 20;
+  return test;
 }

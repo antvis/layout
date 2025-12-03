@@ -1,7 +1,6 @@
 import { FruchtermanLayout } from '@antv/layout-npm';
 import type { Test } from 'iperf';
-import { CANVAS_SIZE } from './utils';
-import { DataFormat, runPerfTest, TestScale } from './utils/createPerfTests';
+import { createTest, DataFormat, TestScale } from './utils';
 
 const commonConfig = {
   layoutName: 'fruchterman',
@@ -12,9 +11,6 @@ const commonConfig = {
   dataFormat: DataFormat.GRAPHLIB,
   layoutOptions: {
     dimensions: 2,
-    height: CANVAS_SIZE,
-    width: CANVAS_SIZE,
-    center: [CANVAS_SIZE / 2, CANVAS_SIZE / 2],
     gravity: 1,
     speed: 5,
     animate: false,
@@ -24,31 +20,28 @@ const commonConfig = {
   customExecute: async (layout: any, graph: any) => {
     layout.execute(graph);
     layout.stop();
-    return await layout.tick(500 - 1);
+    return await layout.tick(500);
   },
 };
 
-export const fruchtermanAntvNpmJsTiny: Test = async (context) => {
-  await runPerfTest(context, { ...commonConfig, scale: TestScale.TINY });
-};
-fruchtermanAntvNpmJsTiny.iteration = 10;
+export const fruchtermanAntvNpmJsTiny: Test = createTest(
+  commonConfig,
+  TestScale.TINY,
+);
 
-export const fruchtermanAntvNpmJsSmall: Test = async (context) => {
-  await runPerfTest(context, { ...commonConfig, scale: TestScale.SMALL });
-};
-fruchtermanAntvNpmJsSmall.iteration = 10;
+export const fruchtermanAntvNpmJsSmall: Test = createTest(
+  commonConfig,
+  TestScale.SMALL,
+);
 
-export const fruchtermanAntvNpmJsMedium: Test = async (context) => {
-  await runPerfTest(context, { ...commonConfig, scale: TestScale.MEDIUM });
-};
-fruchtermanAntvNpmJsMedium.iteration = 10;
+export const fruchtermanAntvNpmJsMedium: Test = createTest(
+  commonConfig,
+  TestScale.MEDIUM,
+);
 
-// export const fruchtermanAntvNpmJsLarge: Test = async (context) => {
-//   await runPerfTest(context, { ...commonConfig, scale: TestScale.LARGE });
-// };
-// fruchtermanAntvNpmJsLarge.iteration = 10;
+export const fruchtermanAntvNpmJsLarge: Test = createTest(
+  commonConfig,
+  TestScale.LARGE,
+);
 
-// export const fruchtermanAntvNpmJsXlarge: Test = async (context) => {
-//   await runPerfTest(context, { ...commonConfig, scale: TestScale.XLARGE });
-// };
-// fruchtermanAntvNpmJsXlarge.iteration = 10;
+// export const fruchtermanAntvNpmJsXlarge: Test = createTest(commonConfig, TestScale.XLARGE);

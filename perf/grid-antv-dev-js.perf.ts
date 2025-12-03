@@ -1,7 +1,5 @@
 import { GridLayout } from '@antv/layout';
-import type { Test } from 'iperf';
-import { CANVAS_SIZE } from './utils';
-import { DataFormat, runPerfTest, TestScale } from './utils/createPerfTests';
+import { createTest, DataFormat, TestScale } from './utils';
 
 const commonConfig = {
   layoutName: 'grid',
@@ -10,34 +8,16 @@ const commonConfig = {
   implementation: 'js',
   LayoutClass: GridLayout,
   dataFormat: DataFormat.PLAIN_OBJECT,
-  layoutOptions: {
-    height: CANVAS_SIZE,
-    width: CANVAS_SIZE,
-  },
+  layoutOptions: {},
   shouldRender: true,
 };
 
-export const gridAntvDevJsTiny: Test = async (context) => {
-  await runPerfTest(context, { ...commonConfig, scale: TestScale.TINY });
-};
-gridAntvDevJsTiny.iteration = 20;
+export const gridAntvDevJsTiny = createTest(commonConfig, TestScale.TINY);
 
-export const gridAntvDevJsSmall: Test = async (context) => {
-  await runPerfTest(context, { ...commonConfig, scale: TestScale.SMALL });
-};
-gridAntvDevJsSmall.iteration = 20;
+export const gridAntvDevJsSmall = createTest(commonConfig, TestScale.SMALL);
 
-export const gridAntvDevJsMedium: Test = async (context) => {
-  await runPerfTest(context, { ...commonConfig, scale: TestScale.MEDIUM });
-};
-gridAntvDevJsMedium.iteration = 20;
+export const gridAntvDevJsMedium = createTest(commonConfig, TestScale.MEDIUM);
 
-export const gridAntvDevJsLarge: Test = async (context) => {
-  await runPerfTest(context, { ...commonConfig, scale: TestScale.LARGE });
-};
-gridAntvDevJsLarge.iteration = 20;
+export const gridAntvDevJsLarge = createTest(commonConfig, TestScale.LARGE);
 
-export const gridAntvDevJsXlarge: Test = async (context) => {
-  await runPerfTest(context, { ...commonConfig, scale: TestScale.XLARGE });
-};
-gridAntvDevJsXlarge.iteration = 20;
+export const gridAntvDevJsXlarge = createTest(commonConfig, TestScale.XLARGE);
