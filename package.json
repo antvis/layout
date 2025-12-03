@@ -24,7 +24,9 @@
     "build:site": "vite build && cp site/enable-threads.js site/dist",
     "deploy": "gh-pages -d site/dist",
     "preview": "vite preview --port 9092",
-    "prettier": "prettier --write \"**/*.ts\""
+    "prettier": "prettier --write \"**/*.ts\"",
+    "perf": "perf",
+    "perf:preview": "perf preview"
   },
   "lint-staged": {
     "*.{md,json}": [
@@ -38,6 +40,7 @@
     ]
   },
   "devDependencies": {
+    "@antv/layout-npm": "npm:@antv/layout@1.2.14-beta.8",
     "@antv/g": "^5.18.25",
     "@antv/g-canvas": "^1.11.27",
     "@antv/g-plugin-3d": "^1.9.34",
