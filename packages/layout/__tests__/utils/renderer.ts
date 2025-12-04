@@ -128,7 +128,6 @@ export class GraphRenderer {
     data?: GraphData,
   ): void {
     const opts = deepMix({}, this.defaultOptions, options);
-    // this.currentData = data;
 
     if (opts.clearCanvas) {
       this.clear();

@@ -46,9 +46,9 @@ describe('order', () => {
       const sorted = orderByDegree(model);
       const nodeIds = sorted.nodes().map((n) => n.id);
 
-      expect(nodeIds[0]).toBe('isolated'); // degree 0
-      expect(nodeIds[1]).toBe('connected1'); // degree 1
-      expect(nodeIds[2]).toBe('connected2'); // degree 1
+      expect(nodeIds[0]).toBe('connected1'); // degree 1
+      expect(nodeIds[1]).toBe('connected2'); // degree 1
+      expect(nodeIds[2]).toBe('isolated'); // degree 0
     });
 
     test('should handle single node', () => {

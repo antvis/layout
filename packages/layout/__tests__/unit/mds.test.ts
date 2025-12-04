@@ -1,113 +1,108 @@
 import { MDSLayout } from '@/src';
 import { createCanvas } from '@@/utils/create';
 import type { Canvas } from '@antv/g';
-import { Graph } from '@antv/graphlib';
 import { countries as data } from '../dataset';
-import { renderNodesAndEdges } from '../utils/render';
+import { GraphRenderer, RenderOptions } from '../utils';
+import { calculatePositions } from '../utils/render-update';
 
 describe('layout mds', () => {
   let canvas: Canvas;
-  let graph: Graph<any, any>;
   let mds: MDSLayout;
+  let renderer: GraphRenderer;
 
   beforeEach(() => {
     canvas = createCanvas();
-    const { nodes, edges } = data;
-    graph = new Graph({ nodes, edges });
     mds = new MDSLayout({
       center: [250, 250],
       linkDistance: 50,
     });
+    renderer = new GraphRenderer(canvas);
   });
 
   afterEach(() => {
     canvas.destroy();
   });
 
+  const renderLayout = async (
+    layout: MDSLayout,
+    options: RenderOptions = {},
+  ) => {
+    await renderer.render(layout, {
+      nodeRadius: 10,
+      nodeStyle: { lineWidth: 2 },
+      ...options,
+    });
+  };
+
   it('should render with default config', async () => {
-    const positions = await mds.execute(graph);
-    await renderNodesAndEdges(canvas, positions);
+    await mds.execute(data);
+    await renderLayout(mds);
     await expect(canvas).toMatchSnapshot(__filename);
   });
 
   it('should render with custom center', async () => {
-    const positions = await mds.execute(graph, { center: [300, 300] });
-    await renderNodesAndEdges(canvas, positions);
+    await mds.execute(data, { center: [300, 300] });
+    await renderLayout(mds);
     await expect(canvas).toMatchSnapshot(__filename, 'custom-center');
   });
 
   it('should render with custom linkDistance', async () => {
-    const positions = await mds.execute(graph, { linkDistance: 60 });
-    await renderNodesAndEdges(canvas, positions);
+    await mds.execute(data, { linkDistance: 60 });
+    await renderLayout(mds);
     await expect(canvas).toMatchSnapshot(__filename, 'linkDistance-60');
   });
 
   it('should render with small linkDistance', async () => {
-    const positions = await mds.execute(graph, { linkDistance: 20 });
-    await renderNodesAndEdges(canvas, positions);
+    await mds.execute(data, { linkDistance: 20 });
+    await renderLayout(mds);
     await expect(canvas).toMatchSnapshot(__filename, 'linkDistance-20');
   });
 
   it('returns empty result for empty graph', async () => {
-    const emptyGraph = new Graph({ nodes: [], edges: [] });
+    const emptyGraph = { nodes: [], edges: [] };
     const layout = new MDSLayout({ center: [0, 0], linkDistance: 50 });
-    const positions = await layout.execute(emptyGraph);
+    await layout.execute(emptyGraph);
+    const positions = calculatePositions(layout);
     expect(positions.nodes).toHaveLength(0);
     expect(positions.edges).toHaveLength(0);
   });
 
-  it('assign places single node at center', async () => {
-    const singleGraph = new Graph({
-      nodes: [{ id: 'a', data: {} }],
-      edges: [] as any,
-    });
-    const layout = new MDSLayout();
-    await layout.assign(singleGraph, { center: [10, 20] } as any);
-    const n = singleGraph.getAllNodes()[0];
-    expect((n.data as any).x).toBe(10);
-    expect((n.data as any).y).toBe(20);
-  });
-
   it('should handle single node graph', async () => {
-    const singleGraph = new Graph({
+    const singleGraph = {
       nodes: [{ id: 'node', data: {} }],
       edges: [],
-    });
+    };
     const layout = new MDSLayout({ center: [10, 20] });
-    const positions = await layout.execute(singleGraph);
-    expect(positions.nodes[0].data.x).toBe(10);
-    expect(positions.nodes[0].data.y).toBe(20);
+    await layout.execute(singleGraph);
+    const positions = calculatePositions(layout);
+    expect(positions.nodes[0].x).toBe(10);
+    expect(positions.nodes[0].y).toBe(20);
   });
 
   it('should layout unconnected graph', async () => {
-    const unconnectedGraph = new Graph({
+    const unconnectedGraph = {
       nodes: [
         { id: 'node0', data: {} },
         { id: 'node1', data: {} },
         { id: 'node2', data: {} },
       ],
       edges: [{ id: 'edge1', source: 'node0', target: 'node1', data: {} }],
-    });
+    };
     const layout = new MDSLayout({ center: [100, 200] });
-    const positions = await layout.execute(unconnectedGraph);
+    await layout.execute(unconnectedGraph);
+    const positions = calculatePositions(layout);
 
     // Check center of mass
     const avgX =
-      (positions.nodes[0].data.x +
-        positions.nodes[1].data.x +
-        positions.nodes[2].data.x) /
-      3;
+      (positions.nodes[0].x + positions.nodes[1].x + positions.nodes[2].x) / 3;
     const avgY =
-      (positions.nodes[0].data.y +
-        positions.nodes[1].data.y +
-        positions.nodes[2].data.y) /
-      3;
+      (positions.nodes[0].y + positions.nodes[1].y + positions.nodes[2].y) / 3;
     expect(avgX).toBe(100);
     expect(avgY).toBe(200);
   });
 
   it('should handle graph with infinity distances', async () => {
-    const disconnectedGraph = new Graph({
+    const disconnectedGraph = {
       nodes: [
         { id: 'a', data: {} },
         { id: 'b', data: {} },
@@ -118,14 +113,14 @@ describe('layout mds', () => {
         { id: 'e1', source: 'a', target: 'b', data: {} },
         { id: 'e2', source: 'c', target: 'd', data: {} },
       ],
-    });
-    const positions = await mds.execute(disconnectedGraph);
-    await renderNodesAndEdges(canvas, positions);
+    };
+    await mds.execute(disconnectedGraph);
+    await renderLayout(mds);
     await expect(canvas).toMatchSnapshot(__filename, 'disconnected-components');
   });
 
   it('should render complete graph', async () => {
-    const completeGraph = new Graph({
+    const completeGraph = {
       nodes: [
         { id: 'a', data: {} },
         { id: 'b', data: {} },
@@ -140,14 +135,14 @@ describe('layout mds', () => {
         { id: 'e5', source: 'b', target: 'd', data: {} },
         { id: 'e6', source: 'c', target: 'd', data: {} },
       ],
-    });
-    const positions = await mds.execute(completeGraph);
-    await renderNodesAndEdges(canvas, positions);
+    };
+    await mds.execute(completeGraph);
+    await renderLayout(mds);
     await expect(canvas).toMatchSnapshot(__filename, 'complete-graph');
   });
 
   it('should render star graph', async () => {
-    const starGraph = new Graph({
+    const starGraph = {
       nodes: [
         { id: 'center', data: {} },
         { id: 'a', data: {} },
@@ -163,14 +158,14 @@ describe('layout mds', () => {
         { id: 'e4', source: 'center', target: 'd', data: {} },
         { id: 'e5', source: 'center', target: 'e', data: {} },
       ],
-    });
-    const positions = await mds.execute(starGraph);
-    await renderNodesAndEdges(canvas, positions);
+    };
+    await mds.execute(starGraph);
+    await renderLayout(mds);
     await expect(canvas).toMatchSnapshot(__filename, 'star-graph');
   });
 
   it('should render path graph', async () => {
-    const pathGraph = new Graph({
+    const pathGraph = {
       nodes: [
         { id: 'a', data: {} },
         { id: 'b', data: {} },
@@ -184,46 +179,26 @@ describe('layout mds', () => {
         { id: 'e3', source: 'c', target: 'd', data: {} },
         { id: 'e4', source: 'd', target: 'e', data: {} },
       ],
-    });
-    const positions = await mds.execute(pathGraph);
-    await renderNodesAndEdges(canvas, positions);
+    };
+    await mds.execute(pathGraph);
+    await renderLayout(mds);
     await expect(canvas).toMatchSnapshot(__filename, 'path-graph');
   });
 
-  it('assign mode should directly modify graph node positions', async () => {
-    const nodes = [
-      { id: 'a', data: {} },
-      { id: 'b', data: {} },
-      { id: 'c', data: {} },
-    ];
-    const edges = [
-      { id: 'e1', source: 'a', target: 'b', data: {} },
-      { id: 'e2', source: 'b', target: 'c', data: {} },
-    ];
-    const testGraph = new Graph({ nodes: nodes as any, edges: edges as any });
-    const layout = new MDSLayout({ center: [100, 100], linkDistance: 50 });
-    await layout.assign(testGraph, {});
-    const allNodes = testGraph.getAllNodes();
-    allNodes.forEach((node) => {
-      expect(typeof node.data.x).toBe('number');
-      expect(typeof node.data.y).toBe('number');
-      expect(Number.isFinite(node.data.x)).toBe(true);
-      expect(Number.isFinite(node.data.y)).toBe(true);
-    });
-  });
-
   it('should handle varying linkDistance values', async () => {
-    const positions1 = await mds.execute(graph, { linkDistance: 30 });
-    const positions2 = await mds.execute(graph, { linkDistance: 100 });
+    await mds.execute(data, { linkDistance: 30 });
+    const positions1 = calculatePositions(mds);
+    await mds.execute(data, { linkDistance: 100 });
+    const positions2 = calculatePositions(mds);
 
     // With larger linkDistance, nodes should be more spread out
     const dist1 = Math.sqrt(
-      Math.pow(positions1.nodes[0].data.x - positions1.nodes[1].data.x, 2) +
-        Math.pow(positions1.nodes[0].data.y - positions1.nodes[1].data.y, 2),
+      Math.pow(positions1.nodes[0].x - positions1.nodes[1].x, 2) +
+        Math.pow(positions1.nodes[0].y - positions1.nodes[1].y, 2),
     );
     const dist2 = Math.sqrt(
-      Math.pow(positions2.nodes[0].data.x - positions2.nodes[1].data.x, 2) +
-        Math.pow(positions2.nodes[0].data.y - positions2.nodes[1].data.y, 2),
+      Math.pow(positions2.nodes[0].x - positions2.nodes[1].x, 2) +
+        Math.pow(positions2.nodes[0].y - positions2.nodes[1].y, 2),
     );
 
     // Generally, larger linkDistance should result in larger distances
@@ -231,27 +206,26 @@ describe('layout mds', () => {
   });
 
   it('should verify positions are valid numbers', async () => {
-    const positions = await mds.execute(graph);
+    await mds.execute(data);
+    const positions = calculatePositions(mds);
     positions.nodes.forEach((node) => {
-      expect(Number.isFinite(node.data.x)).toBe(true);
-      expect(Number.isFinite(node.data.y)).toBe(true);
+      expect(Number.isFinite(node.x)).toBe(true);
+      expect(Number.isFinite(node.y)).toBe(true);
     });
   });
 
   it('should center nodes around specified center', async () => {
     const centerX = 150;
     const centerY = 150;
-    const positions = await mds.execute(graph, {
+    await mds.execute(data, {
       center: [centerX, centerY],
     });
-
+    const positions = calculatePositions(mds);
     // Calculate the center of mass
     const avgX =
-      positions.nodes.reduce((sum, n) => sum + n.data.x, 0) /
-      positions.nodes.length;
+      positions.nodes.reduce((sum, n) => sum + n.x, 0) / positions.nodes.length;
     const avgY =
-      positions.nodes.reduce((sum, n) => sum + n.data.y, 0) /
-      positions.nodes.length;
+      positions.nodes.reduce((sum, n) => sum + n.y, 0) / positions.nodes.length;
 
     // Should be close to the specified center
     expect(Math.abs(avgX - centerX)).toBeLessThan(1);

@@ -57,7 +57,7 @@ export function applySingleNodeLayout(
   const n = model.nodeCount();
 
   if (n === 1) {
-    const first = model.nodes()[0];
+    const first = model.firstNode();
     first.x = center[0];
     first.y = center[1];
     if (dimensions === 3) {

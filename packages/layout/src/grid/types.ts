@@ -1,7 +1,7 @@
 import type { BaseLayoutOptions } from '../base-layout';
 import type { ViewportOptions } from '../base-layout/types';
-import { NodeData } from '../types/data';
-import { Point } from '../types/point';
+import type { NodeData } from '../types/data';
+import type { Point } from '../types/point';
 import type { Size } from '../types/size';
 
 export interface GridLayoutOptions extends BaseLayoutOptions, ViewportOptions {
@@ -29,13 +29,13 @@ export interface GridLayoutOptions extends BaseLayoutOptions, ViewportOptions {
    *
    * <en/> Node size (diameter). Used for collision detection when nodes overlap
    */
-  nodeSize?: Size | ((node?: NodeData) => Size);
+  nodeSize?: Size | ((d?: NodeData) => Size);
   /**
    * <zh/> 环与环之间最小间距，用于调整半径
    *
    * <en/> Minimum spacing between rings, used to adjust the radius
    */
-  nodeSpacing?: number | ((node?: NodeData) => number);
+  nodeSpacing?: number | ((d?: NodeData) => number);
   /**
    * <zh/> 避免重叠时节点的间距 padding。preventOverlap 为 true 时生效
    *

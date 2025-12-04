@@ -1,7 +1,8 @@
 import { Graph } from '@antv/graphlib';
 import { isNumber } from '@antv/util';
-import type { Edge, Matrix, Node, OutNode, Point } from '../types';
+import type { Matrix, Node, OutNode, Point } from '../types';
 import { isArray } from './array';
+import { LayoutModel } from './model';
 
 export const floydWarshall = (adjMatrix: Matrix[]): Matrix[] => {
   // initialize
@@ -33,28 +34,23 @@ export const floydWarshall = (adjMatrix: Matrix[]): Matrix[] => {
 };
 
 export const getAdjMatrix = (
-  data: { nodes: Node[]; edges: Edge[] },
+  model: LayoutModel,
   directed: boolean,
 ): Matrix[] => {
-  const { nodes, edges } = data;
   const matrix: Matrix[] = [];
+
   // map node with index in data.nodes
   const nodeMap: {
     [key: string]: number;
   } = {};
 
-  if (!nodes) {
-    throw new Error('invalid nodes data!');
-  }
-  if (nodes) {
-    nodes.forEach((node, i) => {
-      nodeMap[node.id] = i;
-      const row: number[] = [];
-      matrix.push(row);
-    });
-  }
+  model.forEachNode((node, i) => {
+    nodeMap[node.id] = i;
+    const row: number[] = [];
+    matrix.push(row);
+  });
 
-  edges?.forEach((e) => {
+  model.forEachEdge((e) => {
     const { source, target } = e;
     const sIndex = nodeMap[source as string];
     const tIndex = nodeMap[target as string];

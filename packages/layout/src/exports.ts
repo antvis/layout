@@ -13,7 +13,7 @@ export {
   type FruchtermanLayoutOptions,
 } from './fruchterman';
 export { GridLayout, type GridLayoutOptions } from './grid';
-export * from './mds';
+export { MDSLayout, type MDSLayoutOptions } from './mds';
 export * from './radial';
 export * from './random';
 export * from './registry';
