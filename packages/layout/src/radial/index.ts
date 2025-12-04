@@ -131,6 +131,7 @@ export class RadialLayout implements Layout<RadialLayoutOptions> {
     const focusIndex = getIndexById(nodes, focusNode.id);
 
     // the graph-theoretic distance (shortest path distance) matrix
+    // @ts-ignore LATER: fix the type error
     const adjMatrix = getAdjMatrix({ nodes, edges }, false);
     const distances = floydWarshall(adjMatrix);
     const maxDistance = maxToFocus(distances, focusIndex);

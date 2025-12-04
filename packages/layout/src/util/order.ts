@@ -1,8 +1,7 @@
-import type { PlainObject } from '../types/common';
 import type { LayoutNode, NodeData } from '../types/data';
 import type { LayoutModel } from './model';
 
-export type SortComparator<N extends PlainObject = PlainObject> = (
+export type SortComparator<N extends NodeData = NodeData> = (
   nodeA: LayoutNode<N>,
   nodeB: LayoutNode<N>,
   nodes: LayoutNode<N>[],
@@ -11,7 +10,7 @@ export type SortComparator<N extends PlainObject = PlainObject> = (
 /**
  * 通用排序核心函数
  */
-function sort<N extends PlainObject = PlainObject>(
+function sort<N extends NodeData = NodeData>(
   model: LayoutModel<N>,
   compareFn: (a: LayoutNode<N>, b: LayoutNode<N>) => number,
 ): LayoutModel<N> {
@@ -27,20 +26,22 @@ function sort<N extends PlainObject = PlainObject>(
   return model;
 }
 
-export function orderByDegree<N extends PlainObject = PlainObject>(
+export function orderByDegree<N extends NodeData = NodeData>(
   model: LayoutModel<N>,
 ): LayoutModel<N> {
   return sort(model, (nodeA, nodeB) => {
     const degreeA = model.degree(nodeA.id);
     const degreeB = model.degree(nodeB.id);
-    return degreeA - degreeB;
+    return degreeB - degreeA; // descending order
   });
 }
 
 /**
  * 按 ID 排序
  */
-export function orderById<N = any>(model: LayoutModel<N>): LayoutModel<N> {
+export function orderById<N extends NodeData = NodeData>(
+  model: LayoutModel<N>,
+): LayoutModel<N> {
   return sort(model, (nodeA, nodeB) => {
     const idA = nodeA.id;
     const idB = nodeB.id;
@@ -56,7 +57,7 @@ export function orderById<N = any>(model: LayoutModel<N>): LayoutModel<N> {
 /**
  * 按自定义比较函数排序
  */
-export function orderBySorter<N = any>(
+export function orderBySorter<N extends NodeData = NodeData>(
   model: LayoutModel<N>,
   sorter: (a: NodeData, b: NodeData) => -1 | 0 | 1,
 ): LayoutModel<N> {
@@ -65,4 +66,83 @@ export function orderBySorter<N = any>(
     const b = model.originalNode(nodeB.id);
     return sorter(a!, b!);
   });
+}
+
+/**
+ * Order nodes according to graph topology
+ */
+export function orderByTopology<N extends NodeData = NodeData>(
+  model: LayoutModel<N>,
+  directed: boolean = false,
+): LayoutModel<N> {
+  const n = model.nodeCount();
+
+  if (n === 0) return model;
+
+  const nodes = model.nodes();
+  const orderedNodes: LayoutNode<N>[] = [nodes[0]];
+  const pickFlags: { [id: string]: boolean } = {};
+  pickFlags[nodes[0].id] = true;
+
+  let k = 0;
+  model.forEachNode((node, i) => {
+    if (i !== 0) {
+      const currentDegree = model.degree(node.id, 'both');
+      const nextDegree = i < n - 1 ? model.degree(nodes[i + 1].id, 'both') : 0;
+      const currentNodeId = orderedNodes[k].id;
+      const isNeighbor = model
+        .neighbors(currentNodeId, 'both')
+        .includes(node.id);
+
+      if (
+        (i === n - 1 || currentDegree !== nextDegree || isNeighbor) &&
+        !pickFlags[node.id]
+      ) {
+        orderedNodes.push(node);
+        pickFlags[node.id] = true;
+        k++;
+      } else {
+        const children = directed
+          ? model.successors(currentNodeId)
+          : model.neighbors(currentNodeId);
+        let foundChild = false;
+
+        for (let j = 0; j < children.length; j++) {
+          const childId = children[j];
+          const child = model.node(childId);
+          if (
+            child &&
+            model.degree(childId) === model.degree(node.id) &&
+            !pickFlags[childId]
+          ) {
+            orderedNodes.push(child);
+            pickFlags[childId] = true;
+            foundChild = true;
+            break;
+          }
+        }
+
+        let ii = 0;
+        while (!foundChild) {
+          if (!pickFlags[nodes[ii].id]) {
+            orderedNodes.push(nodes[ii]);
+            pickFlags[nodes[ii].id] = true;
+            foundChild = true;
+          }
+          ii++;
+          if (ii === n) {
+            break;
+          }
+        }
+      }
+    }
+  });
+
+  // Update model with ordered nodes
+  model.nodeMap.clear();
+  orderedNodes.forEach((node) => {
+    model.nodeMap.set(node.id, node);
+  });
+
+  return model;
 }

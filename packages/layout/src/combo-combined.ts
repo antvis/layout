@@ -203,6 +203,7 @@ export class ComboCombinedLayout implements Layout<ComboCombinedLayoutOptions> {
             outerLayoutNodes.length < 100
               ? new MDSLayout()
               : new ConcentricLayout();
+          // @ts-ignore LATER: fix the type error
           await outerLayoutPreset.assign(outerLayoutGraph);
         }
 

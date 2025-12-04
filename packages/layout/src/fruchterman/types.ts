@@ -9,7 +9,31 @@ import type { NodeData } from '../types/data';
  */
 export interface FruchtermanLayoutOptions
   extends BaseLayoutOptions,
-    ViewportOptions {
+    Omit<SimulationOptions, 'nodeClusterBy'> {
+  /**
+   * <zh/> 聚类布局依据的字段名，cluster: true 时使用
+   *
+   * <en/> The field name of the node data in the data, which is used when cluster is true
+   * @defaultValue 'cluster'
+   */
+  nodeClusterBy?: string | ((node: NodeData) => string);
+  /**
+   * <zh/> 每一次迭代的回调函数
+   *
+   * <en/> The callback function for each iteration
+   * @param data - <zh/> 当前迭代的布局数据 | <en/> Current layout data
+   */
+  onTick?: (layout: Layout<FruchtermanLayoutOptions>) => void;
+  /**
+   * <zh/> 是否使用动画自动运行迭代。为 false 时，需要手动调用 tick() 方法来驱动迭代
+   *
+   * <en/> Whether to use animation to automatically run iterations. When false, you need to manually call the tick() method to drive iterations
+   * @defaultValue false
+   */
+  animate?: boolean;
+}
+
+export interface SimulationOptions extends ViewportOptions {
   /**
    * <zh/> 布局的维度，2D 渲染时指定为 2；若为 3D 渲染可指定为 3，则将多计算 z 轴的布局
    *
@@ -58,29 +82,5 @@ export interface FruchtermanLayoutOptions
    * <en/> The field name of the node data in the data, which is used when cluster is true
    * @defaultValue 'cluster'
    */
-  nodeClusterBy?: string | ((node: NodeData) => string);
-  /**
-   * <zh/> 每一次迭代的回调函数
-   *
-   * <en/> The callback function for each iteration
-   * @param data - <zh/> 当前迭代的布局数据 | <en/> Current layout data
-   */
-  onTick?: (layout: Layout<FruchtermanLayoutOptions>) => void;
-  /**
-   * <zh/> 是否使用动画自动运行迭代。为 false 时，需要手动调用 tick() 方法来驱动迭代
-   *
-   * <en/> Whether to use animation to automatically run iterations. When false, you need to manually call the tick() method to drive iterations
-   * @defaultValue false
-   */
-  animate?: boolean;
-}
-
-/**
- * <zh/> 规范化后的 Fruchterman 布局配置项
- *
- * <en/> Normalized Fruchterman layout options
- */
-export interface NormalizedFruchtermanLayoutOptions
-  extends Required<Omit<FruchtermanLayoutOptions, 'nodeClusterBy'>> {
-  nodeClusterBy: (node: NodeData) => string;
+  nodeClusterBy?: (node: NodeData) => string;
 }

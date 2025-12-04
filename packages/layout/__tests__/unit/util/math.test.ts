@@ -6,6 +6,7 @@ import {
   getLayoutBBox,
   scaleMatrix,
 } from '@/src/util/math';
+import { LayoutModel } from '@/src/util/model';
 
 describe('getAdjMatrix', () => {
   test('should create adjacency matrix for undirected graph', () => {
@@ -19,7 +20,8 @@ describe('getAdjMatrix', () => {
       { id: 'e2', source: 'b', target: 'c', data: {} },
     ];
 
-    const matrix = getAdjMatrix({ nodes, edges }, false);
+    const model = new LayoutModel({ nodes, edges });
+    const matrix = getAdjMatrix(model, false);
 
     expect(matrix).toEqual([
       [undefined, 1, undefined],
@@ -39,7 +41,8 @@ describe('getAdjMatrix', () => {
       { id: 'e2', source: 'b', target: 'c', data: {} },
     ];
 
-    const matrix = getAdjMatrix({ nodes, edges }, true);
+    const model = new LayoutModel({ nodes, edges });
+    const matrix = getAdjMatrix(model, true);
 
     expect(matrix).toEqual([
       [undefined, 1, undefined],
@@ -55,7 +58,8 @@ describe('getAdjMatrix', () => {
     ];
     const edges: Edge[] = [];
 
-    const matrix = getAdjMatrix({ nodes, edges }, false);
+    const model = new LayoutModel({ nodes, edges });
+    const matrix = getAdjMatrix(model, false);
 
     expect(matrix).toEqual([[], []]);
   });
@@ -64,7 +68,8 @@ describe('getAdjMatrix', () => {
     const nodes: Node[] = [{ id: 'a', data: {} }];
     const edges: Edge[] = [];
 
-    const matrix = getAdjMatrix({ nodes, edges }, false);
+    const model = new LayoutModel({ nodes, edges });
+    const matrix = getAdjMatrix(model, false);
 
     expect(matrix).toEqual([[]]);
   });
@@ -79,7 +84,8 @@ describe('getAdjMatrix', () => {
       { id: 'e2', source: 'a', target: 'b', data: {} },
     ];
 
-    const matrix = getAdjMatrix({ nodes, edges }, false);
+    const model = new LayoutModel({ nodes, edges });
+    const matrix = getAdjMatrix(model, false);
 
     expect(matrix[0][0]).toBe(1); // self-loop
     expect(matrix[0][1]).toBe(1);
@@ -97,7 +103,8 @@ describe('getAdjMatrix', () => {
       { id: 'e3', source: 'nonexistent', target: 'b', data: {} },
     ];
 
-    const matrix = getAdjMatrix({ nodes, edges }, false);
+    const model = new LayoutModel({ nodes, edges });
+    const matrix = getAdjMatrix(model, false);
 
     expect(matrix).toEqual([
       [undefined, 1],
@@ -111,15 +118,17 @@ describe('getAdjMatrix', () => {
       { id: 'b', data: {} },
     ];
 
-    const matrix = getAdjMatrix({ nodes, edges: undefined as any }, false);
+    const model = new LayoutModel({ nodes, edges: undefined as any });
+    const matrix = getAdjMatrix(model, false);
 
     expect(matrix).toEqual([[], []]);
   });
 
-  test('should throw error for invalid nodes', () => {
-    expect(() => {
-      getAdjMatrix({ nodes: undefined as any, edges: [] }, false);
-    }).toThrow('invalid nodes data!');
+  test('should handle empty nodes', () => {
+    const model = new LayoutModel({ nodes: [], edges: [] });
+    const matrix = getAdjMatrix(model, false);
+
+    expect(matrix).toEqual([]);
   });
 
   test('should handle complete graph', () => {
@@ -134,7 +143,8 @@ describe('getAdjMatrix', () => {
       { id: 'e3', source: 'b', target: 'c', data: {} },
     ];
 
-    const matrix = getAdjMatrix({ nodes, edges }, false);
+    const model = new LayoutModel({ nodes, edges });
+    const matrix = getAdjMatrix(model, false);
 
     expect(matrix).toEqual([
       [undefined, 1, 1],
@@ -154,7 +164,8 @@ describe('getAdjMatrix', () => {
       { id: 'e2', source: 'a', target: 'c', data: {} },
     ];
 
-    const matrix = getAdjMatrix({ nodes, edges }, true);
+    const model = new LayoutModel({ nodes, edges });
+    const matrix = getAdjMatrix(model, true);
 
     expect(matrix).toEqual([
       [undefined, 1, 1],
@@ -173,7 +184,8 @@ describe('getAdjMatrix', () => {
       { id: 'e2', source: 'b', target: 'a', data: {} },
     ];
 
-    const matrix = getAdjMatrix({ nodes, edges }, true);
+    const model = new LayoutModel({ nodes, edges });
+    const matrix = getAdjMatrix(model, true);
 
     expect(matrix).toEqual([
       [undefined, 1],

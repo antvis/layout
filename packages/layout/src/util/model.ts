@@ -41,8 +41,17 @@ export class LayoutModel<
     return this.nodeMap.get(id);
   }
 
-  public forEachNode(callback: (node: LayoutNode<N>) => void): void {
-    this.nodeMap.forEach(callback);
+  public firstNode(): LayoutNode<N> | undefined {
+    return this.nodeMap.values().next().value;
+  }
+
+  public forEachNode(
+    callback: (node: LayoutNode<N>, index: number) => void,
+  ): void {
+    let index = 0;
+    this.nodeMap.forEach((node) => {
+      callback(node, index++);
+    });
   }
 
   public originalNode(id: ID): N | undefined {
@@ -62,8 +71,17 @@ export class LayoutModel<
     return this.edgeMap.get(id);
   }
 
-  public forEachEdge(callback: (edge: LayoutEdge<E>) => void): void {
-    this.edgeMap.forEach(callback);
+  public firstEdge(): LayoutEdge<E> | undefined {
+    return this.edgeMap.values().next().value;
+  }
+
+  public forEachEdge(
+    callback: (edge: LayoutEdge<E>, index: number) => void,
+  ): void {
+    let index = 0;
+    this.edgeMap.forEach((edge) => {
+      callback(edge, index++);
+    });
   }
 
   public originalEdge(id: ID): E | undefined {

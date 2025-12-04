@@ -49,7 +49,9 @@ export interface ViewportOptions {
 export interface BaseLayoutOptions<
   N extends NodeData = NodeData,
   E extends EdgeData = EdgeData,
-> extends LayoutModelOptions<N, E> {}
+> extends LayoutModelOptions<N, E> {
+  [key: string]: any;
+}
 
 export interface Layout<
   LayoutOptions extends BaseLayoutOptions = BaseLayoutOptions,
