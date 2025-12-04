@@ -53,7 +53,7 @@ export class MDSLayout extends BaseLayout<MDSLayoutOptions> {
 }
 
 const handleInfinity = (distances: Matrix[]) => {
-  let maxDistance = -999999;
+  let maxDistance = Number.NEGATIVE_INFINITY;
   distances.forEach((row) => {
     row.forEach((value) => {
       if (value === Infinity) {
