@@ -30,7 +30,8 @@ export class MDSLayout extends BaseLayout<MDSLayoutOptions> {
 
     const n = this.model.nodeCount();
     if (n === 0 || n === 1) {
-      return applySingleNodeLayout(this.model, center);
+      applySingleNodeLayout(this.model, center);
+      return;
     }
 
     // the graph-theoretic distance (shortest path distance) matrix

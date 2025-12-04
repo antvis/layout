@@ -3,26 +3,9 @@ import type { ID } from '@antv/graphlib';
 import { isNil } from '@antv/util';
 import type { Point } from '../types';
 import type { LayoutNode } from '../types/data';
-import type { Position } from '../types/position';
+import type { NullablePosition } from '../types/position';
 import type { LayoutModel } from '../util/model';
-import type { NormalizedFruchtermanLayoutOptions } from './types';
-
-interface SimulationOptions
-  extends Required<
-    Pick<
-      NormalizedFruchtermanLayoutOptions,
-      | 'width'
-      | 'height'
-      | 'center'
-      | 'gravity'
-      | 'speed'
-      | 'clustering'
-      | 'clusterGravity'
-      | 'nodeClusterBy'
-      | 'dimensions'
-      | 'maxIteration'
-    >
-  > {}
+import type { SimulationOptions } from './types';
 
 interface ClusterInfo {
   name: string;
@@ -152,9 +135,9 @@ export class Simulation extends EventEmitter {
   /**
    * Fixes the position of the node with the given id to the specified position.
    */
-  public setFixedPosition(id: ID, position: Position | null): this {
+  public setFixedPosition(id: ID, position: NullablePosition | null) {
     const node = this.context.model.node(id);
-    if (!node) return this;
+    if (!node) return;
 
     const keys = ['fx', 'fy', 'fz'] as const;
 
@@ -163,7 +146,7 @@ export class Simulation extends EventEmitter {
       keys.forEach((key) => {
         delete node[key];
       });
-      return this;
+      return;
     }
 
     position.forEach((value, index) => {
@@ -174,8 +157,6 @@ export class Simulation extends EventEmitter {
         node[keys[index]] = value;
       }
     });
-
-    return this;
   }
 
   /**

@@ -1,7 +1,7 @@
 import { BaseLayoutWithIterations } from '../base-layout';
 import type { NodeData } from '../types/data';
 import type { ID } from '../types/id';
-import type { Position } from '../types/position';
+import type { NullablePosition } from '../types/position';
 import {
   applySingleNodeLayout,
   getNestedValue,
@@ -9,12 +9,22 @@ import {
 } from '../util';
 import { initModelNodePosition, LayoutModel } from '../util/model';
 import { Simulation } from './simulation';
-import type {
-  FruchtermanLayoutOptions,
-  NormalizedFruchtermanLayoutOptions,
-} from './types';
+import type { FruchtermanLayoutOptions, SimulationOptions } from './types';
 
 export type { FruchtermanLayoutOptions };
+
+const DEFAULTS_LAYOUT_OPTIONS: Partial<FruchtermanLayoutOptions> = {
+  maxIteration: 1000,
+  gravity: 10,
+  speed: 5,
+  clustering: false,
+  clusterGravity: 10,
+  width: 300,
+  height: 300,
+  nodeClusterBy: 'data.cluster',
+  dimensions: 2,
+  animate: true,
+};
 
 export class FruchtermanLayout extends BaseLayoutWithIterations<FruchtermanLayoutOptions> {
   public id = 'fruchterman';
@@ -22,43 +32,30 @@ export class FruchtermanLayout extends BaseLayoutWithIterations<FruchtermanLayou
   private simulation: Simulation | null = null;
 
   protected getDefaultOptions(): Partial<FruchtermanLayoutOptions> {
-    return {
-      maxIteration: 1000,
-      gravity: 10,
-      speed: 5,
-      clustering: false,
-      clusterGravity: 10,
-      width: 300,
-      height: 300,
-      nodeClusterBy: 'data.cluster',
-      dimensions: 2,
-      animate: true,
-    };
+    return DEFAULTS_LAYOUT_OPTIONS;
   }
 
-  protected normalizeOptions(
-    options: FruchtermanLayoutOptions,
-  ): NormalizedFruchtermanLayoutOptions {
-    const { clustering, nodeClusterBy } = options;
+  protected parseOptions(options?: Partial<FruchtermanLayoutOptions>) {
+    const { clustering, nodeClusterBy } = this.options;
     const clusteringEnabled = clustering && !!nodeClusterBy;
     const nodeClusterByFunc =
       typeof nodeClusterBy === 'string'
         ? (node: NodeData) => getNestedValue(node, nodeClusterBy)
         : nodeClusterBy!;
 
-    return {
-      ...options,
-      ...normalizeViewport(options),
+    Object.assign(options, normalizeViewport(this.options), {
       clustering: clusteringEnabled,
       nodeClusterBy: nodeClusterByFunc,
-    } as NormalizedFruchtermanLayoutOptions;
+    });
+
+    return options;
   }
 
   protected async layout(): Promise<void> {
-    const opts = this.normalizeOptions(this.options);
-    this.options = opts;
+    const options = this.parseOptions(this.options);
+    this.options = options;
 
-    const { dimensions, center, animate, maxIteration } = opts;
+    const { dimensions, center } = this.options;
 
     const n = this.model.nodeCount();
     if (!n || n === 1) {
@@ -66,10 +63,13 @@ export class FruchtermanLayout extends BaseLayoutWithIterations<FruchtermanLayou
       return;
     }
 
-    const { width, height } = opts;
+    const { width, height, animate, maxIteration } = this.options;
     initModelNodePosition(this.model, width, height, dimensions);
 
-    const simulation = this.setSimulation(this.model, opts);
+    const simulation = this.setSimulation(
+      this.model,
+      this.options as SimulationOptions,
+    );
 
     if (animate) {
       return new Promise<void>((resolve) => {
@@ -83,7 +83,7 @@ export class FruchtermanLayout extends BaseLayoutWithIterations<FruchtermanLayou
 
   private setSimulation(
     model: LayoutModel,
-    options: NormalizedFruchtermanLayoutOptions,
+    options: SimulationOptions,
   ): Simulation {
     if (this.simulation) {
       this.simulation.off('tick');
@@ -115,7 +115,7 @@ export class FruchtermanLayout extends BaseLayoutWithIterations<FruchtermanLayou
     }
   }
 
-  public setFixedPosition(id: ID, position: Position | null): void {
+  public setFixedPosition(id: ID, position: NullablePosition | null): void {
     if (this.simulation) {
       this.simulation.setFixedPosition(id, position);
     }
