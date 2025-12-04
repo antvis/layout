@@ -14,7 +14,7 @@ const LAYOUT_STATUS = {
   force2: { refactored: false },
   fruchterman: { refactored: true },
   grid: { refactored: true },
-  mds: { refactored: false },
+  mds: { refactored: true },
   radial: { refactored: false },
   random: { refactored: true },
 };
