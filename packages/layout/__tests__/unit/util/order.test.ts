@@ -355,7 +355,7 @@ describe('order', () => {
       const sorted = orderBySorter(model, (a: NodeData, b: NodeData) => {
         const orderA = a.data?.order || 0;
         const orderB = b.data?.order || 0;
-        return orderA - orderB;
+        return orderA > orderB ? 1 : orderA < orderB ? -1 : 0;
       });
 
       expect(sorted.node('a')).toBeDefined();
@@ -377,7 +377,7 @@ describe('order', () => {
       const sorted = orderBySorter(model, (a: NodeData, b: NodeData) => {
         const scoreA = a.data?.score || 0;
         const scoreB = b.data?.score || 0;
-        return scoreB - scoreA > 0 ? 1 : scoreB - scoreA < 0 ? -1 : 0;
+        return scoreB > scoreA ? 1 : scoreB < scoreA ? -1 : 0;
       });
 
       const nodeIds = sorted.nodes().map((n) => n.id);
@@ -398,7 +398,7 @@ describe('order', () => {
       const sorted = orderBySorter(model, (a: NodeData, b: NodeData) => {
         const valueA = a.data?.value || 0;
         const valueB = b.data?.value || 0;
-        return valueA - valueB > 0 ? 1 : valueA - valueB < 0 ? -1 : 0;
+        return valueA > valueB ? 1 : valueA < valueB ? -1 : 0;
       });
 
       const nodeIds = sorted.nodes().map((n) => n.id);
