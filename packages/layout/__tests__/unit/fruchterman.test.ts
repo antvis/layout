@@ -17,17 +17,7 @@ describe('FruchtermanLayout', () => {
     mockRandom();
     canvas = createCanvas();
     renderer = new GraphRenderer(canvas);
-    fruchterman = new FruchtermanLayout({
-      node: (d) => ({
-        id: d.id,
-        x: d.data.x,
-        y: d.data.y,
-        z: d.data.z,
-        fx: d.data.fx,
-        fy: d.data.fy,
-        fz: d.data.fz,
-      }),
-    });
+    fruchterman = new FruchtermanLayout();
     data = preprocessGraphData(fruchtermanData, renderer.getCanvasSize());
   });
 
@@ -100,6 +90,35 @@ describe('FruchtermanLayout', () => {
     await expect(canvas).toMatchSnapshot(__filename, 'clustering-enabled');
   });
 
+  it('should fix node position in 2D', async () => {
+    await fruchterman.execute({
+      nodes: [{ id: 'n1' }, { id: 'n2' }],
+    });
+    fruchterman.setFixedPosition('n1', [100, 200]);
+    fruchterman.tick(10);
+    const positions = calculatePositions(fruchterman);
+    const node = positions.nodes.find((node) => node.id === 'n1');
+    expect(node.x).toBe(100);
+    expect(node.y).toBe(200);
+  });
+
+  it('should fix node position in 3D', async () => {
+    await fruchterman.execute(
+      {
+        nodes: [{ id: 'n1' }, { id: 'n2' }],
+      },
+      { dimensions: 3 },
+    );
+    fruchterman.setFixedPosition('n1', [100, 200, 300]);
+    fruchterman.tick(10);
+
+    const positions = calculatePositions(fruchterman);
+    const node = positions.nodes.find((node) => node.id === 'n1');
+    expect(node.x).toBe(100);
+    expect(node.y).toBe(200);
+    expect(node.z).toBe(300);
+  });
+
   it('should do fruchterman layout with an empty graph.', async () => {
     const fruchterman = new FruchtermanLayout();
     await fruchterman.execute({
@@ -130,23 +149,8 @@ describe('FruchtermanLayout', () => {
     const positions = calculatePositions(fruchterman);
 
     // z 轴有变化
-    const before = graph.nodes.find((n) => n.id === 'n1')?.z;
+    const before = graph.nodes.find((n) => n.id === 'n1').data.z;
     expect(positions.nodes[0].z).not.toBe(before);
-  });
-
-  it('should keep z fixed if fx/fy/fz is set (move branch for 3D)', () => {
-    const graph = {
-      nodes: [
-        { id: 'n1', data: { x: 1, y: 2, z: 3, fx: 1, fy: 2, fz: 3 } },
-        { id: 'n2', data: { x: 4, y: 5, z: 6 } },
-      ],
-      edges: [{ id: 'e1', source: 'n1', target: 'n2', data: {} }],
-    };
-    fruchterman.execute(graph, { dimensions: 3 });
-    fruchterman.stop();
-    fruchterman.tick(1);
-    const positions = calculatePositions(fruchterman);
-    expect(positions.nodes[0].z).toBe(3);
   });
 
   it('should skip repulsive/attractive if node positions are not numbers (repulsive/attractive skip branches)', () => {
@@ -287,7 +291,8 @@ describe('FruchtermanLayout', () => {
       ],
       edges: [],
     };
-    const fruchterman1 = new FruchtermanLayout({
+
+    fruchterman.execute(graph, {
       gravity: 1,
       center: [10, 20],
       node: (d) => ({
@@ -296,11 +301,11 @@ describe('FruchtermanLayout', () => {
         y: d.data.y,
       }),
     });
-    fruchterman1.execute(graph);
-    fruchterman1.stop();
-    fruchterman1.tick(1000);
-    const positions1 = calculatePositions(fruchterman1);
-    const fruchterman2 = new FruchtermanLayout({
+    fruchterman.stop();
+    fruchterman.tick(10);
+    const positions1 = calculatePositions(fruchterman);
+
+    fruchterman.execute(graph, {
       gravity: 10,
       center: [10, 20],
       node: (d) => ({
@@ -309,10 +314,9 @@ describe('FruchtermanLayout', () => {
         y: d.data.y,
       }),
     });
-    fruchterman2.execute(graph);
-    fruchterman2.stop();
-    fruchterman2.tick(1000);
-    const positions2 = calculatePositions(fruchterman2);
+    fruchterman.stop();
+    fruchterman.tick(10);
+    const positions2 = calculatePositions(fruchterman);
     const virtualCenterNode = { data: { x: 10, y: 20 } };
     const layout1DistToCenter1 = getEuclideanDistance(
       positions1.nodes[0],
@@ -416,7 +420,15 @@ describe('FruchtermanLayout', () => {
       ],
       edges: [{ id: 'edge1', source: 'node0', target: 'node1', data: {} }],
     };
-    fruchterman.execute(graph);
+    fruchterman.execute(graph, {
+      node: (d) => ({
+        id: d.id,
+        x: d.data.x,
+        y: d.data.y,
+        fx: d.data.fx,
+        fy: d.data.fy,
+      }),
+    });
     fruchterman.stop();
     fruchterman.tick(1000);
     const positions = calculatePositions(fruchterman);
@@ -425,6 +437,33 @@ describe('FruchtermanLayout', () => {
     expect(positions.nodes[0].y).toBe(10);
     // node1 should move
     expect(positions.nodes[1].x).not.toBe(100);
+  });
+
+  it('should do fruchterman layout with fixed positions (fx, fy, fz).', () => {
+    const graph = {
+      nodes: [
+        { id: 'n1', data: { x: 1, y: 2, z: 3, fx: 1, fy: 2, fz: 3 } },
+        { id: 'n2', data: { x: 4, y: 5, z: 6 } },
+      ],
+      edges: [{ id: 'e1', source: 'n1', target: 'n2', data: {} }],
+    };
+    fruchterman.execute(graph, {
+      dimensions: 3,
+      node: (d) => ({
+        id: d.id,
+        x: d.data.x,
+        y: d.data.y,
+        z: d.data.z,
+        fx: d.data.fx,
+        fy: d.data.fy,
+        fz: d.data.fz,
+      }),
+    });
+    fruchterman.stop();
+    fruchterman.tick(1);
+    const positions = calculatePositions(fruchterman);
+    const node1 = positions.nodes.find((n) => n.id === 'n1');
+    expect(node1.z).toBe(3);
   });
 
   it('should handle disconnected components.', () => {

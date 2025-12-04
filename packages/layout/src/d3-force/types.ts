@@ -3,9 +3,11 @@ import type {
   SimulationLinkDatum,
   SimulationNodeDatum,
 } from 'd3-force';
-import type { EdgeData, LayoutMapping, NodeData } from '../types';
+import type { BaseLayoutOptions } from '../base-layout';
+import type { Layout } from '../base-layout/types';
+import type { LayoutEdge, LayoutNode } from '../types/data';
 
-export interface D3ForceLayoutOptions {
+export interface D3ForceLayoutOptions extends BaseLayoutOptions {
   /**
    * <zh/> 节点大小（直径）。用于防止节点重叠时的碰撞检测
    *
@@ -22,7 +24,7 @@ export interface D3ForceLayoutOptions {
    * <en/> Callback executed on each tick
    * @param data - <zh/> 布局结果 | <en/> layout result
    */
-  onTick?: (data: LayoutMapping) => void;
+  onTick?: (layout: Layout<D3ForceLayoutOptions>) => void;
   /**
    * <zh/> 迭代次数
    *
@@ -183,6 +185,10 @@ export interface D3ForceLayoutOptions {
       };
 }
 
-export interface NodeDatum extends NodeData, SimulationNodeDatum {}
+export interface NodeDatum
+  extends Omit<LayoutNode, 'x' | 'y'>,
+    SimulationNodeDatum {}
 
-export interface EdgeDatum extends EdgeData, SimulationLinkDatum<NodeDatum> {}
+export interface EdgeDatum
+  extends Omit<LayoutEdge, 'source' | 'target'>,
+    SimulationLinkDatum<NodeDatum> {}

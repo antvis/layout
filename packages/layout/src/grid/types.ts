@@ -1,9 +1,10 @@
 import type { BaseLayoutOptions } from '../base-layout';
+import type { ViewportOptions } from '../base-layout/types';
 import { NodeData } from '../types/data';
 import { Point } from '../types/point';
 import type { Size } from '../types/size';
 
-export interface GridLayoutOptions extends BaseLayoutOptions {
+export interface GridLayoutOptions extends BaseLayoutOptions, ViewportOptions {
   /**
    * <zh/> 网格开始位置（左上角）
    *

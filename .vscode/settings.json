@@ -12,7 +12,8 @@
     "rankdir",
     "ranksep",
     "Reingold",
-    "relayout"
+    "relayout",
+    "Xlarge"
   ],
   "rust-analyzer.linkedProjects": ["./packages/layout-rust/Cargo.toml"]
 }

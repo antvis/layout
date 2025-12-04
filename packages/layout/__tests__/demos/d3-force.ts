@@ -1,26 +1,39 @@
-import { FruchtermanLayout } from '@/src';
+import { D3Force3DLayout } from '@/src';
+import { Canvas } from '@antv/g';
+import { Renderer } from '@antv/g-canvas';
 import type { GUI } from 'lil-gui';
-import { fruchterman as data } from '../dataset';
-import { GraphRenderer, preprocessGraphData } from '../utils';
+import { d3Force as data } from '../dataset';
+import { GraphRenderer } from '../utils/renderer';
 
 export async function render(gui?: GUI) {
-  const renderer = new GraphRenderer();
-  const { width, height } = renderer.getCanvasSize();
-
-  const processedData = preprocessGraphData(data, {
-    width,
-    height,
+  const canvas = new Canvas({
+    container: 'container',
+    width: 700,
+    height: 700,
+    renderer: new Renderer(),
   });
 
-  const layout = new FruchtermanLayout({
-    width,
-    height,
+  const renderer = new GraphRenderer(canvas);
+  const { width, height } = renderer.getCanvasSize();
+
+  const layout = new D3Force3DLayout({});
+
+  layout.execute(data, {
+    center: {
+      x: width / 2,
+      y: height / 2,
+    },
+    x: {
+      x: width / 2,
+    },
+    y: {
+      y: height / 2,
+    },
+    manyBody: {
+      strength: -20,
+    },
     onTick: (layout) => {
-      renderer.handleTick(
-        layout,
-        { nodeRadius: 10, showLabel: true },
-        processedData as any,
-      );
+      renderer.handleTick(layout, { nodeRadius: 5 });
     },
   });
 
@@ -31,9 +44,8 @@ export async function render(gui?: GUI) {
     },
 
     onDrag: (nodeId, position) => {
-      console.log(`🚚 Dragging node: ${position}`);
       layout.setFixedPosition(nodeId, [position.x, position.y]);
-      layout.tick(10);
+      layout.simulation.alphaTarget(0.3).restart();
     },
 
     onDragEnd: (nodeId) => {
@@ -41,31 +53,17 @@ export async function render(gui?: GUI) {
     },
   });
 
-  const options = {
-    gravity: 10,
-    speed: 5,
-    nodeSize: 20,
-  };
-
-  const clusterOptions = {
-    ...options,
-    clustering: true,
-    nodeClusterBy: (node: any) => node.cluster,
-  };
-
-  layout.execute(processedData, options);
-
   if (gui) {
     const controls = {
       restart: () => layout.restart(),
       stop: () => layout.stop(),
-      tick: () => layout.tick(100),
+      tick: () => layout.tick(5),
       enableDrag: true,
     };
 
-    const layoutFolder = gui.addFolder('Fruchterman Layout');
+    const layoutFolder = gui.addFolder('D3 Force Layout');
     layoutFolder.add(controls, 'stop').name('Stop');
-    layoutFolder.add(controls, 'tick').name('Tick 100 Iterations');
+    layoutFolder.add(controls, 'tick').name('Tick 5 Iterations');
     layoutFolder.add(controls, 'restart').name('Restart');
 
     layoutFolder
@@ -75,5 +73,6 @@ export async function render(gui?: GUI) {
         renderer.setDraggable(enabled);
       });
   }
-  return renderer.getCanvas();
+
+  return canvas;
 }

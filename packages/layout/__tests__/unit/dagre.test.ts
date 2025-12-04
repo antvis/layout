@@ -1,6 +1,6 @@
+import { DagreLayout } from '@/src';
+import type { EdgeData, NodeData } from '@/src/types';
 import { Graph } from '@antv/graphlib';
-import { DagreLayout } from '../../src/dagre';
-import type { EdgeData, NodeData } from '../../src/types';
 
 const data = {
   nodes: [

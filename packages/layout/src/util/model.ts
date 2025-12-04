@@ -9,10 +9,6 @@ import type {
 } from '../types/data';
 import type { ID } from '../types/id';
 
-const getEdgeId = (edge: EdgeData): string => {
-  return edge.id || `$${edge.source}-$${edge.target}`;
-};
-
 export class LayoutModel<
   N extends NodeData = NodeData,
   E extends EdgeData = EdgeData,
@@ -26,9 +22,15 @@ export class LayoutModel<
   private outAdjacencyCache?: Map<ID, Set<ID>>;
   private bothAdjacencyCache?: Map<ID, Set<ID>>;
 
+  private edgeIdCounter: Map<string, number> = new Map();
+
   constructor(data: GraphData<N, E>, options: LayoutModelOptions<N, E> = {}) {
     this.nodeMap = extractNodeData<N>(data.nodes, options.node);
-    this.edgeMap = extractEdgeData<E>(data.edges || [], options.edge);
+    this.edgeMap = extractEdgeData<E>(
+      data.edges || [],
+      options.edge,
+      this.getEdgeId.bind(this),
+    );
   }
 
   public nodes(): LayoutNode<N>[] {
@@ -71,6 +73,17 @@ export class LayoutModel<
 
   public edgeCount(): number {
     return this.edgeMap.size;
+  }
+
+  public getEdgeId(edge: E): string {
+    if (edge.id) return edge.id;
+
+    const baseId = `${edge.source}-${edge.target}`;
+    const count = this.edgeIdCounter.get(baseId) || 0;
+    const id = count === 0 ? baseId : `${baseId}-${count}`;
+    this.edgeIdCounter.set(baseId, count + 1);
+
+    return id;
   }
 
   public degree(nodeId: ID, direction: 'in' | 'out' | 'both' = 'both'): number {
@@ -181,6 +194,7 @@ export class LayoutModel<
     this.clearCache();
     this.nodeMap.clear();
     this.edgeMap.clear();
+    this.edgeIdCounter.clear();
   }
 }
 
@@ -226,6 +240,7 @@ function extractNodeData<N extends NodeData = NodeData>(
 function extractEdgeData<E extends EdgeData = EdgeData>(
   edges: E[],
   edge?: (datum: E) => LayoutEdge,
+  getEdgeId?: (datum: E) => ID,
 ): Map<ID, LayoutEdge<E>> {
   const result = new Map<ID, LayoutEdge<E>>();
   const fields = ['id', 'source', 'target', 'controlPoints'];

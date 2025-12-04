@@ -1,3 +1,4 @@
+import type { Simulation } from 'd3-force';
 import {
   forceCenter,
   forceCollide,
@@ -10,18 +11,14 @@ import {
   forceZ,
 } from 'd3-force-3d';
 import { D3ForceLayout } from '../d3-force';
-import type { LayoutWithIterations } from '../types';
-import type { D3Force3DLayoutOptions } from './types';
+import type { D3Force3DLayoutOptions, EdgeDatum, NodeDatum } from './types';
 
-export class D3Force3DLayout
-  extends D3ForceLayout<D3Force3DLayoutOptions>
-  implements LayoutWithIterations<D3Force3DLayoutOptions>
-{
+export type { D3Force3DLayoutOptions };
+
+export class D3Force3DLayout extends D3ForceLayout<D3Force3DLayoutOptions> {
   public id = 'd3-force-3d';
 
   protected config = {
-    inputNodeAttrs: ['x', 'y', 'z', 'vx', 'vy', 'vz', 'fx', 'fy', 'fz'],
-    outputNodeAttrs: ['x', 'y', 'z', 'vx', 'vy', 'vz'],
     simulationAttrs: [
       'alpha',
       'alphaMin',
@@ -44,20 +41,22 @@ export class D3Force3DLayout
     z: forceZ,
   };
 
-  public options: Partial<D3Force3DLayoutOptions> = {
-    numDimensions: 3,
-    link: {
-      id: (edge) => edge.id,
-    },
-    manyBody: {},
-    center: {
-      x: 0,
-      y: 0,
-      z: 0,
-    },
-  };
+  protected getDefaultOptions(): Partial<D3Force3DLayoutOptions> {
+    return {
+      numDimensions: 3,
+      link: {
+        id: (edge) => String(edge.id),
+      },
+      manyBody: {},
+      center: {
+        x: 0,
+        y: 0,
+        z: 0,
+      },
+    };
+  }
 
   protected initSimulation() {
-    return forceSimulation();
+    return forceSimulation() as any as Simulation<NodeDatum, EdgeDatum>;
   }
 }
