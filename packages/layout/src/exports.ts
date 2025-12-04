@@ -1,6 +1,6 @@
 export * from './antv-dagre';
 export type { DagreAlign, DagreRankdir } from './antv-dagre/types';
-export * from './circular';
+export { BaseLayout, type BaseLayoutOptions } from './base-layout';
 export * from './combo-combined';
 export * from './concentric';
 export { D3ForceLayout, type D3ForceLayoutOptions } from './d3-force';
@@ -15,7 +15,7 @@ export {
 export { GridLayout, type GridLayoutOptions } from './grid';
 export { MDSLayout, type MDSLayoutOptions } from './mds';
 export * from './radial';
-export * from './random';
+export { RandomLayout, type RandomLayoutOptions } from './random';
 export * from './registry';
 export * from './types';
 export * from './util';

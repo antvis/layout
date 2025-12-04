@@ -2,6 +2,8 @@ import { BaseLayout } from '../base-layout';
 import { normalizeViewport } from '../util';
 import type { RandomLayoutOptions } from './types';
 
+export type { RandomLayoutOptions };
+
 /**
  * <zh/> 随机布局
  *
