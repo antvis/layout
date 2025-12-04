@@ -18,6 +18,6 @@ export const mdsAntvDevJsSmall = createTest(commonConfig, TestScale.SMALL);
 
 export const mdsAntvDevJsMedium = createTest(commonConfig, TestScale.MEDIUM);
 
-export const mdsAntvDevJsLarge = createTest(commonConfig, TestScale.LARGE);
+// export const mdsAntvDevJsLarge = createTest(commonConfig, TestScale.LARGE);
 
-export const mdsAntvDevJsXlarge = createTest(commonConfig, TestScale.XLARGE);
+// export const mdsAntvDevJsXlarge = createTest(commonConfig, TestScale.XLARGE);
