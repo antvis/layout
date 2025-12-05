@@ -7,7 +7,7 @@ import {
   formatNodeSizeToNumber,
   getAdjMatrix,
   getEuclideanDistance,
-  johnsonAPSP,
+  johnson,
   LayoutModel,
   normalizeViewport,
 } from '../util';
@@ -74,7 +74,7 @@ export class RadialLayout extends BaseLayout<RadialLayoutOptions> {
 
     // the graph-theoretic distance (shortest path distance) matrix
     const adjMatrix = getAdjMatrix(this.model, false);
-    const distances = johnsonAPSP(adjMatrix);
+    const distances = johnson(adjMatrix);
     const maxDistance = maxToFocus(distances, focusIndex);
 
     // replace first node in unconnected component to the circle at (maxDistance + 1)

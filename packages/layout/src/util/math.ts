@@ -183,7 +183,7 @@ export const graphTreeDfs = (
  * Fully compatible with floydWarshall(adjMatrix).
  */
 
-export function johnsonAPSP(adjMatrix: number[][]): number[][] {
+export function johnson(adjMatrix: number[][]): number[][] {
   const n = adjMatrix.length;
   if (n === 0) return [];
 

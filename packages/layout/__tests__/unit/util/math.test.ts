@@ -4,7 +4,7 @@ import {
   getAdjMatrix,
   getEuclideanDistance,
   getLayoutBBox,
-  johnsonAPSP,
+  johnson,
   scaleMatrix,
 } from '@/src/util/math';
 import { LayoutModel } from '@/src/util/model';
@@ -502,7 +502,7 @@ describe('getLayoutBBox', () => {
     });
   });
 
-  describe('johnsonAPSP', () => {
+  describe('johnson', () => {
     test('should compute shortest paths for simple weighted graph', () => {
       const adjMatrix = [
         [0, 4, Infinity, 5],
@@ -511,7 +511,7 @@ describe('getLayoutBBox', () => {
         [5, Infinity, 3, 0],
       ];
 
-      const result = johnsonAPSP(adjMatrix);
+      const result = johnson(adjMatrix);
 
       expect(result).toEqual([
         [0, 4, 5, 5],
@@ -524,7 +524,7 @@ describe('getLayoutBBox', () => {
     test('should handle empty graph', () => {
       const adjMatrix: number[][] = [];
 
-      const result = johnsonAPSP(adjMatrix);
+      const result = johnson(adjMatrix);
 
       expect(result).toEqual([]);
     });
@@ -532,7 +532,7 @@ describe('getLayoutBBox', () => {
     test('should handle single node', () => {
       const adjMatrix = [[0]];
 
-      const result = johnsonAPSP(adjMatrix);
+      const result = johnson(adjMatrix);
 
       expect(result).toEqual([[0]]);
     });
@@ -544,7 +544,7 @@ describe('getLayoutBBox', () => {
         [Infinity, Infinity, 0],
       ];
 
-      const result = johnsonAPSP(adjMatrix);
+      const result = johnson(adjMatrix);
 
       expect(result).toEqual([
         [0, 1, Infinity],
@@ -560,7 +560,7 @@ describe('getLayoutBBox', () => {
         [Infinity, 1, 0],
       ];
 
-      const johnsonResult = johnsonAPSP(adjMatrix);
+      const johnsonResult = johnson(adjMatrix);
       const floydResult = floydWarshall(adjMatrix);
 
       expect(johnsonResult).toEqual(floydResult);
@@ -573,7 +573,7 @@ describe('getLayoutBBox', () => {
         [2, 3, 0],
       ];
 
-      const result = johnsonAPSP(adjMatrix);
+      const result = johnson(adjMatrix);
 
       expect(result).toEqual([
         [0, 1, 2],
@@ -590,7 +590,7 @@ describe('getLayoutBBox', () => {
         [Infinity, Infinity, 1, 0],
       ];
 
-      const result = johnsonAPSP(adjMatrix);
+      const result = johnson(adjMatrix);
 
       expect(result).toEqual([
         [0, 10, 11, 12],
@@ -606,7 +606,7 @@ describe('getLayoutBBox', () => {
         [5, 0],
       ];
 
-      const result = johnsonAPSP(adjMatrix);
+      const result = johnson(adjMatrix);
 
       expect(result).toEqual([
         [0, 5],
@@ -621,7 +621,7 @@ describe('getLayoutBBox', () => {
         [Infinity, Infinity, 0],
       ];
 
-      const result = johnsonAPSP(adjMatrix);
+      const result = johnson(adjMatrix);
 
       expect(result).toEqual([
         [0, 2, 5],
@@ -637,7 +637,7 @@ describe('getLayoutBBox', () => {
         [100, 1, 0],
       ];
 
-      const result = johnsonAPSP(adjMatrix);
+      const result = johnson(adjMatrix);
 
       expect(result).toEqual([
         [0, 1, 2],
@@ -655,7 +655,7 @@ describe('getLayoutBBox', () => {
         [Infinity, Infinity, Infinity, 1, 0],
       ];
 
-      const result = johnsonAPSP(adjMatrix);
+      const result = johnson(adjMatrix);
 
       expect(result).toEqual([
         [0, 1, 2, 3, 4],
@@ -674,7 +674,7 @@ describe('getLayoutBBox', () => {
         [Infinity, 1, 3, 0],
       ];
 
-      const result = johnsonAPSP(adjMatrix);
+      const result = johnson(adjMatrix);
 
       expect(result).toEqual([
         [0, 9, 5, 8],
@@ -691,7 +691,7 @@ describe('getLayoutBBox', () => {
         [Infinity, 3, 0],
       ];
 
-      const result = johnsonAPSP(adjMatrix);
+      const result = johnson(adjMatrix);
 
       expect(result).toEqual([
         [0, 2, 5],
@@ -707,7 +707,7 @@ describe('getLayoutBBox', () => {
         [Infinity, 1, 0],
       ];
 
-      const result = johnsonAPSP(adjMatrix);
+      const result = johnson(adjMatrix);
 
       expect(result).toEqual([
         [0, 1000, 1001],
@@ -724,7 +724,7 @@ describe('getLayoutBBox', () => {
         [Infinity, Infinity, 2, 0],
       ];
 
-      const result = johnsonAPSP(adjMatrix);
+      const result = johnson(adjMatrix);
 
       expect(result).toEqual([
         [0, 1, Infinity, Infinity],
