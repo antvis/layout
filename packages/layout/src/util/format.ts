@@ -110,7 +110,7 @@ export function formatSizeFn<T extends NodeData>(
  * @param defaultNodeSize The default node size when value is invalid
  * @returns A function that returns the total size (node size + spacing)
  */
-export const formatNodeSizeWithSpacingFn = (
+export const formatNodeSizeFn = (
   nodeSize: Size | ((node?: NodeData) => Size) | undefined,
   nodeSpacing: number | ((node?: NodeData) => number) | undefined,
   defaultNodeSize: number = 10,
