@@ -1,6 +1,7 @@
 export * from './antv-dagre';
 export type { DagreAlign, DagreRankdir } from './antv-dagre/types';
 export { BaseLayout, type BaseLayoutOptions } from './base-layout';
+export { CircularLayout, type CircularLayoutOptions } from './circular';
 export { ConcentricLayout, type ConcentricLayoutOptions } from './concentric';
 export { D3ForceLayout, type D3ForceLayoutOptions } from './d3-force';
 export { D3Force3DLayout, type D3Force3DLayoutOptions } from './d3-force-3d';
