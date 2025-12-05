@@ -1,196 +1,196 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="500" height="500" color-interpolation-filters="sRGB" style="background: transparent;">
   <g transform="matrix(1 0 0 1 0 0)">
     <g fill="none" stroke="none" stroke-dashoffset="0" font-family="sans-serif" font-size="16" font-style="normal" font-variant="normal" font-weight="normal" text-anchor="left" transform="matrix(1 0 0 1 0 0)" visibility="visible">
-      <g transform="matrix(1 0 0 1 216.0165 420.8465)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 216.0165 420.8465)">
         <line x1="33.9835" x2="0" y1="6.5729" y2="0" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 250 124.1936)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 250 124.1936)">
         <line x1="0" x2="196.1571" y1="0" y2="164.8245" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 216.0165 124.1936)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 216.0165 124.1936)">
         <line x1="33.9835" x2="0" y1="0" y2="296.6529" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 250 289.018)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 250 289.018)">
         <line x1="0" x2="196.1571" y1="138.4013" y2="0" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 216.0165 289.018)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 216.0165 289.018)">
         <line x1="0" x2="230.1405" y1="131.8284" y2="0" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 250 124.1936)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 250 124.1936)">
         <line x1="0" x2="0" y1="0" y2="303.2258" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 98.1365 171.1449)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 98.1365 171.1449)">
         <line x1="0" x2="33.8485" y1="109.0627" y2="0" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 184.5735 405.5653)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 184.5735 405.5653)">
         <line x1="169.3719" x2="0" y1="0" y2="2.3883" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 98.1365 280.2075)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 98.1365 280.2075)">
         <line x1="0" x2="86.437" y1="0" y2="127.7461" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 131.985 171.1449)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 131.985 171.1449)">
         <line x1="0" x2="221.9604" y1="0" y2="234.4204" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 131.985 171.1449)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 131.985 171.1449)">
         <line x1="52.5885" x2="0" y1="236.8087" y2="0" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 98.1365 280.2075)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 98.1365 280.2075)">
         <line x1="0" x2="255.8089" y1="0" y2="125.3577" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 199.387 127.8095)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 199.387 127.8095)">
         <line x1="151.8553" x2="0" y1="102.0522" y2="0" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 133.6695 129.7747)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 133.6695 129.7747)">
         <line x1="0" x2="140.2448" y1="236.5558" y2="0" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 273.9143 129.7747)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 273.9143 129.7747)">
         <line x1="77.3281" x2="0" y1="100.0869" y2="0" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 133.6695 127.8095)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 133.6695 127.8095)">
         <line x1="0" x2="65.7175" y1="238.521" y2="0" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 199.387 127.8095)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 199.387 127.8095)">
         <line x1="0" x2="74.5273" y1="0" y2="1.9652" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 133.6695 229.8616)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 133.6695 229.8616)">
         <line x1="217.5728" x2="0" y1="0" y2="136.4688" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 151.9175 151.9175)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 151.9175 151.9175)">
         <line x1="0" x2="198.0826" y1="0" y2="98.0826" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 103.9674 139.7305)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 103.9674 139.7305)">
         <line x1="0" x2="191.7077" y1="170.7582" y2="0" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 295.6751 139.7305)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 295.6751 139.7305)">
         <line x1="54.3249" x2="0" y1="110.2695" y2="0" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 103.9674 151.9175)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 103.9674 151.9175)">
         <line x1="47.95" x2="0" y1="0" y2="158.5712" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 103.9674 250)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 103.9674 250)">
         <line x1="0" x2="246.0326" y1="60.4887" y2="0" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 151.9175 139.7305)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 151.9175 139.7305)">
         <line x1="0" x2="143.7577" y1="12.1869" y2="0" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 314.5178 153.4422)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 314.5178 153.4422)">
         <line x1="0" x2="5.8465" y1="0" y2="266.4324" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 341.1935 189.0665)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 341.1935 189.0665)">
         <line x1="69.7362" x2="0" y1="168.4632" y2="0" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 314.5178 153.4422)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 314.5178 153.4422)">
         <line x1="0" x2="26.6756" y1="0" y2="35.6243" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 320.3644 357.5297)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 320.3644 357.5297)">
         <line x1="0" x2="90.5652" y1="62.3449" y2="0" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 320.3644 189.0665)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 320.3644 189.0665)">
         <line x1="0" x2="20.8291" y1="230.8081" y2="0" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 314.5178 153.4422)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 314.5178 153.4422)">
         <line x1="0" x2="96.4118" y1="0" y2="204.0875" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 98.3871 137.3493)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 98.3871 137.3493)">
         <line x1="76.3421" x2="0" y1="0" y2="112.6507" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 104.4641 221.0511)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 104.4641 221.0511)">
         <line x1="0" x2="280.1143" y1="0" y2="163.5273" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 98.3871 221.0511)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 98.3871 221.0511)">
         <line x1="6.077" x2="0" y1="0" y2="28.9489" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 174.7292 137.3493)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 174.7292 137.3493)">
         <line x1="209.8492" x2="0" y1="247.2291" y2="0" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 104.4641 137.3493)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 104.4641 137.3493)">
         <line x1="70.2651" x2="0" y1="0" y2="83.7018" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 98.3871 250)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 98.3871 250)">
         <line x1="0" x2="286.1913" y1="0" y2="134.5784" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 115.892 209.2627)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 115.892 209.2627)">
         <line x1="0" x2="232.4565" y1="130.3454" y2="0" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 224.827 123.447)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 224.827 123.447)">
         <line x1="206.9686" x2="0" y1="201.8552" y2="0" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 348.3485 209.2627)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 348.3485 209.2627)">
         <line x1="83.4472" x2="0" y1="116.0395" y2="0" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 115.892 123.447)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 115.892 123.447)">
         <line x1="0" x2="108.9351" y1="216.161" y2="0" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 224.827 123.447)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 224.827 123.447)">
         <line x1="0" x2="123.5214" y1="0" y2="85.8157" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 115.892 325.3022)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 115.892 325.3022)">
         <line x1="0" x2="315.9037" y1="14.3059" y2="0" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 115.8885 170.1654)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 115.8885 170.1654)">
         <line x1="213.9462" x2="0" y1="0" y2="24.2838" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 156.8076 389.4723)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 156.8076 389.4723)">
         <line x1="0" x2="128.4345" y1="0" y2="37.7018" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 115.8885 194.4492)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 115.8885 194.4492)">
         <line x1="169.3537" x2="0" y1="232.7249" y2="0" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 156.8076 170.1654)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 156.8076 170.1654)">
         <line x1="0" x2="173.0271" y1="219.307" y2="0" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 115.8885 194.4492)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 115.8885 194.4492)">
         <line x1="0" x2="40.9191" y1="0" y2="195.0231" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 285.2421 170.1654)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 285.2421 170.1654)">
         <line x1="0" x2="44.5925" y1="257.0088" y2="0" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 184.5735 289.018)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 184.5735 289.018)">
         <line x1="0" x2="261.5836" y1="118.9355" y2="0" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 199.387 127.8095)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 199.387 127.8095)">
         <line x1="150.613" x2="0" y1="122.1905" y2="0" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 216.0165 405.5653)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 216.0165 405.5653)">
         <line x1="137.9289" x2="0" y1="0" y2="15.2812" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 273.9143 129.7747)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 273.9143 129.7747)">
         <line x1="0" x2="21.7608" y1="0" y2="9.9558" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 98.3871 189.0665)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 98.3871 189.0665)">
         <line x1="0" x2="242.8063" y1="60.9335" y2="0" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 115.8885 194.4492)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 115.8885 194.4492)">
         <line x1="0" x2="232.46" y1="0" y2="14.8136" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 384.5784 357.5297)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 384.5784 357.5297)">
         <line x1="26.3512" x2="0" y1="0" y2="27.0487" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 224.827 123.447)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 224.827 123.447)">
         <line x1="105.0076" x2="0" y1="46.7183" y2="0" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 199.387 127.8095)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 199.387 127.8095)">
         <line x1="246.77" x2="0" y1="161.2086" y2="0" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 341.1935 189.0665)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 341.1935 189.0665)">
         <line x1="0" x2="7.155" y1="0" y2="20.1962" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 216.0165 139.7305)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 216.0165 139.7305)">
         <line x1="0" x2="79.6586" y1="281.116" y2="0" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 224.827 123.447)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 224.827 123.447)">
         <line x1="159.7513" x2="0" y1="261.1313" y2="0" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 199.387 127.8095)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 199.387 127.8095)">
         <line x1="148.9614" x2="0" y1="81.4533" y2="0" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 224.827 123.447)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 224.827 123.447)">
         <line x1="0" x2="70.8481" y1="0" y2="16.2834" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 224.827 123.447)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 224.827 123.447)">
         <line x1="0" x2="123.5214" y1="0" y2="85.8157" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 199.387 127.8095)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 199.387 127.8095)">
         <line x1="96.2881" x2="0" y1="11.921" y2="0" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
       <g stroke-width="2" transform="matrix(1 0 0 1 350 250)">
@@ -289,196 +289,196 @@
       <g stroke-width="2" transform="matrix(1 0 0 1 446.157 289.018)">
         <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
       </g>
-      <g transform="matrix(1 0 0 1 216.0165 420.8465)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 216.0165 420.8465)">
         <line x1="33.9835" x2="0" y1="6.5729" y2="0" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 250 124.1936)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 250 124.1936)">
         <line x1="0" x2="196.1571" y1="0" y2="164.8245" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 216.0165 124.1936)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 216.0165 124.1936)">
         <line x1="33.9835" x2="0" y1="0" y2="296.6529" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 250 289.018)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 250 289.018)">
         <line x1="0" x2="196.1571" y1="138.4013" y2="0" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 216.0165 289.018)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 216.0165 289.018)">
         <line x1="0" x2="230.1405" y1="131.8284" y2="0" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 250 124.1936)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 250 124.1936)">
         <line x1="0" x2="0" y1="0" y2="303.2258" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 98.1365 171.1449)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 98.1365 171.1449)">
         <line x1="0" x2="33.8485" y1="109.0627" y2="0" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 184.5735 405.5653)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 184.5735 405.5653)">
         <line x1="169.3719" x2="0" y1="0" y2="2.3883" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 98.1365 280.2075)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 98.1365 280.2075)">
         <line x1="0" x2="86.437" y1="0" y2="127.7461" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 131.985 171.1449)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 131.985 171.1449)">
         <line x1="0" x2="221.9604" y1="0" y2="234.4204" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 131.985 171.1449)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 131.985 171.1449)">
         <line x1="52.5885" x2="0" y1="236.8087" y2="0" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 98.1365 280.2075)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 98.1365 280.2075)">
         <line x1="0" x2="255.8089" y1="0" y2="125.3577" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 199.387 127.8095)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 199.387 127.8095)">
         <line x1="151.8553" x2="0" y1="102.0522" y2="0" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 133.6695 129.7747)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 133.6695 129.7747)">
         <line x1="0" x2="140.2448" y1="236.5558" y2="0" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 273.9143 129.7747)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 273.9143 129.7747)">
         <line x1="77.3281" x2="0" y1="100.0869" y2="0" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 133.6695 127.8095)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 133.6695 127.8095)">
         <line x1="0" x2="65.7175" y1="238.521" y2="0" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 199.387 127.8095)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 199.387 127.8095)">
         <line x1="0" x2="74.5273" y1="0" y2="1.9652" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 133.6695 229.8616)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 133.6695 229.8616)">
         <line x1="217.5728" x2="0" y1="0" y2="136.4688" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 151.9175 151.9175)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 151.9175 151.9175)">
         <line x1="0" x2="198.0826" y1="0" y2="98.0826" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 103.9674 139.7305)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 103.9674 139.7305)">
         <line x1="0" x2="191.7077" y1="170.7582" y2="0" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 295.6751 139.7305)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 295.6751 139.7305)">
         <line x1="54.3249" x2="0" y1="110.2695" y2="0" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 103.9674 151.9175)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 103.9674 151.9175)">
         <line x1="47.95" x2="0" y1="0" y2="158.5712" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 103.9674 250)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 103.9674 250)">
         <line x1="0" x2="246.0326" y1="60.4887" y2="0" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 151.9175 139.7305)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 151.9175 139.7305)">
         <line x1="0" x2="143.7577" y1="12.1869" y2="0" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 314.5178 153.4422)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 314.5178 153.4422)">
         <line x1="0" x2="5.8465" y1="0" y2="266.4324" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 341.1935 189.0665)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 341.1935 189.0665)">
         <line x1="69.7362" x2="0" y1="168.4632" y2="0" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 314.5178 153.4422)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 314.5178 153.4422)">
         <line x1="0" x2="26.6756" y1="0" y2="35.6243" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 320.3644 357.5297)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 320.3644 357.5297)">
         <line x1="0" x2="90.5652" y1="62.3449" y2="0" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 320.3644 189.0665)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 320.3644 189.0665)">
         <line x1="0" x2="20.8291" y1="230.8081" y2="0" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 314.5178 153.4422)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 314.5178 153.4422)">
         <line x1="0" x2="96.4118" y1="0" y2="204.0875" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 98.3871 137.3493)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 98.3871 137.3493)">
         <line x1="76.3421" x2="0" y1="0" y2="112.6507" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 104.4641 221.0511)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 104.4641 221.0511)">
         <line x1="0" x2="280.1143" y1="0" y2="163.5273" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 98.3871 221.0511)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 98.3871 221.0511)">
         <line x1="6.077" x2="0" y1="0" y2="28.9489" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 174.7292 137.3493)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 174.7292 137.3493)">
         <line x1="209.8492" x2="0" y1="247.2291" y2="0" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 104.4641 137.3493)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 104.4641 137.3493)">
         <line x1="70.2651" x2="0" y1="0" y2="83.7018" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 98.3871 250)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 98.3871 250)">
         <line x1="0" x2="286.1913" y1="0" y2="134.5784" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 115.892 209.2627)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 115.892 209.2627)">
         <line x1="0" x2="232.4565" y1="130.3454" y2="0" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 224.827 123.447)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 224.827 123.447)">
         <line x1="206.9686" x2="0" y1="201.8552" y2="0" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 348.3485 209.2627)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 348.3485 209.2627)">
         <line x1="83.4472" x2="0" y1="116.0395" y2="0" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 115.892 123.447)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 115.892 123.447)">
         <line x1="0" x2="108.9351" y1="216.161" y2="0" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 224.827 123.447)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 224.827 123.447)">
         <line x1="0" x2="123.5214" y1="0" y2="85.8157" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 115.892 325.3022)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 115.892 325.3022)">
         <line x1="0" x2="315.9037" y1="14.3059" y2="0" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 115.8885 170.1654)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 115.8885 170.1654)">
         <line x1="213.9462" x2="0" y1="0" y2="24.2838" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 156.8076 389.4723)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 156.8076 389.4723)">
         <line x1="0" x2="128.4345" y1="0" y2="37.7018" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 115.8885 194.4492)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 115.8885 194.4492)">
         <line x1="169.3537" x2="0" y1="232.7249" y2="0" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 156.8076 170.1654)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 156.8076 170.1654)">
         <line x1="0" x2="173.0271" y1="219.307" y2="0" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 115.8885 194.4492)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 115.8885 194.4492)">
         <line x1="0" x2="40.9191" y1="0" y2="195.0231" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 285.2421 170.1654)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 285.2421 170.1654)">
         <line x1="0" x2="44.5925" y1="257.0088" y2="0" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 184.5735 289.018)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 184.5735 289.018)">
         <line x1="0" x2="261.5836" y1="118.9355" y2="0" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 199.387 127.8095)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 199.387 127.8095)">
         <line x1="150.613" x2="0" y1="122.1905" y2="0" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 216.0165 405.5653)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 216.0165 405.5653)">
         <line x1="137.9289" x2="0" y1="0" y2="15.2812" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 273.9143 129.7747)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 273.9143 129.7747)">
         <line x1="0" x2="21.7608" y1="0" y2="9.9558" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 98.3871 189.0665)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 98.3871 189.0665)">
         <line x1="0" x2="242.8063" y1="60.9335" y2="0" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 115.8885 194.4492)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 115.8885 194.4492)">
         <line x1="0" x2="232.46" y1="0" y2="14.8136" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 384.5784 357.5297)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 384.5784 357.5297)">
         <line x1="26.3512" x2="0" y1="0" y2="27.0487" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 224.827 123.447)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 224.827 123.447)">
         <line x1="105.0076" x2="0" y1="46.7183" y2="0" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 199.387 127.8095)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 199.387 127.8095)">
         <line x1="246.77" x2="0" y1="161.2086" y2="0" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 341.1935 189.0665)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 341.1935 189.0665)">
         <line x1="0" x2="7.155" y1="0" y2="20.1962" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 216.0165 139.7305)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 216.0165 139.7305)">
         <line x1="0" x2="79.6586" y1="281.116" y2="0" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 224.827 123.447)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 224.827 123.447)">
         <line x1="159.7513" x2="0" y1="261.1313" y2="0" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 199.387 127.8095)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 199.387 127.8095)">
         <line x1="148.9614" x2="0" y1="81.4533" y2="0" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 224.827 123.447)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 224.827 123.447)">
         <line x1="0" x2="70.8481" y1="0" y2="16.2834" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 224.827 123.447)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 224.827 123.447)">
         <line x1="0" x2="123.5214" y1="0" y2="85.8157" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 199.387 127.8095)">
+      <g pointer-events="none" transform="matrix(1 0 0 1 199.387 127.8095)">
         <line x1="96.2881" x2="0" y1="11.921" y2="0" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
       <g stroke-width="2" transform="matrix(1 0 0 1 350 250)">
