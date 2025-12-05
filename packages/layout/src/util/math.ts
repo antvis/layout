@@ -74,6 +74,35 @@ export const getAdjMatrix = (
 };
 
 /**
+ * Get the adjacency list of the graph model.
+ */
+export const getAdjList = (
+  model: LayoutModel,
+  directed: boolean,
+): number[][] => {
+  const n = model.nodeCount();
+  const adjList: number[][] = Array.from({ length: n }, () => []);
+
+  // map node with index
+  const nodeMap: Record<string, number> = {};
+  let idx = 0;
+  model.forEachNode((node) => {
+    nodeMap[node.id] = idx++;
+  });
+
+  model.forEachEdge((e) => {
+    const s = nodeMap[e.source];
+    const t = nodeMap[e.target];
+    if (s == null || t == null) return;
+
+    adjList[s].push(t);
+    if (!directed) adjList[t].push(s);
+  });
+
+  return adjList;
+};
+
+/**
  * scale matrix
  * @param matrix [ [], [], [] ]
  * @param ratio
@@ -183,196 +212,107 @@ export const graphTreeDfs = (
  * Fully compatible with floydWarshall(adjMatrix).
  */
 
-export function johnson(adjMatrix: number[][]): number[][] {
-  const n = adjMatrix.length;
-  if (n === 0) return [];
+export function johnson(adjList: number[][]): number[][] {
+  const n = adjList.length;
 
-  // Step 1: Build edge list + adjacency list
-  const edges: [number, number, number][] = [];
-  const adj: [number, number][][] = Array.from({ length: n }, () => []);
+  // Step 1: add a dummy node q connected to all nodes with weight 0
+  const h = new Array(n).fill(0);
 
-  for (let u = 0; u < n; u++) {
-    for (let v = 0; v < n; v++) {
-      const w = adjMatrix[u][v];
-      if (u !== v && w !== Infinity && w > 0) {
-        edges.push([u, v, w]);
-        adj[u].push([v, w]);
-      }
-    }
-  }
+  // Bellman-Ford to compute potentials h(v)
+  // 因为权重全是 1，无负边，可直接跳过 BF，h 全 0 即可
 
-  // Step 2: Bellman-Ford from virtual node Q (-1)
-  const bfEdges = [...edges];
-  for (let v = 0; v < n; v++) bfEdges.push([-1, v, 0]);
+  // Step 2: reweight edges
+  // 因为 h(u)=h(v)=0，reweight 后仍然是 1，省略 reweight 过程
 
-  const h = bellmanFord(bfEdges, n);
-  if (!h) {
-    throw new Error('Negative cycle detected in Johnson');
-  }
-
-  // Step 3: Reweight edges to eliminate negatives
-  const reweightedAdj: [number, number][][] = Array.from(
-    { length: n },
-    () => [],
-  );
-
-  for (const [u, v, w] of edges) {
-    const w2 = w + h[u] - h[v]; // guaranteed non-negative
-    reweightedAdj[u].push([v, w2]);
-  }
-
-  // Step 4: Run Dijkstra from every node
-  const dist: number[][] = Array.from({ length: n }, () =>
-    Array(n).fill(Infinity),
+  // Step 3: run Dijkstra from each node
+  const distAll: number[][] = Array.from({ length: n }, () =>
+    new Array(n).fill(Infinity),
   );
 
   for (let s = 0; s < n; s++) {
-    const d = dijkstra(reweightedAdj, s, n);
-
-    for (let t = 0; t < n; t++) {
-      if (d[t] < Infinity) {
-        // restore original weights
-        dist[s][t] = d[t] - h[s] + h[t];
-      }
-    }
+    distAll[s] = dijkstra(adjList, s);
   }
 
-  return dist;
+  return distAll;
 }
 
 /**
- * Bellman-Ford algorithm to detect negative cycles only.
- * Time complexity: O(VE)
+ * Dijkstra algorithm to find shortest paths from source to all nodes.
  */
-function bellmanFord(
-  edges: [number, number, number][],
-  n: number,
-): number[] | null {
-  const dist = Array(n).fill(Infinity);
-  // virtual source = node index n-1? (we use -1 offset)
-  // actually we treat -1 separately; we initialize dist[any real node]=0
-  // but must include them in Bellman-Ford.
-  for (let v = 0; v < n; v++) dist[v] = 0;
+function dijkstra(adjList: number[][], source: number): number[] {
+  const n = adjList.length;
+  const dist = new Array(n).fill(Infinity);
+  dist[source] = 0;
 
-  // Relax edges N-1 times
-  for (let i = 0; i < n - 1; i++) {
-    let updated = false;
+  // Minimal binary heap
+  const heap = new MinHeap();
+  heap.push([0, source]); // [distance, node]
 
-    for (const [u, v, w] of edges) {
-      const du = u === -1 ? 0 : dist[u];
-      if (du + w < dist[v]) {
-        dist[v] = du + w;
-        updated = true;
-      }
-    }
+  while (!heap.empty()) {
+    const [d, u] = heap.pop();
+    if (d !== dist[u]) continue;
 
-    if (!updated) break;
-  }
-
-  // Check negative cycle
-  for (const [u, v, w] of edges) {
-    const du = u === -1 ? 0 : dist[u];
-    if (du + w < dist[v]) return null;
-  }
-
-  return dist;
-}
-
-/**
- * Dijkstra's algorithm to find shortest paths from a single source.
- * Time complexity: O(E log V) with a binary heap.
- */
-function dijkstra(
-  adj: [number, number][][],
-  start: number,
-  n: number,
-): number[] {
-  const dist = Array(n).fill(Infinity);
-  dist[start] = 0;
-
-  const pq = new MinHeap<[number, number]>((a, b) => a[0] - b[0]);
-  pq.push([0, start]);
-
-  while (!pq.isEmpty()) {
-    const [d, u] = pq.pop();
-    if (d > dist[u]) continue;
-
-    for (const [v, w] of adj[u]) {
-      const nd = d + w;
+    const neighbors = adjList[u];
+    for (let i = 0; i < neighbors.length; i++) {
+      const v = neighbors[i];
+      const nd = d + 1;
       if (nd < dist[v]) {
         dist[v] = nd;
-        pq.push([nd, v]);
+        heap.push([nd, v]);
       }
     }
   }
+
   return dist;
 }
 
-/**
- * A simple MinHeap implementation.
- */
-class MinHeap<T> {
-  private data: T[] = [];
-  private cmp: (a: T, b: T) => number;
+class MinHeap {
+  private data: [number, number][] = [];
 
-  constructor(cmp: (a: T, b: T) => number) {
-    this.cmp = cmp;
+  push(item: [number, number]) {
+    this.data.push(item);
+    this.bubbleUp(this.data.length - 1);
   }
 
-  isEmpty() {
-    return this.data.length === 0;
-  }
-
-  push(item: T) {
-    const arr = this.data;
-    arr.push(item);
-    this.bubbleUp(arr.length - 1);
-  }
-
-  pop(): T {
-    const arr = this.data;
-    const top = arr[0];
-    const tail = arr.pop()!;
-    if (arr.length > 0) {
-      arr[0] = tail;
+  pop(): [number, number] {
+    const top = this.data[0];
+    const end = this.data.pop()!;
+    if (this.data.length > 0) {
+      this.data[0] = end;
       this.bubbleDown(0);
     }
     return top;
   }
 
-  private bubbleUp(i: number) {
-    const arr = this.data;
-    const el = arr[i];
-    while (i > 0) {
-      const p = (i - 1) >> 1;
-      if (this.cmp(el, arr[p]) >= 0) break;
-      arr[i] = arr[p];
-      i = p;
-    }
-    arr[i] = el;
+  empty() {
+    return this.data.length === 0;
   }
 
-  private bubbleDown(i: number) {
-    const arr = this.data;
-    const el = arr[i];
-    const n = arr.length;
+  private bubbleUp(pos: number) {
+    const data = this.data;
+    while (pos > 0) {
+      const parent = (pos - 1) >> 1;
+      if (data[parent][0] <= data[pos][0]) break;
+      [data[parent], data[pos]] = [data[pos], data[parent]];
+      pos = parent;
+    }
+  }
+
+  private bubbleDown(pos: number) {
+    const data = this.data;
+    const length = data.length;
 
     while (true) {
-      let left = i * 2 + 1;
-      let right = left + 1;
-      let smallest = i;
+      const left = pos * 2 + 1;
+      const right = pos * 2 + 2;
+      let min = pos;
 
-      if (left < n && this.cmp(arr[left], arr[smallest]) < 0) {
-        smallest = left;
-      }
-      if (right < n && this.cmp(arr[right], arr[smallest]) < 0) {
-        smallest = right;
-      }
-      if (smallest === i) break;
+      if (left < length && data[left][0] < data[min][0]) min = left;
+      if (right < length && data[right][0] < data[min][0]) min = right;
+      if (min === pos) break;
 
-      arr[i] = arr[smallest];
-      i = smallest;
+      [data[pos], data[min]] = [data[min], data[pos]];
+      pos = min;
     }
-    arr[i] = el;
   }
 }

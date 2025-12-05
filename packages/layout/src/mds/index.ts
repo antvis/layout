@@ -2,7 +2,7 @@ import { Matrix as MLMatrix, SingularValueDecomposition } from 'ml-matrix';
 import { BaseLayout } from '../base-layout';
 import type { Matrix } from '../types';
 import type { Point } from '../types/point';
-import { getAdjMatrix, johnson, scaleMatrix } from '../util';
+import { getAdjList, johnson, scaleMatrix } from '../util';
 import { applySingleNodeLayout } from '../util/common';
 import type { MDSLayoutOptions } from './types';
 
@@ -35,8 +35,8 @@ export class MDSLayout extends BaseLayout<MDSLayoutOptions> {
     }
 
     // the graph-theoretic distance (shortest path distance) matrix
-    const adjMatrix = getAdjMatrix(this.model, false);
-    const distances = johnson(adjMatrix);
+    const adjList = getAdjList(this.model, false);
+    const distances = johnson(adjList);
     handleInfinity(distances);
 
     // scale the ideal edge length acoording to linkDistance

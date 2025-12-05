@@ -13,8 +13,7 @@ export function render(gui?: GUI) {
     height,
     center: [width / 2, height / 2],
     nodeSize: 20,
-    sortBy: 'data',
-    linkDistance: 400,
+    unitRadius: 50,
   });
 
   const relayout = async (options = {}) => {
@@ -22,7 +21,7 @@ export function render(gui?: GUI) {
 
     renderer.render(radial, {
       showLabel: true,
-      nodeRadius: 25,
+      nodeRadius: 10,
       nodeStyle: { stroke: '#F875AA', lineWidth: 1 },
     });
   };

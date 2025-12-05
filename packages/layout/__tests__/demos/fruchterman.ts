@@ -18,7 +18,11 @@ export async function render(gui?: GUI) {
     onTick: (layout) => {
       renderer.handleTick(
         layout,
-        { nodeRadius: 10, showLabel: true },
+        {
+          nodeRadius: 10,
+          showLabel: true,
+          nodeStyle: { stroke: '#F875AA', lineWidth: 1 },
+        },
         processedData as any,
       );
     },

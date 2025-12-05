@@ -1,12 +1,11 @@
 import { BaseLayout } from '../base-layout';
 import { runMDS } from '../mds';
 import type { Matrix } from '../types';
-import type { LayoutNode, NodeData } from '../types/data';
 import type { ID } from '../types/id';
 import {
   formatNodeSizeToNumber,
+  getAdjList,
   getAdjMatrix,
-  getEuclideanDistance,
   johnson,
   LayoutModel,
   normalizeViewport,
@@ -73,8 +72,8 @@ export class RadialLayout extends BaseLayout<RadialLayoutOptions> {
     const focusIndex = this.model.nodeIndexOf(focusNode.id);
 
     // the graph-theoretic distance (shortest path distance) matrix
-    const adjMatrix = getAdjMatrix(this.model, false);
-    const distances = johnson(adjMatrix);
+    const adjList = getAdjList(this.model, false);
+    const distances = johnson(adjList);
     const maxDistance = maxToFocus(distances, focusIndex);
 
     // replace first node in unconnected component to the circle at (maxDistance + 1)
@@ -124,7 +123,7 @@ export class RadialLayout extends BaseLayout<RadialLayoutOptions> {
       i++;
     });
 
-    this.run(maxIteration, idealDistances, radii, focusNode);
+    this.run(maxIteration, idealDistances, radii, focusIndex);
 
     this.model.forEachNode((node) => {
       node.x += center[0];
@@ -151,111 +150,99 @@ export class RadialLayout extends BaseLayout<RadialLayoutOptions> {
     maxIteration: number,
     idealDistances: Matrix[],
     radii: number[],
-    focusNode: LayoutNode,
+    focusIndex: number,
   ) {
     const weights = getWeightMatrix(idealDistances);
 
+    const n = this.model.nodeCount();
+    const nodes = this.model.nodes();
+
+    const xs = new Float64Array(n);
+    const ys = new Float64Array(n);
+
+    for (let i = 0; i < n; i++) {
+      xs[i] = nodes[i].x;
+      ys[i] = nodes[i].y;
+    }
+
     for (let i = 0; i <= maxIteration; i++) {
       const param = i / maxIteration;
-      this.oneIteration(
-        this.model,
-        param,
-        radii,
-        idealDistances,
-        weights,
-        focusNode,
-      );
+      const vparam = 1 - param;
+
+      for (let i = 0; i < n; i++) {
+        if (i === focusIndex) continue;
+
+        const vx = xs[i];
+        const vy = ys[i];
+        const originDis = Math.sqrt(vx * vx + vy * vy);
+
+        const reciODis = originDis === 0 ? 0 : 1 / originDis;
+        let xMolecule = 0;
+        let yMolecule = 0;
+        let denominator = 0;
+
+        for (let j = 0; j < n; j++) {
+          // u
+          if (i === j) continue;
+
+          const ux = xs[j];
+          const uy = ys[j];
+          // the euclidean distance between v and u
+          const edis = Math.sqrt((vx - ux) * (vx - ux) + (vy - uy) * (vy - uy));
+
+          const reciEdis = edis === 0 ? 0 : 1 / edis;
+          const idealDis = idealDistances[j][i];
+          // same for x and y
+          denominator += weights[i][j];
+          // x
+          xMolecule += weights[i][j] * (ux + idealDis * (vx - ux) * reciEdis);
+          // y
+          yMolecule += weights[i][j] * (uy + idealDis * (vy - uy) * reciEdis);
+        }
+        const reciR = radii[i] === 0 ? 0 : 1 / radii[i];
+        denominator *= vparam;
+        denominator += param * reciR * reciR;
+
+        // x
+        xMolecule *= vparam;
+        xMolecule += param * reciR * vx * reciODis;
+        // y
+        yMolecule *= vparam;
+        yMolecule += param * reciR * vy * reciODis;
+
+        xs[i] = xMolecule / denominator;
+        ys[i] = yMolecule / denominator;
+
+        nodes[i].x = xs[i];
+        nodes[i].y = ys[i];
+      }
     }
   }
-
-  private oneIteration(
-    model: LayoutModel,
-    param: number,
-    radii: number[],
-    distances: Matrix[],
-    weights: Matrix[],
-    focusNode: LayoutNode,
-  ) {
-    const vparam = 1 - param;
-    let i = 0;
-
-    model.forEachNode((v) => {
-      // v
-      const originDis = getEuclideanDistance(v, { x: 0, y: 0 });
-      const reciODis = originDis === 0 ? 0 : 1 / originDis;
-      if (v.id === focusNode.id) {
-        i++;
-        return;
-      }
-      let xMolecule = 0;
-      let yMolecule = 0;
-      let denominator = 0;
-
-      let j = 0;
-      model.forEachNode((u) => {
-        // u
-        if (i === j) {
-          j++;
-          return;
-        }
-
-        // the euclidean distance between v and u
-        const edis = getEuclideanDistance(v, u);
-        const reciEdis = edis === 0 ? 0 : 1 / edis;
-        const idealDis = distances[j][i];
-        // same for x and y
-        denominator += weights[i][j];
-        // x
-        xMolecule += weights[i][j] * (u.x + idealDis * (v.x - u.x) * reciEdis);
-        // y
-        yMolecule += weights[i][j] * (u.y + idealDis * (v.y - u.y) * reciEdis);
-
-        j++;
-      });
-      const reciR = radii[i] === 0 ? 0 : 1 / radii[i];
-      denominator *= vparam;
-      denominator += param * reciR * reciR;
-
-      // x
-      xMolecule *= vparam;
-      xMolecule += param * reciR * v.x * reciODis;
-      // y
-      yMolecule *= vparam;
-      yMolecule += param * reciR * v.y * reciODis;
-
-      v.x = xMolecule / denominator;
-      v.y = yMolecule / denominator;
-      i++;
-    });
-  }
 }
+
 const eIdealDisMatrix = (
   model: LayoutModel,
   distances: Matrix[],
   linkDistance: number,
   radii: number[],
   unitRadius: number,
-  sortBy: 'data' | ((d?: NodeData) => number | string) | undefined,
+  sortBy: any,
   sortStrength: number,
 ): Matrix[] => {
-  if (!distances) return [];
-
-  const n = model.nodeCount();
+  const n = distances.length;
   const result: Matrix[] = new Array(n);
-
-  const sortCache = new Map<ID, number>();
-
-  const sortByFn: ((d?: NodeData) => number | string) | null =
-    typeof sortBy === 'function' ? sortBy : null;
-
-  const radiusScale = new Array<number>(n);
+  const radiusScale = new Array(n);
   for (let i = 0; i < n; i++) radiusScale[i] = radii[i] / unitRadius;
 
   const baseLink = (linkDistance + unitRadius) / 2;
+  const sortCache = new Map<ID, number>();
+  const sortFn = typeof sortBy === 'function' ? sortBy : null;
+  const isDataSort = sortBy === 'data';
 
   for (let i = 0; i < n; i++) {
     const row = distances[i];
     const newRow = new Array(n);
+    result[i] = newRow;
     const riScale = radiusScale[i] || 1;
 
     for (let j = 0; j < n; j++) {
@@ -265,42 +252,33 @@ const eIdealDisMatrix = (
       }
 
       const v = row[j];
-
-      // same circle
       if (radii[i] === radii[j]) {
-        if (sortBy === 'data') {
-          // data ordering
+        if (isDataSort) {
           newRow[j] = (v * Math.abs(i - j) * sortStrength) / riScale;
-        } else if (sortByFn) {
-          // sort by custom attribute
-          const iNode = model.nodeAt(i);
-          let iv = sortCache.get(iNode.id);
+        } else if (sortFn) {
+          // cache node attribute values
+          const nodeI = model.nodeAt(i);
+          const nodeJ = model.nodeAt(j);
+          let iv = sortCache.get(nodeI.id);
           if (iv === undefined) {
-            const raw = sortByFn(iNode._original) || 0;
-            iv = typeof raw === 'string' ? raw.charCodeAt(0) : raw;
-            sortCache.set(iNode.id, iv);
+            const raw = sortFn(nodeI._original) || 0;
+            iv = typeof raw === 'string' ? raw.charCodeAt(0) : Number(raw || 0);
+            sortCache.set(nodeI.id, iv);
           }
-
-          const jNode = model.nodeAt(j);
-          let jv = sortCache.get(jNode.id);
+          let jv = sortCache.get(nodeJ.id);
           if (jv === undefined) {
-            const raw = sortByFn(jNode._original) || 0;
-            jv = typeof raw === 'string' ? raw.charCodeAt(0) : raw;
-            sortCache.set(jNode.id, jv);
+            const raw = sortFn(nodeJ._original) || 0;
+            jv = typeof raw === 'string' ? raw.charCodeAt(0) : Number(raw || 0);
+            sortCache.set(nodeJ.id, jv);
           }
-
           newRow[j] = (v * Math.abs(iv - jv) * sortStrength) / riScale;
         } else {
-          // default same-circle
           newRow[j] = (v * linkDistance) / riScale;
         }
       } else {
-        // different circles
         newRow[j] = v * baseLink;
       }
     }
-
-    result[i] = newRow;
   }
 
   return result;
@@ -327,7 +305,6 @@ const getWeightMatrix = (idealDistances: Matrix[]) => {
 const handleInfinity = (matrix: Matrix[], focusIndex: number, step: number) => {
   const n = matrix.length;
 
-  // 遍历 matrix 中遍历 focus 对应行
   for (let i = 0; i < n; i++) {
     // matrix 关注点对应行的 Inf 项
     if (matrix[focusIndex][i] === Infinity) {
