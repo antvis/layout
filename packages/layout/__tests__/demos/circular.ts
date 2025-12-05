@@ -1,23 +1,23 @@
 import { CircularLayout } from '@/src';
-import type { Canvas } from '@antv/g';
-import { Graph } from '@antv/graphlib';
 import type { GUI } from 'lil-gui';
-import { countries } from '../dataset';
-import { renderNodesAndEdges } from '../utils';
+import { countries as data } from '../dataset';
+import { GraphRenderer } from '../utils/renderer';
 
-export function render(canvas: Canvas, gui?: GUI) {
-  const { nodes, edges } = countries;
-
-  const graph = new Graph({ nodes, edges });
+export function render(gui?: GUI) {
+  const renderer = new GraphRenderer();
 
   const circular = new CircularLayout({
     center: [250, 250],
     radius: 200,
+    nodeSize: 20,
   });
 
   const relayout = async (options = {}) => {
-    const positions = await circular.execute(graph, options);
-    await renderNodesAndEdges(canvas, positions, true, { lineWidth: 0 });
+    await circular.execute(data, options);
+    renderer.render(circular, {
+      nodeRadius: 10,
+      nodeStyle: { stroke: '#F875AA', lineWidth: 1 },
+    });
   };
 
   relayout();
@@ -94,5 +94,5 @@ export function render(canvas: Canvas, gui?: GUI) {
       });
   }
 
-  return canvas;
+  return renderer.getCanvas();
 }
