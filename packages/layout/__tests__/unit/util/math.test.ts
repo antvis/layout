@@ -4,6 +4,7 @@ import {
   getAdjMatrix,
   getEuclideanDistance,
   getLayoutBBox,
+  johnsonAPSP,
   scaleMatrix,
 } from '@/src/util/math';
 import { LayoutModel } from '@/src/util/model';
@@ -498,6 +499,239 @@ describe('getLayoutBBox', () => {
       minY: Infinity,
       maxX: -Infinity,
       maxY: -Infinity,
+    });
+  });
+
+  describe('johnsonAPSP', () => {
+    test('should compute shortest paths for simple weighted graph', () => {
+      const adjMatrix = [
+        [0, 4, Infinity, 5],
+        [4, 0, 1, Infinity],
+        [Infinity, 1, 0, 3],
+        [5, Infinity, 3, 0],
+      ];
+
+      const result = johnsonAPSP(adjMatrix);
+
+      expect(result).toEqual([
+        [0, 4, 5, 5],
+        [4, 0, 1, 4],
+        [5, 1, 0, 3],
+        [5, 4, 3, 0],
+      ]);
+    });
+
+    test('should handle empty graph', () => {
+      const adjMatrix: number[][] = [];
+
+      const result = johnsonAPSP(adjMatrix);
+
+      expect(result).toEqual([]);
+    });
+
+    test('should handle single node', () => {
+      const adjMatrix = [[0]];
+
+      const result = johnsonAPSP(adjMatrix);
+
+      expect(result).toEqual([[0]]);
+    });
+
+    test('should handle disconnected graph', () => {
+      const adjMatrix = [
+        [0, 1, Infinity],
+        [1, 0, Infinity],
+        [Infinity, Infinity, 0],
+      ];
+
+      const result = johnsonAPSP(adjMatrix);
+
+      expect(result).toEqual([
+        [0, 1, Infinity],
+        [1, 0, Infinity],
+        [Infinity, Infinity, 0],
+      ]);
+    });
+
+    test('should produce same results as Floyd-Warshall', () => {
+      const adjMatrix = [
+        [0, 1, Infinity],
+        [1, 0, 1],
+        [Infinity, 1, 0],
+      ];
+
+      const johnsonResult = johnsonAPSP(adjMatrix);
+      const floydResult = floydWarshall(adjMatrix);
+
+      expect(johnsonResult).toEqual(floydResult);
+    });
+
+    test('should handle complete graph', () => {
+      const adjMatrix = [
+        [0, 1, 2],
+        [1, 0, 3],
+        [2, 3, 0],
+      ];
+
+      const result = johnsonAPSP(adjMatrix);
+
+      expect(result).toEqual([
+        [0, 1, 2],
+        [1, 0, 3],
+        [2, 3, 0],
+      ]);
+    });
+
+    test('should handle graph with indirect shorter paths', () => {
+      const adjMatrix = [
+        [0, 10, Infinity, Infinity],
+        [10, 0, 1, Infinity],
+        [Infinity, 1, 0, 1],
+        [Infinity, Infinity, 1, 0],
+      ];
+
+      const result = johnsonAPSP(adjMatrix);
+
+      expect(result).toEqual([
+        [0, 10, 11, 12],
+        [10, 0, 1, 2],
+        [11, 1, 0, 1],
+        [12, 2, 1, 0],
+      ]);
+    });
+
+    test('should handle two-node graph', () => {
+      const adjMatrix = [
+        [0, 5],
+        [5, 0],
+      ];
+
+      const result = johnsonAPSP(adjMatrix);
+
+      expect(result).toEqual([
+        [0, 5],
+        [5, 0],
+      ]);
+    });
+
+    test('should handle directed graph (asymmetric matrix)', () => {
+      const adjMatrix = [
+        [0, 2, Infinity],
+        [Infinity, 0, 3],
+        [Infinity, Infinity, 0],
+      ];
+
+      const result = johnsonAPSP(adjMatrix);
+
+      expect(result).toEqual([
+        [0, 2, 5],
+        [Infinity, 0, 3],
+        [Infinity, Infinity, 0],
+      ]);
+    });
+
+    test('should handle graph with varying edge weights', () => {
+      const adjMatrix = [
+        [0, 1, 100],
+        [1, 0, 1],
+        [100, 1, 0],
+      ];
+
+      const result = johnsonAPSP(adjMatrix);
+
+      expect(result).toEqual([
+        [0, 1, 2],
+        [1, 0, 1],
+        [2, 1, 0],
+      ]);
+    });
+
+    test('should handle sparse graph efficiently', () => {
+      const adjMatrix = [
+        [0, 1, Infinity, Infinity, Infinity],
+        [1, 0, 1, Infinity, Infinity],
+        [Infinity, 1, 0, 1, Infinity],
+        [Infinity, Infinity, 1, 0, 1],
+        [Infinity, Infinity, Infinity, 1, 0],
+      ];
+
+      const result = johnsonAPSP(adjMatrix);
+
+      expect(result).toEqual([
+        [0, 1, 2, 3, 4],
+        [1, 0, 1, 2, 3],
+        [2, 1, 0, 1, 2],
+        [3, 2, 1, 0, 1],
+        [4, 3, 2, 1, 0],
+      ]);
+    });
+
+    test('should handle graph where direct path is not shortest', () => {
+      const adjMatrix = [
+        [0, 10, 5, Infinity],
+        [10, 0, Infinity, 1],
+        [5, Infinity, 0, 3],
+        [Infinity, 1, 3, 0],
+      ];
+
+      const result = johnsonAPSP(adjMatrix);
+
+      expect(result).toEqual([
+        [0, 9, 5, 8],
+        [9, 0, 4, 1],
+        [5, 4, 0, 3],
+        [8, 1, 3, 0],
+      ]);
+    });
+
+    test('should handle graph with self-loops ignored', () => {
+      const adjMatrix = [
+        [0, 2, Infinity],
+        [2, 0, 3],
+        [Infinity, 3, 0],
+      ];
+
+      const result = johnsonAPSP(adjMatrix);
+
+      expect(result).toEqual([
+        [0, 2, 5],
+        [2, 0, 3],
+        [5, 3, 0],
+      ]);
+    });
+
+    test('should handle large weights', () => {
+      const adjMatrix = [
+        [0, 1000, Infinity],
+        [1000, 0, 1],
+        [Infinity, 1, 0],
+      ];
+
+      const result = johnsonAPSP(adjMatrix);
+
+      expect(result).toEqual([
+        [0, 1000, 1001],
+        [1000, 0, 1],
+        [1001, 1, 0],
+      ]);
+    });
+
+    test('should handle multiple disconnected components', () => {
+      const adjMatrix = [
+        [0, 1, Infinity, Infinity],
+        [1, 0, Infinity, Infinity],
+        [Infinity, Infinity, 0, 2],
+        [Infinity, Infinity, 2, 0],
+      ];
+
+      const result = johnsonAPSP(adjMatrix);
+
+      expect(result).toEqual([
+        [0, 1, Infinity, Infinity],
+        [1, 0, Infinity, Infinity],
+        [Infinity, Infinity, 0, 2],
+        [Infinity, Infinity, 2, 0],
+      ]);
     });
   });
 });
