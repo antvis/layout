@@ -85,7 +85,8 @@ export function orderByTopology<N extends NodeData = NodeData>(
   pickFlags[nodes[0].id] = true;
 
   let k = 0;
-  model.forEachNode((node, i) => {
+  let i = 0;
+  model.forEachNode((node) => {
     if (i !== 0) {
       const currentDegree = model.degree(node.id, 'both');
       const nextDegree = i < n - 1 ? model.degree(nodes[i + 1].id, 'both') : 0;
@@ -136,6 +137,7 @@ export function orderByTopology<N extends NodeData = NodeData>(
         }
       }
     }
+    i++;
   });
 
   // Update model with ordered nodes
