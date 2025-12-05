@@ -1,8 +1,8 @@
 import EventEmitter from '@antv/event-emitter';
 import type { ID } from '@antv/graphlib';
 import { isNil } from '@antv/util';
-import type { Point } from '../types';
 import type { LayoutNode } from '../types/data';
+import type { DisplacementMap } from '../types/force';
 import type { NullablePosition } from '../types/position';
 import type { LayoutModel } from '../util/model';
 import type { SimulationOptions } from './types';
@@ -16,7 +16,6 @@ interface ClusterInfo {
 }
 
 type ClusterMap = Map<ID, ClusterInfo>;
-type DisplacementMap = Map<ID, Point>;
 
 const SPEED_DIVISOR = 800;
 

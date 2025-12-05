@@ -39,6 +39,6 @@ export interface LayoutEdge<E extends EdgeData = EdgeData> {
   target: ID;
   sourceNode?: LayoutNode;
   targetNode?: LayoutNode;
-  controlPoints?: Point[];
+  points?: Point[];
   _original?: E;
 }

@@ -15,7 +15,7 @@ export {
 } from './fruchterman';
 export { GridLayout, type GridLayoutOptions } from './grid';
 export { MDSLayout, type MDSLayoutOptions } from './mds';
-export * from './radial';
+export { RadialLayout, type RadialLayoutOptions } from './radial';
 export { RandomLayout, type RandomLayoutOptions } from './random';
 export * from './registry';
 export * from './types';

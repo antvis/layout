@@ -32,11 +32,7 @@ export abstract class BaseLayout<
       edge: this.options.edge,
     });
 
-    try {
-      await this.layout();
-    } catch (error) {
-      throw new Error(`Layout ${this.id} failed`, { cause: error });
-    }
+    await this.layout();
   }
 
   protected abstract layout(): Promise<void>;

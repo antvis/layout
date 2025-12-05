@@ -1,9 +1,11 @@
 import type { Edge, Node, OutNode, Point } from '@/src/types';
 import {
   floydWarshall,
+  getAdjList,
   getAdjMatrix,
   getEuclideanDistance,
   getLayoutBBox,
+  johnson,
   scaleMatrix,
 } from '@/src/util/math';
 import { LayoutModel } from '@/src/util/model';
@@ -191,6 +193,162 @@ describe('getAdjMatrix', () => {
       [undefined, 1],
       [1, undefined],
     ]);
+  });
+});
+
+describe('getAdjList', () => {
+  test('should create adjacency list for undirected graph', () => {
+    const nodes: Node[] = [
+      { id: 'a', data: {} },
+      { id: 'b', data: {} },
+      { id: 'c', data: {} },
+    ];
+    const edges: Edge[] = [
+      { id: 'e1', source: 'a', target: 'b', data: {} },
+      { id: 'e2', source: 'b', target: 'c', data: {} },
+    ];
+
+    const model = new LayoutModel({ nodes, edges });
+    const adjList = getAdjList(model, false);
+
+    expect(adjList).toEqual([[1], [0, 2], [1]]);
+  });
+
+  test('should create adjacency list for directed graph', () => {
+    const nodes: Node[] = [
+      { id: 'a', data: {} },
+      { id: 'b', data: {} },
+      { id: 'c', data: {} },
+    ];
+    const edges: Edge[] = [
+      { id: 'e1', source: 'a', target: 'b', data: {} },
+      { id: 'e2', source: 'b', target: 'c', data: {} },
+    ];
+
+    const model = new LayoutModel({ nodes, edges });
+    const adjList = getAdjList(model, true);
+
+    expect(adjList).toEqual([[1], [2], []]);
+  });
+
+  test('should handle empty edges', () => {
+    const nodes: Node[] = [
+      { id: 'a', data: {} },
+      { id: 'b', data: {} },
+    ];
+    const edges: Edge[] = [];
+
+    const model = new LayoutModel({ nodes, edges });
+    const adjList = getAdjList(model, false);
+
+    expect(adjList).toEqual([[], []]);
+  });
+
+  test('should handle single node', () => {
+    const nodes: Node[] = [{ id: 'a', data: {} }];
+    const edges: Edge[] = [];
+
+    const model = new LayoutModel({ nodes, edges });
+    const adjList = getAdjList(model, false);
+
+    expect(adjList).toEqual([[]]);
+  });
+
+  test('should handle self-loop edge', () => {
+    const nodes: Node[] = [
+      { id: 'a', data: {} },
+      { id: 'b', data: {} },
+    ];
+    const edges: Edge[] = [
+      { id: 'e1', source: 'a', target: 'a', data: {} },
+      { id: 'e2', source: 'a', target: 'b', data: {} },
+    ];
+
+    const model = new LayoutModel({ nodes, edges });
+    const adjList = getAdjList(model, false);
+
+    expect(adjList[0]).toContain(0); // self-loop
+    expect(adjList[0]).toContain(1);
+    expect(adjList[1]).toContain(0);
+  });
+
+  test('should ignore edges with invalid source or target', () => {
+    const nodes: Node[] = [
+      { id: 'a', data: {} },
+      { id: 'b', data: {} },
+    ];
+    const edges: Edge[] = [
+      { id: 'e1', source: 'a', target: 'b', data: {} },
+      { id: 'e2', source: 'a', target: 'nonexistent', data: {} },
+      { id: 'e3', source: 'nonexistent', target: 'b', data: {} },
+    ];
+
+    const model = new LayoutModel({ nodes, edges });
+    const adjList = getAdjList(model, false);
+
+    expect(adjList).toEqual([[1], [0]]);
+  });
+
+  test('should handle complete graph', () => {
+    const nodes: Node[] = [
+      { id: 'a', data: {} },
+      { id: 'b', data: {} },
+      { id: 'c', data: {} },
+    ];
+    const edges: Edge[] = [
+      { id: 'e1', source: 'a', target: 'b', data: {} },
+      { id: 'e2', source: 'a', target: 'c', data: {} },
+      { id: 'e3', source: 'b', target: 'c', data: {} },
+    ];
+
+    const model = new LayoutModel({ nodes, edges });
+    const adjList = getAdjList(model, false);
+
+    expect(adjList).toEqual([
+      [1, 2],
+      [0, 2],
+      [0, 1],
+    ]);
+  });
+
+  test('should handle directed graph with multiple edges from same node', () => {
+    const nodes: Node[] = [
+      { id: 'a', data: {} },
+      { id: 'b', data: {} },
+      { id: 'c', data: {} },
+    ];
+    const edges: Edge[] = [
+      { id: 'e1', source: 'a', target: 'b', data: {} },
+      { id: 'e2', source: 'a', target: 'c', data: {} },
+    ];
+
+    const model = new LayoutModel({ nodes, edges });
+    const adjList = getAdjList(model, true);
+
+    expect(adjList).toEqual([[1, 2], [], []]);
+  });
+
+  test('should handle bidirectional edges in directed graph', () => {
+    const nodes: Node[] = [
+      { id: 'a', data: {} },
+      { id: 'b', data: {} },
+    ];
+    const edges: Edge[] = [
+      { id: 'e1', source: 'a', target: 'b', data: {} },
+      { id: 'e2', source: 'b', target: 'a', data: {} },
+    ];
+
+    const model = new LayoutModel({ nodes, edges });
+    const adjList = getAdjList(model, true);
+
+    expect(adjList).toEqual([[1], [0]]);
+  });
+
+  test('should handle empty nodes', () => {
+    const model = new LayoutModel({ nodes: [], edges: [] });
+    const adjList = getAdjList(model, false);
+
+    expect(adjList).toEqual([]);
   });
 });
 
@@ -498,6 +656,200 @@ describe('getLayoutBBox', () => {
       minY: Infinity,
       maxX: -Infinity,
       maxY: -Infinity,
+    });
+  });
+
+  describe('johnson', () => {
+    test('should compute shortest paths for simple graph', () => {
+      const adjList = [[1], [0, 2], [1, 3], [2]];
+
+      const result = johnson(adjList);
+
+      expect(result).toEqual([
+        [0, 1, 2, 3],
+        [1, 0, 1, 2],
+        [2, 1, 0, 1],
+        [3, 2, 1, 0],
+      ]);
+    });
+
+    test('should handle empty graph', () => {
+      const adjList: number[][] = [];
+
+      const result = johnson(adjList);
+
+      expect(result).toEqual([]);
+    });
+
+    test('should handle single node', () => {
+      const adjList = [[]];
+
+      const result = johnson(adjList);
+
+      expect(result).toEqual([[0]]);
+    });
+
+    test('should handle disconnected graph', () => {
+      const adjList = [[1], [0], []];
+
+      const result = johnson(adjList);
+
+      expect(result).toEqual([
+        [0, 1, Infinity],
+        [1, 0, Infinity],
+        [Infinity, Infinity, 0],
+      ]);
+    });
+
+    test('should produce same results as Floyd-Warshall', () => {
+      const adjMatrix = [
+        [0, 1, Infinity],
+        [1, 0, 1],
+        [Infinity, 1, 0],
+      ];
+      const adjList = [[1], [0, 2], [1]];
+
+      const johnsonResult = johnson(adjList);
+      const floydResult = floydWarshall(adjMatrix);
+
+      expect(johnsonResult).toEqual(floydResult);
+    });
+
+    test('should handle complete graph', () => {
+      const adjList = [
+        [1, 2],
+        [0, 2],
+        [0, 1],
+      ];
+
+      const result = johnson(adjList);
+
+      expect(result).toEqual([
+        [0, 1, 1],
+        [1, 0, 1],
+        [1, 1, 0],
+      ]);
+    });
+
+    test('should handle graph with indirect shorter paths', () => {
+      const adjList = [[1], [0, 2], [1, 3], [2]];
+
+      const result = johnson(adjList);
+
+      expect(result).toEqual([
+        [0, 1, 2, 3],
+        [1, 0, 1, 2],
+        [2, 1, 0, 1],
+        [3, 2, 1, 0],
+      ]);
+    });
+
+    test('should handle two-node graph', () => {
+      const adjList = [[1], [0]];
+
+      const result = johnson(adjList);
+
+      expect(result).toEqual([
+        [0, 1],
+        [1, 0],
+      ]);
+    });
+
+    test('should handle directed graph (asymmetric adjacency list)', () => {
+      const adjList = [[1], [2], []];
+
+      const result = johnson(adjList);
+
+      expect(result).toEqual([
+        [0, 1, 2],
+        [Infinity, 0, 1],
+        [Infinity, Infinity, 0],
+      ]);
+    });
+
+    test('should handle graph with varying edge weights', () => {
+      const adjList = [
+        [1, 2],
+        [0, 2],
+        [0, 1],
+      ];
+
+      const result = johnson(adjList);
+
+      expect(result).toEqual([
+        [0, 1, 1],
+        [1, 0, 1],
+        [1, 1, 0],
+      ]);
+    });
+
+    test('should handle sparse graph efficiently', () => {
+      const adjList = [[1], [0, 2], [1, 3], [2, 4], [3]];
+
+      const result = johnson(adjList);
+
+      expect(result).toEqual([
+        [0, 1, 2, 3, 4],
+        [1, 0, 1, 2, 3],
+        [2, 1, 0, 1, 2],
+        [3, 2, 1, 0, 1],
+        [4, 3, 2, 1, 0],
+      ]);
+    });
+
+    test('should handle graph where direct path is not shortest', () => {
+      const adjList = [
+        [1, 2],
+        [0, 3],
+        [0, 3],
+        [1, 2],
+      ];
+
+      const result = johnson(adjList);
+
+      expect(result).toEqual([
+        [0, 1, 1, 2],
+        [1, 0, 2, 1],
+        [1, 2, 0, 1],
+        [2, 1, 1, 0],
+      ]);
+    });
+
+    test('should handle graph with self-loops ignored', () => {
+      const adjList = [[1], [0, 2], [1]];
+
+      const result = johnson(adjList);
+
+      expect(result).toEqual([
+        [0, 1, 2],
+        [1, 0, 1],
+        [2, 1, 0],
+      ]);
+    });
+
+    test('should handle large graph', () => {
+      const adjList = [[1], [0, 2], [1]];
+
+      const result = johnson(adjList);
+
+      expect(result).toEqual([
+        [0, 1, 2],
+        [1, 0, 1],
+        [2, 1, 0],
+      ]);
+    });
+
+    test('should handle multiple disconnected components', () => {
+      const adjList = [[1], [0], [3], [2]];
+
+      const result = johnson(adjList);
+
+      expect(result).toEqual([
+        [0, 1, Infinity, Infinity],
+        [1, 0, Infinity, Infinity],
+        [Infinity, Infinity, 0, 1],
+        [Infinity, Infinity, 1, 0],
+      ]);
     });
   });
 });

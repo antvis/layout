@@ -22,6 +22,9 @@ export class LayoutModel<
   private outAdjacencyCache?: Map<ID, Set<ID>>;
   private bothAdjacencyCache?: Map<ID, Set<ID>>;
 
+  private nodeIndexCache?: Map<ID, number>;
+  private indexNodeCache?: Map<number, ID>;
+
   private edgeIdCounter: Map<string, number> = new Map();
 
   constructor(data: GraphData<N, E>, options: LayoutModelOptions<N, E> = {}) {
@@ -41,17 +44,27 @@ export class LayoutModel<
     return this.nodeMap.get(id);
   }
 
+  public nodeAt(index: number): LayoutNode<N> | undefined {
+    if (!this.indexNodeCache) {
+      this.buildNodeIndexCache();
+    }
+    const nodeId = this.indexNodeCache!.get(index);
+    return nodeId ? this.nodeMap.get(nodeId) : undefined;
+  }
+
+  public nodeIndexOf(id: ID): number {
+    if (!this.nodeIndexCache) {
+      this.buildNodeIndexCache();
+    }
+    return this.nodeIndexCache!.get(id) ?? -1;
+  }
+
   public firstNode(): LayoutNode<N> | undefined {
     return this.nodeMap.values().next().value;
   }
 
-  public forEachNode(
-    callback: (node: LayoutNode<N>, index: number) => void,
-  ): void {
-    let index = 0;
-    this.nodeMap.forEach((node) => {
-      callback(node, index++);
-    });
+  public forEachNode(callback: (node: LayoutNode<N>) => void): void {
+    this.nodeMap.forEach(callback);
   }
 
   public originalNode(id: ID): N | undefined {
@@ -75,13 +88,8 @@ export class LayoutModel<
     return this.edgeMap.values().next().value;
   }
 
-  public forEachEdge(
-    callback: (edge: LayoutEdge<E>, index: number) => void,
-  ): void {
-    let index = 0;
-    this.edgeMap.forEach((edge) => {
-      callback(edge, index++);
-    });
+  public forEachEdge(callback: (edge: LayoutEdge<E>) => void): void {
+    this.edgeMap.forEach(callback);
   }
 
   public originalEdge(id: ID): E | undefined {
@@ -158,6 +166,8 @@ export class LayoutModel<
     this.inAdjacencyCache = undefined;
     this.outAdjacencyCache = undefined;
     this.bothAdjacencyCache = undefined;
+    this.nodeIndexCache = undefined;
+    this.indexNodeCache = undefined;
   }
 
   private buildDegreeCache(): void {
@@ -205,6 +215,18 @@ export class LayoutModel<
         this.inAdjacencyCache!.set(edge.target, new Set());
       }
       this.inAdjacencyCache.get(edge.target)!.add(edge.source);
+    }
+  }
+
+  private buildNodeIndexCache(): void {
+    this.nodeIndexCache = new Map();
+    this.indexNodeCache = new Map();
+
+    let index = 0;
+    for (const nodeId of this.nodeMap.keys()) {
+      this.nodeIndexCache.set(nodeId, index);
+      this.indexNodeCache.set(index, nodeId);
+      index++;
     }
   }
 
@@ -261,7 +283,7 @@ function extractEdgeData<E extends EdgeData = EdgeData>(
   getEdgeId?: (datum: E) => ID,
 ): Map<ID, LayoutEdge<E>> {
   const result = new Map<ID, LayoutEdge<E>>();
-  const fields = ['id', 'source', 'target', 'controlPoints'];
+  const fields = ['id', 'source', 'target', 'points'];
 
   for (const datum of edges) {
     const edgeData: LayoutEdge<E> = { _original: datum } as LayoutEdge<E>;
