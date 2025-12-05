@@ -1,38 +1,34 @@
-import { isString } from '@antv/util';
-import type {
-  Graph,
-  Layout,
-  LayoutMapping,
-  Matrix,
-  Node,
-  OutNode,
-  Point,
-  PointTuple,
-  RadialLayoutOptions,
-} from '../types';
+import { BaseLayout } from '../base-layout';
+import { runMDS } from '../mds';
+import type { Matrix } from '../types';
+import type { LayoutNode, NodeData } from '../types/data';
+import type { ID } from '../types/id';
 import {
-  cloneFormatData,
-  floydWarshall,
   formatNodeSizeToNumber,
   getAdjMatrix,
   getEuclideanDistance,
+  johnsonAPSP,
+  LayoutModel,
+  normalizeViewport,
 } from '../util';
-import { handleSingleNodeGraph } from '../util/common';
-import { mds } from './mds';
+import { applySingleNodeLayout } from '../util/common';
 import {
   radialNonoverlapForce,
   RadialNonoverlapForceOptions,
 } from './radial-nonoverlap-force';
+import type { RadialLayoutOptions } from './types';
+
+export type { RadialLayoutOptions };
 
 const DEFAULTS_LAYOUT_OPTIONS: Partial<RadialLayoutOptions> = {
-  maxIteration: 1000,
   focusNode: null,
-  unitRadius: null,
   linkDistance: 50,
-  preventOverlap: false,
-  strictRadial: true,
+  maxIteration: 1000,
   maxPreventOverlapIteration: 200,
+  preventOverlap: false,
   sortStrength: 10,
+  strictRadial: true,
+  unitRadius: null,
 };
 
 /**
@@ -40,128 +36,74 @@ const DEFAULTS_LAYOUT_OPTIONS: Partial<RadialLayoutOptions> = {
  *
  * <en/> Radial layout
  */
-export class RadialLayout implements Layout<RadialLayoutOptions> {
+export class RadialLayout extends BaseLayout<RadialLayoutOptions> {
   id = 'radial';
 
-  constructor(public options: RadialLayoutOptions = {} as RadialLayoutOptions) {
-    this.options = {
-      ...DEFAULTS_LAYOUT_OPTIONS,
-      ...options,
-    };
+  protected getDefaultOptions(): Partial<RadialLayoutOptions> {
+    return DEFAULTS_LAYOUT_OPTIONS;
   }
 
-  /**
-   * Return the positions of nodes and edges(if needed).
-   */
-  async execute(graph: Graph, options?: RadialLayoutOptions) {
-    return this.genericRadialLayout(false, graph, options);
-  }
-  /**
-   * To directly assign the positions to the nodes.
-   */
-  async assign(graph: Graph, options?: RadialLayoutOptions) {
-   await this.genericRadialLayout(true, graph, options);
-  }
+  protected async layout(): Promise<void> {
+    const { width, height, center } = normalizeViewport(this.options);
 
-  private async genericRadialLayout(
-    assign: false,
-    graph: Graph,
-    options?: RadialLayoutOptions,
-  ): Promise<LayoutMapping>;
-  private async genericRadialLayout(
-    assign: true,
-    graph: Graph,
-    options?: RadialLayoutOptions,
-  ): Promise<void>;
-  private async genericRadialLayout(
-    assign: boolean,
-    graph: Graph,
-    options?: RadialLayoutOptions,
-  ): Promise<LayoutMapping | void> {
-    const mergedOptions = { ...this.options, ...options };
+    const n = this.model.nodeCount();
+    if (!n || n === 1) {
+      return applySingleNodeLayout(this.model, center);
+    }
+
     const {
-      width: propsWidth,
-      height: propsHeight,
-      center: propsCenter,
       focusNode: propsFocusNode,
-      unitRadius: propsUnitRadius,
+      linkDistance = DEFAULTS_LAYOUT_OPTIONS.linkDistance,
+      maxIteration = DEFAULTS_LAYOUT_OPTIONS.maxIteration,
+      maxPreventOverlapIteration = DEFAULTS_LAYOUT_OPTIONS.maxPreventOverlapIteration,
       nodeSize,
       nodeSpacing,
-      strictRadial,
       preventOverlap,
-      maxPreventOverlapIteration,
       sortBy,
-      linkDistance = 50,
-      sortStrength = 10,
-      maxIteration = 1000,
-    } = mergedOptions;
+      sortStrength = DEFAULTS_LAYOUT_OPTIONS.sortStrength,
+      strictRadial,
+      unitRadius: propsUnitRadius,
+    } = this.options;
 
-    const nodes = graph.getAllNodes();
-    const edges = graph.getAllEdges();
-
-    const width =
-      !propsWidth && typeof window !== 'undefined'
-        ? window.innerWidth
-        : propsWidth!;
-    const height =
-      !propsHeight && typeof window !== 'undefined'
-        ? window.innerHeight
-        : propsHeight!;
-    const center = (
-      !propsCenter ? [width / 2, height / 2] : propsCenter
-    ) as PointTuple;
-
-    if (!nodes?.length || nodes.length === 1) {
-      return handleSingleNodeGraph(graph, assign, center);
-    }
-
-    let focusNode = nodes[0];
-    if (isString(propsFocusNode)) {
-      for (let i = 0; i < nodes.length; i++) {
-        if (nodes[i].id === propsFocusNode) {
-          focusNode = nodes[i];
-          break;
-        }
-      }
-    } else {
-      focusNode = propsFocusNode || nodes[0];
-    }
+    const focusNode =
+      (propsFocusNode && this.model.node(propsFocusNode)) ||
+      this.model.firstNode();
 
     // the index of the focusNode in data
-    const focusIndex = getIndexById(nodes, focusNode.id);
+    const focusIndex = this.model.nodeIndexOf(focusNode.id);
 
     // the graph-theoretic distance (shortest path distance) matrix
-    // @ts-ignore LATER: fix the type error
-    const adjMatrix = getAdjMatrix({ nodes, edges }, false);
-    const distances = floydWarshall(adjMatrix);
+    const adjMatrix = getAdjMatrix(this.model, false);
+    const distances = johnsonAPSP(adjMatrix);
     const maxDistance = maxToFocus(distances, focusIndex);
+
     // replace first node in unconnected component to the circle at (maxDistance + 1)
     handleInfinity(distances, focusIndex, maxDistance + 1);
 
     // the shortest path distance from each node to focusNode
     const focusNodeD = distances[focusIndex];
-    let semiWidth =
-      width - center[0] > center[0] ? center[0] : width - center[0];
-    let semiHeight =
-      height - center[1] > center[1] ? center[1] : height - center[1];
-    if (semiWidth === 0) {
-      semiWidth = width / 2;
-    }
-    if (semiHeight === 0) {
-      semiHeight = height / 2;
-    }
+    const semiWidth =
+      (width - center[0] > center[0] ? center[0] : width - center[0]) ||
+      width / 2;
+    const semiHeight =
+      (height - center[1] > center[1] ? center[1] : height - center[1]) ||
+      height / 2;
+
     // the maxRadius of the graph
     const maxRadius = Math.min(semiWidth, semiHeight);
     const maxD = Math.max(...focusNodeD);
     // the radius for each nodes away from focusNode
     const radii: number[] = [];
-    const unitRadius = !propsUnitRadius ? maxRadius / maxD : propsUnitRadius;
+    const radiiMap: Map<ID, number> = new Map();
+    const unitRadius = propsUnitRadius ?? maxRadius / maxD;
     focusNodeD.forEach((value, i) => {
-      radii[i] = value * unitRadius;
+      const v = value * unitRadius;
+      radii.push(v);
+      radiiMap.set(this.model.nodeAt(i).id, v);
     });
 
     const idealDistances = eIdealDisMatrix(
-      nodes,
+      this.model,
       distances,
       linkDistance,
       radii,
@@ -169,115 +111,94 @@ export class RadialLayout implements Layout<RadialLayoutOptions> {
       sortBy,
       sortStrength,
     );
-    // the weight matrix, Wij = 1 / dij^(-2)
-    const weights = getWeightMatrix(idealDistances);
 
     // the initial positions from mds, move the graph to origin, centered at focusNode
-    const mdsResult = mds(linkDistance, idealDistances, linkDistance);
-    let positions = mdsResult.map(([x, y]) => ({
-      x:
-        (isNaN(x) ? Math.random() * linkDistance : x) -
-        mdsResult[focusIndex][0],
-      y:
-        (isNaN(y) ? Math.random() * linkDistance : y) -
-        mdsResult[focusIndex][1],
-    }));
+    const mdsResult = runMDS(idealDistances, 2, linkDistance);
+    const mdsFocus = mdsResult[focusIndex];
 
-    this.run(
-      maxIteration,
-      positions,
-      weights,
-      idealDistances,
-      radii,
-      focusIndex,
-    );
-    let nodeSizeFunc;
-    // stagger the overlapped nodes
-    if (preventOverlap) {
-      nodeSizeFunc = formatNodeSizeToNumber(nodeSize, nodeSpacing);
-      const nonoverlapForceParams: RadialNonoverlapForceOptions = {
-        nodes,
-        nodeSizeFunc,
-        positions,
-        radii,
-        height,
-        width,
-        strictRadial: Boolean(strictRadial),
-        focusIdx: focusIndex,
-        iterations: maxPreventOverlapIteration || 200,
-        k: positions.length / 4.5,
-      };
-      positions = radialNonoverlapForce(graph, nonoverlapForceParams);
-    }
-    // move the graph to center
-    const layoutNodes: OutNode[] = [];
-    positions.forEach((p: Point, i: number) => {
-      const cnode = cloneFormatData(nodes[i]) as OutNode;
-      cnode.data.x = p.x + center[0];
-      cnode.data.y = p.y + center[1];
-      layoutNodes.push(cnode);
+    let i = 0;
+    this.model.forEachNode((node) => {
+      const p = mdsResult[i];
+      node.x = p[0] - mdsFocus[0];
+      node.y = p[1] - mdsFocus[1];
+      i++;
     });
 
-    if (assign) {
-      layoutNodes.forEach((node) =>
-        graph.mergeNodeData(node.id, {
-          x: node.data.x,
-          y: node.data.y,
-        }),
-      );
+    this.run(maxIteration, idealDistances, radii, focusNode);
+
+    this.model.forEachNode((node) => {
+      node.x += center[0];
+      node.y += center[1];
+    });
+
+    // stagger the overlapped nodes
+    if (preventOverlap) {
+      const nodeSizeFunc = formatNodeSizeToNumber(nodeSize, nodeSpacing);
+      const nonoverlapForceParams: RadialNonoverlapForceOptions = {
+        nodeSizeFunc,
+        radiiMap,
+        width,
+        strictRadial: Boolean(strictRadial),
+        focusNode,
+        maxIteration: maxPreventOverlapIteration,
+        k: n / 4.5,
+      };
+      radialNonoverlapForce(this.model, nonoverlapForceParams);
     }
-
-    const result = {
-      nodes: layoutNodes,
-      edges,
-    };
-
-    return result;
   }
+
   private run(
     maxIteration: number,
-    positions: Point[],
-    weights: Matrix[],
     idealDistances: Matrix[],
     radii: number[],
-    focusIndex: number,
+    focusNode: LayoutNode,
   ) {
+    const weights = getWeightMatrix(idealDistances);
+
     for (let i = 0; i <= maxIteration; i++) {
       const param = i / maxIteration;
       this.oneIteration(
+        this.model,
         param,
-        positions,
         radii,
         idealDistances,
         weights,
-        focusIndex,
+        focusNode,
       );
     }
   }
+
   private oneIteration(
+    model: LayoutModel,
     param: number,
-    positions: Point[],
     radii: number[],
     distances: Matrix[],
     weights: Matrix[],
-    focusIndex: number,
+    focusNode: LayoutNode,
   ) {
     const vparam = 1 - param;
-    positions.forEach((v: Point, i: number) => {
+    let i = 0;
+
+    model.forEachNode((v) => {
       // v
       const originDis = getEuclideanDistance(v, { x: 0, y: 0 });
       const reciODis = originDis === 0 ? 0 : 1 / originDis;
-      if (i === focusIndex) {
+      if (v.id === focusNode.id) {
+        i++;
         return;
       }
       let xMolecule = 0;
       let yMolecule = 0;
       let denominator = 0;
-      positions.forEach((u, j) => {
+
+      let j = 0;
+      model.forEachNode((u) => {
         // u
         if (i === j) {
+          j++;
           return;
         }
+
         // the euclidean distance between v and u
         const edis = getEuclideanDistance(v, u);
         const reciEdis = edis === 0 ? 0 : 1 / edis;
@@ -288,99 +209,100 @@ export class RadialLayout implements Layout<RadialLayoutOptions> {
         xMolecule += weights[i][j] * (u.x + idealDis * (v.x - u.x) * reciEdis);
         // y
         yMolecule += weights[i][j] * (u.y + idealDis * (v.y - u.y) * reciEdis);
+
+        j++;
       });
       const reciR = radii[i] === 0 ? 0 : 1 / radii[i];
       denominator *= vparam;
       denominator += param * reciR * reciR;
+
       // x
       xMolecule *= vparam;
       xMolecule += param * reciR * v.x * reciODis;
-      v.x = xMolecule / denominator;
       // y
       yMolecule *= vparam;
       yMolecule += param * reciR * v.y * reciODis;
+
+      v.x = xMolecule / denominator;
       v.y = yMolecule / denominator;
+      i++;
     });
   }
 }
-
 const eIdealDisMatrix = (
-  nodes: Node[],
+  model: LayoutModel,
   distances: Matrix[],
   linkDistance: number,
   radii: number[],
   unitRadius: number,
-  sortBy: string | undefined,
+  sortBy: 'data' | ((d?: NodeData) => number | string) | undefined,
   sortStrength: number,
 ): Matrix[] => {
-  if (!nodes) return [];
-  const result: Matrix[] = [];
-  if (distances) {
-    // cache the value of field sortBy for nodes to avoid dupliate calculation
-    const sortValueCache: {
-      [id: string]: number;
-    } = {};
-    distances.forEach((row: number[], i: number) => {
-      const newRow: Matrix = [];
-      row.forEach((v, j) => {
-        if (i === j) {
-          newRow.push(0);
-        } else if (radii[i] === radii[j]) {
-          // i and j are on the same circle
-          if (sortBy === 'data') {
-            // sort the nodes on the same circle according to the ordering of the data
-            newRow.push(
-              (v * (Math.abs(i - j) * sortStrength)) / (radii[i] / unitRadius),
-            );
-          } else if (sortBy) {
-            // sort the nodes on the same circle according to the attributes
-            let iValue: number;
-            let jValue: number;
-            if (sortValueCache[nodes[i].id]) {
-              iValue = sortValueCache[nodes[i].id];
-            } else {
-              const value =
-                (sortBy === 'id'
-                  ? nodes[i].id
-                  : (nodes[i].data?.[sortBy] as number | string)) || 0;
-              if (isString(value)) {
-                iValue = value.charCodeAt(0);
-              } else {
-                iValue = value;
-              }
-              sortValueCache[nodes[i].id] = iValue;
-            }
+  if (!distances) return [];
 
-            if (sortValueCache[nodes[j].id]) {
-              jValue = sortValueCache[nodes[j].id];
-            } else {
-              const value =
-                (sortBy === 'id'
-                  ? nodes[j].id
-                  : (nodes[j].data?.[sortBy] as number | string)) || 0;
-              if (isString(value)) {
-                jValue = value.charCodeAt(0);
-              } else {
-                jValue = value;
-              }
-              sortValueCache[nodes[j].id] = jValue;
-            }
-            newRow.push(
-              (v * (Math.abs(iValue - jValue) * sortStrength)) /
-                (radii[i] / unitRadius),
-            );
-          } else {
-            newRow.push((v * linkDistance) / (radii[i] / unitRadius));
+  const n = model.nodeCount();
+  const result: Matrix[] = new Array(n);
+
+  const sortCache = new Map<ID, number>();
+
+  const sortByFn: ((d?: NodeData) => number | string) | null =
+    typeof sortBy === 'function' ? sortBy : null;
+
+  const radiusScale = new Array<number>(n);
+  for (let i = 0; i < n; i++) radiusScale[i] = radii[i] / unitRadius;
+
+  const baseLink = (linkDistance + unitRadius) / 2;
+
+  for (let i = 0; i < n; i++) {
+    const row = distances[i];
+    const newRow = new Array(n);
+    const riScale = radiusScale[i] || 1;
+
+    for (let j = 0; j < n; j++) {
+      if (i === j) {
+        newRow[j] = 0;
+        continue;
+      }
+
+      const v = row[j];
+
+      // same circle
+      if (radii[i] === radii[j]) {
+        if (sortBy === 'data') {
+          // data ordering
+          newRow[j] = (v * Math.abs(i - j) * sortStrength) / riScale;
+        } else if (sortByFn) {
+          // sort by custom attribute
+          const iNode = model.nodeAt(i);
+          let iv = sortCache.get(iNode.id);
+          if (iv === undefined) {
+            const raw = sortByFn(iNode._original) || 0;
+            iv = typeof raw === 'string' ? raw.charCodeAt(0) : raw;
+            sortCache.set(iNode.id, iv);
           }
+
+          const jNode = model.nodeAt(j);
+          let jv = sortCache.get(jNode.id);
+          if (jv === undefined) {
+            const raw = sortByFn(jNode._original) || 0;
+            jv = typeof raw === 'string' ? raw.charCodeAt(0) : raw;
+            sortCache.set(jNode.id, jv);
+          }
+
+          newRow[j] = (v * Math.abs(iv - jv) * sortStrength) / riScale;
         } else {
-          // i and j are on different circles
-          const link = (linkDistance + unitRadius) / 2;
-          newRow.push(v * link);
+          // default same-circle
+          newRow[j] = (v * linkDistance) / riScale;
         }
-      });
-      result.push(newRow);
-    });
+      } else {
+        // different circles
+        newRow[j] = v * baseLink;
+      }
+    }
+
+    result[i] = newRow;
   }
+
   return result;
 };
 
@@ -402,26 +324,18 @@ const getWeightMatrix = (idealDistances: Matrix[]) => {
   return result;
 };
 
-const getIndexById = (array: any[], id: string | number) => {
-  let index = -1;
-  array.forEach((a, i) => {
-    if (a.id === id) {
-      index = i;
-    }
-  });
-  return Math.max(index, 0);
-};
-
 const handleInfinity = (matrix: Matrix[], focusIndex: number, step: number) => {
-  const length = matrix.length;
+  const n = matrix.length;
+
   // 遍历 matrix 中遍历 focus 对应行
-  for (let i = 0; i < length; i++) {
+  for (let i = 0; i < n; i++) {
     // matrix 关注点对应行的 Inf 项
     if (matrix[focusIndex][i] === Infinity) {
       matrix[focusIndex][i] = step;
       matrix[i][focusIndex] = step;
+
       // 遍历 matrix 中的 i 行，i 行中非 Inf 项若在 focus 行为 Inf，则替换 focus 行的那个 Inf
-      for (let j = 0; j < length; j++) {
+      for (let j = 0; j < n; j++) {
         if (matrix[i][j] !== Infinity && matrix[focusIndex][j] === Infinity) {
           matrix[focusIndex][j] = step + matrix[i][j];
           matrix[j][focusIndex] = step + matrix[i][j];
@@ -429,12 +343,13 @@ const handleInfinity = (matrix: Matrix[], focusIndex: number, step: number) => {
       }
     }
   }
+
   // 处理其他行的 Inf。根据该行对应点与 focus 距离以及 Inf 项点 与 focus 距离，决定替换值
-  for (let i = 0; i < length; i++) {
+  for (let i = 0; i < n; i++) {
     if (i === focusIndex) {
       continue;
     }
-    for (let j = 0; j < length; j++) {
+    for (let j = 0; j < n; j++) {
       if (matrix[i][j] === Infinity) {
         let minus = Math.abs(matrix[focusIndex][i] - matrix[focusIndex][j]);
         minus = minus === 0 ? 1 : minus;
@@ -444,13 +359,17 @@ const handleInfinity = (matrix: Matrix[], focusIndex: number, step: number) => {
   }
 };
 
+/**
+ * Get the maximum finite distance from the focus node to other nodes
+ */
 const maxToFocus = (matrix: Matrix[], focusIndex: number): number => {
+  const row = matrix[focusIndex];
+
   let max = 0;
-  for (let i = 0; i < matrix[focusIndex].length; i++) {
-    if (matrix[focusIndex][i] === Infinity) {
-      continue;
-    }
-    max = matrix[focusIndex][i] > max ? matrix[focusIndex][i] : max;
+  for (let i = 0; i < row.length; i++) {
+    if (row[i] === Infinity) continue;
+
+    max = Math.max(max, row[i]);
   }
   return max;
 };
