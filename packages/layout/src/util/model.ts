@@ -256,7 +256,6 @@ const nodeFields = [
   'fy',
   'fz',
   'parentId',
-  'isGroup',
 ];
 
 const edgeFields = ['id', 'source', 'target', 'points'];

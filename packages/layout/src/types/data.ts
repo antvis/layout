@@ -36,7 +36,6 @@ export interface LayoutNode<N extends NodeData = NodeData> {
 
   size?: Size;
 
-  isGroup?: boolean;
   parentId?: ID | null;
 
   _original: N;
