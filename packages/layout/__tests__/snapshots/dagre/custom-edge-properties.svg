@@ -1,0 +1,198 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="500" color-interpolation-filters="sRGB" style="background: transparent;">
+  <g transform="matrix(1 0 0 1 0 0)">
+    <g fill="none" stroke="none" stroke-dashoffset="0" font-family="sans-serif" font-size="16" font-style="normal" font-variant="normal" font-weight="normal" text-anchor="left" transform="matrix(1 0 0 1 0 0)" visibility="visible">
+      <g pointer-events="none" transform="matrix(1 0 0 1 85 15)">
+        <polyline fill="none" stroke="rgba(190,190,190,1)" points="135,0 105,8.88888888888889 0,40 0,65 0,90 0,115 0,130"/>
+      </g>
+      <g pointer-events="none" transform="matrix(1 0 0 1 220 15)">
+        <polyline fill="none" stroke="rgba(190,190,190,1)" points="0,0 22.5,15 60,40 60,65 60,90 60,130 60,170 60,195 60,220 60,260 60,300 60,325 60,350 60,390 60,430 60,455 60,480 60,505 60,520"/>
+      </g>
+      <g pointer-events="none" transform="matrix(1 0 0 1 85 145)">
+        <polyline fill="none" stroke="rgba(190,190,190,1)" points="0,0 0,15 0,40 0,65 0,90 34.375,115 55,130"/>
+      </g>
+      <g pointer-events="none" transform="matrix(1 0 0 1 220 15)">
+        <polyline fill="none" stroke="rgba(190,190,190,1)" points="0,0 0,15 0,40 0,65 0,90 0,115 0,130"/>
+      </g>
+      <g pointer-events="none" transform="matrix(1 0 0 1 140 145)">
+        <polyline fill="none" stroke="rgba(190,190,190,1)" points="80,0 80,15 80,40 80,65 80,90 30,115 0,130"/>
+      </g>
+      <g pointer-events="none" transform="matrix(1 0 0 1 85 275)">
+        <polyline fill="none" stroke="rgba(190,190,190,1)" points="55,0 34.375,15 0,40 0,65 0,90 0,115 0,130"/>
+      </g>
+      <g pointer-events="none" transform="matrix(1 0 0 1 140 275)">
+        <polyline fill="none" stroke="rgba(190,190,190,1)" points="0,0 30,15 80,40 80,65 80,90 80,115 80,130"/>
+      </g>
+      <g pointer-events="none" transform="matrix(1 0 0 1 85 405)">
+        <polyline fill="none" stroke="rgba(190,190,190,1)" points="0,0 20.625,15 55,40 55,65 55,90 55,115 55,130"/>
+      </g>
+      <g pointer-events="none" transform="matrix(1 0 0 1 30 405)">
+        <polyline fill="none" stroke="rgba(190,190,190,1)" points="55,0 34.375,15 0,40 0,65 0,90 0,115 0,130"/>
+      </g>
+      <g pointer-events="none" transform="matrix(1 0 0 1 30 535)">
+        <polyline fill="none" stroke="rgba(190,190,190,1)" points="0,0 0,15 0,40 0,65 0,90 220,125.20000000000005 250,130"/>
+      </g>
+      <g pointer-events="none" transform="matrix(1 0 0 1 280 535)">
+        <polyline fill="none" stroke="rgba(190,190,190,1)" points="0,0 0,15 0,40 0,65 0,90 0,115 0,130"/>
+      </g>
+      <g pointer-events="none" transform="matrix(1 0 0 1 220 145)">
+        <polyline fill="none" stroke="rgba(190,190,190,1)" points="0,0 30,10 120,40 120,65 120,90 120,130 120,170 120,195 120,220 120,260 120,300 120,325 120,350 120,390 120,430 120,455 120,480 82.5,505 60,520"/>
+      </g>
+      <g transform="matrix(1 0 0 1 190 0)">
+        <path width="60" height="30" fill="rgba(167,233,175,1)" stroke="rgba(51,51,51,1)" d="m0 0 60 0 0 30-60 0z"/>
+        <g font-size="10" font-weight="bolder" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 0 0)">
+          <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">0</text>
+        </g>
+      </g>
+      <g transform="matrix(1 0 0 1 55 130)">
+        <path width="60" height="30" fill="rgba(167,233,175,1)" stroke="rgba(51,51,51,1)" d="m0 0 60 0 0 30-60 0z"/>
+        <g font-size="10" font-weight="bolder" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 0 0)">
+          <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">1</text>
+        </g>
+      </g>
+      <g transform="matrix(1 0 0 1 250 520)">
+        <path width="60" height="30" fill="rgba(167,233,175,1)" stroke="rgba(51,51,51,1)" d="m0 0 60 0 0 30-60 0z"/>
+        <g font-size="10" font-weight="bolder" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 0 0)">
+          <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">2</text>
+        </g>
+      </g>
+      <g transform="matrix(1 0 0 1 190 130)">
+        <path width="60" height="30" fill="rgba(167,233,175,1)" stroke="rgba(51,51,51,1)" d="m0 0 60 0 0 30-60 0z"/>
+        <g font-size="10" font-weight="bolder" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 0 0)">
+          <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">3</text>
+        </g>
+      </g>
+      <g transform="matrix(1 0 0 1 110 260)">
+        <path width="60" height="30" fill="rgba(167,233,175,1)" stroke="rgba(51,51,51,1)" d="m0 0 60 0 0 30-60 0z"/>
+        <g font-size="10" font-weight="bolder" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 0 0)">
+          <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">4</text>
+        </g>
+      </g>
+      <g transform="matrix(1 0 0 1 55 390)">
+        <path width="60" height="30" fill="rgba(167,233,175,1)" stroke="rgba(51,51,51,1)" d="m0 0 60 0 0 30-60 0z"/>
+        <g font-size="10" font-weight="bolder" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 0 0)">
+          <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">5</text>
+        </g>
+      </g>
+      <g transform="matrix(1 0 0 1 190 390)">
+        <path width="60" height="30" fill="rgba(167,233,175,1)" stroke="rgba(51,51,51,1)" d="m0 0 60 0 0 30-60 0z"/>
+        <g font-size="10" font-weight="bolder" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 0 0)">
+          <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">6</text>
+        </g>
+      </g>
+      <g transform="matrix(1 0 0 1 110 520)">
+        <path width="60" height="30" fill="rgba(167,233,175,1)" stroke="rgba(51,51,51,1)" d="m0 0 60 0 0 30-60 0z"/>
+        <g font-size="10" font-weight="bolder" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 0 0)">
+          <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">7</text>
+        </g>
+      </g>
+      <g transform="matrix(1 0 0 1 0 520)">
+        <path width="60" height="30" fill="rgba(167,233,175,1)" stroke="rgba(51,51,51,1)" d="m0 0 60 0 0 30-60 0z"/>
+        <g font-size="10" font-weight="bolder" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 0 0)">
+          <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">8</text>
+        </g>
+      </g>
+      <g transform="matrix(1 0 0 1 250 650)">
+        <path width="60" height="30" fill="rgba(167,233,175,1)" stroke="rgba(51,51,51,1)" d="m0 0 60 0 0 30-60 0z"/>
+        <g font-size="10" font-weight="bolder" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 0 0)">
+          <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">9</text>
+        </g>
+      </g>
+      <g pointer-events="none" transform="matrix(1 0 0 1 85 15)">
+        <polyline fill="none" stroke="rgba(190,190,190,1)" points="135,0 105,8.88888888888889 0,40 0,65 0,90 0,115 0,130"/>
+      </g>
+      <g pointer-events="none" transform="matrix(1 0 0 1 220 15)">
+        <polyline fill="none" stroke="rgba(190,190,190,1)" points="0,0 22.5,15 60,40 60,65 60,90 60,130 60,170 60,195 60,220 60,260 60,300 60,325 60,350 60,390 60,430 60,455 60,480 60,505 60,520"/>
+      </g>
+      <g pointer-events="none" transform="matrix(1 0 0 1 85 145)">
+        <polyline fill="none" stroke="rgba(190,190,190,1)" points="0,0 0,15 0,40 0,65 0,90 34.375,115 55,130"/>
+      </g>
+      <g pointer-events="none" transform="matrix(1 0 0 1 220 15)">
+        <polyline fill="none" stroke="rgba(190,190,190,1)" points="0,0 0,15 0,40 0,65 0,90 0,115 0,130"/>
+      </g>
+      <g pointer-events="none" transform="matrix(1 0 0 1 140 145)">
+        <polyline fill="none" stroke="rgba(190,190,190,1)" points="80,0 80,15 80,40 80,65 80,90 30,115 0,130"/>
+      </g>
+      <g pointer-events="none" transform="matrix(1 0 0 1 85 275)">
+        <polyline fill="none" stroke="rgba(190,190,190,1)" points="55,0 34.375,15 0,40 0,65 0,90 0,115 0,130"/>
+      </g>
+      <g pointer-events="none" transform="matrix(1 0 0 1 140 275)">
+        <polyline fill="none" stroke="rgba(190,190,190,1)" points="0,0 30,15 80,40 80,65 80,90 80,115 80,130"/>
+      </g>
+      <g pointer-events="none" transform="matrix(1 0 0 1 85 405)">
+        <polyline fill="none" stroke="rgba(190,190,190,1)" points="0,0 20.625,15 55,40 55,65 55,90 55,115 55,130"/>
+      </g>
+      <g pointer-events="none" transform="matrix(1 0 0 1 30 405)">
+        <polyline fill="none" stroke="rgba(190,190,190,1)" points="55,0 34.375,15 0,40 0,65 0,90 0,115 0,130"/>
+      </g>
+      <g pointer-events="none" transform="matrix(1 0 0 1 30 535)">
+        <polyline fill="none" stroke="rgba(190,190,190,1)" points="0,0 0,15 0,40 0,65 0,90 220,125.20000000000005 250,130"/>
+      </g>
+      <g pointer-events="none" transform="matrix(1 0 0 1 280 535)">
+        <polyline fill="none" stroke="rgba(190,190,190,1)" points="0,0 0,15 0,40 0,65 0,90 0,115 0,130"/>
+      </g>
+      <g pointer-events="none" transform="matrix(1 0 0 1 220 145)">
+        <polyline fill="none" stroke="rgba(190,190,190,1)" points="0,0 30,10 120,40 120,65 120,90 120,130 120,170 120,195 120,220 120,260 120,300 120,325 120,350 120,390 120,430 120,455 120,480 82.5,505 60,520"/>
+      </g>
+      <g transform="matrix(1 0 0 1 190 0)">
+        <path width="60" height="30" fill="rgba(167,233,175,1)" stroke="rgba(51,51,51,1)" d="m0 0 60 0 0 30-60 0z"/>
+        <g font-size="10" font-weight="bolder" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 0 0)">
+          <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">0</text>
+        </g>
+      </g>
+      <g transform="matrix(1 0 0 1 55 130)">
+        <path width="60" height="30" fill="rgba(167,233,175,1)" stroke="rgba(51,51,51,1)" d="m0 0 60 0 0 30-60 0z"/>
+        <g font-size="10" font-weight="bolder" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 0 0)">
+          <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">1</text>
+        </g>
+      </g>
+      <g transform="matrix(1 0 0 1 250 520)">
+        <path width="60" height="30" fill="rgba(167,233,175,1)" stroke="rgba(51,51,51,1)" d="m0 0 60 0 0 30-60 0z"/>
+        <g font-size="10" font-weight="bolder" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 0 0)">
+          <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">2</text>
+        </g>
+      </g>
+      <g transform="matrix(1 0 0 1 190 130)">
+        <path width="60" height="30" fill="rgba(167,233,175,1)" stroke="rgba(51,51,51,1)" d="m0 0 60 0 0 30-60 0z"/>
+        <g font-size="10" font-weight="bolder" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 0 0)">
+          <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">3</text>
+        </g>
+      </g>
+      <g transform="matrix(1 0 0 1 110 260)">
+        <path width="60" height="30" fill="rgba(167,233,175,1)" stroke="rgba(51,51,51,1)" d="m0 0 60 0 0 30-60 0z"/>
+        <g font-size="10" font-weight="bolder" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 0 0)">
+          <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">4</text>
+        </g>
+      </g>
+      <g transform="matrix(1 0 0 1 55 390)">
+        <path width="60" height="30" fill="rgba(167,233,175,1)" stroke="rgba(51,51,51,1)" d="m0 0 60 0 0 30-60 0z"/>
+        <g font-size="10" font-weight="bolder" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 0 0)">
+          <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">5</text>
+        </g>
+      </g>
+      <g transform="matrix(1 0 0 1 190 390)">
+        <path width="60" height="30" fill="rgba(167,233,175,1)" stroke="rgba(51,51,51,1)" d="m0 0 60 0 0 30-60 0z"/>
+        <g font-size="10" font-weight="bolder" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 0 0)">
+          <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">6</text>
+        </g>
+      </g>
+      <g transform="matrix(1 0 0 1 110 520)">
+        <path width="60" height="30" fill="rgba(167,233,175,1)" stroke="rgba(51,51,51,1)" d="m0 0 60 0 0 30-60 0z"/>
+        <g font-size="10" font-weight="bolder" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 0 0)">
+          <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">7</text>
+        </g>
+      </g>
+      <g transform="matrix(1 0 0 1 0 520)">
+        <path width="60" height="30" fill="rgba(167,233,175,1)" stroke="rgba(51,51,51,1)" d="m0 0 60 0 0 30-60 0z"/>
+        <g font-size="10" font-weight="bolder" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 0 0)">
+          <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">8</text>
+        </g>
+      </g>
+      <g transform="matrix(1 0 0 1 250 650)">
+        <path width="60" height="30" fill="rgba(167,233,175,1)" stroke="rgba(51,51,51,1)" d="m0 0 60 0 0 30-60 0z"/>
+        <g font-size="10" font-weight="bolder" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 0 0)">
+          <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">9</text>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

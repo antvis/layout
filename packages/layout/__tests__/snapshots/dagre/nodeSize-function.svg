@@ -1,0 +1,198 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="500" color-interpolation-filters="sRGB" style="background: transparent;">
+  <g transform="matrix(1 0 0 1 0 0)">
+    <g fill="none" stroke="none" stroke-dashoffset="0" font-family="sans-serif" font-size="16" font-style="normal" font-variant="normal" font-weight="normal" text-anchor="left" transform="matrix(1 0 0 1 0 0)" visibility="visible">
+      <g pointer-events="none" transform="matrix(1 0 0 1 44.6255 9.3656)">
+        <polyline fill="none" stroke="rgba(190,190,190,1)" points="47.55500565247477,0 23.189369083293876,4.798647245493841 0,9.365636569180902 0,9.365636569180902 0,23.096909707542707"/>
+      </g>
+      <g pointer-events="none" transform="matrix(1 0 0 1 92.1805 9.3656)">
+        <polyline fill="none" stroke="rgba(190,190,190,1)" points="0,0 19.925092553447215,9.365636569180902 19.925092553447215,9.365636569180902 19.925092553447215,23.096909707542707 19.925092553447215,36.828182845904514 19.925092553447215,43.656365691809015 19.925092553447215,50.484548537713515 19.925092553447215,61.67836795279894 19.925092553447215,72.87218736788437 19.925092553447215,79.06600678296977 19.925092553447215,87.16291649051247"/>
+      </g>
+      <g pointer-events="none" transform="matrix(1 0 0 1 44.6255 32.4625)">
+        <polyline fill="none" stroke="rgba(190,190,190,1)" points="0,0 0,13.731273138361807 0,13.731273138361807 0,13.731273138361807 11.828182845904514,20.559455984266307"/>
+      </g>
+      <g pointer-events="none" transform="matrix(1 0 0 1 92.1805 9.3656)">
+        <polyline fill="none" stroke="rgba(190,190,190,1)" points="0,0 0,9.365636569180902 0,9.365636569180902 0,10.634363430819098 0,23.096909707542707"/>
+      </g>
+      <g pointer-events="none" transform="matrix(1 0 0 1 56.4536 32.4625)">
+        <polyline fill="none" stroke="rgba(190,190,190,1)" points="35.726822806570254,0 35.726822806570254,12.462546276723607 35.726822806570254,13.731273138361807 19.290729122628107,16.872572703509086 0,20.559455984266307"/>
+      </g>
+      <g pointer-events="none" transform="matrix(1 0 0 1 34.066 53.022)">
+        <polyline fill="none" stroke="rgba(190,190,190,1)" points="22.387638830170786,0 3.096909707542679,5.883631886298154 0,6.8281828459045 0,6.8281828459045 0,18.02200226098993"/>
+      </g>
+      <g pointer-events="none" transform="matrix(1 0 0 1 56.4536 53.022)">
+        <polyline fill="none" stroke="rgba(190,190,190,1)" points="0,0 19.290729122628107,4.036805898942006 32.629913099027576,6.8281828459045 32.629913099027576,12.462546276723607 32.629913099027576,18.02200226098993"/>
+      </g>
+      <g pointer-events="none" transform="matrix(1 0 0 1 34.066 71.044)">
+        <polyline fill="none" stroke="rgba(190,190,190,1)" points="0,0 19.85018510689443,11.193819415085429 19.85018510689443,11.193819415085429 19.85018510689443,15.559455984266322 19.85018510689443,25.484548537713536"/>
+      </g>
+      <g pointer-events="none" transform="matrix(1 0 0 1 14.2158 71.044)">
+        <polyline fill="none" stroke="rgba(190,190,190,1)" points="19.85018510689443,0 0,11.193819415085429 0,11.193819415085429 0,11.193819415085429 0,25.484548537713536"/>
+      </g>
+      <g pointer-events="none" transform="matrix(1 0 0 1 14.2158 96.5286)">
+        <polyline fill="none" stroke="rgba(190,190,190,1)" points="0,0 0,14.290729122628107 0,14.290729122628107 74.9426444826455,20.91788883529418 97.88973929708268,22.947094814437108"/>
+      </g>
+      <g pointer-events="none" transform="matrix(1 0 0 1 112.1056 96.5286)">
+        <polyline fill="none" stroke="rgba(190,190,190,1)" points="0,0 0,8.096909707542707 0,14.290729122628107 0,14.290729122628107 0,22.947094814437108"/>
+      </g>
+      <g pointer-events="none" transform="matrix(1 0 0 1 92.1805 32.4625)">
+        <polyline fill="none" stroke="rgba(190,190,190,1)" points="0,0 10.559455984266322,3.1012752170616977 46.75327539935172,13.731273138361807 46.75327539935172,20.559455984266307 46.75327539935172,27.387638830170808 46.75327539935172,38.581458245256236 46.75327539935172,49.775277660341665 46.75327539935172,64.06600678296977 46.75327539935172,78.35673590559787 42.87218736788439,79.60900548626435 19.925092553447215,87.01310159740689"/>
+      </g>
+      <g transform="matrix(1 0 0 1 67.8148 0)">
+        <path width="48.7313" height="18.7313" fill="rgba(167,233,175,1)" stroke="rgba(51,51,51,1)" d="m0 0 48.7313 0 0 18.7313-48.7313 0z"/>
+        <g font-size="10" font-weight="bolder" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 0 0)">
+          <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">0</text>
+        </g>
+      </g>
+      <g transform="matrix(1 0 0 1 31.5286 18.7313)">
+        <path width="26.1938" height="27.4625" fill="rgba(167,233,175,1)" stroke="rgba(51,51,51,1)" d="m0 0 26.1938 0 0 27.4625-26.1938 0z"/>
+        <g font-size="10" font-weight="bolder" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 0 0)">
+          <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">1</text>
+        </g>
+      </g>
+      <g transform="matrix(1 0 0 1 90.2774 88.4316)">
+        <path width="43.6564" height="16.1938" fill="rgba(167,233,175,1)" stroke="rgba(51,51,51,1)" d="m0 0 43.6564 0 0 16.1938-43.6564 0z"/>
+        <g font-size="10" font-weight="bolder" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 0 0)">
+          <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">2</text>
+        </g>
+      </g>
+      <g transform="matrix(1 0 0 1 81.621 20)">
+        <path width="21.1189" height="24.9251" fill="rgba(167,233,175,1)" stroke="rgba(51,51,51,1)" d="m0 0 21.119 0 0 24.925-21.119 0z"/>
+        <g font-size="10" font-weight="bolder" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 0 0)">
+          <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">3</text>
+        </g>
+      </g>
+      <g transform="matrix(1 0 0 1 37.163 46.1938)">
+        <path width="38.5815" height="13.6564" fill="rgba(167,233,175,1)" stroke="rgba(51,51,51,1)" d="m0 0 38.5815 0 0 13.6564-38.5815 0z"/>
+        <g font-size="10" font-weight="bolder" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 0 0)">
+          <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">4</text>
+        </g>
+      </g>
+      <g transform="matrix(1 0 0 1 6.044 59.8502)">
+        <path width="56.044" height="22.3876" fill="rgba(167,233,175,1)" stroke="rgba(51,51,51,1)" d="m0 0 56.044 0 0 22.3876-56.044 0z"/>
+        <g font-size="10" font-weight="bolder" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 0 0)">
+          <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">5</text>
+        </g>
+      </g>
+      <g transform="matrix(1 0 0 1 72.3303 65.4845)">
+        <path width="33.5066" height="11.1189" fill="rgba(167,233,175,1)" stroke="rgba(51,51,51,1)" d="m0 0 33.5066 0 0 11.119-33.5066 0z"/>
+        <g font-size="10" font-weight="bolder" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 0 0)">
+          <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">6</text>
+        </g>
+      </g>
+      <g transform="matrix(1 0 0 1 28.4316 86.6035)">
+        <path width="50.9691" height="19.8502" fill="rgba(167,233,175,1)" stroke="rgba(51,51,51,1)" d="m0 0 50.9691 0 0 19.8502-50.9691 0z"/>
+        <g font-size="10" font-weight="bolder" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 0 0)">
+          <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">7</text>
+        </g>
+      </g>
+      <g transform="matrix(1 0 0 1 0 82.2378)">
+        <path width="28.4316" height="28.5815" fill="rgba(167,233,175,1)" stroke="rgba(51,51,51,1)" d="m0 0 28.4316 0 0 28.5815-28.4316 0z"/>
+        <g font-size="10" font-weight="bolder" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 0 0)">
+          <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">8</text>
+        </g>
+      </g>
+      <g transform="matrix(1 0 0 1 89.1585 110.8193)">
+        <path width="45.8942" height="17.3127" fill="rgba(167,233,175,1)" stroke="rgba(51,51,51,1)" d="m0 0 45.8942 0 0 17.3127-45.8942 0z"/>
+        <g font-size="10" font-weight="bolder" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 0 0)">
+          <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">9</text>
+        </g>
+      </g>
+      <g pointer-events="none" transform="matrix(1 0 0 1 44.6255 9.3656)">
+        <polyline fill="none" stroke="rgba(190,190,190,1)" points="47.55500565247477,0 23.189369083293876,4.798647245493841 0,9.365636569180902 0,9.365636569180902 0,23.096909707542707"/>
+      </g>
+      <g pointer-events="none" transform="matrix(1 0 0 1 92.1805 9.3656)">
+        <polyline fill="none" stroke="rgba(190,190,190,1)" points="0,0 19.925092553447215,9.365636569180902 19.925092553447215,9.365636569180902 19.925092553447215,23.096909707542707 19.925092553447215,36.828182845904514 19.925092553447215,43.656365691809015 19.925092553447215,50.484548537713515 19.925092553447215,61.67836795279894 19.925092553447215,72.87218736788437 19.925092553447215,79.06600678296977 19.925092553447215,87.16291649051247"/>
+      </g>
+      <g pointer-events="none" transform="matrix(1 0 0 1 44.6255 32.4625)">
+        <polyline fill="none" stroke="rgba(190,190,190,1)" points="0,0 0,13.731273138361807 0,13.731273138361807 0,13.731273138361807 11.828182845904514,20.559455984266307"/>
+      </g>
+      <g pointer-events="none" transform="matrix(1 0 0 1 92.1805 9.3656)">
+        <polyline fill="none" stroke="rgba(190,190,190,1)" points="0,0 0,9.365636569180902 0,9.365636569180902 0,10.634363430819098 0,23.096909707542707"/>
+      </g>
+      <g pointer-events="none" transform="matrix(1 0 0 1 56.4536 32.4625)">
+        <polyline fill="none" stroke="rgba(190,190,190,1)" points="35.726822806570254,0 35.726822806570254,12.462546276723607 35.726822806570254,13.731273138361807 19.290729122628107,16.872572703509086 0,20.559455984266307"/>
+      </g>
+      <g pointer-events="none" transform="matrix(1 0 0 1 34.066 53.022)">
+        <polyline fill="none" stroke="rgba(190,190,190,1)" points="22.387638830170786,0 3.096909707542679,5.883631886298154 0,6.8281828459045 0,6.8281828459045 0,18.02200226098993"/>
+      </g>
+      <g pointer-events="none" transform="matrix(1 0 0 1 56.4536 53.022)">
+        <polyline fill="none" stroke="rgba(190,190,190,1)" points="0,0 19.290729122628107,4.036805898942006 32.629913099027576,6.8281828459045 32.629913099027576,12.462546276723607 32.629913099027576,18.02200226098993"/>
+      </g>
+      <g pointer-events="none" transform="matrix(1 0 0 1 34.066 71.044)">
+        <polyline fill="none" stroke="rgba(190,190,190,1)" points="0,0 19.85018510689443,11.193819415085429 19.85018510689443,11.193819415085429 19.85018510689443,15.559455984266322 19.85018510689443,25.484548537713536"/>
+      </g>
+      <g pointer-events="none" transform="matrix(1 0 0 1 14.2158 71.044)">
+        <polyline fill="none" stroke="rgba(190,190,190,1)" points="19.85018510689443,0 0,11.193819415085429 0,11.193819415085429 0,11.193819415085429 0,25.484548537713536"/>
+      </g>
+      <g pointer-events="none" transform="matrix(1 0 0 1 14.2158 96.5286)">
+        <polyline fill="none" stroke="rgba(190,190,190,1)" points="0,0 0,14.290729122628107 0,14.290729122628107 74.9426444826455,20.91788883529418 97.88973929708268,22.947094814437108"/>
+      </g>
+      <g pointer-events="none" transform="matrix(1 0 0 1 112.1056 96.5286)">
+        <polyline fill="none" stroke="rgba(190,190,190,1)" points="0,0 0,8.096909707542707 0,14.290729122628107 0,14.290729122628107 0,22.947094814437108"/>
+      </g>
+      <g pointer-events="none" transform="matrix(1 0 0 1 92.1805 32.4625)">
+        <polyline fill="none" stroke="rgba(190,190,190,1)" points="0,0 10.559455984266322,3.1012752170616977 46.75327539935172,13.731273138361807 46.75327539935172,20.559455984266307 46.75327539935172,27.387638830170808 46.75327539935172,38.581458245256236 46.75327539935172,49.775277660341665 46.75327539935172,64.06600678296977 46.75327539935172,78.35673590559787 42.87218736788439,79.60900548626435 19.925092553447215,87.01310159740689"/>
+      </g>
+      <g transform="matrix(1 0 0 1 67.8148 0)">
+        <path width="48.7313" height="18.7313" fill="rgba(167,233,175,1)" stroke="rgba(51,51,51,1)" d="m0 0 48.7313 0 0 18.7313-48.7313 0z"/>
+        <g font-size="10" font-weight="bolder" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 0 0)">
+          <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">0</text>
+        </g>
+      </g>
+      <g transform="matrix(1 0 0 1 31.5286 18.7313)">
+        <path width="26.1938" height="27.4625" fill="rgba(167,233,175,1)" stroke="rgba(51,51,51,1)" d="m0 0 26.1938 0 0 27.4625-26.1938 0z"/>
+        <g font-size="10" font-weight="bolder" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 0 0)">
+          <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">1</text>
+        </g>
+      </g>
+      <g transform="matrix(1 0 0 1 90.2774 88.4316)">
+        <path width="43.6564" height="16.1938" fill="rgba(167,233,175,1)" stroke="rgba(51,51,51,1)" d="m0 0 43.6564 0 0 16.1938-43.6564 0z"/>
+        <g font-size="10" font-weight="bolder" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 0 0)">
+          <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">2</text>
+        </g>
+      </g>
+      <g transform="matrix(1 0 0 1 81.621 20)">
+        <path width="21.1189" height="24.9251" fill="rgba(167,233,175,1)" stroke="rgba(51,51,51,1)" d="m0 0 21.119 0 0 24.925-21.119 0z"/>
+        <g font-size="10" font-weight="bolder" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 0 0)">
+          <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">3</text>
+        </g>
+      </g>
+      <g transform="matrix(1 0 0 1 37.163 46.1938)">
+        <path width="38.5815" height="13.6564" fill="rgba(167,233,175,1)" stroke="rgba(51,51,51,1)" d="m0 0 38.5815 0 0 13.6564-38.5815 0z"/>
+        <g font-size="10" font-weight="bolder" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 0 0)">
+          <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">4</text>
+        </g>
+      </g>
+      <g transform="matrix(1 0 0 1 6.044 59.8502)">
+        <path width="56.044" height="22.3876" fill="rgba(167,233,175,1)" stroke="rgba(51,51,51,1)" d="m0 0 56.044 0 0 22.3876-56.044 0z"/>
+        <g font-size="10" font-weight="bolder" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 0 0)">
+          <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">5</text>
+        </g>
+      </g>
+      <g transform="matrix(1 0 0 1 72.3303 65.4845)">
+        <path width="33.5066" height="11.1189" fill="rgba(167,233,175,1)" stroke="rgba(51,51,51,1)" d="m0 0 33.5066 0 0 11.119-33.5066 0z"/>
+        <g font-size="10" font-weight="bolder" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 0 0)">
+          <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">6</text>
+        </g>
+      </g>
+      <g transform="matrix(1 0 0 1 28.4316 86.6035)">
+        <path width="50.9691" height="19.8502" fill="rgba(167,233,175,1)" stroke="rgba(51,51,51,1)" d="m0 0 50.9691 0 0 19.8502-50.9691 0z"/>
+        <g font-size="10" font-weight="bolder" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 0 0)">
+          <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">7</text>
+        </g>
+      </g>
+      <g transform="matrix(1 0 0 1 0 82.2378)">
+        <path width="28.4316" height="28.5815" fill="rgba(167,233,175,1)" stroke="rgba(51,51,51,1)" d="m0 0 28.4316 0 0 28.5815-28.4316 0z"/>
+        <g font-size="10" font-weight="bolder" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 0 0)">
+          <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">8</text>
+        </g>
+      </g>
+      <g transform="matrix(1 0 0 1 89.1585 110.8193)">
+        <path width="45.8942" height="17.3127" fill="rgba(167,233,175,1)" stroke="rgba(51,51,51,1)" d="m0 0 45.8942 0 0 17.3127-45.8942 0z"/>
+        <g font-size="10" font-weight="bolder" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 0 0)">
+          <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">9</text>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

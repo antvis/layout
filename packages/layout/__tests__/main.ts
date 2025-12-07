@@ -35,7 +35,9 @@ async function render() {
     gui = new lil.GUI({ autoPlace: false });
     $container.appendChild(gui.domElement);
   }
+  console.time('demo');
   await demo(gui);
+  console.timeEnd('demo');
 }
 
 function onChange() {
