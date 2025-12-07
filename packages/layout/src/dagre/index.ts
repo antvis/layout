@@ -1,4 +1,4 @@
-import { isNil, pick } from '@antv/util';
+import { isBoolean, isNil, pick } from '@antv/util';
 import dagre, { graphlib } from 'dagre';
 import { BaseLayout } from '../base-layout';
 import type { LayoutNode } from '../types/data';
@@ -15,6 +15,8 @@ export type { DagreLayoutOptions };
  */
 export class DagreLayout extends BaseLayout<DagreLayoutOptions> {
   id = 'dagre';
+
+  private isCompoundGraph: boolean | null = null;
 
   protected config = {
     graphAttributes: [
@@ -42,7 +44,6 @@ export class DagreLayout extends BaseLayout<DagreLayoutOptions> {
   protected getDefaultOptions(): Partial<DagreLayoutOptions> {
     return {
       directed: true,
-      compound: true,
       multigraph: true,
       rankdir: 'TB',
       align: undefined,
@@ -66,7 +67,7 @@ export class DagreLayout extends BaseLayout<DagreLayoutOptions> {
     const g = new graphlib.Graph({
       directed: !!this.options.directed,
       multigraph: !!this.options.multigraph,
-      compound: !!this.options.compound,
+      compound: this.isCompound(),
     });
 
     g.setGraph(pick(this.options, this.config.graphAttributes));
@@ -82,7 +83,7 @@ export class DagreLayout extends BaseLayout<DagreLayoutOptions> {
       const label = { width, height };
       g.setNode(String(node.id), label);
 
-      if (this.options.compound) {
+      if (this.isCompound()) {
         if (isNil(node.parentId)) return;
 
         g.setParent(String(node.id), String(node.parentId));
@@ -159,5 +160,18 @@ export class DagreLayout extends BaseLayout<DagreLayoutOptions> {
       edge.labelOffset = labeloffset;
       edge.points = points.map(parsePoint);
     });
+  }
+
+  private isCompound(): boolean {
+    if (this.isCompoundGraph !== null) return this.isCompoundGraph;
+
+    if (isBoolean(this.options.compound)) {
+      return (this.isCompoundGraph = this.options.compound);
+    }
+
+    this.isCompoundGraph = this.model
+      .nodes()
+      .some((node) => !isNil(node.parentId));
+    return this.isCompoundGraph;
   }
 }

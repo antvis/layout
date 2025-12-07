@@ -54,7 +54,6 @@ describe('layout dagre', () => {
     const layout = new DagreLayout();
     expect(layout.options).toEqual({
       directed: true,
-      compound: true,
       multigraph: true,
       rankdir: 'TB',
       align: undefined,
