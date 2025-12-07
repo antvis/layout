@@ -1,4 +1,5 @@
 import type { ID } from '@antv/graphlib';
+import { deepMix } from '@antv/util';
 import type { Force, ForceLink, Simulation } from 'd3-force';
 import {
   forceCenter,
@@ -51,7 +52,7 @@ export class D3ForceLayout<
     y: forceY,
   };
 
-  protected getDefaultOptions(): Partial<T> {
+  protected getDefaultOptions(): T {
     return {
       link: {
         id: (d) => String(d.id),
@@ -61,7 +62,11 @@ export class D3ForceLayout<
         x: 0,
         y: 0,
       },
-    } as unknown as Partial<T>;
+    } as unknown as T;
+  }
+
+  protected mergeOptions(base: T, patch?: Partial<T>): T {
+    return deepMix({}, base, patch) as T;
   }
 
   constructor(options?: Partial<T>) {
@@ -119,7 +124,7 @@ export class D3ForceLayout<
     });
   }
 
-  protected getOptions(options: Partial<T>): T {
+  protected parseOptions(options: Partial<T>): T {
     const _ = options;
     // process nodeSize
     if (_.collide && _.collide?.radius === undefined) {
@@ -141,8 +146,7 @@ export class D3ForceLayout<
   }
 
   protected async layout(): Promise<void> {
-    const options = this.getOptions(this.options || {});
-    this.options = options;
+    const options = this.parseOptions(this.options || {});
 
     this.createD3Copies();
 

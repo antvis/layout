@@ -1,4 +1,3 @@
-import { deepMix } from '@antv/util';
 import type { GraphData, LayoutEdge, LayoutNode } from '../types/data';
 import { LayoutModel } from '../util/model';
 import type { BaseLayoutOptions, Layout, LayoutWithIterations } from './types';
@@ -6,7 +5,9 @@ import type { BaseLayoutOptions, Layout, LayoutWithIterations } from './types';
 export type { BaseLayoutOptions };
 
 /**
- * Base class for layout algorithms
+ * <zh/> 布局基类
+ *
+ * <en/> Base class for layouts
  */
 export abstract class BaseLayout<
   O extends BaseLayoutOptions = BaseLayoutOptions,
@@ -14,38 +15,51 @@ export abstract class BaseLayout<
 {
   public abstract readonly id: string;
 
-  public options: O;
+  protected abstract getDefaultOptions(): O;
 
-  protected model: LayoutModel;
+  protected initialOptions!: O;
 
-  protected abstract getDefaultOptions(): Partial<O>;
+  protected runtimeOptions!: O;
+
+  protected model!: LayoutModel;
 
   constructor(options?: Partial<O>) {
-    this.options = deepMix({}, this.getDefaultOptions(), options) as O;
+    this.initialOptions = this.mergeOptions(this.getDefaultOptions(), options);
   }
 
-  public async execute(data: GraphData, options?: Partial<O>): Promise<void> {
-    this.options = deepMix({}, this.options, options) as O;
+  get options(): O {
+    return this.runtimeOptions || this.initialOptions;
+  }
+
+  public async execute(
+    data: GraphData,
+    userOptions?: Partial<O>,
+  ): Promise<void> {
+    this.runtimeOptions = this.mergeOptions(this.initialOptions, userOptions);
 
     this.model = new LayoutModel(data, {
-      node: this.options.node,
-      edge: this.options.edge,
+      node: this.runtimeOptions.node,
+      edge: this.runtimeOptions.edge,
     });
 
-    await this.layout();
+    await this.layout(this.runtimeOptions);
   }
 
-  protected abstract layout(): Promise<void>;
-
-  public forEachNode(callback: (node: LayoutNode) => void) {
-    this.model.nodeMap.forEach(callback);
+  protected mergeOptions(base: O, patch?: Partial<O>): O {
+    return Object.assign({}, base, patch || {});
   }
 
-  public forEachEdge(callback: (edge: LayoutEdge) => void) {
-    this.model.edgeMap.forEach((edge) => {
+  protected abstract layout(options: O): Promise<void>;
+
+  public forEachNode(callback: (node: LayoutNode, index: number) => void) {
+    this.model.forEachNode(callback);
+  }
+
+  public forEachEdge(callback: (edge: LayoutEdge, index: number) => void) {
+    this.model.forEachEdge((edge, i) => {
       edge.sourceNode = this.model.nodeMap.get(edge.source);
       edge.targetNode = this.model.nodeMap.get(edge.target);
-      callback(edge);
+      callback(edge, i);
     });
   }
 
@@ -56,6 +70,11 @@ export abstract class BaseLayout<
   }
 }
 
+/**
+ * <zh/> 迭代布局基类
+ *
+ * <en/> Base class for iterative layouts
+ */
 export abstract class BaseLayoutWithIterations<
     O extends BaseLayoutOptions = BaseLayoutOptions,
   >
@@ -65,4 +84,15 @@ export abstract class BaseLayoutWithIterations<
   abstract stop(): void;
 
   abstract tick(iterations: number): void;
+}
+
+/**
+ * <zh/> 判断布局是否为迭代布局
+ *
+ * <en/> Determine whether the layout is an iterative layout
+ */
+export function isLayoutWithIterations(
+  layout: any,
+): layout is LayoutWithIterations {
+  return !!layout.tick && !!layout.stop;
 }

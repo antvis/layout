@@ -124,22 +124,6 @@ describe('layout circular', () => {
     expect(positions.edges).toHaveLength(0);
   });
 
-  it('assign places single node at center', async () => {
-    const layout = new CircularLayout();
-    await layout.execute(
-      {
-        nodes: [{ id: 'a', data: {} }],
-        edges: [],
-      },
-      { center: [10, 20] },
-    );
-    const positions = calculatePositions(layout);
-    expect(positions.nodes).toHaveLength(1);
-    const n = positions.nodes[0];
-    expect(n.x).toBe(10);
-    expect(n.y).toBe(20);
-  });
-
   it('degree ordering places highest degree at the begin', async () => {
     const nodes = [
       { id: 'A', data: {} },

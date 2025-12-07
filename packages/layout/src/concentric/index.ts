@@ -1,7 +1,11 @@
 import { BaseLayout } from '../base-layout';
 import type { LayoutNode } from '../types/data';
-import { normalizeViewport, orderByDegree, orderBySorter } from '../util';
-import { applySingleNodeLayout } from '../util/common';
+import {
+  applySingleNodeLayout,
+  normalizeViewport,
+  orderByDegree,
+  orderBySorter,
+} from '../util';
 import { formatNodeSizeFn } from '../util/format';
 import type { ConcentricLayoutOptions } from './types';
 
@@ -36,7 +40,8 @@ export class ConcentricLayout extends BaseLayout<ConcentricLayoutOptions> {
 
     const n = this.model.nodeCount();
     if (!n || n === 1) {
-      return applySingleNodeLayout(this.model, center);
+      applySingleNodeLayout(this.model, center);
+      return;
     }
 
     const {

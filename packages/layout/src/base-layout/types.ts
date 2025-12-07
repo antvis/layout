@@ -62,24 +62,28 @@ export interface Layout<
    * <en/> Execute layout calculation
    */
   execute(graph: GraphData, options?: LayoutOptions): Promise<void>;
+
   /**
    * <zh/> 遍历节点布局结果
    *
    * <en/> Iterate over node layout results
    */
   forEachNode(callback: (node: LayoutNode) => void): void;
+
   /**
    * <zh/> 遍历边布局结果
    *
    * <en/> Iterate over edge layout results
    */
   forEachEdge(callback: (edge: LayoutEdge) => void): void;
+
   /**
    * <zh/> 布局计算的配置项
    *
    * <en/> Layout calculation configuration item
    */
   options: LayoutOptions;
+
   /**
    * <zh/> 布局id
    *
@@ -88,14 +92,9 @@ export interface Layout<
   id: string;
 }
 
-export function isLayoutWithIterations(
-  layout: any,
-): layout is LayoutWithIterations<any> {
-  return !!layout.tick && !!layout.stop;
-}
-
-export interface LayoutWithIterations<LayoutOptions>
-  extends Layout<LayoutOptions> {
+export interface LayoutWithIterations<
+  LayoutOptions extends BaseLayoutOptions = BaseLayoutOptions,
+> extends Layout<LayoutOptions> {
   /**
    * Some layout algorithm has n iterations so that the simulation needs to be stopped at any time.
    * This method is useful for running the simulation manually.

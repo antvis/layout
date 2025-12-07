@@ -1,4 +1,4 @@
-import type { PointTuple } from '../types';
+import type { Point } from '../types/point';
 
 /**
  * Viewport configuration such as width, height and center point.
@@ -6,11 +6,11 @@ import type { PointTuple } from '../types';
 export const normalizeViewport = (options: {
   width?: number;
   height?: number;
-  center?: PointTuple;
+  center?: Point;
 }): {
   width: number;
   height: number;
-  center: PointTuple;
+  center: Point;
 } => {
   const { width, height, center } = options;
   const normalizedWidth =

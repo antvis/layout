@@ -46,13 +46,36 @@ export class Simulation extends EventEmitter {
     super();
 
     this.context = { model, options };
+    this.recomputeConstants();
+
+    this.initDisplacements();
+  }
+
+  public update(model: LayoutModel, options: SimulationOptions): this {
+    if (this.isDestroyed) return this;
+
+    this.context.model = model;
+    this.context.options = options;
+
+    this.recomputeConstants();
+
+    this.displacements = null;
+    this.clusterMap = null;
+
+    this.initDisplacements();
+    this.currentIteration = 0;
+
+    return this;
+  }
+
+  private recomputeConstants(): void {
+    const { model, options } = this.context;
     const { width, height } = options;
-    const area = height * width;
+    const area = width * height;
+
     this.k2 = area / (model.nodeCount() + 1);
     this.k = Math.sqrt(this.k2);
     this.maxDisplace = Math.sqrt(area) / 10;
-
-    this.initDisplacements();
   }
 
   /**
@@ -104,10 +127,7 @@ export class Simulation extends EventEmitter {
    * Restart the simulation's animation timer and returns the simulation.
    */
   public restart(): this {
-    if (this.isDestroyed) {
-      console.warn('Simulation has already been destroyed.');
-      return this;
-    }
+    if (this.isDestroyed) return this;
 
     this.isRunning = true;
 

@@ -4,7 +4,6 @@
     "allowSyntheticDefaultImports": true,
     "composite": true,
     "declaration": true,
-    "downlevelIteration": true,
     "esModuleInterop": true,
     "experimentalDecorators": false /* Enables experimental support for ES7 decorators. */,
     "forceConsistentCasingInFileNames": true,
@@ -20,7 +19,7 @@
     "skipLibCheck": true,
     "sourceMap": true,
     "sourceRoot": "src",
-    "target": "es6",
+    "target": "es2015",
     "types": ["@types/jest", "node"],
     "paths": {
       "@/*": ["./*"],

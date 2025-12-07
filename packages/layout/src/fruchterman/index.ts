@@ -53,9 +53,8 @@ export class FruchtermanLayout extends BaseLayoutWithIterations<FruchtermanLayou
 
   protected async layout(): Promise<void> {
     const options = this.parseOptions(this.options);
-    this.options = options;
 
-    const { dimensions, center } = this.options;
+    const { dimensions, center } = options;
 
     const n = this.model.nodeCount();
     if (!n || n === 1) {
@@ -63,12 +62,12 @@ export class FruchtermanLayout extends BaseLayoutWithIterations<FruchtermanLayou
       return;
     }
 
-    const { width, height, animate, maxIteration } = this.options;
+    const { width, height, animate, maxIteration } = options;
     initModelNodePosition(this.model, width, height, dimensions);
 
     const simulation = this.setSimulation(
       this.model,
-      this.options as SimulationOptions,
+      options as SimulationOptions,
     );
 
     if (animate) {
@@ -81,44 +80,33 @@ export class FruchtermanLayout extends BaseLayoutWithIterations<FruchtermanLayou
     }
   }
 
-  private setSimulation(
-    model: LayoutModel,
-    options: SimulationOptions,
-  ): Simulation {
-    if (this.simulation) {
+  private setSimulation(model: LayoutModel, options: SimulationOptions) {
+    if (!this.simulation) {
+      this.simulation = new Simulation(model, options);
+    } else {
+      this.simulation.update(model, options);
       this.simulation.off('tick');
     }
 
-    const simulation = this.simulation || new Simulation(model, options);
+    this.simulation.on('tick', () => this.options.onTick?.(this));
 
-    this.simulation = simulation.on('tick', () => this.options.onTick?.(this));
-
-    return simulation;
+    return this.simulation;
   }
 
   public restart(): void {
-    if (!this.simulation) {
-      console.warn('Simulation instance does not exist.');
-      return;
-    }
-
-    this.simulation.restart();
+    this.simulation?.restart();
   }
 
   public stop(): void {
-    if (this.simulation) this.simulation.stop();
+    this.simulation?.stop();
   }
 
   public tick(iterations: number = 1): void {
-    if (this.simulation) {
-      this.simulation.tick(iterations);
-    }
+    this.simulation?.tick(iterations);
   }
 
   public setFixedPosition(id: ID, position: NullablePosition | null): void {
-    if (this.simulation) {
-      this.simulation.setFixedPosition(id, position);
-    }
+    this.simulation?.setFixedPosition(id, position);
   }
 
   public destroy(): void {
@@ -126,9 +114,7 @@ export class FruchtermanLayout extends BaseLayoutWithIterations<FruchtermanLayou
 
     this.stop();
 
-    if (this.simulation) {
-      this.simulation.destroy();
-      this.simulation = null;
-    }
+    this.simulation?.destroy();
+    this.simulation = null;
   }
 }

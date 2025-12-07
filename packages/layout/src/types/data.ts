@@ -30,7 +30,8 @@ export interface LayoutNode<N extends NodeData = NodeData> {
   vx?: number;
   vy?: number;
   vz?: number;
-  _original?: N;
+  _original: N;
+  [key: string]: any;
 }
 
 export interface LayoutEdge<E extends EdgeData = EdgeData> {
@@ -40,5 +41,6 @@ export interface LayoutEdge<E extends EdgeData = EdgeData> {
   sourceNode?: LayoutNode;
   targetNode?: LayoutNode;
   points?: Point[];
-  _original?: E;
+  _original: E;
+  [key: string]: any;
 }

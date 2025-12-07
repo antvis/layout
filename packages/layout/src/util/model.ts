@@ -63,8 +63,11 @@ export class LayoutModel<
     return this.nodeMap.values().next().value;
   }
 
-  public forEachNode(callback: (node: LayoutNode<N>) => void): void {
-    this.nodeMap.forEach(callback);
+  public forEachNode(
+    callback: (node: LayoutNode<N>, index: number) => void,
+  ): void {
+    let i = 0;
+    this.nodeMap.forEach((node) => callback(node, i++));
   }
 
   public originalNode(id: ID): N | undefined {
@@ -88,8 +91,9 @@ export class LayoutModel<
     return this.edgeMap.values().next().value;
   }
 
-  public forEachEdge(callback: (edge: LayoutEdge<E>) => void): void {
-    this.edgeMap.forEach(callback);
+  public forEachEdge(callback: (edge: LayoutEdge<E>, index: number) => void): void {
+    let i = 0;
+    this.edgeMap.forEach((edge) => callback(edge, i++));
   }
 
   public originalEdge(id: ID): E | undefined {
@@ -173,7 +177,7 @@ export class LayoutModel<
   private buildDegreeCache(): void {
     this.degreeCache = new Map();
 
-    for (const edge of this.edgeMap.values()) {
+    for (const edge of this.edges()) {
       const { source, target } = edge;
 
       if (edge.source === edge.target) continue;
@@ -202,7 +206,7 @@ export class LayoutModel<
     this.inAdjacencyCache = new Map();
     this.outAdjacencyCache = new Map();
 
-    for (const edge of this.edgeMap.values()) {
+    for (const edge of this.edges()) {
       if (!this.nodeMap.has(edge.source) || !this.nodeMap.has(edge.target))
         continue;
 
@@ -223,11 +227,11 @@ export class LayoutModel<
     this.indexNodeCache = new Map();
 
     let index = 0;
-    for (const nodeId of this.nodeMap.keys()) {
-      this.nodeIndexCache.set(nodeId, index);
-      this.indexNodeCache.set(index, nodeId);
+    this.nodeMap.forEach((_node, nodeId) => {
+      this.nodeIndexCache!.set(nodeId, index);
+      this.indexNodeCache!.set(index, nodeId);
       index++;
-    }
+    });
   }
 
   public destroy(): void {
@@ -308,7 +312,7 @@ function extractEdgeData<E extends EdgeData = EdgeData>(
     }
 
     if (isNil(edgeData.id)) {
-      edgeData.id = getEdgeId(datum);
+      edgeData.id = getEdgeId?.(datum) as ID;
     }
 
     result.set(edgeData.id, edgeData);
