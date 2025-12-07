@@ -1,6 +1,8 @@
+import type { EdgeLabelPos } from '../dagre/types';
 import type { PlainObject } from './common';
 import type { ID } from './id';
 import type { Point } from './point';
+import type { Size } from './size';
 
 export interface GraphData<
   N extends NodeData = NodeData,
@@ -21,6 +23,7 @@ export interface LayoutData {
 
 export interface LayoutNode<N extends NodeData = NodeData> {
   id: ID;
+
   x: number;
   y: number;
   z?: number;
@@ -30,17 +33,34 @@ export interface LayoutNode<N extends NodeData = NodeData> {
   vx?: number;
   vy?: number;
   vz?: number;
+
+  size?: Size;
+
+  isGroup?: boolean;
+  parentId?: ID | null;
+
   _original: N;
+
   [key: string]: any;
 }
 
 export interface LayoutEdge<E extends EdgeData = EdgeData> {
   id: ID;
+
   source: ID;
   target: ID;
   sourceNode?: LayoutNode;
   targetNode?: LayoutNode;
-  points?: Point[];
+
   _original: E;
+
+  /** Only for dagre layout */
+  points?: Point[];
+  labelSize?: Size;
+  labelPos?: EdgeLabelPos;
+  labelOffset?: number;
+  weight?: number;
+  minLen?: number;
+
   [key: string]: any;
 }
