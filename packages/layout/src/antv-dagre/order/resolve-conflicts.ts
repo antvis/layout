@@ -24,8 +24,8 @@
  *    elements in `vs`.
  */
 
-import { ID } from '@antv/graphlib';
-import { Graph } from '../../types';
+import type { ID } from '../../types/id';
+import { DagreGraph } from '../graph';
 
 export type ConflictEntry = {
   i: number;
@@ -46,7 +46,7 @@ const resolveConflicts = (
     barycenter?: number;
     weight?: number;
   }[],
-  cg: Graph,
+  cg: DagreGraph,
 ) => {
   const mappedEntries: Record<string, ConflictEntry> = {};
   entries?.forEach((entry, i: number) => {

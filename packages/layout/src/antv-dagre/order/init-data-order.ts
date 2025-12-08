@@ -1,10 +1,10 @@
-import { ID } from '@antv/graphlib';
-import { Graph } from '../../types';
+import type { ID } from '../../types/id';
+import { DagreGraph } from '../graph';
 
 /**
  * 按照数据中的结果设置fixorder
  */
-export const initDataOrder = (g: Graph, nodeOrder?: ID[]) => {
+export const initDataOrder = (g: DagreGraph, nodeOrder?: ID[]) => {
   const simpleNodes = g.getAllNodes().filter((v) => {
     return !g.getChildren(v.id)?.length;
   });

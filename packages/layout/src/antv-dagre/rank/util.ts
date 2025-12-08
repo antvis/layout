@@ -1,5 +1,6 @@
-import { Edge, ID } from '@antv/graphlib';
-import { EdgeData, Graph } from '../../types';
+import type { EdgeData } from '../../types/data';
+import type { ID } from '../../types/id';
+import { DagreGraph, GraphEdge } from '../graph';
 
 /*
  * Initializes ranks for the input graph using the longest path algorithm. This
@@ -22,7 +23,7 @@ import { EdgeData, Graph } from '../../types';
  *
  *    1. Each node will be assign an (unnormalized) "rank" property.
  */
-const longestPath = (g: Graph) => {
+const longestPath = (g: DagreGraph) => {
   const visited: Record<ID, boolean> = {};
 
   const dfs = (v: ID) => {
@@ -59,7 +60,7 @@ const longestPath = (g: Graph) => {
     .forEach((source) => dfs(source.id));
 };
 
-const longestPathWithLayer = (g: Graph) => {
+const longestPathWithLayer = (g: DagreGraph) => {
   // 用longest path，找出最深的点
   const visited: Record<ID, boolean> = {};
   let minRank: number;
@@ -146,7 +147,7 @@ const longestPathWithLayer = (g: Graph) => {
  * Returns the amount of slack for the given edge. The slack is defined as the
  * difference between the length of the edge and its minimum length.
  */
-const slack = (g: Graph, e: Edge<EdgeData>) => {
+const slack = (g: DagreGraph, e: GraphEdge<EdgeData>) => {
   return (
     g.getNode(e.target).data.rank! -
     g.getNode(e.source).data.rank! -

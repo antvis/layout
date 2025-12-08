@@ -1,4 +1,4 @@
-import { Graph as IGraph } from '../../types';
+import { DagreGraph } from '../graph';
 import { feasibleTreeWithLayer as feasibleTree } from './feasible-tree';
 import { networkSimplex } from './network-simplex';
 import { longestPath, longestPathWithLayer } from './util';
@@ -23,7 +23,7 @@ import { longestPath, longestPathWithLayer } from './util';
  *       fix them up later.
  */
 export const rank = (
-  g: IGraph,
+  g: DagreGraph,
   ranker: 'network-simplex' | 'tight-tree' | 'longest-path',
 ) => {
   switch (ranker) {
@@ -45,11 +45,11 @@ export const rank = (
 // A fast and simple ranker, but results are far from optimal.
 const longestPathRanker = longestPath;
 
-const tightTreeRanker = (g: IGraph) => {
+const tightTreeRanker = (g: DagreGraph) => {
   longestPathWithLayer(g);
   feasibleTree(g);
 };
 
-const networkSimplexRanker = (g: IGraph) => {
+const networkSimplexRanker = (g: DagreGraph) => {
   networkSimplex(g);
 };

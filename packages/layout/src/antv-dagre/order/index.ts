@@ -1,6 +1,6 @@
-import { Graph, ID } from '@antv/graphlib';
 import { clone } from '@antv/util';
-import { Graph as IGraph } from '../../types';
+import type { ID } from '../../types/id';
+import { DagreGraph } from '../graph';
 import { buildLayerMatrix, maxRank } from '../util';
 import { addSubgraphConstraints } from './add-subgraph-constraints';
 import { buildLayerGraph } from './build-layer-graph';
@@ -23,7 +23,7 @@ import { sortSubgraph } from './sort-subgraph';
  *    1. Graph nodes will have an "order" attribute based on the results of the
  *       algorithm.
  */
-export const order = (g: IGraph, keepNodeOrder?: boolean) => {
+export const order = (g: DagreGraph, keepNodeOrder?: boolean) => {
   const mxRank = maxRank(g);
   const range1 = [];
   const range2 = [];
@@ -77,7 +77,7 @@ export const order = (g: IGraph, keepNodeOrder?: boolean) => {
 };
 
 const buildLayerGraphs = (
-  g: IGraph,
+  g: DagreGraph,
   ranks: number[],
   direction: 'in' | 'out',
 ) => {
@@ -87,12 +87,12 @@ const buildLayerGraphs = (
 };
 
 const sweepLayerGraphs = (
-  layerGraphs: IGraph[],
+  layerGraphs: DagreGraph[],
   biasRight: boolean,
   usePrev?: boolean,
   keepNodeOrder?: boolean,
 ) => {
-  const cg = new Graph();
+  const cg = new DagreGraph();
   layerGraphs?.forEach((lg) => {
     // const root = lg.graph().root as string;
     const root = lg.getRoots()[0].id;
@@ -114,7 +114,7 @@ const sweepLayerGraphs = (
   });
 };
 
-const assignOrder = (g: IGraph, layering: ID[][]) => {
+const assignOrder = (g: DagreGraph, layering: ID[][]) => {
   layering?.forEach((layer) => {
     layer?.forEach((v: ID, i: number) => {
       g.getNode(v).data.order = i;

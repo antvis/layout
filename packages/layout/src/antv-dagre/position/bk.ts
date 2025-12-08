@@ -2,8 +2,9 @@
  * This module provides coordinate assignment based on Brandes and Köpf, "Fast
  * and Simple Horizontal Coordinate Assignment."
  */
-import { Graph, ID, Node } from '@antv/graphlib';
-import type { EdgeData, Graph as IGraph, NodeData } from '../../types';
+import { EdgeData, NodeData } from '../../types/data';
+import type { ID } from '../../types/id';
+import { DagreGraph, GraphNode } from '../graph';
 import type { DagreAlign } from '../types';
 import { buildLayerMatrix, minBy } from '../util';
 
@@ -27,7 +28,7 @@ import { buildLayerMatrix, minBy } from '../util';
 
 type Conflicts = Record<ID, Record<ID, boolean>>;
 
-export const findType1Conflicts = (g: IGraph, layering?: ID[][]) => {
+export const findType1Conflicts = (g: DagreGraph, layering?: ID[][]) => {
   const conflicts = {};
 
   const visitLayer = (prevLayer: ID[], layer: ID[]) => {
@@ -71,7 +72,7 @@ export const findType1Conflicts = (g: IGraph, layering?: ID[][]) => {
   return conflicts;
 };
 
-export const findType2Conflicts = (g: IGraph, layering?: ID[][]) => {
+export const findType2Conflicts = (g: DagreGraph, layering?: ID[][]) => {
   const conflicts = {};
 
   function scan(
@@ -151,7 +152,7 @@ export const findType2Conflicts = (g: IGraph, layering?: ID[][]) => {
   return conflicts;
 };
 
-export const findOtherInnerSegmentNode = (g: IGraph, v: ID) => {
+export const findOtherInnerSegmentNode = (g: DagreGraph, v: ID) => {
   if (g.getNode(v)?.data.dummy) {
     return g.getPredecessors(v)?.find((u) => g.getNode(u.id).data.dummy);
   }
@@ -193,10 +194,10 @@ export const hasConflict = (conflicts: Conflicts, v: ID, w: ID) => {
  * blocks would be split in that scenario.
  */
 export const verticalAlignment = (
-  g: IGraph,
+  g: DagreGraph,
   layering: ID[][],
   conflicts: Conflicts,
-  neighborFn: (v: ID) => Node<NodeData>[],
+  neighborFn: (v: ID) => NodeData[],
 ) => {
   const root: Record<ID, ID> = {};
   const align: Record<ID, ID> = {};
@@ -241,7 +242,7 @@ export const verticalAlignment = (
 };
 
 export const horizontalCompaction = (
-  g: IGraph,
+  g: DagreGraph,
   layering: ID[][],
   root: Record<ID, ID>,
   align: Record<ID, ID>,
@@ -267,7 +268,7 @@ export const horizontalCompaction = (
 
   const iterate = (
     setXsFunc: (param: ID) => void,
-    nextNodesFunc: (param: ID) => Node<NodeData>,
+    nextNodesFunc: (param: ID) => GraphNode<NodeData>[],
   ) => {
     let stack = blockG.getAllNodes();
     let elem = stack.pop();
@@ -325,14 +326,14 @@ export const horizontalCompaction = (
 };
 
 export const buildBlockGraph = (
-  g: IGraph,
+  g: DagreGraph,
   layering: ID[][],
   root: Record<ID, ID>,
   nodesep: number,
   edgesep: number,
   reverseSep?: boolean,
-): IGraph => {
-  const blockGraph = new Graph<NodeData, EdgeData>();
+): DagreGraph<NodeData, EdgeData> => {
+  const blockGraph = new DagreGraph<NodeData, EdgeData>();
   const sepFn = sep(nodesep, edgesep, reverseSep as boolean);
 
   layering?.forEach((layer) => {
@@ -377,7 +378,7 @@ export const buildBlockGraph = (
  * Returns the alignment that has the smallest width of the given alignments.
  */
 export const findSmallestWidthAlignment = (
-  g: IGraph,
+  g: DagreGraph,
   xss: Record<string, Record<string, number>>,
 ) => {
   return minBy(Object.values(xss), (xs) => {
@@ -451,7 +452,7 @@ export const balance = (
 };
 
 export const positionX = (
-  g: IGraph,
+  g: DagreGraph,
   options?: Partial<{
     align: DagreAlign;
     nodesep: number;
@@ -511,7 +512,7 @@ export const positionX = (
 };
 
 export const sep = (nodeSep: number, edgeSep: number, reverseSep: boolean) => {
-  return (g: IGraph, v: ID, w: ID) => {
+  return (g: DagreGraph, v: ID, w: ID) => {
     const vLabel = g.getNode(v)!;
     const wLabel = g.getNode(w)!;
     let sum = 0;
@@ -556,4 +557,4 @@ export const sep = (nodeSep: number, edgeSep: number, reverseSep: boolean) => {
   };
 };
 
-export const width = (g: IGraph, v: ID) => g.getNode(v)!.data.width! || 0;
+export const width = (g: DagreGraph, v: ID) => g.getNode(v)!.data.width! || 0;
