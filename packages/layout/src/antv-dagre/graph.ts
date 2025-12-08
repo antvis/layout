@@ -366,7 +366,8 @@ export class DagreGraph<
       | (GraphNode<N> & { children?: GraphNode<N>[] })[],
     treeName?: string,
   ): void {
-    const actualTreeName = treeName || (this.options.tree?.[0] ?? 'default');
+    const actualTreeName =
+      treeName || ((this.options.tree?.[0] ?? 'default') as string);
 
     if (!this.hasTreeStructure(actualTreeName)) {
       this.attachTreeStructure(actualTreeName);
@@ -412,7 +413,7 @@ export class DagreGraph<
    * <en/> Set parent node
    */
   setParent(childId: ID, parentId: ID, treeName?: string): void {
-    const actualTreeName = treeName || (this.options.tree?.[0] ?? 'default');
+    const actualTreeName = treeName || (this.options.tree?.[0] ?? 'default') as string;
 
     if (!this.parentMap.has(actualTreeName)) {
       this.attachTreeStructure(actualTreeName);
@@ -443,7 +444,8 @@ export class DagreGraph<
    * <en/> Get parent node
    */
   getParent(nodeId: ID, treeName?: string): GraphNode<N> | null | undefined {
-    const actualTreeName = treeName || (this.options.tree?.[0] ?? 'default');
+    const actualTreeName =
+      treeName || ((this.options.tree?.[0] ?? 'default') as string);
 
     // Ensure tree structure exists
     if (!this.parentMap.has(actualTreeName)) {
@@ -468,7 +470,7 @@ export class DagreGraph<
    * <en/> Get children nodes
    */
   getChildren(nodeId: ID, treeName?: string): GraphNode<N>[] {
-    const actualTreeName = treeName || (this.options.tree?.[0] ?? 'default');
+    const actualTreeName = treeName || (this.options.tree?.[0] ?? 'default') as string;
     const treeChildrenMap = this.childrenMap.get(actualTreeName);
 
     if (!treeChildrenMap) return [];
@@ -487,7 +489,7 @@ export class DagreGraph<
    * <en/> Get root nodes (nodes without parents)
    */
   getRoots(treeName?: string): GraphNode<N>[] {
-    const actualTreeName = treeName || (this.options.tree?.[0] ?? 'default');
+    const actualTreeName = treeName || (this.options.tree?.[0] ?? 'default') as string;
     const treeParentMap = this.parentMap.get(actualTreeName);
 
     const roots: GraphNode<N>[] = [];
