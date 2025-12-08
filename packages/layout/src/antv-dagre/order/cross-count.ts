@@ -15,11 +15,15 @@
  * This algorithm is derived from Barth, et al., "Bilayer Cross Counting."
  */
 
-import { ID } from '@antv/graphlib';
-import { Graph } from '../../types';
+import type { ID } from '../../types/id';
+import { DagreGraph } from '../graph';
 import { zipObject } from '../util';
 
-const twoLayerCrossCount = (g: Graph, northLayer: ID[], southLayer: ID[]) => {
+const twoLayerCrossCount = (
+  g: DagreGraph,
+  northLayer: ID[],
+  southLayer: ID[],
+) => {
   // Sort all of the edges between the north and south layers by their position
   // in the north layer and then the south. Map these edges to the position of
   // their head in the south layer.
@@ -63,7 +67,7 @@ const twoLayerCrossCount = (g: Graph, northLayer: ID[], southLayer: ID[]) => {
   return cc;
 };
 
-export const crossCount = (g: Graph, layering: ID[][]) => {
+export const crossCount = (g: DagreGraph, layering: ID[][]) => {
   let cc = 0;
   for (let i = 1; i < layering?.length; i += 1) {
     cc += twoLayerCrossCount(g, layering[i - 1], layering[i]);

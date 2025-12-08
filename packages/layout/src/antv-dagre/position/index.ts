@@ -1,5 +1,5 @@
-import { ID } from '@antv/graphlib';
-import type { Graph as IGraph } from '../../types';
+import type { ID } from '../../types/id';
+import { DagreGraph } from '../graph';
 import type { DagreAlign } from '../types';
 import { asNonCompoundGraph, buildLayerMatrix } from '../util';
 import {
@@ -13,7 +13,7 @@ import {
 } from './bk';
 
 const positionY = (
-  g: IGraph,
+  g: DagreGraph,
   options?: Partial<{
     ranksep: number;
   }>,
@@ -33,7 +33,7 @@ const positionY = (
 };
 
 const positionX = (
-  g: IGraph,
+  g: DagreGraph,
   options?: Partial<{
     align: DagreAlign;
     nodesep: number;
@@ -91,7 +91,7 @@ const positionX = (
 };
 
 export const position = (
-  g: IGraph,
+  g: DagreGraph,
   options?: Partial<{
     align: DagreAlign;
     nodesep: number;

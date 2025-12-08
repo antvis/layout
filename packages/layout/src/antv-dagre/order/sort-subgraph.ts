@@ -1,13 +1,13 @@
-import { ID } from '@antv/graphlib';
-import { Graph } from '../../types';
+import type { ID } from '../../types/id';
+import { DagreGraph } from '../graph';
 import { barycenter } from './barycenter';
 import resolveConflicts, { ConflictEntry } from './resolve-conflicts';
 import { sort } from './sort';
 
 export const sortSubgraph = (
-  g: Graph,
+  g: DagreGraph,
   v: ID,
-  cg: Graph,
+  cg: DagreGraph,
   biasRight?: boolean,
   usePrev?: boolean,
   keepNodeOrder?: boolean,

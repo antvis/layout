@@ -1,207 +1,17 @@
-import { Graph, ID } from '@antv/graphlib';
 import { isNumber } from '@antv/util';
-import { layout } from './antv-dagre/layout';
-import type { DagreAlign, DagreRankdir } from './antv-dagre/types';
-import type {
-  Edge,
-  EdgeData,
-  Graph as IGraph,
-  Layout,
-  LayoutMapping,
-  Node,
-  NodeData,
-  OutNode,
-  Point,
-  PointTuple,
-} from './types';
-import type { Size } from './types/size';
-import { cloneFormatData, formatNumberFn, formatSizeFn } from './util';
-import { parseSize } from './util/size';
+import { BaseLayout } from '../base-layout';
+import type { Node, NodeData, Point } from '../types';
+import { parsePoint } from '../util';
+import { formatNumberFn, formatSizeFn } from '../util/format';
+import { parseSize } from '../util/size';
+import { DagreGraph } from './graph';
+import { layout } from './layout';
+import { AntVDagreLayoutOptions } from './types';
 
-/**
- * <zh/> 层次/流程图布局的配置项
- *
- * <en/> The configuration options for the hierarchical/flowchart layout
- */
-export interface AntVDagreLayoutOptions {
-  /**
-   * <zh/> 布局的方向。T：top（上）；B：bottom（下）；L：left（左）；R：right（右）
-   * - 'TB':从上至下布局
-   * - 'BT':从下至上布局
-   * - 'LR':从左至右布局
-   * - 'RL':从右至左布局
-   * <en/> The direction of the layout. T: top; B: bottom; L: left; R: right
-   * - 'TB':from top to bottom
-   * - 'BT':from bottom to top
-   * - 'LR':from left to right
-   * - 'RL':from right to left
-   * @defaultValue 'TB'
-   */
-  rankdir?: DagreRankdir;
-  /**
-   * <zh/> 布局的模式
-   *
-   * <en/> The mode of the layout
-   */
-  ranker?: 'network-simplex' | 'tight-tree' | 'longest-path';
-  /**
-   * <zh/> 节点对齐方式 U：upper（上）；D：down（下）；L：left（左）；R：right（右）
-   * - 'UL':对齐到左上角
-   * - 'UR':对齐到右上角
-   * - 'DL':对齐到左下角
-   * - 'DR':对齐到右下角
-   * - undefined:默认，中间对齐
-   * <en/> The alignment of the nodes U: upper; D: down; L: left; R: right
-   * - 'UL':align to left top
-   * - 'UR':align to right top
-   * - 'DL':align to left bottom
-   * - 'DR':align to right bottom
-   * - undefined:default, align to center
-   * @defaultValue 'UL'
-   */
-  align?: DagreAlign;
-  /**
-   * <zh/> 布局的左上角对齐位置
-   *
-   * <en/> The position of the layout's top-left corner
-   * @defaultValue undefined
-   */
-  begin?: PointTuple;
-  /**
-   * <zh/> 节点大小（直径）。
-   *
-   * <en/> The diameter of the node
-   * @remarks
-   * <zh/> 用于防止节点重叠时的碰撞检测
-   *
-   * <en/> Used for collision detection when nodes overlap
-   * @defaultValue undefined
-   */
-  nodeSize?: Size | ((nodeData: Node) => Size);
-  /**
-   * <zh/> 节点间距（px）
-   *
-   * <en/> The horizontal gap between nodes (px)
-   * @remarks
-   * <zh/> 在 rankdir 为 'TB' 或 'BT' 时是节点的水平间距；在 rankdir 为 'LR' 或 'RL' 时代表节点的竖直方向间距。nodesepFunc 拥有更高的优先级
-   *
-   * <en/> The horizontal gap between nodes (px) in the case of rankdir is 'TB' or 'BT'. The vertical gap between nodes (px) in the case of rankdir is 'LR' or 'RL'. nodesepFunc has a higher priority
-   * @defaultValue 50
-   */
-  nodesep?: number;
-  /**
-   * <zh/> 层间距（px）
-   *
-   * <en/> The vertical gap between levels (px)
-   * @remarks
-   * <zh/> 在 rankdir 为 'TB' 或 'BT' 时是竖直方向相邻层间距；在 rankdir 为 'LR' 或 'RL' 时代表水平方向相邻层间距。ranksepFunc 拥有更高的优先级
-   *
-   * <en/> The vertical gap between levels (px) in the case of rankdir is 'TB' or 'BT'. The horizontal gap between levels (px) in the case of rankdir is 'LR' or 'RL'. ranksepFunc has a higher priority
-   * @defaultValue 50
-   */
-  ranksep?: number;
-  /**
-   * <zh/> 是否同时计算边上的的控制点位置
-   *
-   * <en/> Whether to calculate the control point position of the edge at the same time
-   * @remarks
-   * <zh/> 仅在边配置中使用了内置折线（type: 'polyline-edge'） 时，或任何将自定义消费了 data.controlPoints 字段作为控制点位置的边时生效。本质上就是给边数据增加了 data.controlPoints
-   *
-   * <en/> It only takes effect when the built-in polyline edge (type: 'polyline-edge') is used in the edge configuration, or any edge that consumes data.controlPoints as the control point position. In essence, it adds data.controlPoints to the edge data
-   * @defaultValue false
-   */
-  controlPoints?: boolean;
-  /**
-   * <zh/> 同一层节点是否根据每个节点数据中的 parentId 进行排序，以防止 Combo 重叠
-   *
-   * <en/> Whether to sort nodes in the same layer according to the parentId in each node data to prevent Combo overlapping
-   * @remarks
-   * <zh/> 建议在有 Combo 的情况下配置
-   *
-   * <en/> It is recommended to configure when there is a Combo
-   * @defaultValue false
-   */
-  sortByCombo?: boolean;
-  /**
-   * <zh/> 是否为边的label留位置
-   *
-   * <en/> Whether to leave space for the label of the edge
-   * @remarks
-   * <zh/> 这会影响是否在边中间添加dummy node
-   *
-   * <en/> It will affect whether to add a dummy node in the middle of the edge
-   * @defaultValue true
-   */
-  edgeLabelSpace?: boolean;
-  /**
-   * <zh/> 同层节点顺序的参考数组，存放节点 id 值
-   *
-   * <en/> The reference array of the order of the nodes in the same layer, storing the node id value
-   * @remarks
-   * <zh/> 若未指定，则将按照 dagre 本身机制排列同层节点顺序
-   *
-   * <en/> If not specified, the same layer node order will be arranged according to the mechanism of dagre itself
-   * @defaultValue false
-   */
-  nodeOrder?: string[];
-  /**
-   * <zh/> 是否基于 dagre 进行辐射布局
-   *
-   * <en/> Whether to use dagre for radial layout
-   */
-  radial?: boolean;
-  /**
-   * <zh/> 关注的节点
-   * - ID: 节点 id
-   * - Node: 节点实例
-   * - null: 取消关注
-   *
-   * <en/> The focused node
-   * - ID: node id
-   * - Node: node instance
-   * - null: cancel focus
-   * @remarks
-   * <zh/> radial 为 true 时生效
-   *
-   * <en/> It takes effect when radial is true
-   */
-  focusNode?: ID | Node | null;
-  /**
-   * <zh/> 布局计算时参考的节点位置
-   *
-   * <en/> The reference node position when calculating the layout
-   * @remarks
-   * <zh/> 一般用于切换数据时保证重新布局的连续性。在 G6 中，若是更新数据，则将自动使用已存在的布局结果数据作为输入
-   *
-   * <en/> It is generally used to ensure the continuity of the layout when switching data. In G6, if you update the data, the existing layout result data will be used as input automatically
-   * @defaultValue undefined
-   */
-  preset?: OutNode[];
-  /**
-   * <zh/> 节点间距（px）的回调函数，通过该参数可以对不同节点设置不同的节点间距
-   *
-   * <en/> The callback function of the node spacing (px), which can be used to set different node spacing for different nodes
-   * @remarks
-   * <zh/> 在 rankdir 为 'TB' 或 'BT' 时是节点的水平间距；在 rankdir 为 'LR' 或 'RL' 时代表节点的竖直方向间距。优先级高于 nodesep，即若设置了 nodesepFunc，则 nodesep 不生效
-   *
-   * <en/> The horizontal spacing of the node in the case of rankdir is 'TB' or 'BT', and the vertical spacing of the node in the case of rankdir is 'LR' or 'RL'. The priority is higher than nodesep, that is, if nodesepFunc is set, nodesep does not take effect
-   * @param d - <zh/> 节点实例 | <en/> Node instance
-   */
-  nodesepFunc?: (d?: Node) => number;
-  /**
-   * <zh/> 层间距（px）的回调函数
-   *
-   * <en/> The callback function of the layer spacing (px)
-   * @remarks
-   * <zh/> 在 rankdir 为 'TB' 或 'BT' 时是竖直方向相邻层间距；在 rankdir 为 'LR' 或 'RL' 时代表水平方向相邻层间距。优先级高于 nodesep，即若设置了 nodesepFunc，则 nodesep 不生效
-   *
-   * <en/> The vertical spacing of adjacent layers in the case of rankdir is 'TB' or 'BT', and the horizontal spacing of adjacent layers in the case of rankdir is 'LR' or 'RL'. The priority is higher than nodesep, that is, if nodesepFunc is set, nodesep does not take effect
-   * @param d - <zh/> 节点实例 | <en/> Node instance
-   */
-  ranksepFunc?: (d?: Node) => number;
-}
+export type { AntVDagreLayoutOptions };
 
 const DEFAULTS_LAYOUT_OPTIONS: Partial<AntVDagreLayoutOptions> = {
+  nodeSize: 10,
   rankdir: 'TB',
   nodesep: 50, // 节点水平间距(px)
   ranksep: 50, // 每一层节点之间间距
@@ -217,56 +27,20 @@ const DEFAULTS_LAYOUT_OPTIONS: Partial<AntVDagreLayoutOptions> = {
  *
  * <en/> AntV implementation of Dagre layout
  */
-export class AntVDagreLayout implements Layout<AntVDagreLayoutOptions> {
+export class AntVDagreLayout extends BaseLayout<AntVDagreLayoutOptions> {
   id = 'antv-dagre';
 
-  constructor(
-    public options: AntVDagreLayoutOptions = {} as AntVDagreLayoutOptions,
-  ) {
-    this.options = {
-      ...DEFAULTS_LAYOUT_OPTIONS,
-      ...options,
-    };
+  protected getDefaultOptions(): AntVDagreLayoutOptions {
+    return DEFAULTS_LAYOUT_OPTIONS;
   }
 
-  /**
-   * Return the positions of nodes and edges(if needed).
-   */
-  async execute(graph: IGraph, options?: AntVDagreLayoutOptions) {
-    return this.genericDagreLayout(false, graph, options);
-  }
-
-  /**
-   * To directly assign the positions to the nodes.
-   */
-  async assign(graph: IGraph, options?: AntVDagreLayoutOptions) {
-    await this.genericDagreLayout(true, graph, options);
-  }
-
-  private async genericDagreLayout(
-    assign: false,
-    graph: IGraph,
-    options?: AntVDagreLayoutOptions,
-  ): Promise<LayoutMapping>;
-  private async genericDagreLayout(
-    assign: true,
-    graph: IGraph,
-    options?: AntVDagreLayoutOptions,
-  ): Promise<void>;
-  private async genericDagreLayout(
-    assign: boolean,
-    graph: IGraph,
-    options?: AntVDagreLayoutOptions,
-  ): Promise<LayoutMapping | void> {
-    const mergedOptions = { ...this.options, ...options };
+  protected async layout(options: AntVDagreLayoutOptions): Promise<void> {
     const {
       nodeSize,
       align,
       rankdir = 'TB',
       ranksep,
       nodesep,
-      ranksepFunc,
-      nodesepFunc,
       edgeLabelSpace,
       ranker,
       nodeOrder,
@@ -276,25 +50,35 @@ export class AntVDagreLayout implements Layout<AntVDagreLayoutOptions> {
       sortByCombo,
       // focusNode,
       preset,
-    } = mergedOptions;
-    const g = new Graph<NodeData, EdgeData>({
-      tree: [],
-    });
+    } = options;
 
-    const ranksepfunc = formatNumberFn(ranksep || 50, ranksepFunc);
-    const nodesepfunc = formatNumberFn(nodesep || 50, nodesepFunc);
-    let horisep: (d?: Node | undefined) => number = nodesepfunc;
-    let vertisep: (d?: Node | undefined) => number = ranksepfunc;
+    const ranksepfunc = formatNumberFn(
+      ranksep,
+      DEFAULTS_LAYOUT_OPTIONS.ranksep as number,
+    );
+    const nodesepfunc = formatNumberFn(
+      nodesep,
+      DEFAULTS_LAYOUT_OPTIONS.nodesep as number,
+    );
+    let horisep: (d?: NodeData | undefined) => number = nodesepfunc;
+    let vertisep: (d?: NodeData | undefined) => number = ranksepfunc;
     if (rankdir === 'LR' || rankdir === 'RL') {
       horisep = ranksepfunc;
       vertisep = nodesepfunc;
     }
 
-    const nodeSizeFunc = formatSizeFn(10, nodeSize, false);
+    const nodeSizeFunc = formatSizeFn(
+      nodeSize,
+      DEFAULTS_LAYOUT_OPTIONS.nodeSize as number,
+      false,
+    );
+
+    // Create internal graph
+    const g = new DagreGraph<NodeData, any>({ tree: [] });
 
     // copy graph to g
-    const nodes: Node[] = graph.getAllNodes();
-    const edges: Edge[] = graph.getAllEdges();
+    const nodes = this.model.nodes();
+    const edges = this.model.edges();
 
     nodes.forEach((node) => {
       const size = parseSize(nodeSizeFunc(node));
@@ -302,47 +86,60 @@ export class AntVDagreLayout implements Layout<AntVDagreLayoutOptions> {
       const hori = horisep(node);
       const width = size[0] + 2 * hori;
       const height = size[1] + 2 * verti;
-      const layer = node.data.layer;
+      const layer = node.data?.layer;
       if (isNumber(layer)) {
         // 如果有layer属性，加入到node的label中
         g.addNode({
           id: node.id,
-          data: { width, height, layer },
+          data: {
+            width,
+            height,
+            layer,
+            originalWidth: size[0],
+            originalHeight: size[1],
+          },
         });
       } else {
         g.addNode({
           id: node.id,
-          data: { width, height },
+          data: {
+            width,
+            height,
+            originalWidth: size[0],
+            originalHeight: size[1],
+          },
         });
       }
     });
-    if (sortByCombo) {
-      g.attachTreeStructure('combo');
-      nodes.forEach((node) => {
-        const { parentId } = node.data;
-        if (parentId === undefined) return;
-        if (g.hasNode(parentId as ID)) {
-          g.setParent(node.id, parentId as ID, 'combo');
-        }
-      });
-    }
 
     edges.forEach((edge) => {
-      // dagrejs Wiki https://github.com/dagrejs/dagre/wiki#configuring-the-layout
       g.addEdge({
         id: edge.id,
         source: edge.source,
         target: edge.target,
-        data: {
-          weight: edge.data.weight || 1,
-        },
+        data: {},
       });
     });
 
-    let prevGraph: IGraph | undefined = undefined;
+    if (sortByCombo) {
+      g.attachTreeStructure('combo');
+      nodes.forEach((node) => {
+        const parentId = node?.parentId;
+        if (parentId === undefined) return;
+        if (g.hasNode(parentId as any)) {
+          g.setParent(node.id, parentId as any, 'combo');
+        }
+      });
+    }
+
+    let prevGraph: DagreGraph | null = null;
     if (preset?.length) {
-      prevGraph = new Graph({
-        nodes: preset,
+      prevGraph = new DagreGraph<NodeData, any>();
+      preset.forEach((node) => {
+        prevGraph!.addNode({
+          id: node.id,
+          data: node.data,
+        });
       });
     }
 
@@ -354,7 +151,6 @@ export class AntVDagreLayout implements Layout<AntVDagreLayoutOptions> {
       acyclicer: 'greedy',
       ranker,
       rankdir,
-      nodesep,
       align,
     });
 
@@ -650,34 +446,63 @@ export class AntVDagreLayout implements Layout<AntVDagreLayoutOptions> {
       });
     }
 
-    // calculated nodes as temporary result
-    let layoutNodes: OutNode[] = [];
-    // layout according to the original order in the data.nodes
-    layoutNodes = g
-      .getAllNodes()
-      .map((node) => cloneFormatData(node) as OutNode);
-    const layoutEdges = g.getAllEdges();
+    this.model.forEachNode((node) => {
+      const layoutNode = g.getNode(node.id);
 
-    if (assign) {
-      layoutNodes.forEach((node) => {
-        graph.mergeNodeData(node.id, {
-          x: node.data.x,
-          y: node.data.y,
-        });
-      });
-      layoutEdges.forEach((edge) => {
-        graph.mergeEdgeData(edge.id, {
-          controlPoints: edge.data.controlPoints,
-        });
-      });
-    }
+      if (layoutNode) {
+        const { x, y, width, height, originalWidth, originalHeight } =
+          layoutNode.data;
 
-    const result = {
-      nodes: layoutNodes,
-      edges: layoutEdges,
-    };
+        const children = sortByCombo
+          ? g.getChildren(node.id, 'combo')
+          : g.getChildren(node.id);
+        const hasChildren = children.length > 0;
 
-    return result;
+        if (hasChildren) {
+          let minX = Infinity,
+            maxX = -Infinity;
+          let minY = Infinity,
+            maxY = -Infinity;
+
+          children.forEach((child) => {
+            const childId = child.id;
+            const childNode = g.getNode(childId);
+            if (childNode?.data) {
+              const childX = childNode.data.x!;
+              const childY = childNode.data.y!;
+              const childWidth =
+                childNode.data.originalWidth || childNode.data.width || 0;
+              const childHeight =
+                childNode.data.originalHeight || childNode.data.height || 0;
+
+              minX = Math.min(minX, childX - childWidth / 2);
+              maxX = Math.max(maxX, childX + childWidth / 2);
+              minY = Math.min(minY, childY - childHeight / 2);
+              maxY = Math.max(maxY, childY + childHeight / 2);
+            }
+          });
+
+          const padding = 20;
+          const groupWidth = (maxX - minX || 0) + padding * 2;
+          const groupHeight = (maxY - minY || 0) + padding * 2;
+
+          node.x = (minX + maxX) / 2;
+          node.y = (minY + maxY) / 2;
+          node.size = [groupWidth, groupHeight];
+        } else {
+          node.x = x;
+          node.y = y;
+          node.size = [originalWidth, originalHeight];
+        }
+      }
+    });
+
+    this.model.forEachEdge((edge) => {
+      const layoutEdge = g.getEdge(edge.id);
+      if (layoutEdge && layoutEdge.data.controlPoints) {
+        edge.points = layoutEdge.data.controlPoints.map(parsePoint);
+      }
+    });
   }
 }
 

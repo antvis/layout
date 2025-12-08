@@ -1,4 +1,4 @@
-export * from './antv-dagre';
+export { AntVDagreLayout, type AntVDagreLayoutOptions } from './antv-dagre';
 export type { DagreAlign, DagreRankdir } from './antv-dagre/types';
 export { BaseLayout, type BaseLayoutOptions } from './base-layout';
 export { CircularLayout, type CircularLayoutOptions } from './circular';

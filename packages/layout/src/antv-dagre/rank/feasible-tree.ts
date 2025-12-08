@@ -1,5 +1,6 @@
-import { Edge, Graph, ID } from '@antv/graphlib';
-import { EdgeData, Graph as IGraph } from '../../types';
+import type { EdgeData } from '../../types/data';
+import type { ID } from '../../types/id';
+import { DagreGraph, GraphEdge } from '../graph';
 import { minBy } from '../util';
 import { slack } from './util';
 
@@ -28,8 +29,8 @@ import { slack } from './util';
  * Returns a tree (undirected graph) that is constructed using only "tight"
  * edges.
  */
-const feasibleTree = (g: IGraph) => {
-  const t = new Graph({
+const feasibleTree = (g: DagreGraph) => {
+  const t = new DagreGraph({
     tree: [],
   });
 
@@ -38,7 +39,7 @@ const feasibleTree = (g: IGraph) => {
   const size = g.getAllNodes().length;
   t.addNode(start);
 
-  let edge: Edge<EdgeData>;
+  let edge: GraphEdge<EdgeData>;
   let delta: number;
   while (tightTree(t, g) < size) {
     edge = findMinSlackEdge(t, g);
@@ -53,7 +54,7 @@ const feasibleTree = (g: IGraph) => {
  * Finds a maximal tree of tight edges and returns the number of nodes in the
  * tree.
  */
-const tightTree = (t: IGraph, g: IGraph) => {
+const tightTree = (t: DagreGraph, g: DagreGraph) => {
   const dfs = (v: ID) => {
     g.getRelatedEdges(v, 'both').forEach((e) => {
       const edgeV = e.source;
@@ -103,15 +104,15 @@ const tightTree = (t: IGraph, g: IGraph) => {
  * Returns a tree (undirected graph) that is constructed using only "tight"
  * edges.
  */
-const feasibleTreeWithLayer = (g: IGraph) => {
-  const t = new Graph({ tree: [] });
+const feasibleTreeWithLayer = (g: DagreGraph) => {
+  const t = new DagreGraph({ tree: [] });
 
   // Choose arbitrary node from which to start our tree
   const start = g.getAllNodes()[0];
   const size = g.getAllNodes().length;
   t.addNode(start);
 
-  let edge: Edge<EdgeData>;
+  let edge: GraphEdge<EdgeData>;
   let delta: number;
   while (tightTreeWithLayer(t, g)! < size) {
     edge = findMinSlackEdge(t, g);
@@ -126,7 +127,7 @@ const feasibleTreeWithLayer = (g: IGraph) => {
  * Finds a maximal tree of tight edges and returns the number of nodes in the
  * tree.
  */
-const tightTreeWithLayer = (t: IGraph, g: IGraph) => {
+const tightTreeWithLayer = (t: DagreGraph, g: DagreGraph) => {
   const dfs = (v: ID) => {
     g.getRelatedEdges(v, 'both')?.forEach((e) => {
       const edgeV = e.source;
@@ -159,7 +160,7 @@ const tightTreeWithLayer = (t: IGraph, g: IGraph) => {
  * Finds the edge with the smallest slack that is incident on tree and returns
  * it.
  */
-const findMinSlackEdge = (t: IGraph, g: IGraph) => {
+const findMinSlackEdge = (t: DagreGraph, g: DagreGraph) => {
   return minBy(g.getAllEdges(), (e) => {
     if (t.hasNode(e.source) !== t.hasNode(e.target)) {
       return slack(g, e);
@@ -168,7 +169,7 @@ const findMinSlackEdge = (t: IGraph, g: IGraph) => {
   });
 };
 
-const shiftRanks = (t: IGraph, g: IGraph, delta: number) => {
+const shiftRanks = (t: DagreGraph, g: DagreGraph, delta: number) => {
   t.getAllNodes().forEach((tn) => {
     const v = g.getNode(tn.id);
     if (!v.data.rank) v.data.rank = 0;

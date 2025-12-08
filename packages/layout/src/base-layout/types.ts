@@ -16,14 +16,14 @@ export interface LayoutModelOptions<
    *
    * <en/> Custom node field mapping
    */
-  node?: (datum: N) => LayoutNode;
+  node?: (datum: N) => Partial<LayoutNode>;
 
   /**
    * <zh/> 自定义边属性映射
    *
    * <en/> Custom edge field mapping
    */
-  edge?: (datum: E) => LayoutEdge;
+  edge?: (datum: E) => Partial<LayoutEdge>;
 }
 
 export interface ViewportOptions {

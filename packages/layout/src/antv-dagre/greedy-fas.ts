@@ -8,9 +8,10 @@
  * @see https://github.com/dagrejs/dagre/blob/master/lib/greedy-fas.js
  */
 
-import { Edge, Graph, ID } from '@antv/graphlib';
-import { EdgeData, Graph as IGraph, NodeData } from '../types';
+import type { EdgeData, NodeData } from '../types/data';
+import type { ID } from '../types/id';
 import RawList from './data/list';
+import { DagreGraph, GraphEdge } from './graph';
 
 type StateNode = {
   v: ID;
@@ -25,8 +26,8 @@ class List extends RawList<StateNode> {}
 const DEFAULT_WEIGHT_FN = () => 1;
 
 export const greedyFAS = (
-  g: IGraph,
-  weightFn?: (e: Edge<EdgeData>) => number,
+  g: DagreGraph,
+  weightFn?: (e: GraphEdge<EdgeData>) => number,
 ) => {
   if (g.getAllNodes().length <= 1) return [];
   const state = buildState(g, weightFn || DEFAULT_WEIGHT_FN);
@@ -39,7 +40,7 @@ export const greedyFAS = (
     ?.flat();
 };
 
-const doGreedyFAS = (g: IGraph, buckets: List[], zeroIdx: number) => {
+const doGreedyFAS = (g: DagreGraph, buckets: List[], zeroIdx: number) => {
   let results: StateNode[] = [];
   const sources = buckets[buckets.length - 1];
   const sinks = buckets[0];
@@ -69,7 +70,7 @@ const doGreedyFAS = (g: IGraph, buckets: List[], zeroIdx: number) => {
 };
 
 const removeNode = (
-  g: IGraph,
+  g: DagreGraph,
   buckets: List[],
   zeroIdx: number,
   entry: StateNode,
@@ -114,8 +115,11 @@ const removeNode = (
   return collectPredecessors ? results : undefined;
 };
 
-const buildState = (g: IGraph, weightFn?: (e: Edge<EdgeData>) => number) => {
-  const fasGraph = new Graph<NodeData, EdgeData>();
+const buildState = (
+  g: DagreGraph,
+  weightFn?: (e: GraphEdge<EdgeData>) => number,
+) => {
+  const fasGraph = new DagreGraph<NodeData, EdgeData>();
   let maxIn = 0;
   let maxOut = 0;
 

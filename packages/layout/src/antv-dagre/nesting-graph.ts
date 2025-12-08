@@ -1,5 +1,5 @@
-import { ID } from '@antv/graphlib';
-import { Graph as IGraph } from '../types';
+import type { ID } from '../types/id';
+import { DagreGraph } from './graph';
 import { addBorderNode, addDummyNode } from './util';
 
 /*
@@ -25,7 +25,7 @@ import { addBorderNode, addDummyNode } from './util';
  * The nesting graph idea comes from Sander, "Layout of Compound Directed
  * Graphs."
  */
-const run = (g: IGraph) => {
+const run = (g: DagreGraph) => {
   const root = addDummyNode(g, 'root', {}, '_root');
   const depths = treeDepths(g);
   let maxDepth = Math.max(...Object.values(depths));
@@ -66,7 +66,7 @@ const run = (g: IGraph) => {
 };
 
 const dfs = (
-  g: IGraph,
+  g: DagreGraph,
   root: ID,
   nodeSep: number,
   weight: number,
@@ -145,7 +145,7 @@ const dfs = (
   }
 };
 
-const treeDepths = (g: IGraph) => {
+const treeDepths = (g: DagreGraph) => {
   const depths: Record<ID, number> = {};
   const dfs = (v: ID, depth: number) => {
     const children = g.getChildren(v);
@@ -158,7 +158,7 @@ const treeDepths = (g: IGraph) => {
   return depths;
 };
 
-const sumWeights = (g: IGraph) => {
+const sumWeights = (g: DagreGraph) => {
   let result = 0;
   g.getAllEdges().forEach((e) => {
     result += e.data.weight!;
@@ -166,7 +166,7 @@ const sumWeights = (g: IGraph) => {
   return result;
 };
 
-const cleanup = (g: IGraph, nestingRoot?: ID) => {
+const cleanup = (g: DagreGraph, nestingRoot?: ID) => {
   // const graphLabel = g.graph();
   // graphLabel.nestingRoot && g.removeNode(graphLabel.nestingRoot);
   // delete graphLabel.nestingRoot;

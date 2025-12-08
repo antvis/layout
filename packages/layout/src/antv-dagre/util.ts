@@ -1,6 +1,7 @@
-import { Graph, ID, Node } from '@antv/graphlib';
 import { isNumber } from '@antv/util';
-import { EdgeData, Graph as IGraph, NodeData } from '../types';
+import { EdgeData, NodeData } from '../types/data';
+import type { ID } from '../types/id';
+import { DagreGraph, GraphNode } from './graph';
 
 const safeSort = (valueA?: number, valueB?: number) => {
   return Number(valueA) - Number(valueB);
@@ -10,7 +11,7 @@ const safeSort = (valueA?: number, valueB?: number) => {
  * Adds a dummy node to the graph and return v.
  */
 export const addDummyNode = (
-  g: IGraph,
+  g: DagreGraph,
   type: string,
   data: NodeData,
   name: string,
@@ -33,8 +34,8 @@ export const addDummyNode = (
  * Returns a new graph with only simple edges. Handles aggregation of data
  * associated with multi-edges.
  */
-export const simplify = (g: IGraph) => {
-  const simplified = new Graph<NodeData, EdgeData>();
+export const simplify = (g: DagreGraph) => {
+  const simplified = new DagreGraph<NodeData, EdgeData>();
   g.getAllNodes().forEach((v) => {
     simplified.addNode({ ...v });
   });
@@ -63,8 +64,8 @@ export const simplify = (g: IGraph) => {
   return simplified;
 };
 
-export const asNonCompoundGraph = (g: IGraph): IGraph => {
-  const simplified = new Graph();
+export const asNonCompoundGraph = (g: DagreGraph): DagreGraph => {
+  const simplified = new DagreGraph();
 
   g.getAllNodes().forEach((node) => {
     if (!g.getChildren(node.id).length) {
@@ -86,7 +87,7 @@ export const zipObject = <T = any>(keys: ID[], values: T[]) => {
   }, {} as Record<ID, T>);
 };
 
-export const successorWeights = (g: IGraph) => {
+export const successorWeights = (g: DagreGraph) => {
   const weightsMap: Record<ID, Record<string, number>> = {};
 
   g.getAllNodes().forEach((node) => {
@@ -100,7 +101,7 @@ export const successorWeights = (g: IGraph) => {
   return weightsMap;
 };
 
-export const predecessorWeights = (g: IGraph) => {
+export const predecessorWeights = (g: DagreGraph) => {
   const nodes = g.getAllNodes();
 
   const weightMap = nodes.map((v) => {
@@ -165,7 +166,7 @@ export const intersectRect = (
  * Given a DAG with each node assigned "rank" and "order" properties, this
  * const will produce a matrix with the ids of each node.
  */
-export const buildLayerMatrix = (g: IGraph) => {
+export const buildLayerMatrix = (g: DagreGraph) => {
   const layeringNodes: ID[][] = [];
   const rankMax = maxRank(g) + 1;
   for (let i = 0; i < rankMax; i++) {
@@ -182,7 +183,7 @@ export const buildLayerMatrix = (g: IGraph) => {
 
   for (let i = 0; i < rankMax; i++) {
     layeringNodes[i] = layeringNodes[i].sort((va: ID, vb: ID) =>
-      safeSort(g.getNode(va).data.order!, g.getNode(vb).data.order!),
+      safeSort(g.getNode(va)!.data.order!, g.getNode(vb)!.data.order!),
     );
   }
 
@@ -193,7 +194,7 @@ export const buildLayerMatrix = (g: IGraph) => {
  * Adjusts the ranks for all nodes in the graph such that all nodes v have
  * rank(v) >= 0 and at least one node w has rank(w) = 0.
  */
-export const normalizeRanks = (g: IGraph) => {
+export const normalizeRanks = (g: DagreGraph) => {
   const nodeRanks = g
     .getAllNodes()
     .filter((v) => v.data.rank !== undefined)
@@ -206,7 +207,7 @@ export const normalizeRanks = (g: IGraph) => {
   });
 };
 
-export const removeEmptyRanks = (g: IGraph, nodeRankFactor: number = 0) => {
+export const removeEmptyRanks = (g: DagreGraph, nodeRankFactor: number = 0) => {
   // Ranks may not start at 0, so we need to offset them
   const nodes = g.getAllNodes();
   const nodeRanks = nodes
@@ -245,7 +246,7 @@ export const removeEmptyRanks = (g: IGraph, nodeRankFactor: number = 0) => {
 };
 
 export const addBorderNode = (
-  g: IGraph,
+  g: DagreGraph,
   prefix: string,
   rank?: number,
   order?: number,
@@ -261,7 +262,7 @@ export const addBorderNode = (
   return addDummyNode(g, 'border', node, prefix);
 };
 
-export const maxRank = (g: IGraph) => {
+export const maxRank = (g: DagreGraph) => {
   let maxRank: number;
   g.getAllNodes().forEach((v) => {
     const rank = v.data.rank!;
@@ -307,11 +308,11 @@ export const minBy = <T = any>(array: T[], func: (param: T) => number) => {
 };
 
 const doDFS = (
-  graph: IGraph,
-  node: Node<NodeData>,
+  graph: DagreGraph,
+  node: GraphNode<NodeData>,
   postorder: boolean,
   visited: ID[],
-  navigator: (n: ID) => Node<NodeData>[],
+  navigator: (n: ID) => GraphNode<NodeData>[] | undefined,
   result: ID[],
 ) => {
   if (!visited.includes(node.id)) {
@@ -319,9 +320,12 @@ const doDFS = (
     if (!postorder) {
       result.push(node.id);
     }
-    navigator(node.id).forEach((n) =>
-      doDFS(graph, n, postorder, visited, navigator, result),
-    );
+    const neighbors = navigator(node.id);
+    if (neighbors) {
+      neighbors.forEach((n) =>
+        doDFS(graph, n, postorder, visited, navigator, result),
+      );
+    }
     if (postorder) {
       result.push(node.id);
     }
@@ -333,14 +337,14 @@ const doDFS = (
  * @description.zh-CN DFS 遍历。
  */
 export const dfs = (
-  graph: IGraph,
-  node: Node<NodeData> | Node<NodeData>[],
+  graph: DagreGraph,
+  node: GraphNode<NodeData> | GraphNode<NodeData>[],
   order: 'pre' | 'post',
   isDirected: boolean,
 ) => {
   const nodes = Array.isArray(node) ? node : [node];
   const navigator = (n: ID) =>
-    (isDirected ? graph.getSuccessors(n) : graph.getNeighbors(n))!;
+    isDirected ? graph.getSuccessors(n) : graph.getNeighbors(n);
   const results: ID[] = [];
   const visited: ID[] = [];
   nodes.forEach((node) => {

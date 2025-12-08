@@ -1,5 +1,6 @@
-import { Edge, ID, Node } from '@antv/graphlib';
-import { EdgeData, Graph as IGraph, NodeData } from '../../types';
+import type { EdgeData, NodeData } from '../../types/data';
+import type { ID } from '../../types/id';
+import { DagreGraph } from '../graph';
 import { dfs, minBy, simplify } from '../util';
 import { feasibleTree } from './feasible-tree';
 import { longestPath as initRank, slack } from './util';
@@ -37,15 +38,15 @@ import { longestPath as initRank, slack } from './util';
  * for Drawing Directed Graphs." The structure of the file roughly follows the
  * structure of the overall algorithm.
  */
-export const networkSimplex = (og: IGraph) => {
+export const networkSimplex = (og: DagreGraph) => {
   const g = simplify(og);
   initRank(g);
   const t = feasibleTree(g);
   initLowLimValues(t);
   initCutValues(t, g);
 
-  let e: Edge<EdgeData> | undefined;
-  let f: Edge<EdgeData>;
+  let e: EdgeData | undefined;
+  let f: EdgeData;
   while ((e = leaveEdge(t))) {
     f = enterEdge(t, g, e);
     exchangeEdges(t, g, e, f);
@@ -55,7 +56,7 @@ export const networkSimplex = (og: IGraph) => {
 /*
  * Initializes cut values for all edges in the tree.
  */
-export const initCutValues = (t: IGraph, g: IGraph) => {
+export const initCutValues = (t: DagreGraph, g: DagreGraph) => {
   let vs = dfs(t, t.getAllNodes(), 'post', false);
   vs = vs.slice(0, vs?.length - 1);
   vs.forEach((v: ID) => {
@@ -63,7 +64,7 @@ export const initCutValues = (t: IGraph, g: IGraph) => {
   });
 };
 
-const assignCutValue = (t: IGraph, g: IGraph, child: ID) => {
+const assignCutValue = (t: DagreGraph, g: DagreGraph, child: ID) => {
   const childLab = t.getNode(child)!;
   const parent = childLab.data.parent! as ID;
 
@@ -78,7 +79,7 @@ const assignCutValue = (t: IGraph, g: IGraph, child: ID) => {
  * Given the tight tree, its graph, and a child in the graph calculate and
  * return the cut value for the edge between the child and its parent.
  */
-export const calcCutValue = (t: IGraph, g: IGraph, child: ID) => {
+export const calcCutValue = (t: DagreGraph, g: DagreGraph, child: ID) => {
   const childLab = t.getNode(child)!;
   const parent = childLab.data.parent as ID;
   // True if the child is on the tail end of the edge in the directed graph
@@ -124,14 +125,14 @@ export const calcCutValue = (t: IGraph, g: IGraph, child: ID) => {
 };
 
 export const initLowLimValues = (
-  tree: IGraph,
+  tree: DagreGraph,
   root: ID = tree.getAllNodes()[0].id,
 ) => {
   dfsAssignLowLim(tree, {}, 1, root);
 };
 
 const dfsAssignLowLim = (
-  tree: IGraph,
+  tree: DagreGraph,
   visited: Record<ID, boolean>,
   nextLim: number,
   v: ID,
@@ -160,13 +161,13 @@ const dfsAssignLowLim = (
   return useNextLim;
 };
 
-export const leaveEdge = (tree: IGraph) => {
+export const leaveEdge = (tree: DagreGraph) => {
   return tree.getAllEdges().find((e) => {
     return e.data.cutvalue! < 0;
   });
 };
 
-export const enterEdge = (t: IGraph, g: IGraph, edge: Edge<EdgeData>) => {
+export const enterEdge = (t: DagreGraph, g: DagreGraph, edge: EdgeData) => {
   let v = edge.source;
   let w = edge.target;
 
@@ -210,10 +211,10 @@ export const enterEdge = (t: IGraph, g: IGraph, edge: Edge<EdgeData>) => {
  * @param f edge to add
  */
 export const exchangeEdges = (
-  t: IGraph,
-  g: IGraph,
-  e: Edge<EdgeData>,
-  f: Edge<EdgeData>,
+  t: DagreGraph,
+  g: DagreGraph,
+  e: EdgeData,
+  f: EdgeData,
 ) => {
   // FIXME: use undirected edge?
   const existed = t
@@ -235,7 +236,7 @@ export const exchangeEdges = (
   updateRanks(t, g);
 };
 
-const updateRanks = (t: IGraph, g: IGraph) => {
+const updateRanks = (t: DagreGraph, g: DagreGraph) => {
   const root = t.getAllNodes().find((v) => {
     return !v.data.parent;
   })!;
@@ -263,7 +264,7 @@ const updateRanks = (t: IGraph, g: IGraph) => {
 /*
  * Returns true if the edge is in the tree.
  */
-const isTreeEdge = (tree: IGraph, u: ID, v: ID) => {
+const isTreeEdge = (tree: DagreGraph, u: ID, v: ID) => {
   // FIXME: use undirected edge?
   return tree
     .getRelatedEdges(u, 'both')
@@ -274,7 +275,7 @@ const isTreeEdge = (tree: IGraph, u: ID, v: ID) => {
  * Returns true if the specified node is descendant of the root node per the
  * assigned low and lim attributes in the tree.
  */
-const isDescendant = (vLabel: Node<NodeData>, rootLabel: Node<NodeData>) => {
+const isDescendant = (vLabel: NodeData, rootLabel: NodeData) => {
   return (
     rootLabel.data.low! <= vLabel.data.lim! &&
     vLabel.data.lim! <= rootLabel.data.lim!

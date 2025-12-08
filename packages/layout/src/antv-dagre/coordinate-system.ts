@@ -1,15 +1,16 @@
-import { Node } from '@antv/graphlib';
-import type { Graph, NodeData, Point } from '../types';
+import type { NodeData } from '../types/data';
+import type { Point } from '../types/point';
+import { DagreGraph } from './graph';
 import type { DagreRankdir } from './types';
 
-const adjust = (g: Graph, rankdir: DagreRankdir) => {
+const adjust = (g: DagreGraph, rankdir: DagreRankdir) => {
   const rd = rankdir.toLowerCase();
   if (rd === 'lr' || rd === 'rl') {
     swapWidthHeight(g);
   }
 };
 
-const undo = (g: Graph, rankdir: DagreRankdir) => {
+const undo = (g: DagreGraph, rankdir: DagreRankdir) => {
   const rd = rankdir.toLowerCase();
   if (rd === 'bt' || rd === 'rl') {
     reverseY(g);
@@ -21,7 +22,7 @@ const undo = (g: Graph, rankdir: DagreRankdir) => {
   }
 };
 
-const swapWidthHeight = (g: Graph) => {
+const swapWidthHeight = (g: DagreGraph) => {
   g.getAllNodes().forEach((v) => {
     swapWidthHeightOne(v);
   });
@@ -30,13 +31,13 @@ const swapWidthHeight = (g: Graph) => {
   });
 };
 
-const swapWidthHeightOne = (node: Node<NodeData>) => {
+const swapWidthHeightOne = (node: NodeData) => {
   const w = node.data.width;
   node.data.width = node.data.height;
   node.data.height = w;
 };
 
-const reverseY = (g: Graph) => {
+const reverseY = (g: DagreGraph) => {
   g.getAllNodes().forEach((v) => {
     reverseYOne(v.data);
   });
@@ -55,7 +56,7 @@ const reverseYOne = (node: any) => {
   }
 };
 
-const swapXY = (g: Graph) => {
+const swapXY = (g: DagreGraph) => {
   g.getAllNodes().forEach((v) => {
     swapXYOne(v.data);
   });

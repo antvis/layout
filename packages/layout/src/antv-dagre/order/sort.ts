@@ -1,4 +1,4 @@
-import { ID } from '@antv/graphlib';
+import type { ID } from '../../types/id';
 import { partition } from '../util';
 import { ConflictEntry } from './resolve-conflicts';
 

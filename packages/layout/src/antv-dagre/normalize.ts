@@ -1,5 +1,6 @@
-import { Edge, ID } from '@antv/graphlib';
-import { EdgeData, Graph as IGraph } from '../types';
+import type { ID } from '../types/id';
+import { EdgeData } from '../types/data';
+import { DagreGraph, GraphEdge } from './graph';
 import { addDummyNode } from './util';
 
 /*
@@ -22,11 +23,11 @@ import { addDummyNode } from './util';
 const DUMMY_NODE_EDGE = 'edge';
 const DUMMY_NODE_EDGE_LABEL = 'edge-label';
 
-const run = (g: IGraph, dummyChains: ID[]) => {
+const run = (g: DagreGraph, dummyChains: ID[]) => {
   g.getAllEdges().forEach((edge) => normalizeEdge(g, edge, dummyChains));
 };
 
-const normalizeEdge = (g: IGraph, e: Edge<EdgeData>, dummyChains: ID[]) => {
+const normalizeEdge = (g: DagreGraph, e: GraphEdge<EdgeData>, dummyChains: ID[]) => {
   let v = e.source;
   let vRank = g.getNode(v)!.data.rank!;
   const w = e.target;
@@ -41,7 +42,7 @@ const normalizeEdge = (g: IGraph, e: Edge<EdgeData>, dummyChains: ID[]) => {
   let nodeData: {
     width: number;
     height: number;
-    originalEdge: Edge<EdgeData>;
+    originalEdge: GraphEdge<EdgeData>;
     rank: number;
     dummy?: string;
     labelpos?: string;
@@ -85,11 +86,11 @@ const normalizeEdge = (g: IGraph, e: Edge<EdgeData>, dummyChains: ID[]) => {
   });
 };
 
-const undo = (g: IGraph, dummyChains: ID[]) => {
+const undo = (g: DagreGraph, dummyChains: ID[]) => {
   dummyChains.forEach((v) => {
     let node = g.getNode(v)!;
     const { data } = node;
-    const originalEdge = data.originalEdge as Edge<EdgeData>;
+    const originalEdge = data.originalEdge as GraphEdge<EdgeData>;
 
     let w;
     // Restore original edge.
