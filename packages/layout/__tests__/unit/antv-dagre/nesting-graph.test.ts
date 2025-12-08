@@ -1,13 +1,13 @@
-import { EdgeData, NodeData } from '@/src';
+import { DagreGraph as Graph } from '@/src/antv-dagre/graph';
 import { cleanup, run } from '@/src/antv-dagre/nesting-graph';
-import { Graph, ID } from '@antv/graphlib';
+import type { ID } from '@/src/types/id';
 import { components } from '../../utils';
 
 describe('rank/nestingGraph', function () {
-  let g: Graph<NodeData, EdgeData>;
+  let g: Graph;
 
   beforeEach(function () {
-    g = new Graph<NodeData, EdgeData>({
+    g = new Graph({
       tree: [],
     });
   });

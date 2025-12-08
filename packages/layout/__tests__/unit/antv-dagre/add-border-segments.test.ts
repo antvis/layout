@@ -1,12 +1,11 @@
-import { Graph } from '@antv/graphlib';
-import { EdgeData, NodeData } from '@/src';
 import { addBorderSegments } from '@/src/antv-dagre/add-border-segments';
+import { DagreGraph as Graph } from '@/src/antv-dagre/graph';
 
 describe('addBorderSegments', function () {
-  let g: Graph<NodeData, EdgeData>;
+  let g: Graph;
 
   beforeEach(function () {
-    g = new Graph<NodeData, EdgeData>({
+    g = new Graph({
       tree: [],
     });
   });

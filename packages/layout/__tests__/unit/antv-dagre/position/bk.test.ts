@@ -1,7 +1,7 @@
-import { Graph, ID } from '@antv/graphlib';
-import { EdgeData, NodeData } from '@/src';
+import { DagreGraph as Graph } from '@/src/antv-dagre/graph';
 import * as bk from '@/src/antv-dagre/position/bk';
 import { buildLayerMatrix } from '@/src/antv-dagre/util';
+import type { ID } from '@/src/types/id';
 
 let findType1Conflicts = bk.findType1Conflicts;
 let findType2Conflicts = bk.findType2Conflicts;
@@ -15,10 +15,10 @@ let findSmallestWidthAlignment = bk.findSmallestWidthAlignment;
 let positionX = bk.positionX;
 
 describe('position/bk', function () {
-  let g: Graph<NodeData, EdgeData>;
+  let g: Graph;
 
   beforeEach(function () {
-    g = new Graph<NodeData, EdgeData>();
+    g = new Graph({ tree: [] });
   });
 
   describe('findType1Conflicts', function () {

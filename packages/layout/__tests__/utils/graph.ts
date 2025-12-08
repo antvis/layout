@@ -1,5 +1,5 @@
-import { Graph as IGraph } from '@/src';
-import { ID } from '@antv/graphlib';
+import { DagreGraph as Graph } from '@/src/antv-dagre/graph';
+import { ID } from '@/src/types/id';
 
 export function mathEqual(a: number, b: number) {
   return Math.abs(a - b) < 1;
@@ -28,7 +28,19 @@ type Entry = {
   lowlink: number;
   index: number;
 };
-export const tarjan = (graph: IGraph) => {
+
+export const findCycles = (graph: Graph) => {
+  return tarjan(graph).filter(
+    (cmpt) =>
+      cmpt.length > 1 ||
+      (cmpt.length === 1 &&
+        !!graph
+          .getRelatedEdges(cmpt[0], 'out')
+          .find((e) => e.target === cmpt[0])),
+  );
+};
+
+export const tarjan = (graph: Graph) => {
   let index = 0;
   const stack: ID[] = [];
   const visited = new Map<ID, Entry>(); // node id -> { onStack, lowlink, index }
@@ -82,18 +94,7 @@ export const tarjan = (graph: IGraph) => {
   return results;
 };
 
-export const findCycles = (graph: IGraph) => {
-  return tarjan(graph).filter(
-    (cmpt) =>
-      cmpt.length > 1 ||
-      (cmpt.length === 1 &&
-        !!graph
-          .getRelatedEdges(cmpt[0], 'out')
-          .find((e) => e.target === cmpt[0])),
-  );
-};
-
-export const components = (graph: IGraph) => {
+export const components = (graph: Graph) => {
   const visited = new Set();
   const resultComponents: ID[][] = [];
   const nodes = graph.getAllNodes();
