@@ -50,7 +50,7 @@ export const buildLayerGraph = (
       (v.data.minRank! <= rank && rank <= v.data.maxRank!)
     ) {
       if (!result.hasNode(v.id)) {
-        result.addNode({ ...v });
+        result.addNode({ ...v});
       }
 
       if (parent?.id && !result.hasNode(parent?.id)) {
@@ -91,12 +91,10 @@ export const buildLayerGraph = (
       // console.log(v);
 
       if (v.data.hasOwnProperty('minRank')) {
-        const index = rank - v.data.minRank!;
-
         result.updateNodeData(v.id, {
           ...v.data,
-          borderLeft: [(v.data.borderLeft as ID[])?.[index]],
-          borderRight: [(v.data.borderRight as ID[])?.[index]],
+          borderLeft: [(v.data.borderLeft as ID[])?.[rank]],
+          borderRight: [(v.data.borderRight as ID[])?.[rank]],
         });
       }
     }

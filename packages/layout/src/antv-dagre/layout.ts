@@ -1,4 +1,4 @@
-import { clone, isNil } from '@antv/util';
+import { isNil } from '@antv/util';
 import { EdgeData, NodeData, Point } from '../types';
 import type { ID } from '../types/id';
 import { run as runAcyclic, undo as undoAcyclic } from './acyclic';
@@ -66,20 +66,20 @@ export const layout = (
   }
   let dimension;
   // TODO: 暂时处理层级设置不正确时的异常报错，提示设置正确的层级
-  // try {
-  dimension = runLayout(layoutGraph, options);
-  // } catch (e) {
-  //   if (
-  //     e.message === 'Not possible to find intersection inside of the rectangle'
-  //   ) {
-  //     console.error(
-  //       "The following error may be caused by improper layer setting, please make sure your manual layer setting does not violate the graph's structure:\n",
-  //       e,
-  //     );
-  //     return;
-  //   }
-  //   throw e;
-  // }
+  try {
+    dimension = runLayout(layoutGraph, options);
+  } catch (e) {
+    if (
+      e.message === 'Not possible to find intersection inside of the rectangle'
+    ) {
+      console.error(
+        "The following error may be caused by improper layer setting, please make sure your manual layer setting does not violate the graph's structure:\n",
+        e,
+      );
+      return;
+    }
+    throw e;
+  }
   updateInputGraph(g, layoutGraph);
   return dimension;
 };
@@ -140,11 +140,7 @@ const runLayout = (
     initDataOrder(g, nodeOrder);
   }
 
-  console.log(clone(g.getNode('A')));
-
   order(g, keepNodeOrder);
-
-  console.log(clone(g.getNode('A')));
 
   insertSelfEdges(g);
 
