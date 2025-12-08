@@ -14,8 +14,8 @@ import type {
   Point,
   PointTuple,
 } from './types';
+import type { Size } from './types/size';
 import { cloneFormatData, formatNumberFn, formatSizeFn } from './util';
-import type { Size } from './util/size';
 import { parseSize } from './util/size';
 
 /**

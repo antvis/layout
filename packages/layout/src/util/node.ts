@@ -1,5 +1,5 @@
 import type { Node } from '../types';
-import type { Size } from '../util/size';
+import type { Size } from '../types/size';
 
 /**
  * Get the maximum size of nodes

@@ -22,6 +22,8 @@ import {
   FormatedOptions,
 } from './types';
 
+export type { ForceLayoutOptions };
+
 const DEFAULTS_LAYOUT_OPTIONS: Partial<ForceLayoutOptions> = {
   dimensions: 2,
   maxIteration: 500,
