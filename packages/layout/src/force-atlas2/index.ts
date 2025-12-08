@@ -14,12 +14,14 @@ import type {
   OutNodeData,
   PointTuple,
 } from '../types';
+import type { Size } from '../types/size';
 import { cloneFormatData, formatNodeSizeToNumber } from '../util';
 import { handleSingleNodeGraph } from '../util/common';
-import type { Size } from '../util/size';
 import Body from './body';
 import Quad from './quad';
 import QuadTree from './quad-tree';
+
+export type { ForceAtlas2LayoutOptions };
 
 const DEFAULTS_LAYOUT_OPTIONS: Partial<ForceAtlas2LayoutOptions> = {
   center: [0, 0],

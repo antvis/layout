@@ -69,8 +69,8 @@ export class ConcentricLayout extends BaseLayout<ConcentricLayoutOptions> {
       orderByDegree(this.model);
     } else {
       const sorter = (nodeA, nodeB) => {
-        const a = sortBy(nodeA);
-        const b = sortBy(nodeB);
+        const a = (sortBy as (node: LayoutNode) => number)(nodeA);
+        const b = (sortBy as (node: LayoutNode) => number)(nodeB);
         return a === b ? 0 : a > b ? -1 : 1;
       };
       orderBySorter(this.model, sorter);
