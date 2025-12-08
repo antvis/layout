@@ -1,12 +1,11 @@
-import { Graph } from '@antv/graphlib';
-import { EdgeData, NodeData } from '@/src';
+import { DagreGraph as Graph } from '@/src/antv-dagre/graph';
 import { barycenter } from '@/src/antv-dagre/order/barycenter';
 
 describe('order/barycenter', function () {
-  let g: Graph<NodeData, EdgeData>;
+  let g: Graph;
 
   beforeEach(function () {
-    g = new Graph<NodeData, EdgeData>({
+    g = new Graph({
       nodes: [],
       edges: [],
     });

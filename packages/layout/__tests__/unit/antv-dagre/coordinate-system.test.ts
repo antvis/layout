@@ -1,15 +1,11 @@
-import { Graph } from '@antv/graphlib';
-import { EdgeData, NodeData } from '@/src';
-import {
-  adjust,
-  undo,
-} from '@/src/antv-dagre/coordinate-system';
+import { adjust, undo } from '@/src/antv-dagre/coordinate-system';
+import { DagreGraph as Graph } from '@/src/antv-dagre/graph';
 
 describe('coordinateSystem', function () {
-  let g: Graph<NodeData, EdgeData>;
+  let g: Graph;
 
   beforeEach(function () {
-    g = new Graph<NodeData, EdgeData>();
+    g = new Graph({ tree: [] });
   });
 
   describe('adjust', function () {

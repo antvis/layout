@@ -1,9 +1,4 @@
-import { Edge, Graph } from '@antv/graphlib';
-import {
-  EdgeData,
-  Graph as IGraph,
-  NodeData,
-} from '../../../../src';
+import { DagreGraph as Graph } from '@/src/antv-dagre/graph';
 import {
   calcCutValue,
   enterEdge,
@@ -15,19 +10,20 @@ import {
 } from '@/src/antv-dagre/rank/network-simplex';
 import { longestPath } from '@/src/antv-dagre/rank/util';
 import { normalizeRanks } from '@/src/antv-dagre/util';
+import { EdgeData } from '@/src/types/data';
 
 describe('network simplex', function () {
-  let g: Graph<NodeData, EdgeData>;
-  let t: Graph<NodeData, EdgeData>;
-  let gansnerGraph: Graph<NodeData, EdgeData>;
-  let gansnerTree: Graph<NodeData, EdgeData>;
+  let g: Graph;
+  let t: Graph;
+  let gansnerGraph: Graph;
+  let gansnerTree: Graph;
 
   beforeEach(function () {
-    g = new Graph<NodeData, EdgeData>();
-    t = new Graph<NodeData, EdgeData>({
+    g = new Graph({ tree: [] });
+    t = new Graph({
       tree: [],
     });
-    gansnerGraph = new Graph<NodeData, EdgeData>({
+    gansnerGraph = new Graph({
       nodes: [
         {
           id: 'a',
@@ -147,7 +143,7 @@ describe('network simplex', function () {
       ],
     });
 
-    gansnerTree = new Graph<NodeData, EdgeData>({
+    gansnerTree = new Graph({
       tree: [],
       nodes: [
         {
@@ -501,7 +497,7 @@ describe('network simplex', function () {
 
   describe('leaveEdge', function () {
     it('returns undefined if there is no edge with a negative cutvalue', function () {
-      let tree = new Graph();
+      let tree = new Graph({ tree: [] });
 
       tree.addNodes([
         {
@@ -541,7 +537,7 @@ describe('network simplex', function () {
     });
 
     it('returns an edge if one is found with a negative cutvalue', function () {
-      let tree = new Graph();
+      let tree = new Graph({ tree: [] });
       tree.addNodes([
         {
           id: 'a',
@@ -980,7 +976,7 @@ describe('network simplex', function () {
 
   describe('initLowLimValues', function () {
     it('assigns low, lim, and parent for each node in a tree', function () {
-      let g = new Graph<any, any>({
+      let g = new Graph({
         nodes: [
           {
             id: 'a',
@@ -2341,12 +2337,12 @@ describe('network simplex', function () {
   });
 });
 
-function ns(g: IGraph) {
+function ns(g: Graph) {
   networkSimplex(g);
   normalizeRanks(g);
 }
 
-function undirectedEdge(e: Edge<EdgeData>) {
+function undirectedEdge(e: EdgeData) {
   return e.source < e.target
     ? { source: e.source, target: e.target }
     : { source: e.target, target: e.source };

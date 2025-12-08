@@ -1,15 +1,15 @@
-import { EdgeData, NodeData } from '@/src';
+import { EdgeData } from '@/src';
 import { run, undo } from '@/src/antv-dagre/acyclic';
-import { Edge, Graph } from '@antv/graphlib';
+import { DagreGraph as Graph } from '@/src/antv-dagre/graph';
 import { findCycles } from '../../utils';
 
 describe('acyclic', function () {
   let ACYCLICERS = ['greedy', 'dfs', 'unknown-should-still-work'];
 
-  let g: Graph<NodeData, EdgeData>;
+  let g: Graph;
 
   beforeEach(function () {
-    g = new Graph<NodeData, EdgeData>();
+    g = new Graph({ tree: [] });
   });
 
   ACYCLICERS.forEach(function (acyclicer) {

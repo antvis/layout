@@ -1,12 +1,11 @@
-import { Graph } from '@antv/graphlib';
-import { EdgeData, NodeData } from '@/src';
+import { DagreGraph as Graph } from '@/src/antv-dagre/graph';
 import { feasibleTree } from '@/src/antv-dagre/rank/feasible-tree';
 
 describe('feasibleTree', function () {
-  let g: Graph<NodeData, EdgeData>;
+  let g: Graph;
 
   beforeEach(function () {
-    g = new Graph<NodeData, EdgeData>();
+    g = new Graph({ tree: [] });
   });
 
   it('creates a tree for a trivial input graph', function () {

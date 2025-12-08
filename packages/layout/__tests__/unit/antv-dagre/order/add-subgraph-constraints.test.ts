@@ -1,16 +1,15 @@
-import { Graph } from '@antv/graphlib';
-import { EdgeData, NodeData } from '@/src';
+import { DagreGraph as Graph } from '@/src/antv-dagre/graph';
 import { addSubgraphConstraints } from '@/src/antv-dagre/order/add-subgraph-constraints';
 
 describe('order/addSubgraphConstraints', function () {
-  let g: Graph<NodeData, EdgeData>;
-  let cg: Graph<NodeData, EdgeData>;
+  let g: Graph;
+  let cg: Graph;
 
   beforeEach(function () {
-    g = new Graph<NodeData, EdgeData>({
+    g = new Graph({
       tree: [],
     });
-    cg = new Graph<NodeData, EdgeData>({
+    cg = new Graph({
       nodes: [],
       edges: [],
     });

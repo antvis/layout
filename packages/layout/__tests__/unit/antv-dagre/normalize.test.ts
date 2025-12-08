@@ -1,12 +1,13 @@
-import { Edge, Graph, ID } from '@antv/graphlib';
-import { EdgeData, NodeData } from '@/src';
+import { DagreGraph as Graph } from '@/src/antv-dagre/graph';
 import { run, undo } from '@/src/antv-dagre/normalize';
+import { EdgeData } from '@/src/types/data';
+import type { ID } from '@/src/types/id';
 
 describe('normalize', function () {
-  let g: Graph<NodeData, EdgeData>;
+  let g: Graph;
 
   beforeEach(function () {
-    g = new Graph<NodeData, EdgeData>({
+    g = new Graph({
       tree: [],
     });
   });
@@ -412,6 +413,6 @@ describe('normalize', function () {
   });
 });
 
-function incidentNodes(edge: Edge<EdgeData>) {
+function incidentNodes(edge: EdgeData) {
   return { source: edge.source, target: edge.target };
 }

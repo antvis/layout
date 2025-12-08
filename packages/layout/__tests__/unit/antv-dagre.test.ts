@@ -1,5 +1,5 @@
-import { AntVDagreLayout, EdgeData, NodeData } from '@/src';
-import { Graph } from '@antv/graphlib';
+import { AntVDagreLayout } from '@/src';
+import { calculatePositions } from '../utils/render-update';
 
 const data = {
   nodes: [
@@ -106,8 +106,6 @@ const data = {
 
 describe('DagreLayout', () => {
   it('should layout correctly with UR alignment.', async () => {
-    const graph = new Graph<NodeData, EdgeData>(data);
-
     //             +---+
     //             |-| |
     //            -/-|-+
@@ -144,35 +142,35 @@ describe('DagreLayout', () => {
       align: 'UR',
     });
 
-    const positions = await dagre.execute(graph);
-    expect(positions.nodes[0].data.x).toBe(160);
-    expect(positions.nodes[0].data.y).toBe(0);
+    await dagre.execute(data);
+    const positions = calculatePositions(dagre);
 
-    expect(positions.nodes[1].data.x).toBe(0);
-    expect(positions.nodes[1].data.y).toBe(150);
+    expect(positions.nodes[0].x).toBe(160);
+    expect(positions.nodes[0].y).toBe(0);
 
-    expect(positions.nodes[2].data.x).toBe(160);
-    expect(positions.nodes[2].data.y).toBe(150);
+    expect(positions.nodes[1].x).toBe(0);
+    expect(positions.nodes[1].y).toBe(150);
 
-    expect(positions.nodes[3].data.x).toBe(160);
-    expect(positions.nodes[3].data.y).toBe(300);
+    expect(positions.nodes[2].x).toBe(160);
+    expect(positions.nodes[2].y).toBe(150);
 
-    expect(positions.nodes[4].data.x).toBe(160);
-    expect(positions.nodes[4].data.y).toBe(450);
+    expect(positions.nodes[3].x).toBe(160);
+    expect(positions.nodes[3].y).toBe(300);
 
-    expect(positions.nodes[5].data.x).toBe(160);
-    expect(positions.nodes[5].data.y).toBe(600);
+    expect(positions.nodes[4].x).toBe(160);
+    expect(positions.nodes[4].y).toBe(450);
 
-    expect(positions.nodes[6].data.x).toBe(0);
-    expect(positions.nodes[6].data.y).toBe(750);
+    expect(positions.nodes[5].x).toBe(160);
+    expect(positions.nodes[5].y).toBe(600);
 
-    expect(positions.nodes[7].data.x).toBe(160);
-    expect(positions.nodes[7].data.y).toBe(750);
+    expect(positions.nodes[6].x).toBe(0);
+    expect(positions.nodes[6].y).toBe(750);
+
+    expect(positions.nodes[7].x).toBe(160);
+    expect(positions.nodes[7].y).toBe(750);
   });
 
   it('should layout correctly with UR alignment & ranksepFunc.', async () => {
-    const graph = new Graph<NodeData, EdgeData>(data);
-
     //             +---+
     //             |-| |
     //            -/-|-+
@@ -203,35 +201,36 @@ describe('DagreLayout', () => {
     // +---+       +---+
     const dagre = new AntVDagreLayout({
       nodeSize: 10,
-      ranksepFunc: () => 70,
+      ranksep: () => 70,
       controlPoints: true,
       begin: [0, 0],
       align: 'UR',
     });
 
-    const positions = await dagre.execute(graph);
-    expect(positions.nodes[0].data.x).toBe(160);
-    expect(positions.nodes[0].data.y).toBe(0);
+    await dagre.execute(data);
+    const positions = calculatePositions(dagre);
+    expect(positions.nodes[0].x).toBe(160);
+    expect(positions.nodes[0].y).toBe(0);
 
-    expect(positions.nodes[1].data.x).toBe(0);
-    expect(positions.nodes[1].data.y).toBe(150);
+    expect(positions.nodes[1].x).toBe(0);
+    expect(positions.nodes[1].y).toBe(150);
 
-    expect(positions.nodes[2].data.x).toBe(160);
-    expect(positions.nodes[2].data.y).toBe(150);
+    expect(positions.nodes[2].x).toBe(160);
+    expect(positions.nodes[2].y).toBe(150);
 
-    expect(positions.nodes[3].data.x).toBe(160);
-    expect(positions.nodes[3].data.y).toBe(300);
+    expect(positions.nodes[3].x).toBe(160);
+    expect(positions.nodes[3].y).toBe(300);
 
-    expect(positions.nodes[4].data.x).toBe(160);
-    expect(positions.nodes[4].data.y).toBe(450);
+    expect(positions.nodes[4].x).toBe(160);
+    expect(positions.nodes[4].y).toBe(450);
 
-    expect(positions.nodes[5].data.x).toBe(160);
-    expect(positions.nodes[5].data.y).toBe(600);
+    expect(positions.nodes[5].x).toBe(160);
+    expect(positions.nodes[5].y).toBe(600);
 
-    expect(positions.nodes[6].data.x).toBe(0);
-    expect(positions.nodes[6].data.y).toBe(750);
+    expect(positions.nodes[6].x).toBe(0);
+    expect(positions.nodes[6].y).toBe(750);
 
-    expect(positions.nodes[7].data.x).toBe(160);
-    expect(positions.nodes[7].data.y).toBe(750);
+    expect(positions.nodes[7].x).toBe(160);
+    expect(positions.nodes[7].y).toBe(750);
   });
 });
