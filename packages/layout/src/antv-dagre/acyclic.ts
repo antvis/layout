@@ -1,13 +1,14 @@
-import { Edge, ID } from '@antv/graphlib';
-import { EdgeData, Graph } from '../types';
+import type { EdgeData } from '../types/data';
+import type { ID } from '../types/id';
+import { DagreGraph, GraphEdge } from './graph';
 import { greedyFAS } from './greedy-fas';
 
-const run = (g: Graph, acyclicer: string) => {
-  const weightFn = (g: Graph) => {
-    return (e: Edge<EdgeData>) => e.data.weight || 1;
+const run = (g: DagreGraph, acyclicer: string) => {
+  const weightFn = (g: DagreGraph) => {
+    return (e: GraphEdge<EdgeData>) => e.data.weight || 1;
   };
   const fas = acyclicer === 'greedy' ? greedyFAS(g, weightFn(g)) : dfsFAS(g);
-  fas?.forEach((e: Edge<EdgeData>) => {
+  fas?.forEach((e: GraphEdge<EdgeData>) => {
     const label = e.data;
     g.removeEdge(e.id);
     label.forwardName = e.data.name;
@@ -23,8 +24,8 @@ const run = (g: Graph, acyclicer: string) => {
   });
 };
 
-const dfsFAS = (g: Graph) => {
-  const fas: Edge<EdgeData>[] = [];
+const dfsFAS = (g: DagreGraph) => {
+  const fas: GraphEdge<EdgeData>[] = [];
   const stack: Record<ID, boolean> = {};
   const visited: Record<ID, boolean> = {};
 
@@ -48,7 +49,7 @@ const dfsFAS = (g: Graph) => {
   return fas;
 };
 
-const undo = (g: Graph) => {
+const undo = (g: DagreGraph) => {
   g.getAllEdges().forEach((e) => {
     const label = e.data;
     if (label.reversed) {

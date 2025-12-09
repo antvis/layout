@@ -1,14 +1,13 @@
-import { Graph } from '@antv/graphlib';
-import { EdgeData, NodeData } from '@/src';
+import { DagreGraph as Graph } from '@/src/antv-dagre/graph';
 import { order } from '@/src/antv-dagre/order';
 import { crossCount } from '@/src/antv-dagre/order/cross-count';
 import * as util from '@/src/antv-dagre/util';
 
 describe('order', function () {
-  let g: Graph<NodeData, EdgeData>;
+  let g: Graph;
 
   beforeEach(function () {
-    g = new Graph<NodeData, EdgeData>({
+    g = new Graph({
       tree: [],
     });
   });

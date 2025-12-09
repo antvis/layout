@@ -1,13 +1,12 @@
-import { EdgeData, NodeData } from '@/src';
+import { DagreGraph as Graph } from '@/src/antv-dagre/graph';
 import * as util from '@/src/antv-dagre/util';
-import { Graph } from '@antv/graphlib';
 
 describe('util', function () {
   describe('simplify', function () {
-    let g: Graph<NodeData, EdgeData>;
+    let g: Graph;
 
     beforeEach(function () {
-      g = new Graph<NodeData, EdgeData>();
+      g = new Graph({ tree: [] });
     });
 
     it('copies without change a graph with no multi-edges', function () {
@@ -80,10 +79,10 @@ describe('util', function () {
   });
 
   describe('asNonCompoundGraph', function () {
-    let g: Graph<NodeData, EdgeData>;
+    let g: Graph;
 
     beforeEach(function () {
-      g = new Graph<NodeData, EdgeData>({
+      g = new Graph({
         tree: [],
       });
     });
@@ -162,7 +161,7 @@ describe('util', function () {
 
   describe('successorWeights', function () {
     it('maps a node to its successors with associated weights', function () {
-      let g = new Graph();
+      let g = new Graph({ tree: [] });
       g.addNodes([
         {
           id: 'a',
@@ -217,7 +216,7 @@ describe('util', function () {
 
   describe('predecessorWeights', function () {
     it('maps a node to its predecessors with associated weights', function () {
-      let g = new Graph();
+      let g = new Graph({ tree: [] });
       g.addNodes([
         {
           id: 'a',
@@ -313,7 +312,7 @@ describe('util', function () {
 
   describe('buildLayerMatrix', function () {
     it('creates a matrix based on rank and order of nodes in the graph', function () {
-      let g = new Graph();
+      let g = new Graph({ tree: [] });
 
       g.addNodes([
         {
@@ -369,7 +368,7 @@ describe('util', function () {
 
   describe('normalizeRanks', function () {
     it('adjust ranks such that all are >= 0, and at least one is 0', function () {
-      let g = new Graph();
+      let g = new Graph({ tree: [] });
       g.addNodes([
         {
           id: 'a',
@@ -393,7 +392,7 @@ describe('util', function () {
     });
 
     it('works for negative ranks', function () {
-      let g = new Graph();
+      let g = new Graph({ tree: [] });
       g.addNodes([
         {
           id: 'a',
@@ -412,7 +411,7 @@ describe('util', function () {
     });
 
     it('does not assign a rank to subgraphs', function () {
-      let g = new Graph<any, any>({
+      let g = new Graph({
         tree: [
           {
             id: 'sg',
@@ -436,7 +435,7 @@ describe('util', function () {
 
   describe('removeEmptyRanks', function () {
     it('Removes border ranks without any nodes', function () {
-      let g = new Graph<any, any>({
+      let g = new Graph({
         nodes: [
           {
             id: 'a',
@@ -454,7 +453,7 @@ describe('util', function () {
     });
 
     it('Does not remove non-border ranks', function () {
-      let g = new Graph<any, any>({
+      let g = new Graph({
         nodes: [
           {
             id: 'a',

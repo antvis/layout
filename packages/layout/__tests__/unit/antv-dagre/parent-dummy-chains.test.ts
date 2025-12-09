@@ -1,12 +1,11 @@
-import { Graph } from '@antv/graphlib';
-import { EdgeData, NodeData } from '@/src';
+import { DagreGraph as Graph } from '@/src/antv-dagre/graph';
 import { parentDummyChains } from '@/src/antv-dagre/parent-dummy-chains';
 
 describe('parentDummyChains', function () {
-  let g: Graph<NodeData, EdgeData>;
+  let g: Graph;
 
   beforeEach(function () {
-    g = new Graph<NodeData, EdgeData>({
+    g = new Graph({
       tree: [],
     });
   });

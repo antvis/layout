@@ -1,12 +1,11 @@
-import { Graph } from '@antv/graphlib';
-import { Graph as IGraph } from '@/src';
+import { DagreGraph as Graph } from '@/src/antv-dagre/graph';
 import resolveConflicts from '@/src/antv-dagre/order/resolve-conflicts';
 
 describe('order/resolveConflicts', function () {
-  let cg: IGraph;
+  let cg: Graph;
 
   beforeEach(function () {
-    cg = new Graph();
+    cg = new Graph({ tree: [] });
   });
 
   it('returns back nodes unchanged when no constraints exist', function () {

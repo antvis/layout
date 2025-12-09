@@ -1,14 +1,13 @@
-import { Graph } from '@antv/graphlib';
-import { EdgeData, NodeData } from '@/src';
+import { DagreGraph as Graph } from '@/src/antv-dagre/graph';
 import { longestPath } from '@/src/antv-dagre/rank/util';
 import { normalizeRanks } from '@/src/antv-dagre/util';
 
 describe('rank/util', function () {
   describe('longestPath', function () {
-    let g: Graph<NodeData, EdgeData>;
+    let g: Graph;
 
     beforeEach(function () {
-      g = new Graph<NodeData, EdgeData>();
+      g = new Graph({ tree: [] });
     });
 
     it('can assign a rank to a single node graph', function () {

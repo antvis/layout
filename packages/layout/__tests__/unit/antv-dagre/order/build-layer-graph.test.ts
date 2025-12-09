@@ -1,16 +1,11 @@
-import { Graph } from '@antv/graphlib';
-import {
-  EdgeData,
-  Graph as IGraph,
-  NodeData,
-} from '@/src';
+import { DagreGraph as Graph } from '@/src/antv-dagre/graph';
 import { buildLayerGraph } from '@/src/antv-dagre/order/build-layer-graph';
 
 describe('order/buildLayerGraph', function () {
-  let g: Graph<NodeData, EdgeData>;
+  let g: Graph;
 
   beforeEach(function () {
-    g = new Graph<NodeData, EdgeData>({
+    g = new Graph({
       tree: [],
     });
   });
@@ -33,7 +28,7 @@ describe('order/buildLayerGraph', function () {
       data: { rank: 3 },
     });
 
-    let lg: IGraph;
+    let lg: Graph;
     lg = buildLayerGraph(g, 1, 'in');
 
     const root = lg.getRoots()[0].id;

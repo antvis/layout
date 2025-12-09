@@ -1,10 +1,10 @@
-import { Edge, ID } from '@antv/graphlib';
-import { EdgeData, Graph as IGraph } from '../types';
+import type { ID } from '../types/id';
+import { DagreGraph } from './graph';
 
 type OrderItem = { low: number; lim: number };
 
 // deep first search with both order low for pre, lim for post
-const dfsBothOrder = (g: IGraph) => {
+const dfsBothOrder = (g: DagreGraph) => {
   const result: Record<ID, OrderItem> = {};
   let lim = 0;
 
@@ -21,7 +21,7 @@ const dfsBothOrder = (g: IGraph) => {
 // Find a path from v to w through the lowest common ancestor (LCA). Return the
 // full path and the LCA.
 const findPath = (
-  g: IGraph,
+  g: DagreGraph,
   postorderNums: Record<ID, OrderItem>,
   v: ID,
   w: ID,
@@ -54,13 +54,13 @@ const findPath = (
   return { lca, path: vPath.concat(wPath.reverse()) };
 };
 
-export const parentDummyChains = (g: IGraph, dummyChains: ID[]) => {
+export const parentDummyChains = (g: DagreGraph, dummyChains: ID[]) => {
   const postorderNums = dfsBothOrder(g);
 
   dummyChains.forEach((startV) => {
     let v = startV;
     let node = g.getNode(v)!;
-    const originalEdge = node.data.originalEdge as Edge<EdgeData>;
+    const originalEdge = node.data.originalEdge;
     if (!originalEdge) return;
     const pathData = findPath(
       g,

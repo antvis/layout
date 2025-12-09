@@ -1,5 +1,6 @@
-import { Graph, ID } from '@antv/graphlib';
-import { EdgeData, Graph as IGraph, NodeData } from '../../types';
+import type { EdgeData, NodeData } from '../../types/data';
+import type { ID } from '../../types/id';
+import { DagreGraph } from '../graph';
 
 /*
  * Constructs a graph that can be used to sort a layer of nodes. The graph will
@@ -32,20 +33,14 @@ import { EdgeData, Graph as IGraph, NodeData } from '../../types';
  *       graph is not a multi-graph.
  */
 export const buildLayerGraph = (
-  g: IGraph,
+  g: DagreGraph,
   rank: number,
   direction: 'in' | 'out',
 ) => {
   const root = createRootNode(g);
-  const result = new Graph<NodeData, EdgeData>({
-    tree: [
-      {
-        id: root,
-        children: [],
-        data: {},
-      },
-    ],
-  });
+  const result = new DagreGraph<NodeData, EdgeData>();
+
+  result.addNode({ id: root, data: {} });
 
   g.getAllNodes().forEach((v) => {
     const parent = g.getParent(v.id);
@@ -98,8 +93,8 @@ export const buildLayerGraph = (
       if (v.data.hasOwnProperty('minRank')) {
         result.updateNodeData(v.id, {
           ...v.data,
-          borderLeft: (v.data.borderLeft as ID[])[rank],
-          borderRight: (v.data.borderRight as ID[])[rank],
+          borderLeft: [(v.data.borderLeft as ID[])?.[rank - v.data.minRank!]],
+          borderRight: [(v.data.borderRight as ID[])?.[rank - v.data.minRank!]],
         });
       }
     }
@@ -108,7 +103,7 @@ export const buildLayerGraph = (
   return result;
 };
 
-const createRootNode = (g: IGraph) => {
+const createRootNode = (g: DagreGraph) => {
   let v;
   while (g.hasNode((v = `_root${Math.random()}`)));
   return v;

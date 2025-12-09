@@ -262,7 +262,7 @@ const edgeFields = ['id', 'source', 'target', 'points'];
 
 function extractNodeData<N extends NodeData = NodeData>(
   nodes: N[],
-  node?: (datum: N) => LayoutNode,
+  node?: (datum: N) => Partial<LayoutNode>,
 ): Map<ID, LayoutNode<N>> {
   if (!nodes) {
     throw new Error('Data.nodes is required');
@@ -300,7 +300,7 @@ function extractNodeData<N extends NodeData = NodeData>(
 
 function extractEdgeData<E extends EdgeData = EdgeData>(
   edges: E[],
-  edge?: (datum: E) => LayoutEdge,
+  edge?: (datum: E) => Partial<LayoutEdge>,
   getEdgeId?: (datum: E) => ID,
 ): Map<ID, LayoutEdge<E>> {
   const result = new Map<ID, LayoutEdge<E>>();

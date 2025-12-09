@@ -1,4 +1,3 @@
-import type { ID } from '@antv/graphlib';
 import { deepMix } from '@antv/util';
 import type { Force, ForceLink, Simulation } from 'd3-force';
 import {
@@ -13,6 +12,7 @@ import {
 } from 'd3-force';
 import { BaseLayoutWithIterations } from '../base-layout';
 import type { LayoutWithIterations } from '../base-layout/types';
+import type { ID } from '../types/id';
 import type { Position } from '../types/position';
 import type { D3ForceLayoutOptions, EdgeDatum, NodeDatum } from './types';
 

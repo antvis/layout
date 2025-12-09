@@ -1,12 +1,13 @@
-import { Edge as IEdge, Graph, ID } from '@antv/graphlib';
 import { isNil } from '@antv/util';
-import { EdgeData, Graph as IGraph, NodeData, Point } from '../types';
+import { EdgeData, NodeData, Point } from '../types';
+import type { ID } from '../types/id';
 import { run as runAcyclic, undo as undoAcyclic } from './acyclic';
 import { addBorderSegments } from './add-border-segments';
 import {
   adjust as adjustCoordinateSystem,
   undo as undoCoordinateSystem,
 } from './coordinate-system';
+import { DagreGraph, GraphEdge } from './graph';
 import {
   cleanup as cleanupNestingGraph,
   run as runNestingGraph,
@@ -32,10 +33,10 @@ import {
 // const graphAttrs = ["acyclicer", "ranker", "rankdir", "align"];
 
 export const layout = (
-  g: IGraph,
+  g: DagreGraph,
   options: {
     keepNodeOrder: boolean;
-    prevGraph: IGraph | null;
+    prevGraph: DagreGraph | null;
     edgeLabelSpace?: boolean;
     align?: DagreAlign;
     nodesep?: number;
@@ -84,7 +85,7 @@ export const layout = (
 };
 
 const runLayout = (
-  g: IGraph,
+  g: DagreGraph,
   options: {
     acyclicer: string;
     keepNodeOrder: boolean;
@@ -177,7 +178,7 @@ const runLayout = (
  * 继承上一个布局中的order，防止翻转
  * TODO: 暂时没有考虑涉及层级变动的布局，只保证原来布局层级和相对顺序不变
  */
-const inheritOrder = (currG: IGraph, prevG: IGraph) => {
+const inheritOrder = (currG: DagreGraph, prevG: DagreGraph) => {
   currG.getAllNodes().forEach((n) => {
     const node = currG.getNode(n.id)!;
     if (prevG.hasNode(n.id)) {
@@ -196,7 +197,7 @@ const inheritOrder = (currG: IGraph, prevG: IGraph) => {
  * to the input graph, so it serves as a good place to determine what
  * attributes can influence layout.
  */
-const updateInputGraph = (inputGraph: IGraph, layoutGraph: IGraph) => {
+const updateInputGraph = (inputGraph: DagreGraph, layoutGraph: DagreGraph) => {
   inputGraph.getAllNodes().forEach((v) => {
     const inputLabel = inputGraph.getNode(v.id);
 
@@ -248,8 +249,8 @@ const edgeAttrs = ['labelpos'];
  * layout graph. Thus this function serves as a good place to determine what
  * attributes can influence layout.
  */
-const buildLayoutGraph = (inputGraph: IGraph) => {
-  const g = new Graph({ tree: [] });
+const buildLayoutGraph = (inputGraph: DagreGraph) => {
+  const g = new DagreGraph({ tree: [] });
   inputGraph.getAllNodes().forEach((v) => {
     const node = canonicalize(inputGraph.getNode(v.id).data);
     const defaultNode = {
@@ -311,7 +312,7 @@ const buildLayoutGraph = (inputGraph: IGraph) => {
  * away from the edge itself a bit.
  */
 const makeSpaceForEdgeLabels = (
-  g: IGraph,
+  g: DagreGraph,
   options: {
     ranksep?: number;
     rankdir: string;
@@ -343,7 +344,7 @@ const makeSpaceForEdgeLabels = (
  * so that we can safely remove empty ranks while preserving balance for the
  * label's position.
  */
-const injectEdgeLabelProxies = (g: IGraph) => {
+const injectEdgeLabelProxies = (g: DagreGraph) => {
   g.getAllEdges().forEach((e) => {
     if (e.data.width && e.data.height) {
       const v = g.getNode(e.source)!;
@@ -357,7 +358,7 @@ const injectEdgeLabelProxies = (g: IGraph) => {
   });
 };
 
-const assignRankMinMax = (g: IGraph): number => {
+const assignRankMinMax = (g: DagreGraph): number => {
   let maxRank = 0;
   g.getAllNodes().forEach((node) => {
     if (node.data.borderTop) {
@@ -370,7 +371,7 @@ const assignRankMinMax = (g: IGraph): number => {
   return maxRank;
 };
 
-const removeEdgeLabelProxies = (g: IGraph) => {
+const removeEdgeLabelProxies = (g: DagreGraph) => {
   g.getAllNodes().forEach((node) => {
     if (node.data.dummy === 'edge-proxy') {
       g.getEdge(node.data.e!.id)!.data.labelRank = node.data.rank;
@@ -380,7 +381,7 @@ const removeEdgeLabelProxies = (g: IGraph) => {
 };
 
 const translateGraph = (
-  g: IGraph,
+  g: DagreGraph,
   options?: {
     marginx: number;
     marginy: number;
@@ -451,7 +452,7 @@ const translateGraph = (
   };
 };
 
-const assignNodeIntersects = (g: IGraph) => {
+const assignNodeIntersects = (g: DagreGraph) => {
   g.getAllEdges().forEach((e) => {
     const nodeV = g.getNode(e.source)!;
     const nodeW = g.getNode(e.target)!;
@@ -471,7 +472,7 @@ const assignNodeIntersects = (g: IGraph) => {
   });
 };
 
-const fixupEdgeLabelCoords = (g: IGraph) => {
+const fixupEdgeLabelCoords = (g: DagreGraph) => {
   g.getAllEdges().forEach((edge) => {
     if (edge.data.hasOwnProperty('x')) {
       if (edge.data.labelpos === 'l' || edge.data.labelpos === 'r') {
@@ -489,7 +490,7 @@ const fixupEdgeLabelCoords = (g: IGraph) => {
   });
 };
 
-const reversePointsForReversedEdges = (g: IGraph) => {
+const reversePointsForReversedEdges = (g: DagreGraph) => {
   g.getAllEdges().forEach((edge) => {
     if (edge.data.reversed) {
       edge.data.points?.reverse();
@@ -497,7 +498,7 @@ const reversePointsForReversedEdges = (g: IGraph) => {
   });
 };
 
-const removeBorderNodes = (g: IGraph) => {
+const removeBorderNodes = (g: DagreGraph) => {
   g.getAllNodes().forEach((v) => {
     if (g.getChildren(v.id)?.length) {
       const node = g.getNode(v.id)!;
@@ -528,7 +529,7 @@ const removeBorderNodes = (g: IGraph) => {
   });
 };
 
-const removeSelfEdges = (g: IGraph) => {
+const removeSelfEdges = (g: DagreGraph) => {
   g.getAllEdges().forEach((e) => {
     if (e.source === e.target) {
       const node = g.getNode(e.source)!;
@@ -541,14 +542,14 @@ const removeSelfEdges = (g: IGraph) => {
   });
 };
 
-const insertSelfEdges = (g: IGraph) => {
+const insertSelfEdges = (g: DagreGraph) => {
   const layers = buildLayerMatrix(g);
   layers?.forEach((layer: ID[]) => {
     let orderShift = 0;
     layer?.forEach((v: ID, i: number) => {
       const node = g.getNode(v)!;
       node.data.order = i + orderShift;
-      node.data.selfEdges?.forEach((selfEdge: IEdge<EdgeData>) => {
+      node.data.selfEdges?.forEach((selfEdge: GraphEdge<EdgeData>) => {
         addDummyNode(
           g,
           'selfedge',
@@ -567,7 +568,7 @@ const insertSelfEdges = (g: IGraph) => {
   });
 };
 
-const positionSelfEdges = (g: IGraph) => {
+const positionSelfEdges = (g: DagreGraph) => {
   g.getAllNodes().forEach((v) => {
     const node = g.getNode(v.id)!;
     if (node.data.dummy === 'selfedge') {

@@ -1,8 +1,9 @@
-import { ID, Node } from '@antv/graphlib';
-import { Graph, NodeData } from '../types';
+import type { NodeData } from '../types/data';
+import type { ID } from '../types/id';
+import { DagreGraph } from './graph';
 import { addDummyNode } from './util';
 
-export const addBorderSegments = (g: Graph) => {
+export const addBorderSegments = (g: DagreGraph) => {
   const dfs = (v: ID) => {
     const children = g.getChildren(v);
     const node = g.getNode(v)!;
@@ -28,19 +29,21 @@ export const addBorderSegments = (g: Graph) => {
 };
 
 const addBorderNode = (
-  g: Graph,
+  g: DagreGraph,
   prop: string,
   prefix: string,
   sg: ID,
-  sgNode: Node<NodeData>,
+  sgNode: { data: NodeData },
   rank: number,
 ) => {
   const label: NodeData = { rank, borderType: prop, width: 0, height: 0 };
+  // 使用相对于 minRank 的索引
+  const index = rank - sgNode.data.minRank!;
   // @ts-ignore
-  const prev = sgNode.data[prop][rank - 1];
+  const prev = sgNode.data[prop][index - 1];
   const curr = addDummyNode(g, 'border', label, prefix);
   // @ts-ignore
-  sgNode.data[prop][rank] = curr;
+  sgNode.data[prop][index] = curr;
   g.setParent(curr, sg);
   if (prev) {
     g.addEdge({

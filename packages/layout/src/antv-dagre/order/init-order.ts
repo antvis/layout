@@ -1,5 +1,5 @@
-import { ID } from '@antv/graphlib';
-import { Graph } from '../../types';
+import type { ID } from '../../types/id';
+import { DagreGraph } from '../graph';
 
 /*
  * Assigns an initial order value for each node by performing a DFS search
@@ -12,7 +12,7 @@ import { Graph } from '../../types';
  * Returns a layering matrix with an array per layer and each layer sorted by
  * the order of its nodes.
  */
-export const initOrder = (g: Graph) => {
+export const initOrder = (g: DagreGraph) => {
   const visited: Record<string, boolean> = {};
   // const simpleNodes = g.getAllNodes().filter((v) => {
   //   return !g.getChildren(v.id)?.length;

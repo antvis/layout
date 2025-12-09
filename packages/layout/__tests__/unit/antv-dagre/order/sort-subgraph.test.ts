@@ -1,27 +1,26 @@
-import { Graph } from '@antv/graphlib';
-import { EdgeData, NodeData } from '@/src';
+import { DagreGraph as Graph } from '@/src/antv-dagre/graph';
 import { sortSubgraph } from '@/src/antv-dagre/order/sort-subgraph';
 
 describe('order/sortSubgraph', function () {
-  let g: Graph<NodeData, EdgeData>;
-  let cg: Graph<NodeData, EdgeData>;
+  let g: Graph;
+  let cg: Graph;
 
   beforeEach(function () {
-    g = new Graph<NodeData, EdgeData>({
+    g = new Graph({
       tree: [],
     });
-    cg = new Graph();
+    cg = new Graph({ tree: [] });
   });
 
   beforeEach(function () {
-    g = new Graph();
+    g = new Graph({ tree: [] });
     for (let i = 0; i < 5; i++) {
       g.addNode({
         id: `${i}`,
         data: { order: i },
       });
     }
-    cg = new Graph();
+    cg = new Graph({ tree: [] });
   });
 
   it('sorts a flat subgraph based on barycenter', function () {

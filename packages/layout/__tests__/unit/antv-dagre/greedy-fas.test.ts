@@ -1,13 +1,13 @@
-import { EdgeData, Graph as IGraph, NodeData } from '@/src';
+import { DagreGraph as Graph } from '@/src/antv-dagre/graph';
 import { greedyFAS } from '@/src/antv-dagre/greedy-fas';
-import { Edge, Graph } from '@antv/graphlib';
+import type { EdgeData } from '@/src/types/data';
 import { findCycles } from '../../utils';
 
 describe('greedyFAS', function () {
-  let g: Graph<NodeData, EdgeData>;
+  let g: Graph;
 
   beforeEach(function () {
-    g = new Graph<NodeData, EdgeData>();
+    g = new Graph({ tree: [] });
   });
 
   it('returns the empty set for empty graphs', function () {
@@ -319,7 +319,7 @@ describe('greedyFAS', function () {
     // the same pair of incident nodes. We try this by assigning weights to
     // our edges representing the number of edges from one node to the other.
 
-    let g1 = new Graph();
+    let g1 = new Graph({ tree: [] });
     g1.addNodes([
       {
         id: 'n1',
@@ -351,7 +351,7 @@ describe('greedyFAS', function () {
       { id: 'e2', source: 'n2', target: 'n1', data: { weight: 1 } },
     ]);
 
-    let g2 = new Graph();
+    let g2 = new Graph({ tree: [] });
     g2.addNodes([
       {
         id: 'n1',
@@ -385,7 +385,7 @@ describe('greedyFAS', function () {
   });
 
   it('works for multigraphs', function () {
-    let g = new Graph();
+    let g = new Graph({ tree: [] });
     g.addNodes([
       {
         id: 'a',
@@ -442,7 +442,7 @@ describe('greedyFAS', function () {
   });
 });
 
-function checkFAS(g: IGraph, fas: Edge<EdgeData>[]) {
+function checkFAS(g: Graph, fas: EdgeData[]) {
   let n = g.getAllNodes().length;
   let m = g.getAllEdges().length;
   fas.forEach((edge) => {
@@ -455,8 +455,8 @@ function checkFAS(g: IGraph, fas: Edge<EdgeData>[]) {
   expect(fas.length).toBeLessThanOrEqual(Math.floor(m / 2) - Math.floor(n / 6));
 }
 
-function weightFn(g: IGraph) {
-  return function (e: Edge<EdgeData>): number {
+function weightFn(g: Graph) {
+  return function (e: EdgeData): number {
     return e.data.weight!;
   };
 }

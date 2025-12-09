@@ -1,10 +1,10 @@
-import { ID } from '@antv/graphlib';
-import { Graph } from '../../types';
+import type { ID } from '../../types/id';
+import { DagreGraph } from '../graph';
 
 /**
  * TODO: The median method consistently performs better than the barycenter method and has a slight theoretical advantage
  */
-export const barycenter = (g: Graph, movable: ID[]) => {
+export const barycenter = (g: DagreGraph, movable: ID[]) => {
   return movable.map((v) => {
     const inV = g.getRelatedEdges(v, 'in');
     if (!inV?.length) {

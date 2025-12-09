@@ -1,12 +1,11 @@
-import { Graph } from '@antv/graphlib';
-import { EdgeData, NodeData } from '@/src';
 import { addBorderSegments } from '@/src/antv-dagre/add-border-segments';
+import { DagreGraph as Graph } from '@/src/antv-dagre/graph';
 
 describe('addBorderSegments', function () {
-  let g: Graph<NodeData, EdgeData>;
+  let g: Graph;
 
   beforeEach(function () {
-    g = new Graph<NodeData, EdgeData>({
+    g = new Graph({
       tree: [],
     });
   });
@@ -36,9 +35,9 @@ describe('addBorderSegments', function () {
     addBorderSegments(g);
 
     // @ts-ignore
-    let bl = g.getNode('sg').data.borderLeft[1];
+    let bl = g.getNode('sg').data.borderLeft[0];
     // @ts-ignore
-    let br = g.getNode('sg').data.borderRight[1];
+    let br = g.getNode('sg').data.borderRight[0];
     expect(g.getNode(bl).data).toEqual({
       dummy: 'border',
       borderType: 'borderLeft',
@@ -66,9 +65,9 @@ describe('addBorderSegments', function () {
 
     let sgNode = g.getNode('sg');
     // @ts-ignore
-    let bl2 = sgNode.data.borderLeft[1];
+    let bl2 = sgNode.data.borderLeft[0];
     // @ts-ignore
-    let br2 = sgNode.data.borderRight[1];
+    let br2 = sgNode.data.borderRight[0];
     expect(g.getNode(bl2).data).toEqual({
       dummy: 'border',
       borderType: 'borderLeft',
@@ -87,9 +86,9 @@ describe('addBorderSegments', function () {
     expect(g.getParent(br2)?.id).toEqual('sg');
 
     // @ts-ignore
-    let bl1 = sgNode.data.borderLeft[2];
+    let bl1 = sgNode.data.borderLeft[1];
     // @ts-ignore
-    let br1 = sgNode.data.borderRight[2];
+    let br1 = sgNode.data.borderRight[1];
     expect(g.getNode(bl1).data).toEqual({
       dummy: 'border',
       borderType: 'borderLeft',
@@ -110,16 +109,16 @@ describe('addBorderSegments', function () {
     expect(
       g
         // @ts-ignore
-        .getRelatedEdges(sgNode.data.borderLeft[1], 'out')
+        .getRelatedEdges(sgNode.data.borderLeft[0], 'out')
         // @ts-ignore
-        .find((e) => e.target === sgNode.data.borderLeft[2]),
+        .find((e) => e.target === sgNode.data.borderLeft[1]),
     ).toBeTruthy();
     expect(
       g
         // @ts-ignore
-        .getRelatedEdges(sgNode.data.borderRight[1], 'out')
+        .getRelatedEdges(sgNode.data.borderRight[0], 'out')
         // @ts-ignore
-        .find((e) => e.target === sgNode.data.borderRight[2]),
+        .find((e) => e.target === sgNode.data.borderRight[1]),
     ).toBeTruthy();
   });
 
@@ -136,9 +135,9 @@ describe('addBorderSegments', function () {
     addBorderSegments(g);
 
     // @ts-ignore
-    let bl1 = g.getNode('sg1').data.borderLeft[1];
+    let bl1 = g.getNode('sg1').data.borderLeft[0];
     // @ts-ignore
-    let br1 = g.getNode('sg1').data.borderRight[1];
+    let br1 = g.getNode('sg1').data.borderRight[0];
     expect(g.getNode(bl1).data).toEqual({
       dummy: 'border',
       borderType: 'borderLeft',
@@ -157,9 +156,9 @@ describe('addBorderSegments', function () {
     expect(g.getParent(br1)?.id).toEqual('sg1');
 
     // @ts-ignore
-    let bl2 = g.getNode('sg2').data.borderLeft[1];
+    let bl2 = g.getNode('sg2').data.borderLeft[0];
     // @ts-ignore
-    let br2 = g.getNode('sg2').data.borderRight[1];
+    let br2 = g.getNode('sg2').data.borderRight[0];
     expect(g.getNode(bl2).data).toEqual({
       dummy: 'border',
       borderType: 'borderLeft',

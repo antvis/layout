@@ -1,18 +1,13 @@
-import { Graph, ID } from '@antv/graphlib';
-import {
-  DagreRankdir,
-  EdgeData,
-  Graph as IGraph,
-  NodeData,
-  Point,
-} from '@/src';
+import { DagreRankdir, Point } from '@/src';
+import { DagreGraph as Graph } from '@/src/antv-dagre/graph';
 import { layout } from '@/src/antv-dagre/layout';
+import type { ID } from '@/src/types/id';
 
 describe.skip('layout', function () {
-  let g: Graph<NodeData, EdgeData>;
+  let g: Graph;
 
   beforeEach(function () {
-    g = new Graph<NodeData, EdgeData>({
+    g = new Graph({
       tree: [],
     });
   });
@@ -645,7 +640,7 @@ describe.skip('layout', function () {
   });
 });
 
-function extractCoordinates(g: IGraph) {
+function extractCoordinates(g: Graph) {
   const coords: Record<ID, { x: number; y: number }> = {};
   g.getAllNodes().forEach(function (v) {
     coords[v.id] = {

@@ -1,8 +1,8 @@
 import EventEmitter from '@antv/event-emitter';
-import type { ID } from '@antv/graphlib';
 import { isNil } from '@antv/util';
 import type { LayoutNode } from '../types/data';
 import type { DisplacementMap } from '../types/force';
+import type { ID } from '../types/id';
 import type { NullablePosition } from '../types/position';
 import type { LayoutModel } from '../util/model';
 import type { SimulationOptions } from './types';
