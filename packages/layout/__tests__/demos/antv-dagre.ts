@@ -171,7 +171,6 @@ export function render(gui?: GUI) {
     });
 
     dagre.forEachNode((node) => {
-      console.log('node:', node);
       renderer.updateNodeAttributes(node.id, {
         x: node.x - node.size[0] / 2,
         y: node.y - node.size[1] / 2,

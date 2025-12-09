@@ -1,4 +1,5 @@
-import { D3ForceLayout } from '@/src';
+import { D3Force3DLayout } from '@/src';
+import { Layout } from '@/src/base-layout/types';
 import { Canvas } from '@antv/g';
 import { Renderer } from '@antv/g-canvas';
 import type { GUI } from 'lil-gui';
@@ -16,7 +17,7 @@ export async function render(gui?: GUI) {
   const renderer = new GraphRenderer(canvas);
   const { width, height } = renderer.getCanvasSize();
 
-  const layout = new D3ForceLayout();
+  const layout = new D3Force3DLayout();
 
   layout.execute(data, {
     center: {
@@ -32,24 +33,8 @@ export async function render(gui?: GUI) {
     manyBody: {
       strength: -20,
     },
-    onTick: (layout) => {
+    onTick: (layout: Layout) => {
       renderer.handleTick(layout, { nodeRadius: 5 });
-    },
-  });
-
-  renderer.setDragCallbacks({
-    onDragStart: (nodeId, position) => {
-      console.log(`🎯 Start dragging node: ${nodeId}`);
-      layout.setFixedPosition(nodeId, [position.x, position.y]);
-    },
-
-    onDrag: (nodeId, position) => {
-      layout.setFixedPosition(nodeId, [position.x, position.y]);
-      layout.simulation.alphaTarget(0.3).restart();
-    },
-
-    onDragEnd: (nodeId) => {
-      layout.setFixedPosition(nodeId, null);
     },
   });
 

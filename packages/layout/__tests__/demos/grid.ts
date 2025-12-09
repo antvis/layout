@@ -38,7 +38,7 @@ export function render(gui?: GUI) {
   });
 
   const relayout = async () => {
-    layout.options = {
+    const _options = {
       width: options.width,
       height: options.height,
       begin: [options.beginX, options.beginY],
@@ -63,14 +63,11 @@ export function render(gui?: GUI) {
       nodes: nodes as any,
       edges: edges as any,
     };
-    await layout.execute(graphWithUsedCells, layout.options);
+    await layout.execute(graphWithUsedCells, _options);
 
     renderer.render(layout, {
       showLabel: true,
       nodeRadius: options.nodeSize / 2,
-      labelStyle: {
-        fill: '#fff',
-      },
     });
   };
 
