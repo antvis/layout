@@ -1,5 +1,5 @@
-import { deepMix } from '@antv/util';
-import type { Force, ForceLink, Simulation } from 'd3-force';
+import { deepMix, isNil } from '@antv/util';
+import type { ForceLink, Simulation } from 'd3-force';
 import {
   forceCenter,
   forceCollide,
@@ -13,10 +13,36 @@ import {
 import { BaseLayoutWithIterations } from '../base-layout';
 import type { LayoutWithIterations } from '../base-layout/types';
 import type { ID } from '../types/id';
+import type { Point } from '../types/point';
 import type { Position } from '../types/position';
+import { normalizeViewport } from '../util';
+import { formatNodeSizeFn } from '../util/format';
+import forceInABox from './force-in-a-box';
 import type { D3ForceLayoutOptions, EdgeDatum, NodeDatum } from './types';
 
 export type { D3ForceLayoutOptions };
+
+const DEFAULTS_LAYOUT_OPTIONS: Partial<D3ForceLayoutOptions> = {
+  centerStrength: 1,
+  linkDistance: 30,
+  nodeStrength: -30,
+  edgeStrength: null,
+  preventOverlap: true,
+  nodeSize: 10,
+  nodeSpacing: 0,
+  collideStrength: 1,
+  alpha: 1,
+  alphaMin: 0.001,
+  alphaDecay: 1 - Math.pow(0.001, 1 / 300),
+  alphaTarget: 0,
+  velocityDecay: 0.4,
+  clustering: false,
+  clusterNodeStrength: -1,
+  clusterEdgeStrength: 0.1,
+  clusterEdgeDistance: 100,
+  clusterFociStrength: 0.8,
+  clusterNodeSize: 10,
+};
 
 export class D3ForceLayout<
     T extends D3ForceLayoutOptions = D3ForceLayoutOptions,
@@ -50,19 +76,11 @@ export class D3ForceLayout<
     radial: forceRadial,
     x: forceX,
     y: forceY,
+    group: forceInABox,
   };
 
   protected getDefaultOptions(): T {
-    return {
-      link: {
-        id: (d) => String(d.id),
-      },
-      manyBody: {},
-      center: {
-        x: 0,
-        y: 0,
-      },
-    } as unknown as T;
+    return DEFAULTS_LAYOUT_OPTIONS as T;
   }
 
   protected mergeOptions(base: T, patch?: Partial<T>): T {
@@ -77,24 +95,67 @@ export class D3ForceLayout<
     }
   }
 
-  public stop() {
+  public stop(): this {
     if (this.simulation) {
       this.simulation.stop();
     }
+    return this;
   }
 
-  public tick(iterations?: number): void {
+  public tick(iterations: number = 1): this {
     if (this.simulation) {
-      this.simulation.tick(iterations);
+      for (let i = 0; i < iterations; i++) {
+        this.simulation.tick();
+      }
       this.syncPositionsFromD3();
       this.options.onTick?.(this);
     }
+    return this;
   }
 
-  public restart() {
+  public restart(alpha?: number): this {
     if (this.simulation) {
+      if (alpha !== undefined) {
+        this.simulation.alpha(alpha);
+      }
       this.simulation.restart();
     }
+    return this;
+  }
+
+  public reheat(): this {
+    return this.restart(1);
+  }
+
+  public getAlpha(): number {
+    return this.simulation?.alpha() ?? 0;
+  }
+
+  public setAlpha(alpha: number): this {
+    if (this.simulation) {
+      this.simulation.alpha(alpha);
+    }
+    return this;
+  }
+
+  public getForce(name: string): any {
+    return this.simulation?.force(name);
+  }
+
+  public force(name: string, force: any): this {
+    if (this.simulation) {
+      this.simulation.force(name, force);
+    }
+    return this;
+  }
+
+  public nodes(): NodeDatum[] {
+    return this.simulation?.nodes() ?? [];
+  }
+
+  public find(x: number, y: number, radius?: number): NodeDatum | undefined {
+    if (!this.simulation) return undefined;
+    return this.simulation.find(x, y, radius);
   }
 
   public setFixedPosition(id: ID, position: Position | null[] | null): void {
@@ -177,7 +238,7 @@ export class D3ForceLayout<
     });
   }
 
-  private syncPositionsFromD3() {
+  protected syncPositionsFromD3() {
     this.d3Nodes.forEach((d3Node) => {
       const node = this.model.node(d3Node.id);
       if (node) {
@@ -219,19 +280,302 @@ export class D3ForceLayout<
       ]),
     );
 
-    Object.entries(this.forceMap).forEach(([name, Ctor]) => {
-      const forceName = name;
-      if (options[name as keyof T]) {
-        let force = simulation.force(forceName);
-        if (!force) {
-          force = Ctor();
-          simulation.force(forceName, force as Force<NodeDatum, EdgeDatum>);
-        }
-        apply(force, Object.entries(options[forceName as keyof T] as object));
-      } else simulation.force(forceName, null);
-    });
+    this.setupCenterForce(simulation, options);
+    this.setupManyBodyForce(simulation, options);
+    this.setupLinkForce(simulation, options);
+    this.setupCollisionForce(simulation, options);
+    this.setupXForce(simulation, options);
+    this.setupYForce(simulation, options);
+    this.setupRadialForce(simulation, options);
+    this.setupClusterForce(simulation, options);
 
     return simulation;
+  }
+
+  protected setupCenterForce(
+    simulation: Simulation<NodeDatum, EdgeDatum>,
+    options: T,
+  ) {
+    const opts = options as any;
+
+    const centerStrength = opts.centerStrength ?? opts.center?.strength;
+    const center = this.getCenterPoint(options);
+
+    if (center) {
+      let force = simulation.force('center');
+      if (!force) {
+        force = forceCenter(center[0], center[1]);
+        simulation.force('center', force as any);
+      }
+
+      const params: [string, any][] = [
+        ['x', center[0]],
+        ['y', center[1]],
+      ];
+      if (centerStrength !== undefined)
+        params.push(['strength', centerStrength]);
+
+      apply(force, params);
+    } else {
+      simulation.force('center', null);
+    }
+  }
+
+  protected setupManyBodyForce(
+    simulation: Simulation<NodeDatum, EdgeDatum>,
+    options: T,
+  ) {
+    const opts = options as any;
+
+    const nodeStrength = opts.nodeStrength ?? opts.manyBody?.strength;
+    const distanceMin = opts.distanceMin ?? opts.manyBody?.distanceMin;
+    const distanceMax = opts.distanceMax ?? opts.manyBody?.distanceMax;
+    const theta = opts.theta ?? opts.manyBody?.theta;
+
+    if (nodeStrength !== undefined || opts.manyBody) {
+      let force = simulation.force('charge');
+      if (!force) {
+        force = forceManyBody();
+        simulation.force('charge', force as any);
+      }
+
+      const params: [string, any][] = [];
+
+      if (nodeStrength !== undefined) params.push(['strength', nodeStrength]);
+      if (distanceMin !== undefined) params.push(['distanceMin', distanceMin]);
+      if (distanceMax !== undefined) params.push(['distanceMax', distanceMax]);
+      if (theta !== undefined) params.push(['theta', theta]);
+
+      apply(force, params);
+    } else {
+      simulation.force('charge', null);
+    }
+  }
+
+  protected setupLinkForce(
+    simulation: Simulation<NodeDatum, EdgeDatum>,
+    options: T,
+  ) {
+    const opts = options as any;
+    const edges = this.model.edges();
+
+    const linkDistance = opts.linkDistance ?? opts.link?.distance;
+    const edgeStrength = opts.edgeStrength ?? opts.link?.strength;
+    const linkIterations = opts.linkIterations ?? opts.link?.iterations;
+    const linkId = opts.link?.id;
+
+    if (
+      edges.length > 0 &&
+      (linkDistance !== undefined || edgeStrength !== undefined || opts.link)
+    ) {
+      let force = simulation.force<ForceLink<NodeDatum, EdgeDatum>>('link');
+      if (!force) {
+        force = forceLink<NodeDatum, EdgeDatum>().id(
+          linkId || ((d: any) => d.id),
+        );
+        simulation.force('link', force);
+      }
+
+      const params: [string, any][] = [];
+      if (linkDistance !== undefined) params.push(['distance', linkDistance]);
+      if (edgeStrength !== undefined) params.push(['strength', edgeStrength]);
+      if (linkIterations !== undefined)
+        params.push(['iterations', linkIterations]);
+
+      apply(force, params);
+    } else {
+      simulation.force('link', null);
+    }
+  }
+
+  protected setupCollisionForce(
+    simulation: Simulation<NodeDatum, EdgeDatum>,
+    options: T,
+  ) {
+    const opts = options as any;
+
+    const preventOverlap =
+      opts.preventOverlap ??
+      (opts.collide !== undefined && opts.collide !== false);
+    const collideStrength = opts.collideStrength ?? opts.collide?.strength;
+    const nodeSize = opts.nodeSize ?? opts.collide?.radius ?? 10;
+    const nodeSpacing = opts.nodeSpacing ?? opts.collide?.nodeSpacing ?? 0;
+    const collideIterations =
+      opts.collideIterations ?? opts.collide?.iterations;
+
+    if (preventOverlap) {
+      const getRadius = (d: NodeDatum) => {
+        const sizeFn = formatNodeSizeFn(nodeSize, nodeSpacing, 10);
+        return sizeFn(d._original || d) / 2;
+      };
+
+      let force = simulation.force('collide');
+      if (!force) {
+        force = forceCollide(getRadius);
+        simulation.force('collide', force as any);
+      }
+
+      const params: [string, any][] = [
+        ['radius', getRadius],
+        ['strength', collideStrength ?? 1],
+      ];
+
+      if (collideIterations !== undefined)
+        params.push(['iterations', collideIterations]);
+
+      apply(force, params);
+    } else {
+      simulation.force('collide', null);
+    }
+  }
+
+  protected setupXForce(
+    simulation: Simulation<NodeDatum, EdgeDatum>,
+    options: T,
+  ) {
+    const opts = options as any;
+
+    const forceXStrength = opts.forceXStrength ?? opts.x?.strength;
+    const forceXPosition = opts.forceXPosition ?? opts.x?.x;
+
+    if (forceXStrength !== undefined || opts.x) {
+      let force = simulation.force('x');
+      if (!force) {
+        force = forceX();
+        simulation.force('x', force as any);
+      }
+
+      const params: [string, any][] = [];
+      if (forceXPosition !== undefined) params.push(['x', forceXPosition]);
+      if (forceXStrength !== undefined)
+        params.push(['strength', forceXStrength]);
+
+      apply(force, params);
+    } else {
+      simulation.force('x', null);
+    }
+  }
+
+  protected setupYForce(
+    simulation: Simulation<NodeDatum, EdgeDatum>,
+    options: T,
+  ) {
+    const opts = options as any;
+
+    const forceYStrength = opts.forceYStrength ?? opts.y?.strength;
+    const forceYPosition = opts.forceYPosition ?? opts.y?.y;
+
+    if (forceYStrength !== undefined || opts.y) {
+      let force = simulation.force('y');
+      if (!force) {
+        force = forceY();
+        simulation.force('y', force as any);
+      }
+
+      const params: [string, any][] = [];
+      if (forceYPosition !== undefined) params.push(['y', forceYPosition]);
+      if (forceYStrength !== undefined)
+        params.push(['strength', forceYStrength]);
+
+      apply(force, params);
+    } else {
+      simulation.force('y', null);
+    }
+  }
+
+  protected setupRadialForce(
+    simulation: Simulation<NodeDatum, EdgeDatum>,
+    options: T,
+  ) {
+    const opts = options as any;
+
+    const radialStrength = opts.radialStrength ?? opts.radial?.strength;
+    const radialRadius = opts.radialRadius ?? opts.radial?.radius;
+    const radialX = opts.radialX ?? opts.radial?.x;
+    const radialY = opts.radialY ?? opts.radial?.y;
+
+    if (
+      (radialRadius !== undefined && radialStrength !== undefined) ||
+      opts.radial
+    ) {
+      const center = this.getCenterPoint(options);
+      const x = !isNil(radialX) ? radialX : center[0];
+      const y = !isNil(radialY) ? radialY : center[1];
+
+      let force = simulation.force('radial');
+      if (!force) {
+        force = forceRadial(radialRadius ?? 100, x, y);
+        simulation.force('radial', force as any);
+      }
+
+      const params: [string, any][] = [];
+      if (radialRadius !== undefined) params.push(['radius', radialRadius]);
+      if (radialStrength !== undefined)
+        params.push(['strength', radialStrength]);
+      if (radialX !== undefined) params.push(['x', radialX]);
+      if (radialY !== undefined) params.push(['y', radialY]);
+
+      apply(force, params);
+    } else {
+      simulation.force('radial', null);
+    }
+  }
+
+  protected setupClusterForce(
+    simulation: Simulation<NodeDatum, EdgeDatum>,
+    options: T,
+  ) {
+    const { clustering } = options;
+
+    if (clustering) {
+      const {
+        clusterFociStrength,
+        clusterEdgeDistance,
+        clusterEdgeStrength,
+        clusterNodeStrength,
+        clusterNodeSize,
+        clusterBy,
+      } = options;
+
+      const center = this.getCenterPoint(options);
+
+      let force = simulation.force('group');
+      if (!force) {
+        force = forceInABox();
+        simulation.force('group', force as any);
+      }
+
+      apply(force, [
+        ['centerX', center[0]],
+        ['centerY', center[1]],
+        ['template', 'force'],
+        ['strength', clusterFociStrength],
+        ['groupBy', clusterBy],
+        ['nodes', this.model.nodes()],
+        ['links', this.model.edges()],
+        ['forceLinkDistance', clusterEdgeDistance],
+        ['forceLinkStrength', clusterEdgeStrength],
+        ['forceCharge', clusterNodeStrength],
+        ['forceNodeSize', clusterNodeSize],
+      ]);
+    } else {
+      simulation.force('group', null);
+    }
+  }
+
+  private getCenterPoint(options: T): Point {
+    const viewport = normalizeViewport({
+      width: options.width,
+      height: options.height,
+    });
+    const vwCenter: Point = [viewport.width / 2, viewport.height / 2];
+    const center: Point = options.center
+      ? [
+          options.center?.x ?? viewport.width / 2,
+          options.center?.y ?? viewport.height / 2,
+        ]
+      : vwCenter;
+    return center;
   }
 }
 

@@ -4,10 +4,54 @@ import type {
   SimulationNodeDatum,
 } from 'd3-force';
 import type { BaseLayoutOptions } from '../base-layout';
-import type { Layout } from '../base-layout/types';
+import type { Layout, ViewportOptions } from '../base-layout/types';
 import type { LayoutEdge, LayoutNode } from '../types/data';
 
-export interface D3ForceLayoutOptions extends BaseLayoutOptions {
+export interface D3ForceLayoutOptions
+  extends BaseLayoutOptions,
+    Omit<ViewportOptions, 'center'> {
+  /**
+   * <zh/> 每次迭代执行回调
+   *
+   * <en/> Callback executed on each tick
+   * @param data - <zh/> 布局结果 | <en/> layout result
+   */
+  onTick?: (layout: Layout<D3ForceLayoutOptions>) => void;
+  /**
+   * <zh/> 边的理想长度，可以是数值或根据边数据返回长度的函数
+   *
+   * <en/> Ideal length of edges, can be a number or a function that returns length based on edge data
+   * @defaultValue 50
+   */
+  linkDistance?: number | ((edge: EdgeDatum) => number);
+  /**
+   * <zh/> 边的强度，可以是数值或根据边数据返回强度的函数。值范围为 [0, 1]
+   *
+   * <en/> Strength of edges, can be a number or a function that returns strength based on edge data. Value range is [0, 1]
+   * @defaultValue null
+   */
+  edgeStrength?: number | ((edge: EdgeDatum) => number) | null;
+  /**
+   * <zh/> 节点之间的作用力强度，负数为斥力，正数为引力
+   *
+   * <en/> Strength of node force, negative for repulsion, positive for attraction
+   * @defaultValue -30
+   */
+  nodeStrength?: number | ((node: NodeDatum) => number);
+  /**
+   * <zh/> 是否防止节点重叠
+   *
+   * <en/> Whether to prevent node overlap
+   * @defaultValue false
+   */
+  preventOverlap?: boolean;
+  /**
+   * <zh/> 防止重叠的力强度，值范围为 [0, 1]
+   *
+   * <en/> Strength of collision force, value range is [0, 1]
+   * @defaultValue 1
+   */
+  collideStrength?: number;
   /**
    * <zh/> 节点大小（直径）。用于防止节点重叠时的碰撞检测
    *
@@ -19,12 +63,68 @@ export interface D3ForceLayoutOptions extends BaseLayoutOptions {
     | number
     | ((node: NodeDatum, index: number, nodes: NodeDatum[]) => number);
   /**
-   * <zh/> 每次迭代执行回调
+   * <zh/> 节点之间的最小间距
    *
-   * <en/> Callback executed on each tick
-   * @param data - <zh/> 布局结果 | <en/> layout result
+   * <en/> Minimum spacing between nodes
+   * @defaultValue 0
    */
-  onTick?: (layout: Layout<D3ForceLayoutOptions>) => void;
+  nodeSpacing?: number | ((d?: NodeDatum) => number);
+  /**
+   * <zh/> 中心力的强度，值范围为 [0, 1]
+   *
+   * <en/> Strength of the centering force. Value range is [0, 1]
+   * @defaultValue undefined
+   */
+  centerStrength?: number;
+  /**
+   * <zh/> 是否启用聚类布局
+   *
+   * <en/> Whether to enable clustering layout
+   * @defaultValue false
+   */
+  clustering?: boolean;
+  /**
+   * <zh/> 用于聚类的字段或函数
+   *
+   * <en/> Field or function used for clustering
+   * @defaultValue (d) => d.cluster
+   */
+  clusterBy?: (d: NodeDatum) => string | number;
+  /**
+   * <zh/> 聚类内节点之间的作用力强度
+   *
+   * <en/> Strength of force between nodes within a cluster
+   * @defaultValue -1
+   */
+  clusterNodeStrength?: number;
+  /**
+   * <zh/> 聚类之间边的强度
+   *
+   * <en/> Strength of edges between clusters
+   * @defaultValue 0.1
+   */
+  clusterEdgeStrength?: number;
+  /**
+   * <zh/> 聚类之间边的距离
+   *
+   * <en/> Distance of edges between clusters
+   * @defaultValue 100
+   */
+  clusterEdgeDistance?: number;
+  /**
+   * <zh/> 聚类节点的大小
+   *
+   * <en/> Size of cluster nodes
+   * @defaultValue 10
+   */
+  clusterNodeSize?: number;
+  /**
+   * <zh/> 聚类焦点的引力强度，值范围为 [0, 1]
+   *
+   * <en/> Strength of cluster foci attraction, value range is [0, 1]
+   * @defaultValue 0.8
+   */
+  clusterFociStrength?: number;
   /**
    * <zh/> 迭代次数
    *
