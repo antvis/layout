@@ -1,8 +1,36 @@
-import { quadtree } from 'd3-quadtree';
-// @ts-ignore
 import { octree } from 'd3-octree';
-import { Point } from '../types';
-import { CalcGraph } from './types';
+import { quadtree } from 'd3-quadtree';
+import type { PointObject } from '../types/point';
+import { LayoutModel } from '../util';
+
+/**
+ * Repulsive force based on Coulomb's law
+ * Uses Barnes-Hut optimization with quadtree/octree
+ */
+export function forceRepulsive(
+  factor: number = 1,
+  coulombDisScale: number = 0.005,
+  dimensions: number = 2,
+) {
+  function force(model: LayoutModel, accMap: { [id: string]: PointObject }) {
+    const coulombDisScale2 = coulombDisScale * coulombDisScale;
+    forceNBody(model, factor, coulombDisScale2, accMap, dimensions);
+  }
+
+  force.factor = function (_?: number) {
+    return arguments.length ? ((factor = _!), force) : factor;
+  };
+
+  force.coulombDisScale = function (_?: number) {
+    return arguments.length ? ((coulombDisScale = _!), force) : coulombDisScale;
+  };
+
+  force.dimensions = function (_?: number) {
+    return arguments.length ? ((dimensions = _!), force) : dimensions;
+  };
+
+  return force;
+}
 
 const theta2 = 0.81; // Barnes-Hut approximation threshold
 const epsilon = 0.1; // 为了防止出现除0的情况，加一个epsilon
@@ -20,27 +48,29 @@ interface InternalNode {
 }
 
 export function forceNBody(
-  calcGraph: CalcGraph,
+  model: LayoutModel,
   factor: number,
   coulombDisScale2: number,
-  accMap: { [id: string]: Point },
+  accMap: { [id: string]: PointObject },
   dimensions: number = 2,
 ) {
   const weightParam = factor / coulombDisScale2;
-  const calcNodes = calcGraph.getAllNodes();
-  const data = calcNodes.map((calcNode, i) => {
-    const { nodeStrength, x, y, z, size } = calcNode.data;
+  const nodes = model.nodes();
+
+  const data = nodes.map((node, i) => {
+    const { nodeStrength, x, y, z, size, mass } = node;
     return {
       x,
       y,
       z,
       size,
       index: i,
-      id: calcNode.id,
+      id: node.id,
       vx: 0,
       vy: 0,
       vz: 0,
       weight: weightParam * nodeStrength,
+      mass: mass || 1,
     };
   });
 
@@ -65,15 +95,13 @@ export function forceNBody(
     // @ts-ignore
     computeForce(n, tree, dimensions);
   });
-
-  data.map((n, i) => {
-    const { id, data } = calcNodes[i];
-    const { mass = 1 } = data;
+  data.map((n) => {
+    const id = n.id;
     // 从 0 开始，= 初始化 + 加斥力
     accMap[id] = {
-      x: n.vx / mass,
-      y: n.vy / mass,
-      z: n.vz / mass,
+      x: n.vx / n.mass,
+      y: n.vy / n.mass,
+      z: n.vz / n.mass,
     };
   });
   return accMap;
@@ -121,11 +149,13 @@ const apply = (
   arg1: number,
   arg2: number,
   arg3: number,
+  arg4: number,
+  arg5: number,
   node: InternalNode,
   dimensions: number,
 ) => {
   if (treeNode.data?.id === node.id) return;
-  const x2 = [arg1, arg2, arg3][dimensions - 1];
+  const x2 = dimensions === 2 ? arg2 : dimensions === 3 ? arg4 : arg1;
 
   const dx = node.x - treeNode.x || epsilon;
   const dy = node.y - treeNode.y || epsilon;
@@ -163,7 +193,7 @@ const apply = (
 // @ts-ignore
 function computeForce(node: InternalNode, tree: any, dimensions: number) {
   // @ts-ignore
-  tree.visit((treeNode, x1, y1, x2, y2) =>
-    apply(treeNode, x1, y1, x2, y2, node, dimensions),
+  tree.visit((treeNode, x1, y1, arg2, arg3, arg4, arg5) =>
+    apply(treeNode, x1, y1, arg2, arg3, arg4, arg5, node, dimensions),
   );
 }
