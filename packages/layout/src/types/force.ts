@@ -13,7 +13,7 @@ export interface CommonForceLayoutOptions {
    * <en/> The dimensions of the layout, specify 2 for 2D rendering; if it is 3D rendering, specify 3 to calculate the layout of the z axis
    * @defaultValue 2
    */
-  dimensions?: number;
+  dimensions?: 2 | 3;
   /**
    * <zh/> 布局的中心点，默认为图的中心
    *
