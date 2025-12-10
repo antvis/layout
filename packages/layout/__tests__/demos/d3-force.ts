@@ -19,19 +19,25 @@ export async function render(gui?: GUI) {
   const layout = new D3ForceLayout();
 
   layout.execute(data, {
-    center: {
-      x: width / 2,
-      y: height / 2,
-    },
-    x: {
-      x: width / 2,
-    },
-    y: {
-      y: height / 2,
-    },
-    manyBody: {
-      strength: -20,
-    },
+    width,
+    height,
+    // x: {
+    //   x: width / 2,
+    // },
+    // y: {
+    //   y: height / 2,
+    // },
+    // manyBody: {
+    //   strength: -20,
+    // },
+    clustering: true,
+    clusterNodeStrength: -5,
+    clusterEdgeDistance: 200,
+    clusterNodeSize: 20,
+    clusterFociStrength: 1.2,
+    nodeSpacing: 5,
+    preventOverlap: true,
+    clusterBy: (d) => d.group,
     onTick: (layout) => {
       renderer.handleTick(layout, { nodeRadius: 5 });
     },
