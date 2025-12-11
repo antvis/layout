@@ -18,6 +18,13 @@ export interface D3ForceLayoutOptions
    */
   onTick?: (layout: Layout<D3ForceLayoutOptions>) => void;
   /**
+   * <zh/> 边的唯一标识字段或函数
+   *
+   * <en/> Unique identifier field or function for edges
+   * @defaultValue (edge) => String(edge.id)
+   */
+  linkId?: (edge: EdgeDatum) => string;
+  /**
    * <zh/> 边的理想长度，可以是数值或根据边数据返回长度的函数
    *
    * <en/> Ideal length of edges, can be a number or a function that returns length based on edge data
@@ -59,9 +66,7 @@ export interface D3ForceLayoutOptions
    *
    * @defaultValue 10
    */
-  nodeSize?:
-    | number
-    | ((node: NodeDatum, index: number, nodes: NodeDatum[]) => number);
+  nodeSize?: number | ((node: NodeDatum) => number);
   /**
    * <zh/> 节点之间的最小间距
    *

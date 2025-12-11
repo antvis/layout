@@ -1,4 +1,4 @@
-import { deepMix, isNil } from '@antv/util';
+import { deepMix } from '@antv/util';
 import type { ForceLink, Simulation } from 'd3-force';
 import {
   forceCenter,
@@ -13,9 +13,8 @@ import {
 import { BaseLayoutWithIterations } from '../base-layout';
 import type { LayoutWithIterations } from '../base-layout/types';
 import type { ID } from '../types/id';
-import type { Point } from '../types/point';
 import type { Position } from '../types/position';
-import { normalizeViewport } from '../util';
+import { assignDefined, normalizeViewport } from '../util';
 import { formatNodeSizeFn } from '../util/format';
 import forceInABox from './force-in-a-box';
 import type { D3ForceLayoutOptions, EdgeDatum, NodeDatum } from './types';
@@ -26,7 +25,7 @@ const DEFAULTS_LAYOUT_OPTIONS: Partial<D3ForceLayoutOptions> = {
   centerStrength: 1,
   linkDistance: 30,
   nodeStrength: -30,
-  edgeStrength: null,
+  edgeStrength: undefined,
   preventOverlap: true,
   nodeSize: 10,
   nodeSpacing: 0,
@@ -42,6 +41,7 @@ const DEFAULTS_LAYOUT_OPTIONS: Partial<D3ForceLayoutOptions> = {
   clusterEdgeDistance: 100,
   clusterFociStrength: 0.8,
   clusterNodeSize: 10,
+  linkId: (d) => String(d.id),
 };
 
 export class D3ForceLayout<
@@ -69,14 +69,14 @@ export class D3ForceLayout<
   };
 
   protected forceMap: Record<string, Function> = {
-    link: forceLink,
-    manyBody: forceManyBody,
-    center: forceCenter,
-    collide: forceCollide,
-    radial: forceRadial,
-    x: forceX,
-    y: forceY,
-    group: forceInABox,
+    // link: forceLink,
+    // manyBody: forceManyBody,
+    // center: forceCenter,
+    // collide: forceCollide,
+    // radial: forceRadial,
+    // x: forceX,
+    // y: forceY,
+    // group: forceInABox,
   };
 
   protected getDefaultOptions(): T {
@@ -280,40 +280,62 @@ export class D3ForceLayout<
       ]),
     );
 
-    this.setupCenterForce(simulation, options);
-    this.setupManyBodyForce(simulation, options);
+    this.setupForces(simulation, options);
+
+    return simulation;
+  }
+
+  protected setupForces(
+    simulation: Simulation<NodeDatum, EdgeDatum>,
+    options: T,
+  ) {
     this.setupLinkForce(simulation, options);
+    this.setupManyBodyForce(simulation, options);
+    this.setupCenterForce(simulation, options);
     this.setupCollisionForce(simulation, options);
     this.setupXForce(simulation, options);
     this.setupYForce(simulation, options);
     this.setupRadialForce(simulation, options);
     this.setupClusterForce(simulation, options);
+  }
 
-    return simulation;
+  private getCenterOptions(options: T): D3ForceLayoutOptions['center'] {
+    if (
+      !options.width ||
+      !options.height ||
+      options.centerStrength !== undefined
+    ) {
+      const viewport = normalizeViewport({
+        width: options.width,
+        height: options.height,
+      });
+      return assignDefined({}, options.center, {
+        x: viewport.width / 2,
+        y: viewport.height / 2,
+        strength: options.centerStrength,
+      });
+    }
+    return undefined;
   }
 
   protected setupCenterForce(
     simulation: Simulation<NodeDatum, EdgeDatum>,
     options: T,
   ) {
-    const opts = options as any;
-
-    const centerStrength = opts.centerStrength ?? opts.center?.strength;
-    const center = this.getCenterPoint(options);
+    const center = this.getCenterOptions(options);
 
     if (center) {
       let force = simulation.force('center');
       if (!force) {
-        force = forceCenter(center[0], center[1]);
+        force = forceCenter(center.x, center.y);
         simulation.force('center', force as any);
       }
 
-      const params: [string, any][] = [
-        ['x', center[0]],
-        ['y', center[1]],
-      ];
-      if (centerStrength !== undefined)
-        params.push(['strength', centerStrength]);
+      const params: [string, any][] = [];
+      if (center.x !== undefined) params.push(['x', center.x]);
+      if (center.y !== undefined) params.push(['y', center.y]);
+      if (center.strength !== undefined)
+        params.push(['strength', center.strength]);
 
       apply(force, params);
     } else {
@@ -321,18 +343,31 @@ export class D3ForceLayout<
     }
   }
 
+  private getManyBodyOptions(options: T): D3ForceLayoutOptions['manyBody'] {
+    if (
+      options.manyBody !== undefined ||
+      options.nodeStrength !== undefined ||
+      options.distanceMin !== undefined ||
+      options.distanceMax !== undefined ||
+      options.theta !== undefined
+    ) {
+      return assignDefined({}, options.manyBody, {
+        strength: options.nodeStrength,
+        distanceMin: options.distanceMin,
+        distanceMax: options.distanceMax,
+        theta: options.theta,
+      });
+    }
+    return undefined;
+  }
+
   protected setupManyBodyForce(
     simulation: Simulation<NodeDatum, EdgeDatum>,
     options: T,
   ) {
-    const opts = options as any;
+    const manyBody = this.getManyBodyOptions(options);
 
-    const nodeStrength = opts.nodeStrength ?? opts.manyBody?.strength;
-    const distanceMin = opts.distanceMin ?? opts.manyBody?.distanceMin;
-    const distanceMax = opts.distanceMax ?? opts.manyBody?.distanceMax;
-    const theta = opts.theta ?? opts.manyBody?.theta;
-
-    if (nodeStrength !== undefined || opts.manyBody) {
+    if (manyBody) {
       let force = simulation.force('charge');
       if (!force) {
         force = forceManyBody();
@@ -341,10 +376,13 @@ export class D3ForceLayout<
 
       const params: [string, any][] = [];
 
-      if (nodeStrength !== undefined) params.push(['strength', nodeStrength]);
-      if (distanceMin !== undefined) params.push(['distanceMin', distanceMin]);
-      if (distanceMax !== undefined) params.push(['distanceMax', distanceMax]);
-      if (theta !== undefined) params.push(['theta', theta]);
+      if (manyBody.strength !== undefined)
+        params.push(['strength', manyBody.strength]);
+      if (manyBody.distanceMin !== undefined)
+        params.push(['distanceMin', manyBody.distanceMin]);
+      if (manyBody.distanceMax !== undefined)
+        params.push(['distanceMax', manyBody.distanceMax]);
+      if (manyBody.theta !== undefined) params.push(['theta', manyBody.theta]);
 
       apply(force, params);
     } else {
@@ -352,35 +390,46 @@ export class D3ForceLayout<
     }
   }
 
+  private getLinkOptions(options: T): D3ForceLayoutOptions['link'] {
+    console.log('getLinkOptions', options);
+    if (
+      options.link ||
+      options.linkId !== undefined ||
+      options.linkDistance !== undefined ||
+      options.edgeStrength !== undefined ||
+      options.linkIterations !== undefined
+    ) {
+      return assignDefined({}, options.link, {
+        id: options.linkId,
+        distance: options.linkDistance,
+        strength: options.edgeStrength,
+        iterations: options.linkIterations,
+      });
+    }
+    return undefined;
+  }
+
   protected setupLinkForce(
     simulation: Simulation<NodeDatum, EdgeDatum>,
     options: T,
   ) {
-    const opts = options as any;
     const edges = this.model.edges();
 
-    const linkDistance = opts.linkDistance ?? opts.link?.distance;
-    const edgeStrength = opts.edgeStrength ?? opts.link?.strength;
-    const linkIterations = opts.linkIterations ?? opts.link?.iterations;
-    const linkId = opts.link?.id;
+    const link = this.getLinkOptions(options);
 
-    if (
-      edges.length > 0 &&
-      (linkDistance !== undefined || edgeStrength !== undefined || opts.link)
-    ) {
+    if (edges.length > 0 && link) {
       let force = simulation.force<ForceLink<NodeDatum, EdgeDatum>>('link');
       if (!force) {
-        force = forceLink<NodeDatum, EdgeDatum>().id(
-          linkId || ((d: any) => d.id),
-        );
+        force = forceLink<NodeDatum, EdgeDatum>();
         simulation.force('link', force);
       }
 
       const params: [string, any][] = [];
-      if (linkDistance !== undefined) params.push(['distance', linkDistance]);
-      if (edgeStrength !== undefined) params.push(['strength', edgeStrength]);
-      if (linkIterations !== undefined)
-        params.push(['iterations', linkIterations]);
+      if (link.id !== undefined) params.push(['id', link.id]);
+      if (link.distance !== undefined) params.push(['distance', link.distance]);
+      if (link.strength !== undefined) params.push(['strength', link.strength]);
+      if (link.iterations !== undefined)
+        params.push(['iterations', link.iterations]);
 
       apply(force, params);
     } else {
@@ -388,40 +437,48 @@ export class D3ForceLayout<
     }
   }
 
+  private getCollisionOptions(options: T): D3ForceLayoutOptions['collide'] {
+    if (
+      options.collide !== undefined ||
+      options.preventOverlap !== undefined ||
+      options.nodeSize !== undefined ||
+      options.nodeSpacing !== undefined ||
+      options.collideStrength !== undefined ||
+      options.collideIterations !== undefined
+    ) {
+      const radius =
+        options.nodeSize || options.nodeSpacing
+          ? (d: NodeDatum) =>
+              formatNodeSizeFn(options.nodeSize, options.nodeSpacing, 10)(d) / 2
+          : undefined;
+      return assignDefined({}, options.collide, {
+        radius,
+        strength: options.collideStrength,
+        iterations: options.collideIterations,
+      });
+    }
+    return undefined;
+  }
+
   protected setupCollisionForce(
     simulation: Simulation<NodeDatum, EdgeDatum>,
     options: T,
   ) {
-    const opts = options as any;
-
-    const preventOverlap =
-      opts.preventOverlap ??
-      (opts.collide !== undefined && opts.collide !== false);
-    const collideStrength = opts.collideStrength ?? opts.collide?.strength;
-    const nodeSize = opts.nodeSize ?? opts.collide?.radius ?? 10;
-    const nodeSpacing = opts.nodeSpacing ?? opts.collide?.nodeSpacing ?? 0;
-    const collideIterations =
-      opts.collideIterations ?? opts.collide?.iterations;
-
-    if (preventOverlap) {
-      const getRadius = (d: NodeDatum) => {
-        const sizeFn = formatNodeSizeFn(nodeSize, nodeSpacing, 10);
-        return sizeFn(d._original || d) / 2;
-      };
-
+    const collide = this.getCollisionOptions(options);
+    if (collide) {
       let force = simulation.force('collide');
       if (!force) {
-        force = forceCollide(getRadius);
+        force = forceCollide();
         simulation.force('collide', force as any);
       }
 
-      const params: [string, any][] = [
-        ['radius', getRadius],
-        ['strength', collideStrength ?? 1],
-      ];
+      const params: [string, any][] = [];
 
-      if (collideIterations !== undefined)
-        params.push(['iterations', collideIterations]);
+      if (collide.radius !== undefined) params.push(['radius', collide.radius]);
+      if (collide.strength !== undefined)
+        params.push(['strength', collide.strength]);
+      if (collide.iterations !== undefined)
+        params.push(['iterations', collide.iterations]);
 
       apply(force, params);
     } else {
@@ -429,16 +486,27 @@ export class D3ForceLayout<
     }
   }
 
+  private getXForceOptions(options: T): D3ForceLayoutOptions['x'] {
+    if (
+      options.x !== undefined ||
+      options.forceXPosition !== undefined ||
+      options.forceXStrength !== undefined
+    ) {
+      return assignDefined({}, options.x, {
+        x: options.forceXPosition,
+        strength: options.forceXStrength,
+      });
+    }
+    return undefined;
+  }
+
   protected setupXForce(
     simulation: Simulation<NodeDatum, EdgeDatum>,
     options: T,
   ) {
-    const opts = options as any;
+    const x = this.getXForceOptions(options);
 
-    const forceXStrength = opts.forceXStrength ?? opts.x?.strength;
-    const forceXPosition = opts.forceXPosition ?? opts.x?.x;
-
-    if (forceXStrength !== undefined || opts.x) {
+    if (x) {
       let force = simulation.force('x');
       if (!force) {
         force = forceX();
@@ -446,9 +514,8 @@ export class D3ForceLayout<
       }
 
       const params: [string, any][] = [];
-      if (forceXPosition !== undefined) params.push(['x', forceXPosition]);
-      if (forceXStrength !== undefined)
-        params.push(['strength', forceXStrength]);
+      if (x.x !== undefined) params.push(['x', x.x]);
+      if (x.strength !== undefined) params.push(['strength', x.strength]);
 
       apply(force, params);
     } else {
@@ -456,16 +523,26 @@ export class D3ForceLayout<
     }
   }
 
+  private getYForceOptions(options: T): D3ForceLayoutOptions['y'] {
+    if (
+      options.y !== undefined ||
+      options.forceYPosition !== undefined ||
+      options.forceYStrength !== undefined
+    ) {
+      return assignDefined({}, options.y, {
+        y: options.forceYPosition,
+        strength: options.forceYStrength,
+      });
+    }
+    return undefined;
+  }
+
   protected setupYForce(
     simulation: Simulation<NodeDatum, EdgeDatum>,
     options: T,
   ) {
-    const opts = options as any;
-
-    const forceYStrength = opts.forceYStrength ?? opts.y?.strength;
-    const forceYPosition = opts.forceYPosition ?? opts.y?.y;
-
-    if (forceYStrength !== undefined || opts.y) {
+    const y = this.getYForceOptions(options);
+    if (y) {
       let force = simulation.force('y');
       if (!force) {
         force = forceY();
@@ -473,9 +550,8 @@ export class D3ForceLayout<
       }
 
       const params: [string, any][] = [];
-      if (forceYPosition !== undefined) params.push(['y', forceYPosition]);
-      if (forceYStrength !== undefined)
-        params.push(['strength', forceYStrength]);
+      if (y.y !== undefined) params.push(['y', y.y]);
+      if (y.strength !== undefined) params.push(['strength', y.strength]);
 
       apply(force, params);
     } else {
@@ -483,37 +559,44 @@ export class D3ForceLayout<
     }
   }
 
+  private getRadialOptions(options: T): D3ForceLayoutOptions['radial'] {
+    if (
+      options.radial !== undefined ||
+      options.radialStrength !== undefined ||
+      options.radialRadius !== undefined ||
+      options.radialX !== undefined ||
+      options.radialY !== undefined
+    ) {
+      const center = this.getCenterOptions(options);
+      return assignDefined({}, options.radial, {
+        strength: options.radialStrength,
+        radius: options.radialRadius ?? 100,
+        x: options.radialX ?? (center && center.x),
+        y: options.radialY ?? (center && center.y),
+      });
+    }
+    return undefined;
+  }
+
   protected setupRadialForce(
     simulation: Simulation<NodeDatum, EdgeDatum>,
     options: T,
   ) {
-    const opts = options as any;
+    const radial = this.getRadialOptions(options);
 
-    const radialStrength = opts.radialStrength ?? opts.radial?.strength;
-    const radialRadius = opts.radialRadius ?? opts.radial?.radius;
-    const radialX = opts.radialX ?? opts.radial?.x;
-    const radialY = opts.radialY ?? opts.radial?.y;
-
-    if (
-      (radialRadius !== undefined && radialStrength !== undefined) ||
-      opts.radial
-    ) {
-      const center = this.getCenterPoint(options);
-      const x = !isNil(radialX) ? radialX : center[0];
-      const y = !isNil(radialY) ? radialY : center[1];
-
+    if (radial) {
       let force = simulation.force('radial');
       if (!force) {
-        force = forceRadial(radialRadius ?? 100, x, y);
+        force = forceRadial(radial.radius, radial.x, radial.y);
         simulation.force('radial', force as any);
       }
 
       const params: [string, any][] = [];
-      if (radialRadius !== undefined) params.push(['radius', radialRadius]);
-      if (radialStrength !== undefined)
-        params.push(['strength', radialStrength]);
-      if (radialX !== undefined) params.push(['x', radialX]);
-      if (radialY !== undefined) params.push(['y', radialY]);
+      if (radial.radius !== undefined) params.push(['radius', radial.radius]);
+      if (radial.strength !== undefined)
+        params.push(['strength', radial.strength]);
+      if (radial.x !== undefined) params.push(['x', radial.x]);
+      if (radial.y !== undefined) params.push(['y', radial.y]);
 
       apply(force, params);
     } else {
@@ -537,7 +620,7 @@ export class D3ForceLayout<
         clusterBy,
       } = options;
 
-      const center = this.getCenterPoint(options);
+      const center = this.getCenterOptions(options);
 
       let force = simulation.force('group');
       if (!force) {
@@ -546,8 +629,8 @@ export class D3ForceLayout<
       }
 
       apply(force, [
-        ['centerX', center[0]],
-        ['centerY', center[1]],
+        ['centerX', center && center.x],
+        ['centerY', center && center.y],
         ['template', 'force'],
         ['strength', clusterFociStrength],
         ['groupBy', clusterBy],
@@ -562,24 +645,9 @@ export class D3ForceLayout<
       simulation.force('group', null);
     }
   }
-
-  private getCenterPoint(options: T): Point {
-    const viewport = normalizeViewport({
-      width: options.width,
-      height: options.height,
-    });
-    const vwCenter: Point = [viewport.width / 2, viewport.height / 2];
-    const center: Point = options.center
-      ? [
-          options.center?.x ?? viewport.width / 2,
-          options.center?.y ?? viewport.height / 2,
-        ]
-      : vwCenter;
-    return center;
-  }
 }
 
-const apply = (target: any, params: [string, any][]) => {
+export const apply = (target: any, params: [string, any][]) => {
   return params.reduce((acc, [method, param]) => {
     if (!acc[method] || param === undefined) return acc;
     return acc[method].call(target, param);

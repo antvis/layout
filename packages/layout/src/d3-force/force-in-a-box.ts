@@ -1,5 +1,5 @@
 import * as d3Force from 'd3-force';
-import { LayoutEdge, LayoutNode } from '../types/data';
+import type { LayoutEdge, LayoutNode, NodeData } from '../types/data';
 
 export const getEdgeTerminal = (
   edge: LayoutEdge,
@@ -16,7 +16,7 @@ export default function forceInABox() {
     return () => _;
   }
 
-  let groupBy = (d: LayoutNode) => {
+  let groupBy = (d: NodeData) => {
     return d.cluster;
     // return d.group;
   };
@@ -67,7 +67,8 @@ export default function forceInABox() {
       return;
     }
 
-    if (groupBy(nodes[0]._original) === undefined) {
+    const node = nodes[0];
+    if (groupBy(node._original) === undefined) {
       throw Error(
         "Couldnt find the grouping attribute for the nodes. Make sure to set it up with forceInABox.groupBy('clusterAttr') before calling .links()",
       );
