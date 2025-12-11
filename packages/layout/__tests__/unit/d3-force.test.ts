@@ -35,30 +35,34 @@ describe('layout d3-force', () => {
   it('should return default config', () => {
     const d3Force = new D3ForceLayout();
     expect(d3Force.options).toMatchObject({
-      link: {
-        id: expect.any(Function),
-      },
-      manyBody: {},
-      center: {
-        x: 0,
-        y: 0,
-      },
+      centerStrength: 1,
+      linkId: (d) => String(d.id),
+      linkDistance: 30,
+      nodeStrength: -30,
+      edgeStrength: undefined,
+      preventOverlap: true,
+      nodeSize: 10,
+      nodeSpacing: 0,
+      collideStrength: 1,
+      alpha: 1,
+      alphaMin: 0.001,
+      alphaDecay: 1 - Math.pow(0.001, 1 / 300),
+      alphaTarget: 0,
+      velocityDecay: 0.4,
+      clustering: false,
+      clusterNodeStrength: -1,
+      clusterEdgeStrength: 0.1,
+      clusterEdgeDistance: 100,
+      clusterFociStrength: 0.8,
+      clusterNodeSize: 10,
     });
   });
 
   it('should render with correct config', async () => {
     const d3Force = new D3ForceLayout();
     await d3Force.execute(data, {
-      center: {
-        x: width / 2,
-        y: height / 2,
-      },
-      x: {
-        x: width / 2,
-      },
-      y: {
-        y: height / 2,
-      },
+      width,
+      height,
     });
 
     await renderLayout(d3Force);
@@ -101,16 +105,8 @@ describe('layout d3-force', () => {
 
     const d3Force = new D3ForceLayout();
     await d3Force.execute(data, {
-      center: {
-        x: width / 2,
-        y: height / 2,
-      },
-      x: {
-        x: width / 2,
-      },
-      y: {
-        y: height / 2,
-      },
+      width,
+      height,
       onTick,
     });
     await renderLayout(d3Force);
@@ -119,19 +115,9 @@ describe('layout d3-force', () => {
 
   it('should render with manyBody force', async () => {
     const d3Force = new D3ForceLayout({
-      center: {
-        x: width / 2,
-        y: height / 2,
-      },
-      x: {
-        x: width / 2,
-      },
-      y: {
-        y: height / 2,
-      },
-      manyBody: {
-        strength: -20,
-      },
+      width,
+      height,
+      nodeStrength: -20,
     });
     await d3Force.execute(data);
     await renderLayout(d3Force);
@@ -140,20 +126,9 @@ describe('layout d3-force', () => {
 
   it('should render with link force', async () => {
     const d3Force = new D3ForceLayout({
-      link: {
-        id: (d: any) => d.id,
-        distance: 100,
-      },
-      center: {
-        x: width / 2,
-        y: height / 2,
-      },
-      x: {
-        x: width / 2,
-      },
-      y: {
-        y: height / 2,
-      },
+      linkDistance: 100,
+      width,
+      height,
     });
     await d3Force.execute(data);
     await renderLayout(d3Force);
@@ -162,19 +137,10 @@ describe('layout d3-force', () => {
 
   it('should render with collide force', async () => {
     const d3Force = new D3ForceLayout({
-      collide: {
-        radius: 10,
-      },
-      center: {
-        x: width / 2,
-        y: height / 2,
-      },
-      x: {
-        x: width / 2,
-      },
-      y: {
-        y: height / 2,
-      },
+      width,
+      height,
+      preventOverlap: true,
+      nodeSize: 20,
     });
     await d3Force.execute(data);
     await renderLayout(d3Force);
@@ -200,15 +166,11 @@ describe('layout d3-force', () => {
       ],
     };
     const d3Force = new D3ForceLayout({
-      center: {
-        x: width / 2,
-        y: height / 2,
-      },
-      radial: {
-        radius: 100,
-        x: 250,
-        y: 250,
-      },
+      width,
+      height,
+      radialRadius: 100,
+      radialX: 250,
+      radialY: 250,
     });
     await d3Force.execute(radialGraph);
     await renderLayout(d3Force);
