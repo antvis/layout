@@ -39,7 +39,6 @@ describe('layout d3-force', () => {
 
       edgeId: (d) => String(d.id),
       linkDistance: 30,
-      edgeStrength: undefined,
       edgeIterations: 1,
 
       preventOverlap: false,
@@ -49,9 +48,6 @@ describe('layout d3-force', () => {
       collideIterations: 1,
 
       nodeStrength: -30,
-      distanceMin: undefined,
-      distanceMax: undefined,
-      theta: undefined,
 
       alpha: 1,
       alphaMin: 0.001,
