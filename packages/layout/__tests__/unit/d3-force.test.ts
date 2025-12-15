@@ -38,7 +38,7 @@ describe('layout d3-force', () => {
       centerStrength: 1,
 
       edgeId: (d) => String(d.id),
-      edgeDistance: 30,
+      linkDistance: 30,
       edgeStrength: undefined,
       edgeIterations: 1,
 
@@ -136,7 +136,7 @@ describe('layout d3-force', () => {
 
   it('should render with link force', async () => {
     const d3Force = new D3ForceLayout({
-      edgeDistance: 100,
+      linkDistance: 100,
       width,
       height,
     });

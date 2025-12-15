@@ -25,7 +25,7 @@ const DEFAULTS_LAYOUT_OPTIONS: Partial<D3ForceLayoutOptions> = {
   centerStrength: 1,
 
   edgeId: (d) => String(d.id),
-  edgeDistance: 30,
+  linkDistance: 30,
   edgeIterations: 1,
 
   preventOverlap: false,
@@ -389,13 +389,13 @@ export class D3ForceLayout<
     if (
       options.link ||
       options.edgeId !== undefined ||
-      options.edgeDistance !== undefined ||
+      options.linkDistance !== undefined ||
       options.edgeStrength !== undefined ||
       options.edgeIterations !== undefined
     ) {
       return assignDefined({}, options.link, {
         id: options.edgeId,
-        distance: options.edgeDistance,
+        distance: options.linkDistance,
         strength: options.edgeStrength,
         iterations: options.edgeIterations,
       });

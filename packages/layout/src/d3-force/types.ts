@@ -51,7 +51,7 @@ export interface D3ForceLayoutOptions
    * <en/> Ideal length of edges, can be a number or a function that returns length based on edge data
    * @defaultValue 50
    */
-  edgeDistance?: number | ((edge: EdgeDatum) => number);
+  linkDistance?: number | ((edge: EdgeDatum) => number);
   /**
    * <zh/> 边的强度，可以是数值或根据边数据返回强度的函数。值范围为 [0, 1]
    *

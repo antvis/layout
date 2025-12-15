@@ -24,7 +24,7 @@ export async function render(gui?: GUI) {
     }),
     width,
     height,
-    // edgeDistance: 100,
+    // linkDistance: 100,
     // manyBody: {
     //   strength: -20,
     // },
