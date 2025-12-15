@@ -23,25 +23,31 @@ export type { D3ForceLayoutOptions };
 
 const DEFAULTS_LAYOUT_OPTIONS: Partial<D3ForceLayoutOptions> = {
   centerStrength: 1,
-  linkDistance: 30,
-  nodeStrength: -30,
-  edgeStrength: undefined,
-  preventOverlap: true,
+
+  edgeId: (d) => String(d.id),
+  edgeDistance: 30,
+  edgeIterations: 1,
+
+  preventOverlap: false,
   nodeSize: 10,
   nodeSpacing: 0,
   collideStrength: 1,
+  collideIterations: 1,
+
+  nodeStrength: -30,
+
   alpha: 1,
   alphaMin: 0.001,
   alphaDecay: 1 - Math.pow(0.001, 1 / 300),
   alphaTarget: 0,
   velocityDecay: 0.4,
+
   clustering: false,
   clusterNodeStrength: -1,
   clusterEdgeStrength: 0.1,
   clusterEdgeDistance: 100,
   clusterFociStrength: 0.8,
   clusterNodeSize: 10,
-  linkId: (d) => String(d.id),
 };
 
 export class D3ForceLayout<
@@ -66,17 +72,6 @@ export class D3ForceLayout<
       'velocityDecay',
       'randomSource',
     ],
-  };
-
-  protected forceMap: Record<string, Function> = {
-    // link: forceLink,
-    // manyBody: forceManyBody,
-    // center: forceCenter,
-    // collide: forceCollide,
-    // radial: forceRadial,
-    // x: forceX,
-    // y: forceY,
-    // group: forceInABox,
   };
 
   protected getDefaultOptions(): T {
@@ -391,19 +386,18 @@ export class D3ForceLayout<
   }
 
   private getLinkOptions(options: T): D3ForceLayoutOptions['link'] {
-    console.log('getLinkOptions', options);
     if (
       options.link ||
-      options.linkId !== undefined ||
-      options.linkDistance !== undefined ||
+      options.edgeId !== undefined ||
+      options.edgeDistance !== undefined ||
       options.edgeStrength !== undefined ||
-      options.linkIterations !== undefined
+      options.edgeIterations !== undefined
     ) {
       return assignDefined({}, options.link, {
-        id: options.linkId,
-        distance: options.linkDistance,
+        id: options.edgeId,
+        distance: options.edgeDistance,
         strength: options.edgeStrength,
-        iterations: options.linkIterations,
+        iterations: options.edgeIterations,
       });
     }
     return undefined;
@@ -438,9 +432,9 @@ export class D3ForceLayout<
   }
 
   private getCollisionOptions(options: T): D3ForceLayoutOptions['collide'] {
+    if (!options.preventOverlap) return undefined;
     if (
       options.collide !== undefined ||
-      options.preventOverlap !== undefined ||
       options.nodeSize !== undefined ||
       options.nodeSpacing !== undefined ||
       options.collideStrength !== undefined ||
@@ -449,8 +443,9 @@ export class D3ForceLayout<
       const radius =
         options.nodeSize || options.nodeSpacing
           ? (d: NodeDatum) =>
-              formatNodeSizeFn(options.nodeSize, options.nodeSpacing, 10)(d) / 2
+              formatNodeSizeFn(options.nodeSize, options.nodeSpacing)(d) / 2
           : undefined;
+
       return assignDefined({}, options.collide, {
         radius,
         strength: options.collideStrength,
@@ -465,6 +460,7 @@ export class D3ForceLayout<
     options: T,
   ) {
     const collide = this.getCollisionOptions(options);
+
     if (collide) {
       let force = simulation.force('collide');
       if (!force) {
@@ -490,10 +486,13 @@ export class D3ForceLayout<
     if (
       options.x !== undefined ||
       options.forceXPosition !== undefined ||
-      options.forceXStrength !== undefined
+      options.forceXStrength !== undefined ||
+      options.width !== undefined ||
+      options.height !== undefined
     ) {
+      const center = this.getCenterOptions(options);
       return assignDefined({}, options.x, {
-        x: options.forceXPosition,
+        x: options.forceXPosition ?? (center && center.x),
         strength: options.forceXStrength,
       });
     }
@@ -527,13 +526,17 @@ export class D3ForceLayout<
     if (
       options.y !== undefined ||
       options.forceYPosition !== undefined ||
-      options.forceYStrength !== undefined
+      options.forceYStrength !== undefined ||
+      options.width !== undefined ||
+      options.height !== undefined
     ) {
+      const center = this.getCenterOptions(options);
       return assignDefined({}, options.y, {
-        y: options.forceYPosition,
+        y: options.forceYPosition ?? (center && center.y),
         strength: options.forceYStrength,
       });
     }
+
     return undefined;
   }
 

@@ -3,7 +3,7 @@ import { Canvas } from '@antv/g';
 import { Renderer } from '@antv/g-canvas';
 import type { GUI } from 'lil-gui';
 import { d3Force as data } from '../dataset';
-import { GraphRenderer } from '../utils/renderer';
+import { GraphRenderer } from '../utils';
 
 export async function render(gui?: GUI) {
   const canvas = new Canvas({
@@ -19,8 +19,12 @@ export async function render(gui?: GUI) {
   const layout = new D3ForceLayout();
 
   layout.execute(data, {
+    node: (d) => ({
+      size: d.size,
+    }),
     width,
     height,
+    // edgeDistance: 100,
     // manyBody: {
     //   strength: -20,
     // },

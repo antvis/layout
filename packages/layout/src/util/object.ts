@@ -65,3 +65,30 @@ export function setNestedValue<T>(
   const keys = String(path).split('.');
   set(obj, keys, value);
 }
+
+/**
+ * Merge objects, but undefined values in source objects will not override existing values
+ * @param target - The target object
+ * @param sources - Source objects to merge
+ * @returns A new merged object
+ *
+ * @example
+ * assignDefined({ a: 1, b: 2 }, { b: undefined, c: 3 })
+ * // Returns: { a: 1, b: 2, c: 3 }
+ */
+export function assignDefined<T extends object>(
+  target: T,
+  ...sources: Partial<T>[]
+): T {
+  sources.forEach((source) => {
+    if (source) {
+      Object.keys(source).forEach((key) => {
+        const value = source[key as keyof T];
+        if (value !== undefined) {
+          target[key as keyof T] = value as T[keyof T];
+        }
+      });
+    }
+  });
+  return target;
+}

@@ -36,19 +36,29 @@ describe('layout d3-force', () => {
     const d3Force = new D3ForceLayout();
     expect(d3Force.options).toMatchObject({
       centerStrength: 1,
-      linkId: (d) => String(d.id),
-      linkDistance: 30,
-      nodeStrength: -30,
+
+      edgeId: (d) => String(d.id),
+      edgeDistance: 30,
       edgeStrength: undefined,
-      preventOverlap: true,
+      edgeIterations: 1,
+
+      preventOverlap: false,
       nodeSize: 10,
       nodeSpacing: 0,
       collideStrength: 1,
+      collideIterations: 1,
+
+      nodeStrength: -30,
+      distanceMin: undefined,
+      distanceMax: undefined,
+      theta: undefined,
+
       alpha: 1,
       alphaMin: 0.001,
       alphaDecay: 1 - Math.pow(0.001, 1 / 300),
       alphaTarget: 0,
       velocityDecay: 0.4,
+
       clustering: false,
       clusterNodeStrength: -1,
       clusterEdgeStrength: 0.1,
@@ -126,7 +136,7 @@ describe('layout d3-force', () => {
 
   it('should render with link force', async () => {
     const d3Force = new D3ForceLayout({
-      linkDistance: 100,
+      edgeDistance: 100,
       width,
       height,
     });
@@ -242,16 +252,8 @@ describe('layout d3-force', () => {
     };
     const d3Force = new D3ForceLayout();
     await d3Force.execute(starGraph, {
-      center: {
-        x: width / 2,
-        y: height / 2,
-      },
-      x: {
-        x: width / 2,
-      },
-      y: {
-        y: height / 2,
-      },
+      width,
+      height,
     });
     renderLayout(d3Force);
     await expect(canvas).toMatchSnapshot(__filename, 'star-graph');
