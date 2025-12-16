@@ -317,34 +317,33 @@ describe('layout force', () => {
     await expect(canvas).toMatchSnapshot(__filename, 'path-graph');
   });
 
-  // TODO: fix this test case
-  // it('should handle fixed node positions', async () => {
-  //   const fixedGraph = {
-  //     nodes: [
-  //       { id: 'a', data: { fx: 100, fy: 100 } },
-  //       { id: 'b', data: {} },
-  //       { id: 'c', data: {} },
-  //     ],
-  //     edges: [
-  //       { id: 'e1', source: 'a', target: 'b', data: {} },
-  //       { id: 'e2', source: 'b', target: 'c', data: {} },
-  //     ],
-  //   };
-  //   const layout = new ForceLayout({
-  //     node: (d) => ({
-  //       fx: d.fx,
-  //       fy: d.fy,
-  //     }),
-  //     maxIteration: 100,
-  //   });
-  //   layout.execute(fixedGraph);
-  //   layout.stop();
-  //   layout.tick(100);
-  //   const positions = calculatePositions(layout);
-  //   // Fixed node should stay at its position
-  //   expect(positions.nodes[0].x).toBe(100);
-  //   expect(positions.nodes[0].y).toBe(100);
-  // });
+  it('should handle fixed node positions', async () => {
+    const fixedGraph = {
+      nodes: [
+        { id: 'a', data: { fx: 100, fy: 100 } },
+        { id: 'b', data: {} },
+        { id: 'c', data: {} },
+      ],
+      edges: [
+        { id: 'e1', source: 'a', target: 'b', data: {} },
+        { id: 'e2', source: 'b', target: 'c', data: {} },
+      ],
+    };
+    const layout = new ForceLayout({
+      node: (d) => ({
+        fx: d.data.fx,
+        fy: d.data.fy,
+      }),
+      maxIteration: 100,
+    });
+    layout.execute(fixedGraph);
+    layout.stop();
+    layout.tick(100);
+    const positions = calculatePositions(layout);
+    // Fixed node should stay at its position
+    expect(positions.nodes[0].x).toBe(100);
+    expect(positions.nodes[0].y).toBe(100);
+  });
 
   it('should render with low maxIteration', async () => {
     const layout = new ForceLayout({ maxIteration: 10 });

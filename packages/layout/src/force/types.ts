@@ -1,5 +1,4 @@
-import type { SimulationOptions } from '../base-layout/base-simulation';
-import type { BaseLayoutOptions, Layout } from '../base-layout/types';
+import type { Layout } from '../base-layout/types';
 import type { Edge, EdgeData, Node, NodeData, PointTuple } from '../types';
 import type { CommonForceLayoutOptions } from '../types/force';
 import type { Point } from '../types/point';
@@ -70,10 +69,7 @@ interface FormatCentripetalOptions extends CentripetalOptions {
   others: (node: NodeData) => number;
 }
 
-export interface ForceLayoutOptions
-  extends BaseLayoutOptions,
-    SimulationOptions,
-    CommonForceLayoutOptions {
+export interface ForceLayoutOptions extends CommonForceLayoutOptions {
   /**
    * <zh/> 布局的宽度、默认为画布宽度
    *

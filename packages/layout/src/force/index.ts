@@ -68,6 +68,7 @@ export class ForceLayout
 
     simulation.data(this.model);
     simulation.initialize(options);
+    simulation.restart();
 
     return new Promise<void>((resolve) => {
       simulation.on('end', () => resolve());
