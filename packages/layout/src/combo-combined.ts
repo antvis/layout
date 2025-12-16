@@ -228,7 +228,7 @@ export class ComboCombinedLayout implements Layout<ComboCombinedLayoutOptions> {
         };
 
         outerPositions = await executeLayout(
-          outerLayout,
+          outerLayout as any,
           outerLayoutGraph,
           options,
         );

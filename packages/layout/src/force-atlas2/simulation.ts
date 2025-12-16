@@ -427,7 +427,6 @@ export class Simulation extends BaseSimulation<ParsedForceAtlas2LayoutOptions> {
 
   public destroy(): void {
     this.stop();
-    this.isDestroyed = true;
     this.forces = {};
     this.preForces = {};
     this.bodies = {};

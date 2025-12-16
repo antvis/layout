@@ -1,8 +1,8 @@
 import { isNumber } from '@antv/util';
 import { BaseSimulation } from '../base-layout/base-simulation';
-import { NullablePosition } from '../types';
 import type { LayoutNode } from '../types/data';
 import type { PointObject } from '../types/point';
+import type { NullablePosition } from '../types/position';
 import { LayoutModel } from '../util';
 import type { ParsedForceLayoutOptions } from './types';
 

@@ -1,3 +1,4 @@
+import { ViewportOptions } from '../base-layout/types';
 import type { NodeData } from '../types/data';
 import type { CommonForceLayoutOptions } from '../types/force';
 
@@ -7,7 +8,8 @@ import type { CommonForceLayoutOptions } from '../types/force';
  * <en/> Fruchterman force layout configuration
  */
 export interface FruchtermanLayoutOptions
-  extends Omit<FruchtermanSimulationOptions, 'nodeClusterBy'> {
+  extends ViewportOptions,
+    Omit<FruchtermanSimulationOptions, 'nodeClusterBy'> {
   /**
    * <zh/> 聚类布局依据的字段名，cluster: true 时使用
    *
