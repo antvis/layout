@@ -58,6 +58,9 @@ export class ForceSimulation {
 
     this.iteration = 0;
     this.judgingDistance = Infinity;
+
+    // Start the simulation
+    this.restart();
   }
 
   /**

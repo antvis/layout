@@ -1,3 +1,4 @@
+import type { NodeData } from '../types/data';
 import type { PointObject } from '../types/point';
 import { LayoutModel } from '../util';
 
@@ -6,7 +7,7 @@ import { LayoutModel } from '../util';
  * Applies spring-like forces between connected nodes
  */
 export function forceAttractive(dimensions: number = 2) {
-  let nodeSize: (node: any) => number = () => 10;
+  let nodeSize: (node: NodeData) => number = () => 10;
   let preventOverlap: boolean = false;
 
   function force(model: LayoutModel, accMap: { [id: string]: PointObject }) {
@@ -35,7 +36,7 @@ export function forceAttractive(dimensions: number = 2) {
       const direY = vecY / vecLength;
       const direZ = vecZ / vecLength;
 
-      const { linkDistance = 200, edgeStrength = 200 } = edge || {};
+      const { linkDistance = 200, edgeStrength = 200 } = edge as any;
       const diff = linkDistance - vecLength;
       const param = diff * edgeStrength;
 

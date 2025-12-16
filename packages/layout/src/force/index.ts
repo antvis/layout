@@ -1,7 +1,7 @@
 import { BaseLayoutWithIterations } from '../base-layout';
 import type { LayoutWithIterations } from '../base-layout/types';
 import type { EdgeData, NodeData } from '../types/data';
-import { PointObject } from '../types/point';
+import type { PointObject } from '../types/point';
 import { initModelNodePosition, LayoutModel, normalizeViewport } from '../util';
 import { formatNodeSizeFn, formatNumberFn } from '../util/format';
 import { forceAttractive } from './attractive';
@@ -72,8 +72,6 @@ export class ForceLayout
       simulation.on('end', () => {
         resolve();
       });
-
-      simulation.restart();
     });
   }
 

@@ -1,3 +1,4 @@
+import cluster from './cluster.json';
 import combo from './combo.json';
 import concentric from './concentric.json';
 import countries from './countries.json';
@@ -13,6 +14,7 @@ export {
   dagre,
   combo,
   radial,
+  cluster,
   concentric,
   countries,
   d3Force,
