@@ -1,6 +1,6 @@
-import type { PointTuple } from '../types';
+import type { Layout } from '../base-layout/types';
 import type { ID } from './id';
-import type { PointObject } from './point';
+import type { Point, PointObject } from './point';
 
 export type DisplacementMap = Map<ID, PointObject>;
 
@@ -19,7 +19,7 @@ export interface CommonForceLayoutOptions {
    *
    * <en/> The center point of the layout, default to the center of the graph
    */
-  center?: PointTuple;
+  center?: Point;
   /**
    * <zh/> 最大迭代次数，若为 0 则将自动调整
    *
@@ -52,4 +52,10 @@ export interface CommonForceLayoutOptions {
    * <en/> Maximum distance
    */
   maxDistance?: number;
+  /**
+   * <zh/> 每次迭代后的回调函数
+   *
+   * <en/> Callback function after each iteration
+   */
+  onTick?: (layout: Layout) => void;
 }
