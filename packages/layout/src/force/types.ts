@@ -1,6 +1,8 @@
+import type { SimulationOptions } from '../base-layout/base-simulation';
 import type { BaseLayoutOptions, Layout } from '../base-layout/types';
 import type { Edge, EdgeData, Node, NodeData, PointTuple } from '../types';
 import type { CommonForceLayoutOptions } from '../types/force';
+import type { Point } from '../types/point';
 import type { Size } from '../types/size';
 
 /**
@@ -70,6 +72,7 @@ interface FormatCentripetalOptions extends CentripetalOptions {
 
 export interface ForceLayoutOptions
   extends BaseLayoutOptions,
+    SimulationOptions,
     CommonForceLayoutOptions {
   /**
    * <zh/> 布局的宽度、默认为画布宽度
@@ -83,6 +86,12 @@ export interface ForceLayoutOptions
    * <en/> The height of the layout, default to the height of the canvas
    */
   height?: number;
+  /**
+   * <zh/> 布局的中心点，默认为图的中心
+   *
+   * <en/> The center point of the layout, default to the center of the graph
+   */
+  center?: Point;
   /**
    * <zh/> 边的长度
    * - number: 固定长度

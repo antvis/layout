@@ -1,7 +1,7 @@
 import { BaseLayoutWithIterations } from '../base-layout';
 import type { LayoutWithIterations } from '../base-layout/types';
 import type { EdgeData, NodeData } from '../types/data';
-import type { PointObject } from '../types/point';
+import type { Point, PointObject } from '../types/point';
 import { initModelNodePosition, LayoutModel, normalizeViewport } from '../util';
 import { formatNodeSizeFn, formatNumberFn } from '../util/format';
 import { forceAttractive } from './attractive';
@@ -66,12 +66,11 @@ export class ForceLayout
 
     const simulation = this.setSimulation(options);
 
-    simulation.initialize(this.model, options);
+    simulation.data(this.model);
+    simulation.initialize(options);
 
     return new Promise<void>((resolve) => {
-      simulation.on('end', () => {
-        resolve();
-      });
+      simulation.on('end', () => resolve());
     });
   }
 
@@ -504,6 +503,16 @@ export class ForceLayout
   public restart(): this {
     if (this.simulation) {
       this.simulation.restart();
+    }
+    return this;
+  }
+
+  /**
+   * Set fixed position for a node
+   */
+  public setFixedPosition(nodeId: string, position: Point | null): this {
+    if (this.simulation) {
+      this.simulation.setFixedPosition(nodeId, position);
     }
     return this;
   }
