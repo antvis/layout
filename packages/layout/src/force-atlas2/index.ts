@@ -43,7 +43,7 @@ export class ForceAtlas2Layout extends BaseLayoutWithIterations<ForceAtlas2Layou
 
   protected async layout(options: ForceAtlas2LayoutOptions): Promise<void> {
     const merged = this.parseOptions(options);
-    const { width, height, prune, maxIteration, center, animate } = merged;
+    const { width, height, prune, center } = merged;
 
     const n = this.model.nodeCount();
     if (!n || n === 1) {
@@ -54,17 +54,19 @@ export class ForceAtlas2Layout extends BaseLayoutWithIterations<ForceAtlas2Layou
 
     const sizes = this.getSizes(merged.nodeSize, merged.nodeSpacing);
 
-    // Create or update simulation
-    this.simulation = this.setSimulation(this.model, merged, sizes);
+    const simulation = this.setSimulation();
+    simulation.data(this.model, sizes);
+    simulation.initialize(merged);
+    simulation.restart();
 
-    if (animate) {
-      return new Promise<void>((resolve) => {
-        this.simulation!.restart();
-        this.simulation!.once('end', () => resolve());
+    const run = () =>
+      new Promise<void>((resolve) => {
+        simulation.on('end', resolve);
       });
-    } else {
-      this.simulation.tick(maxIteration);
-    }
+
+    if (!prune) return run();
+
+    await run();
 
     // prune: 把叶子节点贴到父节点并再运行若干次以收敛
     if (prune) {
@@ -83,16 +85,12 @@ export class ForceAtlas2Layout extends BaseLayoutWithIterations<ForceAtlas2Layou
           targetNode.y = sourceNode.y;
         }
       }
-      this.simulation = this.setSimulation(
-        this.model,
-        {
-          ...merged,
-          prune: false,
-          barnesHut: false,
-        },
-        sizes,
-      );
-      this.simulation.tick(100);
+      simulation.initialize({
+        ...merged,
+        prune: false,
+        barnesHut: false,
+      });
+      simulation.tick(100);
     }
   }
 
@@ -108,19 +106,14 @@ export class ForceAtlas2Layout extends BaseLayoutWithIterations<ForceAtlas2Layou
     return result;
   }
 
-  private setSimulation(
-    model: any,
-    options: ParsedForceAtlas2LayoutOptions,
-    sizes: SizeMap,
-  ) {
-    if (!this.simulation) {
-      this.simulation = new Simulation(model, options, sizes);
-    } else {
-      this.simulation.update(model, options, sizes);
-      this.simulation.off('tick');
-    }
+  private setSimulation() {
+    const simulation = this.simulation || new Simulation();
 
-    this.simulation.on('tick', () => options.onTick?.(this));
+    if (!this.simulation) {
+      this.simulation = simulation.on('tick', () =>
+        this.options.onTick?.(this),
+      );
+    }
 
     return this.simulation;
   }

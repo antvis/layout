@@ -1,12 +1,15 @@
-import EventEmitter from '@antv/event-emitter';
 import { isNumber } from '@antv/util';
+import { BaseSimulation } from '../base-layout/base-simulation';
 import type { ID } from '../types/id';
 import type { NullablePosition } from '../types/position';
 import type { LayoutModel } from '../util/model';
 import Body from './body';
 import Quad from './quad';
 import QuadTree from './quad-tree';
-import type { ParsedForceAtlas2LayoutOptions } from './types';
+import type {
+  ForceAtlas2LayoutOptions,
+  ParsedForceAtlas2LayoutOptions,
+} from './types';
 
 type PointTuple = [number, number];
 type ForceMap = Record<string, PointTuple>;
@@ -16,62 +19,34 @@ type SizeMap = Record<string, number>;
 /**
  * ForceAtlas2 Simulation
  */
-export class Simulation extends EventEmitter {
+export class Simulation extends BaseSimulation<ParsedForceAtlas2LayoutOptions> {
   private sg = 0;
   private forces: ForceMap = {};
   private preForces: ForceMap = {};
   private bodies: BodyMap = {};
   private sizes: SizeMap = {};
-  private currentIteration = 0;
   private maxIteration = 0;
 
-  private isRunning = false;
-  private animationFrameId: number | null = null;
-  private iterationsPerFrame = 1;
-  private isDestroyed = false;
+  protected model: LayoutModel;
 
-  private context: {
-    model: LayoutModel;
-    options: ParsedForceAtlas2LayoutOptions;
-  };
-
-  constructor(
-    model: LayoutModel,
-    options: ParsedForceAtlas2LayoutOptions,
-    sizes: SizeMap,
-  ) {
-    super();
-    this.context = { model, options };
+  data(model: LayoutModel, sizes: SizeMap): this {
+    this.model = model;
     this.sizes = sizes;
-    this.maxIteration = options.maxIteration;
-    this.initForces();
-  }
-
-  public update(
-    model: LayoutModel,
-    options: ParsedForceAtlas2LayoutOptions,
-    sizes: SizeMap,
-  ): this {
-    if (this.isDestroyed) return this;
-
-    this.context.model = model;
-    this.context.options = options;
-    this.sizes = sizes;
-    this.maxIteration = options.maxIteration;
-
-    this.forces = {};
-    this.preForces = {};
-    this.bodies = {};
-    this.sg = 0;
-    this.currentIteration = 0;
-
-    this.initForces();
-
     return this;
   }
 
+  initialize(options: Required<ForceAtlas2LayoutOptions>): void {
+    super.initialize(options);
+
+    this.maxIteration = options.maxIteration;
+
+    this.sg = 0;
+
+    this.initForces();
+  }
+
   private initForces(): void {
-    const { model, options } = this.context;
+    const { model, options } = this;
     const { kr, barnesHut } = options;
     const nodes = model.nodes();
 
@@ -99,77 +74,10 @@ export class Simulation extends EventEmitter {
   }
 
   /**
-   * Execute specified number of iterations
-   */
-  public tick(iterations: number = 1): this {
-    if (this.isDestroyed) {
-      console.warn('Simulation has already been destroyed.');
-      return this;
-    }
-
-    this.isRunning = true;
-
-    for (let i = 0; i < iterations; i++) {
-      this.syncFixedPositions();
-      this.step();
-      this.currentIteration++;
-      this.emit('tick');
-    }
-
-    return this;
-  }
-
-  /**
-   * Stop the simulation
-   */
-  public stop(): this {
-    if (!this.isRunning) return this;
-
-    this.isRunning = false;
-    if (this.animationFrameId !== null) {
-      if (typeof cancelAnimationFrame !== 'undefined') {
-        cancelAnimationFrame(this.animationFrameId);
-      }
-      this.animationFrameId = null;
-    }
-
-    return this;
-  }
-
-  /**
-   * Restart the simulation
-   */
-  public restart(): this {
-    if (this.isDestroyed) return this;
-
-    this.isRunning = true;
-
-    const loop = () => {
-      if (!this.isRunning) return;
-
-      const delta = this.maxIteration - this.currentIteration;
-      if (delta <= 0) {
-        this.isRunning = false;
-        this.emit('end');
-        return;
-      }
-
-      this.tick(Math.min(this.iterationsPerFrame, delta));
-
-      if (this.isRunning) {
-        this.animationFrameId = requestAnimationFrame(loop);
-      }
-    };
-
-    this.animationFrameId = requestAnimationFrame(loop);
-    return this;
-  }
-
-  /**
    * Set a node's fixed position
    */
   public setFixedPosition(id: ID, position: NullablePosition | null): void {
-    const node = this.context.model.node(id);
+    const node = this.model.node(id);
     if (!node) return;
 
     if (position === null) {
@@ -187,7 +95,7 @@ export class Simulation extends EventEmitter {
   }
 
   private syncFixedPositions(): void {
-    this.context.model.forEachNode((node) => {
+    this.model.forEachNode((node) => {
       if (this.isNodeFixed(node)) {
         node.x = node.fx!;
         node.y = node.fy!;
@@ -198,10 +106,10 @@ export class Simulation extends EventEmitter {
   /**
    * Execute one step of the simulation
    */
-  private step(): void {
-    const { model, options } = this.context;
+  protected runOneStep(): number {
+    const { model, options } = this;
     const { preventOverlap, barnesHut } = options;
-    const iter = this.maxIteration - this.currentIteration;
+    const iter = this.maxIteration - this.iteration;
     const krPrime = 100;
 
     // Save previous & reset current force vectors
@@ -211,6 +119,8 @@ export class Simulation extends EventEmitter {
       this.preForces[id] = [...(this.forces[id] || [0, 0])];
       this.forces[id] = [0, 0];
     }
+
+    this.syncFixedPositions();
 
     // 1. Attractive forces (edges)
     this.calculateAttractive(iter);
@@ -224,11 +134,11 @@ export class Simulation extends EventEmitter {
     }
 
     // 3. Update positions
-    this.updatePositions();
+    return this.updatePositions();
   }
 
   private calculateAttractive(iter: number): void {
-    const { model, options } = this.context;
+    const { model, options } = this;
     const { preventOverlap, dissuadeHubs, mode, prune } = options;
     const edges = model.edges();
 
@@ -252,7 +162,10 @@ export class Simulation extends EventEmitter {
       let effectiveDist = eucliDis;
       // 当启用 preventOverlap 时,考虑节点大小,确保有效距离不为负
       if (preventOverlap) {
-        effectiveDist = Math.max(0, eucliDis - this.sizes[source] - this.sizes[target]);
+        effectiveDist = Math.max(
+          0,
+          eucliDis - this.sizes[source] - this.sizes[target],
+        );
       }
 
       let faSource = effectiveDist;
@@ -276,7 +189,7 @@ export class Simulation extends EventEmitter {
   }
 
   private calculateOptRepulsiveGravity(): void {
-    const { model, options } = this.context;
+    const { model, options } = this;
     const { kg, center, prune, kr } = options;
 
     const nodes = model.nodes();
@@ -350,7 +263,7 @@ export class Simulation extends EventEmitter {
   }
 
   private calculateRepulsiveGravity(iter: number, krPrime: number): void {
-    const { model, options } = this.context;
+    const { model, options } = this;
     const { preventOverlap, kr, kg, center, prune } = options;
     const nodes = model.nodes();
     const n = nodes.length;
@@ -411,9 +324,9 @@ export class Simulation extends EventEmitter {
     }
   }
 
-  private updatePositions(): void {
-    const { model, options } = this.context;
-    const { ks, tao, prune, ksmax } = options;
+  private updatePositions(): number {
+    const { model, options } = this;
+    const { ks, tao, prune, ksmax, distanceThresholdMode = 'max' } = options;
     const nodes = model.nodes();
     const n = nodes.length;
 
@@ -423,7 +336,7 @@ export class Simulation extends EventEmitter {
     let swgG = 0;
     let traG = 0;
 
-    // Accumulate swg and tra across nodes
+    // -------- ① 计算 swg / tra --------
     for (let i = 0; i < n; i += 1) {
       const { id } = nodes[i];
       const degree = model.degree(id);
@@ -447,6 +360,7 @@ export class Simulation extends EventEmitter {
       traG += (degree + 1) * trans[id];
     }
 
+    // -------- ② 更新 sg --------
     let usingSg = this.sg;
     const preSG = this.sg;
     if (swgG <= 0) {
@@ -457,14 +371,20 @@ export class Simulation extends EventEmitter {
         usingSg = usingSg > 1.5 * preSG ? 1.5 * preSG : usingSg;
       }
     }
-
     this.sg = usingSg;
 
-    // Update positions with adaptive step factor
+    // -------- ③ 新增：distance 累计 --------
+    let maxDistance = 0;
+    let minDistance = Infinity;
+    let sumDistance = 0;
+    let movedCount = 0;
+
+    // -------- ④ 更新位置 --------
     for (let i = 0; i < n; i += 1) {
       const node = nodes[i];
       const id = node.id;
       const degree = model.degree(id);
+
       if (prune && degree <= 1) continue;
       if (this.isNodeFixed(node)) continue;
 
@@ -473,13 +393,35 @@ export class Simulation extends EventEmitter {
 
       let absForce = Math.hypot(this.forces[id][0], this.forces[id][1]);
       absForce = absForce < 1e-4 ? 1e-4 : absForce;
+
       const maxStep = ksmax / absForce;
       if (sn > maxStep) sn = maxStep;
 
       const dx = sn * this.forces[id][0];
       const dy = sn * this.forces[id][1];
+
       node.x += dx;
       node.y += dy;
+
+      // -------- ⑤ 记录位移 --------
+      const dist = Math.hypot(dx, dy);
+      if (dist > 0) {
+        movedCount++;
+        sumDistance += dist;
+        if (dist > maxDistance) maxDistance = dist;
+        if (dist < minDistance) minDistance = dist;
+      }
+    }
+
+    // -------- ⑥ 根据 mode 返回 distance --------
+    switch (distanceThresholdMode) {
+      case 'min':
+        return minDistance;
+      case 'mean':
+        return movedCount > 0 ? sumDistance / movedCount : 0;
+      case 'max':
+      default:
+        return maxDistance;
     }
   }
 

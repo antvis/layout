@@ -2,8 +2,6 @@ import { ForceAtlas2Layout } from '@/src';
 import { Canvas } from '@antv/g';
 import { Renderer } from '@antv/g-canvas';
 import type { GUI } from 'lil-gui';
-import { relations as data } from '../dataset';
-import { preprocessGraphData } from '../utils';
 import { GraphRenderer } from '../utils/renderer';
 
 export async function render(gui?: GUI) {
@@ -17,11 +15,6 @@ export async function render(gui?: GUI) {
   const renderer = new GraphRenderer(canvas);
   const { width, height } = renderer.getCanvasSize();
 
-  const processedData = preprocessGraphData(data, {
-    width: 690,
-    height: 640,
-  });
-
   const layout = new ForceAtlas2Layout({
     width,
     height,
@@ -29,15 +22,40 @@ export async function render(gui?: GUI) {
     nodeSize: 20,
   });
 
-  await layout.execute(processedData, {
-    preventOverlap: true,
-    nodeSize: 20,
-    maxIterations: 500,
-    kr: 10,
-    onTick: (layout) => {
+  // const processedData = preprocessGraphData(data, {
+  //   width: 690,
+  //   height: 640,
+  // });
+
+  //  await layout.execute(processedData, {
+  //   preventOverlap: true,
+  //   nodeSize: 20,
+  //   maxIterations: 500,
+  //   kr: 10,
+  //   onTick: (layout) => {
+  //     renderer.handleTick(layout, { nodeRadius: 10 });
+  //   },
+  // });
+
+  const nodes100: any = [];
+  for (let i = 0; i < 101; i++) nodes100.push({ id: i, data: {} });
+  const graph2 = {
+    nodes: nodes100,
+    edges: [],
+  };
+
+  let tickCount2 = 0;
+
+  await layout.execute(graph2, {
+    center: [100, 200],
+    onTick: (res) => {
+      tickCount2++;
+
       renderer.handleTick(layout, { nodeRadius: 10 });
     },
   });
+
+  console.log('Total ticks:', tickCount2);
 
   renderer.setDragCallbacks({
     onDragStart: (nodeId, position) => {

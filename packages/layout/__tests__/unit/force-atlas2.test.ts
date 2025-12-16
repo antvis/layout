@@ -213,7 +213,7 @@ describe('ForceAtlas2Layout', () => {
         tickCount++;
       },
     });
-    const res = await fa2.execute(graph);
+    await fa2.execute(graph);
     expect(tickCount).toBe(250); // default maxIteration for small graph is 250
 
     const nodes100: any = [];

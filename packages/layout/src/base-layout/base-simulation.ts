@@ -49,6 +49,7 @@ export abstract class BaseSimulation<
       const distance = this.runOneStep();
       this.judgingDistance = distance;
       this.iteration++;
+      this.tickCallback?.();
     }
     return this;
   }
@@ -71,7 +72,6 @@ export abstract class BaseSimulation<
     this.running = true;
     this.timer = window.setInterval(() => {
       this.tick(1);
-      this.tickCallback?.();
 
       if (
         this.iteration >= maxIteration ||

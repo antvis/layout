@@ -421,7 +421,7 @@ export class Simulation extends BaseSimulation<FruchtermanSimulationOptions> {
     switch (distanceThresholdMode) {
       case 'min':
         return min === Infinity ? 0 : min;
-      case 'avg':
+      case 'mean':
         return sum / count;
       case 'max':
       default:
