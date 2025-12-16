@@ -15,6 +15,13 @@ export interface SimulationOptions {
    * @defaultValue 0.4
    */
   minMovement?: number;
+  /**
+   * <zh/> 是否启用动画模式，启用后会在浏览器的 requestAnimationFrame 中执行迭代
+   *
+   * <en/> Whether to enable animation mode. After enabling, the iteration will be executed in the browser's requestAnimationFrame
+   * @defaultValue true
+   */
+  animate?: boolean;
 }
 
 export abstract class BaseSimulation<
@@ -57,8 +64,14 @@ export abstract class BaseSimulation<
   restart() {
     if (this.running) return this;
 
-    const { maxIteration = 500, minMovement = 0 } = this.options;
-    if (typeof window === 'undefined') {
+    const {
+      maxIteration = 500,
+      minMovement = 0,
+      animate = true,
+    } = this.options;
+
+    // ---------- 非动画 or 非浏览器环境 ----------
+    if (!animate || typeof window === 'undefined') {
       while (
         this.iteration < maxIteration &&
         (this.judgingDistance > minMovement || this.iteration < 1)
@@ -69,6 +82,7 @@ export abstract class BaseSimulation<
       return this;
     }
 
+    // ---------- 动画模式 ----------
     this.running = true;
     this.timer = window.setInterval(() => {
       this.tick(1);
