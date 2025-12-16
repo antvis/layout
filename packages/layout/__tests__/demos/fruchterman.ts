@@ -15,6 +15,7 @@ export async function render(gui?: GUI) {
   const layout = new FruchtermanLayout({
     width,
     height,
+    animate: false,
     onTick: (layout) => {
       renderer.handleTick(
         layout,
@@ -57,7 +58,9 @@ export async function render(gui?: GUI) {
     nodeClusterBy: (node: any) => node.cluster,
   };
 
-  layout.execute(processedData, options);
+  console.time('fruchterman layout');
+  await layout.execute(processedData, options);
+  console.timeEnd('fruchterman layout');
 
   if (gui) {
     const controls = {

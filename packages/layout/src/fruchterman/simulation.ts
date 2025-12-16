@@ -417,7 +417,6 @@ export class Simulation extends BaseSimulation<FruchtermanSimulationOptions> {
     });
 
     if (count === 0) return 0;
-
     switch (distanceThresholdMode) {
       case 'min':
         return min === Infinity ? 0 : min;

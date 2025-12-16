@@ -42,7 +42,6 @@ export abstract class BaseSimulation<
 
     this.iteration = 0;
     this.judgingDistance = Infinity;
-    this.restart();
   }
 
   on(event: 'tick' | 'end', cb: () => void) {
@@ -78,7 +77,11 @@ export abstract class BaseSimulation<
       ) {
         this.tick(1);
       }
-      this.endCallback?.();
+
+      Promise.resolve().then(() => {
+        this.endCallback?.();
+      });
+
       return this;
     }
 
