@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="700" height="700" color-interpolation-filters="sRGB" style="background: transparent;">
+  <g transform="matrix(1 0 0 1 0 0)">
+    <g fill="none" stroke="none" stroke-dashoffset="0" font-family="sans-serif" font-size="16" font-style="normal" font-variant="normal" font-weight="normal" text-anchor="left" transform="matrix(1 0 0 1 0 0)" visibility="visible">
+      <g pointer-events="none" transform="matrix(1 0 0 1 390.1962 347.3462)">
+        <line x1="4.429" x2="0" y1="0" y2="18.4796" fill="none" stroke="rgba(190,190,190,1)"/>
+      </g>
+      <g pointer-events="none" transform="matrix(1 0 0 1 317.909 365.8257)">
+        <line x1="72.2873" x2="0" y1="0" y2="13.176" fill="none" stroke="rgba(190,190,190,1)"/>
+      </g>
+      <g pointer-events="none" transform="matrix(1 0 0 1 307.254 363.2745)">
+        <line x1="10.655" x2="0" y1="15.7272" y2="0" fill="none" stroke="rgba(190,190,190,1)"/>
+      </g>
+      <g pointer-events="none" transform="matrix(1 0 0 1 307.254 294.5515)">
+        <line x1="0" x2="32.761" y1="68.723" y2="0" fill="none" stroke="rgba(190,190,190,1)"/>
+      </g>
+      <g pointer-events="none" transform="matrix(1 0 0 1 340.015 294.5515)">
+        <line x1="0" x2="54.6102" y1="0" y2="52.7946" fill="none" stroke="rgba(190,190,190,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 394.6252 347.3462)">
+        <circle cx="5" cy="5" r="5" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-5 -5)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 390.1962 365.8257)">
+        <circle cx="5" cy="5" r="5" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-5 -5)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 317.909 379.0017)">
+        <circle cx="5" cy="5" r="5" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-5 -5)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 307.254 363.2745)">
+        <circle cx="5" cy="5" r="5" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-5 -5)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 340.015 294.5515)">
+        <circle cx="5" cy="5" r="5" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-5 -5)"/>
+      </g>
+      <g pointer-events="none" transform="matrix(1 0 0 1 390.1962 347.3462)">
+        <line x1="4.429" x2="0" y1="0" y2="18.4796" fill="none" stroke="rgba(190,190,190,1)"/>
+      </g>
+      <g pointer-events="none" transform="matrix(1 0 0 1 317.909 365.8257)">
+        <line x1="72.2873" x2="0" y1="0" y2="13.176" fill="none" stroke="rgba(190,190,190,1)"/>
+      </g>
+      <g pointer-events="none" transform="matrix(1 0 0 1 307.254 363.2745)">
+        <line x1="10.655" x2="0" y1="15.7272" y2="0" fill="none" stroke="rgba(190,190,190,1)"/>
+      </g>
+      <g pointer-events="none" transform="matrix(1 0 0 1 307.254 294.5515)">
+        <line x1="0" x2="32.761" y1="68.723" y2="0" fill="none" stroke="rgba(190,190,190,1)"/>
+      </g>
+      <g pointer-events="none" transform="matrix(1 0 0 1 340.015 294.5515)">
+        <line x1="0" x2="54.6102" y1="0" y2="52.7946" fill="none" stroke="rgba(190,190,190,1)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 394.6252 347.3462)">
+        <circle cx="5" cy="5" r="5" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-5 -5)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 390.1962 365.8257)">
+        <circle cx="5" cy="5" r="5" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-5 -5)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 317.909 379.0017)">
+        <circle cx="5" cy="5" r="5" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-5 -5)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 307.254 363.2745)">
+        <circle cx="5" cy="5" r="5" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-5 -5)"/>
+      </g>
+      <g transform="matrix(1 0 0 1 340.015 294.5515)">
+        <circle cx="5" cy="5" r="5" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-5 -5)"/>
+      </g>
+    </g>
+  </g>
+</svg>
