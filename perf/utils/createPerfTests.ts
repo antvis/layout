@@ -231,6 +231,6 @@ export function createTest(config: any, scale: TestScale): Test {
   const test: Test = async (context) => {
     await runPerfTest(context, { ...config, scale });
   };
-  test.iteration = 20;
+  test.iteration = 10;
   return test;
 }

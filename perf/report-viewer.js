@@ -5,17 +5,18 @@ let REPORT_LIST = [];
 const LAYOUT_STATUS = {
   'antv-dagre': { refactored: false },
   'combo-combined': { refactored: false },
-  'd3-force-3d': { refactored: false },
+  'd3-force-3d': { refactored: true },
   'd3-force': { refactored: true },
   'force-altas2': { refactored: false },
-  circular: { refactored: false },
-  dagre: { refactored: false },
+  circular: { refactored: true },
+  concentric: { refactored: true },
+  dagre: { refactored: true },
   force: { refactored: false },
   force2: { refactored: false },
   fruchterman: { refactored: true },
   grid: { refactored: true },
   mds: { refactored: true },
-  radial: { refactored: false },
+  radial: { refactored: true },
   random: { refactored: true },
 };
 

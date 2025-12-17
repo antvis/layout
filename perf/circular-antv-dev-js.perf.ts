@@ -7,7 +7,7 @@ const commonConfig = {
   version: 'dev',
   implementation: 'js',
   LayoutClass: CircularLayout,
-  dataFormat: DataFormat.GRAPHLIB,
+  dataFormat: DataFormat.PLAIN_OBJECT,
   layoutOptions: {},
   shouldRender: true,
 };

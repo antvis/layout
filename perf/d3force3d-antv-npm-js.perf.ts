@@ -1,13 +1,13 @@
-import { D3ForceLayout } from '@antv/layout-npm';
+import { D3Force3DLayout } from '@antv/layout-npm';
 import type { Test } from 'iperf';
 import { CANVAS_SIZE, createTest, DataFormat, TestScale } from './utils';
 
 const commonConfig = {
-  layoutName: 'd3force',
+  layoutName: 'd3force3d',
   source: 'antv',
   version: '1.2.14_beta_8',
   implementation: 'js',
-  LayoutClass: D3ForceLayout,
+  LayoutClass: D3Force3DLayout,
   dataFormat: DataFormat.GRAPHLIB,
   layoutOptions: {
     center: {
@@ -24,27 +24,27 @@ const commonConfig = {
   shouldRender: true,
 };
 
-export const d3forceAntvNpmJsTiny: Test = createTest(
+export const d3force3dAntvNpmJsTiny: Test = createTest(
   commonConfig,
   TestScale.TINY,
 );
 
-export const d3forceAntvNpmJsSmall: Test = createTest(
+export const d3force3dAntvNpmJsSmall: Test = createTest(
   commonConfig,
   TestScale.SMALL,
 );
 
-export const d3forceAntvNpmJsMedium: Test = createTest(
+export const d3force3dAntvNpmJsMedium: Test = createTest(
   commonConfig,
   TestScale.MEDIUM,
 );
 
-// export const d3forceAntvNpmJsLarge: Test = createTest(
+// export const d3force3dAntvNpmJsLarge: Test = createTest(
 //   commonConfig,
 //   TestScale.LARGE,
 // );
 
-// export const d3forceAntvNpmJsXlarge: Test = createTest(
+// export const d3force3dAntvNpmJsXlarge: Test = createTest(
 //   commonConfig,
 //   TestScale.XLARGE,
 // );

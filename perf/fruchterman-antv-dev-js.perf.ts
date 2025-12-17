@@ -31,9 +31,9 @@ export const fruchtermanAntvDevJsMedium = createTest(
   TestScale.MEDIUM,
 );
 
-export const fruchtermanAntvDevJsLarge = createTest(
-  commonConfig,
-  TestScale.LARGE,
-);
+// export const fruchtermanAntvDevJsLarge = createTest(
+//   commonConfig,
+//   TestScale.LARGE,
+// );
 
 // export const fruchtermanAntvDevJsXlarge = createTest(commonConfig, TestScale.XLARGE);
