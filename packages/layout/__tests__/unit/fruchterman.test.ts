@@ -41,7 +41,6 @@ describe('FruchtermanLayout', () => {
       height: 300,
       nodeClusterBy: 'data.cluster',
       dimensions: 2,
-      animate: true,
     });
   });
 

@@ -667,6 +667,9 @@ describe('layout radial', () => {
       maxPreventOverlapIteration: 2000,
       unitRadius,
       nodeSpacing,
+      nodeSize: (d: any) => {
+        return d.data.size;
+      },
     });
     await radial.execute(graph);
     const positions = calculatePositions(radial);

@@ -1,4 +1,4 @@
-import { PointTuple } from '../types';
+import type { Point } from '../types/point';
 
 /**
  * @fileOverview quad
@@ -9,7 +9,7 @@ type QuadProps = {
   xmid: number;
   ymid: number;
   length: number;
-  massCenter?: PointTuple;
+  massCenter?: Point;
   mass?: number;
 };
 
@@ -17,7 +17,7 @@ export default class Quad {
   public xmid: number;
   public ymid: number;
   public length: number;
-  public massCenter: PointTuple;
+  public massCenter: Point;
   public mass: number;
   constructor(params: QuadProps) {
     /**

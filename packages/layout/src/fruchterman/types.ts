@@ -1,6 +1,6 @@
-import type { BaseLayoutOptions } from '../base-layout';
-import type { Layout, ViewportOptions } from '../base-layout/types';
+import { ViewportOptions } from '../base-layout/types';
 import type { NodeData } from '../types/data';
+import type { CommonForceLayoutOptions } from '../types/force';
 
 /**
  * <zh/> Fruchterman 力导布局配置项
@@ -8,8 +8,8 @@ import type { NodeData } from '../types/data';
  * <en/> Fruchterman force layout configuration
  */
 export interface FruchtermanLayoutOptions
-  extends BaseLayoutOptions,
-    Omit<SimulationOptions, 'nodeClusterBy'> {
+  extends ViewportOptions,
+    Omit<FruchtermanSimulationOptions, 'nodeClusterBy'> {
   /**
    * <zh/> 聚类布局依据的字段名，cluster: true 时使用
    *
@@ -17,37 +17,9 @@ export interface FruchtermanLayoutOptions
    * @defaultValue 'cluster'
    */
   nodeClusterBy?: string | ((node: NodeData) => string);
-  /**
-   * <zh/> 每一次迭代的回调函数
-   *
-   * <en/> The callback function for each iteration
-   * @param data - <zh/> 当前迭代的布局数据 | <en/> Current layout data
-   */
-  onTick?: (layout: Layout<FruchtermanLayoutOptions>) => void;
-  /**
-   * <zh/> 是否使用动画自动运行迭代。为 false 时，需要手动调用 tick() 方法来驱动迭代
-   *
-   * <en/> Whether to use animation to automatically run iterations. When false, you need to manually call the tick() method to drive iterations
-   * @defaultValue false
-   */
-  animate?: boolean;
 }
 
-export interface SimulationOptions extends ViewportOptions {
-  /**
-   * <zh/> 布局的维度，2D 渲染时指定为 2；若为 3D 渲染可指定为 3，则将多计算 z 轴的布局
-   *
-   * <en/> The dimensions of the layout, specify 2 for 2D rendering; if it is 3D rendering, specify 3 to calculate the layout of the z axis
-   * @defaultValue 2
-   */
-  dimensions?: 2 | 3;
-  /**
-   * <zh/> 最大迭代次数，若为 0 则将自动调整
-   *
-   * <en/> Maximum number of iterations, if it is 0, it will be automatically adjusted
-   * @defaultValue 0
-   */
-  maxIteration?: number;
+export interface FruchtermanSimulationOptions extends CommonForceLayoutOptions {
   /**
    * <zh/> 中心力大小，指所有节点被吸引到 center 的力。数字越大，布局越紧凑
    *

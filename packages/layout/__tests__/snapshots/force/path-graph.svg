@@ -1,59 +1,89 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1000" height="1000" color-interpolation-filters="sRGB" style="background: transparent;">
   <g transform="matrix(1 0 0 1 0 0)">
     <g fill="none" stroke="none" stroke-dashoffset="0" font-family="sans-serif" font-size="16" font-style="normal" font-variant="normal" font-weight="normal" text-anchor="left" transform="matrix(1 0 0 1 0 0)" visibility="visible">
-      <g transform="matrix(1 0 0 1 565.0718 237.546)">
-        <line x1="58.578" x2="0" y1="0" y2="192.6727" fill="none" stroke="rgba(190,190,190,1)"/>
+      <g pointer-events="none" transform="matrix(1 0 0 1 493.289 444.124)">
+        <line x1="176.3473" x2="0" y1="0" y2="111.1233" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 329.5865 427.556)">
-        <line x1="235.4852" x2="0" y1="2.6627" y2="0" fill="none" stroke="rgba(190,190,190,1)"/>
+      <g pointer-events="none" transform="matrix(1 0 0 1 493.289 346.466)">
+        <line x1="0" x2="31.9094" y1="208.7813" y2="0" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 329.5865 427.556)">
-        <line x1="0" x2="146.3752" y1="0" y2="130.6055" fill="none" stroke="rgba(190,190,190,1)"/>
+      <g pointer-events="none" transform="matrix(1 0 0 1 322.0842 346.466)">
+        <line x1="203.1142" x2="0" y1="0" y2="47.943" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 447.2288 326.1424)">
-        <line x1="28.7329" x2="0" y1="232.0191" y2="0" fill="none" stroke="rgba(190,190,190,1)"/>
+      <g pointer-events="none" transform="matrix(1 0 0 1 322.0842 201.187)">
+        <line x1="0" x2="77.6146" y1="193.2219" y2="0" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g stroke-width="2" transform="matrix(1 0 0 1 623.6498 237.546)">
+      <g transform="matrix(1 0 0 1 669.6364 444.124)">
         <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
+        <g font-size="10" font-weight="bolder" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 0 0)">
+          <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">a</text>
+        </g>
       </g>
-      <g stroke-width="2" transform="matrix(1 0 0 1 565.0718 430.2187)">
+      <g transform="matrix(1 0 0 1 493.289 555.2474)">
         <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
+        <g font-size="10" font-weight="bolder" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 0 0)">
+          <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">b</text>
+        </g>
       </g>
-      <g stroke-width="2" transform="matrix(1 0 0 1 329.5865 427.556)">
+      <g transform="matrix(1 0 0 1 525.1984 346.466)">
         <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
+        <g font-size="10" font-weight="bolder" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 0 0)">
+          <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">c</text>
+        </g>
       </g>
-      <g stroke-width="2" transform="matrix(1 0 0 1 475.9618 558.1615)">
+      <g transform="matrix(1 0 0 1 322.0842 394.409)">
         <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
+        <g font-size="10" font-weight="bolder" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 0 0)">
+          <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">d</text>
+        </g>
       </g>
-      <g stroke-width="2" transform="matrix(1 0 0 1 447.2288 326.1424)">
+      <g transform="matrix(1 0 0 1 399.6989 201.187)">
         <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
+        <g font-size="10" font-weight="bolder" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 0 0)">
+          <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">e</text>
+        </g>
       </g>
-      <g transform="matrix(1 0 0 1 565.0718 237.546)">
-        <line x1="58.578" x2="0" y1="0" y2="192.6727" fill="none" stroke="rgba(190,190,190,1)"/>
+      <g pointer-events="none" transform="matrix(1 0 0 1 493.289 444.124)">
+        <line x1="176.3473" x2="0" y1="0" y2="111.1233" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 329.5865 427.556)">
-        <line x1="235.4852" x2="0" y1="2.6627" y2="0" fill="none" stroke="rgba(190,190,190,1)"/>
+      <g pointer-events="none" transform="matrix(1 0 0 1 493.289 346.466)">
+        <line x1="0" x2="31.9094" y1="208.7813" y2="0" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 329.5865 427.556)">
-        <line x1="0" x2="146.3752" y1="0" y2="130.6055" fill="none" stroke="rgba(190,190,190,1)"/>
+      <g pointer-events="none" transform="matrix(1 0 0 1 322.0842 346.466)">
+        <line x1="203.1142" x2="0" y1="0" y2="47.943" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g transform="matrix(1 0 0 1 447.2288 326.1424)">
-        <line x1="28.7329" x2="0" y1="232.0191" y2="0" fill="none" stroke="rgba(190,190,190,1)"/>
+      <g pointer-events="none" transform="matrix(1 0 0 1 322.0842 201.187)">
+        <line x1="0" x2="77.6146" y1="193.2219" y2="0" fill="none" stroke="rgba(190,190,190,1)"/>
       </g>
-      <g stroke-width="2" transform="matrix(1 0 0 1 623.6498 237.546)">
+      <g transform="matrix(1 0 0 1 669.6364 444.124)">
         <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
+        <g font-size="10" font-weight="bolder" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 0 0)">
+          <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">a</text>
+        </g>
       </g>
-      <g stroke-width="2" transform="matrix(1 0 0 1 565.0718 430.2187)">
+      <g transform="matrix(1 0 0 1 493.289 555.2474)">
         <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
+        <g font-size="10" font-weight="bolder" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 0 0)">
+          <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">b</text>
+        </g>
       </g>
-      <g stroke-width="2" transform="matrix(1 0 0 1 329.5865 427.556)">
+      <g transform="matrix(1 0 0 1 525.1984 346.466)">
         <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
+        <g font-size="10" font-weight="bolder" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 0 0)">
+          <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">c</text>
+        </g>
       </g>
-      <g stroke-width="2" transform="matrix(1 0 0 1 475.9618 558.1615)">
+      <g transform="matrix(1 0 0 1 322.0842 394.409)">
         <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
+        <g font-size="10" font-weight="bolder" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 0 0)">
+          <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">d</text>
+        </g>
       </g>
-      <g stroke-width="2" transform="matrix(1 0 0 1 447.2288 326.1424)">
+      <g transform="matrix(1 0 0 1 399.6989 201.187)">
         <circle cx="10" cy="10" r="10" fill="rgba(65,201,226,1)" stroke="rgba(255,255,255,1)" transform="translate(-10 -10)"/>
+        <g font-size="10" font-weight="bolder" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 0 0)">
+          <text fill="rgba(0,0,0,1)" stroke="none" dominant-baseline="central" dx=".5" paint-order="stroke">e</text>
+        </g>
       </g>
     </g>
   </g>

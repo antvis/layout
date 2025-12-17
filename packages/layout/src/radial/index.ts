@@ -2,15 +2,9 @@ import { BaseLayout } from '../base-layout';
 import { runMDS } from '../mds';
 import type { Matrix } from '../types';
 import type { ID } from '../types/id';
-import {
-  formatNodeSizeToNumber,
-  getAdjList,
-  getAdjMatrix,
-  johnson,
-  LayoutModel,
-  normalizeViewport,
-} from '../util';
+import { getAdjList, johnson, LayoutModel, normalizeViewport } from '../util';
 import { applySingleNodeLayout } from '../util/common';
+import { formatNodeSizeFn } from '../util/format';
 import {
   radialNonoverlapForce,
   RadialNonoverlapForceOptions,
@@ -132,7 +126,7 @@ export class RadialLayout extends BaseLayout<RadialLayoutOptions> {
 
     // stagger the overlapped nodes
     if (preventOverlap) {
-      const nodeSizeFunc = formatNodeSizeToNumber(nodeSize, nodeSpacing);
+      const nodeSizeFunc = formatNodeSizeFn(nodeSize, nodeSpacing);
       const nonoverlapForceParams: RadialNonoverlapForceOptions = {
         nodeSizeFunc,
         radiiMap,

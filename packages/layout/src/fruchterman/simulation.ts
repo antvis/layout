@@ -1,11 +1,11 @@
-import EventEmitter from '@antv/event-emitter';
 import { isNil } from '@antv/util';
+import { BaseSimulation } from '../base-layout/base-simulation';
 import type { LayoutNode } from '../types/data';
 import type { DisplacementMap } from '../types/force';
 import type { ID } from '../types/id';
 import type { NullablePosition } from '../types/position';
 import type { LayoutModel } from '../util/model';
-import type { SimulationOptions } from './types';
+import type { FruchtermanSimulationOptions } from './types';
 
 interface ClusterInfo {
   name: string;
@@ -22,40 +22,24 @@ const SPEED_DIVISOR = 800;
 /**
  * Fruchterman Simulation
  */
-export class Simulation extends EventEmitter {
+export class Simulation extends BaseSimulation<FruchtermanSimulationOptions> {
   private k: number;
   private k2: number;
   private maxDisplace: number;
 
   private displacements: DisplacementMap | null = null;
   private clusterMap: ClusterMap | null = null;
-  private currentIteration: number = 0;
 
-  private isRunning: boolean = false;
-  private animationFrameId: number | null = null;
-  private iterationsPerFrame: number = 10;
+  protected model!: LayoutModel;
 
-  private isDestroyed: boolean = false;
+  data(model: LayoutModel): this {
+    this.model = model;
 
-  private context: {
-    model: LayoutModel;
-    options: SimulationOptions;
-  };
-
-  constructor(model: LayoutModel, options: SimulationOptions) {
-    super();
-
-    this.context = { model, options };
-    this.recomputeConstants();
-
-    this.initDisplacements();
+    return this;
   }
 
-  public update(model: LayoutModel, options: SimulationOptions): this {
-    if (this.isDestroyed) return this;
-
-    this.context.model = model;
-    this.context.options = options;
+  initialize(options: FruchtermanSimulationOptions): void {
+    super.initialize(options);
 
     this.recomputeConstants();
 
@@ -63,13 +47,10 @@ export class Simulation extends EventEmitter {
     this.clusterMap = null;
 
     this.initDisplacements();
-    this.currentIteration = 0;
-
-    return this;
   }
 
   private recomputeConstants(): void {
-    const { model, options } = this.context;
+    const { model, options } = this;
     const { width, height } = options;
     const area = width * height;
 
@@ -78,84 +59,21 @@ export class Simulation extends EventEmitter {
     this.maxDisplace = Math.sqrt(area) / 10;
   }
 
-  /**
-   * Manually steps the simulation by the specified number of *iterations*, and returns the simulation.
-   * If *iterations* is not specified, it defaults to 1 (single step).
-   */
-  public tick(iterations: number = 1): this {
-    if (this.isDestroyed) {
-      console.warn('Simulation has already been destroyed.');
-      return this;
-    }
-
-    this.isRunning = true;
-
-    for (let i = 0; i < iterations; i++) {
-      this.syncFixedPositions();
-      this.initDisplacements();
-      this.calculateRepulsive();
-      this.calculateAttractive();
-      this.applyClusterGravity();
-      this.applyGlobalGravity();
-      this.updatePositions();
-
-      this.currentIteration++;
-      this.emit('tick');
-    }
-
-    return this;
-  }
-
-  /**
-   * Stops the simulation's animation timer and returns the simulation.
-   */
-  public stop(): this {
-    if (!this.isRunning) return this;
-
-    this.isRunning = false;
-    if (this.animationFrameId !== null) {
-      if (typeof cancelAnimationFrame !== 'undefined') {
-        cancelAnimationFrame(this.animationFrameId);
-      }
-      this.animationFrameId = null;
-    }
-
-    return this;
-  }
-
-  /**
-   * Restart the simulation's animation timer and returns the simulation.
-   */
-  public restart(): this {
-    if (this.isDestroyed) return this;
-
-    this.isRunning = true;
-
-    const loop = () => {
-      if (!this.isRunning) return;
-
-      const delta = this.context.options.maxIteration - this.currentIteration;
-      if (delta <= 0) {
-        this.isRunning = false;
-        this.emit('end');
-        return;
-      }
-      this.tick(Math.min(this.iterationsPerFrame, delta));
-
-      if (this.isRunning) {
-        this.animationFrameId = requestAnimationFrame(loop);
-      }
-    };
-
-    this.animationFrameId = requestAnimationFrame(loop);
-    return this;
+  protected runOneStep(): number {
+    this.syncFixedPositions();
+    this.initDisplacements();
+    this.calculateRepulsive();
+    this.calculateAttractive();
+    this.applyClusterGravity();
+    this.applyGlobalGravity();
+    return this.updatePositions();
   }
 
   /**
    * Fixes the position of the node with the given id to the specified position.
    */
   public setFixedPosition(id: ID, position: NullablePosition | null) {
-    const node = this.context.model.node(id);
+    const node = this.model.node(id);
     if (!node) return;
 
     const keys = ['fx', 'fy', 'fz'] as const;
@@ -189,7 +107,7 @@ export class Simulation extends EventEmitter {
    * Synchronizes fixed node positions (fx/fy -> x/y)
    */
   private syncFixedPositions(): void {
-    const { model, options } = this.context;
+    const { model, options } = this;
     const is3D = options.dimensions === 3;
 
     model.forEachNode((node) => {
@@ -206,7 +124,7 @@ export class Simulation extends EventEmitter {
   private initDisplacements(): void {
     if (!this.displacements) {
       this.displacements = new Map();
-      this.context.model.forEachNode((node) => {
+      this.model.forEachNode((node) => {
         this.displacements!.set(node.id, { x: 0, y: 0, z: 0 });
       });
     }
@@ -222,7 +140,7 @@ export class Simulation extends EventEmitter {
    * Calculates repulsive forces
    */
   private calculateRepulsive(): void {
-    const { model, options } = this.context;
+    const { model, options } = this;
     const is3D = options.dimensions === 3;
 
     const nodes = model.nodes();
@@ -286,7 +204,7 @@ export class Simulation extends EventEmitter {
   }
 
   private calculateAttractive(): void {
-    const { model, options } = this.context;
+    const { model, options } = this;
     const is3D = options.dimensions === 3;
 
     model.forEachEdge((edge) => {
@@ -347,7 +265,7 @@ export class Simulation extends EventEmitter {
   }
 
   private applyClusterGravity(): void {
-    const { model, options } = this.context;
+    const { model, options } = this;
     const { nodeClusterBy, clusterGravity, dimensions, clustering } = options;
 
     if (!clustering) return;
@@ -429,7 +347,7 @@ export class Simulation extends EventEmitter {
   }
 
   private applyGlobalGravity(): void {
-    const { model, options } = this.context;
+    const { model, options } = this;
     const { gravity, center, dimensions } = options;
 
     const is3D = dimensions === 3;
@@ -455,17 +373,20 @@ export class Simulation extends EventEmitter {
   /**
    * Updates node positions based on calculated displacements
    */
-  private updatePositions(): void {
-    const { model, options } = this.context;
-    const { speed, dimensions } = options;
+  private updatePositions(): number {
+    const { model, options } = this;
+    const { speed, dimensions, distanceThresholdMode = 'max' } = options;
     const is3D = dimensions === 3;
+
+    let max = 0;
+    let min = Infinity;
+    let sum = 0;
+    let count = 0;
 
     model.forEachNode((node) => {
       const { id } = node;
 
-      if (this.isNodeFixed(node)) {
-        return;
-      }
+      if (this.isNodeFixed(node)) return;
 
       const disp = this.displacements!.get(id)!;
 
@@ -482,42 +403,38 @@ export class Simulation extends EventEmitter {
 
       const ratio = limitedDist / distLength;
 
-      node.x = node.x + disp.x * ratio;
-      node.y = node.y + disp.y * ratio;
+      node.x += disp.x * ratio;
+      node.y += disp.y * ratio;
       if (is3D) {
         node.z = node.z! + disp.z! * ratio;
       }
+
+      // ---- distance statistics ----
+      max = Math.max(max, limitedDist);
+      min = Math.min(min, limitedDist);
+      sum += limitedDist;
+      count++;
     });
+
+    if (count === 0) return 0;
+    switch (distanceThresholdMode) {
+      case 'min':
+        return min === Infinity ? 0 : min;
+      case 'mean':
+        return sum / count;
+      case 'max':
+      default:
+        return max;
+    }
   }
 
   public destroy(): void {
-    if (this.isDestroyed) {
-      console.warn('Simulation has already been destroyed.');
-      return;
-    }
-
     this.stop();
 
-    if (this.displacements) {
-      this.displacements.clear();
-      this.displacements = null;
-    }
+    this.displacements?.clear();
+    this.clusterMap?.clear();
 
-    if (this.clusterMap) {
-      this.clusterMap.clear();
-      this.clusterMap = null;
-    }
-
-    this.off('tick');
-    this.off('end');
-
-    // @ts-ignore
-    this.context = null;
-
-    this.currentIteration = 0;
-    this.isRunning = false;
-    this.animationFrameId = null;
-
-    this.isDestroyed = true;
+    this.model = null;
+    this.options = null;
   }
 }

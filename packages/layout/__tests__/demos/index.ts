@@ -4,6 +4,8 @@ export { render as concentric } from './concentric';
 export { render as d3force } from './d3-force';
 export { render as d3force3d } from './d3-force-3d';
 export { render as dagre } from './dagre';
+export { render as force } from './force';
+export { render as forceAtlas2 } from './force-atlas2';
 export { render as fruchterman } from './fruchterman';
 export { render as grid } from './grid';
 export { render as mds } from './mds';

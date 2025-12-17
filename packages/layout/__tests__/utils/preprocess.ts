@@ -61,6 +61,7 @@ export function initializeNodePositions(
     if (isNaN(+node.y!)) {
       node.y = Math.floor(i / horiNum) * vertiGap + beginY;
     }
+    node.z = 0;
   });
 }
 

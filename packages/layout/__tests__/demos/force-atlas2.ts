@@ -1,45 +1,61 @@
-import { D3ForceLayout } from '@/src';
+import { ForceAtlas2Layout } from '@/src';
 import { Canvas } from '@antv/g';
 import { Renderer } from '@antv/g-canvas';
 import type { GUI } from 'lil-gui';
-import { d3Force as data } from '../dataset';
-import { GraphRenderer } from '../utils';
+import { GraphRenderer } from '../utils/renderer';
 
 export async function render(gui?: GUI) {
   const canvas = new Canvas({
     container: 'container',
-    width: 700,
-    height: 700,
+    width: 1000,
+    height: 1000,
     renderer: new Renderer(),
   });
 
   const renderer = new GraphRenderer(canvas);
   const { width, height } = renderer.getCanvasSize();
 
-  const layout = new D3ForceLayout();
-
-  layout.execute(data, {
-    node: (d) => ({
-      size: d.size,
-    }),
+  const layout = new ForceAtlas2Layout({
     width,
     height,
-    // linkDistance: 100,
-    // manyBody: {
-    //   strength: -20,
-    // },
-    // clustering: true,
-    // clusterNodeStrength: -5,
-    // clusterEdgeDistance: 200,
-    // clusterNodeSize: 20,
-    // clusterFociStrength: 1.2,
-    // nodeSpacing: 5,
-    // preventOverlap: true,
-    // clusterBy: (d) => d.group,
-    onTick: (layout) => {
-      renderer.handleTick(layout, { nodeRadius: 5 });
+    radius: 200,
+    nodeSize: 20,
+  });
+
+  // const processedData = preprocessGraphData(data, {
+  //   width: 690,
+  //   height: 640,
+  // });
+
+  //  await layout.execute(processedData, {
+  //   preventOverlap: true,
+  //   nodeSize: 20,
+  //   maxIterations: 500,
+  //   kr: 10,
+  //   onTick: (layout) => {
+  //     renderer.handleTick(layout, { nodeRadius: 10 });
+  //   },
+  // });
+
+  const nodes100: any = [];
+  for (let i = 0; i < 101; i++) nodes100.push({ id: i, data: {} });
+  const graph2 = {
+    nodes: nodes100,
+    edges: [],
+  };
+
+  let tickCount2 = 0;
+
+  await layout.execute(graph2, {
+    center: [100, 200],
+    onTick: (res) => {
+      tickCount2++;
+
+      renderer.handleTick(layout, { nodeRadius: 10 });
     },
   });
+
+  console.log('Total ticks:', tickCount2);
 
   renderer.setDragCallbacks({
     onDragStart: (nodeId, position) => {
@@ -49,7 +65,7 @@ export async function render(gui?: GUI) {
 
     onDrag: (nodeId, position) => {
       layout.setFixedPosition(nodeId, [position.x, position.y]);
-      layout.simulation.alphaTarget(0.3).restart();
+      layout?.tick(10);
     },
 
     onDragEnd: (nodeId) => {
@@ -65,7 +81,7 @@ export async function render(gui?: GUI) {
       enableDrag: true,
     };
 
-    const layoutFolder = gui.addFolder('D3 Force Layout');
+    const layoutFolder = gui.addFolder('Force Atlas2 Layout');
     layoutFolder.add(controls, 'stop').name('Stop');
     layoutFolder.add(controls, 'tick').name('Tick 5 Iterations');
     layoutFolder.add(controls, 'restart').name('Restart');
@@ -78,5 +94,5 @@ export async function render(gui?: GUI) {
       });
   }
 
-  return canvas;
+  return renderer.getCanvas();
 }

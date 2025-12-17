@@ -1,10 +1,18 @@
-import { FruchtermanLayout } from '@/src';
+import { ForceLayout } from '@/src';
+import { Canvas } from '@antv/g';
+import { Renderer } from '@antv/g-canvas';
 import type { GUI } from 'lil-gui';
-import { fruchterman as data } from '../dataset';
+import { cluster as data } from '../dataset';
 import { GraphRenderer, preprocessGraphData } from '../utils';
 
 export async function render(gui?: GUI) {
-  const renderer = new GraphRenderer();
+  const canvas = new Canvas({
+    container: 'container',
+    width: 690,
+    height: 628,
+    renderer: new Renderer(),
+  });
+  const renderer = new GraphRenderer(canvas);
   const { width, height } = renderer.getCanvasSize();
 
   const processedData = preprocessGraphData(data, {
@@ -12,11 +20,18 @@ export async function render(gui?: GUI) {
     height,
   });
 
-  const layout = new FruchtermanLayout({
+  let index = 0;
+  const layout = new ForceLayout({
     width,
     height,
-    animate: false,
+    center: [width / 2, height / 2],
+    maxSpeed: 100,
+    linkDistance: 50,
+    clustering: true,
+    nodeClusterBy: (d) => d.cluster,
+    clusterNodeStrength: 300,
     onTick: (layout) => {
+      console.log('tick:', index++);
       renderer.handleTick(
         layout,
         {
@@ -46,21 +61,7 @@ export async function render(gui?: GUI) {
     },
   });
 
-  const options = {
-    gravity: 10,
-    speed: 5,
-    nodeSize: 20,
-  };
-
-  const clusterOptions = {
-    ...options,
-    clustering: true,
-    nodeClusterBy: (node: any) => node.cluster,
-  };
-
-  console.time('fruchterman layout');
-  await layout.execute(processedData, options);
-  console.timeEnd('fruchterman layout');
+  layout.execute(processedData);
 
   if (gui) {
     const controls = {

@@ -7,9 +7,12 @@ import {
   getNestedValue,
   normalizeViewport,
 } from '../util';
-import { initModelNodePosition, LayoutModel } from '../util/model';
+import { initModelNodePosition } from '../util/model';
 import { Simulation } from './simulation';
-import type { FruchtermanLayoutOptions, SimulationOptions } from './types';
+import type {
+  FruchtermanLayoutOptions,
+  FruchtermanSimulationOptions,
+} from './types';
 
 export type { FruchtermanLayoutOptions };
 
@@ -23,7 +26,6 @@ const DEFAULTS_LAYOUT_OPTIONS: Partial<FruchtermanLayoutOptions> = {
   height: 300,
   nodeClusterBy: 'data.cluster',
   dimensions: 2,
-  animate: true,
 };
 
 export class FruchtermanLayout extends BaseLayoutWithIterations<FruchtermanLayoutOptions> {
@@ -62,33 +64,28 @@ export class FruchtermanLayout extends BaseLayoutWithIterations<FruchtermanLayou
       return;
     }
 
-    const { width, height, animate, maxIteration } = options;
+    const { width, height } = options;
     initModelNodePosition(this.model, width, height, dimensions);
 
-    const simulation = this.setSimulation(
-      this.model,
-      options as SimulationOptions,
-    );
+    const simulation = this.setSimulation();
 
-    if (animate) {
-      return new Promise<void>((resolve) => {
-        simulation.restart();
-        simulation.once('end', () => resolve());
-      });
-    } else {
-      simulation.tick(maxIteration);
-    }
+    simulation.data(this.model);
+    simulation.initialize(options as FruchtermanSimulationOptions);
+    simulation.restart();
+
+    return new Promise<void>((resolve) => {
+      simulation.on('end', () => resolve());
+    });
   }
 
-  private setSimulation(model: LayoutModel, options: SimulationOptions) {
-    if (!this.simulation) {
-      this.simulation = new Simulation(model, options);
-    } else {
-      this.simulation.update(model, options);
-      this.simulation.off('tick');
-    }
+  private setSimulation() {
+    const simulation = this.simulation || new Simulation();
 
-    this.simulation.on('tick', () => this.options.onTick?.(this));
+    if (!this.simulation) {
+      this.simulation = simulation.on('tick', () =>
+        this.options.onTick?.(this),
+      );
+    }
 
     return this.simulation;
   }

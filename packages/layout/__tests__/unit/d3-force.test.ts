@@ -32,33 +32,11 @@ describe('layout d3-force', () => {
     canvas.destroy();
   });
 
-  it('should return default config', () => {
-    const d3Force = new D3ForceLayout();
-    expect(d3Force.options).toMatchObject({
-      link: {
-        id: expect.any(Function),
-      },
-      manyBody: {},
-      center: {
-        x: 0,
-        y: 0,
-      },
-    });
-  });
-
   it('should render with correct config', async () => {
     const d3Force = new D3ForceLayout();
     await d3Force.execute(data, {
-      center: {
-        x: width / 2,
-        y: height / 2,
-      },
-      x: {
-        x: width / 2,
-      },
-      y: {
-        y: height / 2,
-      },
+      width,
+      height,
     });
 
     await renderLayout(d3Force);
@@ -101,16 +79,8 @@ describe('layout d3-force', () => {
 
     const d3Force = new D3ForceLayout();
     await d3Force.execute(data, {
-      center: {
-        x: width / 2,
-        y: height / 2,
-      },
-      x: {
-        x: width / 2,
-      },
-      y: {
-        y: height / 2,
-      },
+      width,
+      height,
       onTick,
     });
     await renderLayout(d3Force);
@@ -119,19 +89,9 @@ describe('layout d3-force', () => {
 
   it('should render with manyBody force', async () => {
     const d3Force = new D3ForceLayout({
-      center: {
-        x: width / 2,
-        y: height / 2,
-      },
-      x: {
-        x: width / 2,
-      },
-      y: {
-        y: height / 2,
-      },
-      manyBody: {
-        strength: -20,
-      },
+      width,
+      height,
+      nodeStrength: -20,
     });
     await d3Force.execute(data);
     await renderLayout(d3Force);
@@ -140,20 +100,9 @@ describe('layout d3-force', () => {
 
   it('should render with link force', async () => {
     const d3Force = new D3ForceLayout({
-      link: {
-        id: (d: any) => d.id,
-        distance: 100,
-      },
-      center: {
-        x: width / 2,
-        y: height / 2,
-      },
-      x: {
-        x: width / 2,
-      },
-      y: {
-        y: height / 2,
-      },
+      linkDistance: 100,
+      width,
+      height,
     });
     await d3Force.execute(data);
     await renderLayout(d3Force);
@@ -162,19 +111,10 @@ describe('layout d3-force', () => {
 
   it('should render with collide force', async () => {
     const d3Force = new D3ForceLayout({
-      collide: {
-        radius: 10,
-      },
-      center: {
-        x: width / 2,
-        y: height / 2,
-      },
-      x: {
-        x: width / 2,
-      },
-      y: {
-        y: height / 2,
-      },
+      width,
+      height,
+      preventOverlap: true,
+      nodeSize: 20,
     });
     await d3Force.execute(data);
     await renderLayout(d3Force);
@@ -200,15 +140,11 @@ describe('layout d3-force', () => {
       ],
     };
     const d3Force = new D3ForceLayout({
-      center: {
-        x: width / 2,
-        y: height / 2,
-      },
-      radial: {
-        radius: 100,
-        x: 250,
-        y: 250,
-      },
+      width,
+      height,
+      radialRadius: 100,
+      radialX: 250,
+      radialY: 250,
     });
     await d3Force.execute(radialGraph);
     await renderLayout(d3Force);
@@ -280,16 +216,8 @@ describe('layout d3-force', () => {
     };
     const d3Force = new D3ForceLayout();
     await d3Force.execute(starGraph, {
-      center: {
-        x: width / 2,
-        y: height / 2,
-      },
-      x: {
-        x: width / 2,
-      },
-      y: {
-        y: height / 2,
-      },
+      width,
+      height,
     });
     renderLayout(d3Force);
     await expect(canvas).toMatchSnapshot(__filename, 'star-graph');
@@ -347,5 +275,135 @@ describe('layout d3-force', () => {
       expect(typeof node.x).toBe('number');
       expect(typeof node.y).toBe('number');
     });
+  });
+
+  it('should render with clustering force', async () => {
+    const clusterGraph = {
+      nodes: [
+        { id: 'a', data: { cluster: 'group1' } },
+        { id: 'b', data: { cluster: 'group1' } },
+        { id: 'c', data: { cluster: 'group2' } },
+        { id: 'd', data: { cluster: 'group2' } },
+        { id: 'e', data: { cluster: 'group3' } },
+      ],
+      edges: [
+        { id: 'e1', source: 'a', target: 'b', data: {} },
+        { id: 'e2', source: 'b', target: 'c', data: {} },
+        { id: 'e3', source: 'c', target: 'd', data: {} },
+        { id: 'e4', source: 'd', target: 'e', data: {} },
+        { id: 'e5', source: 'e', target: 'a', data: {} },
+      ],
+    };
+    const d3Force = new D3ForceLayout({
+      width,
+      height,
+      clustering: true,
+      clusterBy: (d) => d.data.cluster,
+      clusterNodeStrength: -2,
+      clusterEdgeStrength: 0.2,
+      clusterEdgeDistance: 150,
+      clusterFociStrength: 0.9,
+      clusterNodeSize: 15,
+    });
+    await d3Force.execute(clusterGraph);
+    await renderLayout(d3Force);
+    await expect(canvas).toMatchSnapshot(__filename, 'clustering-force');
+  });
+
+  it('should render with X and Y forces', async () => {
+    const d3Force = new D3ForceLayout({
+      width,
+      height,
+      forceXPosition: 350,
+      forceXStrength: 0.3,
+      forceYPosition: 350,
+      forceYStrength: 0.3,
+    });
+    await d3Force.execute(data);
+    await renderLayout(d3Force);
+    await expect(canvas).toMatchSnapshot(__filename, 'xy-forces');
+  });
+
+  it('should handle alpha methods', async () => {
+    const d3Force = new D3ForceLayout();
+    await d3Force.execute(data);
+
+    // Test getAlpha
+    const alpha = d3Force.getAlpha();
+    expect(typeof alpha).toBe('number');
+
+    // Test setAlpha
+    d3Force.setAlpha(0.5);
+    expect(d3Force.getAlpha()).toBe(0.5);
+
+    // Test reheat
+    d3Force.reheat();
+    expect(d3Force.getAlpha()).toBe(1);
+  });
+
+  it('should use custom simulation', async () => {
+    const { forceSimulation } = require('d3-force');
+    const customSimulation = forceSimulation();
+
+    const d3Force = new D3ForceLayout({
+      width,
+      height,
+      forceSimulation: customSimulation,
+    });
+
+    await d3Force.execute(data);
+    await renderLayout(d3Force);
+    await expect(canvas).toMatchSnapshot(__filename, 'custom-simulation');
+  });
+
+  it('should handle force options as objects', async () => {
+    const d3Force = new D3ForceLayout({
+      width,
+      height,
+      center: { x: 300, y: 300, strength: 0.8 },
+      manyBody: { strength: -50, theta: 0.8 },
+      link: { distance: 80, strength: 0.5 },
+      collide: { radius: 15, strength: 0.7 },
+      radial: { radius: 120, strength: 0.6, x: 350, y: 350 },
+      x: { x: 300, strength: 0.4 },
+      y: { y: 300, strength: 0.4 },
+    });
+
+    await d3Force.execute(data);
+    await renderLayout(d3Force);
+    await expect(canvas).toMatchSnapshot(__filename, 'force-options');
+  });
+
+  it('should handle disabled forces', async () => {
+    const d3Force = new D3ForceLayout({
+      width,
+      height,
+      center: false,
+      manyBody: false,
+      collide: false,
+      radial: false,
+      x: false,
+      y: false,
+    });
+
+    await d3Force.execute(data);
+    await renderLayout(d3Force);
+    await expect(canvas).toMatchSnapshot(__filename, 'disabled-forces');
+  });
+
+  it('should handle function-based options', async () => {
+    const d3Force = new D3ForceLayout({
+      width,
+      height,
+      nodeSize: (d) => (d.id === 'a' ? 20 : 10),
+      nodeSpacing: (d) => (d.id === 'a' ? 5 : 2),
+      nodeStrength: (d) => (d.id === 'a' ? -50 : -30),
+      linkDistance: (d) => (d.source === 'a' ? 100 : 50),
+      edgeStrength: (d) => (d.source === 'a' ? 0.8 : 0.5),
+    });
+
+    await d3Force.execute(data);
+    await renderLayout(d3Force);
+    await expect(canvas).toMatchSnapshot(__filename, 'function-options');
   });
 });
