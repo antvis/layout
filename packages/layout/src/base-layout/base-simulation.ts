@@ -16,9 +16,9 @@ export interface SimulationOptions {
    */
   minMovement?: number;
   /**
-   * <zh/> 是否启用动画模式，启用后会在浏览器的 requestAnimationFrame 中执行迭代
+   * <zh/> 是否启用动画模式：动画模式下布局过程会被分解为多次迭代并通过定时器执行，从而可以在布局过程中看到节点的移动过程；非动画模式下布局将在一次函数调用中完成所有迭代
    *
-   * <en/> Whether to enable animation mode. After enabling, the iteration will be executed in the browser's requestAnimationFrame
+   * <en/> Whether to enable animation mode： in animation mode, the layout process will be decomposed into multiple iterations and executed through a timer, so that you can see the movement process of the nodes during the layout; in non-animation mode, the layout will complete all iterations in one function call
    * @defaultValue true
    */
   animate?: boolean;
