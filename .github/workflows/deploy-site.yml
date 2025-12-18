@@ -35,9 +35,7 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Install dependencies
-        run: |
-          cd site
-          pnpm install
+        run: pnpm install
       - name: Build with Rspress
         run: |
           cd site
