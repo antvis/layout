@@ -1,0 +1,14 @@
+{
+  "docs": {
+    "zh": "文档",
+    "en": "Docs"
+  },
+  "gettingStarted": {
+    "zh": "开始",
+    "en": "Getting Started"
+  },
+  "layout": {
+    "zh": "图布局",
+    "en": "Layout"
+  }
+}
