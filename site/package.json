@@ -1,8 +1,8 @@
 {
   "name": "site",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Documentation site for @antv/layout",
+  "private": true,
   "scripts": {
     "dev": "rspress dev",
     "build": "rspress build",
