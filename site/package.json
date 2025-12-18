@@ -14,9 +14,7 @@
   "packageManager": "pnpm@10.20.0",
   "devDependencies": {
     "@rspress/plugin-playground": "^1.47.0",
-    "rspress": "^1.47.0"
-  },
-  "dependencies": {
+    "rspress": "^1.47.0",
     "@antv/g-canvas": "^1.11.27",
     "@antv/g-lite": "^2.5.1",
     "@antv/layout": "workspace:*"

@@ -1,4 +1,4 @@
-name: Deploy Rspress site to Pages
+name: Deploy site to Pages
 
 on:
   push:
@@ -33,7 +33,7 @@ jobs:
           run_install: false
 
       - name: Install Dependencies
-        run: pnpm install --no-frozen-lockfile
+        run: pnpm install -r --frozen-lockfile
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
