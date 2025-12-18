@@ -22,7 +22,7 @@
     "benchmarks:forceatlas2": "node benchmarks/forceatlas2.test.js",
     "dev": "vite",
     "build:site": "vite build && cp site/enable-threads.js site/dist",
-    "deploy": "gh-pages -d site/dist",
+    "deploy": "gh-pages -d site/doc_build",
     "preview": "vite preview --port 9092",
     "prettier": "prettier --write \"**/*.ts\"",
     "perf": "perf",
