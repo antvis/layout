@@ -1,0 +1,85 @@
+# 快速开始
+
+import { PackageManagerTabs } from '@theme';
+
+## 安装
+
+使用 npm、pnpm、yarn 或 bun 安装:
+
+<PackageManagerTabs command="install @antv/layout" />
+
+## 使用
+
+接下来将介绍图布局算法的通用用法。
+
+### 1. 准备图数据
+
+`@antv/layout` 使用一种 **通用、轻量的图数据结构**：
+
+```js
+const data = {
+  nodes: [{ id: 'node1' }, { id: 'node2' }, { id: 'node3' }],
+  edges: [
+    { source: 'node1', target: 'node2' },
+    { source: 'node2', target: 'node3' },
+  ],
+};
+```
+
+数据结构包含 `nodes` 数组和可选的 `edges` 数组，每个节点需要 `id` 字段，每条边需要 `source` 和 `target` 字段。
+
+### 2. 布局初始化
+
+从 `@antv/layout` 按需引入布局算法：
+
+```js
+import { CircularLayout } from '@antv/layout';
+```
+
+然后创建算法实例，并传入初始化参数：
+
+```js
+const layout = new CircularLayout({
+  center: [200, 200],
+  radius: 150,
+});
+```
+
+这些参数也可以在执行时传入。
+
+### 3. 执行布局
+
+调用 `execute` 开始计算布局，这过程中不会改变原始数据：
+
+```js
+await layout.execute(data);
+```
+
+也可以在执行算法时传入参数：
+
+```js
+await layout.execute(data, {
+  center: [200, 200],
+  radius: 150,
+});
+```
+
+### 4. 读取布局结果
+
+布局完成后，可以通过 `forEachNode` 遍历节点位置结果：
+
+```js
+layout.forEachNode((node) => {
+  console.log(node.x, node.y);
+});
+```
+
+也可以使用 `forEachEdge` 遍历边的结果。
+
+## 完整示例
+
+下面是一个完整示例，我们将所有节点和边渲染出来。
+
+<code src="../../../components/CircularDemo.jsx" direction="vertical" />
+
+现在你应该能在页面上看到一个简单的圆形布局图。

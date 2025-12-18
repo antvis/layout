@@ -1,0 +1,24 @@
+{
+  "name": "site",
+  "version": "1.0.0",
+  "description": "Documentation site for @antv/layout",
+  "private": true,
+  "scripts": {
+    "dev": "rspress dev",
+    "build": "rspress build",
+    "preview": "rspress preview"
+  },
+  "keywords": [],
+  "author": "yvonneyx",
+  "license": "ISC",
+  "packageManager": "pnpm@10.20.0",
+  "devDependencies": {
+    "@rspress/plugin-playground": "^1.47.0",
+    "rspress": "^1.47.0"
+  },
+  "dependencies": {
+    "@antv/g-canvas": "^1.11.27",
+    "@antv/g-lite": "^2.5.1",
+    "@antv/layout": "workspace:*"
+  }
+}
