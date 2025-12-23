@@ -15,6 +15,16 @@ module.exports = {
             syntax: 'typescript',
             decorators: true,
           },
+          transform: {
+            // 处理 import.meta
+            optimizer: {
+              globals: {
+                vars: {
+                  'import.meta': '{}',
+                },
+              },
+            },
+          },
         },
       },
     ],
@@ -30,5 +40,10 @@ module.exports = {
   moduleNameMapper: {
     '^@@/(.*)$': '<rootDir>/__tests__/$1',
     '^@/(.*)$': '<rootDir>/$1',
+  },
+  globals: {
+    'import.meta': {
+      url: 'file:///test/index.js',
+    },
   },
 };

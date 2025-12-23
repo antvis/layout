@@ -85,7 +85,7 @@
     "build:watch": "rollup -c --watch",
     "build": "npm run clean && rollup -c && npm run size",
     "ci": "npm run build && npm run test",
-    "clean": "rimraf dist lib tsconfig.build.tsbuildinfo",
+    "clean": "rimraf dist lib",
     "dev": "vite",
     "prepublishOnly": "npm run build",
     "publish:alpha": "npm publish --tag alpha",
