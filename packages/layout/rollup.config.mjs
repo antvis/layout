@@ -4,7 +4,7 @@ import commonjs from '@rollup/plugin-commonjs';
 import dts from 'rollup-plugin-dts';
 import terser from '@rollup/plugin-terser';
 
-const external = [];
+const external = ['comlink'];
 
 // 主库配置
 const mainConfig = {
