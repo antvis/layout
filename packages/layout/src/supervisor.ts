@@ -1,16 +1,6 @@
 import { Remote, wrap } from 'comlink';
 import type { GraphData, LayoutData, PlainObject } from './types';
-
-interface LayoutWorker {
-  execute(
-    id: string,
-    data: GraphData,
-    config: PlainObject,
-  ): Promise<LayoutData>;
-  stop(): Promise<void>;
-  tick(iterations?: number): Promise<LayoutData | void>;
-  destroy(): void;
-}
+import type { LayoutWorker } from './worker';
 
 export class Supervisor {
   private worker: Worker | null = null;
@@ -39,19 +29,19 @@ export class Supervisor {
   /**
    * Stop layout calculation
    */
-  async stop(): Promise<void> {
-    if (this.workerApi) {
-      await this.workerApi.stop();
-    }
+  stop(): void {
+    this.workerApi?.stop();
   }
 
   /**
    * Execute iteration
    */
-  async tick(iterations?: number): Promise<LayoutData | void> {
-    if (this.workerApi) {
-      return await this.workerApi.tick(iterations);
+  async tick(iterations?: number): Promise<LayoutData> {
+    if (!this.workerApi) {
+      throw new Error('Worker API not initialized');
     }
+
+    return this.workerApi.tick(iterations);
   }
 
   /**

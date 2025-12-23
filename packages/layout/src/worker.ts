@@ -1,16 +1,23 @@
 import { expose } from 'comlink';
 import { isLayoutWithIterations } from './core/base-layout';
 import { registry } from './registry';
-import type { GraphData, LayoutData } from './types';
+import type { GraphData, LayoutData, PlainObject } from './types';
 
 let layoutInstance: any = null;
 
-const api = {
-  async execute(
+export interface LayoutWorker {
+  execute(
     id: string,
     data: GraphData,
-    options: Record<string, any>,
-  ): Promise<LayoutData> {
+    config: PlainObject,
+  ): Promise<LayoutData>;
+  stop(): void;
+  tick(iterations?: number): LayoutData;
+  destroy(): void;
+}
+
+const api: LayoutWorker = {
+  async execute(id: string, data: GraphData, options: Record<string, any>) {
     const LayoutCtor = registry[id];
 
     if (!LayoutCtor) {
@@ -33,10 +40,13 @@ const api = {
     }
   },
 
-  tick(iterations?: number) {
+  tick(iterations?: number): LayoutData {
     if (layoutInstance && isLayoutWithIterations(layoutInstance)) {
       layoutInstance.tick(iterations);
+
+      return (layoutInstance as any).model.data();
     }
+    return {} as LayoutData;
   },
 
   destroy() {

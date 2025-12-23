@@ -98,7 +98,9 @@ export abstract class BaseLayout<
 }
 
 /**
- * 迭代布局基类
+ * <zh/> 支持迭代的布局基类
+ *
+ * <en/> Base class for layouts with iterations
  */
 export abstract class BaseLayoutWithIterations<
   O extends BaseLayoutOptions = BaseLayoutOptions,
@@ -111,31 +113,20 @@ export abstract class BaseLayoutWithIterations<
 
   abstract setFixedPosition(nodeId: string, position: Point | null): void;
 
-  /**
-   * 在 worker 中停止布局
-   */
-  protected async stopInWorker(): Promise<void> {
-    if (this.supervisor) {
-      await this.supervisor.stop();
-    }
+  async stopInWorker(): Promise<void> {
+    this.supervisor?.stop();
   }
 
-  /**
-   * 在 worker 中执行迭代
-   */
-  protected async tickInWorker(iterations?: number): Promise<void> {
-    if (this.supervisor) {
-      const result = await this.supervisor.tick(iterations);
-      if (result) {
-        this.model?.apply(result);
-      }
+  async tickInWorker(iterations?: number): Promise<void> {
+    if (!this.supervisor) {
+      this.supervisor = new Supervisor();
     }
+
+    const result = await this.supervisor.tick(iterations);
+    this.model?.apply(result);
   }
 }
 
-/**
- * 判断布局是否为迭代布局
- */
 export function isLayoutWithIterations(
   layout: any,
 ): layout is LayoutWithIterations {
