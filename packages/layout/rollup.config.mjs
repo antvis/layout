@@ -86,7 +86,6 @@ const workerIIFEConfig = {
   ],
 };
 
-// 类型声明 - 保留模块结构
 const dtsConfig = {
   input: 'src/index.ts',
   output: {

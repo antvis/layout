@@ -98,9 +98,9 @@ export abstract class BaseLayout<
 }
 
 /**
- * <zh/> 支持迭代的布局基类
+ * <zh/> 迭代布局基类
  *
- * <en/> Base class for layouts with iterations
+ * <en/> Base class for iterative layouts
  */
 export abstract class BaseLayoutWithIterations<
   O extends BaseLayoutOptions = BaseLayoutOptions,
@@ -114,6 +114,11 @@ export abstract class BaseLayoutWithIterations<
   abstract setFixedPosition(nodeId: string, position: Point | null): void;
 }
 
+/**
+ * <zh/> 判断布局是否为迭代布局
+ *
+ * <en/> Determine whether the layout is an iterative layout
+ */
 export function isLayoutWithIterations(
   layout: any,
 ): layout is LayoutWithIterations {
