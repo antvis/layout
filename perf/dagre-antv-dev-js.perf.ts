@@ -16,10 +16,7 @@ export const dagreAntvDevJsTiny = createTest(commonConfig, TestScale.TINY);
 
 export const dagreAntvDevJsSmall = createTest(commonConfig, TestScale.SMALL);
 
-export const dagreAntvDevJsMedium = createTest(
-  commonConfig,
-  TestScale.MEDIUM,
-);
+export const dagreAntvDevJsMedium = createTest(commonConfig, TestScale.MEDIUM);
 
 // export const dagreAntvDevJsLarge = createTest(commonConfig, TestScale.LARGE);
 

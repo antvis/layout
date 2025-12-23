@@ -1,5 +1,5 @@
 import type {
-  D3ForceLayoutOptions,
+  D3ForceCommonOptions,
   EdgeDatum as _EdgeDatum,
   NodeDatum as _NodeDatum,
 } from '../d3-force/types';
@@ -7,10 +7,11 @@ import type {
 /**
  * @see https://github.com/vasturiano/d3-force-3d
  */
-export interface D3Force3DLayoutOptions extends D3ForceLayoutOptions {
-  numDimensions?: number;
+export interface D3Force3DLayoutOptions extends D3ForceCommonOptions {
+  numDimensions?: 3;
   /**
    * <zh/> 中心力
+   *
    * <en/> Center force
    */
   center?:
@@ -61,7 +62,7 @@ export interface NodeDatum extends _NodeDatum {
   vz: number;
 }
 
-export interface EdgeDatum extends _EdgeDatum {
+export interface EdgeDatum extends Omit<_EdgeDatum, 'source' | 'target'> {
   source: NodeDatum | string | number;
   target: NodeDatum | string | number;
 }

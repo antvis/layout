@@ -1,4 +1,4 @@
-import type { Edge, Node, OutNode, Point } from '@/src/types';
+import type { EdgeData, NodeData, PointObject } from '@/src/types';
 import {
   floydWarshall,
   getAdjList,
@@ -12,12 +12,12 @@ import { LayoutModel } from '@/src/util/model';
 
 describe('getAdjMatrix', () => {
   test('should create adjacency matrix for undirected graph', () => {
-    const nodes: Node[] = [
+    const nodes: NodeData[] = [
       { id: 'a', data: {} },
       { id: 'b', data: {} },
       { id: 'c', data: {} },
     ];
-    const edges: Edge[] = [
+    const edges: EdgeData[] = [
       { id: 'e1', source: 'a', target: 'b', data: {} },
       { id: 'e2', source: 'b', target: 'c', data: {} },
     ];
@@ -33,12 +33,12 @@ describe('getAdjMatrix', () => {
   });
 
   test('should create adjacency matrix for directed graph', () => {
-    const nodes: Node[] = [
+    const nodes: NodeData[] = [
       { id: 'a', data: {} },
       { id: 'b', data: {} },
       { id: 'c', data: {} },
     ];
-    const edges: Edge[] = [
+    const edges: EdgeData[] = [
       { id: 'e1', source: 'a', target: 'b', data: {} },
       { id: 'e2', source: 'b', target: 'c', data: {} },
     ];
@@ -54,11 +54,11 @@ describe('getAdjMatrix', () => {
   });
 
   test('should handle empty edges', () => {
-    const nodes: Node[] = [
+    const nodes: NodeData[] = [
       { id: 'a', data: {} },
       { id: 'b', data: {} },
     ];
-    const edges: Edge[] = [];
+    const edges: EdgeData[] = [];
 
     const model = new LayoutModel({ nodes, edges });
     const matrix = getAdjMatrix(model, false);
@@ -67,8 +67,8 @@ describe('getAdjMatrix', () => {
   });
 
   test('should handle single node', () => {
-    const nodes: Node[] = [{ id: 'a', data: {} }];
-    const edges: Edge[] = [];
+    const nodes: NodeData[] = [{ id: 'a', data: {} }];
+    const edges: EdgeData[] = [];
 
     const model = new LayoutModel({ nodes, edges });
     const matrix = getAdjMatrix(model, false);
@@ -77,11 +77,11 @@ describe('getAdjMatrix', () => {
   });
 
   test('should handle self-loop edge', () => {
-    const nodes: Node[] = [
+    const nodes: NodeData[] = [
       { id: 'a', data: {} },
       { id: 'b', data: {} },
     ];
-    const edges: Edge[] = [
+    const edges: EdgeData[] = [
       { id: 'e1', source: 'a', target: 'a', data: {} },
       { id: 'e2', source: 'a', target: 'b', data: {} },
     ];
@@ -95,11 +95,11 @@ describe('getAdjMatrix', () => {
   });
 
   test('should ignore edges with invalid source or target', () => {
-    const nodes: Node[] = [
+    const nodes: NodeData[] = [
       { id: 'a', data: {} },
       { id: 'b', data: {} },
     ];
-    const edges: Edge[] = [
+    const edges: EdgeData[] = [
       { id: 'e1', source: 'a', target: 'b', data: {} },
       { id: 'e2', source: 'a', target: 'nonexistent', data: {} },
       { id: 'e3', source: 'nonexistent', target: 'b', data: {} },
@@ -115,7 +115,7 @@ describe('getAdjMatrix', () => {
   });
 
   test('should handle undefined edges', () => {
-    const nodes: Node[] = [
+    const nodes: NodeData[] = [
       { id: 'a', data: {} },
       { id: 'b', data: {} },
     ];
@@ -134,12 +134,12 @@ describe('getAdjMatrix', () => {
   });
 
   test('should handle complete graph', () => {
-    const nodes: Node[] = [
+    const nodes: NodeData[] = [
       { id: 'a', data: {} },
       { id: 'b', data: {} },
       { id: 'c', data: {} },
     ];
-    const edges: Edge[] = [
+    const edges: EdgeData[] = [
       { id: 'e1', source: 'a', target: 'b', data: {} },
       { id: 'e2', source: 'a', target: 'c', data: {} },
       { id: 'e3', source: 'b', target: 'c', data: {} },
@@ -156,12 +156,12 @@ describe('getAdjMatrix', () => {
   });
 
   test('should handle directed graph with multiple edges from same node', () => {
-    const nodes: Node[] = [
+    const nodes: NodeData[] = [
       { id: 'a', data: {} },
       { id: 'b', data: {} },
       { id: 'c', data: {} },
     ];
-    const edges: Edge[] = [
+    const edges: EdgeData[] = [
       { id: 'e1', source: 'a', target: 'b', data: {} },
       { id: 'e2', source: 'a', target: 'c', data: {} },
     ];
@@ -177,11 +177,11 @@ describe('getAdjMatrix', () => {
   });
 
   test('should handle bidirectional edges in directed graph', () => {
-    const nodes: Node[] = [
+    const nodes: NodeData[] = [
       { id: 'a', data: {} },
       { id: 'b', data: {} },
     ];
-    const edges: Edge[] = [
+    const edges: EdgeData[] = [
       { id: 'e1', source: 'a', target: 'b', data: {} },
       { id: 'e2', source: 'b', target: 'a', data: {} },
     ];
@@ -198,12 +198,12 @@ describe('getAdjMatrix', () => {
 
 describe('getAdjList', () => {
   test('should create adjacency list for undirected graph', () => {
-    const nodes: Node[] = [
+    const nodes: NodeData[] = [
       { id: 'a', data: {} },
       { id: 'b', data: {} },
       { id: 'c', data: {} },
     ];
-    const edges: Edge[] = [
+    const edges: EdgeData[] = [
       { id: 'e1', source: 'a', target: 'b', data: {} },
       { id: 'e2', source: 'b', target: 'c', data: {} },
     ];
@@ -215,12 +215,12 @@ describe('getAdjList', () => {
   });
 
   test('should create adjacency list for directed graph', () => {
-    const nodes: Node[] = [
+    const nodes: NodeData[] = [
       { id: 'a', data: {} },
       { id: 'b', data: {} },
       { id: 'c', data: {} },
     ];
-    const edges: Edge[] = [
+    const edges: EdgeData[] = [
       { id: 'e1', source: 'a', target: 'b', data: {} },
       { id: 'e2', source: 'b', target: 'c', data: {} },
     ];
@@ -232,11 +232,11 @@ describe('getAdjList', () => {
   });
 
   test('should handle empty edges', () => {
-    const nodes: Node[] = [
+    const nodes: NodeData[] = [
       { id: 'a', data: {} },
       { id: 'b', data: {} },
     ];
-    const edges: Edge[] = [];
+    const edges: EdgeData[] = [];
 
     const model = new LayoutModel({ nodes, edges });
     const adjList = getAdjList(model, false);
@@ -245,8 +245,8 @@ describe('getAdjList', () => {
   });
 
   test('should handle single node', () => {
-    const nodes: Node[] = [{ id: 'a', data: {} }];
-    const edges: Edge[] = [];
+    const nodes: NodeData[] = [{ id: 'a', data: {} }];
+    const edges: EdgeData[] = [];
 
     const model = new LayoutModel({ nodes, edges });
     const adjList = getAdjList(model, false);
@@ -255,11 +255,11 @@ describe('getAdjList', () => {
   });
 
   test('should handle self-loop edge', () => {
-    const nodes: Node[] = [
+    const nodes: NodeData[] = [
       { id: 'a', data: {} },
       { id: 'b', data: {} },
     ];
-    const edges: Edge[] = [
+    const edges: EdgeData[] = [
       { id: 'e1', source: 'a', target: 'a', data: {} },
       { id: 'e2', source: 'a', target: 'b', data: {} },
     ];
@@ -273,11 +273,11 @@ describe('getAdjList', () => {
   });
 
   test('should ignore edges with invalid source or target', () => {
-    const nodes: Node[] = [
+    const nodes: NodeData[] = [
       { id: 'a', data: {} },
       { id: 'b', data: {} },
     ];
-    const edges: Edge[] = [
+    const edges: EdgeData[] = [
       { id: 'e1', source: 'a', target: 'b', data: {} },
       { id: 'e2', source: 'a', target: 'nonexistent', data: {} },
       { id: 'e3', source: 'nonexistent', target: 'b', data: {} },
@@ -290,12 +290,12 @@ describe('getAdjList', () => {
   });
 
   test('should handle complete graph', () => {
-    const nodes: Node[] = [
+    const nodes: NodeData[] = [
       { id: 'a', data: {} },
       { id: 'b', data: {} },
       { id: 'c', data: {} },
     ];
-    const edges: Edge[] = [
+    const edges: EdgeData[] = [
       { id: 'e1', source: 'a', target: 'b', data: {} },
       { id: 'e2', source: 'a', target: 'c', data: {} },
       { id: 'e3', source: 'b', target: 'c', data: {} },
@@ -312,12 +312,12 @@ describe('getAdjList', () => {
   });
 
   test('should handle directed graph with multiple edges from same node', () => {
-    const nodes: Node[] = [
+    const nodes: NodeData[] = [
       { id: 'a', data: {} },
       { id: 'b', data: {} },
       { id: 'c', data: {} },
     ];
-    const edges: Edge[] = [
+    const edges: EdgeData[] = [
       { id: 'e1', source: 'a', target: 'b', data: {} },
       { id: 'e2', source: 'a', target: 'c', data: {} },
     ];
@@ -329,11 +329,11 @@ describe('getAdjList', () => {
   });
 
   test('should handle bidirectional edges in directed graph', () => {
-    const nodes: Node[] = [
+    const nodes: NodeData[] = [
       { id: 'a', data: {} },
       { id: 'b', data: {} },
     ];
-    const edges: Edge[] = [
+    const edges: EdgeData[] = [
       { id: 'e1', source: 'a', target: 'b', data: {} },
       { id: 'e2', source: 'b', target: 'a', data: {} },
     ];
@@ -480,8 +480,8 @@ describe('scaleMatrix', () => {
 
 describe('getEuclideanDistance', () => {
   test('should calculate distance between two points', () => {
-    const p1: Point = { x: 0, y: 0 };
-    const p2: Point = { x: 3, y: 4 };
+    const p1: PointObject = { x: 0, y: 0 };
+    const p2: PointObject = { x: 3, y: 4 };
 
     const distance = getEuclideanDistance(p1, p2);
 
@@ -489,8 +489,8 @@ describe('getEuclideanDistance', () => {
   });
 
   test('should return zero for same point', () => {
-    const p1: Point = { x: 5, y: 10 };
-    const p2: Point = { x: 5, y: 10 };
+    const p1: PointObject = { x: 5, y: 10 };
+    const p2: PointObject = { x: 5, y: 10 };
 
     const distance = getEuclideanDistance(p1, p2);
 
@@ -498,8 +498,8 @@ describe('getEuclideanDistance', () => {
   });
 
   test('should handle negative coordinates', () => {
-    const p1: Point = { x: -3, y: -4 };
-    const p2: Point = { x: 0, y: 0 };
+    const p1: PointObject = { x: -3, y: -4 };
+    const p2: PointObject = { x: 0, y: 0 };
 
     const distance = getEuclideanDistance(p1, p2);
 
@@ -507,8 +507,8 @@ describe('getEuclideanDistance', () => {
   });
 
   test('should calculate horizontal distance', () => {
-    const p1: Point = { x: 0, y: 5 };
-    const p2: Point = { x: 10, y: 5 };
+    const p1: PointObject = { x: 0, y: 5 };
+    const p2: PointObject = { x: 10, y: 5 };
 
     const distance = getEuclideanDistance(p1, p2);
 
@@ -516,8 +516,8 @@ describe('getEuclideanDistance', () => {
   });
 
   test('should calculate vertical distance', () => {
-    const p1: Point = { x: 5, y: 0 };
-    const p2: Point = { x: 5, y: 10 };
+    const p1: PointObject = { x: 5, y: 0 };
+    const p2: PointObject = { x: 5, y: 10 };
 
     const distance = getEuclideanDistance(p1, p2);
 
@@ -527,7 +527,7 @@ describe('getEuclideanDistance', () => {
 
 describe('getLayoutBBox', () => {
   test('should calculate bounding box for nodes with number size', () => {
-    const nodes: OutNode[] = [
+    const nodes: NodeData[] = [
       { id: 'a', data: { x: 0, y: 0, size: 20 } },
       { id: 'b', data: { x: 100, y: 100, size: 20 } },
     ];
@@ -543,7 +543,7 @@ describe('getLayoutBBox', () => {
   });
 
   test('should calculate bounding box for nodes with array size', () => {
-    const nodes: OutNode[] = [
+    const nodes: NodeData[] = [
       { id: 'a', data: { x: 0, y: 0, size: [40, 20] } },
       { id: 'b', data: { x: 100, y: 100, size: [40, 20] } },
     ];
@@ -559,7 +559,7 @@ describe('getLayoutBBox', () => {
   });
 
   test('should handle single element array size', () => {
-    const nodes: OutNode[] = [{ id: 'a', data: { x: 0, y: 0, size: [30] } }];
+    const nodes: NodeData[] = [{ id: 'a', data: { x: 0, y: 0, size: [30] } }];
 
     const bbox = getLayoutBBox(nodes);
 
@@ -572,7 +572,7 @@ describe('getLayoutBBox', () => {
   });
 
   test('should use default size when size is undefined', () => {
-    const nodes: OutNode[] = [
+    const nodes: NodeData[] = [
       { id: 'a', data: { x: 0, y: 0 } },
       { id: 'b', data: { x: 100, y: 100 } },
     ];
@@ -588,7 +588,7 @@ describe('getLayoutBBox', () => {
   });
 
   test('should use default size when size is NaN', () => {
-    const nodes: OutNode[] = [{ id: 'a', data: { x: 0, y: 0, size: NaN } }];
+    const nodes: NodeData[] = [{ id: 'a', data: { x: 0, y: 0, size: NaN } }];
 
     const bbox = getLayoutBBox(nodes);
 
@@ -601,7 +601,7 @@ describe('getLayoutBBox', () => {
   });
 
   test('should handle single node', () => {
-    const nodes: OutNode[] = [{ id: 'a', data: { x: 50, y: 50, size: 40 } }];
+    const nodes: NodeData[] = [{ id: 'a', data: { x: 50, y: 50, size: 40 } }];
 
     const bbox = getLayoutBBox(nodes);
 
@@ -614,7 +614,7 @@ describe('getLayoutBBox', () => {
   });
 
   test('should handle nodes with negative coordinates', () => {
-    const nodes: OutNode[] = [
+    const nodes: NodeData[] = [
       { id: 'a', data: { x: -50, y: -50, size: 20 } },
       { id: 'b', data: { x: 50, y: 50, size: 20 } },
     ];
@@ -630,7 +630,7 @@ describe('getLayoutBBox', () => {
   });
 
   test('should handle nodes with different sizes', () => {
-    const nodes: OutNode[] = [
+    const nodes: NodeData[] = [
       { id: 'a', data: { x: 0, y: 0, size: 20 } },
       { id: 'b', data: { x: 50, y: 50, size: [60, 40] } },
       { id: 'c', data: { x: 100, y: 100, size: 30 } },
@@ -647,7 +647,7 @@ describe('getLayoutBBox', () => {
   });
 
   test('should handle empty node array', () => {
-    const nodes: OutNode[] = [];
+    const nodes: NodeData[] = [];
 
     const bbox = getLayoutBBox(nodes);
 

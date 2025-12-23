@@ -1,4 +1,4 @@
-import type { Point } from '../types/point';
+import type { Point } from '../types';
 
 /**
  * Viewport configuration such as width, height and center point.

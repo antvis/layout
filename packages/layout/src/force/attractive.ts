@@ -1,6 +1,6 @@
-import type { NodeData } from '../types/data';
-import type { PointObject } from '../types/point';
+import type { NodeData } from '../types';
 import { LayoutModel } from '../util';
+import { AccMap } from './types';
 
 /**
  * Attractive force based on Hooke's law
@@ -10,16 +10,17 @@ export function forceAttractive(dimensions: number = 2) {
   let nodeSize: (node: NodeData) => number = () => 10;
   let preventOverlap: boolean = false;
 
-  function force(model: LayoutModel, accMap: { [id: string]: PointObject }) {
+  function force(model: LayoutModel, accMap: AccMap) {
     model.forEachEdge((edge) => {
       const { source, target } = edge;
-      const sourceNode = model.node(source);
-      const targetNode = model.node(target);
+      const sourceNode = model.node(source)!;
+      const targetNode = model.node(target)!;
       if (!sourceNode || !targetNode) return;
 
       let vecX = targetNode.x - sourceNode.x;
       let vecY = targetNode.y - sourceNode.y;
-      let vecZ = dimensions === 3 ? targetNode.z - sourceNode.z : 0;
+      let vecZ =
+        dimensions === 3 ? (targetNode.z ?? 0) - (sourceNode.z ?? 0) : 0;
 
       if (!vecX && !vecY) {
         vecX = 0.01;

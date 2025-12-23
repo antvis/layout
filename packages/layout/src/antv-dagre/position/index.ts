@@ -1,4 +1,4 @@
-import type { ID } from '../../types/id';
+import type { ID } from '../../types';
 import { DagreGraph } from '../graph';
 import type { DagreAlign } from '../types';
 import { asNonCompoundGraph, buildLayerMatrix } from '../util';
@@ -25,7 +25,7 @@ const positionY = (
   layering?.forEach((layer) => {
     const heights = layer.map((v) => g.getNode(v).data.height!);
     const maxHeight = Math.max(...heights, 0);
-    layer?.forEach((v: string) => {
+    layer?.forEach((v: ID) => {
       g.getNode(v).data.y = prevY + maxHeight / 2;
     });
     prevY += maxHeight + ranksep;

@@ -1,16 +1,12 @@
-import type { BaseLayoutOptions } from '../base-layout';
-import type { ViewportOptions } from '../base-layout/types';
-import type { NodeData } from '../types/data';
-import type { Size } from '../types/size';
+import type { BaseLayoutOptions } from '../core/base-layout';
+import type { NodeData, Size } from '../types';
 
 /**
  * <zh/> Radial 辐射布局的配置项
  *
  * <en/> Configuration items for Radial layout
  */
-export interface RadialLayoutOptions
-  extends BaseLayoutOptions,
-    ViewportOptions {
+export interface RadialLayoutOptions extends BaseLayoutOptions {
   /**
    * <zh/> 边长度
    *

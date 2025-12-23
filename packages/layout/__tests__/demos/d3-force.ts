@@ -19,11 +19,9 @@ export async function render(gui?: GUI) {
   const layout = new D3ForceLayout();
 
   layout.execute(data, {
-    node: (d) => ({
-      size: d.size,
-    }),
     width,
     height,
+    nodeSize: (d) => d.size || 10,
     // linkDistance: 100,
     // manyBody: {
     //   strength: -20,

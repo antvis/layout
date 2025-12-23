@@ -1,9 +1,9 @@
 import { isBoolean, isNil, pick } from '@antv/util';
 import dagre, { graphlib } from 'dagre';
-import { BaseLayout } from '../base-layout';
-import type { LayoutNode } from '../types/data';
+import { BaseLayout } from '../core/base-layout';
+import type { LayoutNode } from '../types';
 import { parsePoint, parseSize } from '../util';
-import { formatSizeFn } from '../util/format';
+import { formatNumberFn, formatSizeFn } from '../util/format';
 import type { DagreLayoutOptions } from './types';
 
 export type { DagreLayoutOptions };
@@ -74,7 +74,7 @@ export class DagreLayout extends BaseLayout<DagreLayoutOptions> {
 
     g.setDefaultEdgeLabel(() => ({}));
 
-    const nodeSizeFn = formatSizeFn(this.options.nodeSize, 0, false);
+    const nodeSizeFn = formatSizeFn(this.options.nodeSize, 0);
 
     this.model.forEachNode((node: LayoutNode) => {
       const raw = node._original;
@@ -99,16 +99,11 @@ export class DagreLayout extends BaseLayout<DagreLayoutOptions> {
     } = this.options;
 
     const edgeLabelSizeFn = formatSizeFn(edgeLabelSize, 0);
-    const edgeLabelOffsetFn =
-      typeof edgeLabelOffset === 'function'
-        ? edgeLabelOffset
-        : () => edgeLabelOffset;
+    const edgeLabelOffsetFn = formatNumberFn(edgeLabelOffset, 10);
     const edgeLabelPosFn =
       typeof edgeLabelPos === 'function' ? edgeLabelPos : () => edgeLabelPos;
-    const edgeMinLenFn =
-      typeof edgeMinLen === 'function' ? edgeMinLen : () => edgeMinLen;
-    const edgeWeightFn =
-      typeof edgeWeight === 'function' ? edgeWeight : () => edgeWeight;
+    const edgeMinLenFn = formatNumberFn(edgeMinLen, 1);
+    const edgeWeightFn = formatNumberFn(edgeWeight, 1);
 
     this.model.forEachEdge((edge) => {
       const raw = edge._original;

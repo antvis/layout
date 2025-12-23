@@ -1,8 +1,7 @@
 import { Matrix as MLMatrix, SingularValueDecomposition } from 'ml-matrix';
-import { BaseLayout } from '../base-layout';
-import type { Matrix } from '../types';
-import type { Point } from '../types/point';
-import { getAdjList, johnson, scaleMatrix } from '../util';
+import { BaseLayout } from '../core/base-layout';
+import type { Matrix, Point } from '../types';
+import { getAdjList, johnson, normalizeViewport, scaleMatrix } from '../util';
 import { applySingleNodeLayout } from '../util/common';
 import type { MDSLayoutOptions } from './types';
 
@@ -26,7 +25,9 @@ export class MDSLayout extends BaseLayout<MDSLayoutOptions> {
   }
 
   protected async layout(): Promise<void> {
-    const { center, linkDistance } = this.options;
+    const { linkDistance = DEFAULTS_LAYOUT_OPTIONS.linkDistance } =
+      this.options;
+    const { center } = normalizeViewport(this.options);
 
     const n = this.model.nodeCount();
     if (n === 0 || n === 1) {
@@ -40,7 +41,7 @@ export class MDSLayout extends BaseLayout<MDSLayoutOptions> {
     handleInfinity(distances);
 
     // scale the ideal edge length acoording to linkDistance
-    const scaledD = scaleMatrix(distances, linkDistance);
+    const scaledD = scaleMatrix(distances, linkDistance!);
 
     // get positions by MDS
     const positions = runMDS(scaledD);
@@ -57,7 +58,7 @@ export class MDSLayout extends BaseLayout<MDSLayoutOptions> {
 /**
  * Handle Infinity values in the distance matrix by replacing them with the maximum finite distance.
  */
-const handleInfinity = (distances: Matrix[]) => {
+const handleInfinity = (distances: Matrix) => {
   let maxDistance = Number.NEGATIVE_INFINITY;
 
   const infList: [number, number][] = [];
@@ -91,7 +92,7 @@ const handleInfinity = (distances: Matrix[]) => {
  * @returns {array} positions Positions of nodes
  */
 export const runMDS = (
-  distances: Matrix[],
+  distances: Matrix,
   dimension: number = 2,
   linkDistance: number = DEFAULTS_LAYOUT_OPTIONS.linkDistance!,
 ): Point[] => {

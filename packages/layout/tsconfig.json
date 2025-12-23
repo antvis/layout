@@ -19,6 +19,7 @@
     "skipLibCheck": true,
     "sourceMap": true,
     "sourceRoot": "src",
+    "strict": true,
     "target": "es2015",
     "types": ["@types/jest", "node"],
     "paths": {

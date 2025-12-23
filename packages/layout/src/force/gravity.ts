@@ -1,6 +1,6 @@
-import type { NodeData } from '../types/data';
-import type { Point, PointObject } from '../types/point';
+import type { NodeData, Point } from '../types';
 import { LayoutModel } from '../util';
+import { AccMap } from './types';
 
 /**
  * Gravity force toward center
@@ -9,12 +9,12 @@ import { LayoutModel } from '../util';
 export function forceGravity(center: Point = [0, 0, 0], gravity: number = 10) {
   let getCenter: ((node?: NodeData, degree?: number) => number[]) | undefined;
 
-  function force(model: LayoutModel, accMap: { [id: string]: PointObject }) {
+  function force(model: LayoutModel, accMap: AccMap) {
     const nodes = model.nodes();
     if (!nodes) return;
 
     model.forEachNode((node) => {
-      const { id, mass, x, y, z } = node;
+      const { id, mass, x, y, z = 0 } = node;
 
       let vecX = 0;
       let vecY = 0;
@@ -51,7 +51,9 @@ export function forceGravity(center: Point = [0, 0, 0], gravity: number = 10) {
     return arguments.length ? ((gravity = _!), force) : gravity;
   };
 
-  force.getCenter = function (_?: (node?: Node, degree?: number) => number[]) {
+  force.getCenter = function (
+    _?: (node?: NodeData, degree?: number) => number[],
+  ) {
     return arguments.length ? ((getCenter = _), force) : getCenter;
   };
 

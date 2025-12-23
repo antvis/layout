@@ -1,8 +1,5 @@
-import { BaseLayoutWithIterations } from '../base-layout';
-import type { Node } from '../types';
-import type { ID } from '../types/id';
-import type { NullablePosition } from '../types/position';
-import type { Size } from '../types/size';
+import { BaseLayoutWithIterations } from '../core/base-layout';
+import type { ID, NullablePosition } from '../types';
 import { initModelNodePosition, normalizeViewport } from '../util';
 import { applySingleNodeLayout } from '../util/common';
 import { formatNodeSizeFn, formatNumberFn, formatSizeFn } from '../util/format';
@@ -75,8 +72,8 @@ export class ForceAtlas2Layout extends BaseLayoutWithIterations<ForceAtlas2Layou
         const { source, target } = edges[j];
         const sourceDegree = this.model.degree(source);
         const targetDegree = this.model.degree(target);
-        const sourceNode = this.model.node(source);
-        const targetNode = this.model.node(target);
+        const sourceNode = this.model.node(source)!;
+        const targetNode = this.model.node(target)!;
         if (sourceDegree <= 1) {
           sourceNode.x = targetNode.x;
           sourceNode.y = targetNode.y;
@@ -95,8 +92,8 @@ export class ForceAtlas2Layout extends BaseLayoutWithIterations<ForceAtlas2Layou
   }
 
   private getSizes(
-    nodeSize?: Size | ((d?: Node) => Size),
-    nodeSpacing?: number | ((d?: Node) => number),
+    nodeSize?: ForceAtlas2LayoutOptions['nodeSize'],
+    nodeSpacing?: ForceAtlas2LayoutOptions['nodeSpacing'],
   ): SizeMap {
     const result: SizeMap = {};
     this.model.forEachNode((node) => {

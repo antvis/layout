@@ -1,4 +1,4 @@
-import type { ID } from '../../types/id';
+import type { ID } from '../../types';
 import { partition } from '../util';
 import { ConflictEntry } from './resolve-conflicts';
 

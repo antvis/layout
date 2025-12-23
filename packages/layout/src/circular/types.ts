@@ -1,16 +1,12 @@
-import type { BaseLayoutOptions } from '../base-layout';
-import type { ViewportOptions } from '../base-layout/types';
-import type { NodeData } from '../types/data';
-import type { Size } from '../types/size';
+import type { BaseLayoutOptions } from '../core/types';
+import type { NodeData, Size } from '../types';
 
 /**
  * <zh/> 环形 Circular 布局配置
  *
  * <en/> Circular layout configuration
  */
-export interface CircularLayoutOptions
-  extends BaseLayoutOptions,
-    ViewportOptions {
+export interface CircularLayoutOptions extends BaseLayoutOptions {
   /**
    * <zh/> 圆的半径
    *

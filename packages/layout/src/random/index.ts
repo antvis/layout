@@ -1,4 +1,4 @@
-import { BaseLayout } from '../base-layout';
+import { BaseLayout } from '../core/base-layout';
 import { normalizeViewport } from '../util';
 import type { RandomLayoutOptions } from './types';
 

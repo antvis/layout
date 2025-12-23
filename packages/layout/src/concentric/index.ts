@@ -1,5 +1,5 @@
-import { BaseLayout } from '../base-layout';
-import type { LayoutNode } from '../types/data';
+import { BaseLayout } from '../core/base-layout';
+import type { LayoutNode, NodeData } from '../types';
 import {
   applySingleNodeLayout,
   normalizeViewport,
@@ -58,7 +58,7 @@ export class ConcentricLayout extends BaseLayout<ConcentricLayoutOptions> {
 
     let sortBy: ConcentricLayoutOptions['sortBy'] = propsSortBy;
     if (propsSortBy && typeof propsSortBy === 'function') {
-      const testNode = this.model.firstNode();
+      const testNode = this.model.firstNode()!;
       const testValue = propsSortBy(testNode._original);
       if (typeof testValue !== 'number') sortBy = 'degree';
     } else {
@@ -68,9 +68,9 @@ export class ConcentricLayout extends BaseLayout<ConcentricLayoutOptions> {
     if (sortBy === 'degree') {
       orderByDegree(this.model);
     } else {
-      const sorter = (nodeA, nodeB) => {
-        const a = (sortBy as (node: LayoutNode) => number)(nodeA);
-        const b = (sortBy as (node: LayoutNode) => number)(nodeB);
+      const sorter = (nodeA: NodeData, nodeB: NodeData) => {
+        const a = (sortBy as (node: NodeData) => number)(nodeA);
+        const b = (sortBy as (node: NodeData) => number)(nodeB);
         return a === b ? 0 : a > b ? -1 : 1;
       };
       orderBySorter(this.model, sorter);
@@ -83,11 +83,11 @@ export class ConcentricLayout extends BaseLayout<ConcentricLayoutOptions> {
       const v =
         sortBy === 'degree'
           ? this.model.degree(node.id)
-          : sortBy(node._original);
+          : sortBy?.(node._original);
       sortKeys.set(node.id, v);
     }
 
-    const maxValueNode = this.model.firstNode();
+    const maxValueNode = this.model.firstNode()!;
     const maxLevelDiff = propsMaxLevelDiff || sortKeys.get(maxValueNode.id) / 4;
 
     let minDist = 0; // min dist between nodes
@@ -175,7 +175,7 @@ export class ConcentricLayout extends BaseLayout<ConcentricLayoutOptions> {
       const dTheta = level.dTheta || 0;
       const rr = level.r || 0;
       level.nodes.forEach((node: LayoutNode, j: number) => {
-        const theta = startAngle + (clockwise ? 1 : -1) * dTheta * j;
+        const theta = startAngle! + (clockwise ? 1 : -1) * dTheta * j;
         node.x = center[0] + rr * Math.cos(theta);
         node.y = center[1] + rr * Math.sin(theta);
       });

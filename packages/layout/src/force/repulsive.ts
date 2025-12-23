@@ -1,7 +1,8 @@
 import { octree } from 'd3-octree';
 import { quadtree } from 'd3-quadtree';
-import type { PointObject } from '../types/point';
+import type { PointObject } from '../types';
 import { LayoutModel } from '../util';
+import { AccMap } from './types';
 
 /**
  * Repulsive force based on Coulomb's law
@@ -12,7 +13,7 @@ export function forceRepulsive(
   coulombDisScale: number = 0.005,
   dimensions: number = 2,
 ) {
-  function force(model: LayoutModel, accMap: { [id: string]: PointObject }) {
+  function force(model: LayoutModel, accMap: AccMap) {
     const coulombDisScale2 = coulombDisScale * coulombDisScale;
     forceNBody(model, factor, coulombDisScale2, accMap, dimensions);
   }
@@ -39,10 +40,10 @@ interface InternalNode {
   id: string;
   x: number;
   y: number;
-  z?: number;
+  z: number;
   vx: number;
   vy: number;
-  vz?: number;
+  vz: number;
   weight: number;
   size: number;
 }

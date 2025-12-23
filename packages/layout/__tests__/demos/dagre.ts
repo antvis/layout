@@ -2,15 +2,15 @@ import { DagreLayout } from '@/src';
 import { Canvas } from '@antv/g';
 import { Renderer } from '@antv/g-canvas';
 import type { GUI } from 'lil-gui';
-import { combo as data } from '../dataset';
+import { dagre as data } from '../dataset';
 import { GraphRenderer } from '../utils/renderer';
 
-data.combos.forEach((combo: any) => {
-  (data.nodes as any).push({
-    id: combo.id,
-    isGroup: true,
-  });
-});
+// data.combos.forEach((combo: any) => {
+//   (data.nodes as any).push({
+//     id: combo.id,
+//     isGroup: true,
+//   });
+// });
 
 export function render(gui?: GUI) {
   const canvas = new Canvas({
@@ -26,8 +26,24 @@ export function render(gui?: GUI) {
     node: (d) => ({
       parentId: d.comboId,
     }),
+    // nodeSize: [60, 30],
+    // ranksep: 50,
+
+    rankdir: 'TB',
     nodeSize: [60, 30],
     ranksep: 50,
+    nodesep: 50,
+    edgeLabelSize: [50, 20],
+    edgeLabelPos: 'c',
+    edgeLabelOffset: 5,
+
+    // rankdir: 'TB',
+    // nodeSize: [60, 30],
+    // ranksep: 50,
+    // nodesep: 50,
+    // edgeLabelSize: (d) => [50, 20],
+    // edgeLabelPos: (d) => 'c',
+    // edgeLabelOffset: (d) => 10,
   });
 
   const relayout = async (options = {}) => {

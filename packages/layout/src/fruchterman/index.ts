@@ -1,7 +1,5 @@
-import { BaseLayoutWithIterations } from '../base-layout';
-import type { NodeData } from '../types/data';
-import type { ID } from '../types/id';
-import type { NullablePosition } from '../types/position';
+import { BaseLayoutWithIterations } from '../core/base-layout';
+import type { ID, NodeData, NullablePosition } from '../types';
 import {
   applySingleNodeLayout,
   getNestedValue,
@@ -11,7 +9,7 @@ import { initModelNodePosition } from '../util/model';
 import { Simulation } from './simulation';
 import type {
   FruchtermanLayoutOptions,
-  FruchtermanSimulationOptions,
+  ParsedFruchtermanLayoutOptions,
 } from './types';
 
 export type { FruchtermanLayoutOptions };
@@ -37,7 +35,9 @@ export class FruchtermanLayout extends BaseLayoutWithIterations<FruchtermanLayou
     return DEFAULTS_LAYOUT_OPTIONS;
   }
 
-  protected parseOptions(options?: Partial<FruchtermanLayoutOptions>) {
+  protected parseOptions(
+    options?: Partial<FruchtermanLayoutOptions>,
+  ): ParsedFruchtermanLayoutOptions {
     const { clustering, nodeClusterBy } = this.options;
     const clusteringEnabled = clustering && !!nodeClusterBy;
     const nodeClusterByFunc =
@@ -45,18 +45,18 @@ export class FruchtermanLayout extends BaseLayoutWithIterations<FruchtermanLayou
         ? (node: NodeData) => getNestedValue(node, nodeClusterBy)
         : nodeClusterBy!;
 
-    Object.assign(options, normalizeViewport(this.options), {
+    Object.assign((options ||= {}), normalizeViewport(options), {
       clustering: clusteringEnabled,
       nodeClusterBy: nodeClusterByFunc,
     });
 
-    return options;
+    return options as ParsedFruchtermanLayoutOptions;
   }
 
   protected async layout(): Promise<void> {
     const options = this.parseOptions(this.options);
 
-    const { dimensions, center } = options;
+    const { dimensions, center, width, height } = options;
 
     const n = this.model.nodeCount();
     if (!n || n === 1) {
@@ -64,13 +64,12 @@ export class FruchtermanLayout extends BaseLayoutWithIterations<FruchtermanLayou
       return;
     }
 
-    const { width, height } = options;
     initModelNodePosition(this.model, width, height, dimensions);
 
     const simulation = this.setSimulation();
 
     simulation.data(this.model);
-    simulation.initialize(options as FruchtermanSimulationOptions);
+    simulation.initialize(options);
     simulation.restart();
 
     return new Promise<void>((resolve) => {

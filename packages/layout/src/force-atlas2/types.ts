@@ -1,64 +1,11 @@
-import type { BaseLayoutOptions } from '../base-layout';
-import type { Layout, ViewportOptions } from '../base-layout/types';
-import type { NodeData } from '../types/data';
-import type { Size } from '../types/size';
-
-/**
- * <zh/> 公共力导向布局配置项
- *
- * <en/> Common force layout configuration items
- */
-interface CommonForceLayoutOptions {
-  /**
-   * <zh/> 布局的维度，2D 渲染时指定为 2；若为 3D 渲染可指定为 3，则将多计算 z 轴的布局
-   *
-   * <en/> The dimensions of the layout, specify 2 for 2D rendering; if it is 3D rendering, specify 3 to calculate the layout of the z axis
-   * @defaultValue 2
-   */
-  dimensions?: number;
-  /**
-   * <zh/> 当一次迭代的平均/最大/最小（根据distanceThresholdMode决定）移动长度小于该值时停止迭代。数字越小，布局越收敛，所用时间将越长
-   *
-   * <en/> When the average/max/min (depending on distanceThresholdMode) movement length of one iteration is less than this value, the iteration will stop. The smaller the number, the more converged the layout, and the longer the time it takes to use
-   * @defaultValue 0.4
-   */
-  minMovement?: number;
-  /**
-   * <zh/> 最大迭代次数，若为 0 则将自动调整
-   *
-   * <en/> Maximum number of iterations, if it is 0, it will be automatically adjusted
-   * @defaultValue 0
-   */
-  maxIteration?: number;
-  /**
-   * <zh/> minMovement 的使用条件
-   * - 'mean': 平均移动距离小于 minMovement 时停止迭代
-   * - 'max': 最大移动距离小于时 minMovement 时停止迭代
-   * - 'min': 最小移动距离小于时 minMovement 时停止迭代
-   * <en/> The condition for using minMovement
-   * - 'mean': The average movement distance is less than minMovement when stopped iterating
-   * - 'max': The maximum movement distance is less than minMovement when stopped iterating
-   * - 'min': The minimum movement distance is less than minMovement when stopped iterating
-   * @defaultValue 'mean'
-   */
-  distanceThresholdMode?: 'mean' | 'max' | 'min';
-  /**
-   * <zh/> 最大距离
-   *
-   * <en/> Maximum distance
-   */
-  maxDistance?: number;
-}
+import type { CommonForceLayoutOptions, NodeData, Size } from '../types';
 
 /**
  * <zh/> ForceAtlas2 力导向布局配置
  *
  * <en/> ForceAtlas2 layout configuration
  */
-export interface ForceAtlas2LayoutOptions
-  extends BaseLayoutOptions,
-    ViewportOptions,
-    CommonForceLayoutOptions {
+export interface ForceAtlas2LayoutOptions extends CommonForceLayoutOptions {
   /**
    * <zh/> 斥力系数，可用于调整布局的紧凑程度。kr 越大，布局越松散
    *
@@ -154,13 +101,6 @@ export interface ForceAtlas2LayoutOptions
    * <en/> Node spacing. Used for collision detection when preventing node overlap
    */
   nodeSpacing?: number | ((d?: NodeData) => number);
-  /**
-   * <zh/> 每一次迭代的回调函数
-   *
-   * <en/> The callback function for each iteration
-   * @param data - <zh/> 当前迭代的布局数据 | <en/> Current layout data
-   */
-  onTick?: (layout: Layout<ForceAtlas2LayoutOptions>) => void;
 }
 
 export type ParsedForceAtlas2LayoutOptions = Required<ForceAtlas2LayoutOptions>;

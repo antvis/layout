@@ -15,7 +15,7 @@
  * This algorithm is derived from Barth, et al., "Bilayer Cross Counting."
  */
 
-import type { ID } from '../../types/id';
+import type { ID } from '../../types';
 import { DagreGraph } from '../graph';
 import { zipObject } from '../util';
 

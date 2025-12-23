@@ -1,7 +1,6 @@
-import { BaseLayout } from '../base-layout';
+import { BaseLayout } from '../core/base-layout';
 import { runMDS } from '../mds';
-import type { Matrix } from '../types';
-import type { ID } from '../types/id';
+import type { ID, Matrix } from '../types';
 import { getAdjList, johnson, LayoutModel, normalizeViewport } from '../util';
 import { applySingleNodeLayout } from '../util/common';
 import { formatNodeSizeFn } from '../util/format';
@@ -60,7 +59,7 @@ export class RadialLayout extends BaseLayout<RadialLayoutOptions> {
 
     const focusNode =
       (propsFocusNode && this.model.node(propsFocusNode)) ||
-      this.model.firstNode();
+      this.model.firstNode()!;
 
     // the index of the focusNode in data
     const focusIndex = this.model.nodeIndexOf(focusNode.id);
@@ -92,17 +91,17 @@ export class RadialLayout extends BaseLayout<RadialLayoutOptions> {
     focusNodeD.forEach((value, i) => {
       const v = value * unitRadius;
       radii.push(v);
-      radiiMap.set(this.model.nodeAt(i).id, v);
+      radiiMap.set(this.model.nodeAt(i)!.id, v);
     });
 
     const idealDistances = eIdealDisMatrix(
       this.model,
       distances,
-      linkDistance,
+      linkDistance!,
       radii,
       unitRadius,
       sortBy,
-      sortStrength,
+      sortStrength!,
     );
 
     // the initial positions from mds, move the graph to origin, centered at focusNode
@@ -117,7 +116,7 @@ export class RadialLayout extends BaseLayout<RadialLayoutOptions> {
       i++;
     });
 
-    this.run(maxIteration, idealDistances, radii, focusIndex);
+    this.run(maxIteration!, idealDistances, radii, focusIndex);
 
     this.model.forEachNode((node) => {
       node.x += center[0];
@@ -133,7 +132,7 @@ export class RadialLayout extends BaseLayout<RadialLayoutOptions> {
         width,
         strictRadial: Boolean(strictRadial),
         focusNode,
-        maxIteration: maxPreventOverlapIteration,
+        maxIteration: maxPreventOverlapIteration!,
         k: n / 4.5,
       };
       radialNonoverlapForce(this.model, nonoverlapForceParams);
@@ -142,7 +141,7 @@ export class RadialLayout extends BaseLayout<RadialLayoutOptions> {
 
   private run(
     maxIteration: number,
-    idealDistances: Matrix[],
+    idealDistances: Matrix,
     radii: number[],
     focusIndex: number,
   ) {
@@ -216,15 +215,15 @@ export class RadialLayout extends BaseLayout<RadialLayoutOptions> {
 
 const eIdealDisMatrix = (
   model: LayoutModel,
-  distances: Matrix[],
+  distances: Matrix,
   linkDistance: number,
   radii: number[],
   unitRadius: number,
   sortBy: any,
   sortStrength: number,
-): Matrix[] => {
+): Matrix => {
   const n = distances.length;
-  const result: Matrix[] = new Array(n);
+  const result: Matrix = new Array(n);
   const radiusScale = new Array(n);
   for (let i = 0; i < n; i++) radiusScale[i] = radii[i] / unitRadius;
 
@@ -251,8 +250,8 @@ const eIdealDisMatrix = (
           newRow[j] = (v * Math.abs(i - j) * sortStrength) / riScale;
         } else if (sortFn) {
           // cache node attribute values
-          const nodeI = model.nodeAt(i);
-          const nodeJ = model.nodeAt(j);
+          const nodeI = model.nodeAt(i)!;
+          const nodeJ = model.nodeAt(j)!;
           let iv = sortCache.get(nodeI.id);
           if (iv === undefined) {
             const raw = sortFn(nodeI._original) || 0;
@@ -278,7 +277,7 @@ const eIdealDisMatrix = (
   return result;
 };
 
-const getWeightMatrix = (idealDistances: Matrix[]) => {
+const getWeightMatrix = (idealDistances: Matrix) => {
   const rows = idealDistances.length;
   const cols = idealDistances[0].length;
   const result: number[][] = [];
@@ -296,7 +295,7 @@ const getWeightMatrix = (idealDistances: Matrix[]) => {
   return result;
 };
 
-const handleInfinity = (matrix: Matrix[], focusIndex: number, step: number) => {
+const handleInfinity = (matrix: Matrix, focusIndex: number, step: number) => {
   const n = matrix.length;
 
   for (let i = 0; i < n; i++) {
@@ -333,7 +332,7 @@ const handleInfinity = (matrix: Matrix[], focusIndex: number, step: number) => {
 /**
  * Get the maximum finite distance from the focus node to other nodes
  */
-const maxToFocus = (matrix: Matrix[], focusIndex: number): number => {
+const maxToFocus = (matrix: Matrix, focusIndex: number): number => {
   const row = matrix[focusIndex];
 
   let max = 0;

@@ -1,5 +1,5 @@
 import { ForceLayout } from '@antv/layout';
-import { CANVAS_SIZE, createTest, DataFormat, TestScale } from './utils';
+import { createTest, DataFormat, TestScale } from './utils';
 
 const commonConfig = {
   layoutName: 'force',

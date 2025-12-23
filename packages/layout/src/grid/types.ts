@@ -1,10 +1,7 @@
-import type { BaseLayoutOptions } from '../base-layout';
-import type { ViewportOptions } from '../base-layout/types';
-import type { NodeData } from '../types/data';
-import type { Point } from '../types/point';
-import type { Size } from '../types/size';
+import type { BaseLayoutOptions } from '../core/types';
+import type { NodeData, Point, Size } from '../types';
 
-export interface GridLayoutOptions extends BaseLayoutOptions, ViewportOptions {
+export interface GridLayoutOptions extends BaseLayoutOptions {
   /**
    * <zh/> 网格开始位置（左上角）
    *

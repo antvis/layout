@@ -2,8 +2,12 @@ import { pluginPlayground } from '@rspress/plugin-playground';
 import path from 'path';
 import { defineConfig } from 'rspress/config';
 
+const base =
+  process.env.RSPRESS_BASE || (process.env.GITHUB_ACTIONS ? '/layout/' : '/');
+
 export default defineConfig({
   root: 'docs',
+  base,
   logoText: '@antv/layout',
 
   // 默认语言
@@ -28,7 +32,6 @@ export default defineConfig({
   themeConfig: {
     hideNavbar: 'auto',
     outline: true,
-    enableContentAnimation: true,
     enableScrollToTop: true,
     socialLinks: [
       {

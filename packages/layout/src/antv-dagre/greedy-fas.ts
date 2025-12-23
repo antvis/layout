@@ -8,8 +8,7 @@
  * @see https://github.com/dagrejs/dagre/blob/master/lib/greedy-fas.js
  */
 
-import type { EdgeData, NodeData } from '../types/data';
-import type { ID } from '../types/id';
+import type { EdgeData, ID, NodeData } from '../types';
 import RawList from './data/list';
 import { DagreGraph, GraphEdge } from './graph';
 

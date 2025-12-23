@@ -1,5 +1,5 @@
 import { isNil } from '@antv/util';
-import { BaseLayout } from '../base-layout';
+import { BaseLayout } from '../core/base-layout';
 import { normalizeViewport, orderByDegree, orderByTopology } from '../util';
 import { applySingleNodeLayout } from '../util/common';
 import { formatNodeSizeFn } from '../util/format';
@@ -91,14 +91,14 @@ export class CircularLayout extends BaseLayout<CircularLayoutOptions> {
     const angleStep = (endAngle - startAngle) / n;
     const adjustedStep = angleStep * angleRatio!;
     const nodesPerDivision = Math.ceil(n / divisions!);
-    const divAngle = (2 * Math.PI) / divisions;
+    const divAngle = (2 * Math.PI) / divisions!;
 
     for (let i = 0; i < n; ) {
       const node = nodes[i];
       // Calculate radius for this node
       let r = radius;
       if (!r && startRadius !== null && endRadius !== null) {
-        r = startRadius + (i * (endRadius - startRadius)) / (n - 1);
+        r = startRadius! + (i * (endRadius! - startRadius!)) / (n - 1);
       }
       if (!r) {
         r = 10 + (i * 100) / (n - 1);

@@ -1,5 +1,4 @@
-import type { EdgeData, NodeData } from '../types/data';
-import type { ID } from '../types/id';
+import type { EdgeData, ID, NodeData } from '../types';
 
 /**
  * <zh/> 图中的节点
@@ -108,8 +107,8 @@ export class DagreGraph<
    *
    * <en/> Get a node
    */
-  getNode(id: ID): GraphNode<N> | undefined {
-    return this.nodes.get(id);
+  getNode(id: ID): GraphNode<N> {
+    return this.nodes.get(id)!;
   }
 
   /**
@@ -189,8 +188,8 @@ export class DagreGraph<
    *
    * <en/> Get an edge
    */
-  getEdge(id: ID): GraphEdge<E> | undefined {
-    return this.edges.get(id);
+  getEdge(id: ID): GraphEdge<E> {
+    return this.edges.get(id)!;
   }
 
   /**
@@ -413,7 +412,8 @@ export class DagreGraph<
    * <en/> Set parent node
    */
   setParent(childId: ID, parentId: ID, treeName?: string): void {
-    const actualTreeName = treeName || (this.options.tree?.[0] ?? 'default') as string;
+    const actualTreeName =
+      treeName || ((this.options.tree?.[0] ?? 'default') as string);
 
     if (!this.parentMap.has(actualTreeName)) {
       this.attachTreeStructure(actualTreeName);
@@ -470,7 +470,8 @@ export class DagreGraph<
    * <en/> Get children nodes
    */
   getChildren(nodeId: ID, treeName?: string): GraphNode<N>[] {
-    const actualTreeName = treeName || (this.options.tree?.[0] ?? 'default') as string;
+    const actualTreeName =
+      treeName || ((this.options.tree?.[0] ?? 'default') as string);
     const treeChildrenMap = this.childrenMap.get(actualTreeName);
 
     if (!treeChildrenMap) return [];
@@ -489,7 +490,8 @@ export class DagreGraph<
    * <en/> Get root nodes (nodes without parents)
    */
   getRoots(treeName?: string): GraphNode<N>[] {
-    const actualTreeName = treeName || (this.options.tree?.[0] ?? 'default') as string;
+    const actualTreeName =
+      treeName || ((this.options.tree?.[0] ?? 'default') as string);
     const treeParentMap = this.parentMap.get(actualTreeName);
 
     const roots: GraphNode<N>[] = [];

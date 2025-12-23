@@ -1,7 +1,4 @@
-import type { LayoutNode, NodeData } from '../types/data';
-import type { DisplacementMap } from '../types/force';
-import type { ID } from '../types/id';
-import type { Size } from '../types/size';
+import type { DisplacementMap, ID, LayoutNode, NodeData, Size } from '../types';
 import { parseSize, type LayoutModel } from '../util';
 
 const SPEED_DIVISOR = 800;
@@ -24,7 +21,7 @@ export type RadialNonoverlapForceOptions = {
   /** Gravity factor pulling nodes towards their target radius */
   gravity?: number;
   /** Function to get the size of a node (includes node self and spacing) */
-  nodeSizeFunc: (node: NodeData) => Size;
+  nodeSizeFunc: (node?: NodeData) => Size;
 };
 
 const DEFAULTS_LAYOUT_OPTIONS: Partial<RadialNonoverlapForceOptions> = {
@@ -67,7 +64,7 @@ export const radialNonoverlapForce = (
     const avgDisplacement = updatePositions(
       model,
       displacements,
-      speed,
+      speed!,
       strictRadial,
       focusNode,
       maxDisplacement,
@@ -120,8 +117,8 @@ const getRepulsion = (
       // these two nodes overlap
       if (vecLength < nodeSizeV / 2 + nodeSizeU / 2) {
         const common = (k * k) / vecLength;
-        const dispU = displacements.get(nodeU.id);
-        const dispV = displacements.get(nodeV.id);
+        const dispU = displacements.get(nodeU.id)!;
+        const dispV = displacements.get(nodeV.id)!;
         const deltaX = (vecx / vecLength) * common;
         const deltaY = (vecy / vecLength) * common;
         displacements.set(nodeU.id, {
@@ -157,7 +154,7 @@ const updatePositions = (
       let vpx = vy / vLength;
       let vpy = -vx / vLength;
 
-      const disp = displacements.get(node.id);
+      const disp = displacements.get(node.id)!;
       const diLength = Math.sqrt(disp.x * disp.x + disp.y * disp.y);
       let alpha = Math.acos((vpx * disp.x + vpy * disp.y) / diLength);
       if (alpha > Math.PI / 2) {
@@ -182,7 +179,7 @@ const updatePositions = (
       return;
     }
 
-    const disp = displacements.get(node.id);
+    const disp = displacements.get(node.id)!;
     const distLength = Math.sqrt(disp.x * disp.x + disp.y * disp.y);
 
     if (distLength > 0) {
@@ -197,8 +194,8 @@ const updatePositions = (
         let vx = node.x - focusNode.x;
         let vy = node.y - focusNode.y;
         const nfDis = Math.sqrt(vx * vx + vy * vy);
-        vx = (vx / nfDis) * radiiMap.get(node.id);
-        vy = (vy / nfDis) * radiiMap.get(node.id);
+        vx = (vx / nfDis) * radiiMap.get(node.id)!;
+        vy = (vy / nfDis) * radiiMap.get(node.id)!;
         node.x = focusNode.x + vx;
         node.y = focusNode.y + vy;
       }

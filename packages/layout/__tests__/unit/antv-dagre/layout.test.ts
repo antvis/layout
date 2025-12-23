@@ -1,4 +1,4 @@
-import { DagreRankdir, Point } from '@/src';
+import { DagreRankdir, PointObject } from '@/src';
 import { DagreGraph as Graph } from '@/src/antv-dagre/graph';
 import { layout } from '@/src/antv-dagre/layout';
 import type { ID } from '@/src/types/id';
@@ -111,7 +111,7 @@ describe.skip('layout', function () {
         labelpos: 'c',
       },
     });
-    const { width, height } = layout(g, {
+    layout(g, {
       keepNodeOrder: false,
       prevGraph: null,
       ranksep: 300,
@@ -151,7 +151,7 @@ describe.skip('layout', function () {
           data: { width: 1, height: 1 },
         });
 
-        const { width, height } = layout(g, {
+        layout(g, {
           keepNodeOrder: false,
           prevGraph: null,
           acyclicer: 'greedy',
@@ -199,7 +199,7 @@ describe.skip('layout', function () {
           data: { width: 10, height: 10, labelpos: 'r', labeloffset: 1000 },
         });
 
-        const { width, height } = layout(g, {
+        layout(g, {
           keepNodeOrder: false,
           prevGraph: null,
           acyclicer: 'greedy',
@@ -249,7 +249,7 @@ describe.skip('layout', function () {
         labelpos: 'c',
       },
     });
-    const { width, height } = layout(g, {
+    layout(g, {
       keepNodeOrder: false,
       prevGraph: null,
       ranksep: 300,
@@ -287,7 +287,7 @@ describe.skip('layout', function () {
       target: 'a',
       data: {},
     });
-    const { width, height } = layout(g, {
+    layout(g, {
       keepNodeOrder: false,
       prevGraph: null,
       ranksep: 200,
@@ -325,7 +325,7 @@ describe.skip('layout', function () {
       target: 'b',
       data: {},
     });
-    const { width, height } = layout(g, {
+    layout(g, {
       keepNodeOrder: false,
       prevGraph: null,
       ranksep: 200,
@@ -359,7 +359,7 @@ describe.skip('layout', function () {
       target: 'b',
       data: { minlen: 2 },
     });
-    const { width, height } = layout(g, {
+    layout(g, {
       keepNodeOrder: false,
       prevGraph: null,
       ranksep: 200,
@@ -393,7 +393,7 @@ describe.skip('layout', function () {
           target: 'a',
           data: { width: 50, height: 50 },
         });
-        const { width, height } = layout(g, {
+        layout(g, {
           keepNodeOrder: false,
           prevGraph: null,
           acyclicer: 'greedy',
@@ -407,7 +407,7 @@ describe.skip('layout', function () {
         let points = g.getEdge('e1').data.points!;
         expect(points).toHaveLength(7);
 
-        points.forEach(function (point: Point) {
+        points.forEach(function (point: PointObject) {
           if (rankdir !== 'LR' && rankdir !== 'RL') {
             expect(point.x).toBeGreaterThan(nodeA.data.x!);
             expect(Math.abs(point.y - nodeA.data.y!)).toBeLessThanOrEqual(
@@ -436,7 +436,7 @@ describe.skip('layout', function () {
     });
     g.setParent('a', 'sg1');
 
-    const { width, height } = layout(g, {
+    layout(g, {
       keepNodeOrder: false,
       prevGraph: null,
       acyclicer: 'greedy',
@@ -497,7 +497,7 @@ describe.skip('layout', function () {
     // outside of the subgraph to nodes in the subgraph. This is to try to
     // force nodes x and y to be on different ranks, which we want our ranker
     // to avoid.
-    const { width, height } = layout(g, {
+    layout(g, {
       keepNodeOrder: false,
       prevGraph: null,
       acyclicer: 'greedy',
@@ -526,7 +526,7 @@ describe.skip('layout', function () {
     }
     (['tb'] as DagreRankdir[]).forEach(function (rankdir) {
       // (["tb", "bt", "lr", "rl"] as DagreRankdir[]).forEach(function (rankdir) {
-      const { width, height } = layout(g, {
+      layout(g, {
         keepNodeOrder: false,
         prevGraph: null,
         acyclicer: 'greedy',
@@ -542,7 +542,7 @@ describe.skip('layout', function () {
       id: 'a',
       data: { width: 100, height: 50 },
     });
-    const { width, height } = layout(g, {
+    layout(g, {
       keepNodeOrder: false,
       prevGraph: null,
       ranksep: 0,
@@ -551,6 +551,8 @@ describe.skip('layout', function () {
       ranker: 'network-simplex',
       rankdir: 'TB',
     });
+    const width = g.getNode('a').data.width;
+    const height = g.getNode('a').data.height;
     expect(width).toEqual(100);
     expect(height).toEqual(50);
   });
@@ -563,7 +565,7 @@ describe.skip('layout', function () {
             id: 'a',
             data: { width: 100, height: 200 },
           });
-          const { width, height } = layout(g, {
+          layout(g, {
             keepNodeOrder: false,
             prevGraph: null,
             acyclicer: 'greedy',
@@ -596,7 +598,7 @@ describe.skip('layout', function () {
               labeloffset: 0,
             },
           });
-          const { width, height } = layout(g, {
+          layout(g, {
             keepNodeOrder: false,
             prevGraph: null,
             acyclicer: 'greedy',
@@ -623,7 +625,7 @@ describe.skip('layout', function () {
       id: 'b',
       data: { width: 75, height: 200 },
     });
-    const { width, height } = layout(g, {
+    layout(g, {
       keepNodeOrder: false,
       prevGraph: null,
       acyclicer: 'greedy',

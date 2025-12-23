@@ -1,19 +1,17 @@
 import { isNumber } from '@antv/util';
-import { BaseSimulation } from '../base-layout/base-simulation';
-import type { LayoutNode } from '../types/data';
-import type { PointObject } from '../types/point';
-import type { NullablePosition } from '../types/position';
+import { BaseSimulation } from '../core/base-simulation';
+import type { LayoutNode, NullablePosition } from '../types';
 import { LayoutModel } from '../util';
-import type { ParsedForceLayoutOptions } from './types';
+import type { AccMap, ParsedForceLayoutOptions } from './types';
 
 interface Force {
-  (model: LayoutModel, accMap: { [id: string]: PointObject }): void;
+  (model: LayoutModel, accMap: AccMap): void;
   [key: string]: any;
 }
 
 export class ForceSimulation extends BaseSimulation<ParsedForceLayoutOptions> {
   private forces = new Map<string, Force>();
-  private velMap: Record<string, PointObject> = {};
+  private velMap: AccMap = {};
 
   protected model!: LayoutModel;
 
@@ -35,7 +33,7 @@ export class ForceSimulation extends BaseSimulation<ParsedForceLayoutOptions> {
   }
 
   protected runOneStep(): number {
-    const accMap: Record<string, PointObject> = {};
+    const accMap: AccMap = {};
     const nodes = this.model.nodes();
     if (!nodes.length) return 0;
 
@@ -80,7 +78,7 @@ export class ForceSimulation extends BaseSimulation<ParsedForceLayoutOptions> {
     }
   }
 
-  private updateVelocity(accMap: Record<string, PointObject>) {
+  private updateVelocity(accMap: AccMap) {
     const {
       damping = 0.9,
       maxSpeed = 100,
@@ -153,7 +151,7 @@ export class ForceSimulation extends BaseSimulation<ParsedForceLayoutOptions> {
     return distanceThresholdMode === 'mean' ? sum / nodes.length : judge;
   }
 
-  private monitor(accMap: Record<string, PointObject>, nodes: LayoutNode[]) {
+  private monitor(accMap: AccMap, nodes: LayoutNode[]) {
     const { monitor, dimensions = 2 } = this.options;
     if (!monitor) return;
 

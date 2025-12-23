@@ -1,5 +1,5 @@
-import type { SimulationOptions } from '../base-layout/base-simulation';
-import type { BaseLayoutOptions, Layout } from '../base-layout/types';
+import type { SimulationOptions } from '../core/base-simulation';
+import type { BaseLayoutOptions, Layout } from '../core/types';
 import type { ID } from './id';
 import type { PointObject } from './point';
 
@@ -7,6 +7,11 @@ export type DisplacementMap = Map<ID, PointObject>;
 
 export type DistanceThresholdMode = 'mean' | 'max' | 'min';
 
+/**
+ * <zh/> 公共力导向布局配置项
+ *
+ * <en/> Common force layout configuration items
+ */
 export interface CommonForceLayoutOptions
   extends BaseLayoutOptions,
     SimulationOptions {
@@ -40,5 +45,5 @@ export interface CommonForceLayoutOptions
    *
    * <en/> Callback function after each iteration
    */
-  onTick?: (layout: Layout) => void;
+  onTick?: (layout: Layout<any>) => void;
 }

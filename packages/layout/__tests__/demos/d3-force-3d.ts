@@ -1,5 +1,5 @@
 import { D3Force3DLayout } from '@/src';
-import { Layout } from '@/src/base-layout/types';
+import { Layout } from '@/src/core/types';
 import { Canvas } from '@antv/g';
 import { Renderer } from '@antv/g-canvas';
 import type { GUI } from 'lil-gui';

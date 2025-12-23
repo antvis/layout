@@ -1,13 +1,13 @@
 import { Graph } from '@antv/graphlib';
 import { isNumber } from '@antv/util';
-import type { Matrix, Node, OutNode, Point } from '../types';
+import type { Matrix, NodeData, PointObject } from '../types';
 import { isArray } from './array';
 import type { LayoutModel } from './model';
 
 /**
  * Floyd-Warshall algorithm to find shortest paths (but with no negative cycles).
  */
-export const floydWarshall = (adjMatrix: Matrix[]): Matrix[] => {
+export const floydWarshall = (adjMatrix: Matrix): Matrix => {
   // initialize
   const n = adjMatrix.length;
   const dist = Array.from({ length: n }, () => new Array(n));
@@ -45,12 +45,9 @@ export const floydWarshall = (adjMatrix: Matrix[]): Matrix[] => {
 /**
  * Get the adjacency matrix of the graph model.
  */
-export const getAdjMatrix = (
-  model: LayoutModel,
-  directed: boolean,
-): Matrix[] => {
+export const getAdjMatrix = (model: LayoutModel, directed: boolean): Matrix => {
   const n = model.nodeCount();
-  const matrix: Matrix[] = Array.from({ length: n }, () => new Array(n));
+  const matrix: Matrix = Array.from({ length: n }, () => new Array(n));
 
   // map node with index in data.nodes
   const nodeMap: { [key: string]: number } = {};
@@ -76,12 +73,9 @@ export const getAdjMatrix = (
 /**
  * Get the adjacency list of the graph model.
  */
-export const getAdjList = (
-  model: LayoutModel,
-  directed: boolean,
-): number[][] => {
+export const getAdjList = (model: LayoutModel, directed: boolean): Matrix => {
   const n = model.nodeCount();
-  const adjList: number[][] = Array.from({ length: n }, () => []);
+  const adjList: Matrix = Array.from({ length: n }, () => [] as number[]);
 
   // map node with index
   const nodeMap: Record<string, number> = {};
@@ -107,7 +101,7 @@ export const getAdjList = (
  * @param matrix [ [], [], [] ]
  * @param ratio
  */
-export const scaleMatrix = (matrix: Matrix[], ratio: number) => {
+export const scaleMatrix = (matrix: Matrix, ratio: number) => {
   const n = matrix.length;
   const result = new Array(n);
 
@@ -130,7 +124,7 @@ export const scaleMatrix = (matrix: Matrix[], ratio: number) => {
  * @param nodes nodes in the layout
  * @returns
  */
-export const getLayoutBBox = (nodes: OutNode[]) => {
+export const getLayoutBBox = (nodes: NodeData[]) => {
   let minX = Infinity;
   let minY = Infinity;
   let maxX = -Infinity;
@@ -165,7 +159,7 @@ export const getLayoutBBox = (nodes: OutNode[]) => {
  * @param p2
  * @returns
  */
-export const getEuclideanDistance = (p1: Point, p2: Point) =>
+export const getEuclideanDistance = (p1: PointObject, p2: PointObject) =>
   Math.sqrt((p1.x - p2.x) * (p1.x - p2.x) + (p1.y - p2.y) * (p1.y - p2.y));
 
 /**
@@ -178,13 +172,13 @@ export const getEuclideanDistance = (p1: Point, p2: Point) =>
  */
 export const graphTreeDfs = (
   graph: Graph<any, any>,
-  nodes: Node[],
-  fn: (n: Node) => void,
+  nodes: NodeData[],
+  fn: (n: NodeData) => void,
   mode: 'TB' | 'BT' = 'TB',
   treeKey: string,
   stopFns: {
-    stopBranchFn?: (node: Node) => boolean;
-    stopAllFn?: (node: Node) => boolean;
+    stopBranchFn?: (node: NodeData) => boolean;
+    stopAllFn?: (node: NodeData) => boolean;
   } = {},
 ) => {
   if (!nodes?.length) return;
@@ -212,7 +206,7 @@ export const graphTreeDfs = (
  * Fully compatible with floydWarshall(adjMatrix).
  */
 
-export function johnson(adjList: number[][]): number[][] {
+export function johnson(adjList: Matrix): Matrix {
   const n = adjList.length;
 
   // Step 1: add a dummy node q connected to all nodes with weight 0
@@ -225,7 +219,7 @@ export function johnson(adjList: number[][]): number[][] {
   // 因为 h(u)=h(v)=0，reweight 后仍然是 1，省略 reweight 过程
 
   // Step 3: run Dijkstra from each node
-  const distAll: number[][] = Array.from({ length: n }, () =>
+  const distAll: Matrix = Array.from({ length: n }, () =>
     new Array(n).fill(Infinity),
   );
 

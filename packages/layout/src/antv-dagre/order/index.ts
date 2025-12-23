@@ -1,5 +1,5 @@
 import { clone } from '@antv/util';
-import type { ID } from '../../types/id';
+import type { ID } from '../../types';
 import { DagreGraph } from '../graph';
 import { buildLayerMatrix, maxRank } from '../util';
 import { addSubgraphConstraints } from './add-subgraph-constraints';

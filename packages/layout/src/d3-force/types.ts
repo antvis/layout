@@ -3,20 +3,18 @@ import type {
   SimulationLinkDatum,
   SimulationNodeDatum,
 } from 'd3-force';
-import type { BaseLayoutOptions } from '../base-layout';
-import type { Layout, ViewportOptions } from '../base-layout/types';
-import type { LayoutEdge, LayoutNode } from '../types/data';
+import type { BaseLayoutOptions, Layout } from '../core/types';
+import type { LayoutEdge, LayoutNode } from '../types';
 
-export interface D3ForceLayoutOptions
-  extends BaseLayoutOptions,
-    Omit<ViewportOptions, 'center'> {
+export interface D3ForceCommonOptions
+  extends Omit<BaseLayoutOptions, 'center'> {
   /**
    * <zh/> 每次迭代执行回调
    *
    * <en/> Callback executed on each tick
    * @param data - <zh/> 布局结果 | <en/> layout result
    */
-  onTick?: (layout: Layout<D3ForceLayoutOptions>) => void;
+  onTick?: (layout: Layout<D3ForceCommonOptions>) => void;
   /**
    * <zh/> 布局中心点的 X 坐标
    *
@@ -122,7 +120,7 @@ export interface D3ForceLayoutOptions
    *
    * @defaultValue 10
    */
-  nodeSize?: number | ((node: NodeDatum) => number);
+  nodeSize?: number | ((d?: NodeDatum) => number);
   /**
    * <zh/> 节点之间的最小间距
    *
@@ -222,7 +220,7 @@ export interface D3ForceLayoutOptions
    *
    * <en/> Custom force method, if not specified, use d3.js method
    */
-  forceSimulation?: Simulation<NodeDatum, EdgeDatum>;
+  forceSimulation?: Simulation<any, any>;
   /**
    * <zh/> 当前的迭代收敛阈值
    *
@@ -260,18 +258,6 @@ export interface D3ForceLayoutOptions
    * @returns <zh/> 随机数 | <en/> Random number
    */
   randomSource?: () => number;
-  /**
-   * <zh/> 中心力
-   *
-   * <en/> Center force
-   */
-  center?:
-    | false
-    | {
-        x?: number;
-        y?: number;
-        strength?: number;
-      };
   /**
    * <zh/> 碰撞力
    *
@@ -319,23 +305,6 @@ export interface D3ForceLayoutOptions
         iterations?: number;
       };
   /**
-   * <zh/> 径向力
-   *
-   * <en/> Radial force
-   */
-  radial?:
-    | false
-    | {
-        strength?:
-          | number
-          | ((node: NodeDatum, index: number, nodes: NodeDatum[]) => number);
-        radius?:
-          | number
-          | ((node: NodeDatum, index: number, nodes: NodeDatum[]) => number);
-        x?: number;
-        y?: number;
-      };
-  /**
    * <zh/> X 轴力
    *
    * <en/> X axis force
@@ -367,10 +336,43 @@ export interface D3ForceLayoutOptions
       };
 }
 
+export interface D3ForceLayoutOptions extends D3ForceCommonOptions {
+  numDimensions?: 2;
+  /**
+   * <zh/> 中心力
+   *
+   * <en/> Center force
+   */
+  center?:
+    | false
+    | {
+        x?: number;
+        y?: number;
+        strength?: number;
+      };
+  /**
+   * <zh/> 径向力
+   *
+   * <en/> Radial force
+   */
+  radial?:
+    | false
+    | {
+        strength?:
+          | number
+          | ((node: NodeDatum, index: number, nodes: NodeDatum[]) => number);
+        radius?:
+          | number
+          | ((node: NodeDatum, index: number, nodes: NodeDatum[]) => number);
+        x?: number;
+        y?: number;
+      };
+}
+
 export interface NodeDatum
   extends Omit<LayoutNode, 'x' | 'y'>,
     SimulationNodeDatum {}
 
-export interface EdgeDatum
+export interface EdgeDatum<N extends NodeDatum = NodeDatum>
   extends Omit<LayoutEdge, 'source' | 'target'>,
-    SimulationLinkDatum<NodeDatum> {}
+    SimulationLinkDatum<N> {}

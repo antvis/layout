@@ -2,8 +2,8 @@
  * This module provides coordinate assignment based on Brandes and Köpf, "Fast
  * and Simple Horizontal Coordinate Assignment."
  */
-import { EdgeData, NodeData } from '../../types/data';
-import type { ID } from '../../types/id';
+import type { ID } from '../../types';
+import { EdgeData, NodeData } from '../../types';
 import { DagreGraph, GraphNode } from '../graph';
 import type { DagreAlign } from '../types';
 import { buildLayerMatrix, minBy } from '../util';
@@ -76,13 +76,13 @@ export const findType2Conflicts = (g: DagreGraph, layering?: ID[][]) => {
   const conflicts = {};
 
   function scan(
-    south: string[],
+    south: ID[],
     southPos: number,
     southEnd: number,
     prevNorthBorder: number,
     nextNorthBorder: number,
   ) {
-    let v: string;
+    let v: ID;
     for (let i = southPos; i < southEnd; i++) {
       v = south[i];
       if (g.getNode(v)?.data.dummy) {
@@ -107,7 +107,7 @@ export const findType2Conflicts = (g: DagreGraph, layering?: ID[][]) => {
 
   function scanIfNeeded(
     params: Parameters<typeof scan>,
-    scanCache: Map<string, boolean>,
+    scanCache: Map<ID, boolean>,
   ) {
     const cacheKey = getScannedKey(params);
 
@@ -117,14 +117,14 @@ export const findType2Conflicts = (g: DagreGraph, layering?: ID[][]) => {
     scanCache.set(cacheKey, true);
   }
 
-  const visitLayer = (north: string[], south: string[]) => {
+  const visitLayer = (north: ID[], south: ID[]) => {
     let prevNorthPos = -1;
     let nextNorthPos: number;
     let southPos = 0;
 
-    const scanned = new Map<string, boolean>();
+    const scanned = new Map<ID, boolean>();
 
-    south?.forEach((v: string, southLookahead: number) => {
+    south?.forEach((v: ID, southLookahead: number) => {
       if (g.getNode(v)?.data.dummy === 'border') {
         const predecessors = g.getPredecessors(v) || [];
         if (predecessors.length) {

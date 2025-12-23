@@ -1,5 +1,4 @@
-import type { NodeData } from '../types/data';
-import type { Point } from '../types/point';
+import type { NodeData, Point } from '../types';
 import { DagreGraph } from './graph';
 import type { DagreRankdir } from './types';
 

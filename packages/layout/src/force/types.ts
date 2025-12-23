@@ -1,8 +1,12 @@
-import type { Layout } from '../base-layout/types';
-import type { Edge, EdgeData, Node, NodeData, PointTuple } from '../types';
-import type { CommonForceLayoutOptions } from '../types/force';
-import type { Point } from '../types/point';
-import type { Size } from '../types/size';
+import type {
+  CommonForceLayoutOptions,
+  EdgeData,
+  NodeData,
+  Point,
+  Size,
+} from '../types';
+
+export type AccMap = { [id: string]: { x: number; y: number; z: number } };
 
 /**
  * <zh/> 向心力配置，包括叶子节点、离散点、其他节点的向心中心及向心力大小
@@ -13,10 +17,10 @@ export interface CentripetalOptions {
   /**
    * <zh/> 叶子节点（即度数为 1 的节点）受到的向心力大小
    * - number: 固定向心力大小
-   * - ((node: Node, nodes: Node[], edges: Edge[]) => number): 可根据节点、边的情况返回不同的值
+   * - ((node: NodeData, nodes: NodeData[], edges: EdgeData[]) => number): 可根据节点、边的情况返回不同的值
    * <en/> The centripetal force of the leaf node (i.e., the node with degree 1)
    * - number: fixed centripetal force size
-   * - ((node: Node, nodes: Node[], edges: Edge[]) => number): return different values according to the node, edge, and situation
+   * - ((node: NodeData, nodes: NodeData[], edges: EdgeData[]) => number): return different values according to the node, edge, and situation
    * @defaultValue 2
    */
   leaf?:
@@ -71,30 +75,12 @@ interface FormatCentripetalOptions extends CentripetalOptions {
 
 export interface ForceLayoutOptions extends CommonForceLayoutOptions {
   /**
-   * <zh/> 布局的宽度、默认为画布宽度
-   *
-   * <en/> The width of the layout, default to the width of the canvas
-   */
-  width?: number;
-  /**
-   * <zh/> 布局的高度、默认为画布高度
-   *
-   * <en/> The height of the layout, default to the height of the canvas
-   */
-  height?: number;
-  /**
-   * <zh/> 布局的中心点，默认为图的中心
-   *
-   * <en/> The center point of the layout, default to the center of the graph
-   */
-  center?: Point;
-  /**
    * <zh/> 边的长度
    * - number: 固定长度
-   * - ((edge?: Edge, source?: any, target?: any) => number): 根据边的信息返回长度
+   * - ((edge?: EdgeData, source?: any, target?: any) => number): 根据边的信息返回长度
    * <en/> The length of the edge
    * - number: fixed length
-   * - ((edge?: Edge, source?: any, target?: any) => number): return length according to the edge information
+   * - ((edge?: EdgeData, source?: any, target?: any) => number): return length according to the edge information
    * @defaultValue 200
    */
   linkDistance?:
@@ -106,14 +92,14 @@ export interface ForceLayoutOptions extends CommonForceLayoutOptions {
    * <en/> The force of the node, positive numbers represent the attraction force between nodes, and negative numbers represent the repulsion force between nodes
    * @defaultValue 1000
    */
-  nodeStrength?: number | ((d?: Node) => number);
+  nodeStrength?: number | ((d?: NodeData) => number);
   /**
    * <zh/> 边的作用力（引力）大小
    *
    * <en/> The size of the force of the edge (attraction)
    * @defaultValue 50
    */
-  edgeStrength?: number | ((d?: Edge) => number);
+  edgeStrength?: number | ((d?: EdgeData) => number);
   /**
    * <zh/> 是否防止重叠，必须配合下面属性 nodeSize 或节点数据中的 data.size 属性，只有在数据中设置了 data.size 或在该布局中配置了与当前图节点大小相同的 nodeSize 值，才能够进行节点重叠的碰撞检测
    *
@@ -215,7 +201,7 @@ export interface ForceLayoutOptions extends CommonForceLayoutOptions {
    * <en/> Use it with clustering and nodeClusterBy to specify the size of the centripetal force of the cluster
    * @defaultValue 20
    */
-  clusterNodeStrength?: number | ((node: Node) => number);
+  clusterNodeStrength?: number | ((node: NodeData) => number);
   /**
    * <zh/> 防止重叠的力强度，范围 [0, 1]
    *
@@ -224,17 +210,10 @@ export interface ForceLayoutOptions extends CommonForceLayoutOptions {
    */
   collideStrength?: number;
   /**
-   * <zh/> 每一次迭代的回调函数
-   *
-   * <en/> The callback function for each iteration
-   * @param data - <zh/> 布局数据 | <en/> Layout data
-   */
-  onTick?: (layout: Layout<ForceLayoutOptions>) => void;
-  /**
    * <zh/> 每个节点质量的回调函数，如参为节点内部流转数据，返回值为质量大小
    *
    * <en/> The callback function for the mass of each node, if the parameter is the internal circulation data of the node, the return value is the size of the mass
-   * @param node - <zh/> 节点数据 | <en/> Node data
+   * @param node - <zh/> 节点数据 | <en/> NodeData data
    * @returns <zh/> 节点质量大小 | <en/> Mass size of the node
    */
   getMass?: (node?: NodeData) => number;
@@ -242,8 +221,8 @@ export interface ForceLayoutOptions extends CommonForceLayoutOptions {
    * <zh/> 每个节点中心力的 x、y、强度的回调函数，若不指定，则没有额外中心力
    *
    * <en/> The callback function for the center force of each node, if not specified, there will be no additional center force
-   * @param node - <zh/> 节点数据 | <en/> Node data
-   * @param degree - <zh/> 节点度数 | <en/> Node degree
+   * @param node - <zh/> 节点数据 | <en/> NodeData data
+   * @param degree - <zh/> 节点度数 | <en/> NodeData degree
    * @returns <zh/> 中心力 x、y、强度 | <en/> Center force x、y、strength
    */
   getCenter?: (node?: NodeData, degree?: number) => number[];
@@ -264,7 +243,7 @@ export interface ForceLayoutOptions extends CommonForceLayoutOptions {
 export interface ParsedForceLayoutOptions extends ForceLayoutOptions {
   width: number;
   height: number;
-  center: PointTuple;
+  center: Point;
   minMovement: number;
   maxIteration: number;
   factor: number;
@@ -284,26 +263,3 @@ export interface ParsedForceLayoutOptions extends ForceLayoutOptions {
   ) => number;
   clusterNodeStrength: (node?: NodeData) => number;
 }
-
-// Calculation types for internal physics simulation
-import { Edge as IEdge, Graph as IGraph, Node as INode } from '@antv/graphlib';
-
-export interface CalcNodeData extends NodeData {
-  x: number;
-  y: number;
-  z?: number;
-  mass: number;
-  nodeStrength: number;
-  size?: number;
-}
-
-export type CalcNode = INode<CalcNodeData>;
-
-export interface CalcEdgeData extends EdgeData {
-  linkDistance?: number;
-  edgeStrength?: number;
-}
-
-export type CalcEdge = IEdge<CalcEdgeData>;
-
-export type CalcGraph = IGraph<CalcNodeData, CalcEdgeData>;
