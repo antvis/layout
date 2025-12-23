@@ -1,15 +1,38 @@
-import type { GraphData, LayoutEdge, LayoutNode, Point } from '../types';
+import { Remote, wrap } from 'comlink';
+import type {
+  GraphData,
+  LayoutData,
+  LayoutEdge,
+  LayoutNode,
+  PlainObject,
+  Point,
+} from '../types';
+import { mergeOptions } from '../util';
 import { LayoutModel } from '../util/model';
 import type { BaseLayoutOptions, Layout, LayoutWithIterations } from './types';
 
 export type { BaseLayoutOptions };
+
+interface LayoutWorker {
+  execute(
+    id: string,
+    data: GraphData,
+    config: PlainObject,
+  ): Promise<LayoutData>;
+  stop(): Promise<void>;
+  tick(iterations?: number): Promise<LayoutData | void>;
+  destroy(): Promise<void>;
+}
 
 /**
  * <zh/> 布局基类
  *
  * <en/> Base class for layouts
  */
-export abstract class BaseLayout<O = BaseLayoutOptions> implements Layout<O> {
+export abstract class BaseLayout<
+  O extends BaseLayoutOptions = BaseLayoutOptions,
+> implements Layout<O>
+{
   public abstract readonly id: string;
 
   protected abstract getDefaultOptions(): O;
@@ -20,8 +43,11 @@ export abstract class BaseLayout<O = BaseLayoutOptions> implements Layout<O> {
 
   protected model!: LayoutModel;
 
+  protected worker: Worker | null = null;
+  protected workerApi: Remote<LayoutWorker> | null = null;
+
   constructor(options?: Partial<O>) {
-    this.initialOptions = this.mergeOptions(this.getDefaultOptions(), options);
+    this.initialOptions = mergeOptions<O>(this.getDefaultOptions(), options);
   }
 
   get options(): O {
@@ -32,21 +58,43 @@ export abstract class BaseLayout<O = BaseLayoutOptions> implements Layout<O> {
     data: GraphData,
     userOptions?: Partial<O>,
   ): Promise<void> {
-    this.runtimeOptions = this.mergeOptions(this.initialOptions, userOptions);
+    this.runtimeOptions = mergeOptions<O>(this.initialOptions, userOptions);
+    const { node, edge, workerEnabled } = this.runtimeOptions;
 
-    this.model = new LayoutModel(data, {
-      node: (this.runtimeOptions as any).node,
-      edge: (this.runtimeOptions as any).edge,
-    });
+    this.model = new LayoutModel(data, { node, edge });
 
-    await this.layout(this.runtimeOptions);
-  }
-
-  protected mergeOptions(base: O, patch?: Partial<O>): O {
-    return Object.assign({}, base, patch || {});
+    const shouldUseWorker = workerEnabled && typeof Worker !== 'undefined';
+    if (shouldUseWorker) {
+      await this.layoutInWorker(data, this.runtimeOptions);
+    } else {
+      await this.layout(this.runtimeOptions);
+    }
   }
 
   protected abstract layout(options: O): Promise<void>;
+
+  protected async layoutInWorker(data: any, options: O): Promise<void> {
+    try {
+      if (!this.worker) {
+        const workerPath =
+          this.runtimeOptions.workerScriptURL ||
+          new URL('../worker.js', import.meta.url);
+        this.worker = new Worker(workerPath, { type: 'module' });
+        this.workerApi = wrap<LayoutWorker>(this.worker);
+
+        const result = await this.workerApi.execute(this.id, data, options);
+        this.model?.apply(result);
+      }
+    } catch (error) {
+      console.error(
+        'Layout in worker failed, fallback to main thread layout.',
+        error,
+      );
+
+      // Fallback to main thread layout
+      await this.layout(options);
+    }
+  }
 
   public forEachNode(callback: (node: LayoutNode, index: number) => void) {
     this.model.forEachNode(callback);
@@ -73,7 +121,7 @@ export abstract class BaseLayout<O = BaseLayoutOptions> implements Layout<O> {
  * <en/> Base class for iterative layouts
  */
 export abstract class BaseLayoutWithIterations<
-  O = BaseLayoutOptions,
+  O extends BaseLayoutOptions = BaseLayoutOptions,
 > extends BaseLayout<O> {
   abstract stop(): void;
 

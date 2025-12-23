@@ -4,6 +4,7 @@ import type {
   EdgeData,
   GraphData,
   ID,
+  LayoutData,
   LayoutEdge,
   LayoutNode,
   NodeData,
@@ -13,8 +14,8 @@ export class LayoutModel<
   N extends NodeData = NodeData,
   E extends EdgeData = EdgeData,
 > {
-  public readonly nodeMap: Map<ID, LayoutNode<N>>;
-  public readonly edgeMap: Map<ID, LayoutEdge<E>>;
+  public nodeMap: Map<ID, LayoutNode<N>>;
+  public edgeMap: Map<ID, LayoutEdge<E>>;
 
   private degreeCache?: Map<ID, { in: number; out: number; both: number }>;
 
@@ -34,6 +35,17 @@ export class LayoutModel<
       options.edge,
       this.getEdgeId.bind(this),
     );
+  }
+
+  public data(): LayoutData<N, E> {
+    return { nodes: this.nodeMap, edges: this.edgeMap };
+  }
+
+  public apply(result: LayoutData<N, E>): void {
+    this.nodeMap = result.nodes;
+    this.edgeMap = result.edges;
+
+    this.clearCache();
   }
 
   public nodes(): LayoutNode<N>[] {

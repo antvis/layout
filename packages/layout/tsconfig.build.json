@@ -4,7 +4,10 @@
     "rootDir": "./src",
     "types": [],
     "paths": {},
-    "outDir": "lib"
+    "outDir": "lib",
+    "importHelpers": false,
+    "moduleResolution": "node",
+    "module": "esnext"
   },
   "include": ["src/**/*"],
   "exclude": ["src/**/*.spec.ts"]
