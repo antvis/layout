@@ -41,11 +41,11 @@
         };
 
         const layout = new MDSLayout({
-          workerEnabled: true,
-          workerScriptURL: '../dist/worker.js',
+          enableWorker: true,
         });
 
         await layout.execute(data);
+
         console.log('UMD worker layout done');
         layout.forEachNode((node) => {
           console.log(`Node ${node.id}: x=${node.x}, y=${node.y}`);

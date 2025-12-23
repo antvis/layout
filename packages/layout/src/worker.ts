@@ -53,6 +53,6 @@ expose(api);
 function disableWorker(options?: Record<string, any>) {
   if (!options) return options;
   const cloned = { ...options };
-  cloned.workerEnabled = false;
+  cloned.enableWorker = false;
   return cloned;
 }

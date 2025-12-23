@@ -4,7 +4,6 @@ import type {
   ID,
   LayoutEdge,
   LayoutNode,
-  LayoutResult,
   NodeData,
   Point,
 } from '../types';
@@ -68,14 +67,7 @@ export interface BaseLayoutOptions<
    *
    * <en/> Whether to run the layout in a WebWorker
    */
-  workerEnabled?: boolean;
-
-  /**
-   * <zh/> 自定义 WebWorker 地址，默认使用内置 worker
-   *
-   * <en/> Custom WebWorker url, uses the built-in worker by default
-   */
-  workerScriptURL?: string;
+  enableWorker?: boolean;
 
   [key: string]: any;
 }
@@ -86,10 +78,7 @@ export interface Layout<LayoutOptions> {
    *
    * <en/> Execute layout calculation
    */
-  execute(
-    graph: GraphData,
-    options?: LayoutOptions,
-  ): Promise<void | LayoutResult>;
+  execute(graph: GraphData, options?: LayoutOptions): Promise<void>;
 
   /**
    * <zh/> 遍历节点布局结果

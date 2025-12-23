@@ -1,28 +1,10 @@
-import { Remote, wrap } from 'comlink';
-import type {
-  GraphData,
-  LayoutData,
-  LayoutEdge,
-  LayoutNode,
-  PlainObject,
-  Point,
-} from '../types';
+import { Supervisor } from '../supervisor';
+import type { GraphData, LayoutEdge, LayoutNode, Point } from '../types';
 import { mergeOptions } from '../util';
 import { LayoutModel } from '../util/model';
 import type { BaseLayoutOptions, Layout, LayoutWithIterations } from './types';
 
 export type { BaseLayoutOptions };
-
-interface LayoutWorker {
-  execute(
-    id: string,
-    data: GraphData,
-    config: PlainObject,
-  ): Promise<LayoutData>;
-  stop(): Promise<void>;
-  tick(iterations?: number): Promise<LayoutData | void>;
-  destroy(): Promise<void>;
-}
 
 /**
  * <zh/> 布局基类
@@ -43,8 +25,7 @@ export abstract class BaseLayout<
 
   protected model!: LayoutModel;
 
-  protected worker: Worker | null = null;
-  protected workerApi: Remote<LayoutWorker> | null = null;
+  protected supervisor: Supervisor | null = null;
 
   constructor(options?: Partial<O>) {
     this.initialOptions = mergeOptions<O>(this.getDefaultOptions(), options);
@@ -59,11 +40,11 @@ export abstract class BaseLayout<
     userOptions?: Partial<O>,
   ): Promise<void> {
     this.runtimeOptions = mergeOptions<O>(this.initialOptions, userOptions);
-    const { node, edge, workerEnabled } = this.runtimeOptions;
+    const { node, edge, enableWorker } = this.runtimeOptions;
 
     this.model = new LayoutModel(data, { node, edge });
 
-    const shouldUseWorker = workerEnabled && typeof Worker !== 'undefined';
+    const shouldUseWorker = enableWorker && typeof Worker !== 'undefined';
     if (shouldUseWorker) {
       await this.layoutInWorker(data, this.runtimeOptions);
     } else {
@@ -73,18 +54,14 @@ export abstract class BaseLayout<
 
   protected abstract layout(options: O): Promise<void>;
 
-  protected async layoutInWorker(data: any, options: O): Promise<void> {
+  protected async layoutInWorker(data: GraphData, options: O): Promise<void> {
     try {
-      if (!this.worker) {
-        const workerPath =
-          this.runtimeOptions.workerScriptURL ||
-          new URL('../worker.js', import.meta.url);
-        this.worker = new Worker(workerPath, { type: 'module' });
-        this.workerApi = wrap<LayoutWorker>(this.worker);
-
-        const result = await this.workerApi.execute(this.id, data, options);
-        this.model?.apply(result);
+      if (!this.supervisor) {
+        this.supervisor = new Supervisor();
       }
+
+      const result = await this.supervisor.execute(this.id, data, options);
+      this.model?.apply(result);
     } catch (error) {
       console.error(
         'Layout in worker failed, fallback to main thread layout.',
@@ -112,13 +89,16 @@ export abstract class BaseLayout<
     this.model?.destroy();
     // @ts-ignore
     this.model = null;
+
+    if (this.supervisor) {
+      this.supervisor.destroy();
+      this.supervisor = null;
+    }
   }
 }
 
 /**
- * <zh/> 迭代布局基类
- *
- * <en/> Base class for iterative layouts
+ * 迭代布局基类
  */
 export abstract class BaseLayoutWithIterations<
   O extends BaseLayoutOptions = BaseLayoutOptions,
@@ -130,12 +110,31 @@ export abstract class BaseLayoutWithIterations<
   abstract restart(): void;
 
   abstract setFixedPosition(nodeId: string, position: Point | null): void;
+
+  /**
+   * 在 worker 中停止布局
+   */
+  protected async stopInWorker(): Promise<void> {
+    if (this.supervisor) {
+      await this.supervisor.stop();
+    }
+  }
+
+  /**
+   * 在 worker 中执行迭代
+   */
+  protected async tickInWorker(iterations?: number): Promise<void> {
+    if (this.supervisor) {
+      const result = await this.supervisor.tick(iterations);
+      if (result) {
+        this.model?.apply(result);
+      }
+    }
+  }
 }
 
 /**
- * <zh/> 判断布局是否为迭代布局
- *
- * <en/> Determine whether the layout is an iterative layout
+ * 判断布局是否为迭代布局
  */
 export function isLayoutWithIterations(
   layout: any,

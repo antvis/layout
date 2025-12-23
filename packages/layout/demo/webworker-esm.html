@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -22,7 +22,7 @@
     <p>Open devtools console to see layout results.</p>
 
     <script type="module">
-      import { MDSLayout, Supervisor } from '@antv/layout';
+      import { MDSLayout } from '../lib/index.js';
 
       const data = {
         nodes: Array.from({ length: 10 }).map((_, i) => ({ id: 'n' + i })),
@@ -36,14 +36,16 @@
         ],
       };
 
-      const layout = new MDSLayout({ workerEnabled: true });
-      const supervisor = new Supervisor(layout, {
-        // In dev, let Vite bundle the source worker
-        workerScriptURL: new URL('../src/worker.ts', import.meta.url),
+      const layout = new MDSLayout({
+        enableWorker: true,
       });
 
-      const result = await supervisor.execute(data);
-      console.log('ESM worker layout result:', result);
+      await layout.execute(data);
+      console.log('ESM worker layout done:');
+
+      layout.forEachNode((node) => {
+        console.log(`Node ${node.id}: x=${node.x}, y=${node.y}`);
+      });
     </script>
   </body>
-  </html>
+</html>
