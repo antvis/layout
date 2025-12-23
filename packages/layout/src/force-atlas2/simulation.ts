@@ -1,7 +1,6 @@
 import { isNumber } from '@antv/util';
-import { BaseSimulation } from '../base-layout/base-simulation';
-import type { ID } from '../types/id';
-import type { NullablePosition } from '../types/position';
+import { BaseSimulation } from '../core/base-simulation';
+import type { ID, NullablePosition } from '../types';
 import type { LayoutModel } from '../util/model';
 import Body from './body';
 import Quad from './quad';
@@ -27,7 +26,7 @@ export class Simulation extends BaseSimulation<ParsedForceAtlas2LayoutOptions> {
   private sizes: SizeMap = {};
   private maxIteration = 0;
 
-  protected model: LayoutModel;
+  protected model!: LayoutModel;
 
   data(model: LayoutModel, sizes: SizeMap): this {
     this.model = model;
@@ -76,18 +75,28 @@ export class Simulation extends BaseSimulation<ParsedForceAtlas2LayoutOptions> {
   /**
    * Set a node's fixed position
    */
-  public setFixedPosition(id: ID, position: NullablePosition | null): void {
+  public setFixedPosition(id: ID, position: NullablePosition | null) {
     const node = this.model.node(id);
     if (!node) return;
 
+    const keys = ['fx', 'fy', 'fz'] as const;
+
     if (position === null) {
-      delete node.fx;
-      delete node.fy;
+      // Unset fixed position
+      keys.forEach((key) => {
+        delete node[key];
+      });
       return;
     }
 
-    if (position[0] !== undefined) node.fx = position[0];
-    if (position[1] !== undefined) node.fy = position[1];
+    position.forEach((value, index) => {
+      if (
+        index < keys.length &&
+        (typeof value === 'number' || value === null)
+      ) {
+        node[keys[index]] = value;
+      }
+    });
   }
 
   private isNodeFixed(node: any): boolean {
@@ -144,8 +153,8 @@ export class Simulation extends BaseSimulation<ParsedForceAtlas2LayoutOptions> {
 
     for (let i = 0; i < edges.length; i += 1) {
       const { source, target } = edges[i];
-      const sourceNode = model.node(source);
-      const targetNode = model.node(target);
+      const sourceNode = model.node(source)!;
+      const targetNode = model.node(target)!;
 
       const sourceDegree = model.degree(source);
       const targetDegree = model.degree(target);

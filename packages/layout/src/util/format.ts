@@ -1,6 +1,5 @@
-import { isFunction, isNumber, isObject } from '@antv/util';
-import type { NodeData } from '../types/data';
-import type { Size } from '../types/size';
+import { isEmpty, isFunction, isNumber, isObject } from '@antv/util';
+import type { NodeData, Size } from '../types';
 import { parseSize } from './size';
 
 /**
@@ -37,9 +36,8 @@ export function formatNumberFn<T = NodeData>(
 export function formatSizeFn<T extends NodeData>(
   value?: Size | { width: number; height: number } | ((d?: T) => Size),
   defaultValue: number = 10,
-  resultIsNumber: boolean = true,
 ): (d?: T) => Size {
-  // If value is not provided, return default value
+  // If value is undefined, return default value function
   if (!value) {
     return () => defaultValue;
   }
@@ -56,51 +54,15 @@ export function formatSizeFn<T extends NodeData>(
 
   // If value is an array, return max or the array itself
   if (Array.isArray(value)) {
-    return () => {
-      if (resultIsNumber) {
-        return Math.max(...value) || defaultValue;
-      }
-      return value;
-    };
+    return () => value;
   }
 
   // If value is an object with width and height
   if (isObject(value) && value.width && value.height) {
-    return () => {
-      if (resultIsNumber) {
-        return Math.max(value.width, value.height) || defaultValue;
-      }
-      return [value.width, value.height];
-    };
+    return () => [value.width, value.height];
   }
 
-  // If value is undefined or invalid, try to get from node data
-  return (d) => {
-    const { size } = d.data || {};
-
-    if (!size) {
-      return defaultValue;
-    }
-
-    // Handle array size
-    if (Array.isArray(size)) {
-      return resultIsNumber ? Math.max(...size) || defaultValue : size;
-    }
-
-    // Handle object size with width and height
-    if (
-      isObject<{ width: number; height: number }>(size) &&
-      size.width &&
-      size.height
-    ) {
-      return resultIsNumber
-        ? Math.max(size.width, size.height) || defaultValue
-        : [size.width, size.height];
-    }
-
-    // Handle number size
-    return size;
-  };
+  return () => defaultValue;
 }
 
 /**
@@ -111,7 +73,7 @@ export function formatSizeFn<T extends NodeData>(
  * @returns A function that returns the total size (node size + spacing)
  */
 export const formatNodeSizeFn = (
-  nodeSize: Size | ((node?: NodeData) => Size) | undefined,
+  nodeSize: Size | { width: number; height: number } | ((node?: NodeData) => Size) | undefined,
   nodeSpacing: number | ((node?: NodeData) => number) | undefined,
   defaultNodeSize: number = 10,
 ): ((node?: NodeData) => number) => {

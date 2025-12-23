@@ -10,14 +10,17 @@ import {
   forceX,
   forceY,
 } from 'd3-force';
-import { BaseLayoutWithIterations } from '../base-layout';
-import type { LayoutWithIterations } from '../base-layout/types';
-import type { ID } from '../types/id';
-import type { Position } from '../types/position';
+import { BaseLayoutWithIterations } from '../core/base-layout';
+import type { ID, Position } from '../types';
 import { assignDefined, normalizeViewport } from '../util';
 import { formatNodeSizeFn } from '../util/format';
 import forceInABox from './force-in-a-box';
-import type { D3ForceLayoutOptions, EdgeDatum, NodeDatum } from './types';
+import type {
+  D3ForceCommonOptions,
+  D3ForceLayoutOptions,
+  EdgeDatum,
+  NodeDatum,
+} from './types';
 
 export type { D3ForceLayoutOptions };
 
@@ -55,17 +58,16 @@ const DEFAULTS_LAYOUT_OPTIONS: Partial<D3ForceLayoutOptions> = {
 };
 
 export class D3ForceLayout<
-    T extends D3ForceLayoutOptions = D3ForceLayoutOptions,
-  >
-  extends BaseLayoutWithIterations<T>
-  implements LayoutWithIterations<T>
-{
+  T extends D3ForceCommonOptions = D3ForceLayoutOptions,
+  N extends NodeDatum = NodeDatum,
+  E extends EdgeDatum<N> = EdgeDatum<N>,
+> extends BaseLayoutWithIterations<T> {
   public id = 'd3-force';
 
-  public simulation: Simulation<NodeDatum, EdgeDatum>;
+  public simulation!: Simulation<N, E>;
 
-  private d3Nodes: NodeDatum[] = [];
-  private d3Edges: EdgeDatum[] = [];
+  private d3Nodes: N[] = [];
+  private d3Edges: E[] = [];
 
   protected config = {
     simulationAttrs: [
@@ -90,7 +92,10 @@ export class D3ForceLayout<
     super(options);
 
     if (this.options.forceSimulation) {
-      this.simulation = this.options.forceSimulation;
+      this.simulation = this.options.forceSimulation as unknown as Simulation<
+        N,
+        E
+      >;
     }
   }
 
@@ -148,17 +153,17 @@ export class D3ForceLayout<
     return this;
   }
 
-  public nodes(): NodeDatum[] {
+  public nodes(): N[] {
     return this.simulation?.nodes() ?? [];
   }
 
-  public find(x: number, y: number, radius?: number): NodeDatum | undefined {
+  public find(x: number, y: number, radius?: number): N | undefined {
     if (!this.simulation) return undefined;
     return this.simulation.find(x, y, radius);
   }
 
   public setFixedPosition(id: ID, position: Position | null[] | null): void {
-    const d3Node = this.d3Nodes.find((n) => n.id === id);
+    const d3Node = this.d3Nodes.find((n) => (n as any).id === id);
     const node = this.model.node(id);
     if (!node || !d3Node) return;
 
@@ -167,8 +172,8 @@ export class D3ForceLayout<
     if (position === null) {
       // Unset fixed position
       keys.forEach((key) => {
-        delete node[key];
-        delete d3Node[key];
+        delete (node as any)[key];
+        delete (d3Node as any)[key];
       });
       return;
     }
@@ -178,8 +183,8 @@ export class D3ForceLayout<
         index < keys.length &&
         (typeof value === 'number' || value === null)
       ) {
-        node[keys[index]] = value;
-        d3Node[keys[index]] = value;
+        (node as any)[keys[index]] = value;
+        (d3Node as any)[keys[index]] = value;
       }
     });
   }
@@ -213,9 +218,7 @@ export class D3ForceLayout<
     const simulation = this.setSimulation(options);
 
     simulation.nodes(this.d3Nodes);
-    simulation
-      .force<ForceLink<NodeDatum, EdgeDatum>>('link')
-      ?.links(this.d3Edges);
+    simulation.force<ForceLink<N, E>>('link')?.links(this.d3Edges);
 
     return new Promise<void>((resolve) => {
       simulation.on('end', () => {
@@ -230,10 +233,10 @@ export class D3ForceLayout<
     this.d3Edges = [];
 
     this.model.forEachNode((node) => {
-      this.d3Nodes.push({ ...node });
+      this.d3Nodes.push({ ...(node as any) });
     });
     this.model.forEachEdge((edge) => {
-      this.d3Edges.push({ ...edge });
+      this.d3Edges.push({ ...(edge as any) });
     });
   }
 
@@ -241,8 +244,8 @@ export class D3ForceLayout<
     this.d3Nodes.forEach((d3Node) => {
       const node = this.model.node(d3Node.id);
       if (node) {
-        node.x = d3Node.x;
-        node.y = d3Node.y;
+        node.x = d3Node.x!;
+        node.y = d3Node.y!;
         if (d3Node.z !== undefined) node.z = d3Node.z;
         // 同步固定位置属性
         if (d3Node.fx !== undefined) node.fx = d3Node.fx;
@@ -257,12 +260,14 @@ export class D3ForceLayout<
   }
 
   protected initSimulation() {
-    return forceSimulation<NodeDatum, EdgeDatum>();
+    return forceSimulation<N, E>();
   }
 
   protected setSimulation(options: T) {
     const simulation =
-      this.simulation || this.options.forceSimulation || this.initSimulation();
+      this.simulation ||
+      (this.options.forceSimulation as unknown as Simulation<N, E>) ||
+      this.initSimulation();
 
     if (!this.simulation) {
       this.simulation = simulation.on('tick', () => {
@@ -284,10 +289,7 @@ export class D3ForceLayout<
     return simulation;
   }
 
-  protected setupForces(
-    simulation: Simulation<NodeDatum, EdgeDatum>,
-    options: T,
-  ) {
+  protected setupForces(simulation: Simulation<N, E>, options: T) {
     this.setupLinkForce(simulation, options);
     this.setupManyBodyForce(simulation, options);
     this.setupCenterForce(simulation, options);
@@ -298,7 +300,7 @@ export class D3ForceLayout<
     this.setupClusterForce(simulation, options);
   }
 
-  private getCenterOptions(options: T): D3ForceLayoutOptions['center'] {
+  private getCenterOptions(options: T): T['center'] | undefined {
     if (
       !options.width ||
       !options.height ||
@@ -308,19 +310,16 @@ export class D3ForceLayout<
         width: options.width,
         height: options.height,
       });
-      return assignDefined({}, options.center, {
+      return assignDefined({}, options.center || {}, {
         x: viewport.width / 2,
         y: viewport.height / 2,
         strength: options.centerStrength,
-      });
+      }) as T['center'];
     }
     return undefined;
   }
 
-  protected setupCenterForce(
-    simulation: Simulation<NodeDatum, EdgeDatum>,
-    options: T,
-  ) {
+  protected setupCenterForce(simulation: Simulation<N, E>, options: T) {
     const center = this.getCenterOptions(options);
 
     if (center) {
@@ -350,7 +349,7 @@ export class D3ForceLayout<
       options.distanceMax !== undefined ||
       options.theta !== undefined
     ) {
-      return assignDefined({}, options.manyBody, {
+      return assignDefined({}, options.manyBody || {}, {
         strength: options.nodeStrength,
         distanceMin: options.distanceMin,
         distanceMax: options.distanceMax,
@@ -360,10 +359,7 @@ export class D3ForceLayout<
     return undefined;
   }
 
-  protected setupManyBodyForce(
-    simulation: Simulation<NodeDatum, EdgeDatum>,
-    options: T,
-  ) {
+  protected setupManyBodyForce(simulation: Simulation<N, E>, options: T) {
     const manyBody = this.getManyBodyOptions(options);
 
     if (manyBody) {
@@ -397,7 +393,7 @@ export class D3ForceLayout<
       options.edgeStrength !== undefined ||
       options.edgeIterations !== undefined
     ) {
-      return assignDefined({}, options.link, {
+      return assignDefined({}, options.link || {}, {
         id: options.edgeId,
         distance: options.linkDistance,
         strength: options.edgeStrength,
@@ -407,18 +403,15 @@ export class D3ForceLayout<
     return undefined;
   }
 
-  protected setupLinkForce(
-    simulation: Simulation<NodeDatum, EdgeDatum>,
-    options: T,
-  ) {
+  protected setupLinkForce(simulation: Simulation<N, E>, options: T) {
     const edges = this.model.edges();
 
     const link = this.getLinkOptions(options);
 
     if (edges.length > 0 && link) {
-      let force = simulation.force<ForceLink<NodeDatum, EdgeDatum>>('link');
+      let force = simulation.force<ForceLink<N, E>>('link');
       if (!force) {
-        force = forceLink<NodeDatum, EdgeDatum>();
+        force = forceLink<N, E>();
         simulation.force('link', force);
       }
 
@@ -450,7 +443,7 @@ export class D3ForceLayout<
               formatNodeSizeFn(options.nodeSize, options.nodeSpacing)(d) / 2
           : undefined;
 
-      return assignDefined({}, options.collide, {
+      return assignDefined({}, options.collide || {}, {
         radius,
         strength: options.collideStrength,
         iterations: options.collideIterations,
@@ -459,10 +452,7 @@ export class D3ForceLayout<
     return undefined;
   }
 
-  protected setupCollisionForce(
-    simulation: Simulation<NodeDatum, EdgeDatum>,
-    options: T,
-  ) {
+  protected setupCollisionForce(simulation: Simulation<N, E>, options: T) {
     const collide = this.getCollisionOptions(options);
 
     if (collide) {
@@ -495,7 +485,7 @@ export class D3ForceLayout<
       options.height !== undefined
     ) {
       const center = this.getCenterOptions(options);
-      return assignDefined({}, options.x, {
+      return assignDefined({}, options.x || {}, {
         x: options.forceXPosition ?? (center && center.x),
         strength: options.forceXStrength,
       });
@@ -503,10 +493,7 @@ export class D3ForceLayout<
     return undefined;
   }
 
-  protected setupXForce(
-    simulation: Simulation<NodeDatum, EdgeDatum>,
-    options: T,
-  ) {
+  protected setupXForce(simulation: Simulation<N, E>, options: T) {
     const x = this.getXForceOptions(options);
 
     if (x) {
@@ -535,7 +522,7 @@ export class D3ForceLayout<
       options.height !== undefined
     ) {
       const center = this.getCenterOptions(options);
-      return assignDefined({}, options.y, {
+      return assignDefined({}, options.y || {}, {
         y: options.forceYPosition ?? (center && center.y),
         strength: options.forceYStrength,
       });
@@ -544,10 +531,7 @@ export class D3ForceLayout<
     return undefined;
   }
 
-  protected setupYForce(
-    simulation: Simulation<NodeDatum, EdgeDatum>,
-    options: T,
-  ) {
+  protected setupYForce(simulation: Simulation<N, E>, options: T) {
     const y = this.getYForceOptions(options);
     if (y) {
       let force = simulation.force('y');
@@ -575,7 +559,7 @@ export class D3ForceLayout<
       options.radialY !== undefined
     ) {
       const center = this.getCenterOptions(options);
-      return assignDefined({}, options.radial, {
+      return assignDefined({}, options.radial || {}, {
         strength: options.radialStrength,
         radius: options.radialRadius ?? 100,
         x: options.radialX ?? (center && center.x),
@@ -585,16 +569,13 @@ export class D3ForceLayout<
     return undefined;
   }
 
-  protected setupRadialForce(
-    simulation: Simulation<NodeDatum, EdgeDatum>,
-    options: T,
-  ) {
+  protected setupRadialForce(simulation: Simulation<N, E>, options: T) {
     const radial = this.getRadialOptions(options);
 
     if (radial) {
       let force = simulation.force('radial');
       if (!force) {
-        force = forceRadial(radial.radius, radial.x, radial.y);
+        force = forceRadial(radial.radius || 100, radial.x, radial.y);
         simulation.force('radial', force as any);
       }
 
@@ -611,10 +592,7 @@ export class D3ForceLayout<
     }
   }
 
-  protected setupClusterForce(
-    simulation: Simulation<NodeDatum, EdgeDatum>,
-    options: T,
-  ) {
+  protected setupClusterForce(simulation: Simulation<N, E>, options: T) {
     const { clustering } = options;
 
     if (clustering) {

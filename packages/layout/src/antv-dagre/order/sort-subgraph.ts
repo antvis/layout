@@ -1,4 +1,4 @@
-import type { ID } from '../../types/id';
+import type { ID } from '../../types';
 import { DagreGraph } from '../graph';
 import { barycenter } from './barycenter';
 import resolveConflicts, { ConflictEntry } from './resolve-conflicts';
@@ -85,7 +85,7 @@ const expandSubgraphs = (
   subgraphs: Record<string, Partial<ConflictEntry>>,
 ) => {
   entries?.forEach((entry) => {
-    const vss = entry.vs?.map((v: string) => {
+    const vss = entry.vs?.map((v: ID) => {
       if (subgraphs[v]) {
         return subgraphs[v].vs!;
       }

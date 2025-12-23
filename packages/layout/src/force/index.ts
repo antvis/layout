@@ -1,7 +1,6 @@
-import { BaseLayoutWithIterations } from '../base-layout';
-import type { LayoutWithIterations } from '../base-layout/types';
-import type { EdgeData, NodeData } from '../types/data';
-import type { Point, PointObject } from '../types/point';
+import { isEmpty } from '@antv/util';
+import { BaseLayoutWithIterations } from '../core/base-layout';
+import type { EdgeData, NodeData, Point, PointObject } from '../types';
 import { initModelNodePosition, LayoutModel, normalizeViewport } from '../util';
 import { formatNodeSizeFn, formatNumberFn } from '../util/format';
 import { forceAttractive } from './attractive';
@@ -42,10 +41,7 @@ const DEFAULTS_LAYOUT_OPTIONS: Partial<ForceLayoutOptions> = {
  *
  * <en/> Force-directed layout based on custom physics simulation, using Coulomb's law for repulsion and Hooke's law for attraction
  */
-export class ForceLayout
-  extends BaseLayoutWithIterations<ForceLayoutOptions>
-  implements LayoutWithIterations<ForceLayoutOptions>
-{
+export class ForceLayout extends BaseLayoutWithIterations<ForceLayoutOptions> {
   public id = 'force';
 
   public simulation: ForceSimulation | null = null;
@@ -94,13 +90,11 @@ export class ForceLayout
 
     model.forEachEdge((edge) => {
       const raw = edge._original;
-      const sourceNode = model.node(edge.source);
-      const targetNode = model.node(edge.target);
       edge.edgeStrength = edgeStrength(raw);
       edge.linkDistance = linkDistance(
         raw,
-        sourceNode._original,
-        targetNode._original,
+        model.originalNode(edge.source)!,
+        model.originalNode(edge.target)!,
       );
     });
   }
@@ -233,6 +227,7 @@ export class ForceLayout
     // Format node mass
     if (!options.getMass) {
       _.getMass = (d?: NodeData) => {
+        if (!d) return 1;
         const massWeight = 1;
         const degree = this.model.degree(d.id, 'both');
         return !degree || degree < 5 ? massWeight : degree * 5 * massWeight;
@@ -352,16 +347,15 @@ export class ForceLayout
       if (!sameTypeLeafMap) {
         sameTypeLeafMap = this.getSameTypeLeafMap(nodeClusterBy);
       }
-      if (!clusters) {
-        clusters = Array.from(
-          new Set(
-            this.model
-              .nodes()
-              ?.map((node) => nodeClusterBy(node._original) as string),
-          ),
-        );
+      let clusters: string[] = [];
+      if (isEmpty(clusters)) {
+        this.model.forEachNode((node) => {
+          const cluster = nodeClusterBy(node._original);
+          if (cluster && !clusters.includes(cluster)) {
+            clusters.push(cluster);
+          }
+        });
       }
-      clusters = clusters.filter((item) => item !== undefined);
 
       const centerInfo: { [key: string]: PointObject } = {};
       clusters.forEach((cluster) => {

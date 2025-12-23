@@ -1,4 +1,4 @@
-import type { GraphData, LayoutEdge, LayoutNode } from '../types/data';
+import type { GraphData, LayoutEdge, LayoutNode, Point } from '../types';
 import { LayoutModel } from '../util/model';
 import type { BaseLayoutOptions, Layout, LayoutWithIterations } from './types';
 
@@ -9,10 +9,7 @@ export type { BaseLayoutOptions };
  *
  * <en/> Base class for layouts
  */
-export abstract class BaseLayout<
-  O extends BaseLayoutOptions = BaseLayoutOptions,
-> implements Layout<O>
-{
+export abstract class BaseLayout<O = BaseLayoutOptions> implements Layout<O> {
   public abstract readonly id: string;
 
   protected abstract getDefaultOptions(): O;
@@ -38,8 +35,8 @@ export abstract class BaseLayout<
     this.runtimeOptions = this.mergeOptions(this.initialOptions, userOptions);
 
     this.model = new LayoutModel(data, {
-      node: this.runtimeOptions.node,
-      edge: this.runtimeOptions.edge,
+      node: (this.runtimeOptions as any).node,
+      edge: (this.runtimeOptions as any).edge,
     });
 
     await this.layout(this.runtimeOptions);
@@ -76,14 +73,15 @@ export abstract class BaseLayout<
  * <en/> Base class for iterative layouts
  */
 export abstract class BaseLayoutWithIterations<
-    O extends BaseLayoutOptions = BaseLayoutOptions,
-  >
-  extends BaseLayout<O>
-  implements LayoutWithIterations<O>
-{
+  O = BaseLayoutOptions,
+> extends BaseLayout<O> {
   abstract stop(): void;
 
   abstract tick(iterations: number): void;
+
+  abstract restart(): void;
+
+  abstract setFixedPosition(nodeId: string, position: Point | null): void;
 }
 
 /**

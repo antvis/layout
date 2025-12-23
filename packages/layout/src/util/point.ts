@@ -1,4 +1,4 @@
-import { Point, PointObject } from '../types/point';
+import type { Point, PointObject } from '../types';
 
 export function parsePoint(point: PointObject): Point {
   return [point.x, point.y, point.z ?? 0];

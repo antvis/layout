@@ -31,7 +31,7 @@ export abstract class BaseSimulation<
   protected judgingDistance = Infinity;
   protected running = false;
 
-  protected options: T;
+  protected options!: T;
 
   private tickCallback: (() => void) | null = null;
   private endCallback: (() => void) | null = null;
@@ -69,7 +69,7 @@ export abstract class BaseSimulation<
       animate = true,
     } = this.options;
 
-    // ---------- 非动画 or 非浏览器环境 ----------
+    /** 非动画 or 非浏览器环境 */
     if (!animate || typeof window === 'undefined') {
       while (
         this.iteration < maxIteration &&
@@ -85,7 +85,7 @@ export abstract class BaseSimulation<
       return this;
     }
 
-    // ---------- 动画模式 ----------
+    /** 动画模式 */
     this.running = true;
     this.timer = window.setInterval(() => {
       this.tick(1);

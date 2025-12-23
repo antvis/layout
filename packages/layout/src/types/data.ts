@@ -27,18 +27,21 @@ export interface LayoutNode<N extends NodeData = NodeData> {
   x: number;
   y: number;
   z?: number;
-  fx?: number;
-  fy?: number;
-  fz?: number;
+
+  _original: N;
+
+  parentId?: ID | null;
+
+  /** Only for force-directed layout */
+  fx?: number | null;
+  fy?: number | null;
+  fz?: number | null;
   vx?: number;
   vy?: number;
   vz?: number;
 
+  /** Only for dagre layout */
   size?: Size;
-
-  parentId?: ID | null;
-
-  _original: N;
 
   [key: string]: any;
 }

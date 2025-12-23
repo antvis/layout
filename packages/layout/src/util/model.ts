@@ -1,13 +1,13 @@
 import { isNil } from '@antv/util';
-import type { LayoutModelOptions } from '../base-layout/types';
+import type { LayoutModelOptions } from '../core/types';
 import type {
   EdgeData,
   GraphData,
+  ID,
   LayoutEdge,
   LayoutNode,
   NodeData,
-} from '../types/data';
-import type { ID } from '../types/id';
+} from '../types';
 
 export class LayoutModel<
   N extends NodeData = NodeData,
@@ -156,7 +156,10 @@ export class LayoutModel<
     if (!inSet) return Array.from(outSet!);
     if (!outSet) return Array.from(inSet);
 
-    return Array.from(new Set([...inSet, ...outSet]));
+    const merged = new Set<ID>();
+    inSet.forEach((id) => merged.add(id));
+    outSet.forEach((id) => merged.add(id));
+    return Array.from(merged);
   }
 
   public successors(nodeId: ID): ID[] {

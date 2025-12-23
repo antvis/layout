@@ -1,11 +1,18 @@
 import { isNil } from '@antv/util';
-import { BaseSimulation } from '../base-layout/base-simulation';
-import type { LayoutNode } from '../types/data';
-import type { DisplacementMap } from '../types/force';
-import type { ID } from '../types/id';
-import type { NullablePosition } from '../types/position';
+import { BaseSimulation } from '../core/base-simulation';
+import type {
+  DisplacementMap,
+  ID,
+  LayoutNode,
+  NodeData,
+  NullablePosition,
+} from '../types';
+import { normalizeViewport } from '../util';
 import type { LayoutModel } from '../util/model';
-import type { FruchtermanSimulationOptions } from './types';
+import type {
+  FruchtermanLayoutOptions,
+  ParsedFruchtermanLayoutOptions,
+} from './types';
 
 interface ClusterInfo {
   name: string;
@@ -22,10 +29,10 @@ const SPEED_DIVISOR = 800;
 /**
  * Fruchterman Simulation
  */
-export class Simulation extends BaseSimulation<FruchtermanSimulationOptions> {
-  private k: number;
-  private k2: number;
-  private maxDisplace: number;
+export class Simulation extends BaseSimulation<ParsedFruchtermanLayoutOptions> {
+  private k!: number;
+  private k2!: number;
+  private maxDisplace!: number;
 
   private displacements: DisplacementMap | null = null;
   private clusterMap: ClusterMap | null = null;
@@ -38,7 +45,7 @@ export class Simulation extends BaseSimulation<FruchtermanSimulationOptions> {
     return this;
   }
 
-  initialize(options: FruchtermanSimulationOptions): void {
+  initialize(options: ParsedFruchtermanLayoutOptions): void {
     super.initialize(options);
 
     this.recomputeConstants();
@@ -51,7 +58,7 @@ export class Simulation extends BaseSimulation<FruchtermanSimulationOptions> {
 
   private recomputeConstants(): void {
     const { model, options } = this;
-    const { width, height } = options;
+    const { width, height } = normalizeViewport(options);
     const area = width * height;
 
     this.k2 = area / (model.nodeCount() + 1);
@@ -266,7 +273,10 @@ export class Simulation extends BaseSimulation<FruchtermanSimulationOptions> {
 
   private applyClusterGravity(): void {
     const { model, options } = this;
-    const { nodeClusterBy, clusterGravity, dimensions, clustering } = options;
+    const { nodeClusterBy, clusterGravity, dimensions, clustering } =
+      options as FruchtermanLayoutOptions & {
+        nodeClusterBy: (node: NodeData) => string;
+      };
 
     if (!clustering) return;
 
@@ -336,7 +346,7 @@ export class Simulation extends BaseSimulation<FruchtermanSimulationOptions> {
 
       if (distLength === 0) return;
 
-      const gravityForce = this.k * clusterGravity;
+      const gravityForce = this.k * clusterGravity!;
       disp.x -= (gravityForce * vecX) / distLength;
       disp.y -= (gravityForce * vecY) / distLength;
 
@@ -433,8 +443,5 @@ export class Simulation extends BaseSimulation<FruchtermanSimulationOptions> {
 
     this.displacements?.clear();
     this.clusterMap?.clear();
-
-    this.model = null;
-    this.options = null;
   }
 }

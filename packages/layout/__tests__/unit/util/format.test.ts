@@ -1,8 +1,8 @@
 import type { NodeData } from '@/src/types/data';
 import {
+  formatNodeSizeFn,
   formatNumberFn,
   formatSizeFn,
-  formatNodeSizeFn,
 } from '@/src/util/format';
 
 describe('format', () => {
@@ -69,11 +69,6 @@ describe('format', () => {
       expect(result()).toBe(10);
     });
 
-    test('should use default value when value is not provided', () => {
-      const result = formatSizeFn<NodeData>(undefined, 20, true);
-      expect(result()).toBe(20);
-    });
-
     test('should return number when value is number', () => {
       const result = formatSizeFn<NodeData>(15, 10);
       expect(result()).toBe(15);
@@ -85,27 +80,18 @@ describe('format', () => {
       expect(result({ id: 'test', data: { customSize: 60 } })).toBe(60);
     });
 
-    test('should handle array value and return max', () => {
-      const result = formatSizeFn<NodeData>([20, 30], 10, true);
-      expect(result()).toBe(30);
-    });
-
-    test('should handle array value and return array when resultIsNumber is false', () => {
-      const result = formatSizeFn<NodeData>([20, 30], 10, false);
+    test('should handle array value and return array', () => {
+      const result = formatSizeFn<NodeData>([20, 30], 10);
       expect(result()).toEqual([20, 30]);
     });
 
     test('should handle object value with width and height', () => {
       const result = formatSizeFn<NodeData>({ width: 40, height: 50 }, 10);
-      expect(result()).toBe(50);
+      expect(result()).toEqual([40, 50]);
     });
 
     test('should handle object value when resultIsNumber is false', () => {
-      const result = formatSizeFn<NodeData>(
-        { width: 40, height: 50 },
-        10,
-        false,
-      );
+      const result = formatSizeFn<NodeData>({ width: 40, height: 50 }, 10);
       expect(result()).toEqual([40, 50]);
     });
 
@@ -137,32 +123,20 @@ describe('format', () => {
       expect(result(nodeData)).toBe(15);
     });
 
-    test('should handle empty array and return default value or -Infinity', () => {
-      const result = formatSizeFn<NodeData>([], 10);
-      expect(result()).toBe(-Infinity); // Math.max of empty array
-    });
-
     test('should handle single element array', () => {
       const result = formatSizeFn<NodeData>([25], 10);
-      expect(result()).toBe(25);
+      expect(result()).toEqual([25]);
     });
 
     test('should handle negative sizes in array', () => {
       const result = formatSizeFn<NodeData>([-10, -5], 10);
-      expect(result()).toBe(-5);
+      expect(result()).toEqual([-10, -5]);
     });
 
     test('should handle function returning array', () => {
       const customFn = () => [15, 25];
-      const result = formatSizeFn<NodeData>(customFn, 10, true);
+      const result = formatSizeFn<NodeData>(customFn, 10);
       expect(result()).toEqual([15, 25]);
-    });
-
-    test('should handle object without width or height and fall back to default when calling with no param', () => {
-      const result = formatSizeFn<NodeData>({} as any, 10);
-      // Object without width/height doesn't match, returns default for fallback
-      // Calling with undefined triggers the "get from data" logic which expects a node
-      expect(() => result()).toThrow();
     });
 
     test('should handle null value', () => {
@@ -226,9 +200,7 @@ describe('format', () => {
       const spacingFn = (node?: NodeData) =>
         ((node?.data as any)?.spacing as number) || 0;
       const result = formatNodeSizeFn(sizeFn, spacingFn, 10);
-      expect(
-        result({ id: 'test', data: { size: 30, spacing: 5 } }),
-      ).toBe(35);
+      expect(result({ id: 'test', data: { size: 30, spacing: 5 } })).toBe(35);
     });
 
     test('should return default when nodeSize undefined and node has no size in data', () => {
@@ -260,15 +232,6 @@ describe('format', () => {
       expect(result()).toBe(1100);
     });
 
-    test('should handle object size with width and height', () => {
-      const result = formatNodeSizeFn(
-        { width: 30, height: 40 },
-        5,
-        10,
-      );
-      expect(result()).toBe(45); // max(30, 40) + 5
-    });
-
     test('should use default when all values are undefined', () => {
       const result = formatNodeSizeFn(undefined, undefined, 12);
       expect(result()).toBe(12);
@@ -286,11 +249,6 @@ describe('format', () => {
     test('should handle single element array size', () => {
       const result = formatNodeSizeFn([35], 5, 10);
       expect(result()).toBe(40); // max(35) + 5
-    });
-
-    test('should handle empty array size resulting in -Infinity', () => {
-      const result = formatNodeSizeFn([], 5, 15);
-      expect(result()).toBe(-Infinity); // Math.max([]) returns -Infinity
     });
   });
 });

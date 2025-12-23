@@ -1,5 +1,5 @@
-import type { ID } from '../types/id';
-import { EdgeData } from '../types/data';
+import type { ID } from '../types';
+import { EdgeData } from '../types';
 import { DagreGraph, GraphEdge } from './graph';
 import { addDummyNode } from './util';
 

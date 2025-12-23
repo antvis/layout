@@ -1,5 +1,5 @@
 import { Canvas, Circle, Line, Rect, Text } from '@antv/g';
-import { Layout } from '../../src/base-layout/types';
+import { Layout } from '../../src/core/types';
 
 export async function renderNodesAndEdges(
   canvas: Canvas,

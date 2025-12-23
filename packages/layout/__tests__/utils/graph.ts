@@ -1,5 +1,5 @@
 import { DagreGraph as Graph } from '@/src/antv-dagre/graph';
-import { ID } from '@/src/types/id';
+import { ID } from '@/src/types';
 
 export function mathEqual(a: number, b: number) {
   return Math.abs(a - b) < 1;

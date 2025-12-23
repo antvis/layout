@@ -1,10 +1,10 @@
 import { isNumber } from '@antv/util';
-import { BaseLayout } from '../base-layout';
-import type { Node, NodeData, Point } from '../types';
+import { BaseLayout } from '../core/base-layout';
+import type { NodeData, PointObject } from '../types';
 import { parsePoint } from '../util';
 import { formatNumberFn, formatSizeFn } from '../util/format';
 import { parseSize } from '../util/size';
-import { DagreGraph } from './graph';
+import { DagreGraph, GraphNode } from './graph';
 import { layout } from './layout';
 import { AntVDagreLayoutOptions } from './types';
 
@@ -42,7 +42,7 @@ export class AntVDagreLayout extends BaseLayout<AntVDagreLayoutOptions> {
       ranksep,
       nodesep,
       edgeLabelSpace,
-      ranker,
+      ranker = 'tight-tree',
       nodeOrder,
       begin,
       controlPoints,
@@ -70,7 +70,6 @@ export class AntVDagreLayout extends BaseLayout<AntVDagreLayoutOptions> {
     const nodeSizeFunc = formatSizeFn(
       nodeSize,
       DEFAULTS_LAYOUT_OPTIONS.nodeSize as number,
-      false,
     );
 
     // Create internal graph
@@ -163,7 +162,7 @@ export class AntVDagreLayout extends BaseLayout<AntVDagreLayoutOptions> {
         if (minY > node.data.y!) minY = node.data.y!;
       });
       g.getAllEdges().forEach((edge) => {
-        edge.data.points?.forEach((point: Point) => {
+        edge.data.points?.forEach((point: PointObject) => {
           if (minX > point.x) minX = point.x;
           if (minY > point.y) minY = point.y;
         });
@@ -357,7 +356,7 @@ export class AntVDagreLayout extends BaseLayout<AntVDagreLayoutOptions> {
       //       1,
       //       coord.points.length - 1
       //     );
-      //     const newControlPoints: Point[] = [];
+      //     const newControlPoints: PointObject[] = [];
       //     const sourceOtherDimValue = g.node(edge.v)?.[otherDim]!;
       //     const otherDimDist =
       //       sourceOtherDimValue - g.node(edge.w)?.[otherDim]!;
@@ -410,15 +409,15 @@ export class AntVDagreLayout extends BaseLayout<AntVDagreLayoutOptions> {
 
       // pre-define the isHorizontal related functions to avoid redundant calc in interations
       const isDifferentLayer = isHorizontal
-        ? (point1: Point, point2: Point) => point1.x !== point2.x
-        : (point1: Point, point2: Point) => point1.y !== point2.y;
+        ? (point1: PointObject, point2: PointObject) => point1.x !== point2.x
+        : (point1: PointObject, point2: PointObject) => point1.y !== point2.y;
       const filterControlPointsOutOfBoundary = isHorizontal
-        ? (ps: Point[], point1: Point, point2: Point) => {
+        ? (ps: PointObject[], point1: PointObject, point2: PointObject) => {
             const max = Math.max(point1.y, point2.y);
             const min = Math.min(point1.y, point2.y);
             return ps.filter((point) => point.y <= max && point.y >= min);
           }
-        : (ps: Point[], point1: Point, point2: Point) => {
+        : (ps: PointObject[], point1: PointObject, point2: PointObject) => {
             const max = Math.max(point1.x, point2.x);
             const min = Math.min(point1.x, point2.x);
             return ps.filter((point) => point.x <= max && point.x >= min);
@@ -431,7 +430,7 @@ export class AntVDagreLayout extends BaseLayout<AntVDagreLayoutOptions> {
         // if (i <= -1) return;
         if (edgeLabelSpace && controlPoints && edge.data.type !== 'loop') {
           edge.data.controlPoints = getControlPoints(
-            edge.data.points?.map(({ x, y }: Point) => ({
+            edge.data.points?.map(({ x, y }: PointObject) => ({
               x: x + layoutTopLeft[0],
               y: y + layoutTopLeft[1],
             })),
@@ -516,17 +515,17 @@ export class AntVDagreLayout extends BaseLayout<AntVDagreLayoutOptions> {
  * @returns
  */
 const getControlPoints = (
-  points: Point[] | undefined,
-  sourceNode: Node,
-  targetNode: Node,
+  points: PointObject[] | undefined,
+  sourceNode: GraphNode,
+  targetNode: GraphNode,
   layerCoordsArr: number[],
   isHorizontal: boolean,
-  isDifferentLayer: (point1: Point, point2: Point) => boolean,
+  isDifferentLayer: (point1: PointObject, point2: PointObject) => boolean,
   filterControlPointsOutOfBoundary: (
-    ps: Point[],
-    point1: Point,
-    point2: Point,
-  ) => Point[],
+    ps: PointObject[],
+    point1: PointObject,
+    point2: PointObject,
+  ) => PointObject[],
 ) => {
   let controlPoints = points?.slice(1, points.length - 1) || []; // 去掉头尾
   // 酌情增加控制点，使折线不穿过跨层的节点
@@ -559,7 +558,7 @@ const getControlPoints = (
                 x: firstControlPoint?.x || targetX,
                 y: (sourceY! + sourceNextLayerCoord) / 2,
               }
-        ) as Point;
+        ) as PointObject;
         // 当新增的控制点不存在（!=当前第一个控制点）时添加
         if (
           !firstControlPoint ||
@@ -574,8 +573,8 @@ const getControlPoints = (
       if (layerDiff === 1) {
         controlPoints = filterControlPointsOutOfBoundary(
           controlPoints,
-          sourceNode.data as Point,
-          targetNode.data as Point,
+          sourceNode.data as PointObject,
+          targetNode.data as PointObject,
         );
         // one controlPoint at least
         if (!controlPoints.length) {
@@ -588,7 +587,7 @@ const getControlPoints = (
               : {
                   x: sourceX,
                   y: (sourceY! + targetY!) / 2,
-                }) as Point,
+                }) as PointObject,
           );
         }
       } else if (layerDiff > 1) {
@@ -605,7 +604,7 @@ const getControlPoints = (
                   x: lastControlPoints?.x || sourceX,
                   y: (targetY! + targetLastLayerCoord) / 2,
                 }
-          ) as Point;
+          ) as PointObject;
           // 当新增的控制点不存在（!=当前最后一个控制点）时添加
           if (
             !lastControlPoints ||

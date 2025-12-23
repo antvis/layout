@@ -1,4 +1,4 @@
-import type { LayoutNode, NodeData } from '../types/data';
+import type { LayoutNode, NodeData } from '../types';
 import type { LayoutModel } from './model';
 
 export type SortComparator<N extends NodeData = NodeData> = (

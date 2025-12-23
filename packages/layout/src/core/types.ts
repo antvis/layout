@@ -1,11 +1,12 @@
 import type {
   EdgeData,
   GraphData,
+  ID,
   LayoutEdge,
   LayoutNode,
   NodeData,
-} from '../types/data';
-import type { Point } from '../types/point';
+  Point,
+} from '../types';
 
 export interface LayoutModelOptions<
   N extends NodeData = NodeData,
@@ -16,31 +17,44 @@ export interface LayoutModelOptions<
    *
    * <en/> Custom node field mapping
    */
-  node?: (datum: N) => Partial<LayoutNode>;
+  node?: (datum: N) => {
+    id?: ID;
+    x?: number;
+    y?: number;
+    z?: number;
+    parentId?: ID | null;
+  };
 
   /**
    * <zh/> 自定义边属性映射
    *
    * <en/> Custom edge field mapping
    */
-  edge?: (datum: E) => Partial<LayoutEdge>;
+  edge?: (datum: E) => {
+    id?: ID;
+    source?: ID;
+    target?: ID;
+  };
 }
 
 export interface ViewportOptions {
   /**
    * <zh/> 布局中心
+   *
    * <en/> Layout center
    */
   center?: Point;
 
   /**
    * <zh/> 布局宽度
+   *
    * <en/> Layout width
    */
   width?: number;
 
   /**
    * <zh/> 布局高度
+   *
    * <en/> Layout height
    */
   height?: number;
@@ -49,13 +63,12 @@ export interface ViewportOptions {
 export interface BaseLayoutOptions<
   N extends NodeData = NodeData,
   E extends EdgeData = EdgeData,
-> extends LayoutModelOptions<N, E> {
+> extends LayoutModelOptions<N, E>,
+    ViewportOptions {
   [key: string]: any;
 }
 
-export interface Layout<
-  LayoutOptions extends BaseLayoutOptions = BaseLayoutOptions,
-> {
+export interface Layout<LayoutOptions> {
   /**
    * <zh/> 执行布局计算
    *
@@ -96,15 +109,33 @@ export interface LayoutWithIterations<
   LayoutOptions extends BaseLayoutOptions = BaseLayoutOptions,
 > extends Layout<LayoutOptions> {
   /**
+   * <zh/> 停止布局计算
+   *
+   * <en/> Stop the layout calculation
+   * @description
    * Some layout algorithm has n iterations so that the simulation needs to be stopped at any time.
    * This method is useful for running the simulation manually.
-   * @see https://github.com/d3/d3-force#simulation_stop
    */
   stop(): void;
 
   /**
-   * Manually steps the simulation by the specified number of iterations.
-   * @see https://github.com/d3/d3-force#simulation_tick
+   * <zh/> 手动推进布局计算若干步
+   *
+   * <en/> Manually steps the simulation by the specified number of iterations.
    */
   tick(iterations?: number): void;
+
+  /**
+   * <zh/> 重置布局计算
+   *
+   * <en/> Restart the layout calculation
+   */
+  restart(): void;
+
+  /**
+   * <zh/> 设置节点固定位置，在布局过程中该节点不会被移动
+   *
+   * <en/> Set the fixed position of a node. The node will not be moved during the layout process.
+   */
+  setFixedPosition(nodeId: string, position: Point | null): void;
 }

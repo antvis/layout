@@ -1,6 +1,5 @@
-import { BaseLayout } from '../base-layout';
-import type { PointTuple } from '../types';
-import { LayoutNode } from '../types/data';
+import { BaseLayout } from '../core/base-layout';
+import { LayoutNode, Point } from '../types';
 import { applySingleNodeLayout, normalizeViewport, parseSize } from '../util';
 import { formatNumberFn, formatSizeFn } from '../util/format';
 import { LayoutModel } from '../util/model';
@@ -102,7 +101,7 @@ export class GridLayout extends BaseLayout<GridLayoutOptions> {
     const preventOverlap =
       options.preventOverlap || options.nodeSpacing !== undefined;
     const nodeSpacing = formatNumberFn(options.nodeSpacing, 10);
-    const nodeSize = formatSizeFn(options.nodeSize, 30, false);
+    const nodeSize = formatSizeFn(options.nodeSize, 30);
 
     return {
       ...options,
@@ -271,7 +270,7 @@ const moveToNextCell = (rcs: RowsAndCols, rc: RowAndCol) => {
 
 const getPos = (
   node: LayoutNode,
-  begin: PointTuple,
+  begin: Point,
   cellWidth: number,
   cellHeight: number,
   id2manPos: IdMapRowAndCol,

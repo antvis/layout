@@ -1,7 +1,7 @@
 import { isNumber } from '@antv/util';
-import type { PointObject } from '../types/point';
-import type { EdgeData, NodeData } from '../types/data';
+import type { EdgeData, NodeData } from '../types';
 import { LayoutModel } from '../util';
+import { AccMap } from './types';
 
 interface CentripetalForceOptions {
   leaf: (node: NodeData, nodes: NodeData[], edges: EdgeData[]) => number;
@@ -30,7 +30,7 @@ export function forceCentripetal(options: Partial<CentripetalForceOptions>) {
   let width: number = 800;
   let height: number = 600;
 
-  function force(model: LayoutModel, accMap: { [id: string]: PointObject }) {
+  function force(model: LayoutModel, accMap: AccMap) {
     if (!centripetalOptions) return;
 
     const { leaf, single, others, center: centriCenter } = centripetalOptions;
@@ -43,7 +43,7 @@ export function forceCentripetal(options: Partial<CentripetalForceOptions>) {
     const edgesForCallback = edges.map((e) => ({ ...e, data: e.data || {} }));
 
     model.forEachNode((node) => {
-      const { id, mass, x, y, z, data } = node;
+      const { id, mass, x, y, z = 0, data } = node;
 
       const inDegree = model.degree(id, 'in');
       const outDegree = model.degree(id, 'out');

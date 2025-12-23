@@ -1,5 +1,5 @@
-import type { EdgeData } from '../../types/data';
-import type { ID } from '../../types/id';
+import type { EdgeData } from '../../types';
+import type { ID } from '../../types';
 import { DagreGraph, GraphEdge } from '../graph';
 import { minBy } from '../util';
 import { slack } from './util';

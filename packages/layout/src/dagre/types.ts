@@ -1,7 +1,6 @@
 import type { GraphLabel } from 'dagre';
-import type { BaseLayoutOptions } from '../base-layout';
-import type { NodeData } from '../types/data';
-import type { Size } from '../types/size';
+import type { BaseLayoutOptions } from '../core/types';
+import type { NodeData, Size } from '../types';
 
 /**
  * <zh/> 边标签位置：'l' 左侧，'c' 中心，'r' 右侧

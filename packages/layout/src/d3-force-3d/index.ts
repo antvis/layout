@@ -15,7 +15,11 @@ import type { D3Force3DLayoutOptions, EdgeDatum, NodeDatum } from './types';
 
 export type { D3Force3DLayoutOptions };
 
-export class D3Force3DLayout extends D3ForceLayout<D3Force3DLayoutOptions> {
+export class D3Force3DLayout extends D3ForceLayout<
+  D3Force3DLayoutOptions,
+  NodeDatum,
+  EdgeDatum
+> {
   public id = 'd3-force-3d';
 
   protected config = {

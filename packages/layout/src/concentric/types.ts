@@ -1,16 +1,12 @@
-import type { BaseLayoutOptions } from '../base-layout';
-import type { ViewportOptions } from '../base-layout/types';
-import type { NodeData } from '../types/data';
-import type { Size } from '../types/size';
+import type { BaseLayoutOptions } from '../core/types';
+import type { NodeData, Size } from '../types';
 
 /**
  * <zh/> Concentric 同心圆布局配置
  *
  * <en/> Concentric layout configuration
  */
-export interface ConcentricLayoutOptions
-  extends BaseLayoutOptions,
-    ViewportOptions {
+export interface ConcentricLayoutOptions extends BaseLayoutOptions {
   /**
    * <zh/> 是否防止重叠
    *
@@ -89,5 +85,5 @@ export interface ConcentricLayoutOptions
    * - ((node) => ...): Custom sorting function, returns a number, the higher the value, the more the node will be placed in the center
    * @defaultValue degree
    */
-  sortBy?: 'degree' | ((node: NodeData) => number);
+  sortBy?: 'degree' | ((d?: NodeData) => number);
 }

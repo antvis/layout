@@ -1,5 +1,5 @@
 import { isNumber } from '@antv/util';
-import type { Size, STDSize } from '../types/size';
+import type { Size, STDSize } from '../types';
 
 export function parseSize(size?: Size): STDSize {
   if (!size) return [0, 0, 0];

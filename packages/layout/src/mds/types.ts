@@ -1,5 +1,5 @@
-import type { BaseLayoutOptions } from '../base-layout';
-import type { Point } from '../types/point';
+import type { BaseLayoutOptions } from '../core/types';
+import type { Point } from '../types';
 
 /**
  * <zh/> MDS 高维数据降维布局配置

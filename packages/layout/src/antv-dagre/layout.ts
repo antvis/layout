@@ -1,6 +1,6 @@
 import { isNil } from '@antv/util';
-import { EdgeData, NodeData, Point } from '../types';
-import type { ID } from '../types/id';
+import type { ID } from '../types';
+import { EdgeData, NodeData, PointObject } from '../types';
 import { run as runAcyclic, undo as undoAcyclic } from './acyclic';
 import { addBorderSegments } from './add-border-segments';
 import {
@@ -68,7 +68,7 @@ export const layout = (
   // TODO: 暂时处理层级设置不正确时的异常报错，提示设置正确的层级
   try {
     dimension = runLayout(layoutGraph, options);
-  } catch (e) {
+  } catch (e: any) {
     if (
       e.message === 'Not possible to find intersection inside of the rectangle'
     ) {
@@ -434,7 +434,7 @@ const translateGraph = (
   });
 
   g.getAllEdges().forEach((edge) => {
-    edge.data.points?.forEach((p: Point) => {
+    edge.data.points?.forEach((p: PointObject) => {
       p.x -= minX;
       p.y -= minY;
     });
@@ -456,8 +456,8 @@ const assignNodeIntersects = (g: DagreGraph) => {
   g.getAllEdges().forEach((e) => {
     const nodeV = g.getNode(e.source)!;
     const nodeW = g.getNode(e.target)!;
-    let p1: Point;
-    let p2: Point;
+    let p1: PointObject;
+    let p2: PointObject;
     if (!e.data.points) {
       e.data.points = [];
       p1 = { x: nodeW.data.x!, y: nodeW.data.y! };

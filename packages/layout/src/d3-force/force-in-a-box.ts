@@ -1,5 +1,5 @@
 import * as d3Force from 'd3-force';
-import type { LayoutEdge, LayoutNode, NodeData } from '../types/data';
+import type { LayoutEdge, LayoutNode, NodeData } from '../types';
 
 export const getEdgeTerminal = (
   edge: LayoutEdge,
@@ -52,6 +52,8 @@ export default function forceInABox() {
 
     for (let i = 0, n = nodes.length, node, k = alpha * strength; i < n; ++i) {
       node = nodes[i];
+      node.vx ||= 0;
+      node.vy ||= 0;
       node.vx += (foci[groupBy(node._original)].x - node.x) * k;
       node.vy += (foci[groupBy(node._original)].y - node.y) * k;
     }

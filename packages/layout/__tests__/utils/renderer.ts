@@ -1,6 +1,6 @@
-import { Layout } from '@/src/base-layout/types';
+import { Layout } from '@/src/core/types';
+import { Point } from '@/src/types';
 import { LayoutEdge, LayoutNode } from '@/src/types/data';
-import { Point } from '@/src/types/point';
 import { Canvas, Circle, Line, Polyline, Rect, Text } from '@antv/g';
 import { Renderer } from '@antv/g-canvas';
 import { deepMix } from '@antv/util';

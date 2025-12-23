@@ -1,8 +1,5 @@
-import { BaseLayoutOptions } from '../base-layout';
-import { NodeData } from '../types/data';
-import { ID } from '../types/id';
-import { Point } from '../types/point';
-import { Size } from '../types/size';
+import { BaseLayoutOptions } from '../core/base-layout';
+import { ID, NodeData, Point, Size } from '../types';
 
 export type DagreRankdir =
   | 'TB'

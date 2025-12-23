@@ -1,25 +1,11 @@
-import { ViewportOptions } from '../base-layout/types';
-import type { NodeData } from '../types/data';
-import type { CommonForceLayoutOptions } from '../types/force';
+import type { CommonForceLayoutOptions, NodeData } from '../types';
 
 /**
  * <zh/> Fruchterman 力导布局配置项
  *
  * <en/> Fruchterman force layout configuration
  */
-export interface FruchtermanLayoutOptions
-  extends ViewportOptions,
-    Omit<FruchtermanSimulationOptions, 'nodeClusterBy'> {
-  /**
-   * <zh/> 聚类布局依据的字段名，cluster: true 时使用
-   *
-   * <en/> The field name of the node data in the data, which is used when cluster is true
-   * @defaultValue 'cluster'
-   */
-  nodeClusterBy?: string | ((node: NodeData) => string);
-}
-
-export interface FruchtermanSimulationOptions extends CommonForceLayoutOptions {
+export interface FruchtermanLayoutOptions extends CommonForceLayoutOptions {
   /**
    * <zh/> 中心力大小，指所有节点被吸引到 center 的力。数字越大，布局越紧凑
    *
@@ -48,11 +34,14 @@ export interface FruchtermanSimulationOptions extends CommonForceLayoutOptions {
    * @defaultValue 10
    */
   clusterGravity?: number;
+
   /**
    * <zh/> 聚类布局依据的字段名，cluster: true 时使用
    *
    * <en/> The field name of the node data in the data, which is used when cluster is true
    * @defaultValue 'cluster'
    */
-  nodeClusterBy?: (node: NodeData) => string;
+  nodeClusterBy?: string | ((node: NodeData) => string);
 }
+
+export type ParsedFruchtermanLayoutOptions = Required<FruchtermanLayoutOptions>;
