@@ -8,7 +8,7 @@ import interact from 'interactjs';
 
 export interface GraphNode {
   id: string | number;
-  data: {
+  data?: {
     x: number;
     y: number;
     shape?: 'circle' | 'rect';

@@ -1,9 +1,31 @@
 import { ForceAtlas2Layout } from '@/src';
-import { countries as data } from '../dataset';
-import { getEuclideanDistance } from '../utils';
+import type { Canvas } from '@antv/g';
+import { clear as clearMockRandom, mock as mockRandom } from 'jest-random-mock';
+import { cluster as data } from '../dataset';
+import { createCanvas, getEuclideanDistance, GraphRenderer } from '../utils';
 import { calculatePositions } from '../utils/render-update';
 
 describe('ForceAtlas2Layout', () => {
+  let canvas: Canvas;
+  let renderer: GraphRenderer;
+
+  beforeEach(() => {
+    mockRandom();
+    canvas = createCanvas(null, 500, 500);
+    renderer = new GraphRenderer(canvas);
+  });
+
+  afterEach(() => {
+    clearMockRandom();
+    canvas.destroy();
+  });
+
+  const renderLayout = async (layout: ForceAtlas2Layout) => {
+    await renderer.render(layout, {
+      nodeRadius: 10,
+    });
+  };
+
   it('should return correct default config.', async () => {
     const fa2 = new ForceAtlas2Layout();
     expect(fa2.options).toEqual({
@@ -23,9 +45,26 @@ describe('ForceAtlas2Layout', () => {
     });
 
     await fa2.execute(data);
-    const positions = calculatePositions(fa2);
-    expect(positions.nodes[0].x).not.toBe(undefined);
-    expect(positions.nodes[0].y).not.toBe(undefined);
+
+    fa2.forEachNode((node) => {
+      expect(node.x).not.toBe(undefined);
+      expect(node.y).not.toBe(undefined);
+    });
+  });
+
+  it('should do fa2 layout with a simple graph.', async () => {
+    const fa2 = new ForceAtlas2Layout();
+
+    await fa2.execute(data, {
+      preventOverlap: true,
+      nodeSize: 20,
+      maxIterations: 500,
+      kr: 10,
+      radius: 200,
+    });
+
+    renderLayout(fa2);
+    await expect(canvas).toMatchSnapshot(__filename);
   });
 
   it('should do fa2 layout with an empty graph.', async () => {

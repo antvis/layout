@@ -1,6 +1,6 @@
 import { isNumber } from '@antv/util';
-import { EdgeData, NodeData } from '../types';
 import type { ID } from '../types';
+import { EdgeData, NodeData } from '../types';
 import { DagreGraph, GraphNode } from './graph';
 
 const safeSort = (valueA?: number, valueB?: number) => {

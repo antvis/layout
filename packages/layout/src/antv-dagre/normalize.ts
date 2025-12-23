@@ -27,7 +27,11 @@ const run = (g: DagreGraph, dummyChains: ID[]) => {
   g.getAllEdges().forEach((edge) => normalizeEdge(g, edge, dummyChains));
 };
 
-const normalizeEdge = (g: DagreGraph, e: GraphEdge<EdgeData>, dummyChains: ID[]) => {
+const normalizeEdge = (
+  g: DagreGraph,
+  e: GraphEdge<EdgeData>,
+  dummyChains: ID[],
+) => {
   let v = e.source;
   let vRank = g.getNode(v)!.data.rank!;
   const w = e.target;

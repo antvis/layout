@@ -1,5 +1,5 @@
 import type { GraphData } from '@/src/types/data';
-import { LayoutModel, initModelNodePosition } from '@/src/util/model';
+import { initModelNodePosition, LayoutModel } from '@/src/util/model';
 
 describe('model', () => {
   describe('LayoutModel', () => {

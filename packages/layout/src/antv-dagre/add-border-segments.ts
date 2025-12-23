@@ -1,5 +1,4 @@
-import type { NodeData } from '../types';
-import type { ID } from '../types';
+import type { ID, NodeData } from '../types';
 import { DagreGraph } from './graph';
 import { addDummyNode } from './util';
 

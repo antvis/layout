@@ -1,4 +1,4 @@
-import { isEmpty, isFunction, isNumber, isObject } from '@antv/util';
+import { isFunction, isNumber, isObject } from '@antv/util';
 import type { NodeData, Size } from '../types';
 import { parseSize } from './size';
 
@@ -73,7 +73,11 @@ export function formatSizeFn<T extends NodeData>(
  * @returns A function that returns the total size (node size + spacing)
  */
 export const formatNodeSizeFn = (
-  nodeSize: Size | { width: number; height: number } | ((node?: NodeData) => Size) | undefined,
+  nodeSize:
+    | Size
+    | { width: number; height: number }
+    | ((node?: NodeData) => Size)
+    | undefined,
   nodeSpacing: number | ((node?: NodeData) => number) | undefined,
   defaultNodeSize: number = 10,
 ): ((node?: NodeData) => number) => {
