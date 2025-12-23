@@ -112,19 +112,6 @@ export abstract class BaseLayoutWithIterations<
   abstract restart(): void;
 
   abstract setFixedPosition(nodeId: string, position: Point | null): void;
-
-  async stopInWorker(): Promise<void> {
-    this.supervisor?.stop();
-  }
-
-  async tickInWorker(iterations?: number): Promise<void> {
-    if (!this.supervisor) {
-      this.supervisor = new Supervisor();
-    }
-
-    const result = await this.supervisor.tick(iterations);
-    this.model?.apply(result);
-  }
 }
 
 export function isLayoutWithIterations(

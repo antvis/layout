@@ -1,5 +1,4 @@
 import { expose } from 'comlink';
-import { isLayoutWithIterations } from './core/base-layout';
 import { registry } from './registry';
 import type { GraphData, LayoutData, PlainObject } from './types';
 
@@ -11,8 +10,6 @@ export interface LayoutWorker {
     data: GraphData,
     config: PlainObject,
   ): Promise<LayoutData>;
-  stop(): void;
-  tick(iterations?: number): LayoutData;
   destroy(): void;
 }
 
@@ -32,21 +29,6 @@ const api: LayoutWorker = {
     await layoutInstance.execute(data, opts);
 
     return layoutInstance.model.data();
-  },
-
-  stop() {
-    if (layoutInstance && isLayoutWithIterations(layoutInstance)) {
-      layoutInstance.stop();
-    }
-  },
-
-  tick(iterations?: number): LayoutData {
-    if (layoutInstance && isLayoutWithIterations(layoutInstance)) {
-      layoutInstance.tick(iterations);
-
-      return (layoutInstance as any).model.data();
-    }
-    return {} as LayoutData;
   },
 
   destroy() {

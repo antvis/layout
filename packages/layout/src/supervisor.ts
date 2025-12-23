@@ -27,24 +27,6 @@ export class Supervisor {
   }
 
   /**
-   * Stop layout calculation
-   */
-  stop(): void {
-    this.workerApi?.stop();
-  }
-
-  /**
-   * Execute iteration
-   */
-  async tick(iterations?: number): Promise<LayoutData> {
-    if (!this.workerApi) {
-      throw new Error('Worker API not initialized');
-    }
-
-    return this.workerApi.tick(iterations);
-  }
-
-  /**
    * Destroy worker
    */
   destroy(): void {
