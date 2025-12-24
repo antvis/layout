@@ -1,5 +1,6 @@
 export { render as antvDagre } from './antv-dagre';
 export { render as circular } from './circular';
+export { render as comboCombined } from './combo-combined';
 export { render as concentric } from './concentric';
 export { render as d3force } from './d3-force';
 export { render as d3force3d } from './d3-force-3d';

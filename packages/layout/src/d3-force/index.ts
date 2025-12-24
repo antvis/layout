@@ -440,7 +440,10 @@ export class D3ForceLayout<
       const radius =
         options.nodeSize || options.nodeSpacing
           ? (d: NodeDatum) =>
-              formatNodeSizeFn(options.nodeSize, options.nodeSpacing)(d) / 2
+              formatNodeSizeFn(
+                options.nodeSize,
+                options.nodeSpacing,
+              )(d._original) / 2
           : undefined;
 
       return assignDefined({}, options.collide || {}, {
@@ -454,7 +457,6 @@ export class D3ForceLayout<
 
   protected setupCollisionForce(simulation: Simulation<N, E>, options: T) {
     const collide = this.getCollisionOptions(options);
-
     if (collide) {
       let force = simulation.force('collide');
       if (!force) {

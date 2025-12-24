@@ -243,8 +243,8 @@ export class ForceLayout extends BaseLayoutWithIterations<ForceLayoutOptions> {
       : (edge?: EdgeData) => {
           return (
             1 +
-            _.nodeSize(this.model.node(edge!.source)!) +
-            _.nodeSize(this.model.node(edge!.target)!)
+            _.nodeSize(this.model.node(edge!.source)!._original) +
+            _.nodeSize(this.model.node(edge!.target)!._original)
           );
         };
     _.nodeStrength = formatNumberFn(options.nodeStrength, 1);

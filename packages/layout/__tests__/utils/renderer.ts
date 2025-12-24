@@ -394,7 +394,7 @@ export class GraphRenderer {
 
   updateNodeAttributes(nodeId: string | number, attrs: any): void {
     const elem = this.nodeElements.get(nodeId);
-    if (elem && elem instanceof Rect) {
+    if (elem) {
       const prev = elem.attributes;
       elem.attr({
         ...prev,

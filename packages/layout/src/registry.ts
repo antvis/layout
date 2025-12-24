@@ -13,14 +13,14 @@ import { RadialLayout } from './radial';
 import { RandomLayout } from './random';
 
 export const registry: Record<string, any> = {
+  'antv-dagre': AntVDagreLayout,
   'd3-force-3d': D3Force3DLayout,
-  antvDagre: AntVDagreLayout,
+  'd3-force': D3ForceLayout,
+  'force-atlas2': ForceAtlas2Layout,
   circular: CircularLayout,
   concentric: ConcentricLayout,
-  d3force: D3ForceLayout,
   dagre: DagreLayout,
   force: ForceLayout,
-  forceAtlas2: ForceAtlas2Layout,
   fruchterman: FruchtermanLayout,
   grid: GridLayout,
   mds: MDSLayout,
