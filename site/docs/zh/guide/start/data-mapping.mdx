@@ -1,0 +1,122 @@
+# 准备数据
+
+本章节介绍如何将任意结构的业务数据适配到布局算法中。
+
+> [!NOTE]
+> 如果你已经使用标准图数据结构（包含 `id` / `source` / `target` 字段），可以跳过本章节。
+
+## 为什么需要数据映射？
+
+布局算法内部有特定的数据格式要求，而实际业务中的数据字段命名往往不同。数据映射功能允许你在不修改原始数据的前提下，通过配置映射规则，让布局算法正确理解你的数据结构。
+
+### 业务数据示例
+
+假设你的业务数据结构如下：
+
+```js
+const data = {
+  nodes: [
+    { nodeId: 'n1', position: { x: 100, y: 200 }, radius: 16 },
+    { nodeId: 'n2', position: { x: 300, y: 200 }, radius: 16 },
+  ],
+  edges: [{ edgeId: 'e1', from: 'n1', to: 'n2', weight: 2 }],
+};
+```
+
+> [!WARNING]
+> 直接使用上述数据执行布局会失败，因为字段名（`nodeId`、`from`、`to`）与布局算法的默认约定（`id`、`source`、`target`）不一致。
+
+## 配置数据映射
+
+通过在布局初始化或执行时传入 `node` 和 `edge` 映射函数，可以完成字段转换。
+
+### 节点映射配置
+
+```js
+const layout = new CircularLayout({
+  center: [500, 500],
+  node: (datum) => ({
+    id: datum.nodeId,
+    x: datum.position?.x,
+    y: datum.position?.y,
+  }),
+});
+```
+
+映射函数接收 **单个原始节点数据**，并返回布局所需字段：
+
+**映射字段说明：**
+
+| 字段      | 是否必需 | 说明                         |
+| --------- | -------- | ---------------------------- |
+| `id`      | ✅       | 节点唯一标识符               |
+| `x` / `y` |          | 初始位置坐标，用于热启动布局 |
+
+### 边映射配置
+
+```js
+const layout = new CircularLayout({
+  edge: (datum) => ({
+    id: datum.edgeId,
+    source: datum.from,
+    target: datum.to,
+  }),
+});
+```
+
+**映射字段说明：**
+
+| 字段     | 是否必需 | 说明                                    |
+| -------- | -------- | --------------------------------------- |
+| `id`     |          | 边唯一标识符                            |
+| `source` | ✅       | 起点节点 ID，必须与某个节点的 `id` 匹配 |
+| `target` | ✅       | 终点节点 ID，必须与某个节点的 `id` 匹配 |
+| `weight` |          | 边权重，影响某些布局算法的引力计算      |
+
+## 完整示例
+
+以下示例展示完整的数据映射流程：
+
+```js
+const data = {
+  nodes: [
+    { nodeId: 'n1', position: { x: 100, y: 200 }, radius: 16 },
+    { nodeId: 'n2', position: { x: 300, y: 200 }, radius: 16 },
+  ],
+  edges: [{ edgeId: 'e1', from: 'n1', to: 'n2', weight: 2 }],
+};
+
+const layout = new CircularLayout({
+  center: [500, 500],
+  node: (datum) => ({
+    id: datum.nodeId,
+    x: datum.position?.x,
+    y: datum.position?.y,
+  }),
+  edge: (datum) => ({
+    id: datum.edgeId,
+    source: datum.from,
+    target: datum.to,
+  }),
+});
+
+await layout.execute(data);
+
+layout.forEachNode((node) => {
+  console.log(node.id, node.x, node.y);
+});
+```
+
+布局过程中：
+
+- **不会修改原始数据**
+- 会自动生成内部的节点与边模型
+- 所有映射逻辑只在布局内部生效
+
+## 下一步
+
+配置完数据映射后，你可以：
+
+- 查看不同的 [布局算法](../api/circular.md) 选项
+
+通过数据映射，你可以专注于业务逻辑，而无需为数据格式转换编写额外代码。

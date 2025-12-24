@@ -1,15 +1,43 @@
 import { BaseLayout, isLayoutWithIterations } from '../core/base-layout';
 import { Layout } from '../core/types';
 import { registry } from '../registry';
-import { GraphData, NodeData, STDSize } from '../types';
-import { initModelNodePosition, normalizeViewport, parseSize } from '../util';
+import { GraphData, LayoutNode, NodeData, STDSize } from '../types';
+import { normalizeViewport, parseSize } from '../util';
 import { formatNodeSizeFn } from '../util/format';
 import type {
+  ComboCombinedDependencyLevelInfo,
   ComboCombinedLayoutOptions,
-  ComboCombinedLevelInfo,
 } from './types';
 
-export type { ComboCombinedLevelInfo, ComboCombinedLayoutOptions };
+export type { ComboCombinedDependencyLevelInfo, ComboCombinedLayoutOptions };
+
+interface RelativePosition {
+  x: number;
+  y: number;
+  relativeTo: string;
+}
+
+interface Bounds {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
+interface HierarchyNode {
+  id: string;
+  type: 'combo' | 'node';
+  depth: number;
+  children: HierarchyNode[];
+  parentId: string | null;
+  leafCount?: number;
+  x?: number;
+  y?: number;
+  size?: STDSize;
+  bounds?: Bounds;
+  estimatedSize?: { width: number; height: number };
+  _original?: any;
+}
 
 /**
  * <zh/> 组合布局
@@ -19,21 +47,62 @@ export type { ComboCombinedLevelInfo, ComboCombinedLayoutOptions };
 export class ComboCombinedLayout extends BaseLayout<ComboCombinedLayoutOptions> {
   id = 'combo-combined';
 
-  private relativePositions = new Map<
-    string,
-    { x: number; y: number; relativeTo: string }
-  >();
+  /** 存储元素相对于父容器的位置 */
+  private elementRelativePositions = new Map<string, RelativePosition>();
 
-  private levelsInfo: ComboCombinedLevelInfo[] = [];
+  /** 依赖层级信息列表 */
+  private dependencyLevelsInfo: ComboCombinedDependencyLevelInfo[] = [];
+
+  /** 分组ID到依赖层级的映射 */
+  private groupDependencyLevelMap = new Map<string, number>();
+
+  private getComboEnclosingSizeFromLocalBounds(bounds: Bounds): {
+    width: number;
+    height: number;
+  } {
+    // bounds are relative to combo center (0,0)
+    const left = bounds.x;
+    const right = bounds.x + bounds.width;
+    const top = bounds.y;
+    const bottom = bounds.y + bounds.height;
+    return {
+      width: Math.max(Math.abs(left), Math.abs(right)) * 2,
+      height: Math.max(Math.abs(top), Math.abs(bottom)) * 2,
+    };
+  }
+
+  private getComboEnclosingSizeFromGlobalBounds(
+    bounds: Bounds,
+    center: { x: number; y: number },
+  ): { width: number; height: number } {
+    const left = bounds.x;
+    const right = bounds.x + bounds.width;
+    const top = bounds.y;
+    const bottom = bounds.y + bounds.height;
+    return {
+      width:
+        Math.max(Math.abs(left - center.x), Math.abs(right - center.x)) * 2,
+      height:
+        Math.max(Math.abs(top - center.y), Math.abs(bottom - center.y)) * 2,
+    };
+  }
+
+  private isComboNode(node: any): boolean {
+    return Boolean(
+      node?.isGroup ||
+        node?.isCombo ||
+        node?._original?.isGroup ||
+        node?._original?.isCombo ||
+        node?.data?.isCombo,
+    );
+  }
 
   protected getDefaultOptions(): Partial<ComboCombinedLayoutOptions> {
     return {
-      layout: ({ depth, combo, level, maxDepth }) => {
-        console.log('Layout for combo:', combo, 'at depth:', depth, level);
-        if (depth === maxDepth)
-          return { type: 'concentric', preventOverlap: true };
-        return { type: 'd3-force', preventOverlap: true };
-      },
+      layout: ({ dependencyLevel }) =>
+        dependencyLevel === 0
+          ? { type: 'concentric', preventOverlap: true }
+          : { type: 'd3-force', preventOverlap: true },
       nodeSize: 20,
       nodeSpacing: 10,
       comboPadding: 20,
@@ -43,121 +112,191 @@ export class ComboCombinedLayout extends BaseLayout<ComboCombinedLayoutOptions> 
 
   protected async layout(): Promise<void> {
     const { width, height, center } = normalizeViewport(this.options);
-    this.relativePositions.clear();
+    this.resetLayoutState();
 
-    // 1. 构建分组层级结构
-    const hierarchy = this.buildHierarchy();
-    this.levelsInfo = this.computeLevelsInfo(hierarchy);
+    /** 1. 构建分组层级结构 */
+    const rootHierarchy = this.buildHierarchyTree();
+    this.computeDependencyLevels(rootHierarchy);
+    this.computeLeafCounts(rootHierarchy);
 
-    // 2. 从内到外递归布局
-    await this.layoutHierarchy(hierarchy, { width, height, center });
+    /** 2. 从内到外递归布局 */
+    await this.layoutHierarchy(rootHierarchy, {
+      width,
+      height,
+      center,
+    });
 
-    // 3. 将局部坐标转换为全局坐标
-    this.finalizeHierarchyPositions(hierarchy, {
+    /** 3. 计算全局位置 */
+    this.convertToGlobalPositions(rootHierarchy, {
       x: center[0],
       y: center[1],
     });
 
-    // 4. 应用位置到节点
-    this.applyPositions(hierarchy);
+    /** 4. 应用位置到节点 */
+    this.applyPositionsToModel(rootHierarchy);
   }
+
+  /**
+   * 重置布局状态
+   */
+  private resetLayoutState(): void {
+    this.elementRelativePositions.clear();
+    this.groupDependencyLevelMap.clear();
+  }
+
   /**
    * 递归布局层级结构
    */
   private async layoutHierarchy(
-    group: any,
-    bounds: { width: number; height: number; center: [number, number] },
-  ) {
-    const { width, height, center } = bounds;
-    initModelNodePosition(this.model, width, height, 2);
-
-    const estimatedSize = this.estimateGroupSize(group);
-
-    // 1. 先递归布局所有子 combo
-    for (const child of group.children) {
+    groupNode: HierarchyNode,
+    containerBounds: {
+      width: number;
+      height: number;
+      center: [number, number];
+    },
+  ): Promise<void> {
+    for (const child of groupNode.children) {
       if (child.type === 'combo') {
         await this.layoutHierarchy(
           child,
-          this.calculateChildBounds(child, group),
+          this.calculateChildContainerBounds(child, groupNode),
         );
       }
     }
 
-    // 2. 准备当前层级的元素
-    const elements = group.children || [];
+    const childElements = groupNode.children || [];
 
-    if (elements.length === 0) {
-      group.bounds = { x: 0, y: 0, width: 0, height: 0 };
-      group.parentId = group.id === 'root' ? null : group.parentId;
+    if (childElements.length === 0) {
+      groupNode.bounds = { x: 0, y: 0, width: 0, height: 0 };
+      groupNode.parentId = groupNode.id === 'root' ? null : groupNode.parentId;
       return;
     }
 
-    // 3. 获取布局配置
-    const layoutConfig = this.getLayoutConfig(group);
-    const layoutWidth = Math.max(bounds.width, estimatedSize.width);
-    const layoutHeight = Math.max(bounds.height, estimatedSize.height);
+    const layoutConfig = this.getLayoutConfigForGroup(groupNode);
+    const estimatedSize = this.estimateGroupSize(groupNode);
+    const layoutWidth = Math.max(containerBounds.width, estimatedSize.width);
+    const layoutHeight = Math.max(containerBounds.height, estimatedSize.height);
     const layoutCenter: [number, number] = [layoutWidth / 2, layoutHeight / 2];
 
-    // 4. 执行布局
-    const Layout = this.getLayout(layoutConfig.type);
-
-    const layoutInstance = new Layout({
+    const LayoutClass = this.getLayoutClass(layoutConfig.type);
+    const layoutInstance = new LayoutClass({
       ...layoutConfig,
       width: layoutWidth,
       height: layoutHeight,
       center: layoutCenter,
-    });
-
-    const tempModel = this.createTempModel(elements);
-
-    await executeLayout(layoutInstance, tempModel, {
       nodeSize: (d: NodeData) => d.size,
+      nodeSpacing: 0,
     });
 
-    // 5. 记录布局结果的相对位置：基于参与布局元素的平均中心位置（group center）
-    const layoutedNodes: any[] = [];
-    let sumX = 0;
-    let sumY = 0;
-    let count = 0;
-    layoutInstance.forEachNode((layoutedNode: any) => {
-      layoutedNodes.push(layoutedNode);
-      sumX += layoutedNode.x;
-      sumY += layoutedNode.y;
-      count += 1;
-    });
+    const tmpGraphData = this.createTemporaryGraphData(childElements);
+    await executeLayout(layoutInstance, tmpGraphData, {});
 
-    if (count === 0) {
-      group.bounds = { x: 0, y: 0, width: 0, height: 0 };
-      group.parentId = group.id === 'root' ? null : group.parentId;
-      return;
-    }
+    const layoutedNodes = this.collectLayoutedNodes(layoutInstance);
+    const groupCenter = this.calculateGroupCenter(layoutedNodes, groupNode);
 
-    const groupCenter: [number, number] = [sumX / count, sumY / count];
-    const childMap = new Map(group.children.map((c: any) => [String(c.id), c]));
+    this.recordRelativePositions(
+      layoutedNodes,
+      groupNode,
+      groupCenter,
+      childElements,
+    );
 
-    layoutedNodes.forEach((layoutedNode: any) => {
-      const child = childMap.get(String(layoutedNode.id));
-      if (!child) return;
-      this.relativePositions.set(String(child.id), {
-        x: layoutedNode.x - groupCenter[0],
-        y: layoutedNode.y - groupCenter[1],
-        relativeTo: String(group.id),
-      });
-      child.layouted = true;
-    });
-
-    // 6. 计算当前组的边界
-    group.bounds = this.calculateLocalBounds(group);
-    group.layouted = true;
+    groupNode.bounds = this.calculateGroupLocalBounds(groupNode);
   }
 
   /**
-   * 构建分组层级结构
+   * 收集布局后的节点
    */
-  private buildHierarchy() {
-    const nodes = this.model.nodes();
+  private collectLayoutedNodes(layoutInstance: Layout<any>): any[] {
+    const layoutedNodes: any[] = [];
+    layoutInstance.forEachNode((node: any) => {
+      layoutedNodes.push(node);
+    });
+    return layoutedNodes;
+  }
 
-    const hierarchy: any = {
+  /**
+   * 计算组的中心点
+   */
+  private calculateGroupCenter(
+    layoutedNodes: any[],
+    groupNode: HierarchyNode,
+  ): [number, number] {
+    if (layoutedNodes.length === 0) {
+      return [0, 0];
+    }
+
+    // Use leaf-node counts as weights so group centers represent the centroid
+    // of all descendant nodes (not just direct children).
+    const weightById = new Map<string, number>();
+    (groupNode.children || []).forEach((child) => {
+      weightById.set(String(child.id), child.leafCount ?? 1);
+    });
+
+    let totalX = 0;
+    let totalY = 0;
+    let totalW = 0;
+
+    layoutedNodes.forEach((node) => {
+      const w = weightById.get(String(node.id)) ?? 1;
+      totalX += node.x * w;
+      totalY += node.y * w;
+      totalW += w;
+    });
+
+    const denom = totalW || layoutedNodes.length;
+    return [totalX / denom, totalY / denom];
+  }
+
+  /**
+   * 计算每个层级节点包含的叶子节点数量
+   */
+  private computeLeafCounts(rootNode: HierarchyNode): number {
+    if (rootNode.type === 'node') {
+      rootNode.leafCount = 1;
+      return 1;
+    }
+
+    let sum = 0;
+    (rootNode.children || []).forEach((child) => {
+      sum += this.computeLeafCounts(child);
+    });
+
+    rootNode.leafCount = sum;
+    return sum;
+  }
+
+  /**
+   * 记录相对位置
+   */
+  private recordRelativePositions(
+    layoutedNodes: any[],
+    groupNode: HierarchyNode,
+    groupCenter: [number, number],
+    childElements: HierarchyNode[],
+  ): void {
+    const childMap = new Map(
+      childElements.map((child) => [String(child.id), child]),
+    );
+
+    layoutedNodes.forEach((layoutedNode) => {
+      const child = childMap.get(String(layoutedNode.id));
+      if (!child) return;
+
+      this.elementRelativePositions.set(String(child.id), {
+        x: layoutedNode.x - groupCenter[0],
+        y: layoutedNode.y - groupCenter[1],
+        relativeTo: String(groupNode.id),
+      });
+    });
+  }
+
+  private getParentId = (node: LayoutNode): string => {
+    return String(node.parentId || 'root');
+  };
+
+  private buildHierarchyTree(): HierarchyNode {
+    const rootNode: HierarchyNode = {
       id: 'root',
       type: 'combo',
       depth: 0,
@@ -165,221 +304,241 @@ export class ComboCombinedLayout extends BaseLayout<ComboCombinedLayoutOptions> 
       parentId: null,
     };
 
-    const comboMap = new Map<string, any>();
-    comboMap.set('root', hierarchy);
+    const comboNodeMap = new Map<string, HierarchyNode>();
+    comboNodeMap.set('root', rootNode);
 
-    // 收集所有 combo
-    nodes.forEach((node) => {
-      const isCombo =
-        node.isGroup || node.data?.isCombo || node._original?.isGroup;
-      if (isCombo) {
-        const combo = {
+    this.model.nodes().forEach((node) => {
+      if (this.isComboNode(node)) {
+        const comboNode: HierarchyNode = {
           id: String(node.id),
           type: 'combo',
           depth: 0,
           children: [],
-          data: node._original || node.data,
-          parentId: String(node.parentId || 'root'),
-          layouted: false,
+          parentId: this.getParentId(node),
         };
-        comboMap.set(String(node.id), combo);
+        comboNodeMap.set(String(node.id), comboNode);
       }
     });
 
-    // 构建父子关系：nodes + combos 统一为 children
-    nodes.forEach((node) => {
-      const parentId = String(node.parentId || 'root');
-      const parent = comboMap.get(String(parentId));
+    this.model.nodes().forEach((node) => {
+      const parentNode = comboNodeMap.get(this.getParentId(node));
 
-      const isCombo =
-        node.isGroup || node.data?.isCombo || node._original?.isGroup;
-      if (isCombo) {
-        const combo = comboMap.get(String(node.id));
-        if (parent && combo) {
-          parent.children.push(combo);
-          combo.depth = parent.depth + 1;
-          combo.parentId = parent.id;
+      if (this.isComboNode(node)) {
+        const comboNode = comboNodeMap.get(String(node.id));
+        if (parentNode && comboNode) {
+          parentNode.children.push(comboNode);
+          comboNode.depth = parentNode.depth + 1;
+          comboNode.parentId = parentNode.id;
         }
       } else {
-        if (parent) {
-          parent.children.push({
+        if (parentNode) {
+          parentNode.children.push({
             id: String(node.id),
             type: 'node',
-            data: node._original || node.data,
-            _original: node._original,
-            size: node.size,
-            parentId: parent.id,
-            layouted: false,
+            depth: parentNode.depth + 1,
+            children: [],
+            parentId: parentNode.id,
           });
         }
       }
     });
-    return hierarchy;
+    return rootNode;
   }
 
   /**
    * 将局部坐标转换为全局坐标
    */
-  private finalizeHierarchyPositions(
-    group: any,
-    parentGlobalPos: { x: number; y: number },
-  ) {
-    // 计算当前组的全局中心位置（相对位置来自内部缓存）
-    const rel =
-      group.id === 'root'
+  private convertToGlobalPositions(
+    groupNode: HierarchyNode,
+    parentGlobalPosition: { x: number; y: number },
+  ): void {
+    const relativePos =
+      groupNode.id === 'root'
         ? null
-        : this.relativePositions.get(String(group.id)) || null;
-    const groupGlobalX = parentGlobalPos.x + (rel?.x ?? 0);
-    const groupGlobalY = parentGlobalPos.y + (rel?.y ?? 0);
+        : this.elementRelativePositions.get(String(groupNode.id)) || null;
 
-    group.x = groupGlobalX;
-    group.y = groupGlobalY;
+    const globalX = parentGlobalPosition.x + (relativePos?.x ?? 0);
+    const globalY = parentGlobalPosition.y + (relativePos?.y ?? 0);
 
-    // 更新直接子元素（nodes + combos）的全局位置，并递归处理子 combo
-    (group.children || []).forEach((child: any) => {
-      const childRel = this.relativePositions.get(String(child.id)) || null;
-      if (childRel && childRel.relativeTo !== group.id) {
+    groupNode.x = globalX;
+    groupNode.y = globalY;
+
+    // 处理子元素
+    (groupNode.children || []).forEach((child) => {
+      const childRelativePos =
+        this.elementRelativePositions.get(String(child.id)) || null;
+
+      if (childRelativePos && childRelativePos.relativeTo !== groupNode.id) {
         console.warn(
-          `${child.type === 'combo' ? 'Combo' : 'Node'} ${
-            child.id
-          } layout mismatch: expected parent ${group.id}, got ${
-            childRel.relativeTo
-          }`,
+          `元素 ${child.id} (${child.type}) 的布局父节点不匹配: 期望 ${groupNode.id}, 实际 ${childRelativePos.relativeTo}`,
         );
       }
 
-      child.x = groupGlobalX + (childRel?.x ?? 0);
-      child.y = groupGlobalY + (childRel?.y ?? 0);
+      child.x = globalX + (childRelativePos?.x ?? 0);
+      child.y = globalY + (childRelativePos?.y ?? 0);
       child.size = this.getElementSize(child, false);
 
       if (child.type === 'combo') {
-        this.finalizeHierarchyPositions(child, {
-          x: groupGlobalX,
-          y: groupGlobalY,
+        this.convertToGlobalPositions(child, {
+          x: globalX,
+          y: globalY,
         });
       }
     });
 
-    // 重新计算全局边界
-    if (group.id !== 'root') {
-      const allNodes = this.collectAllNodes(group);
-      group.bounds =
-        allNodes.length > 0
-          ? this.calculateBounds(
-              allNodes.map((el) => ({
-                x: el.x,
-                y: el.y,
-                size: this.getElementSize(el, false),
-              })),
-            )
-          : { x: groupGlobalX, y: groupGlobalY, width: 0, height: 0 };
+    // 转换边界为全局坐标
+    if (groupNode.bounds) {
+      groupNode.bounds = {
+        x: globalX + groupNode.bounds.x,
+        y: globalY + groupNode.bounds.y,
+        width: groupNode.bounds.width,
+        height: groupNode.bounds.height,
+      };
     }
   }
 
   /**
-   * 获取布局配置
+   * 获取分组的布局配置
    */
-  private getLayoutConfig(group: any) {
+  private getLayoutConfigForGroup(groupNode: HierarchyNode) {
     const { layout } = this.options;
 
     if (typeof layout === 'function') {
-      const level = this.levelsInfo.find((l) => l.depth === group.depth);
-      const maxDepth = Math.max(...this.levelsInfo.map((l) => l.depth));
+      const groupId = String(groupNode.id);
+      const dependencyLevel = this.groupDependencyLevelMap.get(groupId) ?? 0;
+      const dependencyLevelInfo = this.dependencyLevelsInfo.find(
+        (info) => info.level === dependencyLevel,
+      );
+
       return this.normalizeLayoutConfig(
         layout({
-          depth: group.depth,
-          combo: String(group.id),
-          level,
-          maxDepth,
+          depth: groupNode.depth,
+          groupId,
+          dependencyLevel,
+          dependencyLevels: this.dependencyLevelsInfo,
+          dependencyLevelInfo,
         }),
       );
     }
+
     return this.normalizeLayoutConfig(layout);
   }
 
-  private computeLevelsInfo(root: any): ComboCombinedLevelInfo[] {
-    const levels = new Map<number, ComboCombinedLevelInfo>();
+  /**
+   * 计算依赖层级
+   * level: 叶子Combo为0，根节点最大
+   */
+  private computeDependencyLevels(rootNode: HierarchyNode): void {
+    const calculateLevel = (groupNode: HierarchyNode): number => {
+      const groupId = String(groupNode.id);
+      const cachedLevel = this.groupDependencyLevelMap.get(groupId);
+      if (cachedLevel !== undefined) return cachedLevel;
 
-    const traverse = (group: any) => {
-      const depth = Number(group.depth ?? 0);
-      const info =
-        levels.get(depth) || ({ depth, groups: [] } as ComboCombinedLevelInfo);
-      if (!levels.has(depth)) levels.set(depth, info);
+      let maxChildLevel = -1;
+      (groupNode.children || []).forEach((child) => {
+        if (child.type !== 'combo') return;
+        maxChildLevel = Math.max(maxChildLevel, calculateLevel(child));
+      });
 
-      info.groups.push({
-        id: String(group.id),
-        elements: (group.children || []).map((child: any) => ({
+      const currentLevel = maxChildLevel + 1;
+      this.groupDependencyLevelMap.set(groupId, currentLevel);
+      return currentLevel;
+    };
+
+    calculateLevel(rootNode);
+
+    const levelsMap = new Map<number, ComboCombinedDependencyLevelInfo>();
+
+    const collectLevelInfo = (groupNode: HierarchyNode) => {
+      const level = this.groupDependencyLevelMap.get(String(groupNode.id)) ?? 0;
+      const levelInfo =
+        levelsMap.get(level) ||
+        ({
+          level,
+          groups: [],
+        } as ComboCombinedDependencyLevelInfo);
+
+      if (!levelsMap.has(level)) {
+        levelsMap.set(level, levelInfo);
+      }
+
+      levelInfo.groups.push({
+        id: String(groupNode.id),
+        elements: (groupNode.children || []).map((child) => ({
           id: String(child.id),
           type: child.type === 'combo' ? 'combo' : 'node',
         })),
       });
 
-      (group.children || []).forEach((child: any) => {
-        if (child.type === 'combo') traverse(child);
+      (groupNode.children || []).forEach((child) => {
+        if (child.type === 'combo') {
+          collectLevelInfo(child);
+        }
       });
     };
 
-    traverse(root);
-    return Array.from(levels.values()).sort((a, b) => a.depth - b.depth);
+    collectLevelInfo(rootNode);
+    this.dependencyLevelsInfo = Array.from(levelsMap.values()).sort(
+      (a, b) => a.level - b.level,
+    );
   }
 
   /**
    * 标准化布局配置
    */
   private normalizeLayoutConfig(config: any) {
-    if (typeof config === 'string') {
-      return { type: config };
-    }
-    const { type = 'concentric', options, ...rest } = config || {};
-    return {
-      ...(options || {}),
-      ...rest,
-      type,
-    };
+    if (typeof config === 'string') return { type: config };
+
+    const { type = 'concentric', ...rest } = config || {};
+    return { ...rest, type };
   }
 
   /**
-   * 获取布局引擎
+   * 获取布局类
    */
-  private getLayout(type: string) {
-    return registry[type] || registry.concentric;
+  private getLayoutClass(layoutType: string) {
+    return registry[layoutType] || registry.concentric;
   }
 
   /**
-   * 创建临时模型
+   * 创建临时图数据用于布局计算
    */
-  private createTempModel(elements: any[]) {
-    const tempNodes = elements.map((el) => ({
-      id: String(el.id),
-      data:
-        el.type === 'combo' ? { ...(el.data || {}), isCombo: true } : el.data,
-      x: this.relativePositions.get(String(el.id))?.x ?? Math.random() * 100,
-      y: this.relativePositions.get(String(el.id))?.y ?? Math.random() * 100,
-      size: this.getLayoutSize(el),
+  private createTemporaryGraphData(elements: HierarchyNode[]): GraphData {
+    const tmpNodes = elements.map((element) => ({
+      ...element._original,
+      ...element,
+      size: this.getLayoutSize(element),
     }));
 
-    const elementIds = new Set(elements.map((e) => String(e.id)));
-    const tempEdges = this.model
-      .edges()
-      .filter(
-        (edge) =>
-          elementIds.has(String(edge.source)) &&
-          elementIds.has(String(edge.target)),
-      );
+    const elementIdSet = new Set(elements.map((e) => String(e.id)));
+    const tmpEdges: GraphData['edges'] = [];
+
+    this.model.edges().forEach((edge) => {
+      if (
+        elementIdSet.has(String(edge.source)) &&
+        elementIdSet.has(String(edge.target))
+      ) {
+        tmpEdges.push(edge._original);
+      }
+    });
 
     return {
-      nodes: tempNodes,
-      edges: tempEdges,
+      nodes: tmpNodes,
+      edges: tmpEdges,
     };
   }
 
   /**
-   * 计算子边界
+   * 计算子容器边界
    */
-  private calculateChildBounds(child: any, parentGroup: any) {
-    const { comboPadding = 20 } = this.options;
-    const parentSize = this.estimateGroupSize(parentGroup);
-    const estimatedSize = this.estimateGroupSize(child);
+  private calculateChildContainerBounds(
+    childNode: HierarchyNode,
+    parentNode: HierarchyNode,
+  ) {
+    const comboPadding = this.options.comboPadding ?? 20;
+    const parentSize = this.estimateGroupSize(parentNode);
+    const estimatedSize = this.estimateGroupSize(childNode);
+
     return {
       width: Math.max(parentSize.width - comboPadding * 2, estimatedSize.width),
       height: Math.max(
@@ -391,22 +550,42 @@ export class ComboCombinedLayout extends BaseLayout<ComboCombinedLayoutOptions> 
   }
 
   /**
-   * 计算局部边界
+   * 计算组的局部边界
    */
-  private calculateLocalBounds(group: any) {
-    const elements = (group.children || []).map((child: any) => ({
-      x: this.relativePositions.get(String(child.id))?.x ?? 0,
-      y: this.relativePositions.get(String(child.id))?.y ?? 0,
-      size: this.getElementSize(child),
-    }));
+  private calculateGroupLocalBounds(groupNode: HierarchyNode): Bounds {
+    const elements = (groupNode.children || []).map((child) => {
+      const relativePos = this.elementRelativePositions.get(String(child.id));
+      const relX = relativePos?.x ?? 0;
+      const relY = relativePos?.y ?? 0;
 
-    return this.calculateBounds(elements);
+      if (child.type === 'combo' && child.bounds) {
+        const { width, height } = this.getComboEnclosingSizeFromLocalBounds(
+          child.bounds,
+        );
+
+        return {
+          x: relX,
+          y: relY,
+          size: [width, height],
+        };
+      }
+
+      return {
+        x: relX,
+        y: relY,
+        size: this.getElementSize(child),
+      };
+    });
+    return this.calculateBoundsFromElements(elements);
   }
 
   /**
-   * 计算边界
+   * 从元素列表计算边界
    */
-  private calculateBounds(elements: any[]) {
+  private calculateBoundsFromElements(
+    elements: Array<{ x: number; y: number; size: any }>,
+    padding: number = this.options.comboPadding ?? 20,
+  ): Bounds {
     if (elements.length === 0) {
       return { x: 0, y: 0, width: 0, height: 0 };
     }
@@ -416,79 +595,91 @@ export class ComboCombinedLayout extends BaseLayout<ComboCombinedLayoutOptions> 
     let maxX = -Infinity,
       maxY = -Infinity;
 
-    elements.forEach((el) => {
-      const [w = 0, h = 0] = el.size || [0, 0];
-      minX = Math.min(minX, el.x - w / 2);
-      minY = Math.min(minY, el.y - h / 2);
-      maxX = Math.max(maxX, el.x + w / 2);
-      maxY = Math.max(maxY, el.y + h / 2);
+    elements.forEach((element) => {
+      const [width = 0, height = 0] = element.size || [0, 0];
+      const max = Math.max(width, height);
+      minX = Math.min(minX, element.x - max / 2);
+      minY = Math.min(minY, element.y - max / 2);
+      maxX = Math.max(maxX, element.x + max / 2);
+      maxY = Math.max(maxY, element.y + max / 2);
     });
 
-    const { comboPadding = 20 } = this.options;
     return {
-      x: minX - comboPadding,
-      y: minY - comboPadding,
-      width: maxX - minX + comboPadding * 2,
-      height: maxY - minY + comboPadding * 2,
+      x: minX - padding,
+      y: minY - padding,
+      width: maxX - minX + padding * 2,
+      height: maxY - minY + padding * 2,
     };
-  }
-
-  /**
-   * 收集组内所有元素
-   */
-  private collectAllNodes(group: any): any[] {
-    const nodes: any[] = [];
-    (group.children || []).forEach((child: any) => {
-      if (child.type === 'node') nodes.push(child);
-      if (child.type === 'combo') nodes.push(...this.collectAllNodes(child));
-    });
-    return nodes;
   }
 
   /**
    * 估算组尺寸
    */
-  private estimateGroupSize(group: any): { width: number; height: number } {
-    const { comboPadding = 20 } = this.options;
-    if (group?.estimatedSize) return group.estimatedSize;
+  private estimateGroupSize(groupNode: HierarchyNode): {
+    width: number;
+    height: number;
+  } {
+    const { comboSpacing = 50 } = this.options;
+
+    const hasChildComboBounds = (groupNode.children || []).some(
+      (child) =>
+        child.type === 'combo' && child.bounds?.width && child.bounds?.height,
+    );
+
+    if (groupNode?.estimatedSize && !hasChildComboBounds) {
+      return groupNode.estimatedSize;
+    }
 
     let totalArea = 0;
-    let maxW = 0;
-    let maxH = 0;
+    let maxWidth = 0;
+    let maxHeight = 0;
 
-    (group.children || []).forEach((child: any) => {
+    (groupNode.children || []).forEach((child) => {
       if (child.type === 'node') {
-        const [w, h] = this.getNodeSize(child);
-        const area = Math.max(w * h, 1);
+        const [width, height] = this.getNodeSize(child);
+        const area = Math.max(width * height, 1);
         totalArea += area;
-        maxW = Math.max(maxW, w);
-        maxH = Math.max(maxH, h);
+        maxWidth = Math.max(maxWidth, width);
+        maxHeight = Math.max(maxHeight, height);
         return;
       }
 
       if (child.type === 'combo') {
-        const childSize = this.estimateGroupSize(child);
-        const area = Math.max(childSize.width * childSize.height, 1);
+        const estimatedChild = this.estimateGroupSize(child);
+        const baseSize = child.bounds
+          ? this.getComboEnclosingSizeFromLocalBounds(child.bounds)
+          : { width: estimatedChild.width, height: estimatedChild.height };
+
+        const width = baseSize.width + comboSpacing * 2;
+        const height = baseSize.height + comboSpacing * 2;
+        const area = Math.max(width * height, 1);
         totalArea += area;
-        maxW = Math.max(maxW, childSize.width);
-        maxH = Math.max(maxH, childSize.height);
+        maxWidth = Math.max(maxWidth, width);
+        maxHeight = Math.max(maxHeight, height);
       }
     });
 
-    const side = Math.max(Math.sqrt(totalArea), maxW, maxH, 10);
-    const padding = comboPadding * 2;
-    group.estimatedSize = {
-      width: side + padding,
-      height: side + padding,
+    const estimatedSide = Math.max(
+      Math.sqrt(totalArea),
+      maxWidth,
+      maxHeight,
+      10,
+    );
+    const padding = (this.options.comboPadding ?? 20) * 2;
+
+    groupNode.estimatedSize = {
+      width: estimatedSide + padding,
+      height: estimatedSide + padding,
     };
-    return group.estimatedSize;
+
+    return groupNode.estimatedSize;
   }
 
   /**
    * 获取元素尺寸
    */
   private getElementSize(
-    element: any,
+    element: HierarchyNode,
     includeSpacing: boolean = true,
   ): STDSize {
     if (element.type === 'combo' && element.bounds) {
@@ -499,80 +690,101 @@ export class ComboCombinedLayout extends BaseLayout<ComboCombinedLayoutOptions> 
   }
 
   /**
-   * 获取布局尺寸
+   * 获取布局尺寸（包含间距）
    */
-  private getLayoutSize(element: any): [number, number] {
-    const [width = 0, height = 0] = this.getElementSize(element);
-
+  private getLayoutSize(element: HierarchyNode): [number, number] {
     if (element.type === 'combo') {
       const spacing = this.options.comboSpacing ?? 0;
-      return [width + spacing * 2, height + spacing * 2];
+      if (element.bounds) {
+        const { width, height } = this.getComboEnclosingSizeFromLocalBounds(
+          element.bounds,
+        );
+        return [width + spacing * 2, height + spacing * 2];
+      }
+
+      const estimated = this.estimateGroupSize(element);
+      return [estimated.width + spacing * 2, estimated.height + spacing * 2];
     }
 
+    const [width = 0, height = 0] = this.getElementSize(element);
     return [width, height];
   }
 
   /**
    * 获取节点尺寸
    */
-  private getNodeSize(node: NodeData, includeSpacing: boolean = true): STDSize {
+  private getNodeSize(
+    node: NodeData | HierarchyNode,
+    includeSpacing: boolean = true,
+  ): STDSize {
     const { nodeSize, nodeSpacing } = this.options;
     const sizeFn = formatNodeSizeFn(nodeSize, includeSpacing ? nodeSpacing : 0);
-    const raw = node._original;
+    const originalNode = (node as any)._original;
 
-    return parseSize(sizeFn(raw));
+    return parseSize(sizeFn(originalNode));
   }
 
   /**
-   * 应用最终位置
+   * 应用最终位置到模型
    */
-  private applyPositions(hierarchy: any) {
-    const applyNode = (node: any) => {
+  private applyPositionsToModel(rootHierarchy: HierarchyNode): void {
+    const applyNodePosition = (node: HierarchyNode) => {
       const modelNode = this.model
         .nodes()
         .find((n) => String(n.id) === String(node.id));
+
       if (modelNode) {
-        modelNode.x = node.x;
-        modelNode.y = node.y;
+        modelNode.x = node.x!;
+        modelNode.y = node.y!;
         if (node.size) {
           modelNode.size = node.size;
         }
       }
     };
 
-    const traverse = (group: any) => {
-      if (group.id !== 'root') {
-        const comboNode = this.model
+    const traverseAndApply = (groupNode: HierarchyNode) => {
+      if (groupNode.id !== 'root') {
+        const comboModelNode = this.model
           .nodes()
-          .find((n) => String(n.id) === String(group.id));
-        if (comboNode) {
-          comboNode.x = group.x;
-          comboNode.y = group.y;
-          if (group.bounds) {
-            comboNode.size = [group.bounds.width, group.bounds.height];
+          .find((n) => String(n.id) === String(groupNode.id));
+
+        if (comboModelNode) {
+          comboModelNode.x = groupNode.x!;
+          comboModelNode.y = groupNode.y!;
+          if (groupNode.bounds) {
+            const { width, height } =
+              this.getComboEnclosingSizeFromGlobalBounds(groupNode.bounds, {
+                x: groupNode.x!,
+                y: groupNode.y!,
+              });
+            comboModelNode.size = [width, height];
           }
         }
       }
 
-      (group.children || []).forEach((child: any) => {
-        if (child.type === 'node') applyNode(child);
-        if (child.type === 'combo') traverse(child);
+      (groupNode.children || []).forEach((child) => {
+        if (child.type === 'node') {
+          applyNodePosition(child);
+        }
+        if (child.type === 'combo') {
+          traverseAndApply(child);
+        }
       });
     };
 
-    traverse(hierarchy);
+    traverseAndApply(rootHierarchy);
   }
 }
 
 async function executeLayout(
   layout: Layout<any>,
-  data: GraphData,
-  options: Record<string, any>,
-) {
+  graphData: GraphData,
+  options: Record<string, any> = {},
+): Promise<void> {
   if (isLayoutWithIterations(layout)) {
-    layout.execute(data, options);
+    layout.execute(graphData, options);
     layout.stop();
     return layout.tick(options.iterations ?? 300);
   }
-  return await layout.execute(data, options);
+  return await layout.execute(graphData, options);
 }

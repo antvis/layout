@@ -20,11 +20,32 @@ export interface ComboCombinedLevelInfo {
   groups: ComboCombinedLevelGroupInfo[];
 }
 
+export interface ComboCombinedStageGroupInfo {
+  id: string;
+  elements: ComboCombinedLevelElementInfo[];
+}
+
+export interface ComboCombinedDependencyLevelInfo {
+  /**
+   * Dependency level (leaf combos first): 0 means no combo prerequisites,
+   * larger level means depends on deeper combos.
+   */
+  level: number;
+  groups: ComboCombinedStageGroupInfo[];
+}
+
 export interface ComboCombinedLayoutContext {
-  maxDepth: number;
+  /**
+   * Tree depth from root (reference only).
+   */
   depth: number;
-  combo: string;
-  level?: ComboCombinedLevelInfo;
+  /**
+   * Dependency level (leaf combos first).
+   */
+  dependencyLevel: number;
+  groupId: string;
+  dependencyLevels: ComboCombinedDependencyLevelInfo[];
+  dependencyLevelInfo?: ComboCombinedDependencyLevelInfo;
 }
 
 export interface ComboData extends PlainObject {
