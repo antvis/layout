@@ -87,14 +87,8 @@ export class ComboCombinedLayout extends BaseLayout<ComboCombinedLayoutOptions> 
     };
   }
 
-  private isComboNode(node: any): boolean {
-    return Boolean(
-      node?.isGroup ||
-        node?.isCombo ||
-        node?._original?.isGroup ||
-        node?._original?.isCombo ||
-        node?.data?.isCombo,
-    );
+  private isCombo(node: any): boolean {
+    return Boolean(node?.isCombo);
   }
 
   protected getDefaultOptions(): Partial<ComboCombinedLayoutOptions> {
@@ -308,7 +302,7 @@ export class ComboCombinedLayout extends BaseLayout<ComboCombinedLayoutOptions> 
     comboNodeMap.set('root', rootNode);
 
     this.model.nodes().forEach((node) => {
-      if (this.isComboNode(node)) {
+      if (this.isCombo(node)) {
         const comboNode: HierarchyNode = {
           id: String(node.id),
           type: 'combo',
@@ -323,7 +317,7 @@ export class ComboCombinedLayout extends BaseLayout<ComboCombinedLayoutOptions> 
     this.model.nodes().forEach((node) => {
       const parentNode = comboNodeMap.get(this.getParentId(node));
 
-      if (this.isComboNode(node)) {
+      if (this.isCombo(node)) {
         const comboNode = comboNodeMap.get(String(node.id));
         if (parentNode && comboNode) {
           parentNode.children.push(comboNode);

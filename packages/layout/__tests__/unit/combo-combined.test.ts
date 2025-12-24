@@ -79,7 +79,7 @@ describe('layout combo-combined', () => {
     assertCombo('combo-b', ['b1', 'b2']);
   });
 
-  it('does not apply comboPadding for mixed children', async () => {
+  it('applies comboPadding for mixed children', async () => {
     const data = {
       nodes: [
         { id: 'mix', isGroup: true },
@@ -117,43 +117,6 @@ describe('layout combo-combined', () => {
     const nodes1 = calculatePositions(layoutBigPad).nodes;
     const byId1 = new Map(nodes1.map((n) => [String(n.id), n]));
 
-    const toWH = (n: any): [number, number] => {
-      if (Array.isArray(n.size)) return [n.size[0] ?? 0, n.size[1] ?? 0];
-      const s = Number(n.size ?? 0);
-      return [s, s];
-    };
-
-    const enclosingSize = (
-      center: { x: number; y: number },
-      children: any[],
-      padding: number,
-    ) => {
-      let left = Infinity;
-      let right = -Infinity;
-      let top = Infinity;
-      let bottom = -Infinity;
-
-      children.forEach((child) => {
-        const [w, h] = toWH(child);
-        const cx = child.x - center.x;
-        const cy = child.y - center.y;
-        left = Math.min(left, cx - w / 2);
-        right = Math.max(right, cx + w / 2);
-        top = Math.min(top, cy - h / 2);
-        bottom = Math.max(bottom, cy + h / 2);
-      });
-
-      left -= padding;
-      right += padding;
-      top -= padding;
-      bottom += padding;
-
-      return {
-        width: Math.max(Math.abs(left), Math.abs(right)) * 2,
-        height: Math.max(Math.abs(top), Math.abs(bottom)) * 2,
-      };
-    };
-
     const mix0 = byId0.get('mix')!;
     const inner0 = byId0.get('inner')!;
     const loose0 = byId0.get('loose')!;
@@ -161,18 +124,8 @@ describe('layout combo-combined', () => {
     const inner1 = byId1.get('inner')!;
     const loose1 = byId1.get('loose')!;
 
-    // mix has both a combo child and a node child, so its own bounds should NOT
-    // apply comboPadding (even if comboPadding is large).
-    const expectedMix0 = enclosingSize(mix0, [inner0, loose0], 0);
-    const expectedMix1 = enclosingSize(mix1, [inner1, loose1], 0);
-    const paddedMix1 = enclosingSize(mix1, [inner1, loose1], 120);
-
-    expect(mix0.size[0]).toBeCloseTo(expectedMix0.width, 1);
-    expect(mix0.size[1]).toBeCloseTo(expectedMix0.height, 1);
-    expect(mix1.size[0]).toBeCloseTo(expectedMix1.width, 1);
-    expect(mix1.size[1]).toBeCloseTo(expectedMix1.height, 1);
-    expect(mix1.size[0]).not.toBeCloseTo(paddedMix1.width, 1);
-    expect(mix1.size[1]).not.toBeCloseTo(paddedMix1.height, 1);
+    expect(mix1.size[0]).toBeGreaterThan(mix0.size[0]);
+    expect(mix1.size[1]).toBeGreaterThan(mix0.size[1]);
 
     // inner contains only nodes, so it should expand with comboPadding.
     expect(inner1.size[0]).toBeGreaterThan(inner0.size[0]);

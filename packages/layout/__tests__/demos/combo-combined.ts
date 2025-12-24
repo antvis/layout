@@ -29,7 +29,7 @@ export function render(gui?: GUI) {
     width: 800,
     height: 800,
     node: (d) => ({
-      parentId: d.combo,
+      parentId: d.comboId,
       isCombo: d.isCombo,
     }),
   });
