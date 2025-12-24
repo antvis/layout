@@ -56,6 +56,7 @@ export interface RenderOptions {
     fontSize?: number;
     fill?: string;
     fontWeight?: CSSStyleDeclaration['fontWeight'];
+    [key: string]: any;
   };
   showLabel?: boolean;
   clearCanvas?: boolean;
@@ -167,9 +168,9 @@ export class GraphRenderer {
       return new Polyline({
         style: {
           points: [
-            [edge.sourceNode.x, edge.sourceNode.y],
+            [edge.sourceNode!.x, edge.sourceNode!.y],
             ...(edge.points || []),
-            [edge.targetNode.x, edge.targetNode.y],
+            [edge.targetNode!.x, edge.targetNode!.y],
           ],
           ...options.edgeStyle,
           pointerEvents: 'none',
@@ -178,10 +179,10 @@ export class GraphRenderer {
     } else {
       return new Line({
         style: {
-          x1: edge.sourceNode.x,
-          y1: edge.sourceNode.y,
-          x2: edge.targetNode.x,
-          y2: edge.targetNode.y,
+          x1: edge.sourceNode!.x,
+          y1: edge.sourceNode!.y,
+          x2: edge.targetNode!.x,
+          y2: edge.targetNode!.y,
           ...options.edgeStyle,
           pointerEvents: 'none',
         },
@@ -235,12 +236,10 @@ export class GraphRenderer {
           x: 0,
           y: 0,
           text: String(node.id),
-          fontSize: options.labelStyle.fontSize,
-          fill: options.labelStyle.fill,
-          fontWeight: options.labelStyle.fontWeight,
           textAlign: 'center',
           textBaseline: 'middle',
           pointerEvents: 'none',
+          ...options.labelStyle,
         },
       });
       elem.appendChild(label);
@@ -351,16 +350,16 @@ export class GraphRenderer {
 
       if (elem instanceof Line) {
         elem.attr({
-          x1: edge.sourceNode.x,
-          y1: edge.sourceNode.y,
-          x2: edge.targetNode.x,
-          y2: edge.targetNode.y,
+          x1: edge.sourceNode?.x,
+          y1: edge.sourceNode?.y,
+          x2: edge.targetNode?.x,
+          y2: edge.targetNode?.y,
         });
       } else if (elem instanceof Polyline) {
         const points: Point[] = [
-          [edge.sourceNode.x, edge.sourceNode.y],
+          [edge.sourceNode!.x, edge.sourceNode!.y],
           ...(edge.points || []),
-          [edge.targetNode.x, edge.targetNode.y],
+          [edge.targetNode!.x, edge.targetNode!.y],
         ];
         elem.attr({ points });
       }
@@ -436,4 +435,18 @@ export class GraphRenderer {
       height: this.canvas.getConfig().height!,
     };
   }
+}
+
+export function calculatePositions(layout: Layout<any>) {
+  const results: any = {
+    nodes: [],
+    edges: [],
+  };
+  layout.forEachNode((node) => {
+    results.nodes.push(node);
+  });
+  layout.forEachEdge((edge) => {
+    results.edges.push(edge);
+  });
+  return results;
 }

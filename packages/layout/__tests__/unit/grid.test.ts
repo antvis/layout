@@ -1,18 +1,18 @@
-import { GridLayout, type Node } from '@/src';
+import { GridLayout, type NodeData } from '@/src';
 import { createCanvas } from '@@/utils/create';
 import type { Canvas } from '@antv/g';
+import { deepMix } from '@antv/util';
 import { grid as data } from '../dataset';
-import {
-  calculatePositions,
-  renderNodesAndEdges,
-} from '../utils/render-update';
+import { calculatePositions, GraphRenderer, RenderOptions } from '../utils';
 
 describe('layout grid', () => {
   let canvas: Canvas;
+  let renderer: GraphRenderer;
   let gridLayout: GridLayout;
 
   beforeEach(() => {
     canvas = createCanvas();
+    renderer = new GraphRenderer(canvas);
     const { width, height } = canvas.getConfig();
     gridLayout = new GridLayout({
       width,
@@ -26,9 +26,33 @@ describe('layout grid', () => {
     canvas.destroy();
   });
 
+  const renderLayout = async (
+    layout: GridLayout,
+    options: RenderOptions = {},
+  ) => {
+    const opts = deepMix(
+      {},
+      {
+        nodeRadius: 15,
+        nodeStyle: { lineWidth: 2 },
+        showLabel: true,
+        labelStyle: {
+          fill: '#fff',
+          fontWeight: 'bolder',
+          fontSize: 11,
+          fontFamily: 'Roboto',
+          textAlign: 'center',
+          textBaseline: 'middle',
+        },
+      },
+      options,
+    );
+    await renderer.render(layout, opts);
+  };
+
   it('should render with default config', async () => {
     await gridLayout.execute(data);
-    await renderNodesAndEdges(canvas, gridLayout, true, { r: 15 });
+    await renderLayout(gridLayout);
     await expect(canvas).toMatchSnapshot(__filename);
   });
 
@@ -36,7 +60,7 @@ describe('layout grid', () => {
     await gridLayout.execute(data, {
       begin: [100, 100],
     });
-    await renderNodesAndEdges(canvas, gridLayout, true, { r: 15 });
+    await renderLayout(gridLayout);
     await expect(canvas).toMatchSnapshot(__filename, 'custom-begin');
   });
 
@@ -45,7 +69,7 @@ describe('layout grid', () => {
       cols: 5,
       sortBy: 'id',
     });
-    await renderNodesAndEdges(canvas, gridLayout, true, { r: 15 });
+    await renderLayout(gridLayout);
     await expect(canvas).toMatchSnapshot(__filename, 'fixed-cols-5');
   });
 
@@ -54,7 +78,7 @@ describe('layout grid', () => {
       rows: 5,
       sortBy: 'id',
     });
-    await renderNodesAndEdges(canvas, gridLayout, true, { r: 15 });
+    await renderLayout(gridLayout);
     await expect(canvas).toMatchSnapshot(__filename, 'fixed-rows-5');
   });
 
@@ -64,7 +88,7 @@ describe('layout grid', () => {
       cols: 6,
       sortBy: 'id',
     });
-    await renderNodesAndEdges(canvas, gridLayout, true, { r: 15 });
+    await renderLayout(gridLayout);
     await expect(canvas).toMatchSnapshot(__filename, 'fixed-rows-cols-6');
   });
 
@@ -72,7 +96,7 @@ describe('layout grid', () => {
     await gridLayout.execute(data, {
       condense: true,
     });
-    await renderNodesAndEdges(canvas, gridLayout, true, { r: 15 });
+    await renderLayout(gridLayout);
     await expect(canvas).toMatchSnapshot(__filename, 'condense');
   });
 
@@ -81,7 +105,7 @@ describe('layout grid', () => {
       preventOverlap: false,
       nodeSize: 100,
     });
-    await renderNodesAndEdges(canvas, gridLayout, true, { r: 50 });
+    await renderLayout(gridLayout, { nodeRadius: 50 });
     await expect(canvas).toMatchSnapshot(__filename, 'preventOverlap-false');
   });
 
@@ -91,7 +115,7 @@ describe('layout grid', () => {
       nodeSize: 60,
       preventOverlapPadding: 15,
     });
-    await renderNodesAndEdges(canvas, gridLayout, true, { r: 30 });
+    await renderLayout(gridLayout, { nodeRadius: 30 });
     await expect(canvas).toMatchSnapshot(
       __filename,
       'preventOverlap-large-nodeSize',
@@ -104,10 +128,10 @@ describe('layout grid', () => {
       nodeSize: [100, 50],
       preventOverlapPadding: 15,
     });
-    await renderNodesAndEdges(canvas, gridLayout, true, {
-      type: 'rect',
-      width: 100,
-      height: 50,
+    await renderLayout(gridLayout, {
+      nodeShape: 'rect',
+      nodeSize: { width: 100, height: 50 },
+      labelStyle: { x: 50, y: 25 },
     });
     await expect(canvas).toMatchSnapshot(
       __filename,
@@ -119,7 +143,7 @@ describe('layout grid', () => {
     await gridLayout.execute(data, {
       sortBy: 'degree',
     });
-    await renderNodesAndEdges(canvas, gridLayout, true, { r: 15 });
+    await renderLayout(gridLayout);
     await expect(canvas).toMatchSnapshot(__filename, 'sortBy-degree');
   });
 
@@ -127,7 +151,7 @@ describe('layout grid', () => {
     await gridLayout.execute(data, {
       sortBy: 'id',
     });
-    await renderNodesAndEdges(canvas, gridLayout, true, { r: 15 });
+    await renderLayout(gridLayout);
     await expect(canvas).toMatchSnapshot(__filename, 'sortBy-id');
   });
 
@@ -136,7 +160,7 @@ describe('layout grid', () => {
       width: 200,
       height: 200,
     });
-    await renderNodesAndEdges(canvas, gridLayout, true, { r: 15 });
+    await renderLayout(gridLayout);
     await expect(canvas).toMatchSnapshot(__filename, 'custom-width-height');
   });
 
@@ -145,7 +169,7 @@ describe('layout grid', () => {
       cols: 50,
       sortBy: 'id',
     });
-    await renderNodesAndEdges(canvas, gridLayout, true, { r: 15 });
+    await renderLayout(gridLayout);
     await expect(canvas).toMatchSnapshot(__filename, 'cols-more-than-nodes');
   });
 
@@ -154,7 +178,7 @@ describe('layout grid', () => {
       rows: 50,
       sortBy: 'id',
     });
-    await renderNodesAndEdges(canvas, gridLayout, true, { r: 15 });
+    await renderLayout(gridLayout);
     await expect(canvas).toMatchSnapshot(__filename, 'rows-more-than-nodes');
   });
 
@@ -164,7 +188,7 @@ describe('layout grid', () => {
       cols: 3,
       sortBy: 'id',
     });
-    await renderNodesAndEdges(canvas, gridLayout, true, { r: 15 });
+    await renderLayout(gridLayout);
     await expect(canvas).toMatchSnapshot(__filename, 'rows-cols-less-nodes');
   });
 
@@ -173,7 +197,7 @@ describe('layout grid', () => {
       condense: true,
       cols: 8,
     });
-    await renderNodesAndEdges(canvas, gridLayout, true, { r: 15 });
+    await renderLayout(gridLayout);
     await expect(canvas).toMatchSnapshot(__filename, 'condense-fixed-cols');
   });
 
@@ -203,7 +227,7 @@ describe('layout grid', () => {
     await gridLayout.execute(minimalGraph, {
       cols: 2,
     });
-    await renderNodesAndEdges(canvas, gridLayout, true, { r: 15 });
+    await renderLayout(gridLayout);
     await expect(canvas).toMatchSnapshot(__filename, 'minimal-data');
   });
 
@@ -225,7 +249,7 @@ describe('layout grid', () => {
         col: d.data.col,
       }),
     });
-    await renderNodesAndEdges(canvas, gridLayout, true, { r: 15 });
+    await renderLayout(gridLayout);
     await expect(canvas).toMatchSnapshot(__filename, 'position-function');
   });
 
@@ -243,10 +267,10 @@ describe('layout grid', () => {
       rows: 4,
       cols: 5,
     });
-    await renderNodesAndEdges(canvas, gridLayout, true, {
-      type: 'rect',
-      width: 40,
-      height: 40,
+    await renderLayout(gridLayout, {
+      nodeShape: 'rect',
+      nodeSize: { width: 40, height: 40 },
+      labelStyle: { x: 20, y: 20 },
     });
     await expect(canvas).toMatchSnapshot(__filename, 'node-size-from-data');
   });
@@ -256,7 +280,7 @@ describe('layout grid', () => {
       nodeSize: () => 40,
       preventOverlap: true,
     });
-    await renderNodesAndEdges(canvas, gridLayout, true, { r: 20 });
+    await renderLayout(gridLayout, { nodeRadius: 20 });
     await expect(canvas).toMatchSnapshot(__filename, 'function-nodeSize');
   });
 
@@ -267,7 +291,7 @@ describe('layout grid', () => {
       nodeSize: 30,
       preventOverlapPadding: 10,
     });
-    await renderNodesAndEdges(canvas, gridLayout, true, { r: 15 });
+    await renderLayout(gridLayout);
     await expect(canvas).toMatchSnapshot(__filename, 'condense-preventOverlap');
   });
 
@@ -289,7 +313,7 @@ describe('layout grid', () => {
       rows: 4,
       cols: 5,
     });
-    await renderNodesAndEdges(canvas, gridLayout, true, { r: 15 });
+    await renderLayout(gridLayout);
     await expect(canvas).toMatchSnapshot(__filename, 'sortBy-custom-property');
   });
 
@@ -315,7 +339,7 @@ describe('layout grid', () => {
       cols: 3,
     });
 
-    await renderNodesAndEdges(canvas, gridLayout, true, { r: 15 });
+    await renderLayout(gridLayout);
     await expect(canvas).toMatchSnapshot(__filename, 'sortBy-id-numbers');
   });
 
@@ -336,7 +360,7 @@ describe('layout grid', () => {
       cols: 2,
     });
 
-    await renderNodesAndEdges(canvas, gridLayout, true, { r: 15 });
+    await renderLayout(gridLayout);
     await expect(canvas).toMatchSnapshot(__filename, 'sortBy-id-strings');
   });
 
@@ -373,7 +397,7 @@ describe('layout grid', () => {
       expect(Number.isFinite(node.y)).toBe(true);
     });
 
-    await renderNodesAndEdges(canvas, gridLayout, true, { r: 15 });
+    await renderLayout(gridLayout);
     await expect(canvas).toMatchSnapshot(__filename, 'reduce-small-side');
   });
 
@@ -400,10 +424,10 @@ describe('layout grid', () => {
 
     const calculatedPositions = calculatePositions(gridLayout);
     // Find nodes by id
-    const nodeA = calculatedPositions.nodes.find((n: Node) => n.id === 'a');
-    const nodeB = calculatedPositions.nodes.find((n: Node) => n.id === 'b');
-    const nodeC = calculatedPositions.nodes.find((n: Node) => n.id === 'c');
-    const nodeD = calculatedPositions.nodes.find((n: Node) => n.id === 'd');
+    const nodeA = calculatedPositions.nodes.find((n: NodeData) => n.id === 'a');
+    const nodeB = calculatedPositions.nodes.find((n: NodeData) => n.id === 'b');
+    const nodeC = calculatedPositions.nodes.find((n: NodeData) => n.id === 'c');
+    const nodeD = calculatedPositions.nodes.find((n: NodeData) => n.id === 'd');
 
     // nodeA and nodeC have row 0 but no col, should get col 0 and 1
     // nodeB has row 1 but no col, should get col 0
@@ -411,7 +435,7 @@ describe('layout grid', () => {
     expect(nodeA!.x).not.toBe(nodeC!.x); // Different cols
     expect(nodeB!.y).not.toBe(nodeA!.y); // Different rows
 
-    await renderNodesAndEdges(canvas, gridLayout, true, { r: 15 });
+    await renderLayout(gridLayout);
     await expect(canvas).toMatchSnapshot(__filename, 'position-undefined-col');
   });
 
@@ -436,10 +460,10 @@ describe('layout grid', () => {
     });
     const positions = calculatePositions(gridLayout);
     // Find nodes by id
-    const nodeA = positions.nodes.find((n: Node) => n.id === 'a');
-    const nodeB = positions.nodes.find((n: Node) => n.id === 'b');
-    const nodeC = positions.nodes.find((n: Node) => n.id === 'c');
-    const nodeD = positions.nodes.find((n: Node) => n.id === 'd');
+    const nodeA = positions.nodes.find((n: NodeData) => n.id === 'a');
+    const nodeB = positions.nodes.find((n: NodeData) => n.id === 'b');
+    const nodeC = positions.nodes.find((n: NodeData) => n.id === 'c');
+    const nodeD = positions.nodes.find((n: NodeData) => n.id === 'd');
 
     // nodeA and nodeC have col 0 but no row, should get row 0 and 1
     // nodeB has col 1 but no row, should get row 0
@@ -447,7 +471,7 @@ describe('layout grid', () => {
     expect(nodeA!.y).not.toBe(nodeC!.y); // Different rows
     expect(nodeB!.x).not.toBe(nodeA!.x); // Different cols
 
-    await renderNodesAndEdges(canvas, gridLayout, true, { r: 15 });
+    await renderLayout(gridLayout);
     await expect(canvas).toMatchSnapshot(__filename, 'position-undefined-row');
   });
 
@@ -483,11 +507,11 @@ describe('layout grid', () => {
     });
     const positions = calculatePositions(gridLayout);
     // Find nodes by id
-    const nodeA = positions.nodes.find((n: Node) => n.id === 'a');
-    const nodeB = positions.nodes.find((n: Node) => n.id === 'b');
-    const nodeC = positions.nodes.find((n: Node) => n.id === 'c');
-    const nodeD = positions.nodes.find((n: Node) => n.id === 'd');
-    const nodeE = positions.nodes.find((n: Node) => n.id === 'e');
+    const nodeA = positions.nodes.find((n: NodeData) => n.id === 'a');
+    const nodeB = positions.nodes.find((n: NodeData) => n.id === 'b');
+    const nodeC = positions.nodes.find((n: NodeData) => n.id === 'c');
+    const nodeD = positions.nodes.find((n: NodeData) => n.id === 'd');
+    const nodeE = positions.nodes.find((n: NodeData) => n.id === 'e');
 
     // Verify manual positions
     expect(nodeA!.x).toBeLessThan(nodeC!.x); // A is at col 0, C is at col 1
@@ -497,7 +521,7 @@ describe('layout grid', () => {
     expect(nodeD!.x).not.toBe(nodeA!.x);
     expect(nodeD!.x).not.toBe(nodeC!.x);
 
-    await renderNodesAndEdges(canvas, gridLayout, true, { r: 15 });
+    await renderLayout(gridLayout);
     await expect(canvas).toMatchSnapshot(__filename, 'skip-used-cells');
   });
 
@@ -545,17 +569,17 @@ describe('layout grid', () => {
 
     const positions = calculatePositions(gridLayout);
     // Check that manually positioned nodes are at correct locations
-    const manual1 = positions.nodes.find((n: Node) => n.id === 'M1-1');
-    const manual2 = positions.nodes.find((n: Node) => n.id === 'M0-2');
-    const manual3 = positions.nodes.find((n: Node) => n.id === 'M2-0');
-    const manual4 = positions.nodes.find((n: Node) => n.id === 'M1-2');
+    const manual1 = positions.nodes.find((n: NodeData) => n.id === 'M1-1');
+    const manual2 = positions.nodes.find((n: NodeData) => n.id === 'M0-2');
+    const manual3 = positions.nodes.find((n: NodeData) => n.id === 'M2-0');
+    const manual4 = positions.nodes.find((n: NodeData) => n.id === 'M1-2');
 
     // manual1 (1,1) and manual4 (1,2) should be in same row
     expect(manual1!.y).toBe(manual4!.y);
     // manual4 should be to the right of manual1
     expect(manual4!.x).toBeGreaterThan(manual1!.x);
 
-    await renderNodesAndEdges(canvas, gridLayout, true, { r: 15 });
+    await renderLayout(gridLayout);
     await expect(canvas).toMatchSnapshot(__filename, 'complex-cell-occupation');
   });
 });

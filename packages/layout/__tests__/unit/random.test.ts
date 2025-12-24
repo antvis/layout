@@ -3,18 +3,18 @@ import { createCanvas } from '@@/utils/create';
 import type { Canvas } from '@antv/g';
 import { clear as clearMockRandom, mock as mockRandom } from 'jest-random-mock';
 import { countries as data } from '../dataset';
-import {
-  calculatePositions,
-  renderNodesAndEdges,
-} from '../utils/render-update';
+import { GraphRenderer, RenderOptions } from '../utils';
+import { calculatePositions } from '../utils';
 
 describe('layout random', () => {
   let canvas: Canvas;
   let random: RandomLayout;
+  let renderer: GraphRenderer;
 
   beforeEach(() => {
     mockRandom();
     canvas = createCanvas();
+    renderer = new GraphRenderer(canvas);
     random = new RandomLayout({
       center: [250, 250],
       width: 500,
@@ -27,15 +27,26 @@ describe('layout random', () => {
     canvas.destroy();
   });
 
+  const renderLayout = async (
+    layout: RandomLayout,
+    options: RenderOptions = {},
+  ) => {
+    await renderer.render(layout, {
+      nodeRadius: 10,
+      nodeStyle: { lineWidth: 2 },
+      ...options,
+    });
+  };
+
   it('should render with default config', async () => {
     await random.execute(data);
-    await renderNodesAndEdges(canvas, random);
+    await renderLayout(random);
     await expect(canvas).toMatchSnapshot(__filename);
   });
 
   it('should render with pure data', async () => {
     await random.execute(data);
-    await renderNodesAndEdges(canvas, random);
+    await renderLayout(random);
     await expect(canvas).toMatchSnapshot(__filename);
   });
 
@@ -55,7 +66,7 @@ describe('layout random', () => {
       height: 500,
     });
     await layout.execute(data);
-    await renderNodesAndEdges(canvas, layout);
+    await renderLayout(layout);
 
     const positions = calculatePositions(layout);
     // Check that nodes are distributed around the center
@@ -108,7 +119,7 @@ describe('layout random', () => {
       height: 100,
     });
     await layout.execute(data);
-    await renderNodesAndEdges(canvas, layout);
+    await renderLayout(layout);
 
     const positions = calculatePositions(layout);
     // All nodes should be within small area
@@ -221,7 +232,7 @@ describe('layout random', () => {
       height: 500,
     });
     await layout.execute(connectedGraph);
-    await renderNodesAndEdges(canvas, layout);
+    await renderLayout(layout);
 
     const positions = calculatePositions(layout);
     expect(positions.nodes).toHaveLength(4);
@@ -272,7 +283,7 @@ describe('layout random', () => {
     });
 
     await layout.execute(disconnectedGraph);
-    await renderNodesAndEdges(canvas, layout);
+    await renderLayout(layout);
     await expect(canvas).toMatchSnapshot(__filename, 'disconnected-graph');
   });
 });

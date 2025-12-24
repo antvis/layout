@@ -3,7 +3,7 @@ import { createCanvas } from '@@/utils/create';
 import type { Canvas } from '@antv/g';
 import { radial as data } from '../dataset';
 import { getEuclideanDistance, mathEqual } from '../utils';
-import { calculatePositions } from '../utils/render-update';
+import { calculatePositions } from '../utils';
 import { GraphRenderer, RenderOptions } from '../utils/renderer';
 
 describe('layout radial', () => {

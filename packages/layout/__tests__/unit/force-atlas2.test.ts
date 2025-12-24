@@ -3,7 +3,7 @@ import type { Canvas } from '@antv/g';
 import { clear as clearMockRandom, mock as mockRandom } from 'jest-random-mock';
 import { cluster as data } from '../dataset';
 import { createCanvas, getEuclideanDistance, GraphRenderer } from '../utils';
-import { calculatePositions } from '../utils/render-update';
+import { calculatePositions } from '../utils';
 
 describe('ForceAtlas2Layout', () => {
   let canvas: Canvas;

@@ -1,6 +1,6 @@
 import { D3Force3DLayout } from '@/src';
 import { force3d as data } from '../dataset';
-import { calculatePositions } from '../utils/render-update';
+import { calculatePositions } from '../utils';
 
 describe('d3 force 3d', () => {
   test('default layout', async () => {

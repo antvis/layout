@@ -4,7 +4,7 @@ import type { Canvas } from '@antv/g';
 import { clear as clearMockRandom, mock as mockRandom } from 'jest-random-mock';
 import { combo as comboData, dagre as data } from '../dataset';
 import { GraphRenderer } from '../utils';
-import { calculatePositions } from '../utils/render-update';
+import { calculatePositions } from '../utils';
 
 describe('layout dagre', () => {
   let canvas: Canvas;

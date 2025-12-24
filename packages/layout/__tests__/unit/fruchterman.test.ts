@@ -4,7 +4,7 @@ import { clear as clearMockRandom, mock as mockRandom } from 'jest-random-mock';
 import { fruchterman as fruchtermanData } from '../dataset';
 import { createCanvas, getEuclideanDistance } from '../utils';
 import { preprocessGraphData } from '../utils/preprocess';
-import { calculatePositions } from '../utils/render-update';
+import { calculatePositions } from '../utils';
 import { GraphRenderer } from '../utils/renderer';
 
 describe('FruchtermanLayout', () => {

@@ -4,7 +4,7 @@ import type { Canvas } from '@antv/g';
 import { clear as clearMockRandom, mock as mockRandom } from 'jest-random-mock';
 import { cluster } from '../dataset';
 import { GraphRenderer, preprocessGraphData } from '../utils';
-import { calculatePositions } from '../utils/render-update';
+import { calculatePositions } from '../utils';
 
 describe('layout force', () => {
   let canvas: Canvas;

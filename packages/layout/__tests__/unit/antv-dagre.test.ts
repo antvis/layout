@@ -1,5 +1,5 @@
 import { AntVDagreLayout } from '@/src';
-import { calculatePositions } from '../utils/render-update';
+import { calculatePositions } from '../utils';
 
 const data = {
   nodes: [

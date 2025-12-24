@@ -3,7 +3,7 @@ import { createCanvas } from '@@/utils/create';
 import type { Canvas } from '@antv/g';
 import { countries as data } from '../dataset';
 import { GraphRenderer, RenderOptions } from '../utils';
-import { calculatePositions } from '../utils/render-update';
+import { calculatePositions } from '../utils';
 
 describe('layout mds', () => {
   let canvas: Canvas;
