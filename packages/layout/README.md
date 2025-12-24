@@ -285,10 +285,10 @@ Sometimes we need to execute CPU-intensive algorithms in WebWorker so as not to 
 
 ```js
 const graph = new Graph();
-const layout = new CircularLayout();
+const layout = new CircularLayout({ enableWorker: true });
 
-const supervisor = new Supervisor(graph, layout);
-const positions = await supervisor.execute();
+const supervisor = new Supervisor(layout);
+const positions = await supervisor.execute(graph);
 ```
 
 [Online Demo](https://observablehq.com/d/2db6b0cc5e97d8d6#cell-199)

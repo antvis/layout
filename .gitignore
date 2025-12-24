@@ -23,3 +23,4 @@ Cargo.lock
 tsconfig.tsbuildinfo
 tsconfig.build.tsbuildinfo
 pnpm-lock.yaml
+.rollup.cache

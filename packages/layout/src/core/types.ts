@@ -37,7 +37,10 @@ export interface LayoutModelOptions<
   };
 }
 
-export interface ViewportOptions {
+export interface BaseLayoutOptions<
+  N extends NodeData = NodeData,
+  E extends EdgeData = EdgeData,
+> extends LayoutModelOptions<N, E> {
   /**
    * <zh/> 布局中心
    *
@@ -58,13 +61,14 @@ export interface ViewportOptions {
    * <en/> Layout height
    */
   height?: number;
-}
 
-export interface BaseLayoutOptions<
-  N extends NodeData = NodeData,
-  E extends EdgeData = EdgeData,
-> extends LayoutModelOptions<N, E>,
-    ViewportOptions {
+  /**
+   * <zh/> 是否启用 WebWorker
+   *
+   * <en/> Whether to run the layout in a WebWorker
+   */
+  enableWorker?: boolean;
+
   [key: string]: any;
 }
 

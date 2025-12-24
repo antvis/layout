@@ -16,9 +16,12 @@ export interface NodeData extends PlainObject {}
 
 export interface EdgeData extends PlainObject {}
 
-export interface LayoutData {
-  nodes: Map<ID, LayoutNode>;
-  edges: Map<ID, LayoutEdge>;
+export interface LayoutData<
+  N extends NodeData = NodeData,
+  E extends EdgeData = EdgeData,
+> {
+  nodes: Map<ID, LayoutNode<N>>;
+  edges: Map<ID, LayoutEdge<E>>;
 }
 
 export interface LayoutNode<N extends NodeData = NodeData> {

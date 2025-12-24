@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>@antv/layout UMD + Worker demo</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 24px;
+        line-height: 1.4;
+      }
+      pre {
+        padding: 12px;
+        background: #f5f5f5;
+        border-radius: 8px;
+        overflow: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>UMD + WebWorker</h1>
+    <p>Open devtools console to see layout results.</p>
+
+    <script src="../dist/index.min.js"></script>
+    <script>
+      (async function () {
+        const { MDSLayout } = window.Layout;
+
+        const data = {
+          nodes: Array.from({ length: 10 }).map((_, i) => ({ id: 'n' + i })),
+          edges: [
+            { source: 'n0', target: 'n1' },
+            { source: 'n1', target: 'n2' },
+            { source: 'n2', target: 'n3' },
+            { source: 'n3', target: 'n4' },
+            { source: 'n4', target: 'n5' },
+            { source: 'n5', target: 'n6' },
+            { source: 'n6', target: 'n7' },
+            { source: 'n7', target: 'n0' },
+          ],
+        };
+
+        const layout = new MDSLayout({
+          enableWorker: true,
+        });
+
+        await layout.execute(data);
+
+        console.log('UMD worker layout done');
+        layout.forEachNode((node) => {
+          console.log(`Node ${node.id}: x=${node.x}, y=${node.y}`);
+        });
+      })().catch((err) => console.error(err));
+    </script>
+  </body>
+</html>

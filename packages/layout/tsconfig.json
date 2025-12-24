@@ -13,7 +13,6 @@
     "lib": ["esnext", "dom"],
     "module": "esnext",
     "moduleResolution": "node",
-    "outDir": "lib",
     "pretty": true,
     "resolveJsonModule": true,
     "skipLibCheck": true,
