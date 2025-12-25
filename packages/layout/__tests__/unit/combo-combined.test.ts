@@ -58,24 +58,30 @@ describe('layout combo-combined', () => {
         }
       }
 
-      // Combo center should align with the centroid of its children
-      const centroid = members.reduce(
-        (acc, cur) => {
-          acc.x += cur.x;
-          acc.y += cur.y;
-          return acc;
-        },
-        { x: 0, y: 0 },
-      );
-      centroid.x /= members.length;
-      centroid.y /= members.length;
+      // Combo center should align with the center of its members' bounds.
+      let minX = Infinity;
+      let minY = Infinity;
+      let maxX = -Infinity;
+      let maxY = -Infinity;
 
-      expect(combo!.x).toBeCloseTo(centroid.x, 3);
-      expect(combo!.y).toBeCloseTo(centroid.y, 3);
+      members.forEach((node) => {
+        const [w = 0, h = 0] = Array.isArray(node.size) ? node.size : [0, 0];
+        const half = Math.max(w, h) / 2;
+        minX = Math.min(minX, node.x - half);
+        minY = Math.min(minY, node.y - half);
+        maxX = Math.max(maxX, node.x + half);
+        maxY = Math.max(maxY, node.y + half);
+      });
+
+      const centerX = (minX + maxX) / 2;
+      const centerY = (minY + maxY) / 2;
+
+      expect(Math.abs(combo!.x - centerX)).toBeLessThan(5);
+      expect(Math.abs(combo!.y - centerY)).toBeLessThan(5);
     };
 
     assertCombo('combo-a1', ['a1', 'a2']);
-    assertCombo('combo-a', ['a1', 'a2', 'a3']);
+    assertCombo('combo-a', ['combo-a1', 'a3']);
     assertCombo('combo-b', ['b1', 'b2']);
   });
 

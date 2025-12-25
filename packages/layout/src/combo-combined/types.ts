@@ -1,69 +1,9 @@
-import { BaseLayoutOptions } from '../core/types';
-import type { PlainObject, Size } from '../types';
+import type { BaseLayoutOptions } from '../core/types';
+import type { ID, NodeData, Size } from '../types';
 
 export type ComboCombinedLayoutConfig =
   | string
   | { type: string; [key: string]: any };
-
-export interface ComboCombinedLevelElementInfo {
-  id: string;
-  type: 'node' | 'combo';
-}
-
-export interface ComboCombinedLevelGroupInfo {
-  id: string;
-  elements: ComboCombinedLevelElementInfo[];
-}
-
-export interface ComboCombinedLevelInfo {
-  depth: number;
-  groups: ComboCombinedLevelGroupInfo[];
-}
-
-export interface ComboCombinedStageGroupInfo {
-  id: string;
-  elements: ComboCombinedLevelElementInfo[];
-}
-
-export interface ComboCombinedDependencyLevelInfo {
-  /**
-   * Dependency level (leaf combos first): 0 means no combo prerequisites,
-   * larger level means depends on deeper combos.
-   */
-  level: number;
-  groups: ComboCombinedStageGroupInfo[];
-}
-
-export interface ComboCombinedLayoutContext {
-  /**
-   * Tree depth from root (reference only).
-   */
-  depth: number;
-  /**
-   * Dependency level (leaf combos first).
-   */
-  dependencyLevel: number;
-  groupId: string;
-  dependencyLevels: ComboCombinedDependencyLevelInfo[];
-  dependencyLevelInfo?: ComboCombinedDependencyLevelInfo;
-}
-
-export interface ComboData extends PlainObject {
-  id: string;
-  parentId?: string;
-  size?: Size;
-  padding?: number | number[];
-}
-
-export interface ComboNodeData extends PlainObject {
-  x?: number;
-  y?: number;
-  fx?: number;
-  fy?: number;
-  size?: Size;
-  mass?: number;
-  parentId?: string;
-}
 
 export interface ComboCombinedLayoutOptions extends BaseLayoutOptions {
   /**
@@ -71,34 +11,29 @@ export interface ComboCombinedLayoutOptions extends BaseLayoutOptions {
    */
   layout?:
     | ComboCombinedLayoutConfig
-    | ((ctx: ComboCombinedLayoutContext) => ComboCombinedLayoutConfig);
+    | ((comboId: ID | null) => ComboCombinedLayoutConfig);
 
   /**
    * <zh/> 节点尺寸
    *
    * <en/> Node size
    */
-  nodeSize?: Size | ((node: any) => Size);
+  nodeSize?: Size | ((node?: NodeData) => Size);
 
   /**
    * <zh/> 节点间距
    *
    * <en/> Node spacing
    */
-  nodeSpacing?: number | ((node: any) => number);
+  nodeSpacing?: number | ((node?: NodeData) => number);
 
   /**
    * Combo 之间的间距
    */
-  comboSpacing?: number;
+  comboSpacing?: number | ((combo?: NodeData) => number);
 
   /**
    * Combo 内部的边距
    */
-  comboPadding?: number;
-
-  /**
-   * 是否计算 Combo 边界
-   */
-  computeComboBounds?: boolean;
+  comboPadding?: number | ((combo?: NodeData) => number);
 }
