@@ -90,19 +90,24 @@ export class ConcentricLayout extends BaseLayout<ConcentricLayoutOptions> {
     const maxValueNode = this.model.firstNode()!;
     const maxLevelDiff = propsMaxLevelDiff || sortKeys.get(maxValueNode.id) / 4;
 
-    let minDist = 0; // min dist between nodes
-
     const nodeSizeFn = formatNodeSizeFn(nodeSize, nodeSpacing);
+    const nodeDistances = new Map<LayoutNode['id'], number>();
+    for (const node of nodes) {
+      nodeDistances.set(node.id, nodeSizeFn(node._original));
+    }
 
     // put the values into levels
-    const levels: { nodes: LayoutNode[]; r?: number; dTheta?: number }[] = [
-      { nodes: [] },
-    ];
+    const levels: {
+      nodes: LayoutNode[];
+      r?: number;
+      dTheta?: number;
+      maxNodeSize?: number;
+      nodeSizes?: number[];
+    }[] = [{ nodes: [] }];
     let currentLevel = levels[0];
 
     for (let i = 0; i < n; i++) {
       const node = nodes[i];
-      minDist = Math.max(minDist, nodeSizeFn(node._original));
 
       if (currentLevel.nodes.length > 0) {
         const firstNode = currentLevel.nodes[0];
@@ -117,40 +122,85 @@ export class ConcentricLayout extends BaseLayout<ConcentricLayoutOptions> {
       }
       currentLevel.nodes.push(node);
     }
-
-    // create positions for levels
-    if (!preventOverlap) {
-      // then strictly constrain to bb
-      const firstLvlHasMulti = levels.length > 0 && levels[0].nodes.length > 1;
-      const maxR = Math.min(width, height) / 2 - minDist;
-      const rStep = maxR / (levels.length + (firstLvlHasMulti ? 1 : 0));
-
-      minDist = Math.min(minDist, rStep);
+    for (const level of levels) {
+      const nodeSizes = level.nodes.map((node) => nodeDistances.get(node.id)!);
+      level.nodeSizes = nodeSizes;
+      level.maxNodeSize = Math.max(...nodeSizes);
     }
 
     // find the metrics for each level
-    let r = 0;
     levels.forEach((level) => {
       const sweep =
         propsSweep === undefined
           ? 2 * Math.PI - (2 * Math.PI) / level.nodes.length
           : propsSweep;
       level.dTheta = sweep / Math.max(1, level.nodes.length - 1);
-
-      // calculate the radius
-      if (level.nodes.length > 1 && preventOverlap) {
-        // but only if more than one node (can't overlap)
-        const dcos = Math.cos(level.dTheta) - Math.cos(0);
-        const dsin = Math.sin(level.dTheta) - Math.sin(0);
-        const rMin = Math.sqrt(
-          (minDist * minDist) / (dcos * dcos + dsin * dsin),
-        ); // s.t. no nodes overlapping
-
-        r = Math.max(rMin, r);
-      }
-      level.r = r;
-      r += minDist;
     });
+
+    // calculate the radius
+    if (preventOverlap) {
+      let r = 0;
+      for (let i = 0; i < levels.length; i++) {
+        const level = levels[i];
+
+        if (level.nodes.length > 1) {
+          const nodeSizes = level.nodeSizes || [];
+          let requiredDist = 0;
+          for (let j = 0; j < nodeSizes.length - 1; j++) {
+            requiredDist = Math.max(
+              requiredDist,
+              (nodeSizes[j] + nodeSizes[j + 1]) / 2,
+            );
+          }
+
+          const dcos = Math.cos(level.dTheta!) - Math.cos(0);
+          const dsin = Math.sin(level.dTheta!) - Math.sin(0);
+          const denom = Math.sqrt(dcos * dcos + dsin * dsin);
+          const rMin = denom > 0 ? requiredDist / denom : 0;
+
+          r = Math.max(rMin, r);
+        }
+
+        level.r = r;
+        if (i < levels.length - 1) {
+          const nextLevel = levels[i + 1];
+          const step =
+            ((level.maxNodeSize || 0) + (nextLevel.maxNodeSize || 0)) / 2;
+          r += Math.max(0, step);
+        }
+      }
+    } else {
+      // create radii by node sizes, then constrain to bb (without overlap guarantees)
+      let r = 0;
+      levels[0].r = 0;
+      for (let i = 0; i < levels.length - 1; i++) {
+        const level = levels[i];
+        const nextLevel = levels[i + 1];
+        const step =
+          ((level.maxNodeSize || 0) + (nextLevel.maxNodeSize || 0)) / 2;
+        r += Math.max(0, step);
+        nextLevel.r = r;
+      }
+
+      const maxHalf = Math.min(width, height) / 2;
+      let scale = 1;
+      for (const level of levels) {
+        const rr = level.r || 0;
+        if (rr <= 0) continue;
+        const allowed = maxHalf - (level.maxNodeSize || 0);
+        if (allowed <= 0) {
+          scale = 0;
+          break;
+        }
+        scale = Math.min(scale, allowed / rr);
+      }
+      scale = Math.max(0, Math.min(1, scale));
+      if (scale !== 1) {
+        for (const level of levels) {
+          level.r = (level.r || 0) * scale;
+        }
+      }
+    }
 
     if (equidistant) {
       let rDeltaMax = 0;
