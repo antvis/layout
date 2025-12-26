@@ -8,7 +8,7 @@ import {
   johnson,
   scaleMatrix,
 } from '@/src/util/math';
-import { LayoutModel } from '@/src/util/model';
+import { GraphLib } from '@/src/model/data';
 
 describe('getAdjMatrix', () => {
   test('should create adjacency matrix for undirected graph', () => {
@@ -22,7 +22,7 @@ describe('getAdjMatrix', () => {
       { id: 'e2', source: 'b', target: 'c', data: {} },
     ];
 
-    const model = new LayoutModel({ nodes, edges });
+    const model = new GraphLib({ nodes, edges });
     const matrix = getAdjMatrix(model, false);
 
     expect(matrix).toEqual([
@@ -43,7 +43,7 @@ describe('getAdjMatrix', () => {
       { id: 'e2', source: 'b', target: 'c', data: {} },
     ];
 
-    const model = new LayoutModel({ nodes, edges });
+    const model = new GraphLib({ nodes, edges });
     const matrix = getAdjMatrix(model, true);
 
     expect(matrix).toEqual([
@@ -60,7 +60,7 @@ describe('getAdjMatrix', () => {
     ];
     const edges: EdgeData[] = [];
 
-    const model = new LayoutModel({ nodes, edges });
+    const model = new GraphLib({ nodes, edges });
     const matrix = getAdjMatrix(model, false);
 
     expect(matrix).toEqual([[], []]);
@@ -70,7 +70,7 @@ describe('getAdjMatrix', () => {
     const nodes: NodeData[] = [{ id: 'a', data: {} }];
     const edges: EdgeData[] = [];
 
-    const model = new LayoutModel({ nodes, edges });
+    const model = new GraphLib({ nodes, edges });
     const matrix = getAdjMatrix(model, false);
 
     expect(matrix).toEqual([[]]);
@@ -86,7 +86,7 @@ describe('getAdjMatrix', () => {
       { id: 'e2', source: 'a', target: 'b', data: {} },
     ];
 
-    const model = new LayoutModel({ nodes, edges });
+    const model = new GraphLib({ nodes, edges });
     const matrix = getAdjMatrix(model, false);
 
     expect(matrix[0][0]).toBe(1); // self-loop
@@ -105,7 +105,7 @@ describe('getAdjMatrix', () => {
       { id: 'e3', source: 'nonexistent', target: 'b', data: {} },
     ];
 
-    const model = new LayoutModel({ nodes, edges });
+    const model = new GraphLib({ nodes, edges });
     const matrix = getAdjMatrix(model, false);
 
     expect(matrix).toEqual([
@@ -120,14 +120,14 @@ describe('getAdjMatrix', () => {
       { id: 'b', data: {} },
     ];
 
-    const model = new LayoutModel({ nodes, edges: undefined as any });
+    const model = new GraphLib({ nodes, edges: undefined as any });
     const matrix = getAdjMatrix(model, false);
 
     expect(matrix).toEqual([[], []]);
   });
 
   test('should handle empty nodes', () => {
-    const model = new LayoutModel({ nodes: [], edges: [] });
+    const model = new GraphLib({ nodes: [], edges: [] });
     const matrix = getAdjMatrix(model, false);
 
     expect(matrix).toEqual([]);
@@ -145,7 +145,7 @@ describe('getAdjMatrix', () => {
       { id: 'e3', source: 'b', target: 'c', data: {} },
     ];
 
-    const model = new LayoutModel({ nodes, edges });
+    const model = new GraphLib({ nodes, edges });
     const matrix = getAdjMatrix(model, false);
 
     expect(matrix).toEqual([
@@ -166,7 +166,7 @@ describe('getAdjMatrix', () => {
       { id: 'e2', source: 'a', target: 'c', data: {} },
     ];
 
-    const model = new LayoutModel({ nodes, edges });
+    const model = new GraphLib({ nodes, edges });
     const matrix = getAdjMatrix(model, true);
 
     expect(matrix).toEqual([
@@ -186,7 +186,7 @@ describe('getAdjMatrix', () => {
       { id: 'e2', source: 'b', target: 'a', data: {} },
     ];
 
-    const model = new LayoutModel({ nodes, edges });
+    const model = new GraphLib({ nodes, edges });
     const matrix = getAdjMatrix(model, true);
 
     expect(matrix).toEqual([
@@ -208,7 +208,7 @@ describe('getAdjList', () => {
       { id: 'e2', source: 'b', target: 'c', data: {} },
     ];
 
-    const model = new LayoutModel({ nodes, edges });
+    const model = new GraphLib({ nodes, edges });
     const adjList = getAdjList(model, false);
 
     expect(adjList).toEqual([[1], [0, 2], [1]]);
@@ -225,7 +225,7 @@ describe('getAdjList', () => {
       { id: 'e2', source: 'b', target: 'c', data: {} },
     ];
 
-    const model = new LayoutModel({ nodes, edges });
+    const model = new GraphLib({ nodes, edges });
     const adjList = getAdjList(model, true);
 
     expect(adjList).toEqual([[1], [2], []]);
@@ -238,7 +238,7 @@ describe('getAdjList', () => {
     ];
     const edges: EdgeData[] = [];
 
-    const model = new LayoutModel({ nodes, edges });
+    const model = new GraphLib({ nodes, edges });
     const adjList = getAdjList(model, false);
 
     expect(adjList).toEqual([[], []]);
@@ -248,7 +248,7 @@ describe('getAdjList', () => {
     const nodes: NodeData[] = [{ id: 'a', data: {} }];
     const edges: EdgeData[] = [];
 
-    const model = new LayoutModel({ nodes, edges });
+    const model = new GraphLib({ nodes, edges });
     const adjList = getAdjList(model, false);
 
     expect(adjList).toEqual([[]]);
@@ -264,7 +264,7 @@ describe('getAdjList', () => {
       { id: 'e2', source: 'a', target: 'b', data: {} },
     ];
 
-    const model = new LayoutModel({ nodes, edges });
+    const model = new GraphLib({ nodes, edges });
     const adjList = getAdjList(model, false);
 
     expect(adjList[0]).toContain(0); // self-loop
@@ -283,7 +283,7 @@ describe('getAdjList', () => {
       { id: 'e3', source: 'nonexistent', target: 'b', data: {} },
     ];
 
-    const model = new LayoutModel({ nodes, edges });
+    const model = new GraphLib({ nodes, edges });
     const adjList = getAdjList(model, false);
 
     expect(adjList).toEqual([[1], [0]]);
@@ -301,7 +301,7 @@ describe('getAdjList', () => {
       { id: 'e3', source: 'b', target: 'c', data: {} },
     ];
 
-    const model = new LayoutModel({ nodes, edges });
+    const model = new GraphLib({ nodes, edges });
     const adjList = getAdjList(model, false);
 
     expect(adjList).toEqual([
@@ -322,7 +322,7 @@ describe('getAdjList', () => {
       { id: 'e2', source: 'a', target: 'c', data: {} },
     ];
 
-    const model = new LayoutModel({ nodes, edges });
+    const model = new GraphLib({ nodes, edges });
     const adjList = getAdjList(model, true);
 
     expect(adjList).toEqual([[1, 2], [], []]);
@@ -338,14 +338,14 @@ describe('getAdjList', () => {
       { id: 'e2', source: 'b', target: 'a', data: {} },
     ];
 
-    const model = new LayoutModel({ nodes, edges });
+    const model = new GraphLib({ nodes, edges });
     const adjList = getAdjList(model, true);
 
     expect(adjList).toEqual([[1], [0]]);
   });
 
   test('should handle empty nodes', () => {
-    const model = new LayoutModel({ nodes: [], edges: [] });
+    const model = new GraphLib({ nodes: [], edges: [] });
     const adjList = getAdjList(model, false);
 
     expect(adjList).toEqual([]);

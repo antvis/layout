@@ -1,5 +1,5 @@
-import { addBorderSegments } from '@/src/antv-dagre/add-border-segments';
-import { DagreGraph as Graph } from '@/src/antv-dagre/graph';
+import { addBorderSegments } from '@/src/algorithm/antv-dagre/add-border-segments';
+import { DagreGraph as Graph } from '@/src/algorithm/antv-dagre/graph';
 
 describe('addBorderSegments', function () {
   let g: Graph;

@@ -2,7 +2,7 @@ import { Graph } from '@antv/graphlib';
 import { isNumber } from '@antv/util';
 import type { Matrix, NodeData, PointObject } from '../types';
 import { isArray } from './array';
-import type { LayoutModel } from './model';
+import type { GraphLib } from '../model/data';
 
 /**
  * Floyd-Warshall algorithm to find shortest paths (but with no negative cycles).
@@ -45,7 +45,7 @@ export const floydWarshall = (adjMatrix: Matrix): Matrix => {
 /**
  * Get the adjacency matrix of the graph model.
  */
-export const getAdjMatrix = (model: LayoutModel, directed: boolean): Matrix => {
+export const getAdjMatrix = (model: GraphLib, directed: boolean): Matrix => {
   const n = model.nodeCount();
   const matrix: Matrix = Array.from({ length: n }, () => new Array(n));
 
@@ -73,7 +73,7 @@ export const getAdjMatrix = (model: LayoutModel, directed: boolean): Matrix => {
 /**
  * Get the adjacency list of the graph model.
  */
-export const getAdjList = (model: LayoutModel, directed: boolean): Matrix => {
+export const getAdjList = (model: GraphLib, directed: boolean): Matrix => {
   const n = model.nodeCount();
   const adjList: Matrix = Array.from({ length: n }, () => [] as number[]);
 

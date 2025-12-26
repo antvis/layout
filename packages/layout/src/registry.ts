@@ -1,16 +1,16 @@
-import { AntVDagreLayout } from './antv-dagre';
-import { CircularLayout } from './circular';
-import { ConcentricLayout } from './concentric';
-import { D3ForceLayout } from './d3-force';
-import { D3Force3DLayout } from './d3-force-3d';
-import { DagreLayout } from './dagre';
-import { ForceLayout } from './force';
-import { ForceAtlas2Layout } from './force-atlas2';
-import { FruchtermanLayout } from './fruchterman';
-import { GridLayout } from './grid';
-import { MDSLayout } from './mds';
-import { RadialLayout } from './radial';
-import { RandomLayout } from './random';
+import { AntVDagreLayout } from './algorithm/antv-dagre';
+import { CircularLayout } from './algorithm/circular';
+import { ConcentricLayout } from './algorithm/concentric';
+import { D3ForceLayout } from './algorithm/d3-force';
+import { D3Force3DLayout } from './algorithm/d3-force-3d';
+import { DagreLayout } from './algorithm/dagre';
+import { ForceLayout } from './algorithm/force';
+import { ForceAtlas2Layout } from './algorithm/force-atlas2';
+import { FruchtermanLayout } from './algorithm/fruchterman';
+import { GridLayout } from './algorithm/grid';
+import { MDSLayout } from './algorithm/mds';
+import { RadialLayout } from './algorithm/radial';
+import { RandomLayout } from './algorithm/random';
 
 export const registry: Record<string, any> = {
   'antv-dagre': AntVDagreLayout,

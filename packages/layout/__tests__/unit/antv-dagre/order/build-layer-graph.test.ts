@@ -1,5 +1,5 @@
-import { DagreGraph as Graph } from '@/src/antv-dagre/graph';
-import { buildLayerGraph } from '@/src/antv-dagre/order/build-layer-graph';
+import { DagreGraph as Graph } from '@/src/algorithm/antv-dagre/graph';
+import { buildLayerGraph } from '@/src/algorithm/antv-dagre/order/build-layer-graph';
 
 describe('order/buildLayerGraph', function () {
   let g: Graph;

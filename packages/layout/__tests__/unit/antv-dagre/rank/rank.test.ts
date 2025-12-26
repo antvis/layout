@@ -1,5 +1,5 @@
-import { DagreGraph as Graph } from '@/src/antv-dagre/graph';
-import { rank } from '@/src/antv-dagre/rank';
+import { DagreGraph as Graph } from '@/src/algorithm/antv-dagre/graph';
+import { rank } from '@/src/algorithm/antv-dagre/rank';
 
 describe('rank', function () {
   let RANKERS = [

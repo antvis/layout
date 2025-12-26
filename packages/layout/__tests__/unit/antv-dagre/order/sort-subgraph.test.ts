@@ -1,5 +1,5 @@
-import { DagreGraph as Graph } from '@/src/antv-dagre/graph';
-import { sortSubgraph } from '@/src/antv-dagre/order/sort-subgraph';
+import { DagreGraph as Graph } from '@/src/algorithm/antv-dagre/graph';
+import { sortSubgraph } from '@/src/algorithm/antv-dagre/order/sort-subgraph';
 
 describe('order/sortSubgraph', function () {
   let g: Graph;

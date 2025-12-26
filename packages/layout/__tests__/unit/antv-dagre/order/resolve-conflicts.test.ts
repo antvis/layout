@@ -1,5 +1,5 @@
-import { DagreGraph as Graph } from '@/src/antv-dagre/graph';
-import resolveConflicts from '@/src/antv-dagre/order/resolve-conflicts';
+import { DagreGraph as Graph } from '@/src/algorithm/antv-dagre/graph';
+import resolveConflicts from '@/src/algorithm/antv-dagre/order/resolve-conflicts';
 
 describe('order/resolveConflicts', function () {
   let cg: Graph;

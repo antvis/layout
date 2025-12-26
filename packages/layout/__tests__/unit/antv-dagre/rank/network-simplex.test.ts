@@ -1,4 +1,4 @@
-import { DagreGraph as Graph } from '@/src/antv-dagre/graph';
+import { DagreGraph as Graph } from '@/src/algorithm/antv-dagre/graph';
 import {
   calcCutValue,
   enterEdge,
@@ -7,9 +7,9 @@ import {
   initLowLimValues,
   leaveEdge,
   networkSimplex,
-} from '@/src/antv-dagre/rank/network-simplex';
-import { longestPath } from '@/src/antv-dagre/rank/util';
-import { normalizeRanks } from '@/src/antv-dagre/util';
+} from '@/src/algorithm/antv-dagre/rank/network-simplex';
+import { longestPath } from '@/src/algorithm/antv-dagre/rank/util';
+import { normalizeRanks } from '@/src/algorithm/antv-dagre/util';
 import { EdgeData } from '@/src/types/data';
 
 describe('network simplex', function () {

@@ -1,6 +1,6 @@
 import { expose } from 'comlink';
 import { registry } from './registry';
-import type { GraphData, LayoutData, PlainObject } from './types';
+import type { Graph, GraphData, PlainObject } from './types';
 
 let layoutInstance: any = null;
 
@@ -9,7 +9,7 @@ export interface LayoutWorker {
     id: string,
     data: GraphData,
     config: PlainObject,
-  ): Promise<LayoutData>;
+  ): Promise<Graph>;
   destroy(): void;
 }
 

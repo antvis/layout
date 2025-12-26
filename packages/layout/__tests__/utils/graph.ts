@@ -1,4 +1,4 @@
-import { DagreGraph as Graph } from '@/src/antv-dagre/graph';
+import { DagreGraph as Graph } from '@/src/algorithm/antv-dagre/graph';
 import { ID } from '@/src/types';
 
 export function mathEqual(a: number, b: number) {

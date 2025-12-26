@@ -1,6 +1,6 @@
 import type { GraphData } from '@/src/types/data';
 import { applySingleNodeLayout } from '@/src/util';
-import { LayoutModel } from '@/src/util/model';
+import { GraphLib } from '@/src/model/data';
 
 describe('applySingleNodeLayout', () => {
   test('should not modify nodes when model has zero nodes', () => {
@@ -8,7 +8,7 @@ describe('applySingleNodeLayout', () => {
       nodes: [],
       edges: [],
     };
-    const model = new LayoutModel(data);
+    const model = new GraphLib(data);
 
     applySingleNodeLayout(model, [100, 200], 2);
 
@@ -20,7 +20,7 @@ describe('applySingleNodeLayout', () => {
       nodes: [{ id: 'node1', data: {} }],
       edges: [],
     };
-    const model = new LayoutModel(data);
+    const model = new GraphLib(data);
 
     applySingleNodeLayout(model, [100, 200], 2);
 
@@ -35,7 +35,7 @@ describe('applySingleNodeLayout', () => {
       nodes: [{ id: 'node1', data: {} }],
       edges: [],
     };
-    const model = new LayoutModel(data);
+    const model = new GraphLib(data);
 
     applySingleNodeLayout(model, [100, 200, 50], 3);
 
@@ -50,7 +50,7 @@ describe('applySingleNodeLayout', () => {
       nodes: [{ id: 'node1', data: {} }],
       edges: [],
     };
-    const model = new LayoutModel(data);
+    const model = new GraphLib(data);
 
     applySingleNodeLayout(model, [100, 200] as any, 3);
 
@@ -65,7 +65,7 @@ describe('applySingleNodeLayout', () => {
       nodes: [{ id: 'node1', data: { color: 'red', size: 10 } }],
       edges: [],
     };
-    const model = new LayoutModel(data);
+    const model = new GraphLib(data);
 
     applySingleNodeLayout(model, [150, 250], 2);
 
@@ -85,7 +85,7 @@ describe('applySingleNodeLayout', () => {
       ],
       edges: [],
     };
-    const model = new LayoutModel(data);
+    const model = new GraphLib(data);
 
     applySingleNodeLayout(model, [100, 200], 2);
 
@@ -101,7 +101,7 @@ describe('applySingleNodeLayout', () => {
       nodes: [{ id: 'node1', data: {} }],
       edges: [],
     };
-    const model = new LayoutModel(data);
+    const model = new GraphLib(data);
 
     applySingleNodeLayout(model, [0, 0], 2);
 
@@ -115,7 +115,7 @@ describe('applySingleNodeLayout', () => {
       nodes: [{ id: 'node1', data: {} }],
       edges: [],
     };
-    const model = new LayoutModel(data);
+    const model = new GraphLib(data);
 
     applySingleNodeLayout(model, [-100, -200], 2);
 
@@ -129,7 +129,7 @@ describe('applySingleNodeLayout', () => {
       nodes: [{ id: 'node1', data: {} }],
       edges: [],
     };
-    const model = new LayoutModel(data);
+    const model = new GraphLib(data);
 
     applySingleNodeLayout(model, [100.5, 200.7], 2);
 
@@ -143,7 +143,7 @@ describe('applySingleNodeLayout', () => {
       nodes: [{ id: 'node1', data: {} }],
       edges: [],
     };
-    const model = new LayoutModel(data);
+    const model = new GraphLib(data);
 
     applySingleNodeLayout(model, [100.5, 200.7, 50.3], 3);
 
@@ -158,7 +158,7 @@ describe('applySingleNodeLayout', () => {
       nodes: [{ id: 'node1', data: {} }],
       edges: [],
     };
-    const model = new LayoutModel(data);
+    const model = new GraphLib(data);
 
     applySingleNodeLayout(model, [100, 200]);
 

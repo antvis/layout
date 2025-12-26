@@ -1,5 +1,5 @@
-import { DagreGraph as Graph } from '@/src/antv-dagre/graph';
-import { greedyFAS } from '@/src/antv-dagre/greedy-fas';
+import { DagreGraph as Graph } from '@/src/algorithm/antv-dagre/graph';
+import { greedyFAS } from '@/src/algorithm/antv-dagre/greedy-fas';
 import type { EdgeData } from '@/src/types/data';
 import { findCycles } from '../../utils';
 

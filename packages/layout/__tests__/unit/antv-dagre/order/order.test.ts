@@ -1,7 +1,7 @@
-import { DagreGraph as Graph } from '@/src/antv-dagre/graph';
-import { order } from '@/src/antv-dagre/order';
-import { crossCount } from '@/src/antv-dagre/order/cross-count';
-import * as util from '@/src/antv-dagre/util';
+import { DagreGraph as Graph } from '@/src/algorithm/antv-dagre/graph';
+import { order } from '@/src/algorithm/antv-dagre/order';
+import { crossCount } from '@/src/algorithm/antv-dagre/order/cross-count';
+import * as util from '@/src/algorithm/antv-dagre/util';
 
 describe('order', function () {
   let g: Graph;

@@ -1,5 +1,5 @@
 import type { Point } from '../types';
-import { LayoutModel } from './model';
+import type { GraphLib } from '../model/data';
 
 /**
  * Return the layout result for a graph with zero or one node.
@@ -8,7 +8,7 @@ import { LayoutModel } from './model';
  * @returns layout result
  */
 export function applySingleNodeLayout(
-  model: LayoutModel,
+  model: GraphLib,
   center: Point,
   dimensions: 2 | 3 = 2,
 ) {

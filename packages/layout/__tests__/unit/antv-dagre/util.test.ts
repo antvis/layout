@@ -1,5 +1,5 @@
-import { DagreGraph as Graph } from '@/src/antv-dagre/graph';
-import * as util from '@/src/antv-dagre/util';
+import { DagreGraph as Graph } from '@/src/algorithm/antv-dagre/graph';
+import * as util from '@/src/algorithm/antv-dagre/util';
 
 describe('util', function () {
   describe('simplify', function () {

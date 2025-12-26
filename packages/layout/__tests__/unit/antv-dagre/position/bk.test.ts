@@ -1,6 +1,6 @@
-import { DagreGraph as Graph } from '@/src/antv-dagre/graph';
-import * as bk from '@/src/antv-dagre/position/bk';
-import { buildLayerMatrix } from '@/src/antv-dagre/util';
+import { DagreGraph as Graph } from '@/src/algorithm/antv-dagre/graph';
+import * as bk from '@/src/algorithm/antv-dagre/position/bk';
+import { buildLayerMatrix } from '@/src/algorithm/antv-dagre/util';
 import type { ID } from '@/src/types/id';
 
 let findType1Conflicts = bk.findType1Conflicts;

@@ -1,5 +1,5 @@
-import { DagreGraph as Graph } from '@/src/antv-dagre/graph';
-import { run, undo } from '@/src/antv-dagre/normalize';
+import { DagreGraph as Graph } from '@/src/algorithm/antv-dagre/graph';
+import { run, undo } from '@/src/algorithm/antv-dagre/normalize';
 import { EdgeData } from '@/src/types/data';
 import type { ID } from '@/src/types/id';
 

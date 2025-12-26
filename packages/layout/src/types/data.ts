@@ -1,4 +1,4 @@
-import type { EdgeLabelPos } from '../dagre/types';
+import type { EdgeLabelPos } from './edge-label';
 import type { PlainObject } from './common';
 import type { ID } from './id';
 import type { Point } from './point';
@@ -16,15 +16,7 @@ export interface NodeData extends PlainObject {}
 
 export interface EdgeData extends PlainObject {}
 
-export interface LayoutData<
-  N extends NodeData = NodeData,
-  E extends EdgeData = EdgeData,
-> {
-  nodes: Map<ID, LayoutNode<N>>;
-  edges: Map<ID, LayoutEdge<E>>;
-}
-
-export interface LayoutNode<N extends NodeData = NodeData> {
+export interface GraphNode<N extends NodeData = NodeData> {
   id: ID;
 
   x: number;
@@ -50,13 +42,13 @@ export interface LayoutNode<N extends NodeData = NodeData> {
   [key: string]: any;
 }
 
-export interface LayoutEdge<E extends EdgeData = EdgeData> {
+export interface GraphEdge<E extends EdgeData = EdgeData> {
   id: ID;
 
   source: ID;
   target: ID;
-  sourceNode?: LayoutNode;
-  targetNode?: LayoutNode;
+  sourceNode?: GraphNode;
+  targetNode?: GraphNode;
 
   _original: E;
 
@@ -70,3 +62,18 @@ export interface LayoutEdge<E extends EdgeData = EdgeData> {
 
   [key: string]: any;
 }
+
+export interface Graph<
+  N extends NodeData = NodeData,
+  E extends EdgeData = EdgeData,
+> {
+  nodes: Map<ID, GraphNode<N>>;
+  edges: Map<ID, GraphEdge<E>>;
+}
+
+export type LayoutNode<N extends NodeData = NodeData> = GraphNode<N>;
+export type LayoutEdge<E extends EdgeData = EdgeData> = GraphEdge<E>;
+export type LayoutData<
+  N extends NodeData = NodeData,
+  E extends EdgeData = EdgeData,
+> = Graph<N, E>;

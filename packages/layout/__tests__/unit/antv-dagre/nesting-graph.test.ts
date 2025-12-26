@@ -1,5 +1,5 @@
-import { DagreGraph as Graph } from '@/src/antv-dagre/graph';
-import { cleanup, run } from '@/src/antv-dagre/nesting-graph';
+import { DagreGraph as Graph } from '@/src/algorithm/antv-dagre/graph';
+import { cleanup, run } from '@/src/algorithm/antv-dagre/nesting-graph';
 import type { ID } from '@/src/types/id';
 import { components } from '../../utils';
 

@@ -1,6 +1,6 @@
-import { DagreGraph as Graph } from '@/src/antv-dagre/graph';
-import { longestPath } from '@/src/antv-dagre/rank/util';
-import { normalizeRanks } from '@/src/antv-dagre/util';
+import { DagreGraph as Graph } from '@/src/algorithm/antv-dagre/graph';
+import { longestPath } from '@/src/algorithm/antv-dagre/rank/util';
+import { normalizeRanks } from '@/src/algorithm/antv-dagre/util';
 
 describe('rank/util', function () {
   describe('longestPath', function () {

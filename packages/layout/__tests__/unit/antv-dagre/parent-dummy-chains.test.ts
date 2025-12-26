@@ -1,5 +1,5 @@
-import { DagreGraph as Graph } from '@/src/antv-dagre/graph';
-import { parentDummyChains } from '@/src/antv-dagre/parent-dummy-chains';
+import { DagreGraph as Graph } from '@/src/algorithm/antv-dagre/graph';
+import { parentDummyChains } from '@/src/algorithm/antv-dagre/parent-dummy-chains';
 
 describe('parentDummyChains', function () {
   let g: Graph;

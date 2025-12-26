@@ -1,5 +1,5 @@
-import { DagreGraph as Graph } from '@/src/antv-dagre/graph';
-import { feasibleTree } from '@/src/antv-dagre/rank/feasible-tree';
+import { DagreGraph as Graph } from '@/src/algorithm/antv-dagre/graph';
+import { feasibleTree } from '@/src/algorithm/antv-dagre/rank/feasible-tree';
 
 describe('feasibleTree', function () {
   let g: Graph;

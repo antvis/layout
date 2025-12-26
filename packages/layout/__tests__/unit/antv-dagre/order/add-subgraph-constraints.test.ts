@@ -1,5 +1,5 @@
-import { DagreGraph as Graph } from '@/src/antv-dagre/graph';
-import { addSubgraphConstraints } from '@/src/antv-dagre/order/add-subgraph-constraints';
+import { DagreGraph as Graph } from '@/src/algorithm/antv-dagre/graph';
+import { addSubgraphConstraints } from '@/src/algorithm/antv-dagre/order/add-subgraph-constraints';
 
 describe('order/addSubgraphConstraints', function () {
   let g: Graph;

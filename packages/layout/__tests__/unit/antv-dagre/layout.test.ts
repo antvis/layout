@@ -1,6 +1,6 @@
 import { DagreRankdir, PointObject } from '@/src';
-import { DagreGraph as Graph } from '@/src/antv-dagre/graph';
-import { layout } from '@/src/antv-dagre/layout';
+import { DagreGraph as Graph } from '@/src/algorithm/antv-dagre/graph';
+import { layout } from '@/src/algorithm/antv-dagre/layout';
 import type { ID } from '@/src/types/id';
 
 describe.skip('layout', function () {

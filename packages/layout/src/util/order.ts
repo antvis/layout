@@ -1,5 +1,5 @@
 import type { LayoutNode, NodeData } from '../types';
-import type { LayoutModel } from './model';
+import type { GraphLib } from '../model/data';
 
 export type SortComparator<N extends NodeData = NodeData> = (
   nodeA: LayoutNode<N>,
@@ -11,24 +11,20 @@ export type SortComparator<N extends NodeData = NodeData> = (
  * 通用排序核心函数
  */
 function sort<N extends NodeData = NodeData>(
-  model: LayoutModel<N>,
+  model: GraphLib<N>,
   compareFn: (a: LayoutNode<N>, b: LayoutNode<N>) => number,
-): LayoutModel<N> {
+): GraphLib<N> {
   const nodes = model.nodes();
 
   nodes.sort(compareFn);
-  model.nodeMap.clear();
-
-  nodes.forEach((node) => {
-    model.nodeMap.set(node.id, node);
-  });
+  model.setNodeOrder(nodes);
 
   return model;
 }
 
 export function orderByDegree<N extends NodeData = NodeData>(
-  model: LayoutModel<N>,
-): LayoutModel<N> {
+  model: GraphLib<N>,
+): GraphLib<N> {
   return sort(model, (nodeA, nodeB) => {
     const degreeA = model.degree(nodeA.id);
     const degreeB = model.degree(nodeB.id);
@@ -40,8 +36,8 @@ export function orderByDegree<N extends NodeData = NodeData>(
  * 按 ID 排序
  */
 export function orderById<N extends NodeData = NodeData>(
-  model: LayoutModel<N>,
-): LayoutModel<N> {
+  model: GraphLib<N>,
+): GraphLib<N> {
   return sort(model, (nodeA, nodeB) => {
     const idA = nodeA.id;
     const idB = nodeB.id;
@@ -58,9 +54,9 @@ export function orderById<N extends NodeData = NodeData>(
  * 按自定义比较函数排序
  */
 export function orderBySorter<N extends NodeData = NodeData>(
-  model: LayoutModel<N>,
+  model: GraphLib<N>,
   sorter: (a: NodeData, b: NodeData) => -1 | 0 | 1,
-): LayoutModel<N> {
+): GraphLib<N> {
   return sort(model, (nodeA, nodeB) => {
     const a = model.originalNode(nodeA.id);
     const b = model.originalNode(nodeB.id);
@@ -72,9 +68,9 @@ export function orderBySorter<N extends NodeData = NodeData>(
  * Order nodes according to graph topology
  */
 export function orderByTopology<N extends NodeData = NodeData>(
-  model: LayoutModel<N>,
+  model: GraphLib<N>,
   directed: boolean = false,
-): LayoutModel<N> {
+): GraphLib<N> {
   const n = model.nodeCount();
 
   if (n === 0) return model;
@@ -141,10 +137,7 @@ export function orderByTopology<N extends NodeData = NodeData>(
   });
 
   // Update model with ordered nodes
-  model.nodeMap.clear();
-  orderedNodes.forEach((node) => {
-    model.nodeMap.set(node.id, node);
-  });
+  model.setNodeOrder(orderedNodes);
 
   return model;
 }

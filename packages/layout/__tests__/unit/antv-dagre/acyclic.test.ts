@@ -1,6 +1,6 @@
 import { EdgeData } from '@/src';
-import { run, undo } from '@/src/antv-dagre/acyclic';
-import { DagreGraph as Graph } from '@/src/antv-dagre/graph';
+import { run, undo } from '@/src/algorithm/antv-dagre/acyclic';
+import { DagreGraph as Graph } from '@/src/algorithm/antv-dagre/graph';
 import { findCycles } from '../../utils';
 
 describe('acyclic', function () {

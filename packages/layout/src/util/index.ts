@@ -1,7 +1,6 @@
 export * from './array';
 export * from './common';
 export * from './math';
-export * from './model';
 export * from './object';
 export * from './order';
 export * from './point';

@@ -1,5 +1,5 @@
-import { adjust, undo } from '@/src/antv-dagre/coordinate-system';
-import { DagreGraph as Graph } from '@/src/antv-dagre/graph';
+import { adjust, undo } from '@/src/algorithm/antv-dagre/coordinate-system';
+import { DagreGraph as Graph } from '@/src/algorithm/antv-dagre/graph';
 
 describe('coordinateSystem', function () {
   let g: Graph;

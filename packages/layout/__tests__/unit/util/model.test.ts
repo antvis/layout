@@ -1,8 +1,8 @@
 import type { GraphData } from '@/src/types/data';
-import { initModelNodePosition, LayoutModel } from '@/src/util/model';
+import { initNodePosition, GraphLib } from '@/src/model/data';
 
 describe('model', () => {
-  describe('LayoutModel', () => {
+  describe('GraphLib', () => {
     describe('constructor', () => {
       test('should create model from graph data', () => {
         const data: GraphData = {
@@ -13,7 +13,7 @@ describe('model', () => {
           edges: [{ id: 'edge1', source: 'node1', target: 'node2', data: {} }],
         };
 
-        const model = new LayoutModel(data);
+        const model = new GraphLib(data);
 
         expect(model.nodeCount()).toBe(2);
         expect(model.edgeCount()).toBe(1);
@@ -25,7 +25,7 @@ describe('model', () => {
           edges: [],
         };
 
-        const model = new LayoutModel(data);
+        const model = new GraphLib(data);
         const node = model.node('node1');
 
         // Positions are stored in data field, not directly on node
@@ -45,7 +45,7 @@ describe('model', () => {
           edges: [],
         };
 
-        const model = new LayoutModel(data);
+        const model = new GraphLib(data);
         const node = model.node('node1');
 
         // Without custom extractor, positions are not automatically extracted
@@ -60,7 +60,7 @@ describe('model', () => {
           edges: [],
         };
 
-        const model = new LayoutModel(data);
+        const model = new GraphLib(data);
         const node = model.node('node1');
 
         expect(node?._original).toBe(originalNode);
@@ -78,7 +78,7 @@ describe('model', () => {
           edges: [],
         };
 
-        const model = new LayoutModel(data);
+        const model = new GraphLib(data);
         const nodes = model.nodes();
 
         expect(nodes).toHaveLength(3);
@@ -94,7 +94,7 @@ describe('model', () => {
           edges: [],
         };
 
-        const model = new LayoutModel(data);
+        const model = new GraphLib(data);
 
         expect(model.nodeCount()).toBe(2);
       });
@@ -105,7 +105,7 @@ describe('model', () => {
           edges: [],
         };
 
-        const model = new LayoutModel(data);
+        const model = new GraphLib(data);
 
         expect(model.nodes()).toHaveLength(0);
         expect(model.nodeCount()).toBe(0);
@@ -119,7 +119,7 @@ describe('model', () => {
           edges: [],
         };
 
-        const model = new LayoutModel(data);
+        const model = new GraphLib(data);
         const node = model.node('node1');
 
         expect(node).toBeDefined();
@@ -135,7 +135,7 @@ describe('model', () => {
           edges: [],
         };
 
-        const model = new LayoutModel(data);
+        const model = new GraphLib(data);
         const node = model.node('nonexistent');
 
         expect(node).toBeUndefined();
@@ -147,7 +147,7 @@ describe('model', () => {
           edges: [],
         };
 
-        const model = new LayoutModel(data);
+        const model = new GraphLib(data);
         const original = model.originalNode('node1');
 
         expect(original).toBe(data.nodes[0]);
@@ -168,7 +168,7 @@ describe('model', () => {
           ],
         };
 
-        const model = new LayoutModel(data);
+        const model = new GraphLib(data);
         const edges = model.edges();
 
         expect(edges).toHaveLength(2);
@@ -184,7 +184,7 @@ describe('model', () => {
           edges: [{ id: 'edge1', source: 'node1', target: 'node2', data: {} }],
         };
 
-        const model = new LayoutModel(data);
+        const model = new GraphLib(data);
 
         expect(model.edgeCount()).toBe(1);
       });
@@ -195,7 +195,7 @@ describe('model', () => {
           edges: [],
         };
 
-        const model = new LayoutModel(data);
+        const model = new GraphLib(data);
 
         expect(model.edges()).toHaveLength(0);
         expect(model.edgeCount()).toBe(0);
@@ -219,7 +219,7 @@ describe('model', () => {
           ],
         };
 
-        const model = new LayoutModel(data);
+        const model = new GraphLib(data);
         const edge = model.edge('edge1');
 
         expect(edge).toBeDefined();
@@ -234,7 +234,7 @@ describe('model', () => {
           edges: [],
         };
 
-        const model = new LayoutModel(data);
+        const model = new GraphLib(data);
         const edge = model.edge('nonexistent');
 
         expect(edge).toBeUndefined();
@@ -256,7 +256,7 @@ describe('model', () => {
           ],
         };
 
-        const model = new LayoutModel(data);
+        const model = new GraphLib(data);
         const original = model.originalEdge('edge1');
 
         expect(original).toBe(data.edges![0]);
@@ -279,7 +279,7 @@ describe('model', () => {
           ],
         };
 
-        const model = new LayoutModel(data);
+        const model = new GraphLib(data);
 
         expect(model.degree('node1')).toBe(2); // 2 out
         expect(model.degree('node2')).toBe(2); // 1 in + 1 out
@@ -298,7 +298,7 @@ describe('model', () => {
           ],
         };
 
-        const model = new LayoutModel(data);
+        const model = new GraphLib(data);
 
         expect(model.degree('node2', 'in')).toBe(2);
       });
@@ -315,7 +315,7 @@ describe('model', () => {
           ],
         };
 
-        const model = new LayoutModel(data);
+        const model = new GraphLib(data);
 
         expect(model.degree('node1', 'out')).toBe(2);
       });
@@ -330,7 +330,7 @@ describe('model', () => {
           edges: [{ id: 'e1', source: 'node1', target: 'node2', data: {} }],
         };
 
-        const model = new LayoutModel(data);
+        const model = new GraphLib(data);
 
         expect(model.degree('isolated')).toBe(0);
       });
@@ -341,7 +341,7 @@ describe('model', () => {
           edges: [],
         };
 
-        const model = new LayoutModel(data);
+        const model = new GraphLib(data);
 
         expect(model.degree('nonexistent')).toBe(0);
       });
@@ -352,7 +352,7 @@ describe('model', () => {
           edges: [{ id: 'e1', source: 'node1', target: 'node1', data: {} }],
         };
 
-        const model = new LayoutModel(data);
+        const model = new GraphLib(data);
 
         // Self-loops are ignored in degree calculation
         expect(model.degree('node1', 'both')).toBe(0);
@@ -375,7 +375,7 @@ describe('model', () => {
           ],
         };
 
-        const model = new LayoutModel(data);
+        const model = new GraphLib(data);
         const neighbors = model.neighbors('node1');
 
         expect(neighbors).toHaveLength(2);
@@ -396,7 +396,7 @@ describe('model', () => {
           ],
         };
 
-        const model = new LayoutModel(data);
+        const model = new GraphLib(data);
         const successors = model.successors('node1');
 
         expect(successors).toHaveLength(2);
@@ -417,7 +417,7 @@ describe('model', () => {
           ],
         };
 
-        const model = new LayoutModel(data);
+        const model = new GraphLib(data);
         const predecessors = model.predecessors('node1');
 
         expect(predecessors).toHaveLength(2);
@@ -435,7 +435,7 @@ describe('model', () => {
           edges: [{ id: 'e1', source: 'node1', target: 'node2', data: {} }],
         };
 
-        const model = new LayoutModel(data);
+        const model = new GraphLib(data);
 
         expect(model.neighbors('isolated')).toEqual([]);
       });
@@ -446,7 +446,7 @@ describe('model', () => {
           edges: [{ id: 'e1', source: 'node1', target: 'node1', data: {} }],
         };
 
-        const model = new LayoutModel(data);
+        const model = new GraphLib(data);
         const neighbors = model.neighbors('node1');
 
         expect(neighbors).toEqual(['node1']);
@@ -463,7 +463,7 @@ describe('model', () => {
           edges: [{ id: 'e1', source: 'node1', target: 'node2', data: {} }],
         };
 
-        const model = new LayoutModel(data);
+        const model = new GraphLib(data);
 
         // Build cache
         model.degree('node1');
@@ -484,7 +484,7 @@ describe('model', () => {
           edges: [{ id: 'e1', source: 'node1', target: 'node2', data: {} }],
         };
 
-        const model = new LayoutModel(data);
+        const model = new GraphLib(data);
 
         // Build cache
         model.neighbors('node1');
@@ -507,7 +507,7 @@ describe('model', () => {
           edges: [{ id: 'e1', source: 'node1', target: 'node2', data: {} }],
         };
 
-        const model = new LayoutModel(data);
+        const model = new GraphLib(data);
 
         model.destroy();
 
@@ -517,7 +517,7 @@ describe('model', () => {
     });
   });
 
-  describe('initModelNodePosition', () => {
+  describe('initNodePosition', () => {
     test('should initialize positions for nodes without x and y', () => {
       const data: GraphData = {
         nodes: [
@@ -527,8 +527,8 @@ describe('model', () => {
         edges: [],
       };
 
-      const model = new LayoutModel(data);
-      initModelNodePosition(model, 100, 200);
+      const model = new GraphLib(data);
+      initNodePosition(model, 100, 200);
 
       const node1 = model.node('node1');
       const node2 = model.node('node2');
@@ -554,11 +554,11 @@ describe('model', () => {
         edges: [],
       };
 
-      const model = new LayoutModel(data);
+      const model = new GraphLib(data);
       const node = model.node('node1')!;
       node.x = 50;
 
-      initModelNodePosition(model, 100, 200);
+      initNodePosition(model, 100, 200);
 
       expect(model.node('node1')?.x).toBe(50);
     });
@@ -569,11 +569,11 @@ describe('model', () => {
         edges: [],
       };
 
-      const model = new LayoutModel(data);
+      const model = new GraphLib(data);
       const node = model.node('node1')!;
       node.y = 75;
 
-      initModelNodePosition(model, 100, 200);
+      initNodePosition(model, 100, 200);
 
       expect(model.node('node1')?.y).toBe(75);
     });
@@ -584,11 +584,11 @@ describe('model', () => {
         edges: [],
       };
 
-      const model = new LayoutModel(data);
+      const model = new GraphLib(data);
       const node = model.node('node1')!;
       node.x = 50;
 
-      initModelNodePosition(model, 100, 200);
+      initNodePosition(model, 100, 200);
 
       expect(model.node('node1')?.x).toBe(50);
       expect(model.node('node1')?.y).toBeDefined();
@@ -602,8 +602,8 @@ describe('model', () => {
         edges: [],
       };
 
-      const model = new LayoutModel(data);
-      initModelNodePosition(model, 100, 200);
+      const model = new GraphLib(data);
+      initNodePosition(model, 100, 200);
 
       expect(model.nodeCount()).toBe(0);
     });
@@ -614,8 +614,8 @@ describe('model', () => {
         edges: [],
       };
 
-      const model = new LayoutModel(data);
-      initModelNodePosition(model, 0, 0);
+      const model = new GraphLib(data);
+      initNodePosition(model, 0, 0);
 
       const node = model.node('node1');
       expect(node?.x).toBe(0);
@@ -628,8 +628,8 @@ describe('model', () => {
         edges: [],
       };
 
-      const model = new LayoutModel(data);
-      initModelNodePosition(model, 10000, 10000);
+      const model = new GraphLib(data);
+      initNodePosition(model, 10000, 10000);
 
       const node = model.node('node1');
       expect(node?.x).toBeDefined();
@@ -646,12 +646,12 @@ describe('model', () => {
         edges: [],
       };
 
-      const model = new LayoutModel(data);
+      const model = new GraphLib(data);
       const node = model.node('node1')!;
       node.x = 0;
       node.y = 0;
 
-      initModelNodePosition(model, 100, 200);
+      initNodePosition(model, 100, 200);
 
       expect(model.node('node1')?.x).toBe(0);
       expect(model.node('node1')?.y).toBe(0);
@@ -667,8 +667,8 @@ describe('model', () => {
         edges: [],
       };
 
-      const model = new LayoutModel(data);
-      initModelNodePosition(model, 100, 200);
+      const model = new GraphLib(data);
+      initNodePosition(model, 100, 200);
 
       const positions = new Set();
       model.forEachNode((node) => {

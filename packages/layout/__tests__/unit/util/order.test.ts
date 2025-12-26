@@ -1,5 +1,5 @@
 import type { GraphData, NodeData } from '@/src/types/data';
-import { LayoutModel } from '@/src/util/model';
+import { GraphLib } from '@/src/model/data';
 import {
   orderByDegree,
   orderById,
@@ -23,7 +23,7 @@ describe('order', () => {
         ],
       };
 
-      const model = new LayoutModel(data);
+      const model = new GraphLib(data);
       const sorted = orderByDegree(model);
       const nodeIds = sorted.nodes().map((n) => n.id);
 
@@ -47,7 +47,7 @@ describe('order', () => {
         ],
       };
 
-      const model = new LayoutModel(data);
+      const model = new GraphLib(data);
       const sorted = orderByDegree(model);
       const nodeIds = sorted.nodes().map((n) => n.id);
 
@@ -62,7 +62,7 @@ describe('order', () => {
         edges: [],
       };
 
-      const model = new LayoutModel(data);
+      const model = new GraphLib(data);
       const sorted = orderByDegree(model);
       const nodeIds = sorted.nodes().map((n) => n.id);
 
@@ -75,7 +75,7 @@ describe('order', () => {
         edges: [],
       };
 
-      const model = new LayoutModel(data);
+      const model = new GraphLib(data);
       const sorted = orderByDegree(model);
 
       expect(sorted.nodes()).toHaveLength(0);
@@ -90,7 +90,7 @@ describe('order', () => {
         edges: [{ id: 'e1', source: 'node1', target: 'node2', data: {} }],
       };
 
-      const model = new LayoutModel(data);
+      const model = new GraphLib(data);
       const sorted = orderByDegree(model);
 
       expect(sorted.node('node1')).toBeDefined();
@@ -112,7 +112,7 @@ describe('order', () => {
         ],
       };
 
-      const model = new LayoutModel(data);
+      const model = new GraphLib(data);
       const sorted = orderByDegree(model);
       const nodeIds = sorted.nodes().map((n) => n.id);
 
@@ -132,7 +132,7 @@ describe('order', () => {
         edges: [],
       };
 
-      const model = new LayoutModel(data);
+      const model = new GraphLib(data);
       const sorted = orderById(model);
       const nodeIds = sorted.nodes().map((n) => n.id);
 
@@ -149,7 +149,7 @@ describe('order', () => {
         edges: [],
       };
 
-      const model = new LayoutModel(data);
+      const model = new GraphLib(data);
       const sorted = orderById(model);
       const nodeIds = sorted.nodes().map((n) => n.id);
 
@@ -166,7 +166,7 @@ describe('order', () => {
         edges: [],
       };
 
-      const model = new LayoutModel(data);
+      const model = new GraphLib(data);
       const sorted = orderById(model);
       const nodeIds = sorted.nodes().map((n) => n.id);
 
@@ -179,7 +179,7 @@ describe('order', () => {
         edges: [],
       };
 
-      const model = new LayoutModel(data);
+      const model = new GraphLib(data);
       const sorted = orderById(model);
       const nodeIds = sorted.nodes().map((n) => n.id);
 
@@ -192,7 +192,7 @@ describe('order', () => {
         edges: [],
       };
 
-      const model = new LayoutModel(data);
+      const model = new GraphLib(data);
       const sorted = orderById(model);
 
       expect(sorted.nodes()).toHaveLength(0);
@@ -207,7 +207,7 @@ describe('order', () => {
         edges: [],
       };
 
-      const model = new LayoutModel(data);
+      const model = new GraphLib(data);
       const sorted = orderById(model);
 
       expect(sorted.node('a')).toBeDefined();
@@ -225,7 +225,7 @@ describe('order', () => {
         edges: [],
       };
 
-      const model = new LayoutModel(data);
+      const model = new GraphLib(data);
       const sorted = orderById(model);
       const nodeIds = sorted.nodes().map((n) => n.id);
 
@@ -242,7 +242,7 @@ describe('order', () => {
         edges: [],
       };
 
-      const model = new LayoutModel(data);
+      const model = new GraphLib(data);
       const sorted = orderById(model);
       const nodeIds = sorted.nodes().map((n) => n.id);
 
@@ -261,7 +261,7 @@ describe('order', () => {
         edges: [],
       };
 
-      const model = new LayoutModel(data);
+      const model = new GraphLib(data);
       const sorted = orderBySorter(model, (a: NodeData, b: NodeData) => {
         const priorityA = a.data?.priority || 0;
         const priorityB = b.data?.priority || 0;
@@ -282,7 +282,7 @@ describe('order', () => {
         edges: [],
       };
 
-      const model = new LayoutModel(data);
+      const model = new GraphLib(data);
       const sorted = orderBySorter(model, (a: NodeData, b: NodeData) => {
         const nameA = a.data?.name || '';
         const nameB = b.data?.name || '';
@@ -303,7 +303,7 @@ describe('order', () => {
         edges: [],
       };
 
-      const model = new LayoutModel(data);
+      const model = new GraphLib(data);
       const sorted = orderBySorter(model, (a: NodeData, b: NodeData) => {
         const valueA = a.data?.value || 0;
         const valueB = b.data?.value || 0;
@@ -323,7 +323,7 @@ describe('order', () => {
         edges: [],
       };
 
-      const model = new LayoutModel(data);
+      const model = new GraphLib(data);
       const sorted = orderBySorter(model, () => 0);
 
       expect(sorted.nodes()).toHaveLength(1);
@@ -336,7 +336,7 @@ describe('order', () => {
         edges: [],
       };
 
-      const model = new LayoutModel(data);
+      const model = new GraphLib(data);
       const sorted = orderBySorter(model, () => 0);
 
       expect(sorted.nodes()).toHaveLength(0);
@@ -351,7 +351,7 @@ describe('order', () => {
         edges: [],
       };
 
-      const model = new LayoutModel(data);
+      const model = new GraphLib(data);
       const sorted = orderBySorter(model, (a: NodeData, b: NodeData) => {
         const orderA = a.data?.order || 0;
         const orderB = b.data?.order || 0;
@@ -373,7 +373,7 @@ describe('order', () => {
         edges: [],
       };
 
-      const model = new LayoutModel(data);
+      const model = new GraphLib(data);
       const sorted = orderBySorter(model, (a: NodeData, b: NodeData) => {
         const scoreA = a.data?.score || 0;
         const scoreB = b.data?.score || 0;
@@ -394,7 +394,7 @@ describe('order', () => {
         edges: [],
       };
 
-      const model = new LayoutModel(data);
+      const model = new GraphLib(data);
       const sorted = orderBySorter(model, (a: NodeData, b: NodeData) => {
         const valueA = a.data?.value || 0;
         const valueB = b.data?.value || 0;
@@ -424,7 +424,7 @@ describe('order', () => {
         ],
       };
 
-      const model = new LayoutModel(data);
+      const model = new GraphLib(data);
       const sorted = orderByTopology(model, false);
       const nodeIds = sorted.nodes().map((n) => n.id);
 
@@ -448,7 +448,7 @@ describe('order', () => {
         ],
       };
 
-      const model = new LayoutModel(data);
+      const model = new GraphLib(data);
       const sorted = orderByTopology(model, true);
       const nodeIds = sorted.nodes().map((n) => n.id);
 
@@ -463,7 +463,7 @@ describe('order', () => {
         edges: [],
       };
 
-      const model = new LayoutModel(data);
+      const model = new GraphLib(data);
       const sorted = orderByTopology(model, false);
       const nodeIds = sorted.nodes().map((n) => n.id);
 
@@ -476,7 +476,7 @@ describe('order', () => {
         edges: [],
       };
 
-      const model = new LayoutModel(data);
+      const model = new GraphLib(data);
       const sorted = orderByTopology(model, false);
 
       expect(sorted.nodes()).toHaveLength(0);
@@ -496,7 +496,7 @@ describe('order', () => {
         ],
       };
 
-      const model = new LayoutModel(data);
+      const model = new GraphLib(data);
       const sorted = orderByTopology(model, false);
       const nodeIds = sorted.nodes().map((n) => n.id);
 
@@ -519,7 +519,7 @@ describe('order', () => {
         ],
       };
 
-      const model = new LayoutModel(data);
+      const model = new GraphLib(data);
       const sorted = orderByTopology(model, false);
       const nodeIds = sorted.nodes().map((n) => n.id);
 
@@ -543,7 +543,7 @@ describe('order', () => {
         ],
       };
 
-      const model = new LayoutModel(data);
+      const model = new GraphLib(data);
       const sorted = orderByTopology(model, false);
 
       expect(sorted.node('a')).toBeDefined();
@@ -567,7 +567,7 @@ describe('order', () => {
         ],
       };
 
-      const model = new LayoutModel(data);
+      const model = new GraphLib(data);
       const sorted = orderByTopology(model, false);
       const nodeIds = sorted.nodes().map((n) => n.id);
 
@@ -591,7 +591,7 @@ describe('order', () => {
         ],
       };
 
-      const model = new LayoutModel(data);
+      const model = new GraphLib(data);
       const sorted = orderByTopology(model, true);
       const nodeIds = sorted.nodes().map((n) => n.id);
 
@@ -614,7 +614,7 @@ describe('order', () => {
         ],
       };
 
-      const model = new LayoutModel(data);
+      const model = new GraphLib(data);
       const sorted = orderByTopology(model, false);
       const nodeIds = sorted.nodes().map((n) => n.id);
 
@@ -641,7 +641,7 @@ describe('order', () => {
         ],
       };
 
-      const model = new LayoutModel(data);
+      const model = new GraphLib(data);
       const sorted = orderByTopology(model, false);
       const nodeIds = sorted.nodes().map((n) => n.id);
 
@@ -662,7 +662,7 @@ describe('order', () => {
         ],
       };
 
-      const model = new LayoutModel(data);
+      const model = new GraphLib(data);
       const sorted = orderByTopology(model, false);
       const nodeIds = sorted.nodes().map((n) => n.id);
 

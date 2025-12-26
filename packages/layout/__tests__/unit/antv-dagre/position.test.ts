@@ -1,5 +1,5 @@
-import { DagreGraph as Graph } from '@/src/antv-dagre/graph';
-import { position } from '@/src/antv-dagre/position';
+import { DagreGraph as Graph } from '@/src/algorithm/antv-dagre/graph';
+import { position } from '@/src/algorithm/antv-dagre/position';
 
 describe('position', function () {
   let g: Graph;

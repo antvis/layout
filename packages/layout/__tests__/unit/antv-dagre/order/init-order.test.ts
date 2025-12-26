@@ -1,5 +1,5 @@
-import { DagreGraph as Graph } from '@/src/antv-dagre/graph';
-import { initOrder } from '@/src/antv-dagre/order/init-order';
+import { DagreGraph as Graph } from '@/src/algorithm/antv-dagre/graph';
+import { initOrder } from '@/src/algorithm/antv-dagre/order/init-order';
 
 describe('order/initOrder', function () {
   let g: Graph;

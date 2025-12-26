@@ -1,5 +1,5 @@
-import type { SimulationOptions } from '../core/base-simulation';
-import type { BaseLayoutOptions, Layout } from '../core/types';
+import type { SimulationOptions } from '../algorithm/base-simulation';
+import type { BaseLayoutOptions, Layout } from '../algorithm/types';
 import type { ID } from './id';
 import type { PointObject } from './point';
 

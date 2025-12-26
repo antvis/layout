@@ -1,5 +1,5 @@
-import { DagreGraph as Graph } from '@/src/antv-dagre/graph';
-import { barycenter } from '@/src/antv-dagre/order/barycenter';
+import { DagreGraph as Graph } from '@/src/algorithm/antv-dagre/graph';
+import { barycenter } from '@/src/algorithm/antv-dagre/order/barycenter';
 
 describe('order/barycenter', function () {
   let g: Graph;
