@@ -1,4 +1,4 @@
-import { AntVDagreLayout } from '@/src';
+import { ComboCombinedLayout } from '@/src';
 import { Canvas } from '@antv/g';
 import { Renderer } from '@antv/g-canvas';
 import type { GUI } from 'lil-gui';
@@ -11,12 +11,18 @@ const data = {
     },
     {
       id: '1',
+      // rank: 1,
+      // order: 1,
     },
     {
       id: '2',
+      // rank: 1,
+      // order: 2,
     },
     {
       id: '3',
+      // rank: 1,
+      // order: 3,
     },
     {
       id: '4',
@@ -50,84 +56,77 @@ const data = {
       id: '11',
       combo: 'B',
     },
+    {
+      id: '12',
+    },
   ],
   edges: [
     {
-      id: 'edge-102',
       source: '0',
       target: '1',
     },
     {
-      id: 'edge-161',
       source: '0',
       target: '2',
     },
     {
-      id: 'edge-237',
       source: '1',
-      target: '4',
+      target: 'A',
     },
     {
-      id: 'edge-253',
       source: '0',
       target: '3',
     },
     {
-      id: 'edge-133',
       source: '3',
-      target: '4',
+      target: 'C',
     },
     {
-      id: 'edge-320',
       source: '2',
-      target: '5',
+      target: 'B',
     },
     {
-      id: 'edge-355',
-      source: '1',
-      target: '6',
-    },
-    {
-      id: 'edge-823',
-      source: '1',
-      target: '7',
-    },
-    {
-      id: 'edge-665',
-      source: '3',
-      target: '8',
-    },
-    {
-      id: 'edge-884',
-      source: '3',
-      target: '9',
-    },
-    {
-      id: 'edge-536',
       source: '5',
       target: '10',
     },
     {
-      id: 'edge-401',
       source: '5',
       target: '11',
+    },
+    {
+      source: 'A',
+      target: '12',
+    },
+    {
+      source: 'B',
+      target: '12',
+    },
+    {
+      source: 'C',
+      target: '12',
     },
   ],
   combos: [
     {
       id: 'A',
+      // rank: 2,
+      // order: 1,
       style: {
         type: 'rect',
       },
     },
     {
       id: 'B',
+      // rank: 2,
+      // order: 2,
       style: {
         type: 'rect',
       },
     },
     {
       id: 'C',
+      // rank: 3,
+      // order: 3,
       style: {
         type: 'rect',
       },
@@ -135,51 +134,77 @@ const data = {
   ],
 };
 
-data.nodes.push(
-  ...data.combos.map((combo: any) => ({ ...combo, isCombo: true })),
-);
+data.combos.forEach((combo: any) => {
+  (data.nodes as any).push({
+    ...combo,
+    id: combo.id,
+    isCombo: true,
+  });
+});
+delete data.combos;
+console.log('combo combined data:', data);
 
 export function render(gui?: GUI) {
   const canvas = new Canvas({
     container: 'container',
-    width: 1000,
-    height: 500,
+    width: 800,
+    height: 800,
     renderer: new Renderer(),
   });
 
   const renderer = new GraphRenderer(canvas);
 
-  const dagre = new AntVDagreLayout({
+  const layout = new ComboCombinedLayout({
+    width: 800,
+    height: 800,
     node: (d) => ({
       parentId: d.combo,
+      isCombo: d.isCombo,
     }),
-    nodeSize: [60, 30],
-    ranksep: 40,
-    nodesep: 10,
-    sortByCombo: true,
-    controlPoints: true,
+    layout: (comboId) => {
+      return !comboId
+        ? {
+            type: 'dagre',
+            rankdir: 'LR',
+            ranksep: 60,
+            nodesep: 50,
+          }
+        : {
+            type: 'dagre',
+            rankdir: 'LR',
+            ranksep: 40,
+            nodesep: 20,
+          };
+    },
   });
 
   const relayout = async (options = {}) => {
-    await dagre.execute(data, options);
+    await layout.execute(data, options);
 
-    renderer.render(dagre, {
-      nodeShape: 'rect',
+    renderer.render(layout, {
+      enableDrag: false,
       nodeStyle: { fill: '#A7E9AF', stroke: '#333', lineWidth: 1 },
-      edgeShape: 'polyline',
       showLabel: true,
+      nodeShape: 'rect',
     });
 
-    dagre.forEachNode((node) => {
+    layout.forEachNode((node: any) => {
+      console.log('node:', node);
       renderer.updateNodeAttributes(node.id, {
+        // cx: node.x,
+        // cy: node.y,
+        // r: Math.max(...node.size) / 2,
         x: node.x - node.size[0] / 2,
         y: node.y - node.size[1] / 2,
         width: node.size[0],
         height: node.size[1],
-        zIndex: node._original.isCombo ? 0 : 1,
-        fillOpacity: node._original.isCombo ? 0.3 : 1,
+        zIndex: node.isCombo ? 0 : 1,
+        fillOpacity: node.isCombo ? 0.3 : 1,
+        fill: node.isCombo ? '#91D5FF' : '#FFD666',
       });
     });
+
+    layout.forEachEdge((edge) => {});
   };
 
   relayout();

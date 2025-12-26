@@ -238,7 +238,7 @@ describe('layout dagre', () => {
         ...comboData.nodes,
         ...comboData.combos.map((combo: any) => ({
           id: combo.id,
-          isGroup: true,
+          isCombo: true,
         })),
       ],
     };
@@ -258,7 +258,7 @@ describe('layout dagre', () => {
 
     // Update group node styles
     layout.forEachNode((node) => {
-      if (node._original.isGroup) {
+      if (node._original.isCombo) {
         renderer.updateNodeAttributes(node.id, {
           zIndex: 0,
           fillOpacity: 0.3,

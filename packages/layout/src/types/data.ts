@@ -31,11 +31,11 @@ export interface LayoutNode<N extends NodeData = NodeData> {
   y: number;
   z?: number;
 
-  _original: N;
-
+  /** Applied for compound layout（dagre、antv-dagre、combo-combined） */
   parentId?: ID | null;
+  isCombo?: boolean;
 
-  /** Only for force-directed layout */
+  /** Applied for force-directed layout */
   fx?: number | null;
   fy?: number | null;
   fz?: number | null;
@@ -43,8 +43,9 @@ export interface LayoutNode<N extends NodeData = NodeData> {
   vy?: number;
   vz?: number;
 
-  /** Only for dagre layout */
+  /** Output additional info */
   size?: Size;
+  _original: N;
 
   [key: string]: any;
 }

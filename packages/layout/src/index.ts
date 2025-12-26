@@ -1,6 +1,10 @@
 export { AntVDagreLayout, type AntVDagreLayoutOptions } from './antv-dagre';
 export type { DagreAlign, DagreRankdir } from './antv-dagre/types';
 export { CircularLayout, type CircularLayoutOptions } from './circular';
+export {
+  ComboCombinedLayout,
+  type ComboCombinedLayoutOptions,
+} from './combo-combined';
 export { ConcentricLayout, type ConcentricLayoutOptions } from './concentric';
 export { BaseLayout, type BaseLayoutOptions } from './core/base-layout';
 export { D3ForceLayout, type D3ForceLayoutOptions } from './d3-force';

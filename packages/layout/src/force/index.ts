@@ -5,6 +5,7 @@ import { initModelNodePosition, LayoutModel, normalizeViewport } from '../util';
 import { formatNodeSizeFn, formatNumberFn } from '../util/format';
 import { forceAttractive } from './attractive';
 import { forceCentripetal } from './centripetal';
+import { forceCollide } from './collide';
 import { forceGravity } from './gravity';
 import { forceRepulsive } from './repulsive';
 import { ForceSimulation } from './simulation';
@@ -27,6 +28,7 @@ const DEFAULTS_LAYOUT_OPTIONS: Partial<ForceLayoutOptions> = {
   interval: 0.02,
   linkDistance: 200,
   clusterNodeStrength: 20,
+  collideStrength: 1,
   preventOverlap: true,
   distanceThresholdMode: 'mean',
 };
@@ -114,6 +116,7 @@ export class ForceLayout extends BaseLayoutWithIterations<ForceLayoutOptions> {
     // Setup all forces
     this.setupRepulsiveForce(simulation, options);
     this.setupAttractiveForce(simulation, options);
+    this.setupCollideForce(simulation, options);
     this.setupGravityForce(simulation, options);
     this.setupCentripetalForce(simulation, options);
 
@@ -147,7 +150,7 @@ export class ForceLayout extends BaseLayoutWithIterations<ForceLayoutOptions> {
     simulation: ForceSimulation,
     options: ParsedForceLayoutOptions,
   ) {
-    const { dimensions, nodeSize, preventOverlap } = options;
+    const { dimensions, preventOverlap } = options;
     const edges = this.model.edges() || [];
 
     if (edges.length > 0) {
@@ -157,7 +160,6 @@ export class ForceLayout extends BaseLayoutWithIterations<ForceLayoutOptions> {
         simulation.force('attractive', force);
       }
 
-      if (force.nodeSize) force.nodeSize(nodeSize);
       if (force.dimensions) force.dimensions(dimensions);
       if (force.preventOverlap) force.preventOverlap(preventOverlap);
     } else {
@@ -186,6 +188,29 @@ export class ForceLayout extends BaseLayoutWithIterations<ForceLayoutOptions> {
       if (force.getCenter) force.getCenter(getCenter);
     } else {
       simulation.force('gravity', null);
+    }
+  }
+
+  /**
+   * Setup collision force to prevent overlap
+   */
+  protected setupCollideForce(
+    simulation: ForceSimulation,
+    options: ParsedForceLayoutOptions,
+  ) {
+    const { preventOverlap, collideStrength = 1, dimensions } = options;
+
+    if (preventOverlap && collideStrength) {
+      let force = simulation.force('collide');
+      if (!force) {
+        force = forceCollide(dimensions);
+        simulation.force('collide', force);
+      }
+
+      if (force.strength) force.strength(collideStrength);
+      if (force.dimensions) force.dimensions(dimensions);
+    } else {
+      simulation.force('collide', null);
     }
   }
 
@@ -243,8 +268,8 @@ export class ForceLayout extends BaseLayoutWithIterations<ForceLayoutOptions> {
       : (edge?: EdgeData) => {
           return (
             1 +
-            _.nodeSize(this.model.node(edge!.source)!) +
-            _.nodeSize(this.model.node(edge!.target)!)
+            _.nodeSize(this.model.node(edge!.source)!._original) +
+            _.nodeSize(this.model.node(edge!.target)!._original)
           );
         };
     _.nodeStrength = formatNumberFn(options.nodeStrength, 1);

@@ -8,7 +8,7 @@ import { GraphRenderer } from '../utils/renderer';
 // data.combos.forEach((combo: any) => {
 //   (data.nodes as any).push({
 //     id: combo.id,
-//     isGroup: true,
+//     isCombo: true,
 //   });
 // });
 
@@ -63,8 +63,8 @@ export function render(gui?: GUI) {
         y: node.y - node.size[1] / 2,
         width: node.size[0],
         height: node.size[1],
-        zIndex: node._original.isGroup ? 0 : 1,
-        fillOpacity: node._original.isGroup ? 0.3 : 1,
+        zIndex: node._original.isCombo ? 0 : 1,
+        fillOpacity: node._original.isCombo ? 0.3 : 1,
       });
     });
 

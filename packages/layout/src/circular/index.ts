@@ -76,7 +76,7 @@ export class CircularLayout extends BaseLayout<CircularLayoutOptions> {
     if (!isNil(nodeSpacing)) {
       let perimeter = 0;
       for (const node of nodes) {
-        perimeter += format(node);
+        perimeter += format(node._original);
       }
       radius = perimeter / (2 * Math.PI);
     } else if (!radius && !startRadius && !endRadius) {

@@ -1,4 +1,3 @@
-import type { NodeData } from '../types';
 import { LayoutModel } from '../util';
 import { AccMap } from './types';
 
@@ -7,7 +6,6 @@ import { AccMap } from './types';
  * Applies spring-like forces between connected nodes
  */
 export function forceAttractive(dimensions: number = 2) {
-  let nodeSize: (node: NodeData) => number = () => 10;
   let preventOverlap: boolean = false;
 
   function force(model: LayoutModel, accMap: AccMap) {
@@ -31,7 +29,7 @@ export function forceAttractive(dimensions: number = 2) {
       }
 
       const vecLength = Math.sqrt(vecX * vecX + vecY * vecY + vecZ * vecZ);
-      if (vecLength < nodeSize(sourceNode) + nodeSize(targetNode)) return;
+      if (vecLength < Number(sourceNode.size) + Number(targetNode.size)) return;
 
       const direX = vecX / vecLength;
       const direY = vecY / vecLength;
@@ -60,10 +58,6 @@ export function forceAttractive(dimensions: number = 2) {
       accMap[target].z += disZ * targetMassRatio;
     });
   }
-
-  force.nodeSize = function (_?: (node: any) => number) {
-    return arguments.length ? ((nodeSize = _!), force) : nodeSize;
-  };
 
   force.dimensions = function (_?: number) {
     return arguments.length ? ((dimensions = _!), force) : dimensions;

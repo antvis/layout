@@ -30,7 +30,7 @@ const DEFAULTS_LAYOUT_OPTIONS: Partial<ForceAtlas2LayoutOptions> = {
 type SizeMap = Record<string, number>;
 
 export class ForceAtlas2Layout extends BaseLayoutWithIterations<ForceAtlas2LayoutOptions> {
-  public id = 'forceAtlas2';
+  public id = 'force-atlas2';
 
   public simulation: Simulation | null = null;
 

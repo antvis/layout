@@ -2,15 +2,15 @@
 
 import { PackageManagerTabs } from '@theme';
 
-## 安装
+## 📦 安装
 
 使用 npm、pnpm、yarn 或 bun 安装:
 
 <PackageManagerTabs command="install @antv/layout" />
 
-## 使用
+## 基础用法
 
-接下来将介绍图布局算法的通用用法。
+接下来介绍图布局算法的标准使用流程，仅需 **4 步** 即可完成布局计算。
 
 ### 1. 准备图数据
 
@@ -70,11 +70,17 @@ await layout.execute(data, {
 
 ```js
 layout.forEachNode((node) => {
-  console.log(node.x, node.y);
+  console.log(`节点 ${node.id}: (${node.x}, ${node.y})`);
 });
 ```
 
 也可以使用 `forEachEdge` 遍历边的结果。
+
+```js
+layout.forEachEdge((edge) => {
+  console.log(`边 ${edge.source} → ${edge.target}`);
+});
+```
 
 ## 完整示例
 
@@ -83,3 +89,12 @@ layout.forEachNode((node) => {
 <code src="../../../components/CircularDemo.jsx" direction="vertical" />
 
 现在你应该能在页面上看到一个简单的圆形布局图。
+
+## 下一步
+
+完成基础布局后，你可以：
+
+- 学习如何 [处理自定义数据结构](./data-mapping.mdx)
+- 查看 [API 完整文档](./api-reference.mdx)
+
+现在，你已经掌握了 `@antv/layout` 的基础用法，可以开始构建自己的图可视化应用了！

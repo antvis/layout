@@ -56,6 +56,7 @@ describe('layout force', () => {
       linkDistance: 200,
       clusterNodeStrength: 20,
       preventOverlap: true,
+      collideStrength: 1,
       distanceThresholdMode: 'mean',
     });
   });
@@ -263,6 +264,35 @@ describe('layout force', () => {
     // After layout with preventOverlap, overlapped nodes should be separated
     expect(positions.nodes[0].x).not.toEqual(positions.nodes[1].x);
     expect(positions.nodes[0].y).not.toEqual(positions.nodes[1].y);
+  });
+
+  it('should actually separate nodes when preventOverlap is enabled', async () => {
+    const overlapGraph = {
+      nodes: [
+        { id: 'a', x: 0, y: 0 },
+        { id: 'b', x: 0, y: 0 },
+      ],
+      edges: [],
+    };
+
+    const layout = new ForceLayout({
+      width,
+      height,
+      maxIteration: 50,
+      minMovement: 0,
+      gravity: 0,
+      nodeStrength: 0,
+      preventOverlap: true,
+      nodeSize: 20,
+    });
+
+    await layout.execute(overlapGraph);
+    const positions = calculatePositions(layout);
+    const nodeA = positions.nodes.find((n) => n.id === 'a')!;
+    const nodeB = positions.nodes.find((n) => n.id === 'b')!;
+
+    const dist = Math.hypot(nodeA.x - nodeB.x, nodeA.y - nodeB.y);
+    expect(dist).toBeGreaterThanOrEqual(20);
   });
 
   it('should render star graph', async () => {

@@ -1,5 +1,4 @@
 import type { Canvas } from '@antv/g';
-import chalk from 'chalk';
 import {
   existsSync,
   mkdirSync,
@@ -12,6 +11,20 @@ import { optimize } from 'svgo';
 import { serializeToString } from 'xmlserializer';
 import { getSnapshotDir } from './dir';
 import { sleep } from './sleep';
+
+// Optional dependency: allow running tests in minimal installs.
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const chalk = (() => {
+  try {
+    // eslint-disable-next-line global-require
+    return require('chalk');
+  } catch {
+    return {
+      green: (s: string) => s,
+      red: (s: string) => s,
+    };
+  }
+})();
 
 const format = (svg: SVGElement) => {
   return optimize(serializeToString(svg as any), {
