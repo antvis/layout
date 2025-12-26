@@ -29,7 +29,7 @@ export function forceAttractive(dimensions: number = 2) {
       }
 
       const vecLength = Math.sqrt(vecX * vecX + vecY * vecY + vecZ * vecZ);
-      if (vecLength < (Number(sourceNode.size) + Number(targetNode.size)) / 2) return;
+      if (vecLength < Number(sourceNode.size) + Number(targetNode.size)) return;
 
       const direX = vecX / vecLength;
       const direY = vecY / vecLength;
