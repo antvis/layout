@@ -10,10 +10,10 @@ import {
   forceX,
   forceY,
 } from 'd3-force';
-import { BaseLayoutWithIterations } from '../base-layout';
 import type { ID, Position } from '../../types';
 import { assignDefined, normalizeViewport } from '../../util';
 import { formatNodeSizeFn } from '../../util/format';
+import { BaseLayoutWithIterations } from '../base-layout';
 import forceInABox from './force-in-a-box';
 import type {
   D3ForceCommonOptions,
@@ -25,29 +25,15 @@ import type {
 export type { D3ForceLayoutOptions };
 
 const DEFAULTS_LAYOUT_OPTIONS: Partial<D3ForceLayoutOptions> = {
-  centerStrength: 1,
-
-  edgeId: (d) => String(d.id),
-  linkDistance: 30,
-  edgeStrength: undefined,
-  edgeIterations: 1,
-
+  link: {
+    id: (d) => String(d.id),
+  },
+  manyBody: {
+    strength: -30,
+  },
   preventOverlap: false,
   nodeSize: 10,
   nodeSpacing: 0,
-  collideStrength: 1,
-  collideIterations: 1,
-
-  nodeStrength: -30,
-  distanceMin: undefined,
-  distanceMax: undefined,
-  theta: undefined,
-
-  alpha: 1,
-  alphaMin: 0.001,
-  alphaDecay: 1 - Math.pow(0.001, 1 / 300),
-  alphaTarget: 0,
-  velocityDecay: 0.4,
 
   clustering: false,
   clusterNodeStrength: -1,
@@ -84,7 +70,7 @@ export class D3ForceLayout<
     return DEFAULTS_LAYOUT_OPTIONS as T;
   }
 
-  protected mergeOptions(base: T, patch?: Partial<T>): T {
+  protected mergeOptions<T>(base: T, patch?: Partial<T>): T {
     return deepMix({}, base, patch) as T;
   }
 
@@ -301,22 +287,17 @@ export class D3ForceLayout<
   }
 
   private getCenterOptions(options: T): T['center'] | undefined {
-    if (
-      !options.width ||
-      !options.height ||
-      options.centerStrength !== undefined
-    ) {
-      const viewport = normalizeViewport({
-        width: options.width,
-        height: options.height,
-      });
-      return assignDefined({}, options.center || {}, {
-        x: viewport.width / 2,
-        y: viewport.height / 2,
-        strength: options.centerStrength,
-      }) as T['center'];
-    }
-    return undefined;
+    if (options.center === false) return undefined;
+
+    const viewport = normalizeViewport({
+      width: options.width,
+      height: options.height,
+    });
+    return assignDefined({}, options.center || {}, {
+      x: viewport.width / 2,
+      y: viewport.height / 2,
+      strength: options.centerStrength,
+    }) as T['center'];
   }
 
   protected setupCenterForce(simulation: Simulation<N, E>, options: T) {
@@ -342,21 +323,14 @@ export class D3ForceLayout<
   }
 
   private getManyBodyOptions(options: T): D3ForceLayoutOptions['manyBody'] {
-    if (
-      options.manyBody !== undefined ||
-      options.nodeStrength !== undefined ||
-      options.distanceMin !== undefined ||
-      options.distanceMax !== undefined ||
-      options.theta !== undefined
-    ) {
-      return assignDefined({}, options.manyBody || {}, {
-        strength: options.nodeStrength,
-        distanceMin: options.distanceMin,
-        distanceMax: options.distanceMax,
-        theta: options.theta,
-      });
-    }
-    return undefined;
+    if (options.manyBody === false) return undefined;
+
+    return assignDefined({}, options.manyBody || {}, {
+      strength: options.nodeStrength,
+      distanceMin: options.distanceMin,
+      distanceMax: options.distanceMax,
+      theta: options.theta,
+    });
   }
 
   protected setupManyBodyForce(simulation: Simulation<N, E>, options: T) {
@@ -386,21 +360,14 @@ export class D3ForceLayout<
   }
 
   private getLinkOptions(options: T): D3ForceLayoutOptions['link'] {
-    if (
-      options.link ||
-      options.edgeId !== undefined ||
-      options.linkDistance !== undefined ||
-      options.edgeStrength !== undefined ||
-      options.edgeIterations !== undefined
-    ) {
-      return assignDefined({}, options.link || {}, {
-        id: options.edgeId,
-        distance: options.linkDistance,
-        strength: options.edgeStrength,
-        iterations: options.edgeIterations,
-      });
-    }
-    return undefined;
+    if (options.link === false) return undefined;
+
+    return assignDefined({}, options.link || {}, {
+      id: options.edgeId,
+      distance: options.linkDistance,
+      strength: options.edgeStrength,
+      iterations: options.edgeIterations,
+    });
   }
 
   protected setupLinkForce(simulation: Simulation<N, E>, options: T) {
@@ -429,30 +396,23 @@ export class D3ForceLayout<
   }
 
   private getCollisionOptions(options: T): D3ForceLayoutOptions['collide'] {
-    if (!options.preventOverlap) return undefined;
-    if (
-      options.collide !== undefined ||
-      options.nodeSize !== undefined ||
-      options.nodeSpacing !== undefined ||
-      options.collideStrength !== undefined ||
-      options.collideIterations !== undefined
-    ) {
-      const radius =
-        options.nodeSize || options.nodeSpacing
-          ? (d: NodeDatum) =>
-              formatNodeSizeFn(
-                options.nodeSize,
-                options.nodeSpacing,
-              )(d._original) / 2
-          : undefined;
+    if (options.preventOverlap === false || options.collide === false)
+      return undefined;
 
-      return assignDefined({}, options.collide || {}, {
-        radius,
-        strength: options.collideStrength,
-        iterations: options.collideIterations,
-      });
-    }
-    return undefined;
+    const radius =
+      options.nodeSize || options.nodeSpacing
+        ? (d: NodeDatum) =>
+            formatNodeSizeFn(
+              options.nodeSize,
+              options.nodeSpacing,
+            )(d._original) / 2
+        : undefined;
+
+    return assignDefined({}, options.collide || {}, {
+      radius: options.collide || radius,
+      strength: options.collideStrength,
+      iterations: options.collideIterations,
+    });
   }
 
   protected setupCollisionForce(simulation: Simulation<N, E>, options: T) {
@@ -479,20 +439,13 @@ export class D3ForceLayout<
   }
 
   private getXForceOptions(options: T): D3ForceLayoutOptions['x'] {
-    if (
-      options.x !== undefined ||
-      options.forceXPosition !== undefined ||
-      options.forceXStrength !== undefined ||
-      options.width !== undefined ||
-      options.height !== undefined
-    ) {
-      const center = this.getCenterOptions(options);
-      return assignDefined({}, options.x || {}, {
-        x: options.forceXPosition ?? (center && center.x),
-        strength: options.forceXStrength,
-      });
-    }
-    return undefined;
+    if (options.x === false) return undefined;
+
+    const center = this.getCenterOptions(options);
+    return assignDefined({}, options.x || {}, {
+      x: options.forceXPosition ?? (center && center.x),
+      strength: options.forceXStrength,
+    });
   }
 
   protected setupXForce(simulation: Simulation<N, E>, options: T) {
@@ -516,21 +469,13 @@ export class D3ForceLayout<
   }
 
   private getYForceOptions(options: T): D3ForceLayoutOptions['y'] {
-    if (
-      options.y !== undefined ||
-      options.forceYPosition !== undefined ||
-      options.forceYStrength !== undefined ||
-      options.width !== undefined ||
-      options.height !== undefined
-    ) {
-      const center = this.getCenterOptions(options);
-      return assignDefined({}, options.y || {}, {
-        y: options.forceYPosition ?? (center && center.y),
-        strength: options.forceYStrength,
-      });
-    }
+    if (options.y === false) return undefined;
 
-    return undefined;
+    const center = this.getCenterOptions(options);
+    return assignDefined({}, options.y || {}, {
+      y: options.forceYPosition ?? (center && center.y),
+      strength: options.forceYStrength,
+    });
   }
 
   protected setupYForce(simulation: Simulation<N, E>, options: T) {

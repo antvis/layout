@@ -48,7 +48,3 @@ export function assignDefined<T extends object>(
   });
   return target;
 }
-
-export function mergeOptions<T extends object>(base: T, patch?: Partial<T>): T {
-  return Object.assign({}, base, patch || {});
-}

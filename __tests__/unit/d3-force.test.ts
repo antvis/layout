@@ -3,8 +3,7 @@ import { createCanvas } from '@@/utils/create';
 import type { Canvas } from '@antv/g';
 import { clear as clearMockRandom, mock as mockRandom } from 'jest-random-mock';
 import { d3Force as data } from '../dataset';
-import { GraphRenderer } from '../utils';
-import { calculatePositions } from '../utils';
+import { calculatePositions, GraphRenderer } from '../utils';
 
 describe('layout d3-force', () => {
   let canvas: Canvas;
@@ -360,10 +359,10 @@ describe('layout d3-force', () => {
     const d3Force = new D3ForceLayout({
       width,
       height,
-      center: { x: 300, y: 300, strength: 0.8 },
+      center: { x: 300, y: 300, strength: 1 },
       manyBody: { strength: -50, theta: 0.8 },
-      link: { distance: 80, strength: 0.5 },
-      collide: { radius: 15, strength: 0.7 },
+      link: { distance: 30, strength: 0.5 },
+      collide: { radius: 10, strength: 1 },
       radial: { radius: 120, strength: 0.6, x: 350, y: 350 },
       x: { x: 300, strength: 0.4 },
       y: { y: 300, strength: 0.4 },
@@ -405,5 +404,25 @@ describe('layout d3-force', () => {
     await d3Force.execute(data);
     await renderLayout(d3Force);
     await expect(canvas).toMatchSnapshot(__filename, 'function-options');
+  });
+
+  it('should render lattice', async () => {
+    const d3Force = new D3ForceLayout({
+      width,
+      height,
+      manyBody: {
+        strength: -30,
+      },
+      link: {
+        strength: 1,
+        distance: 20,
+        iterations: 10,
+      },
+      x: false,
+      y: false,
+    });
+    await d3Force.execute(data);
+    await renderLayout(d3Force);
+    await expect(canvas).toMatchSnapshot(__filename, 'lattice');
   });
 });

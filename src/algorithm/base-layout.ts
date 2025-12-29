@@ -2,12 +2,7 @@ import type { GraphLib } from '../model/data';
 import { RuntimeContext } from '../runtime/context';
 import { Supervisor } from '../runtime/supervisor';
 import type { GraphData, GraphEdge, GraphNode, Point } from '../types';
-import { mergeOptions } from '../util';
-import type {
-  BaseLayoutOptions,
-  Layout,
-  LayoutWithIterations,
-} from './types';
+import type { BaseLayoutOptions, Layout, LayoutWithIterations } from './types';
 
 export type { BaseLayoutOptions };
 
@@ -35,18 +30,28 @@ export abstract class BaseLayout<
   protected supervisor: Supervisor | null = null;
 
   constructor(options?: Partial<O>) {
-    this.initialOptions = mergeOptions<O>(this.getDefaultOptions(), options);
+    this.initialOptions = this.mergeOptions<O>(
+      this.getDefaultOptions(),
+      options,
+    );
   }
 
   get options(): O {
     return this.runtimeOptions || this.initialOptions;
   }
 
+  protected mergeOptions<O>(base: O, patch?: Partial<O>): O {
+    return Object.assign({}, base, patch || {});
+  }
+
   public async execute(
     data: GraphData,
     userOptions?: Partial<O>,
   ): Promise<void> {
-    this.runtimeOptions = mergeOptions<O>(this.initialOptions, userOptions);
+    this.runtimeOptions = this.mergeOptions<O>(
+      this.initialOptions,
+      userOptions,
+    );
     const { node, edge, enableWorker } = this.runtimeOptions;
 
     this.context = new RuntimeContext(data, { node, edge });
