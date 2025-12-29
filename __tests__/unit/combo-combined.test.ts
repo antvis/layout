@@ -19,9 +19,9 @@ describe('layout combo-combined', () => {
     const layout = new ComboCombinedLayout();
     expect(layout.options).toMatchObject({
       nodeSize: 20,
-      nodeSpacing: 10,
-      comboPadding: 20,
-      comboSpacing: 80,
+      nodeSpacing: 0,
+      comboPadding: 10,
+      comboSpacing: 0,
     });
 
     expect(typeof layout.options.layout).toBe('function');

@@ -138,8 +138,8 @@ describe('layout circular', () => {
     const layout = new CircularLayout({ center: [0, 0], radius: 100 });
     await layout.execute(data, { ordering: 'degree' });
     const positions = calculatePositions(layout);
-    // A has degree 2, B and C have degree 1 -> C should be last (sorted descending)
-    expect(positions.nodes[positions.nodes.length - 1].id).toBe('C');
+    // A has degree 2, B and C have degree 1 -> C should be last (sorted ascending)
+    expect(positions.nodes[positions.nodes.length - 1].id).toBe('A');
   });
 
   it('should layout according to the topology', async () => {

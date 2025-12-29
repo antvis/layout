@@ -395,16 +395,19 @@ export class D3ForceLayout<
   }
 
   private getCollisionOptions(options: T): D3ForceLayoutOptions['collide'] {
-    if (options.preventOverlap === false && options.collide === false)
+    if (
+      options.preventOverlap === false &&
+      (options.collide === false || options.collide === undefined)
+    )
       return undefined;
 
     const radius =
       options.nodeSize || options.nodeSpacing
         ? (d: NodeDatum) =>
-              formatNodeSizeFn(
-                options.nodeSize,
-                options.nodeSpacing,
-              )(d._original) / 2
+            formatNodeSizeFn(
+              options.nodeSize,
+              options.nodeSpacing,
+            )(d._original) / 2
         : undefined;
 
     return assignDefined({}, options.collide || {}, {

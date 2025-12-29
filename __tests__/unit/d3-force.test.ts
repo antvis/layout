@@ -431,6 +431,28 @@ describe('layout d3-force', () => {
   });
 
   it('should render lattice', async () => {
+    function getData(size = 10) {
+      const nodes = Array.from({ length: size * size }, (_, i) => ({
+        id: `${i}`,
+      }));
+      const edges = [];
+      for (let y = 0; y < size; ++y) {
+        for (let x = 0; x < size; ++x) {
+          if (y > 0)
+            edges.push({
+              source: `${(y - 1) * size + x}`,
+              target: `${y * size + x}`,
+            });
+          if (x > 0)
+            edges.push({
+              source: `${y * size + (x - 1)}`,
+              target: `${y * size + x}`,
+            });
+        }
+      }
+      return { nodes, edges };
+    }
+
     const d3Force = new D3ForceLayout({
       width,
       height,
@@ -443,7 +465,7 @@ describe('layout d3-force', () => {
         iterations: 10,
       },
     });
-    await d3Force.execute(data);
+    await d3Force.execute(getData());
     await renderLayout(d3Force);
     await expect(canvas).toMatchSnapshot(__filename, 'lattice');
   });
