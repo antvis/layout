@@ -1,3 +1,6 @@
+/**
+ * @jest-environment node
+ */
 import { normalizeViewport } from '@/src/util/viewport';
 
 describe('viewport', () => {
@@ -35,9 +38,11 @@ describe('viewport', () => {
     });
 
     test('should use zero dimensions when width and height not provided and window is undefined', () => {
-      const originalWindow = global.window;
-      // @ts-ignore
-      delete global.window;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const originalWindow = (globalThis as any).window;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (globalThis as any).window = undefined;
+      expect((globalThis as any).window).toBeUndefined();
 
       const result = normalizeViewport({});
 
@@ -45,7 +50,8 @@ describe('viewport', () => {
       expect(result.height).toBe(0);
       expect(result.center).toEqual([0, 0]);
 
-      global.window = originalWindow;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (globalThis as any).window = originalWindow;
     });
 
     test('should handle zero width and height', () => {
@@ -70,9 +76,11 @@ describe('viewport', () => {
     });
 
     test('should handle only width provided', () => {
-      const originalWindow = global.window;
-      // @ts-ignore
-      delete global.window;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const originalWindow = (globalThis as any).window;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (globalThis as any).window = undefined;
+      expect((globalThis as any).window).toBeUndefined();
 
       const result = normalizeViewport({
         width: 800,
@@ -82,13 +90,16 @@ describe('viewport', () => {
       expect(result.height).toBe(0);
       expect(result.center).toEqual([400, 0]);
 
-      global.window = originalWindow;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (globalThis as any).window = originalWindow;
     });
 
     test('should handle only height provided', () => {
-      const originalWindow = global.window;
-      // @ts-ignore
-      delete global.window;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const originalWindow = (globalThis as any).window;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (globalThis as any).window = undefined;
+      expect((globalThis as any).window).toBeUndefined();
 
       const result = normalizeViewport({
         height: 600,
@@ -98,7 +109,8 @@ describe('viewport', () => {
       expect(result.height).toBe(600);
       expect(result.center).toEqual([0, 300]);
 
-      global.window = originalWindow;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (globalThis as any).window = originalWindow;
     });
 
     test('should handle large dimensions', () => {

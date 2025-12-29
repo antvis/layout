@@ -11,23 +11,16 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 20
-
-      - uses: pnpm/action-setup@v2
-        name: Install pnpm
-        with:
-          version: 9
-          run_install: false
+          cache: npm
 
       - name: Install Dependencies
-        run: pnpm install --no-frozen-lockfile
+        run: npm ci
 
       - name: build
-        run: |
-          pnpm run ci
+        run: npm run build
 
       - name: test
-        run: |
-          pnpm test
+        run: npm test
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v5
