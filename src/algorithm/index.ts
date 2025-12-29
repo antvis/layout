@@ -1,5 +1,9 @@
 export { AntVDagreLayout, type AntVDagreLayoutOptions } from './antv-dagre';
-export { BaseLayout, type BaseLayoutOptions } from './base-layout';
+export {
+  BaseLayout,
+  isLayoutWithIterations,
+  type BaseLayoutOptions,
+} from './base-layout';
 export { CircularLayout, type CircularLayoutOptions } from './circular';
 export {
   ComboCombinedLayout,

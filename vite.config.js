@@ -4,7 +4,7 @@ import { defineConfig } from 'vite';
 export default defineConfig({
   root: './__tests__',
   server: {
-    port: 8080,
+    port: Number(process.env.PORT) || 5173,
     open: '/',
   },
   resolve: {

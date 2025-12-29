@@ -8,9 +8,9 @@
   "unpkg": "dist/index.min.js",
   "exports": {
     ".": {
+      "types": "./lib/index.d.ts",
       "import": "./lib/index.js",
-      "require": "./dist/index.js",
-      "types": "./lib/index.d.ts"
+      "require": "./dist/index.js"
     },
     "./worker": {
       "import": "./lib/worker.js",
