@@ -36,6 +36,8 @@ describe('layout d3-force', () => {
     await d3Force.execute(data, {
       width,
       height,
+      x: {},
+      y: {},
     });
 
     await renderLayout(d3Force);
@@ -81,6 +83,8 @@ describe('layout d3-force', () => {
       width,
       height,
       onTick,
+      x: {},
+      y: {},
     });
     await renderLayout(d3Force);
     await expect(canvas).toMatchSnapshot(__filename, 'specified-viewport');
@@ -91,6 +95,8 @@ describe('layout d3-force', () => {
       width,
       height,
       nodeStrength: -20,
+      x: {},
+      y: {},
     });
     await d3Force.execute(data);
     await renderLayout(d3Force);
@@ -102,6 +108,8 @@ describe('layout d3-force', () => {
       linkDistance: 100,
       width,
       height,
+      x: {},
+      y: {},
     });
     await d3Force.execute(data);
     await renderLayout(d3Force);
@@ -114,6 +122,8 @@ describe('layout d3-force', () => {
       height,
       preventOverlap: true,
       nodeSize: 20,
+      x: {},
+      y: {},
     });
     await d3Force.execute(data);
     await renderLayout(d3Force);
@@ -144,6 +154,8 @@ describe('layout d3-force', () => {
       radialRadius: 100,
       radialX: 250,
       radialY: 250,
+      x: {},
+      y: {},
     });
     await d3Force.execute(radialGraph);
     await renderLayout(d3Force);
@@ -217,6 +229,8 @@ describe('layout d3-force', () => {
     await d3Force.execute(starGraph, {
       width,
       height,
+      x: {},
+      y: {},
     });
     renderLayout(d3Force);
     await expect(canvas).toMatchSnapshot(__filename, 'star-graph');
@@ -269,6 +283,8 @@ describe('layout d3-force', () => {
         x: d.data.x,
         y: d.data.y,
       }),
+      x: {},
+      y: {},
     });
     d3Force.forEachNode((node) => {
       expect(typeof node.x).toBe('number');
@@ -303,6 +319,8 @@ describe('layout d3-force', () => {
       clusterEdgeDistance: 150,
       clusterFociStrength: 0.9,
       clusterNodeSize: 15,
+      x: {},
+      y: {},
     });
     await d3Force.execute(clusterGraph);
     await renderLayout(d3Force);
@@ -317,6 +335,8 @@ describe('layout d3-force', () => {
       forceXStrength: 0.3,
       forceYPosition: 350,
       forceYStrength: 0.3,
+      x: {},
+      y: {},
     });
     await d3Force.execute(data);
     await renderLayout(d3Force);
@@ -348,6 +368,8 @@ describe('layout d3-force', () => {
       width,
       height,
       forceSimulation: customSimulation,
+      x: {},
+      y: {},
     });
 
     await d3Force.execute(data);
@@ -399,6 +421,8 @@ describe('layout d3-force', () => {
       nodeStrength: (d) => (d.id === 'a' ? -50 : -30),
       linkDistance: (d) => (d.source === 'a' ? 100 : 50),
       edgeStrength: (d) => (d.source === 'a' ? 0.8 : 0.5),
+      x: {},
+      y: {},
     });
 
     await d3Force.execute(data);
@@ -418,8 +442,6 @@ describe('layout d3-force', () => {
         distance: 20,
         iterations: 10,
       },
-      x: false,
-      y: false,
     });
     await d3Force.execute(data);
     await renderLayout(d3Force);

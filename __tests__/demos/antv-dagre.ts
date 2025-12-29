@@ -7,137 +7,105 @@ import { GraphRenderer } from '../utils/renderer';
 const data = {
   nodes: [
     {
-      id: '0',
-    },
-    {
       id: '1',
+      data: {
+        name: 'alps_file1',
+      },
     },
     {
       id: '2',
+      data: {
+        name: 'alps_file2',
+      },
     },
     {
       id: '3',
+      data: {
+        name: 'alps_file3',
+      },
     },
     {
       id: '4',
-      combo: 'A',
+      data: {
+        name: 'sql_file1',
+      },
     },
     {
       id: '5',
-      combo: 'B',
+      data: {
+        name: 'sql_file2',
+      },
     },
     {
       id: '6',
-      combo: 'A',
+      data: {
+        name: 'feature_etl_1',
+      },
     },
     {
       id: '7',
-      combo: 'C',
+      data: {
+        name: 'feature_etl_1',
+      },
     },
     {
       id: '8',
-      combo: 'C',
-    },
-    {
-      id: '9',
-      combo: 'A',
-    },
-    {
-      id: '10',
-      combo: 'B',
-    },
-    {
-      id: '11',
-      combo: 'B',
+      data: {
+        name: 'feature_extractor',
+      },
     },
   ],
   edges: [
     {
-      id: 'edge-102',
-      source: '0',
-      target: '1',
-    },
-    {
-      id: 'edge-161',
-      source: '0',
+      id: 'e1',
+      data: {},
+      source: '1',
       target: '2',
     },
     {
-      id: 'edge-237',
+      id: 'e2',
+      data: {},
       source: '1',
-      target: '4',
-    },
-    {
-      id: 'edge-253',
-      source: '0',
       target: '3',
     },
     {
-      id: 'edge-133',
+      id: 'e3',
+      data: {},
+      source: '2',
+      target: '4',
+    },
+    {
+      id: 'e4',
+      data: {},
       source: '3',
       target: '4',
     },
     {
-      id: 'edge-320',
-      source: '2',
+      id: 'e5',
+      data: {},
+      source: '4',
       target: '5',
     },
     {
-      id: 'edge-355',
-      source: '1',
+      id: 'e6',
+      data: {},
+      source: '5',
       target: '6',
     },
     {
-      id: 'edge-823',
-      source: '1',
+      id: '7',
+      data: {},
+      source: '6',
       target: '7',
     },
     {
-      id: 'edge-665',
-      source: '3',
+      id: 'e8',
+      data: {},
+      source: '6',
       target: '8',
-    },
-    {
-      id: 'edge-884',
-      source: '3',
-      target: '9',
-    },
-    {
-      id: 'edge-536',
-      source: '5',
-      target: '10',
-    },
-    {
-      id: 'edge-401',
-      source: '5',
-      target: '11',
-    },
-  ],
-  combos: [
-    {
-      id: 'A',
-      style: {
-        type: 'rect',
-      },
-    },
-    {
-      id: 'B',
-      style: {
-        type: 'rect',
-      },
-    },
-    {
-      id: 'C',
-      style: {
-        type: 'rect',
-      },
     },
   ],
 };
-
-data.nodes.push(
-  ...data.combos.map((combo: any) => ({ ...combo, isCombo: true })),
-);
 
 export function render(gui?: GUI) {
   const canvas = new Canvas({
@@ -150,13 +118,12 @@ export function render(gui?: GUI) {
   const renderer = new GraphRenderer(canvas);
 
   const dagre = new AntVDagreLayout({
-    node: (d) => ({
-      parentId: d.combo,
-    }),
-    nodeSize: [60, 30],
-    ranksep: 50,
-    nodesep: 0,
-    sortByCombo: true,
+
+    nodeSize: 10,
+    // ranksep: () => 70,
+    // controlPoints: true,
+    // begin: [0, 0],
+    // align: 'UR',
   });
 
   const relayout = async (options = {}) => {

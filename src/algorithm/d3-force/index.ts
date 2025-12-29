@@ -28,12 +28,17 @@ const DEFAULTS_LAYOUT_OPTIONS: Partial<D3ForceLayoutOptions> = {
   link: {
     id: (d) => String(d.id),
   },
+
   manyBody: {
     strength: -30,
   },
+
   preventOverlap: false,
   nodeSize: 10,
   nodeSpacing: 0,
+
+  x: false,
+  y: false,
 
   clustering: false,
   clusterNodeStrength: -1,

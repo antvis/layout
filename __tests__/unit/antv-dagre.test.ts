@@ -201,7 +201,7 @@ describe('DagreLayout', () => {
     // +---+       +---+
     const dagre = new AntVDagreLayout({
       nodeSize: 10,
-      ranksep: () => 70,
+      ranksepFunc: () => 70,
       controlPoints: true,
       begin: [0, 0],
       align: 'UR',
