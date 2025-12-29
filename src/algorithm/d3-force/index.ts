@@ -182,12 +182,6 @@ export class D3ForceLayout<
 
   protected parseOptions(options: Partial<T>): T {
     const _ = options;
-    // process nodeSize
-    if (_.collide && _.collide?.radius === undefined) {
-      _.collide = _.collide || {};
-      // @ts-ignore
-      _.collide.radius = _.nodeSize ?? 10;
-    }
     // process iterations
     if (_.iterations === undefined) {
       if (_.link && _.link.iterations === undefined) {
@@ -401,20 +395,20 @@ export class D3ForceLayout<
   }
 
   private getCollisionOptions(options: T): D3ForceLayoutOptions['collide'] {
-    if (options.preventOverlap === false || options.collide === false)
+    if (options.preventOverlap === false && options.collide === false)
       return undefined;
 
     const radius =
       options.nodeSize || options.nodeSpacing
         ? (d: NodeDatum) =>
-            formatNodeSizeFn(
-              options.nodeSize,
-              options.nodeSpacing,
-            )(d._original) / 2
+              formatNodeSizeFn(
+                options.nodeSize,
+                options.nodeSpacing,
+              )(d._original) / 2
         : undefined;
 
     return assignDefined({}, options.collide || {}, {
-      radius: options.collide || radius,
+      radius: (options.collide && options.collide.radius) || radius,
       strength: options.collideStrength,
       iterations: options.collideIterations,
     });
