@@ -1,9 +1,9 @@
 import { isNumber } from '@antv/util';
-import { BaseLayout } from '../base-layout';
 import type { NodeData, PointObject } from '../../types';
 import { parsePoint } from '../../util';
 import { formatNumberFn, formatSizeFn } from '../../util/format';
 import { parseSize } from '../../util/size';
+import { BaseLayout } from '../base-layout';
 import { DagreGraph, GraphNode } from './graph';
 import { layout } from './layout';
 import { AntVDagreLayoutOptions } from './types';
@@ -50,18 +50,15 @@ export class AntVDagreLayout extends BaseLayout<AntVDagreLayoutOptions> {
       sortByCombo,
       // focusNode,
       preset,
+      ranksepFunc,
+      nodesepFunc,
     } = options;
 
-    const ranksepfunc = formatNumberFn(
-      ranksep,
-      DEFAULTS_LAYOUT_OPTIONS.ranksep as number,
-    );
-    const nodesepfunc = formatNumberFn(
-      nodesep,
-      DEFAULTS_LAYOUT_OPTIONS.nodesep as number,
-    );
+    const ranksepfunc = formatNumberFn(ranksepFunc, ranksep ?? 50);
+    const nodesepfunc = formatNumberFn(nodesepFunc, nodesep ?? 50);
     let horisep: (d?: NodeData | undefined) => number = nodesepfunc;
     let vertisep: (d?: NodeData | undefined) => number = ranksepfunc;
+
     if (rankdir === 'LR' || rankdir === 'RL') {
       horisep = ranksepfunc;
       vertisep = nodesepfunc;
@@ -80,9 +77,10 @@ export class AntVDagreLayout extends BaseLayout<AntVDagreLayoutOptions> {
     const edges = this.model.edges();
 
     nodes.forEach((node) => {
-      const size = parseSize(nodeSizeFunc(node));
-      const verti = vertisep(node);
-      const hori = horisep(node);
+      const raw = node._original;
+      const size = parseSize(nodeSizeFunc(raw));
+      const verti = vertisep(raw);
+      const hori = horisep(raw);
       const width = size[0] + 2 * hori;
       const height = size[1] + 2 * verti;
       const layer = node.data?.layer;
@@ -150,6 +148,7 @@ export class AntVDagreLayout extends BaseLayout<AntVDagreLayoutOptions> {
       acyclicer: 'greedy',
       ranker,
       rankdir,
+      nodesep,
       align,
     });
 

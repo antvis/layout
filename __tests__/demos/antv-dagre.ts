@@ -154,10 +154,9 @@ export function render(gui?: GUI) {
       parentId: d.combo,
     }),
     nodeSize: [60, 30],
-    ranksep: 40,
-    nodesep: 10,
+    ranksep: 50,
+    nodesep: 0,
     sortByCombo: true,
-    controlPoints: true,
   });
 
   const relayout = async (options = {}) => {
