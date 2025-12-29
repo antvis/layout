@@ -1,8 +1,8 @@
 import { isNil } from '@antv/util';
-import { BaseLayout } from '../base-layout';
 import { normalizeViewport, orderByDegree, orderByTopology } from '../../util';
 import { applySingleNodeLayout } from '../../util/common';
 import { formatNodeSizeFn } from '../../util/format';
+import { BaseLayout } from '../base-layout';
 import type { CircularLayoutOptions } from './types';
 
 export type { CircularLayoutOptions };
@@ -61,7 +61,7 @@ export class CircularLayout extends BaseLayout<CircularLayoutOptions> {
       orderByTopology(this.model, true);
     } else if (ordering === 'degree') {
       // layout according to the descent order of degrees
-      orderByDegree(this.model);
+      orderByDegree(this.model, 'asc');
     }
 
     let { radius, startRadius, endRadius } = this.options;

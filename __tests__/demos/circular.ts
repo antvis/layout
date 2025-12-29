@@ -1,6 +1,6 @@
 import { CircularLayout } from '@/src';
 import type { GUI } from 'lil-gui';
-import { countries as data } from '../dataset';
+import { radial as data } from '../dataset';
 import { GraphRenderer } from '../utils/renderer';
 
 export function render(gui?: GUI) {
@@ -10,12 +10,17 @@ export function render(gui?: GUI) {
     center: [250, 250],
     radius: 200,
     nodeSize: 20,
+      startAngle: Math.PI / 4,
+      endAngle: Math.PI,
+      divisions: 5,
+      ordering: 'degree',
   });
 
   const relayout = async (options = {}) => {
     await circular.execute(data, options);
     renderer.render(circular, {
       nodeRadius: 10,
+      showLabel: true,
       nodeStyle: { stroke: '#F875AA', lineWidth: 1 },
     });
   };

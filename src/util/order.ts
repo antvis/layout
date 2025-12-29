@@ -24,10 +24,14 @@ function sort<N extends NodeData = NodeData>(
 
 export function orderByDegree<N extends NodeData = NodeData>(
   model: GraphLib<N>,
+  order: 'asc' | 'desc' = 'desc',
 ): GraphLib<N> {
   return sort(model, (nodeA, nodeB) => {
     const degreeA = model.degree(nodeA.id);
     const degreeB = model.degree(nodeB.id);
+    if(order === 'asc') {
+      return degreeA - degreeB; // ascending order
+    }
     return degreeB - degreeA; // descending order
   });
 }
