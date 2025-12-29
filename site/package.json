@@ -1,8 +1,9 @@
 {
-  "name": "site",
-  "version": "1.0.0",
+  "name": "@antv/layout-site",
   "description": "Documentation site for @antv/layout",
+  "version": "1.0.0",
   "private": true,
+  "license": "MIT",
   "scripts": {
     "dev": "rspress dev",
     "build": "rspress build",
@@ -10,13 +11,11 @@
   },
   "keywords": [],
   "author": "yvonneyx",
-  "license": "ISC",
-  "packageManager": "pnpm@10.20.0",
   "devDependencies": {
     "@rspress/plugin-playground": "^1.47.0",
     "rspress": "^1.47.0",
     "@antv/g-canvas": "^1.11.27",
     "@antv/g-lite": "^2.5.1",
-    "@antv/layout": "workspace:*"
+    "@antv/layout": "file:../"
   }
 }

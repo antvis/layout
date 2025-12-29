@@ -1,11 +1,31 @@
 {
   "compilerOptions": {
-    "noImplicitAny": true,
-    "module": "esnext",
-    "target": "es5",
+    "baseUrl": ".",
+    "allowSyntheticDefaultImports": true,
+    "composite": true,
+    "declaration": true,
+    "esModuleInterop": true,
+    "experimentalDecorators": false /* Enables experimental support for ES7 decorators. */,
+    "forceConsistentCasingInFileNames": true,
+    "importHelpers": true,
+    "isolatedModules": true,
     "jsx": "react",
-    "allowJs": true,
+    "lib": ["esnext", "dom"],
+    "module": "esnext",
     "moduleResolution": "node",
-    "allowSyntheticDefaultImports": true
-  }
+    "pretty": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "sourceMap": true,
+    "sourceRoot": "src",
+    "strict": true,
+    "target": "es2015",
+    "types": ["@types/jest", "node"],
+    "paths": {
+      "@/*": ["./*"],
+      "@@/*": ["__tests__/*"]
+    }
+  },
+  "exclude": ["node_modules", "dist", "lib", "esm"],
+  "include": ["src/**/*", "__tests__/**/*"]
 }

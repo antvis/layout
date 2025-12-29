@@ -22,6 +22,5 @@
     "vparam",
     "Warshall",
     "Xlarge"
-  ],
-  "rust-analyzer.linkedProjects": ["./packages/layout-rust/Cargo.toml"]
+  ]
 }

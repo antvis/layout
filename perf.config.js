@@ -13,7 +13,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '@antv/layout': path.resolve(__dirname, './packages/layout/src'),
+      '@antv/layout': path.resolve(__dirname, './src'),
     },
   },
 });
