@@ -1,4 +1,4 @@
-import type { ModelOptions } from '../algorithm/types';
+import type { DataOptions } from '../algorithm/types';
 import { GraphLib } from '../model/data';
 import type {
   EdgeData,
@@ -15,7 +15,7 @@ export class RuntimeContext<
 > {
   public readonly graph: GraphLib<N, E>;
 
-  constructor(data: GraphData<N, E>, options: ModelOptions<N, E> = {}) {
+  constructor(data: GraphData<N, E>, options: DataOptions<N, E> = {}) {
     this.graph = new GraphLib<N, E>(data, options);
   }
 

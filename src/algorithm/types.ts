@@ -8,7 +8,7 @@ import type {
   Point,
 } from '../types';
 
-export interface ModelOptions<
+export interface DataOptions<
   N extends NodeData = NodeData,
   E extends EdgeData = EdgeData,
 > {
@@ -38,10 +38,10 @@ export interface ModelOptions<
   };
 }
 
-export interface Options<
+export interface BaseLayoutOptions<
   N extends NodeData = NodeData,
   E extends EdgeData = EdgeData,
-> extends ModelOptions<N, E> {
+> extends DataOptions<N, E> {
   /**
    * <zh/> 布局中心
    *
@@ -73,7 +73,7 @@ export interface Options<
   [key: string]: any;
 }
 
-export interface Algorithm<O> {
+export interface Layout<O extends BaseLayoutOptions = BaseLayoutOptions> {
   /**
    * <zh/> 执行布局计算
    *
@@ -110,8 +110,9 @@ export interface Algorithm<O> {
   id: string;
 }
 
-export interface IterativeAlgorithm<O extends Options = Options>
-  extends Algorithm<O> {
+export interface LayoutWithIterations<
+  O extends BaseLayoutOptions = BaseLayoutOptions,
+> extends Layout<O> {
   /**
    * <zh/> 停止布局计算
    *
@@ -143,22 +144,6 @@ export interface IterativeAlgorithm<O extends Options = Options>
    */
   setFixedPosition(nodeId: string, position: Point | null): void;
 }
-
-export type LayoutModelOptions<
-  N extends NodeData = NodeData,
-  E extends EdgeData = EdgeData,
-> = ModelOptions<N, E>;
-
-export type BaseLayoutOptions<
-  N extends NodeData = NodeData,
-  E extends EdgeData = EdgeData,
-> = Options<N, E>;
-
-export type Layout<LayoutOptions> = Algorithm<LayoutOptions>;
-
-export type LayoutWithIterations<
-  LayoutOptions extends BaseLayoutOptions = BaseLayoutOptions,
-> = IterativeAlgorithm<LayoutOptions>;
 
 export interface SimulationOptions {
   /**

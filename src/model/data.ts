@@ -1,5 +1,5 @@
 import { isNil } from '@antv/util';
-import type { ModelOptions } from '../algorithm/types';
+import type { DataOptions } from '../algorithm/types';
 import type {
   EdgeData,
   Graph,
@@ -28,7 +28,7 @@ export class GraphLib<
 
   private edgeIdCounter: Map<string, number> = new Map();
 
-  constructor(data: GraphData<N, E>, options: ModelOptions<N, E> = {}) {
+  constructor(data: GraphData<N, E>, options: DataOptions<N, E> = {}) {
     this.nodeMap = extractNodeData<N>(data.nodes, options.node);
     this.edgeMap = extractEdgeData<E>(
       data.edges || [],
