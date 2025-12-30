@@ -66,6 +66,7 @@
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-config-prettier": "^6.15.0",
     "eslint-plugin-import": "^2.29.1",
+    "gh-pages": "^6.3.0",
     "husky": "^7.0.4",
     "interactjs": "^1.10.27",
     "jest": "^30.2.0",
@@ -101,7 +102,8 @@
     "size": "limit-size",
     "test:coverage:open": "open-cli coverage/lcov-report/index.html",
     "test:coverage": "jest --coverage",
-    "test": "jest"
+    "test": "jest",
+    "deploy": "gh-pages -d site/doc_build"
   },
   "publishConfig": {
     "access": "public",
