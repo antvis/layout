@@ -1,2 +1,120 @@
 :root {
 }
+
+/* Landing cards */
+.layoutIntroCards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 14px;
+  margin: 32px 0 12px;
+}
+
+.layoutCard {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 16px 16px 14px;
+  border-radius: 14px;
+  border: 1px solid var(--rp-c-divider-light);
+  background: linear-gradient(180deg, var(--rp-c-bg) 0%, var(--rp-c-bg-soft) 100%);
+  text-decoration: none;
+  color: var(--rp-c-text-1);
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.04);
+  transition:
+    transform 150ms ease,
+    box-shadow 150ms ease,
+    border-color 150ms ease;
+}
+
+.layoutCard::after {
+  content: '→';
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  color: var(--rp-c-text-3);
+  transition:
+    transform 150ms ease,
+    color 150ms ease;
+}
+
+.layoutCard:hover {
+  transform: translateY(-1px);
+  border-color: var(--rp-c-brand);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
+}
+
+.layoutCard:hover::after {
+  color: var(--rp-c-brand);
+  transform: translateX(2px);
+}
+
+.layoutCardTitle {
+  padding-right: 22px;
+  font-size: 16px;
+  font-weight: 650;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+}
+
+.layoutCardDesc {
+  color: var(--rp-c-text-2);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.layoutCard--compact {
+  padding: 14px 14px 12px;
+  border-radius: 12px;
+}
+
+.layoutCard--compact .layoutCardTitle {
+  font-size: 15px;
+}
+
+.layoutCard--compact .layoutCardDesc {
+  font-size: 12.5px;
+}
+
+/* Layout index (2-column definition list) */
+.layoutIndexGrid {
+  display: grid;
+  grid-template-columns: 160px 1fr;
+  gap: 12px 18px;
+  margin-top: 10px;
+}
+
+.layoutIndexLabel {
+  font-weight: 650;
+  line-height: 1.35;
+  color: var(--rp-c-text-1);
+}
+
+.layoutIndexContent {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.layoutIndexItem {
+  color: var(--rp-c-text-2);
+  line-height: 1.45;
+}
+
+.layoutIndexItem a {
+  font-weight: 650;
+  color: var(--rp-c-text-1);
+  text-decoration: none;
+}
+
+.layoutIndexItem a:hover {
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 2px;
+}
+
+@media (max-width: 640px) {
+  .layoutIndexGrid {
+    grid-template-columns: 1fr;
+  }
+}

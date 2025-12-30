@@ -1,0 +1,100 @@
+# 图布局配置
+
+本页聚焦如何组织配置，包括通用配置项、常见组合方式，以及选择布局的实践建议。内容涵盖尺寸与中心、节点大小、防重叠、Worker 与热启动等主题。
+
+## 先理解：Options 是怎么合并的？
+
+每个布局的构造函数接受 `initialOptions`，`execute(data, userOptions?)` 接受 `userOptions`。执行时会合并两者：
+
+- 合并策略：浅合并，同名字段后者覆盖前者
+- 优先级：`userOptions` > `initialOptions` > 布局默认值
+
+这意味着：
+
+- 你可以把长期不变的参数放到构造函数里，例如 `width/height`、`enableWorker`。
+- 把每次执行变化的参数放到 `execute` 里，例如 `center`、`nodeSpacing`。
+
+## 通用配置：BaseLayoutOptions
+
+所有布局都支持的公共字段来自 `BaseLayoutOptions`：
+
+- `width` / `height`：布局的参考尺寸。多数布局会基于该值推导默认中心或缩放范围。
+- `center`：布局中心（2D 为 `[x, y]`，3D 可用 `[x, y, z]`）
+- `enableWorker`：是否尝试在 WebWorker 内执行。不可用时会自动回退到主线程。
+- `node` / `edge`：数据映射，用于把业务字段映射到布局所需的 `id/source/target/x/y/...`
+
+想看字段映射的细节与示例，请阅读：[数据转换](./data-mapping)
+
+## 结果读取：forEachNode / forEachEdge
+
+`execute()` 不会修改你传入的 `data`；结果通过遍历方法读取：
+
+```ts
+layout.forEachNode((node) => {
+  // node.id / node.x / node.y / node.z?
+  // node._original 指向原始业务节点对象
+  node._original.x = node.x;
+  node._original.y = node.y;
+});
+```
+
+边的输出字段与布局有关：
+
+- 力导向类一般只需要 `source/target` 来施加力
+- Dagre/AntV-Dagre 可能会输出 `edge.points`、`edge.labelPos` 等字段，用于折线与标签避让等场景。
+
+## Worker：什么时候开、怎么开？
+
+### 什么时候建议开启
+
+- 大图与迭代布局更适合开启，例如力导向、ForceAtlas2、Fruchterman、D3Force。
+- UI 线程需要保持交互流畅，例如拖拽、缩放或动画渲染。
+
+### 怎么开启
+
+```ts
+const layout = new ForceAtlas2Layout({ enableWorker: true });
+await layout.execute(data);
+```
+
+注意事项：
+
+- 仅在浏览器环境且 `Worker` 可用时生效。在不支持 Worker 的环境下会自动回退到主线程。
+- 打包/部署时需要确保构建工具能够加载库提供的 Worker 入口。不同框架对 Worker 与静态资源的处理方式不同，建议结合实际工程验证。
+- 通过 CDN 引入 UMD 构建时，Worker 地址会根据脚本 URL 自动推导为同目录下的 `worker.js`。相关说明见：[安装](./installation)。
+
+## 热启动（利用已有坐标）
+
+很多布局会使用节点的初始坐标作为热启动，以减少抖动并加速收敛。你可以：
+
+- 直接在数据里提供 `x/y`（标准字段）
+- 或通过 `node` 映射把业务坐标映射到 `x/y`
+
+```ts
+const layout = new ForceLayout({
+  node: (n) => ({ id: n.id, x: n.pos?.x, y: n.pos?.y }),
+});
+```
+
+## 节点大小与防重叠：如何“真正生效”
+
+不少布局的“防重叠/碰撞检测”依赖节点大小：
+
+- 你可以在业务节点上提供 `size`（并通过 `_original` 被布局消费）
+- 或在布局配置里提供 `nodeSize`（通常是 number/size 或回调）
+
+常见误区：
+
+- 只设置了 `preventOverlap: true`，但没提供 `size/nodeSize`，碰撞检测无法准确工作
+
+## 选择布局：一个实用的起点
+
+- **Dagre / AntV-Dagre**：流程图 / DAG / 层次结构（需要边走向、层间距等）
+- **Force / ForceAtlas2 / Fruchterman / D3Force**：通用关系图（可迭代、可动画）
+- **Circular / Concentric**：分组/秩序明确的环形展示
+- **Grid / Random**：初始铺排、占位、预处理
+- **MDS**：高维相似度投影（更适合距离矩阵/相似度驱动）
+- **Radial**：以某个中心辐射的层次/关系展示
+- **ComboCombined**：存在 Combo/子图时的复合布局（会按层级对子图选择布局）
+
+布局的具体配置项请阅读：[通用 API](../api/introduction) 与各布局页，例如 `Circular`、`Force`、`Dagre`。

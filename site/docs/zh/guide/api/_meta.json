@@ -1,1 +1,17 @@
-["circular"]
+[
+  "introduction",
+  "force",
+  "force-atlas2",
+  "fruchterman",
+  "d3-force",
+  "d3-force-3d",
+  "dagre",
+  "antv-dagre",
+  "combo-combined",
+  "circular",
+  "concentric",
+  "radial",
+  "grid",
+  "random",
+  "mds"
+]

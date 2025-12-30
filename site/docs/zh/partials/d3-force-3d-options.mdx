@@ -1,0 +1,10 @@
+## 3D 扩展
+
+`D3Force3DLayout` 在 2D 的基础上增加 z 轴相关的 force。节点结果会额外输出 `z`，并可能保留速度 `vz` 等中间量。
+
+| 配置项 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `numDimensions` | 维度，固定为 3。 | `3` | `3` |
+| `center` | 中心力，支持 z。 | `false \| { x?, y?, z?, strength? }` | - |
+| `radial` | 径向力，支持 z。 | `false \| { radius?, x?, y?, z?, strength? }` | - |
+| `z` | z 轴力 | `false \| { z?, strength? }` | - |

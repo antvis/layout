@@ -1,20 +1,14 @@
 # 快速开始
 
-## 📦 安装
-
-使用 npm 安装:
-
-```bash
-npm install @antv/layout
-```
+在开始之前，请先完成安装与引入：[安装](./installation)。
 
 ## 基础用法
 
-接下来介绍图布局算法的标准使用流程，仅需 **4 步** 即可完成布局计算。
+本节用最小流程说明如何执行一次布局计算，并读取结果。
 
 ### 1. 准备图数据
 
-`@antv/layout` 使用一种 **通用、轻量的图数据结构**：
+`@antv/layout` 使用统一的图数据结构：
 
 ```js
 const data = {
@@ -26,7 +20,7 @@ const data = {
 };
 ```
 
-数据结构包含 `nodes` 数组和可选的 `edges` 数组，每个节点需要 `id` 字段，每条边需要 `source` 和 `target` 字段。
+数据结构包含 `nodes` 数组与可选的 `edges` 数组。默认约定：节点使用 `id`，边使用 `source` / `target`。
 
 ### 2. 布局初始化
 
@@ -45,11 +39,11 @@ const layout = new CircularLayout({
 });
 ```
 
-这些参数也可以在执行时传入。
+构造参数也可以在执行时覆盖。
 
 ### 3. 执行布局
 
-调用 `execute` 开始计算布局，这过程中不会改变原始数据：
+调用 `execute` 开始计算布局（不会修改原始数据）：
 
 ```js
 await layout.execute(data);
@@ -82,19 +76,28 @@ layout.forEachEdge((edge) => {
 });
 ```
 
+## 清理资源
+
+布局实例会维护计算上下文，并且在启用 Worker 时可能持有 Worker 等资源；不再使用时建议调用 `destroy()`：
+
+```ts
+layout.destroy();
+```
+
 ## 完整示例
 
 下面是一个完整示例，我们将所有节点和边渲染出来。
 
 <code src="../../../components/CircularDemo.jsx" direction="vertical" />
 
-现在你应该能在页面上看到一个简单的圆形布局图。
+示例会在页面渲染一个简单的圆形布局结果。
 
 ## 下一步
 
 完成基础布局后，你可以：
 
-- 学习如何 [处理自定义数据结构](./data-mapping.mdx)
-- 查看 [API 完整文档](./api-reference.mdx)
+- 学习如何 [处理自定义数据结构](./data-mapping)
+- 学习如何 [组织布局配置](./layout-configuration)
+- 查看 [通用 API](../api/introduction)
 
-现在，你已经掌握了 `@antv/layout` 的基础用法，可以开始构建自己的图可视化应用了！
+至此，你已经具备将图数据交给布局算法并读取坐标结果的完整链路。
