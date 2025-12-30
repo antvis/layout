@@ -1,23 +1,23 @@
-## 通用配置
+### 通用配置
 
 以下配置项适用于所有布局，用于定义布局参考尺寸、中心点、Worker 与数据字段映射。
 
-| 配置项 | 说明 | 类型 | 默认值 |
-| --- | --- | --- | --- |
-| `width` / `height` | 布局参考尺寸。多数布局会基于该值推导默认中心或缩放范围。 | `number` | `undefined` |
-| `center` | 布局中心点。2D 使用 `[x, y]`，3D 使用 `[x, y, z]`。 | `[number, number] \| [number, number, number]` | `undefined`（由各布局决定） |
-| `enableWorker` | 是否在 Web Worker 中执行。Worker 不可用时会自动回退到主线程。 | `boolean` | `false/undefined`（由各布局决定） |
-| `node` | 节点字段映射，用于适配业务字段。 | `(datum) => ({ id?, x?, y?, z?, parentId?, isCombo? })` | `undefined` |
-| `edge` | 边字段映射，用于适配业务字段。 | `(datum) => ({ id?, source?, target? })` | `undefined` |
+| 配置项             | 说明                                                          | 类型                                                    | 默认值                            |
+| ------------------ | ------------------------------------------------------------- | ------------------------------------------------------- | --------------------------------- |
+| `width` / `height` | 布局参考尺寸。多数布局会基于该值推导默认中心或缩放范围。      | `number`                                                | `undefined`                       |
+| `center`           | 布局中心点。2D 使用 `[x, y]`，3D 使用 `[x, y, z]`。           | `[number, number] \| [number, number, number]`          | `undefined`（由各布局决定）       |
+| `enableWorker`     | 是否在 Web Worker 中执行。Worker 不可用时会自动回退到主线程。 | `boolean`                                               | `false/undefined`（由各布局决定） |
+| `node`             | 节点字段映射，用于适配业务字段。                              | `(datum) => ({ id?, x?, y?, z?, parentId?, isCombo? })` | `undefined`                       |
+| `edge`             | 边字段映射，用于适配业务字段。                                | `(datum) => ({ id?, source?, target? })`                | `undefined`                       |
 
-### node 映射字段
+#### node 映射字段
 
 - `id`：节点唯一标识，必需。
 - `x/y/z`：初始坐标，可选。用于热启动或连续布局。
 - `parentId`：父级 Combo id。用于复合或嵌套布局。
 - `isCombo`：是否为 Combo 节点。用于复合布局。
 
-### edge 映射字段
+#### edge 映射字段
 
 - `source` / `target`：端点节点 id，必需。需要能够对应到某个节点的 `id`。
 - `id`：边唯一标识，可选。未提供时会自动生成。

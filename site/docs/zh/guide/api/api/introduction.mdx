@@ -1,0 +1,115 @@
+import { Badge } from '@theme';
+import { DocCards } from '../../../../components/DocCards';
+
+# 通用 API <Badge text="Core" type="tip" />
+
+本页用例子说明 `@antv/layout` 的通用调用方式：准备数据、执行布局、读取结果，以及可选的迭代控制与生命周期方法。不同布局算法的差异主要体现在各自的 `LayoutOptions` 配置项。
+
+## 例子：最小可用流程
+
+```ts
+import { CircularLayout } from '@antv/layout';
+
+const data = {
+  nodes: [{ id: 'a' }, { id: 'b' }],
+  edges: [{ source: 'a', target: 'b' }],
+};
+
+const layout = new CircularLayout({ radius: 80 });
+await layout.execute(data);
+
+layout.forEachNode((node) => {
+  console.log(node.id, node.x, node.y);
+});
+```
+
+补充说明：
+
+- 输入数据默认使用 `id`（节点）与 `source/target`（边）。
+- 布局不会修改原始 `data`，结果通过遍历方法读取。
+- 构造时的 `initialOptions` 会与 `execute` 时的 `userOptions` 合并，规则见 [图布局配置](../start/layout-configuration)。
+
+## 输入
+
+```ts
+type GraphData = {
+  nodes: { [key: string]: any }[];
+  edges?: { [key: string]: any }[];
+};
+```
+
+补充说明：
+
+- 只传 `nodes` 也可以，`edges` 为可选。
+- 字段不一致时，用 `node` / `edge` 映射函数适配，见 [数据转换](../../start/data-mapping)。
+
+## 输出
+
+读取节点结果时常用：
+
+```ts
+layout.forEachNode((node) => {
+  console.log(node.id, node.x, node.y, node._original);
+});
+```
+
+补充说明：
+
+- `node.id`：映射后的节点 id
+- `node.x / node.y / node.z?`：布局坐标
+- `node._original`：指向原始业务节点对象（用于回写/取额外字段）
+
+读取边结果时常用：
+
+```ts
+layout.forEachEdge((edge) => {
+  console.log(edge.source, edge.target, edge._original);
+});
+```
+
+补充说明：
+
+- `edge.source / edge.target`：端点 id
+- `edge._original`：指向原始业务边对象
+- `edge.points / edge.labelPos / ...`：部分层次与流程图布局会输出控制点与标签信息
+
+不同布局可能会输出额外字段，建议以对应布局页为准，例如 [Dagre](../hierarchy/dagre)、[AntVDagre](../hierarchy/antv-dagre)、[ComboCombined](../combo/combo-combined)。
+
+## 数据字段不一致时
+
+当业务字段不是 `id/source/target`，用映射函数一次性适配：
+
+```ts
+const layout = new CircularLayout({
+  node: (n) => ({ id: n.key }),
+  edge: (e) => ({ source: e.from, target: e.to }),
+});
+```
+
+补充说明：
+
+- 映射只影响布局使用的字段，不会改动原始数据。
+- 更完整的映射方式见 [数据转换](../start/data-mapping)。
+
+## 迭代布局
+
+如果是仿真/迭代类布局，可以手动控制步进：
+
+```ts
+layout.tick(10);
+layout.stop();
+layout.restart();
+```
+
+补充说明：
+
+- 不是所有布局都有 `tick/stop/restart`。
+- 可用 `isLayoutWithIterations` 判断是否支持迭代能力，导出位置与内置布局列表见 [公共 API](./public-api)。
+
+## destroy
+
+布局实例会维护计算上下文（启用 Worker 时还可能持有 Worker）。不再使用时建议调用：
+
+```ts
+layout.destroy();
+```

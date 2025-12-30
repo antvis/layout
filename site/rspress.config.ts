@@ -8,7 +8,20 @@ const base =
 export default defineConfig({
   root: 'docs',
   base,
-  logoText: '@antv/layout',
+  logoText: 'AntV Layout',
+  head: [
+    [
+      'link',
+      {
+        rel: 'icon',
+        href: 'https://gw.alipayobjects.com/zos/antfincdn/FLrTNDvlna/antv.png',
+      },
+    ],
+  ],
+
+  route: {
+    cleanUrls: true,
+  },
 
   // 默认语言
   lang: 'en',

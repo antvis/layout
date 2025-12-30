@@ -1,0 +1,81 @@
+import { Badge } from '@theme';
+import { DocCards } from '../../../../components/DocCards';
+import CommonLayoutOptions from '../../../partials/common-layout-options.mdx';
+import ForceIterativeOptions from '../../../partials/force-iterative-options.mdx';
+
+# Force 力导向布局 <Badge text="Iterative" type="info" />
+
+Force 布局提供可配置程度较高的力导向能力，包括边长度、节点斥力与引力、向心力与聚类等。适合需要细粒度调参与过程控制的场景。
+
+<img width="400" src="https://gw.alipayobjects.com/mdn/rms_f8c6a0/afts/img/A*Ce2WSIlo_fcAAAAAAAAAAABkARQnAQ" />
+
+## 适用场景
+
+- 需要对力模型进行细粒度控制
+- 需要聚类、向心力与监控回调等工程能力
+
+## 输入要求
+
+- 节点需要可唯一标识的 `id`
+- 推荐提供 `edges`，因为力模型依赖边关系。无边图仍可运行，但结果更接近散点排布。
+
+## 用法
+
+```ts
+import { ForceLayout } from '@antv/layout';
+
+const layout = new ForceLayout({ width: 800, height: 600, linkDistance: 200 });
+await layout.execute(data);
+```
+
+## 配置项
+
+<CommonLayoutOptions />
+
+<ForceIterativeOptions />
+
+### 算法配置
+
+Force 的配置项较多，以下列出完整字段：
+
+| 配置项                | 说明                                                     | 类型                                       | 默认值      |
+| --------------------- | -------------------------------------------------------- | ------------------------------------------ | ----------- |
+| `linkDistance`        | 边长度                                                   | `number \| (edge, source, target)=>number` | `200`       |
+| `nodeStrength`        | 节点作用力。正值表示引力，负值表示斥力。                 | `number \| (node)=>number`                 | `1000`      |
+| `edgeStrength`        | 边的引力大小                                             | `number \| (edge)=>number`                 | `50`        |
+| `preventOverlap`      | 是否防重叠。启用时需要配合 `nodeSize`。                  | `boolean`                                  | `true`      |
+| `nodeSize`            | 节点大小，用于碰撞检测。                                 | `Size \| (node)=>Size`                     | `undefined` |
+| `nodeSpacing`         | 节点间距                                                 | `number \| (node)=>number`                 | `undefined` |
+| `damping`             | 阻尼系数，取值范围为 `[0, 1]`。                          | `number`                                   | `0.9`       |
+| `maxSpeed`            | 单次迭代的最大移动长度                                   | `number`                                   | `200`       |
+| `coulombDisScale`     | 库伦系数，用于控制斥力强度。                             | `number`                                   | `0.005`     |
+| `gravity`             | 中心力大小，用于吸引节点向 `center` 收敛。               | `number`                                   | `10`        |
+| `factor`              | 斥力系数。值越大斥力越强。                               | `number`                                   | `1`         |
+| `interval`            | 迭代节点移动速度系数                                     | `number`                                   | `0.02`      |
+| `centripetalOptions`  | 向心力配置。可按 leaf、single、others、center 分组配置。 | `CentripetalOptions`                       | -           |
+| `leafCluster`         | 叶子节点聚类                                             | `boolean`                                  | `false`     |
+| `clustering`          | 全节点聚类                                               | `boolean`                                  | `false`     |
+| `nodeClusterBy`       | 聚类字段。`clustering=true` 时生效。                     | `(node)=>string`                           | `undefined` |
+| `clusterNodeStrength` | 聚类向心力强度                                           | `number \| (node)=>number`                 | `20`        |
+| `collideStrength`     | 防重叠的力强度，取值范围为 `[0, 1]`。                    | `number`                                   | `1`         |
+| `getMass`             | 节点质量回调                                             | `(node)=>number`                           | `undefined` |
+| `getCenter`           | 额外中心力回调，返回 `[x, y, strength]`。                | `(node, degree)=>number[]`                 | `undefined` |
+| `monitor`             | 迭代监控回调，例如 energy、iterations 等指标。           | `(params)=>void`                           | `undefined` |
+
+## 相关链接
+
+<DocCards
+  variant="compact"
+  items={[
+    {
+      href: '../api/introduction',
+      title: '通用 API',
+      description: '输入数据结构、执行、结果读取与迭代控制。',
+    },
+    {
+      href: './d3-force',
+      title: 'D3Force',
+      description: '基于 d3-force 的仿真封装。',
+    },
+  ]}
+/>
