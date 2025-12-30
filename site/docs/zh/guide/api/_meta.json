@@ -1,17 +1,37 @@
 [
-  "introduction",
-  "force",
-  "force-atlas2",
-  "fruchterman",
-  "d3-force",
-  "d3-force-3d",
-  "dagre",
-  "antv-dagre",
-  "combo-combined",
-  "circular",
-  "concentric",
-  "radial",
-  "grid",
-  "random",
-  "mds"
+  {
+    "type": "dir",
+    "name": "api",
+    "label": "API"
+  },
+  {
+    "type": "dir",
+    "name": "force",
+    "label": "力导向布局"
+  },
+  {
+    "type": "dir",
+    "name": "hierarchy",
+    "label": "层次布局"
+  },
+  {
+    "type": "dir",
+    "name": "radial",
+    "label": "环形/辐射布局"
+  },
+  {
+    "type": "dir",
+    "name": "regular",
+    "label": "规则/初始化布局"
+  },
+  {
+    "type": "dir",
+    "name": "others",
+    "label": "其他布局"
+  },
+  {
+    "type": "dir",
+    "name": "combo",
+    "label": "复合布局"
+  }
 ]

@@ -14,5 +14,9 @@
   "contributors": {
     "zh": "贡献者专栏",
     "en": "Contributors"
+  },
+  "performance": {
+    "zh": "Benchmark",
+    "en": "Benchmark"
   }
 }

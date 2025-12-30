@@ -53,11 +53,11 @@ const layout = new CircularLayout({
 
 **映射字段说明：**
 
-| 字段      | 是否必需 | 说明 |
-| --------- | -------- | ---------------------------- |
-| `id`      | ✅       | 节点唯一标识符 |
-| `x` / `y` |          | 初始位置。可选，用于热启动。 |
-| `z` |          | 3D 初始位置。可选，用于 3D 布局热启动。 |
+| 字段                   | 是否必需 | 说明                                                                     |
+| ---------------------- | -------- | ------------------------------------------------------------------------ |
+| `id`                   | ✅       | 节点唯一标识符                                                           |
+| `x` / `y`              |          | 初始位置。可选，用于热启动。                                             |
+| `z`                    |          | 3D 初始位置。可选，用于 3D 布局热启动。                                  |
 | `parentId` / `isCombo` |          | 复合或 Combo 布局所需的层级信息，例如 Dagre、AntV-Dagre、ComboCombined。 |
 
 ### 边映射配置
@@ -74,9 +74,9 @@ const layout = new CircularLayout({
 
 **映射字段说明：**
 
-| 字段     | 是否必需 | 说明 |
+| 字段     | 是否必需 | 说明                                    |
 | -------- | -------- | --------------------------------------- |
-| `id`     |          | 边唯一标识符 |
+| `id`     |          | 边唯一标识符                            |
 | `source` | ✅       | 起点节点 ID，必须与某个节点的 `id` 匹配 |
 | `target` | ✅       | 终点节点 ID，必须与某个节点的 `id` 匹配 |
 
@@ -93,7 +93,7 @@ import { ForceLayout } from '@antv/layout';
 
 const layout = new ForceLayout({
   nodeSize: (node) => node.radius ?? 16,
-  linkDistance: (edge) => edge.weight ? 80 / edge.weight : 200,
+  linkDistance: (edge) => (edge.weight ? 80 / edge.weight : 200),
 });
 ```
 
@@ -137,8 +137,8 @@ layout.forEachNode((node) => {
 
 配置完数据映射后，你可以：
 
-- 查看不同的 [布局算法](../api/circular) 选项
-  - 入口：[通用 API](../api/introduction)
+- 查看不同的 [布局算法](../api/radial/circular) 选项
+  - 入口：[通用 API](../api/api/introduction)
 - 通用配置与组合方式：[图布局配置](./layout-configuration)
 
 通过数据映射，你可以保持业务数据结构不变，并以统一的输入接口调用布局算法。

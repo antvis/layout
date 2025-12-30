@@ -1,1 +1,17 @@
-export { default } from './guide/start/introduction.mdx';
+import { useEffect } from 'react';
+
+export default function IndexRedirect() {
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    window.location.replace('./guide/introduction/');
+  }, []);
+
+  return (
+    <div>
+      <p>Redirecting…</p>
+      <p>
+        <a href="./guide/introduction/">进入文档</a>
+      </p>
+    </div>
+  );
+}

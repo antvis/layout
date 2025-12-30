@@ -5,9 +5,10 @@
   "private": true,
   "license": "MIT",
   "scripts": {
-    "dev": "rspress dev",
-    "build": "rspress build",
-    "preview": "rspress preview"
+    "sync:perf": "node scripts/sync-perf-reports.mjs",
+    "dev": "npm run sync:perf && rspress dev",
+    "build": "npm run sync:perf && rspress build && node scripts/clean-urls.mjs",
+    "preview": "npm run sync:perf && rspress preview"
   },
   "keywords": [],
   "author": "yvonneyx",

@@ -1,2 +1,5 @@
 # build
 doc_build/
+
+# generated perf assets (synced from ../perf/reports)
+docs/public/perf/

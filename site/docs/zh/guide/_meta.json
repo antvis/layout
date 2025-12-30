@@ -1,4 +1,5 @@
 [
+  "introduction",
   {
     "type": "dir",
     "name": "start",
@@ -8,10 +9,5 @@
     "type": "dir",
     "name": "api",
     "label": "layout"
-  },
-  {
-    "type": "dir",
-    "name": "contributing",
-    "label": "contributors"
   }
 ]

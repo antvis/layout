@@ -1,0 +1,48 @@
+import { Badge } from '@theme';
+import { DocCards } from '../../../../components/DocCards';
+import D3ForceOptions from '../../../partials/d3-force-options.mdx';
+
+# D3Force 基于 d3-force <Badge text="Iterative" type="info" />
+
+`D3ForceLayout` 封装了 `d3-force` 的仿真能力，适合希望复用 d3 生态 force 配置方式的项目，例如组合 `link`、`manyBody`、`collide`、`x`、`y` 等力模型。
+
+![d3-force](https://gw.alipayobjects.com/mdn/rms_f8c6a0/afts/img/A*9VXcQLLyzHgAAAAAAAAAAABkARQnAQ)
+
+## 适用场景
+
+- 已有 d3-force 参数经验或存量配置
+- 需要更贴近 d3 的 force 组合方式
+
+## 输入要求
+
+- 节点需要可唯一标识的 `id`
+- 推荐提供 `edges`，因为 link 力依赖边关系
+
+## 用法
+
+```ts
+import { D3ForceLayout } from '@antv/layout';
+
+const layout = new D3ForceLayout({ width: 800, height: 600, iterations: 300 });
+await layout.execute(data);
+```
+
+<D3ForceOptions />
+
+## 相关链接
+
+<DocCards
+  variant="compact"
+  items={[
+    {
+      href: './d3-force-3d',
+      title: 'D3Force3D',
+      description: '3D 力导向，输出 z 坐标。',
+    },
+    {
+      href: './force',
+      title: 'Force',
+      description: '参数更丰富的迭代力导向布局。',
+    },
+  ]}
+/>

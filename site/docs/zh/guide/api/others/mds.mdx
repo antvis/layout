@@ -1,0 +1,60 @@
+import { Badge } from '@theme';
+import { DocCards } from '../../../../components/DocCards';
+import CommonLayoutOptions from '../../../partials/common-layout-options.mdx';
+
+# MDS 多维尺度降维布局 <Badge text="Non-Iterative" type="tip" />
+
+MDS 是 Multidimensional Scaling 的缩写。该算法将理想距离关系映射到二维平面，适用于希望整体结构更均衡、边长更接近期望值的场景。
+
+<img width="400" src="https://mdn.alipayobjects.com/huamei_qa8qxu/afts/img/A*myM6T6R_d34AAAAAAAAAAAAADmJ7AQ/original" />
+
+## 适用场景
+
+- 希望整体结构更均衡
+- 以边的理想长度作为主要约束
+
+## 输入要求
+
+- 节点需要可唯一标识的 `id`
+- 推荐提供 `edges`，用于距离约束。图过于稀疏或不连通时，结果可能对初始条件更敏感。
+
+## 用法
+
+```ts
+import { MDSLayout } from '@antv/layout';
+
+const layout = new MDSLayout({ width: 800, height: 600, linkDistance: 200 });
+await layout.execute(data);
+```
+
+## 配置项
+
+<CommonLayoutOptions />
+
+### 算法配置
+
+| 配置项 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `linkDistance` | 边的理想长度 | `number` | `200` |
+
+:::note
+MDS 更适合“距离约束明确”的场景；如果需要在交互过程中持续收敛、或希望引入更多局部约束，通常可以考虑迭代类力导向布局。
+:::
+
+## 相关链接
+
+<DocCards
+  variant="compact"
+  items={[
+    {
+      href: '../api/introduction',
+      title: '通用 API',
+      description: '输入数据结构、执行与结果读取。',
+    },
+    {
+      href: '../force/force',
+      title: 'Force',
+      description: '需要可控迭代过程时可选。',
+    },
+  ]}
+/>

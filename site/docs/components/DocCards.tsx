@@ -34,7 +34,7 @@ export default function DocCardsPage() {
   return (
     <DocCards
       items={[
-        { href: '/guide/start/introduction', title: 'Start', description: 'Docs entry.' },
+        { href: '/guide/introduction', title: 'Start', description: 'Docs entry.' },
       ]}
     />
   );
