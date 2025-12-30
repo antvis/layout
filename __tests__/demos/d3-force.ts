@@ -22,6 +22,8 @@ export async function render(gui?: GUI) {
     width,
     height,
     nodeSize: (d) => d.size || 10,
+    x: {},
+    y: {},
     // linkDistance: 100,
     // manyBody: {
     //   strength: -20,

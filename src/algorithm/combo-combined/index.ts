@@ -1,5 +1,3 @@
-import { BaseLayout, isLayoutWithIterations } from '../base-layout';
-import type { Layout } from '../types';
 import { registry } from '../../registry';
 import type {
   GraphData,
@@ -11,6 +9,8 @@ import type {
 } from '../../types';
 import { normalizeViewport, parseSize } from '../../util';
 import { formatNodeSizeFn, formatNumberFn } from '../../util/format';
+import { BaseLayout, isLayoutWithIterations } from '../base-layout';
+import type { Layout } from '../types';
 import type {
   ComboCombinedLayoutConfig,
   ComboCombinedLayoutOptions,
@@ -34,9 +34,9 @@ const DEFAULT_OPTIONS: ComboCombinedLayoutOptions = {
       ? { type: 'force', preventOverlap: true }
       : { type: 'concentric', preventOverlap: true },
   nodeSize: 20,
-  nodeSpacing: 10,
-  comboPadding: 20,
-  comboSpacing: 80,
+  nodeSpacing: 0,
+  comboPadding: 10,
+  comboSpacing: 0,
 };
 
 const ROOT_ID = 'root';

@@ -3,8 +3,7 @@ import { createCanvas } from '@@/utils/create';
 import type { Canvas } from '@antv/g';
 import { clear as clearMockRandom, mock as mockRandom } from 'jest-random-mock';
 import { d3Force as data } from '../dataset';
-import { GraphRenderer } from '../utils';
-import { calculatePositions } from '../utils';
+import { calculatePositions, GraphRenderer } from '../utils';
 
 describe('layout d3-force', () => {
   let canvas: Canvas;
@@ -37,6 +36,8 @@ describe('layout d3-force', () => {
     await d3Force.execute(data, {
       width,
       height,
+      x: {},
+      y: {},
     });
 
     await renderLayout(d3Force);
@@ -82,6 +83,8 @@ describe('layout d3-force', () => {
       width,
       height,
       onTick,
+      x: {},
+      y: {},
     });
     await renderLayout(d3Force);
     await expect(canvas).toMatchSnapshot(__filename, 'specified-viewport');
@@ -92,6 +95,8 @@ describe('layout d3-force', () => {
       width,
       height,
       nodeStrength: -20,
+      x: {},
+      y: {},
     });
     await d3Force.execute(data);
     await renderLayout(d3Force);
@@ -103,6 +108,8 @@ describe('layout d3-force', () => {
       linkDistance: 100,
       width,
       height,
+      x: {},
+      y: {},
     });
     await d3Force.execute(data);
     await renderLayout(d3Force);
@@ -115,6 +122,8 @@ describe('layout d3-force', () => {
       height,
       preventOverlap: true,
       nodeSize: 20,
+      x: {},
+      y: {},
     });
     await d3Force.execute(data);
     await renderLayout(d3Force);
@@ -145,6 +154,8 @@ describe('layout d3-force', () => {
       radialRadius: 100,
       radialX: 250,
       radialY: 250,
+      x: {},
+      y: {},
     });
     await d3Force.execute(radialGraph);
     await renderLayout(d3Force);
@@ -218,6 +229,8 @@ describe('layout d3-force', () => {
     await d3Force.execute(starGraph, {
       width,
       height,
+      x: {},
+      y: {},
     });
     renderLayout(d3Force);
     await expect(canvas).toMatchSnapshot(__filename, 'star-graph');
@@ -270,6 +283,8 @@ describe('layout d3-force', () => {
         x: d.data.x,
         y: d.data.y,
       }),
+      x: {},
+      y: {},
     });
     d3Force.forEachNode((node) => {
       expect(typeof node.x).toBe('number');
@@ -304,6 +319,8 @@ describe('layout d3-force', () => {
       clusterEdgeDistance: 150,
       clusterFociStrength: 0.9,
       clusterNodeSize: 15,
+      x: {},
+      y: {},
     });
     await d3Force.execute(clusterGraph);
     await renderLayout(d3Force);
@@ -318,6 +335,8 @@ describe('layout d3-force', () => {
       forceXStrength: 0.3,
       forceYPosition: 350,
       forceYStrength: 0.3,
+      x: {},
+      y: {},
     });
     await d3Force.execute(data);
     await renderLayout(d3Force);
@@ -349,6 +368,8 @@ describe('layout d3-force', () => {
       width,
       height,
       forceSimulation: customSimulation,
+      x: {},
+      y: {},
     });
 
     await d3Force.execute(data);
@@ -360,10 +381,10 @@ describe('layout d3-force', () => {
     const d3Force = new D3ForceLayout({
       width,
       height,
-      center: { x: 300, y: 300, strength: 0.8 },
+      center: { x: 300, y: 300, strength: 1 },
       manyBody: { strength: -50, theta: 0.8 },
-      link: { distance: 80, strength: 0.5 },
-      collide: { radius: 15, strength: 0.7 },
+      link: { distance: 30, strength: 0.5 },
+      collide: { radius: 10, strength: 1 },
       radial: { radius: 120, strength: 0.6, x: 350, y: 350 },
       x: { x: 300, strength: 0.4 },
       y: { y: 300, strength: 0.4 },
@@ -400,10 +421,52 @@ describe('layout d3-force', () => {
       nodeStrength: (d) => (d.id === 'a' ? -50 : -30),
       linkDistance: (d) => (d.source === 'a' ? 100 : 50),
       edgeStrength: (d) => (d.source === 'a' ? 0.8 : 0.5),
+      x: {},
+      y: {},
     });
 
     await d3Force.execute(data);
     await renderLayout(d3Force);
     await expect(canvas).toMatchSnapshot(__filename, 'function-options');
+  });
+
+  it('should render lattice', async () => {
+    function getData(size = 10) {
+      const nodes = Array.from({ length: size * size }, (_, i) => ({
+        id: `${i}`,
+      }));
+      const edges = [];
+      for (let y = 0; y < size; ++y) {
+        for (let x = 0; x < size; ++x) {
+          if (y > 0)
+            edges.push({
+              source: `${(y - 1) * size + x}`,
+              target: `${y * size + x}`,
+            });
+          if (x > 0)
+            edges.push({
+              source: `${y * size + (x - 1)}`,
+              target: `${y * size + x}`,
+            });
+        }
+      }
+      return { nodes, edges };
+    }
+
+    const d3Force = new D3ForceLayout({
+      width,
+      height,
+      manyBody: {
+        strength: -30,
+      },
+      link: {
+        strength: 1,
+        distance: 20,
+        iterations: 10,
+      },
+    });
+    await d3Force.execute(getData());
+    await renderLayout(d3Force);
+    await expect(canvas).toMatchSnapshot(__filename, 'lattice');
   });
 });

@@ -1,5 +1,5 @@
-import { BaseLayoutOptions } from '../base-layout';
 import { ID, NodeData, Point, Size } from '../../types';
+import { BaseLayoutOptions } from '../base-layout';
 
 export type DagreRankdir =
   | 'TB'
@@ -83,7 +83,7 @@ export interface AntVDagreLayoutOptions extends BaseLayoutOptions {
    * <en/> The horizontal gap between nodes (px) in the case of rankdir is 'TB' or 'BT'. The vertical gap between nodes (px) in the case of rankdir is 'LR' or 'RL'. nodesepFunc has a higher priority
    * @defaultValue 50
    */
-  nodesep?: number | ((d?: NodeData) => number);
+  nodesep?: number;
   /**
    * <zh/> 层间距（px）
    *
@@ -94,7 +94,29 @@ export interface AntVDagreLayoutOptions extends BaseLayoutOptions {
    * <en/> The vertical gap between levels (px) in the case of rankdir is 'TB' or 'BT'. The horizontal gap between levels (px) in the case of rankdir is 'LR' or 'RL'. ranksepFunc has a higher priority
    * @defaultValue 50
    */
-  ranksep?: number | ((d?: NodeData) => number);
+  ranksep?: number;
+  /**
+   * <zh/> 节点间距（px）的回调函数，通过该参数可以对不同节点设置不同的节点间距
+   *
+   * <en/> The callback function of the node spacing (px), which can be used to set different node spacing for different nodes
+   * @remarks
+   * <zh/> 在 rankdir 为 'TB' 或 'BT' 时是节点的水平间距；在 rankdir 为 'LR' 或 'RL' 时代表节点的竖直方向间距。优先级高于 nodesep，即若设置了 nodesepFunc，则 nodesep 不生效
+   *
+   * <en/> The horizontal spacing of the node in the case of rankdir is 'TB' or 'BT', and the vertical spacing of the node in the case of rankdir is 'LR' or 'RL'. The priority is higher than nodesep, that is, if nodesepFunc is set, nodesep does not take effect
+   * @param d - <zh/> 节点实例 | <en/> Node instance
+   */
+  nodesepFunc?: (d?: NodeData) => number;
+  /**
+   * <zh/> 层间距（px）的回调函数
+   *
+   * <en/> The callback function of the layer spacing (px)
+   * @remarks
+   * <zh/> 在 rankdir 为 'TB' 或 'BT' 时是竖直方向相邻层间距；在 rankdir 为 'LR' 或 'RL' 时代表水平方向相邻层间距。优先级高于 nodesep，即若设置了 nodesepFunc，则 nodesep 不生效
+   *
+   * <en/> The vertical spacing of adjacent layers in the case of rankdir is 'TB' or 'BT', and the horizontal spacing of adjacent layers in the case of rankdir is 'LR' or 'RL'. The priority is higher than nodesep, that is, if nodesepFunc is set, nodesep does not take effect
+   * @param d - <zh/> 节点实例 | <en/> Node instance
+   */
+  ranksepFunc?: (d?: NodeData) => number;
   /**
    * <zh/> 是否同时计算边上的的控制点位置
    *
