@@ -1,0 +1,72 @@
+import { Badge } from '@theme';
+import { DocCards } from '../../../components/DocCards';
+import CommonLayoutOptions from '../../partials/common-layout-options.mdx';
+import ForceIterativeOptions from '../../partials/force-iterative-options.mdx';
+
+# ForceAtlas2 力导向布局 <Badge text="Iterative" type="info" />
+
+ForceAtlas2 面向图可视化场景，适用于较大规模图的社区/聚类结构展示，并提供 Barnes–Hut 等加速选项。
+
+## 适用场景
+
+- 较大规模图的力导向布局
+- 需要更明显的社区/聚类结构
+
+## 输入要求
+
+- 节点需要可唯一标识的 `id`
+- 推荐提供 `edges`，社区结构依赖边关系
+
+## 用法
+
+```ts
+import { ForceAtlas2Layout } from '@antv/layout';
+
+const layout = new ForceAtlas2Layout({ width: 800, height: 600, barnesHut: true });
+await layout.execute(data);
+```
+
+## 配置项
+
+<CommonLayoutOptions />
+
+<ForceIterativeOptions />
+
+## 算法配置
+
+| 配置项 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `kr` | 斥力系数。值越大越松散。 | `number` | `5` |
+| `kg` | 重力系数。值越大越聚集到中心。 | `number` | `1` |
+| `ks` | 移动速度系数 | `number` | `0.1` |
+| `ksmax` | 最大移动速度上限 | `number` | `10` |
+| `tao` | 收敛时停止震荡容忍度 | `number` | `0.1` |
+| `mode` | 模式。`linlog` 更强调聚类结构。 | `'normal' \| 'linlog'` | `'normal'` |
+| `preventOverlap` | 是否防重叠。启用时需要配合 `nodeSize`。 | `boolean` | `false` |
+| `nodeSize` | 节点大小，用于碰撞检测。 | `Size \| (node) => Size` | `undefined` |
+| `nodeSpacing` | 节点间距 | `number \| (node) => number` | `undefined` |
+| `dissuadeHubs` | hub 模式，倾向于让高度数节点更靠近中心。 | `boolean` | `false` |
+| `barnesHut` | barnes-hut 加速。大图建议开启。 | `boolean` | `undefined` |
+| `prune` | 自动剪枝，用于提升速度，可能降低质量。 | `boolean` | `undefined` |
+
+:::tip 性能建议
+节点数较大时，可考虑 `barnesHut: true`。若更在意速度可尝试 `prune: true`，该选项可能影响布局质量。
+:::
+
+## 相关链接
+
+<DocCards
+  variant="compact"
+  items={[
+    {
+      href: './fruchterman',
+      title: 'Fruchterman',
+      description: '经典力导向布局（中小规模）。',
+    },
+    {
+      href: './force',
+      title: 'Force',
+      description: '参数更丰富、可控性更强。',
+    },
+  ]}
+/>

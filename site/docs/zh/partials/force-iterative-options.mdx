@@ -1,0 +1,25 @@
+## 迭代控制
+
+以下配置项用于控制迭代收敛过程，适用于 `ForceLayout`、`ForceAtlas2Layout` 与 `FruchtermanLayout`。
+
+### 执行方式
+
+- `execute(data)`：一次性执行。是否分帧由 `animate` 控制。
+- 也可以通过 `restart()`、`tick(n)`、`stop()` 将布局过程接入自己的渲染循环。详见 [通用 API](../guide/api/introduction) 的“迭代布局”章节。
+
+### SimulationOptions
+
+| 配置项 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `maxIteration` | 最大迭代次数 | `number` | `0/500`（由各布局决定） |
+| `minMovement` | 收敛阈值。迭代步长低于该值时停止。 | `number` | `0/0.4`（由各布局决定） |
+| `animate` | 是否以分帧方式迭代，便于过程可视化与交互。 | `boolean` | `true` |
+
+### CommonForceLayoutOptions
+
+| 配置项 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `dimensions` | 维度。可选 2D 或 3D。 | `2 \| 3` | `2` |
+| `distanceThresholdMode` | `minMovement` 的判断方式，可选平均值、最大值或最小值。 | `'mean' \| 'max' \| 'min'` | `'mean'` |
+| `maxDistance` | 最大作用距离。部分算法用于裁剪计算。 | `number` | `undefined` |
+| `onTick` | 每次迭代结束后的回调，入参为 layout 实例。 | `(layout) => void` | `undefined` |

@@ -1,0 +1,68 @@
+import { Badge } from '@theme';
+import { DocCards } from '../../../components/DocCards';
+import CommonLayoutOptions from '../../partials/common-layout-options.mdx';
+
+# ComboCombined 复合 Combo 布局 <Badge text="Non-Iterative" type="tip" />
+
+用于包含 Combo 或子图的复合场景。你可以为不同层级选择不同布局策略，并统一处理 Combo 的包围盒与间距。
+
+## 适用场景
+
+- 存在 Combo/分组/子图的复合结构
+- 不同层级需要不同布局策略，例如外层力导、内层网格
+
+## 输入要求
+
+复合布局需要明确层级关系与 Combo 节点：
+
+- 普通节点通过 `parentId` 指向所属 Combo
+- Combo 节点需要标识 `isCombo: true`，并且也需要具备 `id`
+
+如果业务字段不同，可通过通用 `node` 映射函数适配。相关说明见“数据映射”章节。
+
+## 用法
+
+```ts
+import { ComboCombinedLayout } from '@antv/layout';
+
+const layout = new ComboCombinedLayout({
+  layout: (comboId) => (comboId ? { type: 'grid' } : { type: 'force' }),
+});
+await layout.execute(data);
+```
+
+## 配置项
+
+<CommonLayoutOptions />
+
+## 算法配置
+
+| 配置项 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `layout` | 布局配置。可固定指定，也可根据 comboId 动态选择。 | `string \| { type: string; ... } \| (comboId)=>...` | `undefined` |
+| `nodeSize` | 节点尺寸 | `Size \| (node)=>Size` | `undefined` |
+| `nodeSpacing` | 节点间距 | `number \| (node)=>number` | `undefined` |
+| `comboSpacing` | Combo 之间的间距 | `number \| (combo)=>number` | `undefined` |
+| `comboPadding` | Combo 内边距 | `number \| (combo)=>number` | `undefined` |
+
+:::tip 数据要求
+如果原始数据不包含 `parentId/isCombo`，需要在业务侧补齐层级信息，或在映射阶段生成对应字段。
+:::
+
+## 相关链接
+
+<DocCards
+  variant="compact"
+  items={[
+    {
+      href: './introduction',
+      title: '通用 API',
+      description: '输入数据结构、执行与结果读取。',
+    },
+    {
+      href: './antv-dagre',
+      title: 'AntVDagre',
+      description: '复合场景下的层次/流程图布局常用选择。',
+    },
+  ]}
+/>

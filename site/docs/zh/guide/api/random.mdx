@@ -1,0 +1,53 @@
+import { Badge } from '@theme';
+import { DocCards } from '../../../components/DocCards';
+import CommonLayoutOptions from '../../partials/common-layout-options.mdx';
+
+# Random 随机布局 <Badge text="Non-Iterative" type="tip" />
+
+在给定布局区域内为每个节点生成随机坐标。常用于占位、调试，或作为其他布局的初始位置。
+
+## 适用场景
+
+- 需要快速得到可渲染坐标
+- 为迭代类布局提供初始位置，用于热启动
+
+## 输入要求
+
+- 节点需要可唯一标识的 `id`
+
+## 用法
+
+```ts
+import { RandomLayout } from '@antv/layout';
+
+const layout = new RandomLayout({ width: 800, height: 600 });
+await layout.execute(data);
+```
+
+## 配置项
+
+<CommonLayoutOptions />
+
+随机布局没有专属配置项。
+
+:::tip
+建议显式设置 `width`/`height`，以便控制随机坐标的分布范围。
+:::
+
+## 相关链接
+
+<DocCards
+  variant="compact"
+  items={[
+    {
+      href: './introduction',
+      title: '通用 API',
+      description: '输入数据结构、执行与结果读取。',
+    },
+    {
+      href: './grid',
+      title: 'Grid',
+      description: '规则网格排布。',
+    },
+  ]}
+/>

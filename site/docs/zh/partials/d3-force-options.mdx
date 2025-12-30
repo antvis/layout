@@ -1,0 +1,93 @@
+## 配置项
+
+本页完整列出 `D3ForceLayout` 的全部配置项。它提供两类配置方式：
+
+1) **快捷字段**：用于快速配置常用参数，例如 `centerX`、`linkDistance`、`nodeStrength`。  
+2) **force 对象**：更贴近 d3-force 的原始形态，例如 `link`、`manyBody`、`collide`、`x`、`y`、`center`、`radial`。
+
+两者可以混用；当同时配置时，以 force 对象为准更容易获得一致的预期。
+
+### 通用配置
+
+| 配置项 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `width` / `height` | 布局参考尺寸 | `number` | `undefined` |
+| `enableWorker` | 是否尝试在 WebWorker 中执行 | `boolean` | `false/undefined` |
+| `node` | 节点字段映射 | `(datum) => ({ id?, x?, y?, z?, parentId?, isCombo? })` | `undefined` |
+| `edge` | 边字段映射 | `(datum) => ({ id?, source?, target? })` | `undefined` |
+
+说明：`D3ForceLayout` 的中心相关配置不使用 `center`，而是使用 `centerX/centerY` 等字段。
+
+### 快捷字段
+
+| 配置项 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `onTick` | 每次 tick 回调 | `(layout) => void` | `undefined` |
+| `centerX` / `centerY` | 布局中心点坐标 | `number` | `width/2`、`height/2` |
+| `centerStrength` | 中心力强度，取值范围为 `[0, 1]`。 | `number` | `undefined` |
+| `edgeId` | 边 id 获取函数 | `(edge) => string` | `(edge) => String(edge.id)` |
+| `linkDistance` | 边理想长度 | `number \| (edge)=>number` | `50` |
+| `edgeStrength` | 边强度，取值范围为 `[0, 1]`。 | `number \| (edge)=>number \| null` | `null` |
+| `edgeIterations` | link force 迭代次数 | `number` | `1` |
+| `nodeStrength` | many-body strength。负值表示斥力。 | `number \| (node)=>number` | `-30` |
+| `theta` | Barnes–Hut 近似参数，取值范围为 `(0, 1]`。 | `number` | `undefined` |
+| `distanceMax` / `distanceMin` | many-body 作用距离上下限 | `number` | `undefined` |
+| `preventOverlap` | 是否防重叠 | `boolean` | `false` |
+| `collideStrength` | 碰撞力强度，取值范围为 `[0, 1]`。 | `number` | `1` |
+| `collideIterations` | 碰撞检测迭代次数 | `number` | `1` |
+| `nodeSize` | 节点直径，用于推导碰撞半径。 | `number \| (node)=>number` | `10` |
+| `nodeSpacing` | 节点间额外间距 | `number \| (node)=>number` | `0` |
+| `radialRadius` | 径向力理想半径 | `number` | `100` |
+| `radialStrength` | 径向力强度，取值范围为 `[0, 1]`。 | `number` | `undefined` |
+| `radialX` / `radialY` | 径向力中心点 | `number` | `undefined` |
+| `clustering` | 是否启用聚类 | `boolean` | `false` |
+| `clusterBy` | 聚类字段/函数 | `(node)=>string\|number` | `(d)=>d.cluster` |
+| `clusterNodeStrength` | 聚类内节点作用力 | `number` | `-1` |
+| `clusterEdgeStrength` | 聚类间边强度 | `number` | `0.1` |
+| `clusterEdgeDistance` | 聚类间边距离 | `number` | `100` |
+| `clusterNodeSize` | 聚类节点大小 | `number` | `10` |
+| `clusterFociStrength` | 聚类焦点引力强度，取值范围为 `[0, 1]`。 | `number` | `0.8` |
+| `iterations` | force 迭代次数。该值不等同于布局的迭代次数。 | `number` | `undefined` |
+| `forceSimulation` | 传入自定义 d3 Simulation | `Simulation` | `undefined` |
+| `alpha` / `alphaMin` | 当前/停止阈值 | `number` | `undefined` |
+| `alphaDecay` | 收敛阈值衰减率 | `number` | `undefined` |
+| `alphaTarget` | 目标收敛阈值 | `number` | `undefined` |
+| `velocityDecay` | 速度衰减因子 | `number` | `undefined` |
+| `randomSource` | 随机数生成函数 | `() => number` | `undefined` |
+
+### force 对象
+
+下列 force 对象可设为 `false` 关闭；否则按 d3-force 的字段进行配置。
+
+#### `collide`
+
+- `radius?: number | (node, index, nodes) => number`
+- `strength?: number`
+- `iterations?: number`
+
+#### `manyBody`
+
+- `strength?: number | (node, index, nodes) => number`
+- `theta?: number`
+- `distanceMin?: number`
+- `distanceMax?: number`
+
+#### `link`
+
+- `id?: (edge, index, edges) => string`
+- `distance?: number | (edge, index, edges) => number`
+- `strength?: number | (edge, index, edges) => number`
+- `iterations?: number`
+
+#### `x` / `y`
+
+- `strength?: number | (node, index, nodes) => number`
+- `x?: number | (node, index, nodes) => number`，仅 `x` force 生效
+- `y?: number | (node, index, nodes) => number`，仅 `y` force 生效
+
+### 2D 扩展
+
+| 配置项 | 说明 | 类型 |
+| --- | --- | --- |
+| `center` | 中心力 | `false \| { x?, y?, strength? }` |
+| `radial` | 径向力 | `false \| { radius?, x?, y?, strength? }` |

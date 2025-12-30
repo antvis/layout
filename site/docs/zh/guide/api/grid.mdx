@@ -1,0 +1,66 @@
+import { Badge } from '@theme';
+import { DocCards } from '../../../components/DocCards';
+import CommonLayoutOptions from '../../partials/common-layout-options.mdx';
+
+# Grid 网格布局 <Badge text="Non-Iterative" type="tip" />
+
+将节点按行列排列到规则网格上，适用于需要稳定、可预测结构的场景，例如矩阵视图或卡片式列表布局。
+
+## 适用场景
+
+- 规则排布、可预测位置
+- 需要通过 `rows`/`cols` 控制布局密度
+
+## 输入要求
+
+- 节点需要可唯一标识的 `id`
+
+## 用法
+
+```ts
+import { GridLayout } from '@antv/layout';
+
+const layout = new GridLayout({ width: 800, height: 600, rows: 8, cols: 10 });
+await layout.execute(data);
+```
+
+## 配置项
+
+<CommonLayoutOptions />
+
+## 算法配置
+
+| 配置项 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `begin` | 网格开始位置，默认从左上角开始 | `[number, number] \| [number, number, number]` | `[0, 0]` |
+| `rows` | 行数。传 `undefined` 时自动计算。 | `number` | `10` |
+| `cols` | 列数。传 `undefined` 时自动计算。 | `number` | `undefined` |
+| `condense` | 是否使用最小画布空间 | `boolean` | `false` |
+| `preventOverlap` | 是否防止重叠。启用时需要配合 `nodeSize` 或数据中的 `size`。 | `boolean` | `false` |
+| `nodeSize` | 节点大小，用于碰撞检测。 | `Size \| (node) => Size` | `undefined` |
+| `nodeSpacing` | 节点间距，用于调整布局密度。 | `number \| (node) => number` | `undefined` |
+| `preventOverlapPadding` | 防止重叠时的 padding | `number` | `10` |
+| `sortBy` | 排序依据，用于影响节点分配到网格的顺序。 | `'id' \| 'degree' \| (a,b)=>-1\|0\|1` | `undefined` |
+| `position` | 为节点指定行列信息，支持只指定 row 或 col。 | `(node) => ({ row?, col? })` | `undefined` |
+
+:::tip 防重叠
+`preventOverlap: true` 需要知道节点大小：你可以在布局中提供 `nodeSize`，或在节点数据中提供可被读取到的 size 信息。
+:::
+
+## 相关链接
+
+<DocCards
+  variant="compact"
+  items={[
+    {
+      href: './introduction',
+      title: '通用 API',
+      description: '输入数据结构、执行与结果读取。',
+    },
+    {
+      href: './concentric',
+      title: 'Concentric',
+      description: '按“重要性”分层的同心圆布局。',
+    },
+  ]}
+/>

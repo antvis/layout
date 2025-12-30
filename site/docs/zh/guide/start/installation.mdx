@@ -1,0 +1,78 @@
+# 安装
+
+import { PackageManagerTabs } from '@theme';
+
+本页介绍 `@antv/layout` 的安装与引入方式，并给出在浏览器中通过 CDN 使用的示例。
+
+## 使用包管理器安装
+
+<PackageManagerTabs command="install @antv/layout" />
+
+## ESM 引入
+
+推荐在具备构建工具的前端工程中使用 ESM `import`：
+
+```ts
+import { CircularLayout } from '@antv/layout';
+```
+
+## CommonJS 引入
+
+在 CommonJS 环境中可以使用 `require`：
+
+```js
+const { CircularLayout } = require('@antv/layout');
+```
+
+## 通过 CDN 使用（UMD）
+
+在无构建工具的页面中可以使用 UMD 构建。UMD 构建会挂载全局变量 `Layout`。
+
+推荐在生产环境固定版本号，避免依赖 `latest` 带来的不确定性。
+
+```html
+<!-- unpkg -->
+<script src="https://unpkg.com/@antv/layout@latest/dist/index.min.js"></script>
+
+<!-- jsDelivr -->
+<script src="https://cdn.jsdelivr.net/npm/@antv/layout@latest/dist/index.min.js"></script>
+```
+
+### 最小示例
+
+```html
+<script>
+  const { CircularLayout } = Layout;
+
+  const data = {
+    nodes: [{ id: 'a' }, { id: 'b' }, { id: 'c' }],
+    edges: [
+      { source: 'a', target: 'b' },
+      { source: 'b', target: 'c' },
+    ],
+  };
+
+  const layout = new CircularLayout({ width: 800, height: 600, radius: 150 });
+  layout.execute(data).then(() => {
+    layout.forEachNode((node) => console.log(node.id, node.x, node.y));
+    layout.destroy();
+  });
+</script>
+```
+
+### Worker 注意事项
+
+当你配置 `enableWorker: true` 且环境支持 `Worker` 时，库会在 Worker 中执行布局计算，以减少主线程阻塞。
+
+在 UMD 构建下，Worker 脚本地址会根据当前引入的 `index.js/index.min.js` 自动推导为同目录下的 `worker.js`。因此你需要确保：
+
+- `dist/worker.js` 可以被访问，并且与 `dist/index.min.js` 位于同一目录。
+- 你的站点 CSP 与跨域策略允许加载 Worker 脚本。
+
+如果 Worker 加载失败，布局会自动回退到主线程执行。
+
+## 下一步
+
+- 最小调用流程：[快速开始](./getting-started)
+- 字段转换与适配：[数据转换](./data-mapping)
+- 配置组织与常见组合：[图布局配置](./layout-configuration)

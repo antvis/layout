@@ -1,0 +1,68 @@
+import { Badge } from '@theme';
+import { DocCards } from '../../../components/DocCards';
+import CommonLayoutOptions from '../../partials/common-layout-options.mdx';
+
+# Radial 辐射布局 <Badge text="Non-Iterative" type="tip" />
+
+以指定焦点节点为中心，将节点按最短路径层级分布到不同半径的圆环上，用于突出某个核心实体的关系结构。
+
+## 适用场景
+
+- 以某个核心节点为中心的关系探索
+- 需要按距离与层级组织节点
+
+## 输入要求
+
+- 节点需要可唯一标识的 `id`
+- 推荐提供 `edges`，用于最短路径层级计算。当图不连通时，非连通部分的分布会依赖算法策略与参数。
+
+## 用法
+
+```ts
+import { RadialLayout } from '@antv/layout';
+
+const layout = new RadialLayout({ width: 800, height: 600, focusNode: null });
+await layout.execute(data);
+```
+
+## 配置项
+
+<CommonLayoutOptions />
+
+## 算法配置
+
+| 配置项 | 说明 | 类型 | 默认值 |
+| --- | --- | --- | --- |
+| `linkDistance` | 边长度 | `number` | `50` |
+| `focusNode` | 焦点节点。可传节点 id；传 `null` 时使用第一个节点。 | `string \| null` | `null` |
+| `unitRadius` | 圈层间距。传 `null` 时按画布自适应填充。 | `number \| null` | `100` |
+| `preventOverlap` | 是否防止重叠。启用时需要提供 `nodeSize` 或数据中的 `size`。 | `boolean` | `false` |
+| `nodeSize` | 节点大小，用于碰撞检测。 | `Size \| (node) => Size` | `undefined` |
+| `nodeSpacing` | 防止重叠时节点边缘最小间距 | `number \| (node) => number` | `10` |
+| `maxPreventOverlapIteration` | 防重叠步骤最大迭代次数 | `number` | `200` |
+| `strictRadial` | 是否严格沿圆环展开。仅在防重叠时生效。 | `boolean` | `true` |
+| `sortBy` | 同层节点排序依据，可按数据顺序或自定义规则。 | `'data' \| (node)=>number\|string` | `undefined` |
+| `sortStrength` | sortBy 强度 | `number` | `10` |
+| `maxIteration` | 最大迭代次数 | `number` | `1000` |
+
+:::tip 焦点选择
+将 `focusNode` 指向业务上的核心实体，通常能得到更符合阅读习惯的辐射结构。
+:::
+
+## 相关链接
+
+<DocCards
+  variant="compact"
+  items={[
+    {
+      href: './introduction',
+      title: '通用 API',
+      description: '输入数据结构、执行与结果读取。',
+    },
+    {
+      href: './dagre',
+      title: 'Dagre',
+      description: '需要强方向性与层级时使用层次布局。',
+    },
+  ]}
+/>
