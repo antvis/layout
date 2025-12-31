@@ -2,9 +2,6 @@ import { Badge } from '@theme';
 import { DocCards } from '../../../../components/DocCards';
 import CommonLayoutOptions from '../../../partials/common-layout-options.mdx';
 
-
-import { GridLayout } from '@antv/layout';
-
 # Grid Layout <Badge text="Non-Iterative" type="tip" />
 
 Arrange nodes in a regular grid. Great for stable, predictable structures like matrix views or card lists.
@@ -26,6 +23,8 @@ Arrange nodes in a regular grid. Great for stable, predictable structures like m
 ## Usage
 
 ```ts
+import { GridLayout } from '@antv/layout';
+
 
 const layout = new GridLayout({ width: 800, height: 600, rows: 8, cols: 10 });
 await layout.execute(data);

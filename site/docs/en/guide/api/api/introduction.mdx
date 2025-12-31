@@ -1,9 +1,6 @@
 import { Badge } from '@theme';
 import { DocCards } from '../../../../components/DocCards';
 
-
-import { CircularLayout } from '@antv/layout';
-
 # Common API <Badge text="Core" type="tip" />
 
 This page explains the shared usage of `@antv/layout`: prepare data, execute a layout, read results, and optionally control iterations and lifecycle methods. Differences across layouts are mainly in their `LayoutOptions`.
@@ -11,6 +8,8 @@ This page explains the shared usage of `@antv/layout`: prepare data, execute a l
 ## Example: minimal flow
 
 ```ts
+import { CircularLayout } from '@antv/layout';
+
 
 const data = {
   nodes: [{ id: 'a' }, { id: 'b' }],

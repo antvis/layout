@@ -2,9 +2,6 @@ import { Badge } from '@theme';
 import { DocCards } from '../../../../components/DocCards';
 import CommonLayoutOptions from '../../../partials/common-layout-options.mdx';
 
-
-import { AntVDagreLayout } from '@antv/layout';
-
 # AntVDagre 层次布局 <Badge text="Non-Iterative" type="tip" />
 
 面向流程图与依赖图等场景的层次布局实现，提供方向、间距、对齐与边控制点等更直接的配置项。
@@ -28,6 +25,8 @@ import { AntVDagreLayout } from '@antv/layout';
 ## 用法
 
 ```ts
+import { AntVDagreLayout } from '@antv/layout';
+
 
 const layout = new AntVDagreLayout({ rankdir: 'TB', nodesep: 50, ranksep: 50 });
 await layout.execute(data);

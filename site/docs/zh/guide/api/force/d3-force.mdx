@@ -2,9 +2,6 @@ import { Badge } from '@theme';
 import { DocCards } from '../../../../components/DocCards';
 import D3ForceOptions from '../../../partials/d3-force-options.mdx';
 
-
-import { D3ForceLayout } from '@antv/layout';
-
 # D3Force 基于 d3-force <Badge text="Iterative" type="info" />
 
 `D3ForceLayout` 封装了 `d3-force` 的仿真能力，适合希望复用 d3 生态 force 配置方式的项目，例如组合 `link`、`manyBody`、`collide`、`x`、`y` 等力模型。
@@ -24,6 +21,8 @@ import { D3ForceLayout } from '@antv/layout';
 ## 用法
 
 ```ts
+import { D3ForceLayout } from '@antv/layout';
+
 
 const layout = new D3ForceLayout({ width: 800, height: 600, iterations: 300 });
 await layout.execute(data);

@@ -2,9 +2,6 @@ import { Badge } from '@theme';
 import { DocCards } from '../../../../components/DocCards';
 import CommonLayoutOptions from '../../../partials/common-layout-options.mdx';
 
-
-import { ConcentricLayout } from '@antv/layout';
-
 # Concentric Layout <Badge text="Non-Iterative" type="tip" />
 
 Layer nodes by a concentric value: higher values are closer to the center. By default, the concentric value is node degree.
@@ -27,6 +24,8 @@ Layer nodes by a concentric value: higher values are closer to the center. By de
 ## Usage
 
 ```ts
+import { ConcentricLayout } from '@antv/layout';
+
 
 const layout = new ConcentricLayout({
   width: 800,

@@ -2,9 +2,6 @@ import { Badge } from '@theme';
 import { DocCards } from '../../../../components/DocCards';
 import CommonLayoutOptions from '../../../partials/common-layout-options.mdx';
 
-
-import { ComboCombinedLayout } from '@antv/layout';
-
 # ComboCombined 复合 Combo 布局 <Badge text="Non-Iterative" type="tip" />
 
 用于包含 Combo 或子图的复合场景。你可以为不同层级选择不同布局策略，并统一处理 Combo 的包围盒与间距。
@@ -31,6 +28,8 @@ import { ComboCombinedLayout } from '@antv/layout';
 ## 用法
 
 ```ts
+import { ComboCombinedLayout } from '@antv/layout';
+
 
 const layout = new ComboCombinedLayout({
   layout: (comboId) => (comboId ? { type: 'grid' } : { type: 'force' }),

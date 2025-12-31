@@ -1,10 +1,6 @@
 import { Badge } from '@theme';
 import { DocCards } from '../../../../components/DocCards';
-
-
 import CommonLayoutOptions from '../../../partials/common-layout-options.mdx';
-
-import { ComboCombinedLayout } from '@antv/layout';
 
 # ComboCombined Composite Combo Layout <Badge text="Non-Iterative" type="tip" />
 
@@ -32,6 +28,8 @@ If your business fields differ, adapt them via the `node` mapping function. See 
 ## Usage
 
 ```ts
+import { ComboCombinedLayout } from '@antv/layout';
+
 
 const layout = new ComboCombinedLayout({
   layout: (comboId) => (comboId ? { type: 'grid' } : { type: 'force' }),

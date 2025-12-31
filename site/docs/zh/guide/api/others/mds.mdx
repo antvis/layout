@@ -2,9 +2,6 @@ import { Badge } from '@theme';
 import { DocCards } from '../../../../components/DocCards';
 import CommonLayoutOptions from '../../../partials/common-layout-options.mdx';
 
-
-import { MDSLayout } from '@antv/layout';
-
 # MDS 多维尺度降维布局 <Badge text="Non-Iterative" type="tip" />
 
 MDS 是 Multidimensional Scaling 的缩写。该算法将理想距离关系映射到二维平面，适用于希望整体结构更均衡、边长更接近期望值的场景。
@@ -24,6 +21,8 @@ MDS 是 Multidimensional Scaling 的缩写。该算法将理想距离关系映�
 ## 用法
 
 ```ts
+import { MDSLayout } from '@antv/layout';
+
 
 const layout = new MDSLayout({ width: 800, height: 600, linkDistance: 200 });
 await layout.execute(data);

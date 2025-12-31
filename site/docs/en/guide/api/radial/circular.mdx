@@ -2,9 +2,6 @@ import { Badge } from '@theme';
 import { DocCards } from '../../../../components/DocCards';
 import CommonLayoutOptions from '../../../partials/common-layout-options.mdx';
 
-
-import { CircularLayout } from '@antv/layout';
-
 # Circular Layout <Badge text="Non-Iterative" type="tip" />
 
 Place nodes on a circle, or configure a spiral distribution. Supports ordering, grouping, start/end angles, and radius control. Algorithm reference: [A framework and algorithms for circular drawings of graphs](https://www.sciencedirect.com/science/article/pii/S1570866705000031).
@@ -37,6 +34,8 @@ Place nodes on a circle, or configure a spiral distribution. Supports ordering, 
 ## Usage
 
 ```ts
+import { CircularLayout } from '@antv/layout';
+
 
 const layout = new CircularLayout({ width: 800, height: 600, radius: 150 });
 await layout.execute(data);

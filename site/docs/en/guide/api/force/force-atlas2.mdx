@@ -1,10 +1,7 @@
 import { Badge } from '@theme';
 import { DocCards } from '../../../../components/DocCards';
 import CommonLayoutOptions from '../../../partials/common-layout-options.mdx';
-
-
 import ForceIterativeOptions from '../../../partials/force-iterative-options.mdx';
-import { ForceAtlas2Layout } from '@antv/layout';
 
 # ForceAtlas2 Layout <Badge text="Iterative" type="info" />
 
@@ -28,6 +25,8 @@ ForceAtlas2 is designed for graph visualization, especially large graphs with co
 ## Usage
 
 ```ts
+import { ForceAtlas2Layout } from '@antv/layout';
+
 
 const layout = new ForceAtlas2Layout({
   width: 800,

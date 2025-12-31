@@ -1,10 +1,7 @@
 import { Badge } from '@theme';
 import { DocCards } from '../../../../components/DocCards';
 import CommonLayoutOptions from '../../../partials/common-layout-options.mdx';
-
-
 import ForceIterativeOptions from '../../../partials/force-iterative-options.mdx';
-import { FruchtermanLayout } from '@antv/layout';
 
 # Fruchterman Layout <Badge text="Iterative" type="info" />
 
@@ -28,6 +25,8 @@ Fruchterman-Reingold is a classic force-directed layout. It uses repulsion, attr
 ## Usage
 
 ```ts
+import { FruchtermanLayout } from '@antv/layout';
+
 
 const layout = new FruchtermanLayout({
   width: 800,
