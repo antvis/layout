@@ -1,0 +1,58 @@
+import { Badge } from '@theme';
+import { DocCards } from '../../../../components/DocCards';
+import D3Force3DOptions from '../../../partials/d3-force-3d-options.mdx';
+import D3ForceOptions from '../../../partials/d3-force-options.mdx';
+
+# D3Force3D (3D force) <Badge text="Iterative" type="info" />
+
+`D3Force3DLayout` is based on `d3-force-3d`, adding z-axis forces on top of 2D. It is suitable for 3D scenes or depth-layered views.
+
+![d3-force](https://mdn.alipayobjects.com/huamei_qa8qxu/afts/img/A*4mbSTJLOXkgAAAAAAAAAAAAADmJ7AQ/original)
+
+## When to use
+
+- 3D rendering or layouts that need z coordinates
+- Reduce occlusion through depth layering
+
+## Input requirements
+
+- Nodes must have unique `id`
+- `edges` are recommended because link forces depend on relationships
+
+## Usage
+
+```ts
+import { D3Force3DLayout } from '@antv/layout';
+
+const layout = new D3Force3DLayout({
+  width: 800,
+  height: 600,
+  iterations: 300,
+});
+await layout.execute(data);
+layout.forEachNode((node) => console.log(node.id, node.x, node.y, node.z));
+```
+
+<D3ForceOptions />
+
+
+<D3Force3DOptions />
+
+
+## Related links
+
+<DocCards
+  variant="compact"
+  items={[
+    {
+      href: '/guide/api/force/d3-force',
+      title: 'D3Force',
+      description: '2D force layout wrapper (d3-force).',
+    },
+    {
+      href: '/guide/api/api/introduction',
+      title: 'Common API',
+      description: 'Input structure, execution, and result access.',
+    },
+  ]}
+/>

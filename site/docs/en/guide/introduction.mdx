@@ -1,0 +1,89 @@
+import { Badge } from '@theme';
+import { DocCards } from '../../components/DocCards';
+
+# Introduction
+
+`@antv/layout` is a layout algorithm library for graph visualization. It ships with a wide range of layouts, unifies graph data and layout APIs, and turns graph structures into renderable coordinates. <Badge type="tip">TypeScript</Badge><Badge type="info" outline>WebWorker</Badge>
+
+<img src="https://mdn.alipayobjects.com/huamei_aphk1k/afts/img/A*oV6nR7oW4PMAAAAAgFAAAAgAegfkAQ/original" />
+
+## Layouts at a glance
+
+| Type            | Layout                                                                                          | Layout                                                                       |
+| --------------- | ----------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| Force (iterative) | [ForceAtlas2](./api/force/force-atlas2)<br />Large graphs with acceleration support.          | [Force](./api/force/force)<br />Rich parameters and fine-grained control.    |
+|                 | [Fruchterman](./api/force/fruchterman)<br />Classic force layout for small/medium graphs.       | [D3Force](./api/force/d3-force)<br />A wrapper around d3-force simulation.   |
+|                 | [D3Force3D](./api/force/d3-force-3d)<br />3D force layout with z output.                         |                                                                              |
+| Hierarchy/flow  | [Dagre](./api/hierarchy/dagre)<br />Directed hierarchical layout with labels/placeholders.      | [AntVDagre](./api/hierarchy/antv-dagre)<br />Production-grade Dagre variant. |
+| Circular/radial | [Circular](./api/radial/circular)<br />Circular/spiral distribution with ordering controls.     | [Concentric](./api/radial/concentric)<br />Layer by concentric value.        |
+|                 | [Radial](./api/radial/radial)<br />Radial structure centered on a focus node.                    |                                                                              |
+| Regular/init    | [Grid](./api/regular/grid)<br />Stable grid positions.                                           | [Random](./api/regular/random)<br />Random coordinates for placeholders.     |
+| Others          | [MDS](./api/others/mds)<br />Distance-constraint-driven dimensionality reduction.               |                                                                              |
+| Composite/Combo | [ComboCombined](./api/combo/combo-combined)<br />Multi-level composite layout with combo bounds. |                                                                              |
+
+:::tip Minimal example
+
+Here is a minimal layout run using `CircularLayout`:
+
+```ts
+import { CircularLayout } from '@antv/layout';
+
+const data = {
+  nodes: [{ id: 'node1' }, { id: 'node2' }, { id: 'node3' }],
+  edges: [
+    { source: 'node1', target: 'node2' },
+    { source: 'node2', target: 'node3' },
+  ],
+};
+
+async function run() {
+  const layout = new CircularLayout({ center: [200, 200], radius: 150 });
+
+  await layout.execute(data);
+
+  layout.forEachNode((node) => {
+    console.log(node.id, node.x, node.y);
+  });
+}
+
+run();
+```
+
+:::
+
+## Get started
+
+<DocCards
+  items={[
+    {
+      href: '/guide/start/getting-started',
+      title: 'Quick Start',
+      description: 'Install, data format, and the minimal execution flow.',
+    },
+    {
+      href: '/guide/start/installation',
+      title: 'Installation',
+      description: 'Package managers, ESM/CommonJS, and CDN usage.',
+    },
+    {
+      href: '/guide/start/data-mapping',
+      title: 'Data Mapping',
+      description: 'Map node/edge fields to your business data.',
+    },
+    {
+      href: '/guide/start/layout-configuration',
+      title: 'Layout Configuration',
+      description: 'Common options, workers, warm start, and overlap prevention.',
+    },
+    {
+      href: '/guide/api/api/introduction',
+      title: 'Common API',
+      description: 'Input structure, execution, result access, and iteration control.',
+    },
+    {
+      href: '/guide/api/force/force',
+      title: 'Layout Algorithms',
+      description: 'Options, input requirements, and output fields for each layout.',
+    },
+  ]}
+/>

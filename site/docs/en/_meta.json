@@ -1,0 +1,17 @@
+[
+  {
+    "text": "docs",
+    "link": "/guide/introduction",
+    "activeMatch": "/guide/"
+  },
+  {
+    "text": "contributors",
+    "link": "/contributing/",
+    "activeMatch": "/contributing/"
+  },
+  {
+    "text": "performance",
+    "link": "/perf/",
+    "activeMatch": "/perf/"
+  }
+]

@@ -103,7 +103,7 @@
     "test:coverage:open": "open-cli coverage/lcov-report/index.html",
     "test:coverage": "jest --coverage",
     "test": "jest",
-    "deploy": "gh-pages -d site/doc_build"
+    "deploy": "npm --prefix site run build && gh-pages -d site/doc_build"
   },
   "publishConfig": {
     "access": "public",

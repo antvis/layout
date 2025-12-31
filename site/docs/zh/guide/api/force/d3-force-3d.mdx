@@ -1,7 +1,7 @@
 import { Badge } from '@theme';
 import { DocCards } from '../../../../components/DocCards';
-import D3ForceOptions from '../../../partials/d3-force-options.mdx';
 import D3Force3DOptions from '../../../partials/d3-force-3d-options.mdx';
+import D3ForceOptions from '../../../partials/d3-force-options.mdx';
 
 # D3Force3D 3D 力导向 <Badge text="Iterative" type="info" />
 
@@ -35,7 +35,9 @@ layout.forEachNode((node) => console.log(node.id, node.x, node.y, node.z));
 
 <D3ForceOptions />
 
+
 <D3Force3DOptions />
+
 
 ## 相关链接
 
@@ -43,12 +45,12 @@ layout.forEachNode((node) => console.log(node.id, node.x, node.y, node.z));
   variant="compact"
   items={[
     {
-      href: './d3-force',
+      href: '/zh/guide/api/force/d3-force',
       title: 'D3Force',
       description: '2D 力导向封装（d3-force）。',
     },
     {
-      href: '../api/introduction',
+      href: '/zh/guide/api/api/introduction',
       title: '通用 API',
       description: '输入数据结构、执行与结果读取。',
     },

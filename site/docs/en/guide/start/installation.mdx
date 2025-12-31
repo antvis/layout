@@ -1,0 +1,78 @@
+# Installation
+
+import { PackageManagerTabs } from '@theme';
+
+This page explains how to install and import `@antv/layout`, plus a CDN example for the browser.
+
+## Install with a package manager
+
+<PackageManagerTabs command="install @antv/layout" />
+
+## ESM import
+
+Recommended for frontend projects with a build tool:
+
+```ts
+import { CircularLayout } from '@antv/layout';
+```
+
+## CommonJS import
+
+In CommonJS environments, use `require`:
+
+```js
+const { CircularLayout } = require('@antv/layout');
+```
+
+## Use via CDN (UMD)
+
+For pages without a build tool, use the UMD build. It exposes a global `Layout`.
+
+Pin a version in production to avoid the uncertainty of `latest`.
+
+```html
+<!-- unpkg -->
+<script src="https://unpkg.com/@antv/layout@latest/dist/index.min.js"></script>
+
+<!-- jsDelivr -->
+<script src="https://cdn.jsdelivr.net/npm/@antv/layout@latest/dist/index.min.js"></script>
+```
+
+### Minimal example
+
+```html
+<script>
+  const { CircularLayout } = Layout;
+
+  const data = {
+    nodes: [{ id: 'a' }, { id: 'b' }, { id: 'c' }],
+    edges: [
+      { source: 'a', target: 'b' },
+      { source: 'b', target: 'c' },
+    ],
+  };
+
+  const layout = new CircularLayout({ width: 800, height: 600, radius: 150 });
+  layout.execute(data).then(() => {
+    layout.forEachNode((node) => console.log(node.id, node.x, node.y));
+    layout.destroy();
+  });
+</script>
+```
+
+### Worker notes
+
+When `enableWorker: true` is set and the environment supports `Worker`, layouts run in a worker to reduce main-thread blocking.
+
+In the UMD build, the worker script URL is derived from the current `index.js/index.min.js` URL, pointing to `worker.js` in the same directory. Make sure:
+
+- `dist/worker.js` is accessible and lives alongside `dist/index.min.js`.
+- Your site CSP and CORS settings allow loading the worker script.
+
+If the worker fails to load, the layout automatically falls back to the main thread.
+
+## Next steps
+
+- Minimal execution flow: [Quick Start](./getting-started)
+- Field mapping and adaptation: [Data Mapping](./data-mapping)
+- Option organization and common combos: [Layout Configuration](./layout-configuration)

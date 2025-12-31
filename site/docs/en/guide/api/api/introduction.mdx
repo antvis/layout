@@ -1,0 +1,110 @@
+import { Badge } from '@theme';
+import { DocCards } from '../../../../components/DocCards';
+
+# Common API <Badge text="Core" type="tip" />
+
+This page explains the shared usage of `@antv/layout`: prepare data, execute a layout, read results, and optionally control iterations and lifecycle methods. Differences across layouts are mainly in their `LayoutOptions`.
+
+## Example: minimal flow
+
+```ts
+import { CircularLayout } from '@antv/layout';
+
+const data = {
+  nodes: [{ id: 'a' }, { id: 'b' }],
+  edges: [{ source: 'a', target: 'b' }],
+};
+
+const layout = new CircularLayout({ radius: 80 });
+await layout.execute(data);
+
+layout.forEachNode((node) => {
+  console.log(node.id, node.x, node.y);
+});
+```
+
+Notes:
+
+- Input defaults to `id` (node) and `source/target` (edge).
+- Layouts do not mutate the original `data`; results are read via traversal.
+- `initialOptions` from construction are merged with `userOptions` from `execute`; see [Layout Configuration](../../start/layout-configuration).
+
+## Input
+
+```ts
+type GraphData = {
+  nodes: { [key: string]: any }[];
+  edges?: { [key: string]: any }[];
+};
+```
+
+Notes:
+
+- `edges` is optional; passing only `nodes` is valid.
+- If field names differ, use `node` / `edge` mapping functions; see [Data Mapping](../../start/data-mapping).
+
+## Output
+
+Common node access:
+
+```ts
+layout.forEachNode((node) => {
+  console.log(node.id, node.x, node.y, node._original);
+});
+```
+
+Notes:
+
+- `node.id`: mapped node id
+- `node.x / node.y / node.z?`: layout coordinates
+- `node._original`: reference to the original business object (for write-back or extra fields)
+
+Common edge access:
+
+```ts
+layout.forEachEdge((edge) => {
+  console.log(edge.source, edge.target, edge._original);
+});
+```
+
+Notes:
+
+- `edge.source / edge.target`: endpoint ids
+- `edge._original`: reference to the original edge object
+- `edge.points / edge.labelPos / ...`: some hierarchical/flow layouts output control points and label positions
+
+Different layouts may output extra fields. Refer to their pages, e.g. [Dagre](../hierarchy/dagre), [AntVDagre](../hierarchy/antv-dagre), [ComboCombined](../combo/combo-combined).
+
+## When fields differ
+
+If your business fields are not `id/source/target`, adapt them with mapping functions:
+
+```ts
+const layout = new CircularLayout({
+  node: (n) => ({ id: n.key }),
+  edge: (e) => ({ source: e.from, target: e.to }),
+});
+```
+
+Notes:
+
+- Mapping only affects fields used by the layout; it does not mutate the original data.
+- See [Data Mapping](../../start/data-mapping) for full examples.
+
+## Iterative layouts
+
+For simulation/iterative layouts, you can control steps manually:
+
+```ts
+layout.tick(10);
+layout.stop();
+layout.restart();
+```
+
+## destroy
+
+Layout instances keep a runtime context (and possibly a Worker). Call this when done:
+
+```ts
+layout.destroy();
+```

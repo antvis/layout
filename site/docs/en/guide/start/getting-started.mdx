@@ -1,0 +1,103 @@
+# Quick Start
+
+Before you begin, complete installation first: [Installation](./installation).
+
+## Basic usage
+
+This section walks through the minimal flow to run a layout and read the results.
+
+### 1. Prepare graph data
+
+`@antv/layout` uses a unified graph data structure:
+
+```js
+const data = {
+  nodes: [{ id: 'node1' }, { id: 'node2' }, { id: 'node3' }],
+  edges: [
+    { source: 'node1', target: 'node2' },
+    { source: 'node2', target: 'node3' },
+  ],
+};
+```
+
+The structure includes a `nodes` array and an optional `edges` array. By default, nodes use `id` and edges use `source` / `target`.
+
+### 2. Initialize a layout
+
+Import the layout you need from `@antv/layout`:
+
+```js
+import { CircularLayout } from '@antv/layout';
+```
+
+Create an instance with initial options:
+
+```js
+const layout = new CircularLayout({
+  center: [200, 200],
+  radius: 150,
+});
+```
+
+You can override these options when executing.
+
+### 3. Execute the layout
+
+Call `execute` to run the layout (it does not mutate the original data):
+
+```js
+await layout.execute(data);
+```
+
+You can also pass options at execution time:
+
+```js
+await layout.execute(data, {
+  center: [200, 200],
+  radius: 150,
+});
+```
+
+### 4. Read results
+
+After the layout completes, iterate with `forEachNode`:
+
+```js
+layout.forEachNode((node) => {
+  console.log(`Node ${node.id}: (${node.x}, ${node.y})`);
+});
+```
+
+You can also iterate edges with `forEachEdge`:
+
+```js
+layout.forEachEdge((edge) => {
+  console.log(`Edge ${edge.source} → ${edge.target}`);
+});
+```
+
+## Clean up
+
+Layout instances keep a runtime context and may hold resources like Workers. Call `destroy()` when done:
+
+```ts
+layout.destroy();
+```
+
+## Full example
+
+This example renders all nodes and edges.
+
+<code src="../../../components/CircularDemo.jsx" direction="vertical" />
+
+It will render a simple circular layout on the page.
+
+## Next steps
+
+After your first layout run, you can:
+
+- Learn how to [map custom data structures](./data-mapping)
+- Learn how to [organize layout options](./layout-configuration)
+- Explore the [common API](../api/api/introduction)
+
+You now have the full flow for feeding graph data into a layout and reading coordinates back.

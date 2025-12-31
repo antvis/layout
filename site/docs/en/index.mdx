@@ -1,0 +1,17 @@
+import { useEffect } from 'react';
+
+export default function IndexRedirect() {
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    window.location.replace('./guide/introduction/');
+  }, []);
+
+  return (
+    <div>
+      <p>Redirecting…</p>
+      <p>
+        <a href="./guide/introduction/">Go to docs</a>
+      </p>
+    </div>
+  );
+}

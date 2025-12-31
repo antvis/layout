@@ -1,0 +1,37 @@
+[
+  {
+    "type": "dir",
+    "name": "api",
+    "label": "API"
+  },
+  {
+    "type": "dir",
+    "name": "force",
+    "label": "Force Layouts"
+  },
+  {
+    "type": "dir",
+    "name": "hierarchy",
+    "label": "Hierarchical Layouts"
+  },
+  {
+    "type": "dir",
+    "name": "radial",
+    "label": "Circular/Radial Layouts"
+  },
+  {
+    "type": "dir",
+    "name": "regular",
+    "label": "Regular/Initial Layouts"
+  },
+  {
+    "type": "dir",
+    "name": "others",
+    "label": "Other Layouts"
+  },
+  {
+    "type": "dir",
+    "name": "combo",
+    "label": "Composite Layouts"
+  }
+]

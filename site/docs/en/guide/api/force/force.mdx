@@ -1,0 +1,83 @@
+import { Badge } from '@theme';
+import { DocCards } from '../../../../components/DocCards';
+import CommonLayoutOptions from '../../../partials/common-layout-options.mdx';
+import ForceIterativeOptions from '../../../partials/force-iterative-options.mdx';
+
+# Force Layout <Badge text="Iterative" type="info" />
+
+Force layout offers a highly configurable force-directed model, including link distance, repulsion/attraction, centripetal force, and clustering. It is ideal when you need fine-grained tuning and process control.
+
+<img width="400" src="https://gw.alipayobjects.com/mdn/rms_f8c6a0/afts/img/A*Ce2WSIlo_fcAAAAAAAAAAABkARQnAQ" />
+
+## When to use
+
+- Fine-grained control over force behavior
+- Engineering features like clustering, centripetal force, and monitoring callbacks
+
+## Input requirements
+
+- Nodes must have unique `id`
+- `edges` are recommended since forces rely on relationships. It can run without edges, but results look like scattered points.
+
+## Usage
+
+```ts
+import { ForceLayout } from '@antv/layout';
+
+const layout = new ForceLayout({ width: 800, height: 600, linkDistance: 200 });
+await layout.execute(data);
+```
+
+## Options
+
+<CommonLayoutOptions />
+
+
+<ForceIterativeOptions />
+
+
+### Algorithm options
+
+Force has a large option set; the table below lists all fields:
+
+| Option                 | Description                                                  | Type                                       | Default     |
+| ---------------------- | ------------------------------------------------------------ | ------------------------------------------ | ----------- |
+| `linkDistance`         | Link distance                                                | `number \| (edge, source, target)=>number` | `200`       |
+| `nodeStrength`         | Node force. Positive = attraction, negative = repulsion.     | `number \| (node)=>number`                 | `1000`      |
+| `edgeStrength`         | Edge attraction strength                                     | `number \| (edge)=>number`                 | `50`        |
+| `preventOverlap`       | Prevent overlaps. Requires `nodeSize`.                       | `boolean`                                  | `true`      |
+| `nodeSize`             | Node size for collision detection.                           | `Size \| (node)=>Size`                     | `undefined` |
+| `nodeSpacing`          | Spacing between nodes                                        | `number \| (node)=>number`                 | `undefined` |
+| `damping`              | Damping factor in `[0, 1]`.                                  | `number`                                   | `0.9`       |
+| `maxSpeed`             | Max movement per iteration                                   | `number`                                   | `200`       |
+| `coulombDisScale`      | Coulomb scale to control repulsion strength                  | `number`                                   | `0.005`     |
+| `gravity`              | Center gravity pulling nodes toward `center`                 | `number`                                   | `10`        |
+| `factor`               | Repulsion factor (higher = stronger)                         | `number`                                   | `1`         |
+| `interval`             | Movement speed scale per iteration                           | `number`                                   | `0.02`      |
+| `centripetalOptions`   | Centripetal force options by leaf/single/others/center       | `CentripetalOptions`                       | -           |
+| `leafCluster`          | Cluster leaf nodes                                           | `boolean`                                  | `false`     |
+| `clustering`           | Cluster all nodes                                            | `boolean`                                  | `false`     |
+| `nodeClusterBy`        | Clustering key (only when `clustering=true`)                 | `(node)=>string`                           | `undefined` |
+| `clusterNodeStrength`  | Centripetal strength for clusters                            | `number \| (node)=>number`                 | `20`        |
+| `collideStrength`      | Overlap prevention strength in `[0, 1]`                      | `number`                                   | `1`         |
+| `getMass`              | Node mass callback                                           | `(node)=>number`                           | `undefined` |
+| `getCenter`            | Extra center force callback, returning `[x, y, strength]`    | `(node, degree)=>number[]`                 | `undefined` |
+| `monitor`              | Iteration monitoring callback (energy, iterations, etc.)     | `(params)=>void`                           | `undefined` |
+
+## Related links
+
+<DocCards
+  variant="compact"
+  items={[
+    {
+      href: '/guide/api/api/introduction',
+      title: 'Common API',
+      description: 'Input structure, execution, result access, and iteration control.',
+    },
+    {
+      href: '/guide/api/force/d3-force',
+      title: 'D3Force',
+      description: 'A simulation wrapper based on d3-force.',
+    },
+  ]}
+/>

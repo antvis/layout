@@ -1,0 +1,72 @@
+import { Badge } from '@theme';
+import { DocCards } from '../../../../components/DocCards';
+import CommonLayoutOptions from '../../../partials/common-layout-options.mdx';
+
+# Grid Layout <Badge text="Non-Iterative" type="tip" />
+
+Arrange nodes in a regular grid. Great for stable, predictable structures like matrix views or card lists.
+
+<img
+  width="400"
+  src="https://mdn.alipayobjects.com/huamei_qa8qxu/afts/img/A*8RYVTrENVCcAAAAAAAAAAAAADmJ7AQ/original"
+/>
+
+## When to use
+
+- Regular placement with predictable positions
+- Control density via `rows`/`cols`
+
+## Input requirements
+
+- Nodes must have unique `id`
+
+## Usage
+
+```ts
+import { GridLayout } from '@antv/layout';
+
+const layout = new GridLayout({ width: 800, height: 600, rows: 8, cols: 10 });
+await layout.execute(data);
+```
+
+## Options
+
+<CommonLayoutOptions />
+
+
+### Algorithm options
+
+| Option                   | Description                                                  | Type                                           | Default     |
+| ------------------------ | ------------------------------------------------------------ | ---------------------------------------------- | ----------- |
+| `begin`                  | Grid origin; defaults to top-left                            | `[number, number] \| [number, number, number]` | `[0, 0]`    |
+| `rows`                   | Row count; auto-calculated when `undefined`                  | `number`                                       | `10`        |
+| `cols`                   | Column count; auto-calculated when `undefined`               | `number`                                       | `undefined` |
+| `condense`               | Use minimal canvas space                                     | `boolean`                                      | `false`     |
+| `preventOverlap`         | Prevent overlaps. Requires `nodeSize` or `size` in data.     | `boolean`                                      | `false`     |
+| `nodeSize`               | Node size for collision detection.                           | `Size \| (node) => Size`                       | `undefined` |
+| `nodeSpacing`            | Spacing between nodes for density control.                   | `number \| (node) => number`                   | `undefined` |
+| `preventOverlapPadding`  | Padding used in overlap prevention                           | `number`                                       | `10`        |
+| `sortBy`                 | Sort key for grid assignment order.                          | `'id' \| 'degree' \| (a,b)=>-1\|0\|1`          | `undefined` |
+| `position`               | Provide row/col for nodes; supports row-only or col-only.     | `(node) => ({ row?, col? })`                   | `undefined` |
+
+:::tip Overlap prevention
+`preventOverlap: true` needs node sizes: set `nodeSize` or provide size info on node data.
+:::
+
+## Related links
+
+<DocCards
+  variant="compact"
+  items={[
+    {
+      href: '/guide/api/api/introduction',
+      title: 'Common API',
+      description: 'Input structure, execution, and result access.',
+    },
+    {
+      href: '/guide/api/radial/concentric',
+      title: 'Concentric',
+      description: 'Concentric layout layered by “importance”.',
+    },
+  ]}
+/>

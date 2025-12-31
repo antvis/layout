@@ -1,0 +1,49 @@
+import { Badge } from '@theme';
+import { DocCards } from '../../../../components/DocCards';
+import D3ForceOptions from '../../../partials/d3-force-options.mdx';
+
+# D3Force (d3-force based) <Badge text="Iterative" type="info" />
+
+`D3ForceLayout` wraps the simulation capabilities of `d3-force`. It is ideal if you want to reuse the d3 force configuration style, combining `link`, `manyBody`, `collide`, `x`, `y`, and more.
+
+![d3-force](https://gw.alipayobjects.com/mdn/rms_f8c6a0/afts/img/A*9VXcQLLyzHgAAAAAAAAAAABkARQnAQ)
+
+## When to use
+
+- You already have d3-force experience or configurations
+- You want d3-style force composition
+
+## Input requirements
+
+- Nodes must have unique `id`
+- `edges` are recommended because link forces depend on relationships
+
+## Usage
+
+```ts
+import { D3ForceLayout } from '@antv/layout';
+
+const layout = new D3ForceLayout({ width: 800, height: 600, iterations: 300 });
+await layout.execute(data);
+```
+
+<D3ForceOptions />
+
+
+## Related links
+
+<DocCards
+  variant="compact"
+  items={[
+    {
+      href: '/guide/api/force/d3-force-3d',
+      title: 'D3Force3D',
+      description: '3D force layout with z output.',
+    },
+    {
+      href: '/guide/api/force/force',
+      title: 'Force',
+      description: 'A more configurable iterative force layout.',
+    },
+  ]}
+/>
