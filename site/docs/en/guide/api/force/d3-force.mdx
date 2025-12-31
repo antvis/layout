@@ -2,6 +2,9 @@ import { Badge } from '@theme';
 import { DocCards } from '../../../../components/DocCards';
 import D3ForceOptions from '../../../partials/d3-force-options.mdx';
 
+
+import { D3ForceLayout } from '@antv/layout';
+
 # D3Force (d3-force based) <Badge text="Iterative" type="info" />
 
 `D3ForceLayout` wraps the simulation capabilities of `d3-force`. It is ideal if you want to reuse the d3 force configuration style, combining `link`, `manyBody`, `collide`, `x`, `y`, and more.
@@ -21,13 +24,13 @@ import D3ForceOptions from '../../../partials/d3-force-options.mdx';
 ## Usage
 
 ```ts
-import { D3ForceLayout } from '@antv/layout';
 
 const layout = new D3ForceLayout({ width: 800, height: 600, iterations: 300 });
 await layout.execute(data);
 ```
 
 <D3ForceOptions />
+
 
 ## Related links
 

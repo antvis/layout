@@ -2,6 +2,9 @@ import { Badge } from '@theme';
 import { DocCards } from '../../../../components/DocCards';
 import CommonLayoutOptions from '../../../partials/common-layout-options.mdx';
 
+
+import { RandomLayout } from '@antv/layout';
+
 # Random 随机布局 <Badge text="Non-Iterative" type="tip" />
 
 在给定布局区域内为每个节点生成随机坐标。常用于占位、调试，或作为其他布局的初始位置。
@@ -18,7 +21,6 @@ import CommonLayoutOptions from '../../../partials/common-layout-options.mdx';
 ## 用法
 
 ```ts
-import { RandomLayout } from '@antv/layout';
 
 const layout = new RandomLayout({ width: 800, height: 600 });
 await layout.execute(data);
@@ -27,6 +29,7 @@ await layout.execute(data);
 ## 配置项
 
 <CommonLayoutOptions />
+
 
 随机布局没有专属配置项。
 

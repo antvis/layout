@@ -2,6 +2,9 @@ import { Badge } from '@theme';
 import { DocCards } from '../../../../components/DocCards';
 import CommonLayoutOptions from '../../../partials/common-layout-options.mdx';
 
+
+import { DagreLayout } from '@antv/layout';
+
 # Dagre 层次布局 <Badge text="Non-Iterative" type="tip" />
 
 用于有向图的分层排列，强调边的方向性与层级关系，常用于 DAG、流程编排与依赖关系等可视化。
@@ -22,7 +25,6 @@ import CommonLayoutOptions from '../../../partials/common-layout-options.mdx';
 ## 用法
 
 ```ts
-import { DagreLayout } from '@antv/layout';
 
 const layout = new DagreLayout({ width: 800, height: 600, rankdir: 'TB' });
 await layout.execute(data);
@@ -31,6 +33,7 @@ await layout.execute(data);
 ## 配置项
 
 <CommonLayoutOptions />
+
 
 ### 算法配置
 

@@ -2,6 +2,9 @@ import { Badge } from '@theme';
 import { DocCards } from '../../../../components/DocCards';
 import CommonLayoutOptions from '../../../partials/common-layout-options.mdx';
 
+
+import { AntVDagreLayout } from '@antv/layout';
+
 # AntVDagre Hierarchical Layout <Badge text="Non-Iterative" type="tip" />
 
 A hierarchical layout for flowcharts and dependency graphs, with direct options for direction, spacing, alignment, and edge control points.
@@ -25,7 +28,6 @@ A hierarchical layout for flowcharts and dependency graphs, with direct options 
 ## Usage
 
 ```ts
-import { AntVDagreLayout } from '@antv/layout';
 
 const layout = new AntVDagreLayout({ rankdir: 'TB', nodesep: 50, ranksep: 50 });
 await layout.execute(data);
@@ -34,6 +36,7 @@ await layout.execute(data);
 ## Options
 
 <CommonLayoutOptions />
+
 
 ### Algorithm options
 

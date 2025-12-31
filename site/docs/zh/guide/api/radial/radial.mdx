@@ -2,6 +2,9 @@ import { Badge } from '@theme';
 import { DocCards } from '../../../../components/DocCards';
 import CommonLayoutOptions from '../../../partials/common-layout-options.mdx';
 
+
+import { RadialLayout } from '@antv/layout';
+
 # Radial 辐射布局 <Badge text="Non-Iterative" type="tip" />
 
 以指定焦点节点为中心，将节点按最短路径层级分布到不同半径的圆环上，用于突出某个核心实体的关系结构。
@@ -24,7 +27,6 @@ import CommonLayoutOptions from '../../../partials/common-layout-options.mdx';
 ## 用法
 
 ```ts
-import { RadialLayout } from '@antv/layout';
 
 const layout = new RadialLayout({ width: 800, height: 600, focusNode: null });
 await layout.execute(data);
@@ -33,6 +35,7 @@ await layout.execute(data);
 ## 配置项
 
 <CommonLayoutOptions />
+
 
 ### 算法配置
 

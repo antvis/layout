@@ -2,6 +2,9 @@ import { Badge } from '@theme';
 import { DocCards } from '../../../../components/DocCards';
 import CommonLayoutOptions from '../../../partials/common-layout-options.mdx';
 
+
+import { CircularLayout } from '@antv/layout';
+
 # Circular 圆形布局 <Badge text="Non-Iterative" type="tip" />
 
 将节点排列在圆周上，也可以配置为螺旋分布。支持节点排序、分组、起止角度与半径控制等能力。算法参考论文：[A framework and algorithms for circular drawings of graphs](https://www.sciencedirect.com/science/article/pii/S1570866705000031)。
@@ -34,7 +37,6 @@ import CommonLayoutOptions from '../../../partials/common-layout-options.mdx';
 ## 用法
 
 ```ts
-import { CircularLayout } from '@antv/layout';
 
 const layout = new CircularLayout({ width: 800, height: 600, radius: 150 });
 await layout.execute(data);
@@ -43,6 +45,7 @@ await layout.execute(data);
 ## 配置项
 
 <CommonLayoutOptions />
+
 
 ### 算法配置
 

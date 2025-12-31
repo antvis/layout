@@ -2,6 +2,9 @@ import { Badge } from '@theme';
 import { DocCards } from '../../../../components/DocCards';
 import CommonLayoutOptions from '../../../partials/common-layout-options.mdx';
 
+
+import { RadialLayout } from '@antv/layout';
+
 # Radial Layout <Badge text="Non-Iterative" type="tip" />
 
 Centers on a focus node and places others on rings by shortest-path distance. Use it to highlight relationships around a core entity.
@@ -24,7 +27,6 @@ Centers on a focus node and places others on rings by shortest-path distance. Us
 ## Usage
 
 ```ts
-import { RadialLayout } from '@antv/layout';
 
 const layout = new RadialLayout({ width: 800, height: 600, focusNode: null });
 await layout.execute(data);
@@ -33,6 +35,7 @@ await layout.execute(data);
 ## Options
 
 <CommonLayoutOptions />
+
 
 ### Algorithm options
 

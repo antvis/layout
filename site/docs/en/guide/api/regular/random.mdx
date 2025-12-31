@@ -2,6 +2,9 @@ import { Badge } from '@theme';
 import { DocCards } from '../../../../components/DocCards';
 import CommonLayoutOptions from '../../../partials/common-layout-options.mdx';
 
+
+import { RandomLayout } from '@antv/layout';
+
 # Random Layout <Badge text="Non-Iterative" type="tip" />
 
 Generate random coordinates for each node within a given area. Useful for placeholders, debugging, or as a starting point for other layouts.
@@ -18,7 +21,6 @@ Generate random coordinates for each node within a given area. Useful for placeh
 ## Usage
 
 ```ts
-import { RandomLayout } from '@antv/layout';
 
 const layout = new RandomLayout({ width: 800, height: 600 });
 await layout.execute(data);
@@ -27,6 +29,7 @@ await layout.execute(data);
 ## Options
 
 <CommonLayoutOptions />
+
 
 Random layout has no additional algorithm options.
 

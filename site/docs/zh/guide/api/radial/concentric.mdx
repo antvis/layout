@@ -2,6 +2,9 @@ import { Badge } from '@theme';
 import { DocCards } from '../../../../components/DocCards';
 import CommonLayoutOptions from '../../../partials/common-layout-options.mdx';
 
+
+import { ConcentricLayout } from '@antv/layout';
+
 # Concentric 同心圆布局 <Badge text="Non-Iterative" type="tip" />
 
 根据节点的同心值将节点分层。同心值越高越靠近中心。默认的同心值来自节点度数。
@@ -24,7 +27,6 @@ import CommonLayoutOptions from '../../../partials/common-layout-options.mdx';
 ## 用法
 
 ```ts
-import { ConcentricLayout } from '@antv/layout';
 
 const layout = new ConcentricLayout({
   width: 800,
@@ -37,6 +39,7 @@ await layout.execute(data);
 ## 配置项
 
 <CommonLayoutOptions />
+
 
 ### 算法配置
 

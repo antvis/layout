@@ -1,7 +1,10 @@
 import { Badge } from '@theme';
 import { DocCards } from '../../../../components/DocCards';
-import D3ForceOptions from '../../../partials/d3-force-options.mdx';
 import D3Force3DOptions from '../../../partials/d3-force-3d-options.mdx';
+import D3ForceOptions from '../../../partials/d3-force-options.mdx';
+
+
+import { D3Force3DLayout } from '@antv/layout';
 
 # D3Force3D 3D 力导向 <Badge text="Iterative" type="info" />
 
@@ -22,7 +25,6 @@ import D3Force3DOptions from '../../../partials/d3-force-3d-options.mdx';
 ## 用法
 
 ```ts
-import { D3Force3DLayout } from '@antv/layout';
 
 const layout = new D3Force3DLayout({
   width: 800,
@@ -35,7 +37,9 @@ layout.forEachNode((node) => console.log(node.id, node.x, node.y, node.z));
 
 <D3ForceOptions />
 
+
 <D3Force3DOptions />
+
 
 ## 相关链接
 

@@ -1,6 +1,9 @@
 import { Badge } from '@theme';
 import { DocCards } from '../../../../components/DocCards';
 
+
+import { CircularLayout } from '@antv/layout';
+
 # 通用 API <Badge text="Core" type="tip" />
 
 本页用例子说明 `@antv/layout` 的通用调用方式：准备数据、执行布局、读取结果，以及可选的迭代控制与生命周期方法。不同布局算法的差异主要体现在各自的 `LayoutOptions` 配置项。
@@ -8,7 +11,6 @@ import { DocCards } from '../../../../components/DocCards';
 ## 例子：最小可用流程
 
 ```ts
-import { CircularLayout } from '@antv/layout';
 
 const data = {
   nodes: [{ id: 'a' }, { id: 'b' }],

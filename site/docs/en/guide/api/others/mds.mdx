@@ -2,6 +2,9 @@ import { Badge } from '@theme';
 import { DocCards } from '../../../../components/DocCards';
 import CommonLayoutOptions from '../../../partials/common-layout-options.mdx';
 
+
+import { MDSLayout } from '@antv/layout';
+
 # MDS Layout <Badge text="Non-Iterative" type="tip" />
 
 MDS stands for Multidimensional Scaling. It maps ideal distance relationships onto a 2D plane, useful when you want a balanced global structure and edge lengths close to expected values.
@@ -21,7 +24,6 @@ MDS stands for Multidimensional Scaling. It maps ideal distance relationships on
 ## Usage
 
 ```ts
-import { MDSLayout } from '@antv/layout';
 
 const layout = new MDSLayout({ width: 800, height: 600, linkDistance: 200 });
 await layout.execute(data);
@@ -30,6 +32,7 @@ await layout.execute(data);
 ## Options
 
 <CommonLayoutOptions />
+
 
 ### Algorithm options
 

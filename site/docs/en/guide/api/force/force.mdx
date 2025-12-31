@@ -1,7 +1,10 @@
 import { Badge } from '@theme';
 import { DocCards } from '../../../../components/DocCards';
 import CommonLayoutOptions from '../../../partials/common-layout-options.mdx';
+
+
 import ForceIterativeOptions from '../../../partials/force-iterative-options.mdx';
+import { ForceLayout } from '@antv/layout';
 
 # Force Layout <Badge text="Iterative" type="info" />
 
@@ -22,7 +25,6 @@ Force layout offers a highly configurable force-directed model, including link d
 ## Usage
 
 ```ts
-import { ForceLayout } from '@antv/layout';
 
 const layout = new ForceLayout({ width: 800, height: 600, linkDistance: 200 });
 await layout.execute(data);
@@ -32,7 +34,9 @@ await layout.execute(data);
 
 <CommonLayoutOptions />
 
+
 <ForceIterativeOptions />
+
 
 ### Algorithm options
 

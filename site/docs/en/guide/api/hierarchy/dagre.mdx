@@ -2,6 +2,9 @@ import { Badge } from '@theme';
 import { DocCards } from '../../../../components/DocCards';
 import CommonLayoutOptions from '../../../partials/common-layout-options.mdx';
 
+
+import { DagreLayout } from '@antv/layout';
+
 # Dagre Hierarchical Layout <Badge text="Non-Iterative" type="tip" />
 
 Arrange directed graphs in layers, emphasizing direction and hierarchy. Common for DAGs, workflows, and dependency graphs.
@@ -22,7 +25,6 @@ Arrange directed graphs in layers, emphasizing direction and hierarchy. Common f
 ## Usage
 
 ```ts
-import { DagreLayout } from '@antv/layout';
 
 const layout = new DagreLayout({ width: 800, height: 600, rankdir: 'TB' });
 await layout.execute(data);
@@ -31,6 +33,7 @@ await layout.execute(data);
 ## Options
 
 <CommonLayoutOptions />
+
 
 ### Algorithm options
 
