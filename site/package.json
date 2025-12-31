@@ -7,7 +7,7 @@
   "scripts": {
     "sync:perf": "node scripts/sync-perf-reports.mjs",
     "dev": "npm run sync:perf && rspress dev",
-    "build": "npm run sync:perf && rspress build && node scripts/clean-urls.mjs",
+    "build": "npm run sync:perf && rspress build && node scripts/clean-urls.mjs && sh -c 'echo layout.antv.vision > doc_build/CNAME'",
     "preview": "npm run sync:perf && rspress preview"
   },
   "keywords": [],
