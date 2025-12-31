@@ -16,10 +16,21 @@ export function DocCards(props: DocCardsProps) {
   const cardClassName =
     variant === 'compact' ? 'layoutCard layoutCard--compact' : 'layoutCard';
 
+  const ensureAbsoluteHref = (href: string) => {
+    if (!href.startsWith('/')) {
+      throw new Error('DocCards href must be an absolute path starting with "/".');
+    }
+    return href;
+  };
+
   return (
     <div className="layoutIntroCards">
       {items.map((item) => (
-        <a key={item.href} className={cardClassName} href={item.href}>
+        <a
+          key={item.href}
+          className={cardClassName}
+          href={ensureAbsoluteHref(item.href)}
+        >
           <div className="layoutCardTitle">{item.title}</div>
           {item.description ? (
             <div className="layoutCardDesc">{item.description}</div>

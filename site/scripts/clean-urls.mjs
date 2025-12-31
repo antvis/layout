@@ -86,6 +86,12 @@ async function main() {
       .split(path.sep)
       .join('/');
 
+    // Hard redirect `/` to the docs entry.
+    if (relative === 'index.html') {
+      await fs.writeFile(filePath, redirectHtml('./guide/introduction/'));
+      continue;
+    }
+
     // Hard redirect `/zh` and `/zh/index.html` to the docs entry.
     if (relative === 'zh/index.html') {
       await fs.writeFile(filePath, redirectHtml('./guide/introduction/'));
