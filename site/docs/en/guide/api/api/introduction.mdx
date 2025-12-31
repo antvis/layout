@@ -101,11 +101,6 @@ layout.stop();
 layout.restart();
 ```
 
-Notes:
-
-- Not all layouts expose `tick/stop/restart`.
-- Use `isLayoutWithIterations` to check support; see [Public API](./public-api) for exports and built-in layouts.
-
 ## destroy
 
 Layout instances keep a runtime context (and possibly a Worker). Call this when done:

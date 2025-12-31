@@ -101,11 +101,6 @@ layout.stop();
 layout.restart();
 ```
 
-补充说明：
-
-- 不是所有布局都有 `tick/stop/restart`。
-- 可用 `isLayoutWithIterations` 判断是否支持迭代能力，导出位置与内置布局列表见 [公共 API](./public-api)。
-
 ## destroy
 
 布局实例会维护计算上下文（启用 Worker 时还可能持有 Worker）。不再使用时建议调用：
