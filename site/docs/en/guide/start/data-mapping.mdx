@@ -1,0 +1,144 @@
+# Data Mapping
+
+This section explains how to adapt your business data to the layout input format.
+
+:::note
+If you already use the standard graph format where nodes use `id` and edges use `source` / `target`, you can skip this section.
+:::
+
+## Why data mapping?
+
+Layouts depend on key fields like node id, edge `source/target`, and optional initial coordinates. Business data often uses different field names. Mapping lets you adapt fields without mutating the original data.
+
+### Example business data
+
+Assume your data looks like this:
+
+```js
+const data = {
+  nodes: [
+    { nodeId: 'n1', position: { x: 100, y: 200 }, radius: 16 },
+    { nodeId: 'n2', position: { x: 300, y: 200 }, radius: 16 },
+  ],
+  edges: [{ edgeId: 'e1', from: 'n1', to: 'n2', weight: 2 }],
+};
+```
+
+:::warning
+Running a layout directly on this data will fail because the fields are `nodeId`, `from`, and `to`, not the expected `id`, `source`, and `target`.
+:::
+
+## Configure field mappings
+
+Pass `node` / `edge` mapping functions either at initialization or execution time.
+
+:::tip Map only the required fields
+Mapping functions only need to return fields required by the layout, such as `id`, `source`, `target`, `x`, `y`. Other business fields do not need to be copied. The layout result keeps `_original` pointing to the original object for easy read/write.
+:::
+
+### Node mapping
+
+```js
+const layout = new CircularLayout({
+  center: [500, 500],
+  node: (datum) => ({
+    id: datum.nodeId,
+    x: datum.position?.x,
+    y: datum.position?.y,
+  }),
+});
+```
+
+The mapping function receives a raw node object and returns the fields needed for layout:
+
+**Field reference:**
+
+| Field                  | Required | Notes                                                                       |
+| ---------------------- | -------- | --------------------------------------------------------------------------- |
+| `id`                   | ✅       | Unique node identifier                                                      |
+| `x` / `y`              |          | Optional initial position for warm start                                    |
+| `z`                    |          | Optional 3D initial position for 3D warm start                              |
+| `parentId` / `isCombo` |          | Hierarchy info for combo layouts such as Dagre, AntV-Dagre, ComboCombined   |
+
+### Edge mapping
+
+```js
+const layout = new CircularLayout({
+  edge: (datum) => ({
+    id: datum.edgeId,
+    source: datum.from,
+    target: datum.to,
+  }),
+});
+```
+
+**Field reference:**
+
+| Field     | Required | Notes                                                    |
+| --------- | -------- | -------------------------------------------------------- |
+| `id`      |          | Unique edge identifier                                   |
+| `source`  | ✅       | Source node id, must match some node `id`                |
+| `target`  | ✅       | Target node id, must match some node `id`                |
+
+:::note Edge id is optional
+If `id` is omitted, it will be generated from `source-target`. For parallel edges, a suffix is added, e.g. `a-b-1`.
+:::
+
+## Common extension: read business fields in callbacks
+
+Many layout options accept callbacks, such as `nodeSize(node)` and `linkDistance(edge)`. These callbacks usually receive the original business object, so you can store custom fields and read them in the callback:
+
+```ts
+import { ForceLayout } from '@antv/layout';
+
+const layout = new ForceLayout({
+  nodeSize: (node) => node.radius ?? 16,
+  linkDistance: (edge) => (edge.weight ? 80 / edge.weight : 200),
+});
+```
+
+## Full example
+
+This example shows the complete mapping flow:
+
+```js
+const data = {
+  nodes: [
+    { nodeId: 'n1', position: { x: 100, y: 200 }, radius: 16 },
+    { nodeId: 'n2', position: { x: 300, y: 200 }, radius: 16 },
+  ],
+  edges: [{ edgeId: 'e1', from: 'n1', to: 'n2', weight: 2 }],
+};
+
+const layout = new CircularLayout({
+  center: [500, 500],
+  node: (datum) => ({
+    id: datum.nodeId,
+    x: datum.position?.x,
+    y: datum.position?.y,
+  }),
+  edge: (datum) => ({
+    id: datum.edgeId,
+    source: datum.from,
+    target: datum.to,
+  }),
+});
+
+await layout.execute(data);
+
+layout.forEachNode((node) => {
+  console.log(node.id, node.x, node.y);
+});
+```
+
+The layout does not mutate the original data. Mapping is only used during computation, and the results are exposed through the layout result objects.
+
+## Next steps
+
+After mapping your data, you can:
+
+- Explore [layout algorithms](../api/radial/circular)
+- Entry point: [Common API](../api/api/introduction)
+- Common options and compositions: [Layout Configuration](./layout-configuration)
+
+Mapping lets you keep your business data intact while using the unified layout input interface.

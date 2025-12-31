@@ -1,0 +1,81 @@
+import { Badge } from '@theme';
+import { DocCards } from '../../../../components/DocCards';
+import CommonLayoutOptions from '../../../partials/common-layout-options.mdx';
+import ForceIterativeOptions from '../../../partials/force-iterative-options.mdx';
+
+# ForceAtlas2 Layout <Badge text="Iterative" type="info" />
+
+ForceAtlas2 is designed for graph visualization, especially large graphs with community/cluster structures, and offers acceleration options like Barnes–Hut.
+
+<img
+  width="400"
+  src="https://mdn.alipayobjects.com/huamei_qa8qxu/afts/img/A*-HgiS6CyuuEAAAAAAAAAAAAADmJ7AQ/original"
+/>
+
+## When to use
+
+- Force-directed layout for larger graphs
+- Emphasizing community/cluster structure
+
+## Input requirements
+
+- Nodes must have unique `id`
+- `edges` are recommended since community structure depends on relationships
+
+## Usage
+
+```ts
+import { ForceAtlas2Layout } from '@antv/layout';
+
+const layout = new ForceAtlas2Layout({
+  width: 800,
+  height: 600,
+  barnesHut: true,
+});
+await layout.execute(data);
+```
+
+## Options
+
+<CommonLayoutOptions />
+
+<ForceIterativeOptions />
+
+### Algorithm options
+
+| Option           | Description                                                 | Type                         | Default     |
+| ---------------- | ----------------------------------------------------------- | ---------------------------- | ----------- |
+| `kr`             | Repulsion coefficient. Higher = more spread.                | `number`                     | `5`         |
+| `kg`             | Gravity coefficient. Higher = tighter center.               | `number`                     | `1`         |
+| `ks`             | Speed coefficient                                           | `number`                     | `0.1`       |
+| `ksmax`          | Maximum speed                                               | `number`                     | `10`        |
+| `tao`            | Oscillation tolerance for convergence                       | `number`                     | `0.1`       |
+| `mode`           | Mode. `linlog` emphasizes clusters.                         | `'normal' \| 'linlog'`       | `'normal'`  |
+| `preventOverlap` | Prevent overlaps. Requires `nodeSize`.                      | `boolean`                    | `false`     |
+| `nodeSize`       | Node size for collision detection.                          | `Size \| (node) => Size`     | `undefined` |
+| `nodeSpacing`    | Spacing between nodes                                       | `number \| (node) => number` | `undefined` |
+| `dissuadeHubs`   | Hub mode; pulls high-degree nodes closer to center.         | `boolean`                    | `false`     |
+| `barnesHut`      | Barnes–Hut acceleration; recommended for large graphs.      | `boolean`                    | `undefined` |
+| `prune`          | Auto-pruning for speed; may reduce quality.                 | `boolean`                    | `undefined` |
+
+:::tip Performance tips
+For large graphs, consider `barnesHut: true`. If speed matters most, try `prune: true`, but it can affect quality.
+:::
+
+## Related links
+
+<DocCards
+  variant="compact"
+  items={[
+    {
+      href: './fruchterman',
+      title: 'Fruchterman',
+      description: 'Classic force layout for small/medium graphs.',
+    },
+    {
+      href: './force',
+      title: 'Force',
+      description: 'More options and finer control.',
+    },
+  ]}
+/>

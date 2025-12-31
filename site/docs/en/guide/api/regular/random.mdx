@@ -1,0 +1,53 @@
+import { Badge } from '@theme';
+import { DocCards } from '../../../../components/DocCards';
+import CommonLayoutOptions from '../../../partials/common-layout-options.mdx';
+
+# Random Layout <Badge text="Non-Iterative" type="tip" />
+
+Generate random coordinates for each node within a given area. Useful for placeholders, debugging, or as a starting point for other layouts.
+
+## When to use
+
+- Need quick renderable coordinates
+- Provide initial positions for iterative layouts (warm start)
+
+## Input requirements
+
+- Nodes must have unique `id`
+
+## Usage
+
+```ts
+import { RandomLayout } from '@antv/layout';
+
+const layout = new RandomLayout({ width: 800, height: 600 });
+await layout.execute(data);
+```
+
+## Options
+
+<CommonLayoutOptions />
+
+Random layout has no additional algorithm options.
+
+:::tip
+Set `width`/`height` explicitly to control the distribution range.
+:::
+
+## Related links
+
+<DocCards
+  variant="compact"
+  items={[
+    {
+      href: '../api/introduction',
+      title: 'Common API',
+      description: 'Input structure, execution, and result access.',
+    },
+    {
+      href: './grid',
+      title: 'Grid',
+      description: 'Regular grid placement.',
+    },
+  ]}
+/>

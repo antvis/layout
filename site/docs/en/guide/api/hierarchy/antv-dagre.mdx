@@ -1,0 +1,91 @@
+import { Badge } from '@theme';
+import { DocCards } from '../../../../components/DocCards';
+import CommonLayoutOptions from '../../../partials/common-layout-options.mdx';
+
+# AntVDagre Hierarchical Layout <Badge text="Non-Iterative" type="tip" />
+
+A hierarchical layout for flowcharts and dependency graphs, with direct options for direction, spacing, alignment, and edge control points.
+
+<img
+  width="400"
+  src="https://mdn.alipayobjects.com/huamei_qa8qxu/afts/img/A*gQGOTYlN6BMAAAAAAAAAAAAADmJ7AQ/original"
+/>
+
+## When to use
+
+- Flowcharts and dependency graphs
+- Need edge control points and path info for direct rendering
+
+## Input requirements
+
+- Nodes must have unique `id`
+- `edges` are required and `source/target` must match node ids
+- For combos or nesting, provide `parentId` (use `node` mapping if needed)
+
+## Usage
+
+```ts
+import { AntVDagreLayout } from '@antv/layout';
+
+const layout = new AntVDagreLayout({ rankdir: 'TB', nodesep: 50, ranksep: 50 });
+await layout.execute(data);
+```
+
+## Options
+
+<CommonLayoutOptions />
+
+### Algorithm options
+
+| Option           | Description                                              | Type                                                  | Default     |
+| ---------------- | -------------------------------------------------------- | ----------------------------------------------------- | ----------- |
+| `rankdir`        | Layout direction: TB, BT, LR, RL                         | `DagreRankdir`                                        | `'TB'`      |
+| `ranker`         | Ranking mode                                             | `'network-simplex' \| 'tight-tree' \| 'longest-path'` | `undefined` |
+| `align`          | Node alignment                                           | `DagreAlign`                                          | `'UL'`      |
+| `begin`          | Top-left origin                                          | `Point`                                               | `undefined` |
+| `nodesep`        | Spacing between nodes in a layer                         | `number \| (node)=>number`                            | `50`        |
+| `ranksep`        | Spacing between layers                                   | `number \| (node)=>number`                            | `50`        |
+| `nodesepFunc`    | Node spacing callback; higher priority than `nodesep`    | `(node)=>number`                                      | `undefined` |
+| `ranksepFunc`    | Rank spacing callback; higher priority than `ranksep`    | `(node)=>number`                                      | `undefined` |
+| `nodeSize`       | Node size for spacing and placeholder calculation        | `Size \| (node)=>Size`                                | `undefined` |
+| `controlPoints`  | Whether to compute edge control points                   | `boolean`                                             | `false`     |
+| `sortByCombo`    | Sort by parentId to reduce combo overlaps                | `boolean`                                             | `false`     |
+| `edgeLabelSpace` | Reserve space for edge labels                            | `boolean`                                             | `true`      |
+| `nodeOrder`      | Node order within a layer by id                          | `string[]`                                            | `undefined` |
+| `radial`         | Radial layout based on dagre                             | `boolean`                                             | `undefined` |
+| `focusNode`      | Focus node; effective when `radial=true`                 | `ID \| Node \| null`                                  | `undefined` |
+| `preset`         | Reference node positions for continuous layouts          | `NodeData[]`                                          | `undefined` |
+
+:::note controlPoints
+`controlPoints: true` adds control points to edge results for direct polyline rendering. Consumption depends on your renderer or graph engine.
+:::
+
+## Output fields
+
+Read additional edge outputs via `forEachEdge`:
+
+- `edge.points?: Point[]`
+- `edge.labelPos?` / `edge.labelOffset?` / `edge.labelSize?`: when label space is enabled
+
+## Related links
+
+<DocCards
+  variant="compact"
+  items={[
+    {
+      href: './dagre',
+      title: 'Dagre',
+      description: 'Directed hierarchical/flow layout.',
+    },
+    {
+      href: '../combo/combo-combined',
+      title: 'ComboCombined',
+      description: 'Composite layout for combos/subgraphs.',
+    },
+    {
+      href: '../api/introduction',
+      title: 'Common API',
+      description: 'Input structure, execution, result access, and iteration control.',
+    },
+  ]}
+/>

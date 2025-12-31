@@ -1,0 +1,93 @@
+## Options
+
+This page lists all options for `D3ForceLayout`. It supports two configuration styles:
+
+1) **Shorthand fields**: quick access to common settings like `centerX`, `linkDistance`, `nodeStrength`.
+2) **Force objects**: closer to the original d3-force API, such as `link`, `manyBody`, `collide`, `x`, `y`, `center`, `radial`.
+
+You can mix both; when both are provided, the force objects are usually more predictable.
+
+### Common options
+
+| Option | Description | Type | Default |
+| --- | --- | --- | --- |
+| `width` / `height` | Reference size | `number` | `undefined` |
+| `enableWorker` | Whether to run in a Web Worker | `boolean` | `false/undefined` |
+| `node` | Node field mapping | `(datum) => ({ id?, x?, y?, z?, parentId?, isCombo? })` | `undefined` |
+| `edge` | Edge field mapping | `(datum) => ({ id?, source?, target? })` | `undefined` |
+
+Note: `D3ForceLayout` does not use `center`; it uses `centerX/centerY` instead.
+
+### Shorthand fields
+
+| Option | Description | Type | Default |
+| --- | --- | --- | --- |
+| `onTick` | Tick callback | `(layout) => void` | `undefined` |
+| `centerX` / `centerY` | Center coordinates | `number` | `width/2`, `height/2` |
+| `centerStrength` | Center force strength in `[0, 1]` | `number` | `undefined` |
+| `edgeId` | Edge id accessor | `(edge) => string` | `(edge) => String(edge.id)` |
+| `linkDistance` | Ideal link length | `number \| (edge)=>number` | `50` |
+| `edgeStrength` | Link strength in `[0, 1]` | `number \| (edge)=>number \| null` | `null` |
+| `edgeIterations` | Link force iterations | `number` | `1` |
+| `nodeStrength` | Many-body strength; negative = repulsion | `number \| (node)=>number` | `-30` |
+| `theta` | Barnes–Hut parameter in `(0, 1]` | `number` | `undefined` |
+| `distanceMax` / `distanceMin` | Many-body distance range | `number` | `undefined` |
+| `preventOverlap` | Prevent overlaps | `boolean` | `false` |
+| `collideStrength` | Collision strength in `[0, 1]` | `number` | `1` |
+| `collideIterations` | Collision iterations | `number` | `1` |
+| `nodeSize` | Node diameter used for collision radius | `number \| (node)=>number` | `10` |
+| `nodeSpacing` | Extra spacing between nodes | `number \| (node)=>number` | `0` |
+| `radialRadius` | Ideal radial radius | `number` | `100` |
+| `radialStrength` | Radial force strength in `[0, 1]` | `number` | `undefined` |
+| `radialX` / `radialY` | Radial force center | `number` | `undefined` |
+| `clustering` | Enable clustering | `boolean` | `false` |
+| `clusterBy` | Cluster field/function | `(node)=>string\|number` | `(d)=>d.cluster` |
+| `clusterNodeStrength` | In-cluster node strength | `number` | `-1` |
+| `clusterEdgeStrength` | Inter-cluster edge strength | `number` | `0.1` |
+| `clusterEdgeDistance` | Inter-cluster edge distance | `number` | `100` |
+| `clusterNodeSize` | Cluster node size | `number` | `10` |
+| `clusterFociStrength` | Cluster focus strength in `[0, 1]` | `number` | `0.8` |
+| `iterations` | Force iterations; not the same as layout iterations | `number` | `undefined` |
+| `forceSimulation` | Custom d3 Simulation | `Simulation` | `undefined` |
+| `alpha` / `alphaMin` | Current/stop thresholds | `number` | `undefined` |
+| `alphaDecay` | Decay rate of alpha | `number` | `undefined` |
+| `alphaTarget` | Target alpha | `number` | `undefined` |
+| `velocityDecay` | Velocity decay factor | `number` | `undefined` |
+| `randomSource` | Random generator | `() => number` | `undefined` |
+
+### Force objects
+
+These force objects can be set to `false` to disable; otherwise configure fields as in d3-force.
+
+#### `collide`
+
+- `radius?: number | (node, index, nodes) => number`
+- `strength?: number`
+- `iterations?: number`
+
+#### `manyBody`
+
+- `strength?: number | (node, index, nodes) => number`
+- `theta?: number`
+- `distanceMin?: number`
+- `distanceMax?: number`
+
+#### `link`
+
+- `id?: (edge, index, edges) => string`
+- `distance?: number | (edge, index, edges) => number`
+- `strength?: number | (edge, index, edges) => number`
+- `iterations?: number`
+
+#### `x` / `y`
+
+- `strength?: number | (node, index, nodes) => number`
+- `x?: number | (node, index, nodes) => number` (only for `x` force)
+- `y?: number | (node, index, nodes) => number` (only for `y` force)
+
+### 2D extensions
+
+| Option   | Description | Type |
+| --- | --- | --- |
+| `center` | Center force | `false \| { x?, y?, strength? }` |
+| `radial` | Radial force | `false \| { radius?, x?, y?, strength? }` |

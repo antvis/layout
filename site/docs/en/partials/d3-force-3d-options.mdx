@@ -1,0 +1,10 @@
+### 3D extensions
+
+`D3Force3DLayout` adds z-axis forces on top of 2D. Node results include `z` and may keep intermediate velocities like `vz`.
+
+| Option          | Description                     | Type                                       | Default |
+| --------------- | ------------------------------- | ------------------------------------------ | ------- |
+| `numDimensions` | Dimensions, fixed at 3.         | `3`                                        | `3`     |
+| `center`        | Center force with z support.    | `false \| { x?, y?, z?, strength? }`       | -       |
+| `radial`        | Radial force with z support.    | `false \| { radius?, x?, y?, z?, strength? }` | -    |
+| `z`             | Z-axis force                    | `false \| { z?, strength? }`               | -       |

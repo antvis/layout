@@ -1,0 +1,75 @@
+import { Badge } from '@theme';
+import { DocCards } from '../../../../components/DocCards';
+import CommonLayoutOptions from '../../../partials/common-layout-options.mdx';
+
+# Concentric Layout <Badge text="Non-Iterative" type="tip" />
+
+Layer nodes by a concentric value: higher values are closer to the center. By default, the concentric value is node degree.
+
+<img
+  width="400"
+  src="https://mdn.alipayobjects.com/huamei_qa8qxu/afts/img/A*KXunQKOLCSAAAAAAAAAAAAAADmJ7AQ/original"
+/>
+
+## When to use
+
+- Need layered presentation by “importance”
+- Want a stable center region, e.g. core nodes clustered
+
+## Input requirements
+
+- Nodes must have unique `id`
+- When `sortBy: 'degree'`, `edges` are needed for degree calculation
+
+## Usage
+
+```ts
+import { ConcentricLayout } from '@antv/layout';
+
+const layout = new ConcentricLayout({
+  width: 800,
+  height: 600,
+  sortBy: 'degree',
+});
+await layout.execute(data);
+```
+
+## Options
+
+<CommonLayoutOptions />
+
+### Algorithm options
+
+| Option           | Description                                                    | Type                         | Default            |
+| ---------------- | -------------------------------------------------------------- | ---------------------------- | ------------------ |
+| `preventOverlap` | Prevent overlaps. Requires `nodeSize` or `size` on data.       | `boolean`                    | `false`            |
+| `nodeSize`       | Node size used for collision detection.                        | `Size \| (node) => Size`     | `30`               |
+| `nodeSpacing`    | Minimum spacing between rings                                  | `number \| (node) => number` | `10`               |
+| `sweep`          | Arc span between the first and last node                       | `number`                     | `undefined`        |
+| `equidistant`    | Whether ring spacing is uniform                                | `boolean`                    | `false`            |
+| `startAngle`     | Start angle in radians                                         | `number`                     | `3 / 2 * Math.PI`  |
+| `clockwise`      | Place nodes clockwise                                          | `boolean`                    | `true`             |
+| `maxLevelDiff`   | Max concentric value difference per layer; auto if unspecified | `number`                     | `undefined`        |
+| `sortBy`         | Concentric value. Defaults to degree.                          | `'degree' \| (node)=>number` | `'degree'`         |
+
+:::tip
+If “importance” is not degree, use `sortBy: (node) => number` to define your own value.
+:::
+
+## Related links
+
+<DocCards
+  variant="compact"
+  items={[
+    {
+      href: '../api/introduction',
+      title: 'Common API',
+      description: 'Input structure, execution, and result access.',
+    },
+    {
+      href: './circular',
+      title: 'Circular',
+      description: 'A good choice when you need ordering and angle control.',
+    },
+  ]}
+/>

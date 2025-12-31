@@ -1,0 +1,95 @@
+import { Badge } from '@theme';
+import { DocCards } from '../../../../components/DocCards';
+import CommonLayoutOptions from '../../../partials/common-layout-options.mdx';
+
+# Dagre Hierarchical Layout <Badge text="Non-Iterative" type="tip" />
+
+Arrange directed graphs in layers, emphasizing direction and hierarchy. Common for DAGs, workflows, and dependency graphs.
+
+<img width="400" src="https://mdn.alipayobjects.com/huamei_qa8qxu/afts/img/A*v5mBSopYr_wAAAAAAAAAAAAADmJ7AQ/original" />
+
+## When to use
+
+- Graphs with clear direction and hierarchy, such as DAGs or flowcharts
+- Need space for edge labels or node sizes
+
+## Input requirements
+
+- Nodes must have unique `id`
+- `edges` are required and `source/target` must match node ids
+- For nested structures via `compound`, provide `parentId` on nodes (use `node` mapping if needed)
+
+## Usage
+
+```ts
+import { DagreLayout } from '@antv/layout';
+
+const layout = new DagreLayout({ width: 800, height: 600, rankdir: 'TB' });
+await layout.execute(data);
+```
+
+## Options
+
+<CommonLayoutOptions />
+
+### Algorithm options
+
+`DagreLayoutOptions` extends dagre `GraphLabel` with graph-visualization-friendly fields:
+
+| Option            | Description                                          | Type                           | Default     |
+| ----------------- | ---------------------------------------------------- | ------------------------------ | ----------- |
+| `directed`        | Treat as directed graph                              | `boolean`                      | `true`      |
+| `compound`        | Support nesting                                      | `boolean`                      | `true`      |
+| `multigraph`      | Allow multiple edges                                 | `boolean`                      | `true`      |
+| `nodeSize`        | Node size for spacing/placeholder calculation        | `Size \| (node)=>Size`         | `[0, 0]`    |
+| `edgeMinLen`      | Minimum number of layers an edge spans               | `number \| (node)=>number`     | `1`         |
+| `edgeWeight`      | Edge weight for priority in optimization             | `number \| (node)=>number`     | `undefined` |
+| `edgeLabelSize`   | Edge label size for reserved space                   | `Size \| (node)=>Size`         | `undefined` |
+| `edgeLabelPos`    | Edge label position                                  | `EdgeLabelPos \| (node)=>EdgeLabelPos` | `undefined` |
+| `edgeLabelOffset` | Offset between label and edge                        | `number \| (node)=>number`     | `undefined` |
+
+:::tip
+In addition to the fields above, all dagre `GraphLabel` options are supported, such as `rankdir`, `nodesep`, and `ranksep`. These are passed directly to dagre.
+:::
+
+### Dagre GraphLabel
+
+The fields below come from dagre `GraphLabel` and are used directly in dagre computation. These `width/height` values are different from `@antv/layout`’s common `width/height`; here they represent dagre’s graph label size for internal constraints.
+
+| Field                | Description                          | Type     |
+| -------------------- | ------------------------------------ | -------- |
+| `rankdir`            | Layout direction, e.g. TB, BT, LR, RL | `string` |
+| `align`              | Node alignment                        | `string` |
+| `nodesep`            | Spacing between nodes in a layer      | `number` |
+| `edgesep`            | Spacing between edges in a layer      | `number` |
+| `ranksep`            | Spacing between layers                | `number` |
+| `marginx` / `marginy`| Outer margin                          | `number` |
+| `acyclicer`          | Cycle-breaking strategy               | `string` |
+| `ranker`             | Ranking strategy                      | `string` |
+| `width` / `height`   | Dagre graph label size                | `number` |
+| `compound`           | Enable compound for nesting           | `boolean` |
+
+## Output fields
+
+Hierarchical layouts add extra fields on edges, such as polyline control points. Read them via `forEachEdge`:
+
+- `edge.points?: Point[]`
+- `edge.labelPos?` / `edge.labelOffset?` / `edge.labelSize?`
+
+## Related links
+
+<DocCards
+  variant="compact"
+  items={[
+    {
+      href: './antv-dagre',
+      title: 'AntVDagre',
+      description: 'Hierarchical/flow layout with enhanced edge control.',
+    },
+    {
+      href: '../api/introduction',
+      title: 'Common API',
+      description: 'Input structure, execution, and result access.',
+    },
+  ]}
+/>

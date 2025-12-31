@@ -1,0 +1,20 @@
+### Iteration control
+
+These options control convergence for `ForceLayout`, `ForceAtlas2Layout`, and `FruchtermanLayout`.
+
+#### Execution modes
+
+- `execute(data)`: run in one go; frame-splitting is controlled by `animate`.
+- You can also wire layouts into your render loop via `restart()`, `tick(n)`, `stop()`. See "Iterative layouts" in [Common API](../guide/api/introduction).
+
+### Iteration options
+
+| Option | Description | Type | Default |
+| --- | --- | --- | --- |
+| `maxIteration` | Maximum iterations | `number` | `0/500` (layout-dependent) |
+| `minMovement` | Convergence threshold. Stops when step size falls below this value. | `number` | `0/0.4` (layout-dependent) |
+| `animate` | Run iterations in frames for visualization and interaction. | `boolean` | `true` |
+| `dimensions` | Dimensions: 2D or 3D. | `2 \| 3` | `2` |
+| `distanceThresholdMode` | How to evaluate `minMovement`: mean, max, or min. | `'mean' \| 'max' \| 'min'` | `'mean'` |
+| `maxDistance` | Maximum interaction distance; used by some algorithms. | `number` | `undefined` |
+| `onTick` | Callback after each iteration; receives the layout instance. | `(layout) => void` | `undefined` |

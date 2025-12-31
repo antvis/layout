@@ -1,0 +1,23 @@
+### Common options
+
+These options apply to all layouts and define the reference size, center, worker usage, and field mappings.
+
+| Option             | Description                                                   | Type                                                    | Default                           |
+| ------------------ | ------------------------------------------------------------- | ------------------------------------------------------- | --------------------------------- |
+| `width` / `height` | Reference size. Many layouts derive default centers/scales.   | `number`                                                | `undefined`                       |
+| `center`           | Layout center. 2D uses `[x, y]`, 3D uses `[x, y, z]`.          | `[number, number] \| [number, number, number]`          | `undefined` (layout-dependent)    |
+| `enableWorker`     | Run in a Web Worker when available; fallback to main thread.  | `boolean`                                               | `false/undefined` (layout-dependent) |
+| `node`             | Node field mapping for business data.                         | `(datum) => ({ id?, x?, y?, z?, parentId?, isCombo? })` | `undefined`                       |
+| `edge`             | Edge field mapping for business data.                         | `(datum) => ({ id?, source?, target? })`                | `undefined`                       |
+
+#### Node mapping fields
+
+- `id`: unique node id, required.
+- `x/y/z`: optional initial coordinates for warm start or continuous layouts.
+- `parentId`: parent combo id for composite or nested layouts.
+- `isCombo`: whether this is a combo node.
+
+#### Edge mapping fields
+
+- `source` / `target`: endpoint node ids, required. Must match some node `id`.
+- `id`: optional edge id. Auto-generated if omitted.

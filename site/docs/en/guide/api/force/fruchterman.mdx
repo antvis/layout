@@ -1,0 +1,78 @@
+import { Badge } from '@theme';
+import { DocCards } from '../../../../components/DocCards';
+import CommonLayoutOptions from '../../../partials/common-layout-options.mdx';
+import ForceIterativeOptions from '../../../partials/force-iterative-options.mdx';
+
+# Fruchterman Layout <Badge text="Iterative" type="info" />
+
+Fruchterman-Reingold is a classic force-directed layout. It uses repulsion, attraction, and gravity to reach a balanced distribution on the plane.
+
+<img
+  width="400"
+  src="https://mdn.alipayobjects.com/huamei_qa8qxu/afts/img/A*1AvnTorIogUAAAAAAAAAAAAADmJ7AQ/original"
+/>
+
+## When to use
+
+- General force layout for small/medium graphs
+- Need a balanced global structure
+
+## Input requirements
+
+- Nodes must have unique `id`
+- `edges` are recommended for attraction and structural constraints
+
+## Usage
+
+```ts
+import { FruchtermanLayout } from '@antv/layout';
+
+const layout = new FruchtermanLayout({
+  width: 800,
+  height: 600,
+  maxIteration: 500,
+});
+await layout.execute(data);
+```
+
+### Iteration control
+
+```ts
+layout.restart();
+layout.tick(10);
+layout.stop();
+```
+
+## Options
+
+<CommonLayoutOptions />
+
+<ForceIterativeOptions />
+
+### Algorithm options
+
+| Option            | Description                                            | Type                       | Default     |
+| ----------------- | ------------------------------------------------------ | -------------------------- | ----------- |
+| `gravity`         | Attraction to center; higher = tighter                 | `number`                   | `10`        |
+| `speed`           | Node speed per iteration                               | `number`                   | `5`         |
+| `clustering`      | Whether to cluster                                     | `boolean`                  | `false`     |
+| `clusterGravity`  | Gravity within clusters; only when `clustering=true`   | `number`                   | `10`        |
+| `nodeClusterBy`   | Cluster field or function                              | `string \| (node)=>string` | `'cluster'` |
+
+## Related links
+
+<DocCards
+  variant="compact"
+  items={[
+    {
+      href: '../api/introduction',
+      title: 'Common API',
+      description: 'Input structure, execution, and result access.',
+    },
+    {
+      href: './force-atlas2',
+      title: 'ForceAtlas2',
+      description: 'Force layout for larger graphs.',
+    },
+  ]}
+/>

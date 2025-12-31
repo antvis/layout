@@ -1,0 +1,73 @@
+import { Badge } from '@theme';
+import { DocCards } from '../../../../components/DocCards';
+import CommonLayoutOptions from '../../../partials/common-layout-options.mdx';
+
+# ComboCombined Composite Combo Layout <Badge text="Non-Iterative" type="tip" />
+
+Designed for composite scenes with combos or subgraphs. You can assign different layout strategies per hierarchy level, while handling combo bounds and spacing consistently.
+
+<img
+  width="400"
+  src="https://mdn.alipayobjects.com/huamei_qa8qxu/afts/img/A*zPAzSZ3XxpUAAAAAAAAAAAAADmJ7AQ/original"
+/>
+
+## When to use
+
+- Composite structures with combos/groups/subgraphs
+- Different layout strategies by level, e.g. force on the outer layer and grid inside
+
+## Input requirements
+
+Composite layouts need clear hierarchy and combo nodes:
+
+- Normal nodes reference their parent combo via `parentId`
+- Combo nodes must have `isCombo: true` and an `id`
+
+If your business fields differ, adapt them via the `node` mapping function. See the data mapping section for details.
+
+## Usage
+
+```ts
+import { ComboCombinedLayout } from '@antv/layout';
+
+const layout = new ComboCombinedLayout({
+  layout: (comboId) => (comboId ? { type: 'grid' } : { type: 'force' }),
+});
+await layout.execute(data);
+```
+
+## Options
+
+<CommonLayoutOptions />
+
+### Algorithm options
+
+| Option         | Description                                                  | Type                                                | Default     |
+| -------------- | ------------------------------------------------------------ | --------------------------------------------------- | ----------- |
+| `layout`       | Layout config. Can be fixed or chosen per `comboId`.          | `string \| { type: string; ... } \| (comboId)=>...` | `undefined` |
+| `nodeSize`     | Node size                                                    | `Size \| (node)=>Size`                              | `undefined` |
+| `nodeSpacing`  | Spacing between nodes                                        | `number \| (node)=>number`                          | `undefined` |
+| `comboSpacing` | Spacing between combos                                       | `number \| (combo)=>number`                         | `undefined` |
+| `comboPadding` | Inner padding for each combo                                 | `number \| (combo)=>number`                         | `undefined` |
+
+:::tip Data requirements
+If your source data lacks `parentId/isCombo`, add hierarchy information in your business data or generate it in the mapping step.
+:::
+
+## Related links
+
+<DocCards
+  variant="compact"
+  items={[
+    {
+      href: '../api/introduction',
+      title: 'Common API',
+      description: 'Input structure, execution, and result access.',
+    },
+    {
+      href: '../hierarchy/antv-dagre',
+      title: 'AntVDagre',
+      description: 'A common choice for hierarchical/flow layouts with combos.',
+    },
+  ]}
+/>

@@ -1,0 +1,100 @@
+# Layout Configuration
+
+This page focuses on how to organize options, including common fields, typical combinations, and practical guidance for choosing layouts. Topics include size/center, node size, overlap prevention, workers, and warm start.
+
+## First, how options are merged
+
+Each layout constructor takes `initialOptions`, and `execute(data, userOptions?)` accepts `userOptions`. They are merged at execution time:
+
+- Strategy: shallow merge, later fields override earlier ones
+- Priority: `userOptions` > `initialOptions` > layout defaults
+
+This means:
+
+- Put long-lived parameters in the constructor, such as `width/height` and `enableWorker`.
+- Put per-run parameters in `execute`, such as `center` and `nodeSpacing`.
+
+## Common options: BaseLayoutOptions
+
+All layouts share fields from `BaseLayoutOptions`:
+
+- `width` / `height`: reference size for layout. Many layouts derive default centers or scales from it.
+- `center`: layout center (`[x, y]` in 2D, `[x, y, z]` in 3D).
+- `enableWorker`: whether to attempt running in a Web Worker; falls back to the main thread if unavailable.
+- `node` / `edge`: field mappings to adapt business data to `id/source/target/x/y/...`.
+
+For mapping details and examples, see [Data Mapping](./data-mapping).
+
+## Reading results: forEachNode / forEachEdge
+
+`execute()` does not mutate your input `data`; results are read via traversal:
+
+```ts
+layout.forEachNode((node) => {
+  // node.id / node.x / node.y / node.z?
+  // node._original points to the original business node
+  node._original.x = node.x;
+  node._original.y = node.y;
+});
+```
+
+Edge output fields depend on the layout:
+
+- Force-directed layouts typically only need `source/target` to apply forces
+- Dagre/AntV-Dagre may output `edge.points`, `edge.labelPos`, etc. for polylines and label routing
+
+## Workers: when and how
+
+### When to enable
+
+- Large graphs and iterative layouts, such as Force, ForceAtlas2, Fruchterman, D3Force
+- UI threads that need to stay responsive for dragging, zooming, or animations
+
+### How to enable
+
+```ts
+const layout = new ForceAtlas2Layout({ enableWorker: true });
+await layout.execute(data);
+```
+
+Notes:
+
+- Only works in browsers with `Worker` support; otherwise it falls back to the main thread.
+- Bundlers must be able to load the library’s worker entry. Worker handling differs across frameworks, so verify in your target environment.
+- For UMD via CDN, the worker URL is derived from the script URL as `worker.js` in the same directory. See [Installation](./installation).
+
+## Warm start (reuse existing coordinates)
+
+Many layouts use initial coordinates to warm-start and converge faster. You can:
+
+- Provide `x/y` directly in the data (standard fields)
+- Or map business coordinates to `x/y` via `node`
+
+```ts
+const layout = new ForceLayout({
+  node: (n) => ({ id: n.id, x: n.pos?.x, y: n.pos?.y }),
+});
+```
+
+## Node size and overlap prevention
+
+Many layouts rely on node size for collision/overlap detection:
+
+- Provide `size` on your business nodes (consumed via `_original`)
+- Or set `nodeSize` in options (number/size or callback)
+
+Common pitfall:
+
+- Setting `preventOverlap: true` without `size/nodeSize` means collisions cannot be computed accurately
+
+## Choosing a layout: a practical starting point
+
+- **Dagre / AntV-Dagre**: flowcharts, DAGs, hierarchies (needs edge direction, layer spacing, etc.)
+- **Force / ForceAtlas2 / Fruchterman / D3Force**: general relationship graphs (iterative, animatable)
+- **Circular / Concentric**: grouped or ordered circular views
+- **Grid / Random**: initial placement, placeholders, preprocessing
+- **MDS**: high-dimensional similarity projection (distance matrix or similarity-driven)
+- **Radial**: hierarchical/relational views centered on a focus node
+- **ComboCombined**: composite layout for combos/subgraphs (layout selection by hierarchy)
+
+For detailed options, see [Common API](../api/api/introduction) and each layout page such as `Circular`, `Force`, and `Dagre`.

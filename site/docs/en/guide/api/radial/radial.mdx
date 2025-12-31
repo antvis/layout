@@ -1,0 +1,73 @@
+import { Badge } from '@theme';
+import { DocCards } from '../../../../components/DocCards';
+import CommonLayoutOptions from '../../../partials/common-layout-options.mdx';
+
+# Radial Layout <Badge text="Non-Iterative" type="tip" />
+
+Centers on a focus node and places others on rings by shortest-path distance. Use it to highlight relationships around a core entity.
+
+<img
+  width="400"
+  src="https://mdn.alipayobjects.com/huamei_qa8qxu/afts/img/A*vpXjTIFKy1QAAAAAAAAAAAAADmJ7AQ/original"
+/>
+
+## When to use
+
+- Relationship exploration around a core node
+- Layering nodes by distance and depth
+
+## Input requirements
+
+- Nodes must have unique `id`
+- `edges` are recommended for shortest-path layering. In disconnected graphs, distribution depends on algorithm strategy and parameters.
+
+## Usage
+
+```ts
+import { RadialLayout } from '@antv/layout';
+
+const layout = new RadialLayout({ width: 800, height: 600, focusNode: null });
+await layout.execute(data);
+```
+
+## Options
+
+<CommonLayoutOptions />
+
+### Algorithm options
+
+| Option                       | Description                                                  | Type                               | Default     |
+| ---------------------------- | ------------------------------------------------------------ | ---------------------------------- | ----------- |
+| `linkDistance`               | Edge length                                                  | `number`                           | `50`        |
+| `focusNode`                  | Focus node id; `null` uses the first node.                   | `string \| null`                   | `null`      |
+| `unitRadius`                 | Ring spacing; `null` auto-fills the canvas.                  | `number \| null`                   | `100`       |
+| `preventOverlap`             | Prevent overlaps. Requires `nodeSize` or `size` in data.     | `boolean`                          | `false`     |
+| `nodeSize`                   | Node size for collision detection.                           | `Size \| (node) => Size`           | `undefined` |
+| `nodeSpacing`                | Minimum edge spacing when preventing overlap                 | `number \| (node) => number`       | `10`        |
+| `maxPreventOverlapIteration` | Max iterations for overlap-prevention steps                  | `number`                           | `200`       |
+| `strictRadial`               | Keep nodes strictly on rings. Only effective with overlap.   | `boolean`                          | `true`      |
+| `sortBy`                     | In-layer ordering; data order or custom rule.                | `'data' \| (node)=>number\|string` | `undefined` |
+| `sortStrength`               | Strength of sortBy                                            | `number`                           | `10`        |
+| `maxIteration`               | Max iterations                                                | `number`                           | `1000`      |
+
+:::tip Focus selection
+Point `focusNode` to your core entity for a more readable radial structure.
+:::
+
+## Related links
+
+<DocCards
+  variant="compact"
+  items={[
+    {
+      href: '../api/introduction',
+      title: 'Common API',
+      description: 'Input structure, execution, and result access.',
+    },
+    {
+      href: '../hierarchy/dagre',
+      title: 'Dagre',
+      description: 'Use hierarchical layouts when directionality matters.',
+    },
+  ]}
+/>

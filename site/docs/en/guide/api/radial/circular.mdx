@@ -1,0 +1,83 @@
+import { Badge } from '@theme';
+import { DocCards } from '../../../../components/DocCards';
+import CommonLayoutOptions from '../../../partials/common-layout-options.mdx';
+
+# Circular Layout <Badge text="Non-Iterative" type="tip" />
+
+Place nodes on a circle, or configure a spiral distribution. Supports ordering, grouping, start/end angles, and radius control. Algorithm reference: [A framework and algorithms for circular drawings of graphs](https://www.sciencedirect.com/science/article/pii/S1570866705000031).
+
+<div style={{ display: 'flex', gap: '24px', alignItems: 'flex-start' }}>
+  <img
+    width="250"
+    src="https://mdn.alipayobjects.com/huamei_qa8qxu/afts/img/A*qJi5Q4qg6W8AAAAAAAAAAAAADmJ7AQ/original"
+  />
+  <img
+    width="250"
+    src="https://mdn.alipayobjects.com/huamei_qa8qxu/afts/img/A*x4HvSr25sHkAAAAAAAAAAAAADmJ7AQ/original"
+  />
+  <img
+    width="250"
+    src="https://mdn.alipayobjects.com/huamei_qa8qxu/afts/img/A*9wz2RJH1lxkAAAAAAAAAAAAADmJ7AQ/original"
+  />
+</div>
+
+## When to use
+
+- Stable circular structures for relationship or grouped views
+- Explicit ordering by data order, topology, or degree
+
+## Input requirements
+
+- Nodes must have unique `id`
+- If `ordering` depends on topology, provide `edges` and ensure `source/target` match node ids
+
+## Usage
+
+```ts
+import { CircularLayout } from '@antv/layout';
+
+const layout = new CircularLayout({ width: 800, height: 600, radius: 150 });
+await layout.execute(data);
+```
+
+## Options
+
+<CommonLayoutOptions />
+
+### Algorithm options
+
+| Option      | Description                                                                                                                                              | Type                                                                             | Default       |
+| ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- | ------------- |
+| radius      | Circle radius. If set, `startRadius` and `endRadius` are ignored.                                                                                        | `number`                                                                         | `null`        |
+| startRadius | Spiral start radius                                                                                                                                     | `number`                                                                         | `null`        |
+| endRadius   | Spiral end radius                                                                                                                                       | `number`                                                                         | `null`        |
+| startAngle  | Start angle for node placement (radians)                                                                                                                 | `number`                                                                         | `0`           |
+| endAngle    | End angle for node placement (radians)                                                                                                                   | `number`                                                                         | `2 * Math.PI` |
+| clockwise   | Whether to place nodes clockwise                                                                                                                         | `boolean`                                                                        | `true`        |
+| divisions   | Group count on the circle. Effective when `endRadius - startRadius !== 0`                                                                                | `number`                                                                         | `1`           |
+| ordering    | Node ordering. `null` = data order; `'topology'` = topological order; `'topology-directed'` = directed topological order; `'degree'` = by degree         | `null \| 'topology' \| 'topology-directed' \| 'degree'`                          | `null`        |
+| angleRatio  | Angle ratio between nodes. For example, `angleRatio: 1` yields `(endAngle - startAngle) / nodeCount` between nodes                                       | `number`                                                                         | `1`           |
+| nodeSize    | Node size. Combined with `nodeSpacing` to auto-compute radius                                                                                             | `number \| [number, number] \| ((node: NodeData) => number \| [number, number])` | `undefined`   |
+| nodeSpacing | Extra spacing between nodes. Combined with `nodeSize` to auto-compute radius. If set, `startRadius` and `endRadius` are ignored                          | `number \| ((node: NodeData) => number)`                                         | `undefined`   |
+
+:::note About callback arguments
+`NodeData` in the table refers to the original business node object, i.e. entries in `GraphData.nodes`.
+:::
+
+## Related links
+
+<DocCards
+  variant="compact"
+  items={[
+    {
+      href: '../api/introduction',
+      title: 'Common API',
+      description: 'Input structure, execution, and result access.',
+    },
+    {
+      href: './concentric',
+      title: 'Concentric',
+      description: 'Concentric layout layered by “importance”.',
+    },
+  ]}
+/>
