@@ -30,7 +30,6 @@ If your business fields differ, adapt them via the `node` mapping function. See 
 ```ts
 import { ComboCombinedLayout } from '@antv/layout';
 
-
 const layout = new ComboCombinedLayout({
   layout: (comboId) => (comboId ? { type: 'grid' } : { type: 'force' }),
 });
