@@ -1,5 +1,5 @@
+import type { Expr, NodeData } from '../../types';
 import type { BaseLayoutOptions } from '../types';
-import type { NodeData, Size } from '../../types';
 
 /**
  * <zh/> Concentric 同心圆布局配置
@@ -18,20 +18,6 @@ export interface ConcentricLayoutOptions extends BaseLayoutOptions {
    * @defaultValue false
    */
   preventOverlap?: boolean;
-  /**
-   * <zh/> 节点大小（直径）。用于防止节点重叠时的碰撞检测
-   *
-   * <en/> Node size (diameter). Used for collision detection when preventing node overlap
-   * @defaultValue 30
-   */
-  nodeSize?: Size | ((d?: NodeData) => Size);
-  /**
-   * <zh/> 环与环之间最小间距，用于调整半径
-   *
-   * <en/> Minimum spacing between rings, used to adjust the radius
-   * @defaultValue 10
-   */
-  nodeSpacing?: number | ((d?: NodeData) => number);
   /**
    * <zh/> 第一个节点与最后一个节点之间的弧度差
    *
@@ -85,5 +71,5 @@ export interface ConcentricLayoutOptions extends BaseLayoutOptions {
    * - ((node) => ...): Custom sorting function, returns a number, the higher the value, the more the node will be placed in the center
    * @defaultValue degree
    */
-  sortBy?: 'degree' | ((d?: NodeData) => number);
+  sortBy?: 'degree' | Expr | ((node: NodeData) => number);
 }

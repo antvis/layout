@@ -1,9 +1,9 @@
 import type {
   CommonForceLayoutOptions,
   EdgeData,
+  Expr,
   NodeData,
   Point,
-  Size,
 } from '../../types';
 
 export type AccMap = { [id: string]: { x: number; y: number; z: number } };
@@ -25,6 +25,7 @@ export interface CentripetalOptions {
    */
   leaf?:
     | number
+    | Expr
     | ((node: NodeData, nodes: NodeData[], edges: EdgeData[]) => number);
   /**
    * <zh/> 离散节点（即度数为 0 的节点）受到的向心力大小
@@ -35,7 +36,7 @@ export interface CentripetalOptions {
    * - ((node: NodeData) => number): return different values according to the node situation
    * @defaultValue 2
    */
-  single?: number | ((node: NodeData) => number);
+  single?: number | Expr | ((node: NodeData) => number);
   /**
    * <zh/> 除离散节点、叶子节点以外的其他节点（即度数 > 1 的节点）受到的向心力大小
    * - number: 固定向心力大小
@@ -45,13 +46,35 @@ export interface CentripetalOptions {
    * - ((node: NodeData) => number): return different values according to the node situation
    * @defaultValue 1
    */
-  others?: number | ((node: NodeData) => number);
+  others?: number | Expr | ((node: NodeData) => number);
   /**
    * <zh/> 向心力发出的位置，可根据节点、边的情况返回不同的值、默认为图的中心
    *
    * <en/> The position where the centripetal force is emitted, which can return different values according to the node, edge, and situation. The default is the center of the graph
    */
-  center?: (
+  center?:
+    | Expr
+    | ((
+        node: NodeData,
+        nodes: NodeData[],
+        edges: EdgeData[],
+        width: number,
+        height: number,
+      ) => {
+        x: number;
+        y: number;
+        z?: number;
+        centerStrength?: number;
+      });
+}
+
+interface FormatCentripetalOptions extends CentripetalOptions {
+  leaf: (node: NodeData, nodes: NodeData[], edges: EdgeData[]) => number;
+  /** Force strength for single nodes. */
+  single: (node: NodeData) => number;
+  /** Force strength for other nodes. */
+  others: (node: NodeData) => number;
+  center: (
     node: NodeData,
     nodes: NodeData[],
     edges: EdgeData[],
@@ -65,41 +88,34 @@ export interface CentripetalOptions {
   };
 }
 
-interface FormatCentripetalOptions extends CentripetalOptions {
-  leaf: (node: NodeData, nodes: NodeData[], edges: EdgeData[]) => number;
-  /** Force strength for single nodes. */
-  single: (node: NodeData) => number;
-  /** Force strength for other nodes. */
-  others: (node: NodeData) => number;
-}
-
 export interface ForceLayoutOptions extends CommonForceLayoutOptions {
   /**
    * <zh/> 边的长度
    * - number: 固定长度
-   * - ((edge?: EdgeData, source?: any, target?: any) => number): 根据边的信息返回长度
+   * - ((edge: EdgeData, source: NodeData, target: NodeData) => number): 根据边的信息返回长度
    * <en/> The length of the edge
    * - number: fixed length
-   * - ((edge?: EdgeData, source?: any, target?: any) => number): return length according to the edge information
+   * - ((edge: EdgeData, source: NodeData, target: NodeData) => number): return length according to the edge information
    * @defaultValue 200
    */
   linkDistance?:
     | number
-    | ((edge?: EdgeData, source?: any, target?: any) => number);
+    | Expr
+    | ((edge: EdgeData, source: NodeData, target: NodeData) => number);
   /**
    * <zh/> 节点作用力，正数代表节点之间的引力作用，负数代表节点之间的斥力作用
    *
    * <en/> The force of the node, positive numbers represent the attraction force between nodes, and negative numbers represent the repulsion force between nodes
    * @defaultValue 1000
    */
-  nodeStrength?: number | ((d?: NodeData) => number);
+  nodeStrength?: number | Expr | ((node: NodeData) => number);
   /**
    * <zh/> 边的作用力（引力）大小
    *
    * <en/> The size of the force of the edge (attraction)
    * @defaultValue 50
    */
-  edgeStrength?: number | ((d?: EdgeData) => number);
+  edgeStrength?: number | Expr | ((edge: EdgeData) => number);
   /**
    * <zh/> 是否防止重叠，必须配合下面属性 nodeSize 或节点数据中的 data.size 属性，只有在数据中设置了 data.size 或在该布局中配置了与当前图节点大小相同的 nodeSize 值，才能够进行节点重叠的碰撞检测
    *
@@ -107,18 +123,6 @@ export interface ForceLayoutOptions extends CommonForceLayoutOptions {
    * @defaultValue true
    */
   preventOverlap?: boolean;
-  /**
-   * <zh/> 节点大小（直径）。用于防止节点重叠时的碰撞检测
-   *
-   * <en/> The size of the node (diameter). Used for collision detection when preventing node overlap
-   */
-  nodeSize?: Size | ((d?: NodeData) => Size);
-  /**
-   * <zh/> preventOverlap 为 true 时生效, 防止重叠时节点边缘间距的最小值。可以是回调函数, 为不同节点设置不同的最小间距
-   *
-   * <en/> It is effective when preventOverlap is true. The minimum spacing of the node edge when preventing overlap. It can be a callback function to set different minimum spacing for different nodes
-   */
-  nodeSpacing?: number | ((d?: NodeData) => number);
   /**
    * <zh/> 阻尼系数，取值范围 [0, 1]。数字越大，速度降低得越慢
    *
@@ -194,14 +198,14 @@ export interface ForceLayoutOptions extends CommonForceLayoutOptions {
    *
    * <en/> Specify the field name of the node data as the clustering basis for the node, and it takes effect when clustering is true. You can combine it with clusterNodeStrength to use it
    */
-  nodeClusterBy?: (node: NodeData) => string;
+  nodeClusterBy?: Expr | ((node: NodeData) => string);
   /**
    * <zh/> 配合 clustering 和 nodeClusterBy 使用，指定聚类向心力的大小
    *
    * <en/> Use it with clustering and nodeClusterBy to specify the size of the centripetal force of the cluster
    * @defaultValue 20
    */
-  clusterNodeStrength?: number | ((node: NodeData) => number);
+  clusterNodeStrength?: number | Expr | ((node: NodeData) => number);
   /**
    * <zh/> 防止重叠的力强度，范围 [0, 1]
    *
@@ -216,7 +220,7 @@ export interface ForceLayoutOptions extends CommonForceLayoutOptions {
    * @param node - <zh/> 节点数据 | <en/> NodeData data
    * @returns <zh/> 节点质量大小 | <en/> Mass size of the node
    */
-  getMass?: (node?: NodeData) => number;
+  getMass?: Expr | ((node: NodeData) => number);
   /**
    * <zh/> 每个节点中心力的 x、y、强度的回调函数，若不指定，则没有额外中心力
    *
@@ -225,7 +229,7 @@ export interface ForceLayoutOptions extends CommonForceLayoutOptions {
    * @param degree - <zh/> 节点度数 | <en/> NodeData degree
    * @returns <zh/> 中心力 x、y、强度 | <en/> Center force x、y、strength
    */
-  getCenter?: (node?: NodeData, degree?: number) => number[];
+  getCenter?: Expr | ((node: NodeData, degree: number) => number[]);
   /**
    * <zh/> 每个迭代的监控信息回调，energy 表示布局的收敛能量。若配置可能带来额外的计算能量性能消耗，不配置则不计算
    *
@@ -240,7 +244,18 @@ export interface ForceLayoutOptions extends CommonForceLayoutOptions {
   }) => void;
 }
 
-export interface ParsedForceLayoutOptions extends ForceLayoutOptions {
+export interface ParsedForceLayoutOptions
+  extends Omit<
+    ForceLayoutOptions,
+    | 'centripetalOptions'
+    | 'nodeClusterBy'
+    | 'clusterNodeStrength'
+    | 'getMass'
+    | 'getCenter'
+    | 'nodeStrength'
+    | 'edgeStrength'
+    | 'linkDistance'
+  > {
   width: number;
   height: number;
   center: Point;
@@ -251,15 +266,31 @@ export interface ParsedForceLayoutOptions extends ForceLayoutOptions {
   damping: number;
   maxSpeed: number;
   coulombDisScale: number;
-  centripetalOptions: FormatCentripetalOptions;
-  nodeSize: (d?: NodeData) => number;
-  getMass: (d?: NodeData) => number;
-  nodeStrength: (d?: NodeData) => number;
-  edgeStrength: (d?: EdgeData) => number;
-  linkDistance: (
-    edge?: EdgeData,
-    source?: NodeData,
-    target?: NodeData,
-  ) => number;
-  clusterNodeStrength: (node?: NodeData) => number;
+  centripetalOptions?: FormatCentripetalOptions;
+  nodeClusterBy?: NodeClusterByFn;
+  getCenter?: GetCenterFn;
+  nodeSize: NodeSizeFn;
+  getMass: GetMassFn;
+  nodeStrength: NodeStrengthFn;
+  edgeStrength: EdgeStrengthFn;
+  linkDistance: LinkDistanceFn;
+  clusterNodeStrength: NodeStrengthFn;
 }
+
+export type NodeClusterByFn = (node: NodeData) => string;
+
+export type GetCenterFn = (node: NodeData, degree: number) => number[];
+
+export type NodeSizeFn = (node: NodeData) => number;
+
+export type GetMassFn = (node: NodeData) => number;
+
+export type NodeStrengthFn = (node: NodeData) => number;
+
+export type EdgeStrengthFn = (edge: EdgeData) => number;
+
+export type LinkDistanceFn = (
+  edge: EdgeData,
+  source: NodeData,
+  target: NodeData,
+) => number;

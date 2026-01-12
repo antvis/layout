@@ -1,4 +1,4 @@
-import type { CommonForceLayoutOptions, NodeData } from '../../types';
+import type { CommonForceLayoutOptions, Expr, NodeData } from '../../types';
 
 /**
  * <zh/> Fruchterman 力导布局配置项
@@ -13,6 +13,7 @@ export interface FruchtermanLayoutOptions extends CommonForceLayoutOptions {
    * @defaultValue 10
    */
   gravity?: number;
+
   /**
    * <zh/> 每次迭代节点移动的速度。速度太快可能会导致强烈震荡
    *
@@ -20,6 +21,7 @@ export interface FruchtermanLayoutOptions extends CommonForceLayoutOptions {
    * @defaultValue 5
    */
   speed?: number;
+
   /**
    * <zh/> 是否按照聚类布局
    *
@@ -27,6 +29,7 @@ export interface FruchtermanLayoutOptions extends CommonForceLayoutOptions {
    * @defaultValue false
    */
   clustering?: boolean;
+
   /**
    * <zh/> 聚类内部的重力大小，影响聚类的紧凑程度，在 clustering 为 true 时生效
    *
@@ -41,7 +44,7 @@ export interface FruchtermanLayoutOptions extends CommonForceLayoutOptions {
    * <en/> The field name of the node data in the data, which is used when cluster is true
    * @defaultValue 'cluster'
    */
-  nodeClusterBy?: string | ((node: NodeData) => string);
+  nodeClusterBy?: Expr | ((node: NodeData) => string);
 }
 
 export type ParsedFruchtermanLayoutOptions = Required<FruchtermanLayoutOptions>;

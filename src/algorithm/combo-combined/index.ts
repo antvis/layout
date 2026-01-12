@@ -1,14 +1,7 @@
 import { registry } from '../../registry';
-import type {
-  GraphData,
-  ID,
-  LayoutNode,
-  NodeData,
-  Point,
-  STDSize,
-} from '../../types';
-import { normalizeViewport, parseSize } from '../../util';
-import { formatNodeSizeFn, formatNumberFn } from '../../util/format';
+import type { GraphData, ID, LayoutNode, Point, STDSize } from '../../types';
+import { normalizeViewport } from '../../util';
+import { formatFn, formatNodeSizeFn, formatNumberFn } from '../../util/format';
 import { BaseLayout, isLayoutWithIterations } from '../base-layout';
 import type { Layout } from '../types';
 import type {
@@ -205,7 +198,10 @@ export class ComboCombinedLayout extends BaseLayout<ComboCombinedLayoutOptions> 
   }
 
   private getLayoutConfig(combo: HierarchyNode) {
-    const { layout } = this.options;
+    const layout =
+      typeof this.options.layout === 'object'
+        ? this.options.layout
+        : formatFn(this.options.layout, ['comboId']);
 
     if (typeof layout === 'function') {
       const comboId = combo.id === ROOT_ID ? null : combo.id!;
@@ -219,7 +215,7 @@ export class ComboCombinedLayout extends BaseLayout<ComboCombinedLayoutOptions> 
     const base = {
       type: 'concentric',
       ...normalizeViewport(this.options),
-      nodeSize: (d: NodeData) => d.size,
+      nodeSize: 'node.size',
       nodeSpacing: 0,
     };
 
@@ -334,8 +330,12 @@ export class ComboCombinedLayout extends BaseLayout<ComboCombinedLayoutOptions> 
       return { center: [0, 0], width: 0, height: 0 };
     }
 
-    const comboPaddingFn = formatNumberFn(this.options.comboPadding, 20);
-    const padding = comboPaddingFn(combo._original);
+    const comboPaddingFn = formatNumberFn(
+      this.options.comboPadding,
+      20,
+      'combo',
+    );
+    const padding = comboPaddingFn(combo._original!);
 
     return {
       center: [(minX + maxX) / 2, (minY + maxY) / 2],
@@ -359,15 +359,19 @@ export class ComboCombinedLayout extends BaseLayout<ComboCombinedLayoutOptions> 
   ): STDSize {
     const { nodeSize, nodeSpacing } = this.options;
     const sizeFn = formatNodeSizeFn(nodeSize, includeSpacing ? nodeSpacing : 0);
-    return parseSize(sizeFn(node._original));
+    return sizeFn(node._original!);
   }
 
   private getComboSize(
     combo: HierarchyNode,
     includeSpacing: boolean = true,
   ): STDSize {
-    const comboSpacingFn = formatNumberFn(this.options.comboSpacing, 0);
-    const spacing = includeSpacing ? comboSpacingFn(combo._original) : 0;
+    const comboSpacingFn = formatNumberFn(
+      this.options.comboSpacing,
+      0,
+      'combo',
+    );
+    const spacing = includeSpacing ? comboSpacingFn(combo._original!) : 0;
     const [width, height] = combo.size as STDSize;
     return [width + spacing / 2, height + spacing / 2, 0];
   }

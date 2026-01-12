@@ -2,8 +2,7 @@ import { CircularLayout } from '@/src';
 import { createCanvas } from '@@/utils/create';
 import type { Canvas } from '@antv/g';
 import { countries as data } from '../dataset';
-import { GraphRenderer } from '../utils';
-import { calculatePositions } from '../utils';
+import { calculatePositions, GraphRenderer } from '../utils';
 
 describe('layout circular', () => {
   let canvas: Canvas;
@@ -43,6 +42,7 @@ describe('layout circular', () => {
       ordering: null,
       angleRatio: 1,
       nodeSize: 10,
+      nodeSpacing: 0,
     });
   });
 

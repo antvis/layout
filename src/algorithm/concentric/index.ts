@@ -1,4 +1,3 @@
-import { BaseLayout } from '../base-layout';
 import type { LayoutNode, NodeData } from '../../types';
 import {
   applySingleNodeLayout,
@@ -6,7 +5,8 @@ import {
   orderByDegree,
   orderBySorter,
 } from '../../util';
-import { formatNodeSizeFn } from '../../util/format';
+import { formatFn, formatNodeSizeFn } from '../../util/format';
+import { BaseLayout } from '../base-layout';
 import type { ConcentricLayoutOptions } from './types';
 
 export type { ConcentricLayoutOptions };
@@ -52,25 +52,21 @@ export class ConcentricLayout extends BaseLayout<ConcentricLayoutOptions> {
       equidistant,
       preventOverlap,
       startAngle = DEFAULTS_LAYOUT_OPTIONS.startAngle,
-      nodeSize = DEFAULTS_LAYOUT_OPTIONS.nodeSize,
+      nodeSize,
       nodeSpacing,
     } = this.options;
 
-    let sortBy: ConcentricLayoutOptions['sortBy'] = propsSortBy;
-    if (propsSortBy && typeof propsSortBy === 'function') {
-      const testNode = this.model.firstNode()!;
-      const testValue = propsSortBy(testNode._original);
-      if (typeof testValue !== 'number') sortBy = 'degree';
-    } else {
-      sortBy = 'degree';
-    }
+    const sortBy =
+      !propsSortBy || propsSortBy === 'degree'
+        ? ('degree' as const)
+        : (formatFn(propsSortBy, ['node']) as (node: NodeData) => number);
 
     if (sortBy === 'degree') {
       orderByDegree(this.model);
     } else {
       const sorter = (nodeA: NodeData, nodeB: NodeData) => {
-        const a = (sortBy as (node: NodeData) => number)(nodeA);
-        const b = (sortBy as (node: NodeData) => number)(nodeB);
+        const a = sortBy(nodeA);
+        const b = sortBy(nodeB);
         return a === b ? 0 : a > b ? -1 : 1;
       };
       orderBySorter(this.model, sorter);
@@ -83,17 +79,23 @@ export class ConcentricLayout extends BaseLayout<ConcentricLayoutOptions> {
       const v =
         sortBy === 'degree'
           ? this.model.degree(node.id)
-          : sortBy?.(node._original);
+          : sortBy(node._original);
       sortKeys.set(node.id, v);
     }
 
     const maxValueNode = this.model.firstNode()!;
     const maxLevelDiff = propsMaxLevelDiff || sortKeys.get(maxValueNode.id) / 4;
 
-    const nodeSizeFn = formatNodeSizeFn(nodeSize, nodeSpacing);
+    const sizeFn = formatNodeSizeFn(
+      nodeSize,
+      nodeSpacing,
+      DEFAULTS_LAYOUT_OPTIONS.nodeSize as number,
+      DEFAULTS_LAYOUT_OPTIONS.nodeSpacing as number,
+    );
+
     const nodeDistances = new Map<LayoutNode['id'], number>();
     for (const node of nodes) {
-      nodeDistances.set(node.id, nodeSizeFn(node._original));
+      nodeDistances.set(node.id, Math.max(...sizeFn(node._original)));
     }
 
     // put the values into levels

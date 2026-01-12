@@ -1,4 +1,4 @@
-import { ID, NodeData, Point, Size } from '../../types';
+import { Expr, ID, NodeData, Point } from '../../types';
 import { BaseLayoutOptions } from '../base-layout';
 
 export type DagreRankdir =
@@ -63,17 +63,6 @@ export interface AntVDagreLayoutOptions extends BaseLayoutOptions {
    */
   begin?: Point;
   /**
-   * <zh/> 节点大小（直径）。
-   *
-   * <en/> The diameter of the node
-   * @remarks
-   * <zh/> 用于防止节点重叠时的碰撞检测
-   *
-   * <en/> Used for collision detection when nodes overlap
-   * @defaultValue undefined
-   */
-  nodeSize?: Size | ((d?: NodeData) => Size);
-  /**
    * <zh/> 节点间距（px）
    *
    * <en/> The horizontal gap between nodes (px)
@@ -105,7 +94,7 @@ export interface AntVDagreLayoutOptions extends BaseLayoutOptions {
    * <en/> The horizontal spacing of the node in the case of rankdir is 'TB' or 'BT', and the vertical spacing of the node in the case of rankdir is 'LR' or 'RL'. The priority is higher than nodesep, that is, if nodesepFunc is set, nodesep does not take effect
    * @param d - <zh/> 节点实例 | <en/> Node instance
    */
-  nodesepFunc?: (d?: NodeData) => number;
+  nodesepFunc?: Expr | ((node: NodeData) => number);
   /**
    * <zh/> 层间距（px）的回调函数
    *
@@ -116,7 +105,7 @@ export interface AntVDagreLayoutOptions extends BaseLayoutOptions {
    * <en/> The vertical spacing of adjacent layers in the case of rankdir is 'TB' or 'BT', and the horizontal spacing of adjacent layers in the case of rankdir is 'LR' or 'RL'. The priority is higher than nodesep, that is, if nodesepFunc is set, nodesep does not take effect
    * @param d - <zh/> 节点实例 | <en/> Node instance
    */
-  ranksepFunc?: (d?: NodeData) => number;
+  ranksepFunc?: Expr | ((node: NodeData) => number);
   /**
    * <zh/> 是否同时计算边上的的控制点位置
    *

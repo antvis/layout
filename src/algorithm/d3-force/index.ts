@@ -26,7 +26,7 @@ export type { D3ForceLayoutOptions };
 
 const DEFAULTS_LAYOUT_OPTIONS: Partial<D3ForceLayoutOptions> = {
   link: {
-    id: (d) => String(d.id),
+    id: 'edge.id',
   },
 
   manyBody: {
@@ -401,14 +401,13 @@ export class D3ForceLayout<
     )
       return undefined;
 
-    const radius =
-      options.nodeSize || options.nodeSpacing
-        ? (d: NodeDatum) =>
-            formatNodeSizeFn(
-              options.nodeSize,
-              options.nodeSpacing,
-            )(d._original) / 2
-        : undefined;
+    const sizeFn = formatNodeSizeFn(
+      options.nodeSize,
+      options.nodeSpacing,
+      DEFAULTS_LAYOUT_OPTIONS.nodeSize as number,
+      DEFAULTS_LAYOUT_OPTIONS.nodeSpacing as number,
+    );
+    const radius = (d: NodeDatum) => Math.max(...sizeFn(d._original)) / 2;
 
     return assignDefined({}, options.collide || {}, {
       radius: (options.collide && options.collide.radius) || radius,

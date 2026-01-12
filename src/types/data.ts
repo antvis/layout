@@ -1,5 +1,5 @@
-import type { EdgeLabelPos } from './edge-label';
 import type { PlainObject } from './common';
+import type { EdgeLabelPos } from './edge-label';
 import type { ID } from './id';
 import type { Point } from './point';
 import type { Size } from './size';

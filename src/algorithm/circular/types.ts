@@ -1,5 +1,4 @@
 import type { BaseLayoutOptions } from '../types';
-import type { NodeData, Size } from '../../types';
 
 /**
  * <zh/> 环形 Circular 布局配置
@@ -85,20 +84,6 @@ export interface CircularLayoutOptions extends BaseLayoutOptions {
    * @defaultValue 2 * Math.PI
    */
   endAngle?: number;
-  /**
-   * <zh/> 环与环之间最小间距，用于调整半径
-   *
-   * <en/> Minimum spacing between rings, used to adjust the radius
-   * @defaultValue 0
-   */
-  nodeSpacing?: number | ((d?: NodeData) => number);
-  /**
-   * <zh/> 节点大小（直径）。用于防止节点重叠时的碰撞检测
-   *
-   * <en/> Node size (diameter). Used for collision detection when nodes overlap
-   * @defaultValue 10
-   */
-  nodeSize?: Size | ((d?: NodeData) => Size);
 }
 
 export interface ParsedCircularLayoutOptions

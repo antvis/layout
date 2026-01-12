@@ -1,7 +1,7 @@
 import type { GraphLabel } from 'dagre';
-import type { BaseLayoutOptions } from '../types';
+import type { EdgeData, Size } from '../../types';
 import type { EdgeLabelPos } from '../../types/edge-label';
-import type { NodeData, Size } from '../../types';
+import type { BaseLayoutOptions } from '../types';
 
 /**
  * <zh/> 边标签位置：'l' 左侧，'c' 中心，'r' 右侧
@@ -39,46 +39,38 @@ export interface DagreLayoutOptions extends BaseLayoutOptions, GraphLabel {
   multigraph?: boolean;
 
   /**
-   * <zh/> 定义节点占用的空间大小，影响节点间距和整体布局疏密
-   *
-   * <en/> Defines space occupied by nodes, affecting inter-node spacing and overall layout density
-   * @defaultValue [0, 0]
-   */
-  nodeSize?: Size | ((d?: NodeData) => Size);
-
-  /**
    * <zh/> 设置边跨越的最小层数，值越大节点间距越远，用于控制布局紧凑度
    *
    * <en/> Sets minimum number of layers an edge spans; larger values create more distance between nodes, controlling layout compactness
    * @defaultValue 1
    */
-  edgeMinLen?: number | ((d?: NodeData) => number);
+  edgeMinLen?: number | ((edge: EdgeData) => number);
 
   /**
    * <zh/> 边的权重，影响边的长度优化优先级，权重大的边倾向于更短
    *
    * <en/> Edge weight affecting length optimization priority; higher weight edges tend to be shorter
    */
-  edgeWeight?: number | ((d?: NodeData) => number);
+  edgeWeight?: number | ((edge: EdgeData) => number);
 
   /**
    * <zh/> 边标签的尺寸，用于为标签预留空间，避免与节点重叠
    *
    * <en/> Size of edge labels for reserving space to prevent overlap with nodes
    */
-  edgeLabelSize?: Size | ((d?: NodeData) => Size);
+  edgeLabelSize?: Size | ((edge: EdgeData) => Size);
 
   /**
    * <zh/> 标签在边上的位置，控制标签相对于边的对齐方式
    *
    * <en/> Label position on edge, controlling label alignment relative to the edge
    */
-  edgeLabelPos?: EdgeLabelPos | ((d?: NodeData) => EdgeLabelPos);
+  edgeLabelPos?: EdgeLabelPos | ((edge: EdgeData) => EdgeLabelPos);
 
   /**
    * <zh/> 标签与边的偏移距离，用于微调标签位置避免视觉重叠
    *
    * <en/> Offset distance between label and edge for fine-tuning label position to avoid visual overlap
    */
-  edgeLabelOffset?: number | ((d?: NodeData) => number);
+  edgeLabelOffset?: number | ((edge: EdgeData) => number);
 }

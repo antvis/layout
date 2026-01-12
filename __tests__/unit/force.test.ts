@@ -244,6 +244,49 @@ describe('layout force', () => {
     expect(tickCount).toBeGreaterThanOrEqual(1);
   });
 
+  it('should support Expr for accessor callbacks', async () => {
+    const graph = {
+      nodes: [
+        { id: 'a', data: { cluster: 'c1', mass: 2, ns: 123, cs: 50 } },
+        { id: 'b', data: { cluster: 'c2', mass: 3, ns: 456, cs: 60 } },
+      ],
+      edges: [
+        {
+          id: 'e1',
+          source: 'a',
+          target: 'b',
+          data: { len: 77, es: 0.5 },
+        },
+      ],
+    };
+
+    const layout = new ForceLayout({
+      width,
+      height,
+      maxIteration: 1,
+      minMovement: 0,
+      clustering: true,
+      nodeClusterBy: 'node.data.cluster',
+      getMass: 'node.data.mass',
+      nodeStrength: 'node.data.ns',
+      edgeStrength: 'edge.data.es',
+      linkDistance: 'edge.data.len',
+      clusterNodeStrength: 'node.data.cs',
+      getCenter: '[0, 0, 10]',
+    });
+
+    await layout.execute(graph);
+
+    layout.forEachNode((node: any) => {
+      expect(node.mass).toBe(node._original.data.mass);
+      expect(node.nodeStrength).toBe(node._original.data.ns);
+    });
+    layout.forEachEdge((edge: any) => {
+      expect(edge.edgeStrength).toBe(edge._original.data.es);
+      expect(edge.linkDistance).toBe(edge._original.data.len);
+    });
+  });
+
   it('should handle overlapped nodes', async () => {
     const overlapGraph = {
       nodes: [

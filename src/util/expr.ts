@@ -1,0 +1,24 @@
+import { compile, evaluate } from '@antv/expr';
+import type { Context } from '@antv/expr/dist/interpreter';
+
+/**
+ * Evaluate an expression if (and only if) it's a valid string expression.
+ * - Returns `undefined` when `expression` is not a string, empty, or invalid.
+ *
+ * @example
+ * evaluateExpression('x + y', { x: 10, y: 20 }) // 30
+ */
+export function evaluateExpression(
+  expression: string,
+  context: Context,
+): Function | undefined {
+  const source = expression.trim();
+  if (!source) return undefined;
+
+  try {
+    compile(source);
+    return evaluate(source, context);
+  } catch {
+    return undefined;
+  }
+}
