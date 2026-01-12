@@ -253,7 +253,6 @@ export interface D3ForceCommonOptions
     | {
         radius?:
           | number
-          | Expr
           | ((node: NodeDatum, index: number, nodes: NodeDatum[]) => number);
         strength?: number;
         iterations?: number;
@@ -268,7 +267,6 @@ export interface D3ForceCommonOptions
     | {
         strength?:
           | number
-          | Expr
           | ((node: NodeDatum, index: number, nodes: NodeDatum[]) => number);
         theta?: number;
         distanceMin?: number;
@@ -282,16 +280,12 @@ export interface D3ForceCommonOptions
   link?:
     | false
     | {
-        id?:
-          | Expr
-          | ((edge: EdgeDatum, index: number, edges: EdgeDatum[]) => string);
+        id?: (edge: EdgeDatum, index: number, edges: EdgeDatum[]) => string;
         distance?:
           | number
-          | Expr
           | ((edge: EdgeDatum, index: number, edges: EdgeDatum[]) => number);
         strength?:
           | number
-          | Expr
           | ((edge: EdgeDatum, index: number, edges: EdgeDatum[]) => number);
         iterations?: number;
       };
@@ -305,11 +299,9 @@ export interface D3ForceCommonOptions
     | {
         strength?:
           | number
-          | Expr
           | ((node: NodeDatum, index: number, nodes: NodeDatum[]) => number);
         x?:
           | number
-          | Expr
           | ((node: NodeDatum, index: number, nodes: NodeDatum[]) => number);
       };
   /**
@@ -322,11 +314,9 @@ export interface D3ForceCommonOptions
     | {
         strength?:
           | number
-          | Expr
           | ((node: NodeDatum, index: number, nodes: NodeDatum[]) => number);
         y?:
           | number
-          | Expr
           | ((node: NodeDatum, index: number, nodes: NodeDatum[]) => number);
       };
 }

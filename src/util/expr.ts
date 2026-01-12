@@ -9,9 +9,11 @@ import type { Context } from '@antv/expr/dist/interpreter';
  * evaluateExpression('x + y', { x: 10, y: 20 }) // 30
  */
 export function evaluateExpression(
-  expression: string,
+  expression: unknown,
   context: Context,
 ): Function | undefined {
+  if (typeof expression !== 'string') return undefined;
+
   const source = expression.trim();
   if (!source) return undefined;
 

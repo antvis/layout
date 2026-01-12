@@ -38,7 +38,7 @@ export function formatNumberFn<T extends NodeData = NodeData>(
   type: 'node' | 'edge' | 'combo' = 'node',
 ): (d: T) => number {
   // If value is undefined, return default value function
-  if (!value) {
+  if (isNil(value)) {
     return () => defaultValue;
   }
 

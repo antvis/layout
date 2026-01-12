@@ -39,7 +39,7 @@ describe('FruchtermanLayout', () => {
       clusterGravity: 10,
       width: 300,
       height: 300,
-      nodeClusterBy: 'data.cluster',
+      nodeClusterBy: 'node.cluster',
       dimensions: 2,
     });
   });
