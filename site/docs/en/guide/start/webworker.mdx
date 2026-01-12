@@ -1,0 +1,62 @@
+import { Badge } from '@theme';
+
+# Using WebWorker <Badge text="Performance" type="info" />
+
+When `enableWorker: true` and `Worker` is available, layout computation runs in a WebWorker to reduce main-thread blocking.
+
+However, if you pass **function callbacks** in options (e.g. `(node) => ...`), Worker mode may throw errors like:
+
+```txt
+DataCloneError: Failed to execute 'postMessage' on 'Worker': function could not be cloned
+```
+
+## Why it happens
+
+The library transfers `data/options` between the main thread and the Worker via structured clone. **Functions are not structured-cloneable**, so any function inside options can break the transfer.
+
+## How to fix
+
+### Option 1: Use `Expr` (string expressions) instead of callbacks
+
+`@antv/layout` supports `Expr` (powered by `@antv/expr`) for many numeric/size fields. If a field’s type includes `Expr`, you can pass a string expression instead of a function.
+
+Example (ForceLayout):
+
+```ts
+import { ForceLayout } from '@antv/layout';
+
+const layout = new ForceLayout({
+  enableWorker: true,
+  nodeStrength: 'node.data.strength ?? -30',
+  edgeStrength: 'edge.data.weight ?? 0.1',
+  nodeSize: 'node.data.size ?? 10',
+});
+
+await layout.execute(data);
+```
+
+Expression variable names depend on the field:
+
+- Node fields usually use `node`
+- Edge fields usually use `edge`
+- Combo fields usually use `combo`
+
+### Option 2: Pre-compute values into your data
+
+If you used to do:
+
+```ts
+nodeSize: (node) => node.data.size
+```
+
+You can pre-fill `data.nodes[i].data.size` and then use `nodeSize: 'node.data.size'` (or rely on defaults).
+
+### Option 3: If you need callbacks, don’t enable Worker
+
+Some capabilities inherently require functions and cannot be passed into Workers:
+
+- `onTick`-style callbacks
+- `node` / `edge` mapping functions
+- Any custom logic without an `Expr` alternative
+
+In these cases, run the layout on the main thread by keeping `enableWorker` off.

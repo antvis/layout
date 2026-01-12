@@ -1,5 +1,5 @@
 import type { GraphLabel } from 'dagre';
-import type { EdgeData, Size } from '../../types';
+import type { EdgeData, Expr, Size } from '../../types';
 import type { EdgeLabelPos } from '../../types/edge-label';
 import type { BaseLayoutOptions } from '../types';
 
@@ -44,33 +44,33 @@ export interface DagreLayoutOptions extends BaseLayoutOptions, GraphLabel {
    * <en/> Sets minimum number of layers an edge spans; larger values create more distance between nodes, controlling layout compactness
    * @defaultValue 1
    */
-  edgeMinLen?: number | ((edge: EdgeData) => number);
+  edgeMinLen?: number | Expr | ((edge: EdgeData) => number);
 
   /**
    * <zh/> 边的权重，影响边的长度优化优先级，权重大的边倾向于更短
    *
    * <en/> Edge weight affecting length optimization priority; higher weight edges tend to be shorter
    */
-  edgeWeight?: number | ((edge: EdgeData) => number);
+  edgeWeight?: number | Expr | ((edge: EdgeData) => number);
 
   /**
    * <zh/> 边标签的尺寸，用于为标签预留空间，避免与节点重叠
    *
    * <en/> Size of edge labels for reserving space to prevent overlap with nodes
    */
-  edgeLabelSize?: Size | ((edge: EdgeData) => Size);
+  edgeLabelSize?: Size | Expr | ((edge: EdgeData) => Size);
 
   /**
    * <zh/> 标签在边上的位置，控制标签相对于边的对齐方式
    *
    * <en/> Label position on edge, controlling label alignment relative to the edge
    */
-  edgeLabelPos?: EdgeLabelPos | ((edge: EdgeData) => EdgeLabelPos);
+  edgeLabelPos?: EdgeLabelPos | Expr | ((edge: EdgeData) => EdgeLabelPos);
 
   /**
    * <zh/> 标签与边的偏移距离，用于微调标签位置避免视觉重叠
    *
    * <en/> Offset distance between label and edge for fine-tuning label position to avoid visual overlap
    */
-  edgeLabelOffset?: number | ((edge: EdgeData) => number);
+  edgeLabelOffset?: number | Expr | ((edge: EdgeData) => number);
 }

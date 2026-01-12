@@ -1,5 +1,5 @@
 import { compile, evaluate } from '@antv/expr';
-import type { Context } from '@antv/expr/dist/interpreter';
+import type { ExprContext } from '../types';
 
 /**
  * Evaluate an expression if (and only if) it's a valid string expression.
@@ -10,8 +10,8 @@ import type { Context } from '@antv/expr/dist/interpreter';
  */
 export function evaluateExpression(
   expression: unknown,
-  context: Context,
-): Function | undefined {
+  context: ExprContext,
+): unknown | undefined {
   if (typeof expression !== 'string') return undefined;
 
   const source = expression.trim();

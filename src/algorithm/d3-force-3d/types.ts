@@ -1,4 +1,4 @@
-import { Expr } from '../../types';
+import type { Expr } from '../../types';
 import type {
   D3ForceCommonOptions,
   EdgeDatum as _EdgeDatum,

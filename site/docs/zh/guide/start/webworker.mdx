@@ -1,0 +1,62 @@
+import { Badge } from '@theme';
+
+# 使用 WebWorker <Badge text="Performance" type="info" />
+
+当你配置 `enableWorker: true` 且运行环境支持 `Worker` 时，布局计算会在 Worker 中执行，从而减少主线程阻塞。
+
+但如果你在配置项里传入了**回调函数**（例如 `(node) => ...`），在 Worker 模式下可能会直接报错，常见报错类似：
+
+```txt
+DataCloneError: Failed to execute 'postMessage' on 'Worker': function could not be cloned
+```
+
+## 为什么会报错
+
+库在主线程与 Worker 之间传递 `data/options` 时依赖结构化克隆（structured clone）。**函数无法被结构化克隆**，因此当 options 中包含函数时，就会触发 `postMessage`/Comlink 的传输错误。
+
+## 怎么解决
+
+### 方案 1：用 `Expr`（字符串表达式）替代回调
+
+`@antv/layout` 内置了基于 `@antv/expr` 的表达式能力：对于类型里标注为 `Expr` 的字段，你可以传入字符串表达式来代替函数。
+
+示例（ForceLayout）：
+
+```ts
+import { ForceLayout } from '@antv/layout';
+
+const layout = new ForceLayout({
+  enableWorker: true,
+  nodeStrength: 'node.data.strength ?? -30',
+  edgeStrength: 'edge.data.weight ?? 0.1',
+  nodeSize: 'node.data.size ?? 10',
+});
+
+await layout.execute(data);
+```
+
+表达式里的变量名取决于字段类型：
+
+- 节点相关字段通常使用 `node`（例如 `nodeStrength` / `nodeSize`）
+- 边相关字段通常使用 `edge`（例如 `edgeStrength` / `edgeLabelOffset`）
+- combo 相关字段通常使用 `combo`
+
+### 方案 2：把自定义计算结果“提前算好”放进数据里
+
+例如你原本想写：
+
+```ts
+nodeSize: (node) => node.data.size;
+```
+
+可以改为在业务数据里把 `size` 填好，直接传 `nodeSize: 'node.data.size'` 或者不传（让布局从 data 读取）。
+
+### 方案 3：需要回调就不要开 Worker
+
+以下类型的能力天然需要函数回调，Worker 模式下无法传入：
+
+- `onTick` 这类过程回调
+- `node` / `edge` 数据映射函数
+- 任何只有函数形态的自定义逻辑（未提供 `Expr` 字段的场景）
+
+此时建议把 `enableWorker` 关掉，或者只在主线程跑布局。

@@ -1,4 +1,4 @@
-import { Expr, ID, NodeData, Point } from '../../types';
+import type { Expr, ID, NodeData, Point } from '../../types';
 import { BaseLayoutOptions } from '../base-layout';
 
 export type DagreRankdir =
