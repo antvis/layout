@@ -48,7 +48,9 @@ export class D3Force3DLayout extends D3ForceLayout<
   protected getDefaultOptions(): Partial<D3Force3DLayoutOptions> {
     return {
       numDimensions: 3,
-      edgeId: 'edge.id',
+      link: {
+        id: (edge) => edge.id!,
+      },
       manyBody: {},
       center: {
         x: 0,

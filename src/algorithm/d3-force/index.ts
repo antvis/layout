@@ -13,7 +13,6 @@ import {
 import type { ID, Position } from '../../types';
 import { assignDefined, normalizeViewport } from '../../util';
 import { formatFn, formatNodeSizeFn } from '../../util/format';
-import { getNestedValue } from '../../util/object';
 import { BaseLayoutWithIterations } from '../base-layout';
 import forceInABox from './force-in-a-box';
 import type {
@@ -528,7 +527,11 @@ export class D3ForceLayout<
     if (radial) {
       let force = simulation.force('radial');
       if (!force) {
-        force = forceRadial(radial.radius || 100, radial.x, radial.y);
+        force = forceRadial(
+          (radial.radius as () => number) || 100,
+          radial.x,
+          radial.y,
+        );
         simulation.force('radial', force as any);
       }
 
