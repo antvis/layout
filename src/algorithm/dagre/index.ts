@@ -100,7 +100,10 @@ export class DagreLayout extends BaseLayout<DagreLayoutOptions> {
 
     const edgeLabelSizeFn = formatSizeFn(edgeLabelSize, 0, 'edge');
     const edgeLabelOffsetFn = formatNumberFn(edgeLabelOffset, 10, 'edge');
-    const edgeLabelPosFn = formatFn(edgeLabelPos, ['edge']);
+    const edgeLabelPosFn =
+      typeof edgeLabelPos === 'string'
+        ? () => edgeLabelPos
+        : formatFn(edgeLabelPos, ['edge']);
     const edgeMinLenFn = formatNumberFn(edgeMinLen, 1, 'edge');
     const edgeWeightFn = formatNumberFn(edgeWeight, 1, 'edge');
 
