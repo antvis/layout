@@ -2,19 +2,32 @@ import { Badge } from '@theme';
 
 # Using WebWorker <Badge text="Performance" type="info" />
 
-When `enableWorker: true` and `Worker` is available, layout computation runs in a WebWorker to reduce main-thread blocking.
+WebWorker is a browser capability that runs JavaScript in a **separate thread**, helping you avoid main-thread jank caused by heavy computations.
 
-However, if you pass **function callbacks** in options (e.g. `(node) => ...`), Worker mode may throw errors like:
+In `@antv/layout`, when `enableWorker: true` is set and `Worker` is available, layout computation runs in a Worker to reduce main-thread blocking. If the Worker is unavailable or fails to load, it automatically falls back to the main thread.
+
+## How to enable
+
+Just set `enableWorker: true` in layout options:
+
+```ts
+import { ForceAtlas2Layout } from '@antv/layout';
+
+const layout = new ForceAtlas2Layout({ enableWorker: true });
+await layout.execute(data);
+```
+
+If you use the UMD build via CDN, make sure `dist/worker.js` is accessible and lives alongside `dist/index.min.js` (the worker URL is derived from `index.js/index.min.js` and points to `worker.js` in the same directory). See “Worker notes” in the Installation page for details.
+
+## Limitations in Worker mode
+
+In Worker mode, the library transfers `data/options` between the main thread and the Worker via structured clone. **Functions are not structured-cloneable**, so function callbacks inside options can break the transfer, typically with:
 
 ```txt
 DataCloneError: Failed to execute 'postMessage' on 'Worker': function could not be cloned
 ```
 
-## Why it happens
-
-The library transfers `data/options` between the main thread and the Worker via structured clone. **Functions are not structured-cloneable**, so any function inside options can break the transfer.
-
-## How to fix
+Below are common ways to address it.
 
 ### Option 1: Use `Expr` (string expressions) instead of callbacks
 
@@ -27,19 +40,39 @@ import { ForceLayout } from '@antv/layout';
 
 const layout = new ForceLayout({
   enableWorker: true,
-  nodeStrength: 'node.data.strength ?? -30',
-  edgeStrength: 'edge.data.weight ?? 0.1',
-  nodeSize: 'node.data.size ?? 10',
+  // Expr supports expressions only; it does NOT support ?? / ?. / undefined / == / !=
+  nodeStrength:
+    'node.data.strength === 0 || node.data.strength ? node.data.strength : -30',
+  edgeStrength:
+    'edge.data.weight === 0 || edge.data.weight ? edge.data.weight : 0.1',
+  nodeSize: 'node.data.size === 0 || node.data.size ? node.data.size : 10',
 });
 
 await layout.execute(data);
 ```
 
-Expression variable names depend on the field:
+Expression variable names are **taken from the callback parameter names in the type definitions** (i.e. if the field originally supports a function like `(node) => ...`, then your `Expr` should use `node`):
 
-- Node fields usually use `node`
-- Edge fields usually use `edge`
-- Combo fields usually use `combo`
+- `(node) => ...`: use `node` (e.g. `nodeStrength` / `nodeSize`)
+- `(edge) => ...`: use `edge` (e.g. `edgeStrength`)
+- `(edge, source, target) => ...`: use `edge` / `source` / `target` (e.g. `linkDistance`)
+- If the combo callback parameter is named `combo`, use `combo`
+
+#### `Expr` syntax tips
+
+`Expr` follows `@antv/expr` syntax (see: https://github.com/antvis/expr). Common patterns:
+
+- Property access: `node.data.size`, `edge.source`, `combo.id`, `items[0]`
+- Arithmetic / logic: `a + b * c`, `a > 10 && b < 5`, `!flag`
+- Ternary: `node.data.type === "big" ? 20 : 10`
+- Built-in functions (prefixed with `@`): `@max(a, b)`, `@min(a, b)`, `@sqrt(x)` (built-ins: `abs/ceil/floor/round/sqrt/pow/max/min`)
+
+Notes: `@antv/expr` does not support `??`, `?.`, `undefined` literals, or `==/!=`. For fallbacks, prefer `?:` / `&&` / `||`, for example:
+
+```ts
+// Treat 0 as a valid value
+nodeSize: 'node.data.size === 0 || node.data.size ? node.data.size : 10'
+```
 
 ### Option 2: Pre-compute values into your data
 

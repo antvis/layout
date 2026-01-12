@@ -2,19 +2,32 @@ import { Badge } from '@theme';
 
 # 使用 WebWorker <Badge text="Performance" type="info" />
 
-当你配置 `enableWorker: true` 且运行环境支持 `Worker` 时，布局计算会在 Worker 中执行，从而减少主线程阻塞。
+WebWorker 是浏览器提供的一种并行能力：它可以在**独立线程**里执行 JavaScript，从而避免在主线程做大量计算导致的卡顿。
 
-但如果你在配置项里传入了**回调函数**（例如 `(node) => ...`），在 Worker 模式下可能会直接报错，常见报错类似：
+在 `@antv/layout` 中，当你配置 `enableWorker: true` 且运行环境支持 `Worker` 时，布局计算会优先在 Worker 中执行，从而减少主线程阻塞；当 Worker 不可用或加载失败时，会自动回退到主线程。
+
+## 如何开启
+
+只需要在布局配置中设置 `enableWorker: true`：
+
+```ts
+import { ForceAtlas2Layout } from '@antv/layout';
+
+const layout = new ForceAtlas2Layout({ enableWorker: true });
+await layout.execute(data);
+```
+
+如果你通过 CDN 使用 UMD 构建，请确保 `dist/worker.js` 与 `dist/index.min.js` 位于同一目录且可被访问（Worker 脚本地址会自动从 `index.js/index.min.js` 推导为同目录下的 `worker.js`）；更多说明见安装文档的 “Worker 注意事项”。
+
+## Worker 模式的限制
+
+Worker 模式下，主线程与 Worker 之间传递 `data/options` 依赖结构化克隆（structured clone）。**函数无法被结构化克隆**，因此当 options 中包含函数回调时，会触发 `postMessage`/Comlink 的传输错误，常见报错类似：
 
 ```txt
 DataCloneError: Failed to execute 'postMessage' on 'Worker': function could not be cloned
 ```
 
-## 为什么会报错
-
-库在主线程与 Worker 之间传递 `data/options` 时依赖结构化克隆（structured clone）。**函数无法被结构化克隆**，因此当 options 中包含函数时，就会触发 `postMessage`/Comlink 的传输错误。
-
-## 怎么解决
+下面给出几种常用的解决方式。
 
 ### 方案 1：用 `Expr`（字符串表达式）替代回调
 
@@ -27,19 +40,39 @@ import { ForceLayout } from '@antv/layout';
 
 const layout = new ForceLayout({
   enableWorker: true,
-  nodeStrength: 'node.data.strength ?? -30',
-  edgeStrength: 'edge.data.weight ?? 0.1',
-  nodeSize: 'node.data.size ?? 10',
+  // Expr 仅支持“表达式”，不支持 ?? / ?. / undefined / == / !=
+  nodeStrength:
+    'node.data.strength === 0 || node.data.strength ? node.data.strength : -30',
+  edgeStrength:
+    'edge.data.weight === 0 || edge.data.weight ? edge.data.weight : 0.1',
+  nodeSize: 'node.data.size === 0 || node.data.size ? node.data.size : 10',
 });
 
 await layout.execute(data);
 ```
 
-表达式里的变量名取决于字段类型：
+表达式里的变量名**从类型定义里的回调参数命名来取**（也就是：如果该字段原本支持函数回调 `(node) => ...`，那么对应的 `Expr` 里就用 `node` 这个变量名）：
 
-- 节点相关字段通常使用 `node`（例如 `nodeStrength` / `nodeSize`）
-- 边相关字段通常使用 `edge`（例如 `edgeStrength` / `edgeLabelOffset`）
-- combo 相关字段通常使用 `combo`
+- `(node) => ...`：使用 `node`（例如 `nodeStrength` / `nodeSize`）
+- `(edge) => ...`：使用 `edge`（例如 `edgeStrength`）
+- `(edge, source, target) => ...`：使用 `edge` / `source` / `target`（例如 `linkDistance`）
+- combo 回调参数若命名为 `combo`，则使用 `combo`
+
+#### `Expr` 写法提示
+
+`Expr` 语法与 `@antv/expr` 一致（可参考：https://github.com/antvis/expr），常用写法：
+
+- 访问字段：`node.data.size`、`edge.source`、`combo.id`、`items[0]`
+- 运算/逻辑：`a + b * c`、`a > 10 && b < 5`、`!flag`
+- 条件表达式：`node.data.type === "big" ? 20 : 10`
+- 内置函数（以 `@` 开头）：`@max(a, b)`、`@min(a, b)`、`@sqrt(x)`（内置：`abs/ceil/floor/round/sqrt/pow/max/min`）
+
+注意：`@antv/expr` 不支持 `??`、`?.`、`undefined` 字面量、`==/!=`；建议用 `?:` / `&&` / `||` 组合实现兜底逻辑，例如：
+
+```ts
+// 当 size 为 0 时也视为有效值
+nodeSize: 'node.data.size === 0 || node.data.size ? node.data.size : 10'
+```
 
 ### 方案 2：把自定义计算结果“提前算好”放进数据里
 
