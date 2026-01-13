@@ -1,9 +1,7 @@
+import type { Expr, ID, NodeData } from '../../types';
 import type { BaseLayoutOptions } from '../types';
-import type { ID, NodeData, Size } from '../../types';
 
-export type ComboCombinedLayoutConfig =
-  | string
-  | { type: string; [key: string]: any };
+export type ComboCombinedLayoutConfig = { type: string; [key: string]: any };
 
 export interface ComboCombinedLayoutOptions extends BaseLayoutOptions {
   /**
@@ -11,29 +9,16 @@ export interface ComboCombinedLayoutOptions extends BaseLayoutOptions {
    */
   layout?:
     | ComboCombinedLayoutConfig
-    | ((comboId: ID | null) => ComboCombinedLayoutConfig);
-
-  /**
-   * <zh/> 节点尺寸
-   *
-   * <en/> Node size
-   */
-  nodeSize?: Size | ((node?: NodeData) => Size);
-
-  /**
-   * <zh/> 节点间距
-   *
-   * <en/> Node spacing
-   */
-  nodeSpacing?: number | ((node?: NodeData) => number);
+    | ((comboId: ID | null) => ComboCombinedLayoutConfig)
+    | Expr;
 
   /**
    * Combo 之间的间距
    */
-  comboSpacing?: number | ((combo?: NodeData) => number);
+  comboSpacing?: number | ((combo: NodeData) => number) | Expr;
 
   /**
    * Combo 内部的边距
    */
-  comboPadding?: number | ((combo?: NodeData) => number);
+  comboPadding?: number | ((combo: NodeData) => number) | Expr;
 }

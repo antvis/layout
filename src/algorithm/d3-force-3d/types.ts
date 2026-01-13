@@ -1,3 +1,4 @@
+import type { Expr } from '../../types';
 import type {
   D3ForceCommonOptions,
   EdgeDatum as _EdgeDatum,
@@ -32,9 +33,11 @@ export interface D3Force3DLayoutOptions extends D3ForceCommonOptions {
     | {
         strength?:
           | number
+          | Expr
           | ((node: NodeDatum, index: number, nodes: NodeDatum[]) => number);
         radius?:
           | number
+          | Expr
           | ((node: NodeDatum, index: number, nodes: NodeDatum[]) => number);
         x?: number;
         y?: number;
@@ -50,9 +53,11 @@ export interface D3Force3DLayoutOptions extends D3ForceCommonOptions {
     | {
         strength?:
           | number
+          | Expr
           | ((node: NodeDatum, index: number, nodes: NodeDatum[]) => number);
         z?:
           | number
+          | Expr
           | ((node: NodeDatum, index: number, nodes: NodeDatum[]) => number);
       };
 }

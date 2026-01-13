@@ -1,4 +1,3 @@
-import { isNil } from '@antv/util';
 import { normalizeViewport, orderByDegree, orderByTopology } from '../../util';
 import { applySingleNodeLayout } from '../../util/common';
 import { formatNodeSizeFn } from '../../util/format';
@@ -18,6 +17,7 @@ const DEFAULT_LAYOUT_OPTIONS: CircularLayoutOptions = {
   ordering: null,
   angleRatio: 1,
   nodeSize: 10,
+  nodeSpacing: 0,
 };
 
 /**
@@ -67,16 +67,17 @@ export class CircularLayout extends BaseLayout<CircularLayoutOptions> {
     let { radius, startRadius, endRadius } = this.options;
 
     const nodes = this.model.nodes();
-    const format = formatNodeSizeFn(
+    const sizeFn = formatNodeSizeFn(
       nodeSize,
       nodeSpacing,
       DEFAULT_LAYOUT_OPTIONS.nodeSize as number,
+      DEFAULT_LAYOUT_OPTIONS.nodeSpacing as number,
     );
 
-    if (!isNil(nodeSpacing)) {
+    if (nodeSpacing) {
       let perimeter = 0;
       for (const node of nodes) {
-        perimeter += format(node._original);
+        perimeter += Math.max(...sizeFn(node._original));
       }
       radius = perimeter / (2 * Math.PI);
     } else if (!radius && !startRadius && !endRadius) {

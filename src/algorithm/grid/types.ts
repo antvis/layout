@@ -1,5 +1,5 @@
+import type { Expr, NodeData, Point, Sorter } from '../../types';
 import type { BaseLayoutOptions } from '../types';
-import type { NodeData, Point, Size } from '../../types';
 
 export interface GridLayoutOptions extends BaseLayoutOptions {
   /**
@@ -21,25 +21,6 @@ export interface GridLayoutOptions extends BaseLayoutOptions {
    * @defaultValue false
    */
   preventOverlap?: boolean;
-  /**
-   * <zh/> 节点大小（直径）。用于防止节点重叠时的碰撞检测
-   *
-   * <en/> Node size (diameter). Used for collision detection when nodes overlap
-   */
-  nodeSize?: Size | ((d?: NodeData) => Size);
-  /**
-   * <zh/> 环与环之间最小间距，用于调整半径
-   *
-   * <en/> Minimum spacing between rings, used to adjust the radius
-   */
-  nodeSpacing?: number | ((d?: NodeData) => number);
-  /**
-   * <zh/> 避免重叠时节点的间距 padding。preventOverlap 为 true 时生效
-   *
-   * <en/> Padding between nodes to prevent overlap. It takes effect when preventOverlap is true
-   * @defaultValue 10
-   */
-  preventOverlapPadding?: number;
   /**
    * <zh/> 为 false 时表示利用所有可用画布空间，为 true 时表示利用最小的画布空间
    *
@@ -67,38 +48,28 @@ export interface GridLayoutOptions extends BaseLayoutOptions {
    * <en/> Specify the basis for sorting (node attribute name). The higher the value, the more the node will be placed in the center. If it is undefined, the degree of the node will be calculated, and the higher the degree, the more the node will be placed in the center
    * @defaultValue undefined
    */
-  sortBy?: 'id' | 'degree' | ((nodeA: NodeData, nodeB: NodeData) => -1 | 0 | 1);
+  sortBy?: 'id' | 'degree' | Expr | Sorter<NodeData>;
   /**
    * <zh/> 指定每个节点所在的行和列
    *
    * <en/> Specify the row and column where each node is located
    * @defaultValue undefined
    */
-  position?: (node: NodeData) => { row?: number; col?: number };
+  position?: Expr | ((node: NodeData) => { row?: number; col?: number });
 }
 
-export interface NormalizedGridLayoutOptions
+export interface ParsedGridLayoutOptions
   extends Omit<
     GridLayoutOptions,
-    | 'begin'
-    | 'nodeSize'
-    | 'nodeSpacing'
-    | 'preventOverlap'
-    | 'preventOverlapPadding'
-    | 'sortBy'
-    | 'rows'
-    | 'cols'
+    'begin' | 'preventOverlap' | 'sortBy' | 'rows' | 'cols'
   > {
   width: number;
   height: number;
   center: Point;
   begin: Point;
   rcs: { rows: number; cols: number };
-  nodeSize: (node?: NodeData) => Size;
-  nodeSpacing: (node?: NodeData) => number;
   preventOverlap: boolean;
-  preventOverlapPadding: number;
-  sortBy: 'id' | 'degree' | ((nodeA: NodeData, nodeB: NodeData) => -1 | 0 | 1);
+  sortBy: 'id' | 'degree' | Sorter<NodeData>;
 }
 
 export type RowsAndCols = {

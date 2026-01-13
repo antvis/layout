@@ -85,16 +85,6 @@ describe('format', () => {
       expect(result()).toEqual([20, 30]);
     });
 
-    test('should handle object value with width and height', () => {
-      const result = formatSizeFn<NodeData>({ width: 40, height: 50 }, 10);
-      expect(result()).toEqual([40, 50]);
-    });
-
-    test('should handle object value when resultIsNumber is false', () => {
-      const result = formatSizeFn<NodeData>({ width: 40, height: 50 }, 10);
-      expect(result()).toEqual([40, 50]);
-    });
-
     test('should return default value when value is undefined and no node provided', () => {
       const result = formatSizeFn<NodeData>(undefined, 10);
       expect(result()).toBe(10);
@@ -111,7 +101,7 @@ describe('format', () => {
 
     test('should handle number zero as valid size', () => {
       const result = formatSizeFn<NodeData>(0, 10);
-      expect(result()).toBe(10); // 0 is falsy, falls back to default
+      expect(result()).toBe(0);
     });
 
     test('should return default value when data has no size', () => {
@@ -157,41 +147,45 @@ describe('format', () => {
   describe('formatNodeSizeFn', () => {
     test('should return node size plus spacing', () => {
       const result = formatNodeSizeFn(20, 5, 10);
-      expect(result()).toBe(25);
+      expect(result()).toEqual([25, 25, 25]);
     });
 
     test('should use default node size when nodeSize is undefined', () => {
       const result = formatNodeSizeFn(undefined, 5, 15);
-      expect(result()).toBe(20); // 15 + 5
+      expect(result()).toEqual([20, 20, 20]); // 15 + 5
     });
 
     test('should handle zero spacing', () => {
       const result = formatNodeSizeFn(20, 0, 10);
-      expect(result()).toBe(20);
+      expect(result()).toEqual([20, 20, 20]);
     });
 
     test('should handle undefined spacing', () => {
       const result = formatNodeSizeFn(20, undefined, 10);
-      expect(result()).toBe(20);
+      expect(result()).toEqual([20, 20, 20]);
     });
 
     test('should handle nodeSize as array', () => {
       const result = formatNodeSizeFn([30, 40], 5, 10);
-      expect(result()).toBe(45); // max(30, 40) + 5
+      expect(result()).toEqual([35, 45, 35]);
     });
 
     test('should handle nodeSize as function', () => {
       const sizeFn = (node?: NodeData) =>
         ((node?.data as any)?.customSize as number) || 25;
       const result = formatNodeSizeFn(sizeFn, 10, 10);
-      expect(result({ id: 'test', data: { customSize: 30 } })).toBe(40); // 30 + 10
+      expect(result({ id: 'test', data: { customSize: 30 } })).toEqual([
+        40, 40, 40,
+      ]);
     });
 
     test('should handle nodeSpacing as function', () => {
       const spacingFn = (node?: NodeData) =>
         ((node?.data as any)?.spacing as number) || 0;
       const result = formatNodeSizeFn(20, spacingFn, 10);
-      expect(result({ id: 'test', data: { spacing: 5 } })).toBe(25); // 20 + 5
+      expect(result({ id: 'test', data: { spacing: 5 } })).toEqual([
+        25, 25, 25,
+      ]);
     });
 
     test('should handle both nodeSize and nodeSpacing as functions', () => {
@@ -200,7 +194,9 @@ describe('format', () => {
       const spacingFn = (node?: NodeData) =>
         ((node?.data as any)?.spacing as number) || 0;
       const result = formatNodeSizeFn(sizeFn, spacingFn, 10);
-      expect(result({ id: 'test', data: { size: 30, spacing: 5 } })).toBe(35);
+      expect(result({ id: 'test', data: { size: 30, spacing: 5 } })).toEqual([
+        35, 35, 35,
+      ]);
     });
 
     test('should return default when nodeSize undefined and node has no size in data', () => {
@@ -209,32 +205,34 @@ describe('format', () => {
         id: 'node1',
         data: {},
       };
-      expect(result(nodeData)).toBe(15); // default 10 + 5 spacing
+      expect(result(nodeData)).toEqual([15, 15, 15]); // default 10 + 5 spacing
     });
 
     test('should handle negative spacing', () => {
       const result = formatNodeSizeFn(20, -5, 10);
-      expect(result()).toBe(15); // 20 + (-5)
+      expect(result()).toEqual([15, 15, 15]); // 20 + (-5)
     });
 
     test('should handle fractional sizes and spacing', () => {
       const result = formatNodeSizeFn(20.5, 3.2, 10);
-      expect(result()).toBeCloseTo(23.7);
+      expect(result()[0]).toBeCloseTo(23.7);
+      expect(result()[1]).toBeCloseTo(23.7);
+      expect(result()[2]).toBeCloseTo(23.7);
     });
 
     test('should handle number zero node size', () => {
       const result = formatNodeSizeFn(0, 5, 10);
-      expect(result()).toBe(15); // 0 is falsy, falls back to default 10 + 5
+      expect(result()).toEqual([5, 5, 5]);
     });
 
     test('should handle large sizes', () => {
       const result = formatNodeSizeFn(1000, 100, 10);
-      expect(result()).toBe(1100);
+      expect(result()).toEqual([1100, 1100, 1100]);
     });
 
     test('should use default when all values are undefined', () => {
       const result = formatNodeSizeFn(undefined, undefined, 12);
-      expect(result()).toBe(12);
+      expect(result()).toEqual([12, 12, 12]);
     });
 
     test('should handle node data without spacing function', () => {
@@ -243,12 +241,12 @@ describe('format', () => {
         id: 'node1',
         data: {},
       };
-      expect(result(nodeData)).toBe(25);
+      expect(result(nodeData)).toEqual([25, 25, 25]);
     });
 
     test('should handle single element array size', () => {
       const result = formatNodeSizeFn([35], 5, 10);
-      expect(result()).toBe(40); // max(35) + 5
+      expect(result()).toEqual([40, 40, 40]); // max(35) + 5
     });
   });
 });

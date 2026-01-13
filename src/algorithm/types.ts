@@ -1,11 +1,13 @@
 import type {
   EdgeData,
+  Expr,
   GraphData,
   GraphEdge,
   GraphNode,
   ID,
   NodeData,
   Point,
+  Size,
 } from '../types';
 
 export interface DataOptions<
@@ -62,6 +64,22 @@ export interface BaseLayoutOptions<
    * <en/> Layout height
    */
   height?: number;
+
+  /**
+   * <zh/> 节点大小（直径）。用于防止节点重叠时的碰撞检测
+   *
+   * <en/> Node size (diameter). Used for collision detection when nodes overlap
+   * @defaultValue 10
+   */
+  nodeSize?: Size | Expr | ((node: NodeData) => Size);
+
+  /**
+   * <zh/> 节点之间的最小间距
+   *
+   * <en/> Minimum spacing between nodes
+   * @defaultValue 0
+   */
+  nodeSpacing?: Size | Expr | ((node: NodeData) => Size);
 
   /**
    * <zh/> 是否启用 WebWorker

@@ -1,19 +1,33 @@
-import { BaseLayout } from '../base-layout';
-import { LayoutNode, Point } from '../../types';
-import { applySingleNodeLayout, normalizeViewport, parseSize } from '../../util';
-import { formatNumberFn, formatSizeFn } from '../../util/format';
-import { orderByDegree, orderById, orderBySorter } from '../../util/order';
 import type { GraphLib } from '../../model/data';
+import { LayoutNode, NodeData, Point, Sorter } from '../../types';
+import { applySingleNodeLayout, normalizeViewport } from '../../util';
+import { formatFn, formatNodeSizeFn } from '../../util/format';
+import { orderByDegree, orderById, orderBySorter } from '../../util/order';
+import { BaseLayout } from '../base-layout';
 import type {
   GridLayoutOptions,
   IdMapRowAndCol,
-  NormalizedGridLayoutOptions,
+  ParsedGridLayoutOptions,
   RowAndCol,
   RowsAndCols,
   VisitMap,
 } from './types';
 
 export type { GridLayoutOptions };
+
+const DEFAULT_LAYOUT_OPTIONS: Partial<GridLayoutOptions> = {
+  begin: [0, 0],
+  preventOverlap: true,
+  condense: false,
+  rows: undefined,
+  cols: undefined,
+  position: undefined,
+  sortBy: 'degree',
+  nodeSize: 30,
+  nodeSpacing: 10,
+  width: 300,
+  height: 300,
+};
 
 /**
  * <zh/> 网格布局
@@ -24,26 +38,19 @@ export class GridLayout extends BaseLayout<GridLayoutOptions> {
   id = 'grid';
 
   protected getDefaultOptions(): Partial<GridLayoutOptions> {
-    return {
-      begin: [0, 0],
-      preventOverlap: true,
-      preventOverlapPadding: 10,
-      condense: false,
-      rows: undefined,
-      cols: undefined,
-      position: undefined,
-      sortBy: 'degree',
-      nodeSize: 30,
-      width: 300,
-      height: 300,
-    };
+    return DEFAULT_LAYOUT_OPTIONS;
   }
 
-  private normalizeOptions(
+  private parseOptions(
     options: Partial<GridLayoutOptions> = {},
     model: GraphLib,
-  ): NormalizedGridLayoutOptions {
-    const { rows: propRows, cols: propCols } = options;
+  ): ParsedGridLayoutOptions {
+    const {
+      rows: propRows,
+      cols: propCols,
+      position: propPosition,
+      sortBy: propSortBy,
+    } = options;
 
     const { width, height, center } = normalizeViewport(options);
     let rows = options.rows;
@@ -98,23 +105,20 @@ export class GridLayout extends BaseLayout<GridLayoutOptions> {
       }
     }
 
-    const preventOverlap =
-      options.preventOverlap || options.nodeSpacing !== undefined;
-    const nodeSpacing = formatNumberFn(options.nodeSpacing, 10);
-    const nodeSize = formatSizeFn(options.nodeSize, 30);
+    const sortBy = !propSortBy
+      ? (DEFAULT_LAYOUT_OPTIONS.sortBy as 'degree')
+      : propSortBy === 'degree' || propSortBy === 'id'
+      ? propSortBy
+      : (formatFn(propSortBy, ['nodeA', 'nodeB']) as Sorter<NodeData>);
 
     return {
-      ...options,
-      begin: options.begin || [0, 0],
-      sortBy: options.sortBy || 'degree',
-      preventOverlapPadding: options.preventOverlapPadding ?? 0,
-      preventOverlap,
-      nodeSpacing,
-      nodeSize,
+      ...(options as Required<GridLayoutOptions>),
+      sortBy,
       rcs,
       center,
       width,
       height,
+      position: formatFn(propPosition, ['node']),
     };
   }
 
@@ -126,12 +130,11 @@ export class GridLayout extends BaseLayout<GridLayoutOptions> {
       width,
       height,
       condense,
-      preventOverlapPadding,
       preventOverlap,
       nodeSpacing,
       nodeSize,
       position,
-    } = this.normalizeOptions(this.options, this.model);
+    } = this.parseOptions(this.options, this.model);
 
     const n = this.model.nodeCount();
 
@@ -152,18 +155,14 @@ export class GridLayout extends BaseLayout<GridLayoutOptions> {
     let cellHeight = condense ? 0 : height / rcs.rows;
 
     if (preventOverlap) {
+      const sizeFn = formatNodeSizeFn(
+        nodeSize,
+        nodeSpacing,
+        DEFAULT_LAYOUT_OPTIONS.nodeSize as number,
+        DEFAULT_LAYOUT_OPTIONS.nodeSpacing as number,
+      );
       this.model.forEachNode((node) => {
-        const nodeData = node._original;
-        const [nodeW, nodeH] = parseSize(nodeSize(nodeData) || 30);
-
-        const p =
-          nodeSpacing !== undefined
-            ? nodeSpacing(nodeData)
-            : preventOverlapPadding;
-
-        const w = nodeW + p;
-        const h = nodeH + p;
-
+        const [w, h] = sizeFn(node._original);
         cellWidth = Math.max(cellWidth, w);
         cellHeight = Math.max(cellHeight, h);
       });

@@ -1,6 +1,11 @@
-import type { DisplacementMap, ID, LayoutNode, NodeData, Size } from '../../types';
 import type { GraphLib } from '../../model/data';
-import { parseSize } from '../../util';
+import type {
+  DisplacementMap,
+  ID,
+  LayoutNode,
+  NodeData,
+  STDSize,
+} from '../../types';
 
 const SPEED_DIVISOR = 800;
 
@@ -22,7 +27,7 @@ export type RadialNonoverlapForceOptions = {
   /** Gravity factor pulling nodes towards their target radius */
   gravity?: number;
   /** Function to get the size of a node (includes node self and spacing) */
-  nodeSizeFunc: (node?: NodeData) => Size;
+  nodeSizeFunc: (node: NodeData) => STDSize;
 };
 
 const DEFAULTS_LAYOUT_OPTIONS: Partial<RadialNonoverlapForceOptions> = {
@@ -83,7 +88,7 @@ const getRepulsion = (
   displacements: DisplacementMap,
   k: number,
   radiiMap: Map<ID, number>,
-  nodeSizeFunc: (d?: NodeData) => Size,
+  nodeSizeFunc: (node: NodeData) => STDSize,
 ) => {
   let i = 0;
 
@@ -112,8 +117,8 @@ const getRepulsion = (
         vecy = 0.01 * sign;
       }
 
-      const nodeSizeU = Math.max(...parseSize(nodeSizeFunc(nodeU._original)));
-      const nodeSizeV = Math.max(...parseSize(nodeSizeFunc(nodeV._original)));
+      const nodeSizeU = Math.max(...nodeSizeFunc(nodeU._original));
+      const nodeSizeV = Math.max(...nodeSizeFunc(nodeV._original));
 
       // these two nodes overlap
       if (vecLength < nodeSizeV / 2 + nodeSizeU / 2) {

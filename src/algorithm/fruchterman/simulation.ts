@@ -1,5 +1,5 @@
 import { isNil } from '@antv/util';
-import { BaseSimulation } from '../base-simulation';
+import type { GraphLib } from '../../model/data';
 import type {
   DisplacementMap,
   ID,
@@ -8,7 +8,7 @@ import type {
   NullablePosition,
 } from '../../types';
 import { normalizeViewport } from '../../util';
-import type { GraphLib } from '../../model/data';
+import { BaseSimulation } from '../base-simulation';
 import type {
   FruchtermanLayoutOptions,
   ParsedFruchtermanLayoutOptions,

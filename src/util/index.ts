@@ -1,5 +1,7 @@
 export * from './array';
 export * from './common';
+export * from './expr';
+export * from './format';
 export * from './math';
 export * from './object';
 export * from './order';

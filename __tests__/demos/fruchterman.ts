@@ -55,11 +55,12 @@ export async function render(gui?: GUI) {
   const clusterOptions = {
     ...options,
     clustering: true,
-    nodeClusterBy: (node: any) => node.cluster,
+    // nodeClusterBy: (node: any) => node.cluster,
+    nodeClusterBy: 'node.cluster',
   };
 
   console.time('fruchterman layout');
-  await layout.execute(processedData, options);
+  await layout.execute(processedData, clusterOptions);
   console.timeEnd('fruchterman layout');
 
   if (gui) {

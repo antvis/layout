@@ -12,7 +12,7 @@ import {
 } from 'd3-force';
 import type { ID, Position } from '../../types';
 import { assignDefined, normalizeViewport } from '../../util';
-import { formatNodeSizeFn } from '../../util/format';
+import { formatFn, formatNodeSizeFn } from '../../util/format';
 import { BaseLayoutWithIterations } from '../base-layout';
 import forceInABox from './force-in-a-box';
 import type {
@@ -25,9 +25,7 @@ import type {
 export type { D3ForceLayoutOptions };
 
 const DEFAULTS_LAYOUT_OPTIONS: Partial<D3ForceLayoutOptions> = {
-  link: {
-    id: (d) => String(d.id),
-  },
+  edgeId: 'edge.id',
 
   manyBody: {
     strength: -30,
@@ -325,7 +323,9 @@ export class D3ForceLayout<
     if (options.manyBody === false) return undefined;
 
     return assignDefined({}, options.manyBody || {}, {
-      strength: options.nodeStrength,
+      strength: options.nodeStrength
+        ? formatFn(options.nodeStrength, ['node'])
+        : undefined,
       distanceMin: options.distanceMin,
       distanceMax: options.distanceMax,
       theta: options.theta,
@@ -362,9 +362,13 @@ export class D3ForceLayout<
     if (options.link === false) return undefined;
 
     return assignDefined({}, options.link || {}, {
-      id: options.edgeId,
-      distance: options.linkDistance,
-      strength: options.edgeStrength,
+      id: options.edgeId ? formatFn(options.edgeId, ['edge']) : undefined,
+      distance: options.linkDistance
+        ? formatFn(options.linkDistance, ['edge'])
+        : undefined,
+      strength: options.edgeStrength
+        ? formatFn(options.edgeStrength, ['edge'])
+        : undefined,
       iterations: options.edgeIterations,
     });
   }
@@ -401,14 +405,13 @@ export class D3ForceLayout<
     )
       return undefined;
 
-    const radius =
-      options.nodeSize || options.nodeSpacing
-        ? (d: NodeDatum) =>
-            formatNodeSizeFn(
-              options.nodeSize,
-              options.nodeSpacing,
-            )(d._original) / 2
-        : undefined;
+    const sizeFn = formatNodeSizeFn(
+      options.nodeSize,
+      options.nodeSpacing,
+      DEFAULTS_LAYOUT_OPTIONS.nodeSize as number,
+      DEFAULTS_LAYOUT_OPTIONS.nodeSpacing as number,
+    );
+    const radius = (d: NodeDatum) => Math.max(...sizeFn(d._original)) / 2;
 
     return assignDefined({}, options.collide || {}, {
       radius: (options.collide && options.collide.radius) || radius,
@@ -524,7 +527,11 @@ export class D3ForceLayout<
     if (radial) {
       let force = simulation.force('radial');
       if (!force) {
-        force = forceRadial(radial.radius || 100, radial.x, radial.y);
+        force = forceRadial(
+          (radial.radius as () => number) || 100,
+          radial.x,
+          radial.y,
+        );
         simulation.force('radial', force as any);
       }
 
@@ -567,7 +574,7 @@ export class D3ForceLayout<
         ['centerY', center && center.y],
         ['template', 'force'],
         ['strength', clusterFociStrength],
-        ['groupBy', clusterBy],
+        ['groupBy', clusterBy ? formatFn(clusterBy, ['node']) : undefined],
         ['nodes', this.model.nodes()],
         ['links', this.model.edges()],
         ['forceLinkDistance', clusterEdgeDistance],

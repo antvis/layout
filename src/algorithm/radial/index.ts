@@ -1,10 +1,10 @@
-import { BaseLayout } from '../base-layout';
-import { runMDS } from '../mds';
-import type { ID, Matrix } from '../../types';
 import type { GraphLib } from '../../model/data';
+import type { ID, Matrix } from '../../types';
 import { getAdjList, johnson, normalizeViewport } from '../../util';
 import { applySingleNodeLayout } from '../../util/common';
-import { formatNodeSizeFn } from '../../util/format';
+import { formatFn, formatNodeSizeFn } from '../../util/format';
+import { BaseLayout } from '../base-layout';
+import { runMDS } from '../mds';
 import {
   radialNonoverlapForce,
   RadialNonoverlapForceOptions,
@@ -22,6 +22,8 @@ const DEFAULTS_LAYOUT_OPTIONS: Partial<RadialLayoutOptions> = {
   sortStrength: 10,
   strictRadial: true,
   unitRadius: null,
+  nodeSize: 10,
+  nodeSpacing: 0,
 };
 
 /**
@@ -126,7 +128,12 @@ export class RadialLayout extends BaseLayout<RadialLayoutOptions> {
 
     // stagger the overlapped nodes
     if (preventOverlap) {
-      const nodeSizeFunc = formatNodeSizeFn(nodeSize, nodeSpacing);
+      const nodeSizeFunc = formatNodeSizeFn(
+        nodeSize,
+        nodeSpacing,
+        DEFAULTS_LAYOUT_OPTIONS.nodeSize as number,
+        DEFAULTS_LAYOUT_OPTIONS.nodeSpacing as number,
+      );
       const nonoverlapForceParams: RadialNonoverlapForceOptions = {
         nodeSizeFunc,
         radiiMap,
@@ -230,7 +237,8 @@ const eIdealDisMatrix = (
 
   const baseLink = (linkDistance + unitRadius) / 2;
   const sortCache = new Map<ID, number>();
-  const sortFn = typeof sortBy === 'function' ? sortBy : null;
+  const sortFn =
+    !sortBy || sortBy === 'data' ? null : formatFn(sortBy, ['node']);
   const isDataSort = sortBy === 'data';
 
   for (let i = 0; i < n; i++) {

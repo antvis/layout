@@ -1,9 +1,9 @@
-import { BaseLayoutWithIterations } from '../base-layout';
+import { initNodePosition } from '../../model/data';
 import type { ID, NullablePosition } from '../../types';
 import { normalizeViewport } from '../../util';
-import { initNodePosition } from '../../model/data';
 import { applySingleNodeLayout } from '../../util/common';
-import { formatNodeSizeFn, formatNumberFn, formatSizeFn } from '../../util/format';
+import { formatNodeSizeFn } from '../../util/format';
+import { BaseLayoutWithIterations } from '../base-layout';
 import { Simulation } from './simulation';
 import type {
   ForceAtlas2LayoutOptions,
@@ -97,9 +97,16 @@ export class ForceAtlas2Layout extends BaseLayoutWithIterations<ForceAtlas2Layou
     nodeSpacing?: ForceAtlas2LayoutOptions['nodeSpacing'],
   ): SizeMap {
     const result: SizeMap = {};
+
+    const nodeSizeFn = formatNodeSizeFn(
+      nodeSize,
+      nodeSpacing,
+      DEFAULTS_LAYOUT_OPTIONS.nodeSize as number,
+      DEFAULTS_LAYOUT_OPTIONS.nodeSpacing as number,
+    );
+
     this.model.forEachNode((node) => {
-      const nodeSizeFn = formatNodeSizeFn(nodeSize, nodeSpacing);
-      result[node.id] = nodeSizeFn(node._original);
+      result[node.id] = Math.max(...nodeSizeFn(node._original!));
     });
     return result;
   }
@@ -119,8 +126,7 @@ export class ForceAtlas2Layout extends BaseLayoutWithIterations<ForceAtlas2Layou
   private parseOptions(
     options: ForceAtlas2LayoutOptions = {},
   ): ParsedForceAtlas2LayoutOptions {
-    const { barnesHut, prune, maxIteration, kr, kg, nodeSize, nodeSpacing } =
-      options;
+    const { barnesHut, prune, maxIteration, kr, kg } = options;
     const auto: Partial<ForceAtlas2LayoutOptions> = {};
 
     const n = this.model.nodeCount();
@@ -153,14 +159,6 @@ export class ForceAtlas2Layout extends BaseLayoutWithIterations<ForceAtlas2Layou
       ...options,
       ...auto,
       ...normalizeViewport(options),
-      nodeSize: formatSizeFn(
-        nodeSize,
-        DEFAULTS_LAYOUT_OPTIONS.nodeSize as number,
-      ),
-      nodeSpacing: formatNumberFn(
-        nodeSpacing,
-        DEFAULTS_LAYOUT_OPTIONS.nodeSpacing as number,
-      ),
     } as ParsedForceAtlas2LayoutOptions;
   }
 

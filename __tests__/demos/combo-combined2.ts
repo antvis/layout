@@ -189,7 +189,6 @@ export function render(gui?: GUI) {
     });
 
     layout.forEachNode((node: any) => {
-      console.log('node:', node);
       renderer.updateNodeAttributes(node.id, {
         // cx: node.x,
         // cy: node.y,

@@ -89,18 +89,6 @@ export interface ForceAtlas2LayoutOptions extends CommonForceLayoutOptions {
    * <en/> By default, it will be activated when the number of nodes is greater than 100. Note that pruning can improve the convergence speed, but it may reduce the layout quality of the graph. Setting it to false will not be activated automatically
    */
   prune?: boolean;
-  /**
-   * <zh/> 节点大小（直径）。用于防止节点重叠时的碰撞检测
-   *
-   * <en/> Node size (diameter). Used for collision detection when preventing node overlap
-   */
-  nodeSize?: Size | ((d?: NodeData) => Size);
-  /**
-   * <zh/> 节点间距。用于防止节点重叠时的碰撞检测
-   *
-   * <en/> Node spacing. Used for collision detection when preventing node overlap
-   */
-  nodeSpacing?: number | ((d?: NodeData) => number);
 }
 
 export type ParsedForceAtlas2LayoutOptions = Required<ForceAtlas2LayoutOptions>;

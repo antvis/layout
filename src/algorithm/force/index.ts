@@ -1,17 +1,22 @@
 import { isEmpty } from '@antv/util';
-import { BaseLayoutWithIterations } from '../base-layout';
+import type { GraphLib } from '../../model/data';
+import { initNodePosition } from '../../model/data';
 import type { EdgeData, NodeData, Point, PointObject } from '../../types';
 import { normalizeViewport } from '../../util';
-import { initNodePosition } from '../../model/data';
-import type { GraphLib } from '../../model/data';
-import { formatNodeSizeFn, formatNumberFn } from '../../util/format';
+import { formatFn, formatNodeSizeFn, formatNumberFn } from '../../util/format';
+import { BaseLayoutWithIterations } from '../base-layout';
 import { forceAttractive } from './attractive';
 import { forceCentripetal } from './centripetal';
 import { forceCollide } from './collide';
 import { forceGravity } from './gravity';
 import { forceRepulsive } from './repulsive';
 import { ForceSimulation } from './simulation';
-import { ForceLayoutOptions, ParsedForceLayoutOptions } from './types';
+import {
+  ForceLayoutOptions,
+  GetCenterFn,
+  NodeClusterByFn,
+  ParsedForceLayoutOptions,
+} from './types';
 
 export type { ForceLayoutOptions };
 
@@ -251,31 +256,45 @@ export class ForceLayout extends BaseLayoutWithIterations<ForceLayoutOptions> {
       ...normalizeViewport(options),
     } as ParsedForceLayoutOptions;
 
+    // Format nodeClusterBy (for clustering / leafCluster)
+    if (_.nodeClusterBy) {
+      _.nodeClusterBy = formatFn(_.nodeClusterBy, ['node']) as NodeClusterByFn;
+    }
+
     // Format node mass
     if (!options.getMass) {
-      _.getMass = (d?: NodeData) => {
-        if (!d) return 1;
+      _.getMass = (node: NodeData) => {
+        if (!node) return 1;
         const massWeight = 1;
-        const degree = this.model.degree(d.id, 'both');
+        const degree = this.model.degree(node.id, 'both');
         return !degree || degree < 5 ? massWeight : degree * 5 * massWeight;
       };
+    } else {
+      _.getMass = formatNumberFn(options.getMass, 1);
+    }
+
+    // Format per-node center force callback
+    if (options.getCenter) {
+      const params = ['node', 'degree'];
+      _.getCenter = formatFn(options.getCenter, params) as GetCenterFn;
     }
 
     // Format node size
-    _.nodeSize = formatNodeSizeFn(options.nodeSize, options.nodeSpacing);
+    const nodeSizeVec = formatNodeSizeFn(options.nodeSize, options.nodeSpacing);
+    _.nodeSize = (node: NodeData) => {
+      if (!node) return 0;
+      const [w, h, z] = nodeSizeVec(node);
+      return Math.max(w, h, z);
+    };
 
     // Format node / edge strengths
     _.linkDistance = options.linkDistance
-      ? formatNumberFn(options.linkDistance, 1)
-      : (edge?: EdgeData) => {
-          return (
-            1 +
-            _.nodeSize(this.model.node(edge!.source)!._original) +
-            _.nodeSize(this.model.node(edge!.target)!._original)
-          );
-        };
+      ? (formatFn(options.linkDistance, ['edge', 'source', 'target']) as any)
+      : (_: EdgeData, source: NodeData, target: NodeData) =>
+          1 + _.nodeSize(source) + _.nodeSize(target);
     _.nodeStrength = formatNumberFn(options.nodeStrength, 1);
-    _.edgeStrength = formatNumberFn(options.edgeStrength, 1);
+    _.edgeStrength = formatNumberFn(options.edgeStrength, 1, 'edge');
+    _.clusterNodeStrength = formatNumberFn(options.clusterNodeStrength, 1);
 
     // Format centripetal options
     this.formatCentripetal(_);
@@ -291,28 +310,45 @@ export class ForceLayout extends BaseLayoutWithIterations<ForceLayoutOptions> {
       dimensions,
       centripetalOptions,
       center,
-      clusterNodeStrength,
       leafCluster,
       clustering,
       nodeClusterBy,
     } = options;
 
-    // Basic centripetal settings
-    const basicCentripetal = centripetalOptions || {
-      leaf: 2,
-      single: 2,
-      others: 1,
-      center: (_: NodeData) => {
+    const leafParams = ['node', 'nodes', 'edges'];
+    const leafFn = formatFn(centripetalOptions?.leaf, leafParams);
+    const singleFn = formatNumberFn(centripetalOptions?.single, 2);
+    const othersFn = formatNumberFn(centripetalOptions?.others, 1);
+
+    const centerRaw =
+      centripetalOptions?.center ??
+      ((_: NodeData) => {
         return {
           x: center[0],
           y: center[1],
           z: dimensions === 3 ? center[2] : undefined,
         };
-      },
+      });
+
+    const centerFn = formatFn(centerRaw, [
+      'node',
+      'nodes',
+      'edges',
+      'width',
+      'height',
+    ]) as any;
+
+    const basicCentripetal = {
+      ...centripetalOptions,
+      leaf: leafFn,
+      single: singleFn,
+      others: othersFn,
+      center: centerFn,
     };
 
-    if (typeof clusterNodeStrength !== 'function') {
-      options.clusterNodeStrength = () => clusterNodeStrength as number;
+    // If user provided centripetalOptions, normalize them even without clustering modes.
+    if (centripetalOptions) {
+      options.centripetalOptions = basicCentripetal as any;
     }
 
     let sameTypeLeafMap: any;
@@ -405,18 +441,6 @@ export class ForceLayout extends BaseLayoutWithIterations<ForceLayoutOptions> {
           };
         },
       });
-    }
-
-    // Normalize functions
-    const { leaf, single, others } = options.centripetalOptions || {};
-    if (leaf && typeof leaf !== 'function') {
-      options.centripetalOptions.leaf = () => leaf;
-    }
-    if (single && typeof single !== 'function') {
-      options.centripetalOptions.single = () => single;
-    }
-    if (others && typeof others !== 'function') {
-      options.centripetalOptions.others = () => others;
     }
   }
 

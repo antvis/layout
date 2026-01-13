@@ -1,11 +1,5 @@
-import type { LayoutNode, NodeData } from '../types';
 import type { GraphLib } from '../model/data';
-
-export type SortComparator<N extends NodeData = NodeData> = (
-  nodeA: LayoutNode<N>,
-  nodeB: LayoutNode<N>,
-  nodes: LayoutNode<N>[],
-) => -1 | 0 | 1;
+import type { LayoutNode, NodeData, Sorter } from '../types';
 
 /**
  * 通用排序核心函数
@@ -29,7 +23,7 @@ export function orderByDegree<N extends NodeData = NodeData>(
   return sort(model, (nodeA, nodeB) => {
     const degreeA = model.degree(nodeA.id);
     const degreeB = model.degree(nodeB.id);
-    if(order === 'asc') {
+    if (order === 'asc') {
       return degreeA - degreeB; // ascending order
     }
     return degreeB - degreeA; // descending order
@@ -59,7 +53,7 @@ export function orderById<N extends NodeData = NodeData>(
  */
 export function orderBySorter<N extends NodeData = NodeData>(
   model: GraphLib<N>,
-  sorter: (a: NodeData, b: NodeData) => -1 | 0 | 1,
+  sorter: Sorter<N>,
 ): GraphLib<N> {
   return sort(model, (nodeA, nodeB) => {
     const a = model.originalNode(nodeA.id);

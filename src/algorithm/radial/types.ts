@@ -1,5 +1,5 @@
+import type { Expr, NodeData } from '../../types';
 import type { BaseLayoutOptions } from '../base-layout';
-import type { NodeData, Size } from '../../types';
 
 /**
  * <zh/> Radial 辐射布局的配置项
@@ -42,19 +42,6 @@ export interface RadialLayoutOptions extends BaseLayoutOptions {
    */
   preventOverlap?: boolean;
   /**
-   * <zh/> 节点大小（直径）。用于防止节点重叠时的碰撞检测
-   *
-   * <en/> Node size (diameter). Used for collision detection when preventing node overlap
-   */
-  nodeSize?: Size | ((d?: NodeData) => Size);
-  /**
-   * <zh/> preventOverlap 为 true 时生效, 防止重叠时节点边缘间距的最小值。可以是回调函数, 为不同节点设置不同的最小间距
-   *
-   * <en/> Effective when preventOverlap is true. The minimum edge spacing when preventing node overlap. It can be a callback function, and set different minimum spacing for different nodes
-   * @defaultValue 10
-   */
-  nodeSpacing?: number | ((d?: NodeData) => number);
-  /**
    * <zh/> 防止重叠步骤的最大迭代次数
    *
    * <en/> Maximum iteration number of the prevent overlap step
@@ -82,7 +69,7 @@ export interface RadialLayoutOptions extends BaseLayoutOptions {
    * <en/> The default is undefined, which means arranging based on the topological structure of the data (the shortest path between nodes). Nodes that are closer in proximity or have a smaller shortest path between them will be arranged as close together as possible. 'data' indicates arranging based on the order of nodes in the data, so nodes that are closer in the data order will be arranged as close together as possible. You can also specify a field name in the node data, such as 'cluster' or 'name' (it must exist in the data of the graph)
    * @defaultValue undefined
    */
-  sortBy?: 'data' | ((d?: NodeData) => number | string);
+  sortBy?: 'data' | ((node: NodeData) => number | string) | Expr;
   /**
    * <zh/> 同层节点根据 sortBy 排列的强度，数值越大，sortBy 指定的方式计算出距离越小的越靠近。sortBy 不为 undefined 时生效
    *

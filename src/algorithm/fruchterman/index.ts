@@ -1,11 +1,7 @@
-import { BaseLayoutWithIterations } from '../base-layout';
-import type { ID, NodeData, NullablePosition } from '../../types';
-import {
-  applySingleNodeLayout,
-  getNestedValue,
-  normalizeViewport,
-} from '../../util';
 import { initNodePosition } from '../../model/data';
+import type { ID, NullablePosition } from '../../types';
+import { applySingleNodeLayout, formatFn, normalizeViewport } from '../../util';
+import { BaseLayoutWithIterations } from '../base-layout';
 import { Simulation } from './simulation';
 import type {
   FruchtermanLayoutOptions,
@@ -22,7 +18,7 @@ const DEFAULTS_LAYOUT_OPTIONS: Partial<FruchtermanLayoutOptions> = {
   clusterGravity: 10,
   width: 300,
   height: 300,
-  nodeClusterBy: 'data.cluster',
+  nodeClusterBy: 'node.cluster',
   dimensions: 2,
 };
 
@@ -36,18 +32,14 @@ export class FruchtermanLayout extends BaseLayoutWithIterations<FruchtermanLayou
   }
 
   protected parseOptions(
-    options?: Partial<FruchtermanLayoutOptions>,
+    options: Partial<FruchtermanLayoutOptions> = {},
   ): ParsedFruchtermanLayoutOptions {
     const { clustering, nodeClusterBy } = this.options;
     const clusteringEnabled = clustering && !!nodeClusterBy;
-    const nodeClusterByFunc =
-      typeof nodeClusterBy === 'string'
-        ? (node: NodeData) => getNestedValue(node, nodeClusterBy)
-        : nodeClusterBy!;
 
-    Object.assign((options ||= {}), normalizeViewport(options), {
+    Object.assign(options, normalizeViewport(options), {
       clustering: clusteringEnabled,
-      nodeClusterBy: nodeClusterByFunc,
+      nodeClusterBy: formatFn(nodeClusterBy, ['node']),
     });
 
     return options as ParsedFruchtermanLayoutOptions;

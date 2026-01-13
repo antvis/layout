@@ -3,8 +3,8 @@ import type {
   SimulationLinkDatum,
   SimulationNodeDatum,
 } from 'd3-force';
+import type { Expr, LayoutEdge, LayoutNode } from '../../types';
 import type { BaseLayoutOptions, Layout } from '../types';
-import type { LayoutEdge, LayoutNode } from '../../types';
 
 export interface D3ForceCommonOptions
   extends Omit<BaseLayoutOptions, 'center'> {
@@ -42,21 +42,21 @@ export interface D3ForceCommonOptions
    * <en/> Unique identifier field or function for edges
    * @defaultValue (edge) => String(edge.id)
    */
-  edgeId?: (edge: EdgeDatum) => string;
+  edgeId?: Expr | ((edge: EdgeDatum) => string);
   /**
    * <zh/> 边的理想长度，可以是数值或根据边数据返回长度的函数
    *
    * <en/> Ideal length of edges, can be a number or a function that returns length based on edge data
    * @defaultValue 50
    */
-  linkDistance?: number | ((edge: EdgeDatum) => number);
+  linkDistance?: number | Expr | ((edge: EdgeDatum) => number);
   /**
    * <zh/> 边的强度，可以是数值或根据边数据返回强度的函数。值范围为 [0, 1]
    *
    * <en/> Strength of edges, can be a number or a function that returns strength based on edge data. Value range is [0, 1]
    * @defaultValue null
    */
-  edgeStrength?: number | ((edge: EdgeDatum) => number) | null;
+  edgeStrength?: number | Expr | ((edge: EdgeDatum) => number) | null;
   /**
    * <zh/> 链接力的迭代次数
    *
@@ -70,7 +70,7 @@ export interface D3ForceCommonOptions
    * <en/> Strength of node force, negative for repulsion, positive for attraction
    * @defaultValue -30
    */
-  nodeStrength?: number | ((node: NodeDatum) => number);
+  nodeStrength?: number | Expr | ((node: NodeDatum) => number);
   /**
    * <zh/> 多体力的近似参数，值范围为 (0, 1]
    *
@@ -114,21 +114,6 @@ export interface D3ForceCommonOptions
    */
   collideIterations?: number;
   /**
-   * <zh/> 节点大小（直径）。用于防止节点重叠时的碰撞检测
-   *
-   * <en/> Node size (diameter). Used for collision detection when nodes overlap
-   *
-   * @defaultValue 10
-   */
-  nodeSize?: number | ((d?: NodeDatum) => number);
-  /**
-   * <zh/> 节点之间的最小间距
-   *
-   * <en/> Minimum spacing between nodes
-   * @defaultValue 0
-   */
-  nodeSpacing?: number | ((d?: NodeDatum) => number);
-  /**
    * <zh/> 径向力的理想半径，可以是数值或根据节点数据返回半径的函数
    *
    * <en/> Ideal radius of radial force, can be a number or a function that returns radius based on node data
@@ -169,7 +154,7 @@ export interface D3ForceCommonOptions
    * <en/> Field or function used for clustering
    * @defaultValue (d) => d.cluster
    */
-  clusterBy?: (d: NodeDatum) => string | number;
+  clusterBy?: Expr | ((node: NodeDatum) => string | number);
   /**
    * <zh/> 聚类内节点之间的作用力强度
    *
@@ -257,7 +242,7 @@ export interface D3ForceCommonOptions
    * <en/> Set the function for generating random numbers
    * @returns <zh/> 随机数 | <en/> Random number
    */
-  randomSource?: () => number;
+  randomSource?: Expr | (() => number);
   /**
    * <zh/> 碰撞力
    *
@@ -360,9 +345,11 @@ export interface D3ForceLayoutOptions extends D3ForceCommonOptions {
     | {
         strength?:
           | number
+          | Expr
           | ((node: NodeDatum, index: number, nodes: NodeDatum[]) => number);
         radius?:
           | number
+          | Expr
           | ((node: NodeDatum, index: number, nodes: NodeDatum[]) => number);
         x?: number;
         y?: number;

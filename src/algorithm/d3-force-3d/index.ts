@@ -49,7 +49,7 @@ export class D3Force3DLayout extends D3ForceLayout<
     return {
       numDimensions: 3,
       link: {
-        id: (edge) => String(edge.id),
+        id: (edge) => edge.id!,
       },
       manyBody: {},
       center: {

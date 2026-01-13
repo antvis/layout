@@ -1,8 +1,7 @@
 import { isNumber } from '@antv/util';
 import type { NodeData, PointObject } from '../../types';
 import { parsePoint } from '../../util';
-import { formatNumberFn, formatSizeFn } from '../../util/format';
-import { parseSize } from '../../util/size';
+import { formatNodeSizeFn, formatNumberFn } from '../../util/format';
 import { BaseLayout } from '../base-layout';
 import { DagreGraph, GraphNode } from './graph';
 import { layout } from './layout';
@@ -12,6 +11,7 @@ export type { AntVDagreLayoutOptions };
 
 const DEFAULTS_LAYOUT_OPTIONS: Partial<AntVDagreLayoutOptions> = {
   nodeSize: 10,
+  nodeSpacing: 0,
   rankdir: 'TB',
   nodesep: 50, // 节点水平间距(px)
   ranksep: 50, // 每一层节点之间间距
@@ -37,6 +37,7 @@ export class AntVDagreLayout extends BaseLayout<AntVDagreLayoutOptions> {
   protected async layout(options: AntVDagreLayoutOptions): Promise<void> {
     const {
       nodeSize,
+      nodeSpacing,
       align,
       rankdir = 'TB',
       ranksep,
@@ -54,20 +55,15 @@ export class AntVDagreLayout extends BaseLayout<AntVDagreLayoutOptions> {
       nodesepFunc,
     } = options;
 
-    const ranksepfunc = formatNumberFn(ranksepFunc, ranksep ?? 50);
-    const nodesepfunc = formatNumberFn(nodesepFunc, nodesep ?? 50);
-    let horisep: (d?: NodeData | undefined) => number = nodesepfunc;
-    let vertisep: (d?: NodeData | undefined) => number = ranksepfunc;
+    const ranksepfunc = formatNumberFn(ranksepFunc, ranksep ?? 50, 'node');
+    const nodesepfunc = formatNumberFn(nodesepFunc, nodesep ?? 50, 'node');
+    let horisep: (node: NodeData) => number = nodesepfunc;
+    let vertisep: (node: NodeData) => number = ranksepfunc;
 
     if (rankdir === 'LR' || rankdir === 'RL') {
       horisep = ranksepfunc;
       vertisep = nodesepfunc;
     }
-
-    const nodeSizeFunc = formatSizeFn(
-      nodeSize,
-      DEFAULTS_LAYOUT_OPTIONS.nodeSize as number,
-    );
 
     // Create internal graph
     const g = new DagreGraph<NodeData, any>({ tree: [] });
@@ -76,9 +72,16 @@ export class AntVDagreLayout extends BaseLayout<AntVDagreLayoutOptions> {
     const nodes = this.model.nodes();
     const edges = this.model.edges();
 
+    const sizeFn = formatNodeSizeFn(
+      nodeSize,
+      nodeSpacing,
+      DEFAULTS_LAYOUT_OPTIONS.nodeSize as number,
+      DEFAULTS_LAYOUT_OPTIONS.nodeSpacing as number,
+    );
+
     nodes.forEach((node) => {
       const raw = node._original;
-      const size = parseSize(nodeSizeFunc(raw));
+      const size = sizeFn(raw);
       const verti = vertisep(raw);
       const hori = horisep(raw);
       const width = size[0] + 2 * hori;
