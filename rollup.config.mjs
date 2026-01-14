@@ -27,7 +27,7 @@ const mainConfig = {
     {
       dir: 'lib',
       format: 'esm',
-      sourcemap: true,
+      sourcemap: false,
       preserveModules: true,
       preserveModulesRoot: 'src',
     }
@@ -48,7 +48,7 @@ const workerESMConfig = {
   output: {
     file: 'lib/worker.js',
     format: 'esm',
-    sourcemap: true,
+    sourcemap: false,
   },
   plugins: [
     resolve(),
