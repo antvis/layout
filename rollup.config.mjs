@@ -23,9 +23,17 @@ const mainConfig = {
       sourcemap: true,
       plugins: [terser()],
     },
-    // ESM 格式
+    // CJS 格式
     {
       dir: 'lib',
+      format: 'cjs',
+      sourcemap: false,
+      preserveModules: true,
+      preserveModulesRoot: 'src',
+    },
+    // ESM 格式
+    {
+      dir: 'esm',
       format: 'esm',
       sourcemap: true,
       preserveModules: true,
@@ -46,9 +54,27 @@ const mainConfig = {
 const workerESMConfig = {
   input: 'src/worker.ts',
   output: {
-    file: 'lib/worker.js',
+    file: 'esm/worker.js',
     format: 'esm',
     sourcemap: true,
+  },
+  plugins: [
+    resolve(),
+    commonjs(),
+    typescript({
+      tsconfig: './tsconfig.rollup.json',
+      declaration: false,
+    }),
+  ],
+};
+
+// Worker CJS
+const workerCJSConfig = {
+  input: 'src/worker.ts',
+  output: {
+    file: 'lib/worker.js',
+    format: 'cjs',
+    sourcemap: false,
   },
   plugins: [
     resolve(),
@@ -83,7 +109,7 @@ const workerIIFEConfig = {
 const dtsConfig = {
   input: 'src/index.ts',
   output: {
-    dir: 'lib',
+    dir: 'esm',
     format: 'esm',
     preserveModules: true,
     preserveModulesRoot: 'src',
@@ -94,6 +120,7 @@ const dtsConfig = {
 export default [
   mainConfig,
   workerESMConfig,
+  workerCJSConfig,
   workerIIFEConfig,
   dtsConfig,
 ];

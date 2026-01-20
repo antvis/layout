@@ -2,27 +2,30 @@
   "name": "@antv/layout",
   "version": "2.0.0-beta.1",
   "description": "graph layout algorithm",
-  "main": "dist/index.min.js",
-  "module": "lib/index.js",
-  "types": "lib/index.d.ts",
+  "main": "lib/index.js",
+  "module": "esm/index.js",
+  "types": "esm/index.d.ts",
   "unpkg": "dist/index.min.js",
   "exports": {
     ".": {
-      "types": "./lib/index.d.ts",
-      "import": "./lib/index.js",
-      "require": "./dist/index.js"
+      "types": "./esm/index.d.ts",
+      "import": "./esm/index.js",
+      "require": "./lib/index.js"
     },
     "./worker": {
-      "import": "./lib/worker.js",
+      "import": "./esm/worker.js",
+      "require": "./lib/worker.js",
       "default": "./dist/worker.js"
     },
-    "./lib/*": "./lib/*"
+    "./lib/*": "./lib/*",
+    "./esm/*": "./esm/*"
   },
   "files": [
     "src",
     "package.json",
     "dist",
     "lib",
+    "esm",
     "LICENSE",
     "README.md"
   ],
@@ -96,7 +99,7 @@
     "build:watch": "rollup -c --watch",
     "build": "npm run clean && rollup -c && npm run size",
     "ci": "npm run build && npm run test",
-    "clean": "rimraf dist lib",
+    "clean": "rimraf dist lib esm",
     "dev": "vite",
     "prepublishOnly": "npm run build",
     "publish:alpha": "npm publish --tag alpha",
