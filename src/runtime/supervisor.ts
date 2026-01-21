@@ -63,18 +63,16 @@ export class Supervisor {
       if (currentScript?.src) return currentScript.src;
 
       const scripts = document.getElementsByTagName('script');
-      let fallback: string | null = null;
 
       for (let i = scripts.length - 1; i >= 0; i--) {
         const src = scripts[i].src;
         if (!src) continue;
-        if (!fallback) fallback = src;
         if (src.includes('index.js') || src.includes('index.min.js')) {
           return src;
         }
       }
 
-      return fallback;
+      return null;
     })();
 
     if (scriptUrl) {
