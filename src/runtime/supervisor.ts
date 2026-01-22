@@ -56,23 +56,38 @@ export class Supervisor {
    * Resolve worker script path which works in both ESM and UMD environments
    */
   private resolveWorkerPath(): string {
-    if (typeof import.meta !== 'undefined' && import.meta.url) {
-      const currentUrl = new URL(import.meta.url);
-      // e.g. `.../lib/runtime/supervisor.js` -> `.../lib/worker.js`
-      const asRoot = currentUrl.href.replace(/\/runtime\/[^/]+\.js$/, '/worker.js');
-      if (asRoot !== currentUrl.href) return asRoot;
-      // Fallback: keep legacy behavior (same directory)
-      return currentUrl.href.replace(/\/[^/]+\.js$/, '/worker.js');
-    }
+    const scriptUrl = (() => {
+      if (typeof document === 'undefined') return null;
 
-    if (typeof document !== 'undefined') {
+      const currentScript = document.currentScript as HTMLScriptElement | null;
+      if (currentScript?.src) return currentScript.src;
+
       const scripts = document.getElementsByTagName('script');
+
       for (let i = scripts.length - 1; i >= 0; i--) {
         const src = scripts[i].src;
-        if (src && (src.includes('index.js') || src.includes('index.min.js'))) {
-          return src.replace(/index(\.min)?\.js/, 'worker.js');
+        if (!src) continue;
+        if (src.includes('index.js') || src.includes('index.min.js')) {
+          return src;
         }
       }
+
+      return null;
+    })();
+
+    if (scriptUrl) {
+      if (scriptUrl.includes('index.js') || scriptUrl.includes('index.min.js')) {
+        const asIndex = scriptUrl.replace(/index(\.min)?\.(m?js)(\?.*)?$/, 'worker.js');
+        if (asIndex !== scriptUrl) return asIndex;
+      }
+
+      // e.g. `.../lib/runtime/supervisor.js` -> `.../lib/worker.js`
+      const asRoot = scriptUrl.replace(/\/runtime\/[^/]+\.(m?js)(\?.*)?$/, '/worker.js');
+      if (asRoot !== scriptUrl) return asRoot;
+
+      // Fallback: keep legacy behavior (same directory)
+      const asSibling = scriptUrl.replace(/\/[^/]+\.(m?js)(\?.*)?$/, '/worker.js');
+      if (asSibling !== scriptUrl) return asSibling;
     }
 
     return './worker.js';
