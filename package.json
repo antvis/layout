@@ -1,6 +1,6 @@
 {
   "name": "@antv/layout",
-  "version": "2.0.0-beta.2",
+  "version": "2.0.0",
   "description": "graph layout algorithm",
   "main": "dist/index.min.js",
   "module": "lib/index.js",
@@ -62,6 +62,7 @@
     "@types/d3-force": "^3.0.4",
     "@types/d3-quadtree": "^2.0.6",
     "@types/dagre": "^0.7.52",
+    "@types/jest": "^30.0.0",
     "babel-loader": "^8.0.6",
     "eslint": "^7.32.0",
     "eslint-config-airbnb-base": "^14.2.1",
@@ -104,7 +105,8 @@
     "test:coverage:open": "open-cli coverage/lcov-report/index.html",
     "test:coverage": "jest --coverage",
     "test": "jest",
-    "deploy": "npm --prefix site run build && gh-pages -d site/doc_build"
+    "deploy": "npm --prefix site run build && gh-pages -d site/doc_build",
+    "lint": "tsc --noEmit"
   },
   "publishConfig": {
     "access": "public",
