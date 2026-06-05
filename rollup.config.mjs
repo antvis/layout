@@ -1,15 +1,41 @@
-import typescript from '@rollup/plugin-typescript';
-import resolve from '@rollup/plugin-node-resolve';
+import fs from 'node:fs';
+import path from 'node:path';
 import commonjs from '@rollup/plugin-commonjs';
-import dts from 'rollup-plugin-dts';
+import resolve from '@rollup/plugin-node-resolve';
 import terser from '@rollup/plugin-terser';
+import typescript from '@rollup/plugin-typescript';
+import dts from 'rollup-plugin-dts';
 
+const packageJson = JSON.parse(
+  fs.readFileSync(new URL('./package.json', import.meta.url), 'utf8'),
+);
 
-// 主库配置
-const mainConfig = {
+const externalPackages = [
+  ...Object.keys(packageJson.dependencies ?? {}),
+  ...Object.keys(packageJson.peerDependencies ?? {}),
+  ...Object.keys(packageJson.optionalDependencies ?? {}),
+];
+
+const isExternal = (id) =>
+  !id.startsWith('.') &&
+  !path.isAbsolute(id) &&
+  externalPackages.some((pkg) => id === pkg || id.startsWith(`${pkg}/`));
+
+const createPlugins = () => [
+  resolve({
+    browser: true,
+    extensions: ['.mjs', '.js', '.json', '.ts'],
+  }),
+  commonjs(),
+  typescript({
+    tsconfig: './tsconfig.rollup.json',
+    declaration: false,
+  }),
+];
+
+const umdConfig = {
   input: 'src/index.ts',
   output: [
-    // UMD 格式
     {
       file: 'dist/index.js',
       format: 'umd',
@@ -23,44 +49,50 @@ const mainConfig = {
       sourcemap: true,
       plugins: [terser()],
     },
-    // ESM 格式
+  ],
+  plugins: createPlugins(),
+};
+
+const esmConfig = {
+  input: 'src/index.ts',
+  output: [
     {
       dir: 'lib',
       format: 'esm',
       sourcemap: true,
       preserveModules: true,
       preserveModulesRoot: 'src',
-    }
+    },
+    {
+      dir: 'esm',
+      format: 'esm',
+      sourcemap: true,
+      preserveModules: true,
+      preserveModulesRoot: 'src',
+    },
   ],
-  plugins: [
-    resolve(),
-    commonjs(),
-    typescript({
-      tsconfig: './tsconfig.rollup.json',
-      declaration: false,
-    }),
-  ],
+  external: isExternal,
+  plugins: createPlugins(),
 };
 
-// Worker ESM
 const workerESMConfig = {
   input: 'src/worker.ts',
-  output: {
-    file: 'lib/worker.js',
-    format: 'esm',
-    sourcemap: true,
-  },
-  plugins: [
-    resolve(),
-    commonjs(),
-    typescript({
-      tsconfig: './tsconfig.rollup.json',
-      declaration: false,
-    }),
+  output: [
+    {
+      file: 'lib/worker.js',
+      format: 'esm',
+      sourcemap: true,
+    },
+    {
+      file: 'esm/worker.js',
+      format: 'esm',
+      sourcemap: true,
+    },
   ],
+  external: isExternal,
+  plugins: createPlugins(),
 };
 
-// Worker IIFE
 const workerIIFEConfig = {
   input: 'src/worker.ts',
   output: {
@@ -68,16 +100,9 @@ const workerIIFEConfig = {
     format: 'iife',
     sourcemap: true,
     name: 'LayoutWorker',
-    plugins: [terser()], // 压缩 Worker
+    plugins: [terser()],
   },
-  plugins: [
-    resolve(),
-    commonjs(),
-    typescript({
-      tsconfig: './tsconfig.rollup.json',
-      declaration: false,
-    }),
-  ],
+  plugins: createPlugins(),
 };
 
 const dtsConfig = {
@@ -88,12 +113,8 @@ const dtsConfig = {
     preserveModules: true,
     preserveModulesRoot: 'src',
   },
+  external: isExternal,
   plugins: [dts({ tsconfig: './tsconfig.rollup.json' })],
 };
 
-export default [
-  mainConfig,
-  workerESMConfig,
-  workerIIFEConfig,
-  dtsConfig,
-];
+export default [umdConfig, esmConfig, workerESMConfig, workerIIFEConfig, dtsConfig];
