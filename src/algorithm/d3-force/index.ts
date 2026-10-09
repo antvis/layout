@@ -290,11 +290,16 @@ export class D3ForceLayout<
       width: options.width,
       height: options.height,
     });
-    return assignDefined({}, options.center || {}, {
-      x: viewport.width / 2,
-      y: viewport.height / 2,
-      strength: options.centerStrength,
-    }) as T['center'];
+    return assignDefined(
+      {},
+      { x: viewport.width / 2, y: viewport.height / 2 },
+      options.center || {},
+      {
+        x: options.centerX,
+        y: options.centerY,
+        strength: options.centerStrength,
+      },
+    ) as T['center'];
   }
 
   protected setupCenterForce(simulation: Simulation<N, E>, options: T) {
@@ -447,8 +452,8 @@ export class D3ForceLayout<
     if (options.x === false) return undefined;
 
     const center = this.getCenterOptions(options);
-    return assignDefined({}, options.x || {}, {
-      x: options.forceXPosition ?? (center && center.x),
+    return assignDefined({}, { x: center && center.x }, options.x || {}, {
+      x: options.forceXPosition,
       strength: options.forceXStrength,
     });
   }
@@ -477,8 +482,8 @@ export class D3ForceLayout<
     if (options.y === false) return undefined;
 
     const center = this.getCenterOptions(options);
-    return assignDefined({}, options.y || {}, {
-      y: options.forceYPosition ?? (center && center.y),
+    return assignDefined({}, { y: center && center.y }, options.y || {}, {
+      y: options.forceYPosition,
       strength: options.forceYStrength,
     });
   }
@@ -511,12 +516,17 @@ export class D3ForceLayout<
       options.radialY !== undefined
     ) {
       const center = this.getCenterOptions(options);
-      return assignDefined({}, options.radial || {}, {
-        strength: options.radialStrength,
-        radius: options.radialRadius ?? 100,
-        x: options.radialX ?? (center && center.x),
-        y: options.radialY ?? (center && center.y),
-      });
+      return assignDefined(
+        {},
+        { radius: 100, x: center && center.x, y: center && center.y },
+        options.radial || {},
+        {
+          strength: options.radialStrength,
+          radius: options.radialRadius,
+          x: options.radialX,
+          y: options.radialY,
+        },
+      );
     }
     return undefined;
   }
