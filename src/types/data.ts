@@ -37,6 +37,10 @@ export interface GraphNode<N extends NodeData = NodeData> {
 
   /** Output additional info */
   size?: Size;
+  /** Depth below the root in the indented layout. */
+  depth?: number;
+  /** Branch side in the mindmap layout. */
+  side?: 'left' | 'right';
   _original: N;
 
   [key: string]: any;

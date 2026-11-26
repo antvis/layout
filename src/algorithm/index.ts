@@ -13,6 +13,7 @@ export { ConcentricLayout, type ConcentricLayoutOptions } from './concentric';
 export { D3ForceLayout, type D3ForceLayoutOptions } from './d3-force';
 export { D3Force3DLayout, type D3Force3DLayoutOptions } from './d3-force-3d';
 export { DagreLayout, type DagreLayoutOptions } from './dagre';
+export { FishboneLayout, type FishboneLayoutOptions } from './fishbone';
 export { ForceLayout, type ForceLayoutOptions } from './force';
 export {
   ForceAtlas2Layout,
@@ -23,7 +24,9 @@ export {
   type FruchtermanLayoutOptions,
 } from './fruchterman';
 export { GridLayout, type GridLayoutOptions } from './grid';
+export { IndentedLayout, type IndentedLayoutOptions } from './indented';
 export { MDSLayout, type MDSLayoutOptions } from './mds';
+export { MindmapLayout, type MindmapLayoutOptions } from './mindmap';
 export { RadialLayout, type RadialLayoutOptions } from './radial';
 export { RandomLayout, type RandomLayoutOptions } from './random';
 export * from './types';

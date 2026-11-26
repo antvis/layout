@@ -60,6 +60,11 @@ Basic layout algorithms for visualization
 | <img alt="Others" src="https://img.shields.io/badge/Others-8C8C8C?style=flat-square"> [MDS](https://layout.antv.vision/guide/api/others/mds) | <img alt="MDS" src="https://mdn.alipayobjects.com/huamei_qa8qxu/afts/img/A*myM6T6R_d34AAAAAAAAAAAAADmJ7AQ/original" width="240" /> | Multidimensional scaling to match ideal distances and produce a balanced global structure. |
 | <img alt="Combo" src="https://img.shields.io/badge/Combo-FA8C16?style=flat-square"> [ComboCombined](https://layout.antv.vision/guide/api/combo/combo-combined) | <img alt="ComboCombined" src="https://mdn.alipayobjects.com/huamei_qa8qxu/afts/img/A*zPAzSZ3XxpUAAAAAAAAAAAAADmJ7AQ/original" width="240" /> | Composite layout for combos/subgraphs with per-level strategies and consistent bounds/spacing. |
 
+Tree layouts include `IndentedLayout` for depth-first rows, `MindmapLayout`
+for branches on either side of a root, and `FishboneLayout` for a root,
+categories, and items. Each takes parent-to-child edges and exposes positions
+through `execute()` and `forEachNode()`.
+
 ## 🚀 Installation
 
 ```bash
