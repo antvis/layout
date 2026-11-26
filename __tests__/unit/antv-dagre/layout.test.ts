@@ -1,4 +1,5 @@
-import { DagreRankdir, PointObject } from '@/src';
+import type { DagreRankdir } from '@/src/algorithm/antv-dagre/types';
+import type { PointObject } from '@/src/types';
 import { DagreGraph as Graph } from '@/src/algorithm/antv-dagre/graph';
 import { layout } from '@/src/algorithm/antv-dagre/layout';
 import type { ID } from '@/src/types/id';

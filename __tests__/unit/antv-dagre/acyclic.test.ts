@@ -1,5 +1,5 @@
-import { EdgeData } from '@/src';
 import { run, undo } from '@/src/algorithm/antv-dagre/acyclic';
+import type { EdgeData } from '@/src/types';
 import { DagreGraph as Graph } from '@/src/algorithm/antv-dagre/graph';
 import { findCycles } from '../../utils';
 

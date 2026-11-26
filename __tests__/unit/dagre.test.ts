@@ -1,4 +1,5 @@
-import { DagreLayout, Point } from '@/src';
+import { DagreLayout } from '@/src';
+import type { Point } from '@/src/types';
 import { createCanvas } from '@@/utils/create';
 import type { Canvas } from '@antv/g';
 import { clear as clearMockRandom, mock as mockRandom } from 'jest-random-mock';
