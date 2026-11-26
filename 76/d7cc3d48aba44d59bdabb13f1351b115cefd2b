@@ -1,0 +1,61 @@
+__tests__/unit/antv-dagre/layout.test.ts
+  s_3a89ab1f2b1a99::t_5f1f9948ea2398 1-2
+__tests__/unit/grid.test.ts
+  s_3a89ab1f2b1a99::t_1da02a0965210f 1-2
+__tests__/unit/antv-dagre/acyclic.test.ts
+  s_3a89ab1f2b1a99::t_e7f454fc1fbfa6 2
+__tests__/unit/mindmap.test.ts
+  s_3a89ab1f2b1a99::t_251152e54f1586 1-80
+src/algorithm/mindmap/types.ts
+  s_17b7895fef0302::t_b6ac1be6b5615c 1-19
+src/algorithm/fishbone/index.ts
+  s_17b7895fef0302::t_dbff9b60cefafc 1-161
+__tests__/unit/indented.test.ts
+  s_3a89ab1f2b1a99::t_d1dd706d44493f 1-31,33-49
+  s_3a89ab1f2b1a99::t_cdcc6b89c5f5c5 32
+src/algorithm/index.ts
+  s_17b7895fef0302::t_e24e5b95b2b032 26-28
+src/index.ts
+  s_3a89ab1f2b1a99::t_9c15739e5cfb42 17-18
+  s_3a89ab1f2b1a99::t_5c78eec6effb87 1-16,19-26,31-37
+  s_3a89ab1f2b1a99::t_975204add47a2c 27-30
+src/algorithm/indented/index.ts
+  s_17b7895fef0302::t_2b87e389524cc8 1-111
+__tests__/unit/fishbone.test.ts
+  s_3a89ab1f2b1a99::t_9904e490daf9f3 1-51
+src/algorithm/indented/types.ts
+  s_17b7895fef0302::t_b95a429b46e00f 1-16
+src/algorithm/fishbone/types.ts
+  s_17b7895fef0302::t_bcced20b0c4ae5 9-10
+  s_17b7895fef0302::t_0b5c3a21ab9460 1-8,11-19
+src/algorithm/mindmap/index.ts
+  s_17b7895fef0302::t_140ffe9e89cac6 29,79,87-92,112-118,120,124-125,140,142,144-146,148-151,153-158,179,181-182,184-206
+  s_17b7895fef0302::t_eead1e24696bb1 1-28,30-78,80-86,93-111,119,121-123,126-139,141,143,147,152,160-178,180,183,207-234
+  s_3a89ab1f2b1a99::t_fdffe8bf6f8888 159
+__tests__/unit/dagre.test.ts
+  s_3a89ab1f2b1a99::t_0d9a97b7ea2ff3 1-2
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "76d7cc3d48aba44d59bdabb13f1351b115cefd2b",
+  "prompts": {},
+  "sessions": {
+    "s_17b7895fef0302": {
+      "agent_id": {
+        "tool": "codefuse",
+        "id": "b1d1972b-e32e-428e-9c7d-0920211eae84",
+        "model": "codefuse_official_channel/Kimi-K3.1-Pro:glink_domestic"
+      },
+      "human_author": "逍为 <xiaowei.wzw@antgroup.com>"
+    },
+    "s_3a89ab1f2b1a99": {
+      "agent_id": {
+        "tool": "codefuse",
+        "id": "0cb87f5b-d9c8-4b3a-adae-9a97b89fb0c7",
+        "model": "codefuse_official_channel/Kimi-K3.1-Pro:glink_domestic"
+      },
+      "human_author": "逍为 <xiaowei.wzw@antgroup.com>"
+    }
+  }
+}
