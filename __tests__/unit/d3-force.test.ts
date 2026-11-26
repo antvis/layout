@@ -395,6 +395,88 @@ describe('layout d3-force', () => {
     await expect(canvas).toMatchSnapshot(__filename, 'force-options');
   });
 
+  describe('center position', () => {
+    const getCentroid = (layout: D3ForceLayout) => {
+      let x = 0;
+      let y = 0;
+      let count = 0;
+      layout.forEachNode((node) => {
+        x += node.x;
+        y += node.y;
+        count += 1;
+      });
+      return [x / count, y / count];
+    };
+
+    it('should use center.x and center.y', async () => {
+      const d3Force = new D3ForceLayout({
+        width,
+        height,
+        center: { x: 300, y: 200 },
+      });
+      await d3Force.execute(data);
+
+      const [x, y] = getCentroid(d3Force);
+      expect(x).toBeCloseTo(300, 0);
+      expect(y).toBeCloseTo(200, 0);
+    });
+
+    it('should use centerX and centerY', async () => {
+      const d3Force = new D3ForceLayout({
+        width,
+        height,
+        centerX: 300,
+        centerY: 200,
+      });
+      await d3Force.execute(data);
+
+      const [x, y] = getCentroid(d3Force);
+      expect(x).toBeCloseTo(300, 0);
+      expect(y).toBeCloseTo(200, 0);
+    });
+
+    it('should use x.x and y.y', async () => {
+      const d3Force = new D3ForceLayout({
+        width,
+        height,
+        // keep the center force enabled without moving nodes
+        center: { strength: 0 },
+        x: { x: 100, strength: 1 },
+        y: { y: 120, strength: 1 },
+      });
+      await d3Force.execute(data);
+
+      const [x, y] = getCentroid(d3Force);
+      expect(x).toBeCloseTo(100, 0);
+      expect(y).toBeCloseTo(120, 0);
+    });
+
+    it('should use radial.x and radial.y', async () => {
+      const d3Force = new D3ForceLayout({
+        width,
+        height,
+        center: { strength: 0 },
+        manyBody: false,
+        link: false,
+        radial: { x: 100, y: 120, radius: 50, strength: 1 },
+      });
+      await d3Force.execute(data);
+
+      d3Force.forEachNode((node) => {
+        expect(Math.hypot(node.x - 100, node.y - 120)).toBeCloseTo(50, 0);
+      });
+    });
+
+    it('should fall back to the viewport center', async () => {
+      const d3Force = new D3ForceLayout({ width, height });
+      await d3Force.execute(data);
+
+      const [x, y] = getCentroid(d3Force);
+      expect(x).toBeCloseTo(width / 2, 0);
+      expect(y).toBeCloseTo(height / 2, 0);
+    });
+  });
+
   it('should handle disabled forces', async () => {
     const d3Force = new D3ForceLayout({
       width,
