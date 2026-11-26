@@ -1,0 +1,523 @@
+__tests__/snapshots/concentric/minimal-graph.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/concentric/startAngle-0.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/d3-force/function-options.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/main.ts
+  s_3a89ab1f2b1a99::t_e21b973b0a5248 5
+__tests__/snapshots/grid/fixed-rows-5.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/circular/ordering-topology-directed.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/force/preventOverlap-false.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/radial/preventOverlap-with-sortBy.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+site/docs/zh/guide/api/hierarchy/mindmap.mdx
+  s_3a89ab1f2b1a99::t_89bddbb1439efd 1-19,28-29
+  s_3a89ab1f2b1a99::t_c0a1db79f8d996 20-27
+__tests__/snapshots/force/gravity-20.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/demos/combo-combined.ts
+  s_3a89ab1f2b1a99::t_4cfdf0f6d86707 2
+  s_3a89ab1f2b1a99::t_4056b14e097663 16
+  s_3a89ab1f2b1a99::t_a4fa3361ce236a 51
+__tests__/snapshots/d3-force/disabled-forces.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/grid/skip-used-cells.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/dagre/edge-labels.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1,42,48,54,60,66,72,78,84,90,96,138,144,150,156,162,168,174,180,186,192
+__tests__/snapshots/grid/sortBy-degree.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/dagre/compound-groups.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1,42,48,54,60,66,72,78,84,90,96,102,108,114,120,126,168,174,180,186,192,198,204,210,216,222,228,234,240,246,252
+__tests__/snapshots/radial/exact-same-position.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/radial/focusNode-1.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/radial/preventOverlap-enabled.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/mds/linkDistance-20.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/d3-force/lattice.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/fruchterman/clustering-enabled.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/circular/nodeSize-nodeSpacing-fn.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+src/algorithm/antv-dagre/graph.ts
+  s_3a89ab1f2b1a99::t_190c388f346dc8 13-17
+  s_3a89ab1f2b1a99::t_fcf5fd1ccb5f9a 39,368,380
+__tests__/unit/d3-force.test.ts
+  s_3a89ab1f2b1a99::t_fceea402f9e86e 423-427
+  s_3a89ab1f2b1a99::t_48bb719453266d 285
+  s_3a89ab1f2b1a99::t_6d0a9932785733 53
+  s_3a89ab1f2b1a99::t_cc5ae378dacb32 1,3-4
+  s_3a89ab1f2b1a99::t_189c50e199b70e 403
+  s_3a89ab1f2b1a99::t_efe5fcdd6cce27 2
+  s_3a89ab1f2b1a99::t_03cedc1bbe26e2 28-29
+  s_3a89ab1f2b1a99::t_0c4e30a6785eae 72-74
+__tests__/snapshots/force/star-graph.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+site/docs/zh/guide/api/hierarchy/_meta.json
+  s_3a89ab1f2b1a99::t_70a17432215ab5 1
+__tests__/snapshots/dagre/ranker-longest-path.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1,42,48,54,60,66,72,78,84,90,96,138,144,150,156,162,168,174,180,186,192
+__tests__/setup.ts
+  s_3a89ab1f2b1a99::t_004a74768880dd 1
+__tests__/demos/force.ts
+  s_3a89ab1f2b1a99::t_f62483d06808b7 50,55,60
+__tests__/snapshots/concentric/sweep-startAngle.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/radial/sortBy-id.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/concentric/default.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/grid/condense-preventOverlap.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/fruchterman/default.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/mds/star-graph.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/radial/minimal-graph.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/utils/renderer.ts
+  s_3a89ab1f2b1a99::t_c17e64ab9b6a17 189,191
+  s_3a89ab1f2b1a99::t_5a09f42ad54262 4
+  s_3a89ab1f2b1a99::t_08f13ea0293269 419
+  s_3a89ab1f2b1a99::t_76d193eed81d79 170-171
+  s_3a89ab1f2b1a99::t_d5b3c11ad4611d 188,190
+  s_3a89ab1f2b1a99::t_e0bbd436a5a5dc 1
+  s_3a89ab1f2b1a99::t_7e501fc8242061 29
+  s_3a89ab1f2b1a99::t_16b45cea6c5e6e 2-3
+  s_3a89ab1f2b1a99::t_a8ab4a12ff9c04 18-19
+  s_3a89ab1f2b1a99::t_489b1a7a272569 202-204
+  s_3a89ab1f2b1a99::t_c21795e606c9ff 214-215
+__tests__/snapshots/radial/strictRadial-true.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/grid/condense-fixed-cols.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/grid/sortBy-id-strings.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/d3-force/link-distance.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/radial/combined-options.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/mds/complete-graph.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/unit/dagre.test.ts
+  s_3a89ab1f2b1a99::t_53ed3717b180a2 3
+  s_3a89ab1f2b1a99::t_e59dddd7d29ba2 28,30-33
+  s_3a89ab1f2b1a99::t_fcf5fd1ccb5f9a 8
+  s_3a89ab1f2b1a99::t_da74054f8dbe51 433-435
+  s_3a89ab1f2b1a99::t_3177d4a42ef6a7 509
+package.json
+  s_3a89ab1f2b1a99::t_8682f5dba59e0d 106-107
+  s_3a89ab1f2b1a99::t_fd1abc50b9fe17 64-65
+  s_3a89ab1f2b1a99::t_eae1fc54f9fb7d 75
+  s_3a89ab1f2b1a99::t_865de3536a5f7a 87,89-90
+__tests__/snapshots/d3-force/specified-viewport.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/fruchterman/custom-speed.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/force/cluster-strength-40.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/circular/ordering-topology.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/force/linkDistance-100.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/force/path-graph.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/fruchterman/custom-gravity.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/dagre/multigraph.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1,15,21,36,42
+__tests__/snapshots/grid/condense.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/concentric/sweep-PI.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/concentric/preventOverlap-large-nodeSize.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/utils/use-snapshot-matchers.ts
+  s_3a89ab1f2b1a99::t_003c7cb8d39944 1,8,13-18
+  s_3a89ab1f2b1a99::t_3dba2688284691 9,11-12
+  s_3a89ab1f2b1a99::t_fcf5fd1ccb5f9a 10
+__tests__/snapshots/force-atlas2/default.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/concentric/combined-options.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/d3-force/xy-forces.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/grid/sortBy-custom-property.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/utils/to-match-svg-snapshot.ts
+  s_3a89ab1f2b1a99::t_d334c4d3cdba0d 89
+  s_3a89ab1f2b1a99::t_53fbfdbe486a7c 140-146
+  s_3a89ab1f2b1a99::t_63e8e0362df3cd 136-139
+  s_3a89ab1f2b1a99::t_821fc089f51df5 158
+__tests__/demos/dagre.ts
+  s_3a89ab1f2b1a99::t_847ef1cd9dc771 2
+  s_3a89ab1f2b1a99::t_471a7d7ed152f8 62,64-67
+__tests__/snapshots/dagre/align-UR.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1,42,48,54,60,66,72,78,84,90,96,138,144,150,156,162,168,174,180,186,192
+__tests__/snapshots/grid/reduce-small-side.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/concentric/sortBy-equal-values.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/concentric/preventOverlap-array-nodeSpacing.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/grid/node-size-from-data.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/unit/antv-dagre/acyclic.test.ts
+  s_3a89ab1f2b1a99::t_c79445bb69b972 376
+  s_3a89ab1f2b1a99::t_61ed6121f2ae8c 2-5
+__tests__/snapshots/dagre/edgesep-30.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1,42,48,54,60,66,72,78,84,90,96,138,144,150,156,162,168,174,180,186,192
+__tests__/snapshots/dagre/edge-properties-function.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1,42,48,54,60,66,72,78,84,90,96,138,144,150,156,162,168,174,180,186,192
+__tests__/snapshots/grid/preventOverlap-large-nodeSize.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/grid/sortBy-id.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/unit/d3-force-3d.test.ts
+  s_3a89ab1f2b1a99::t_8e31ed9d749ea2 24
+__tests__/snapshots/dagre/nodeSize-function.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1,42,48,54,60,66,72,78,84,90,96,138,144,150,156,162,168,174,180,186,192
+__tests__/snapshots/circular/counterclockwise-radius-range.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/d3-force/clustering-force.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/dagre/rankdir-TB.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1,42,48,54,60,66,72,78,84,90,96,138,144,150,156,162,168,174,180,186,192
+__tests__/snapshots/force/custom-dimensions.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/dagre/disconnected-components.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1,12,18,24,30,42,48,54,60
+__tests__/snapshots/force/custom-center.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/force/default.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/force/gravity-1.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/unit/util/format.test.ts
+  s_3a89ab1f2b1a99::t_c14f5f75b84e74 12,17,29,34,39,44,50,56,62,69,74,85,90,104,118,123,129,134,150,155,160,165,170,213,218-220,225,230,235,249
+__tests__/snapshots/force/nodeStrength-2000.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/force/factor-2.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/tree-layouts/mindmap.svg
+  s_3a89ab1f2b1a99::t_a0465a7da661af 47,53,59,65,71,77,83,89,95,101,107,113,161,167,173,179,185,191,197,203,209,215,221,227
+  s_3a89ab1f2b1a99::t_1befbeec73c012 41,155
+  s_3a89ab1f2b1a99::t_66ae05104cac79 1-40,43-46,49-52,55-58,61-64,67-70,73-76,79-82,85-88,91-94,97-100,103-106,109-112,115-154,157-160,163-166,169-172,175-178,181-184,187-190,193-196,199-202,205-208,211-214,217-220,223-226,229-234
+  s_3a89ab1f2b1a99::t_e4d4cc8cd4ff02 42,48,54,60,66,72,78,84,90,96,102,108,114,156,162,168,174,180,186,192,198,204,210,216,222,228
+__tests__/snapshots/grid/fixed-cols-5.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/circular/divisions-5.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/d3-force/radial-force.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/force/threshold-min.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/grid/function-nodeSize.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/demos/d3-force-3d.ts
+  s_3a89ab1f2b1a99::t_cb3f1d0df8135b 2
+__tests__/snapshots/d3-force/collide-radius.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/demos/circular.ts
+  s_3a89ab1f2b1a99::t_08a2e7898ab840 99
+  s_3a89ab1f2b1a99::t_ed8389e76d83fe 1
+  s_3a89ab1f2b1a99::t_fcf5fd1ccb5f9a 6-7,15-18
+  s_3a89ab1f2b1a99::t_ff446cfc2f6ae3 44
+site/docs/en/guide/api/hierarchy/_meta.json
+  s_3a89ab1f2b1a99::t_394dd8b45a6494 1
+__tests__/snapshots/combo-combined/demo-dagre-rect.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1,39,45,51,57,63,69,75,81,87,93,99,105,111,117,123,129,168,174,180,186,192,198,204,210,216,222,228,234,240,246,252,258
+__tests__/snapshots/concentric/node-size-object-data.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/unit/util/viewport.test.ts
+  s_3a89ab1f2b1a99::t_de8b99aa38a6d4 2
+__tests__/snapshots/dagre/align-DL.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1,42,48,54,60,66,72,78,84,90,96,138,144,150,156,162,168,174,180,186,192
+__tests__/snapshots/grid/rows-more-than-nodes.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/mds/path-graph.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/concentric/function-nodeSize.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/circular/startAngle-PI-endAngle-2PI.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/dagre/rankdir-LR.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1,42,48,54,60,66,72,78,84,90,96,138,144,150,156,162,168,174,180,186,192
+__tests__/snapshots/tree-layouts/indented.svg
+  s_3a89ab1f2b1a99::t_e4d4cc8cd4ff02 30,36,42,48,54,60,66,72,78,108,114,120,126,132,138,144,150,156
+  s_3a89ab1f2b1a99::t_1befbeec73c012 41,47,59,65,77,119,125,137,143,155
+  s_3a89ab1f2b1a99::t_66ae05104cac79 1-28,31-34,37-40,43-46,49-52,55-58,61-64,67-70,73-76,79-106,109-112,115-118,121-124,127-130,133-136,139-142,145-148,151-154,157-162
+  s_3a89ab1f2b1a99::t_a0465a7da661af 29,35,53,71,107,113,131,149
+__tests__/snapshots/d3-force/custom-simulation.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/dagre/tree-structure.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1,15,21,27,33,48,54,60,66
+__tests__/snapshots/grid/minimal-data.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/circular/startRadius-100-endRadius-200.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/xmlserializer.d.ts
+  s_3a89ab1f2b1a99::t_c4bc7c87f7f031 1-3
+__tests__/snapshots/d3-force/force-options.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/grid/sortBy-id-numbers.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/grid/position-undefined-row.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/unit/util/math.test.ts
+  s_3a89ab1f2b1a99::t_fcf5fd1ccb5f9a 1
+  s_3a89ab1f2b1a99::t_f6859d1dd32029 66,126
+  s_3a89ab1f2b1a99::t_b11a664182ca33 76
+__tests__/snapshots/grid/fixed-rows-cols-6.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/dagre/align-DR.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1,42,48,54,60,66,72,78,84,90,96,138,144,150,156,162,168,174,180,186,192
+__tests__/snapshots/combo-combined/demo-combo2.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/concentric/node-size-from-data.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/mds/disconnected-components.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/radial/overlapping-same-position.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/grid/preventOverlap-array-nodeSize.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/concentric/sortBy-degree.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/force/clustering.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/grid/position-undefined-col.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/mds/linkDistance-60.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/radial/disconnected-components.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/radial/preventOverlap-large-nodeSize.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/radial/sortBy-data.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/demos/antv-dagre.ts
+  s_3a89ab1f2b1a99::t_b50b57ac5d0641 2
+  s_3a89ab1f2b1a99::t_ab417587c7950a 175,177-180
+__tests__/snapshots/dagre/simple-chain.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1,12,18,24,36,42,48
+__tests__/snapshots/force/threshold-max.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/circular/endRadius-only.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/circular/custom-center.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/unit/concentric.test.ts
+  s_3a89ab1f2b1a99::t_fcf5fd1ccb5f9a 5
+  s_3a89ab1f2b1a99::t_71df2cf67376ea 27
+__tests__/demos/d3-force.ts
+  s_3a89ab1f2b1a99::t_b9af61884ebaf3 2
+  s_3a89ab1f2b1a99::t_1428a4afebcfe1 25
+__tests__/unit/tree-layouts.test.ts
+  s_3a89ab1f2b1a99::t_b51e1918484e05 128
+  s_3a89ab1f2b1a99::t_cbd48c166755f7 66-74
+  s_3a89ab1f2b1a99::t_ab110abbc6fbb6 64
+  s_3a89ab1f2b1a99::t_377514a0dac062 1-16,38,41-63,65,76-87,90,92-98,105-106,108-109,111-127,129-133,135-142,144-148,150,156-161,168-182,185-186,188-190
+  s_3a89ab1f2b1a99::t_e143df442ed7cd 143
+  s_3a89ab1f2b1a99::t_6b75c1a2385942 162-167
+  s_3a89ab1f2b1a99::t_35cf710c777abf 183-184,187
+  s_3a89ab1f2b1a99::t_b6df08af43e61c 88-89,91
+  s_3a89ab1f2b1a99::t_5df697efd14c9a 134
+  s_3a89ab1f2b1a99::t_63e8e0362df3cd 22-37,39-40,99-101,103,151-155
+  s_3a89ab1f2b1a99::t_a19969f4666554 149
+  s_3a89ab1f2b1a99::t_1ea75f956f35f7 17-21
+  s_3a89ab1f2b1a99::t_4c845cf10e99e0 102
+  s_3a89ab1f2b1a99::t_65aeff4c84ca59 75
+  s_3a89ab1f2b1a99::t_67986ef22c9a62 104,107,110
+__tests__/snapshots/circular/radius-180.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/demos/combo-combined2.ts
+  s_3a89ab1f2b1a99::t_eda38cdee38de3 144
+__tests__/snapshots/concentric/preventOverlap-array-nodeSize.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/circular/default.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/d3-force/star-graph.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/dagre/cyclic-graph.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1,18,24,30,36,54,60,66,72
+__tests__/snapshots/tree-layouts/fishbone.svg
+  s_3a89ab1f2b1a99::t_e4d4cc8cd4ff02 33,39,45,51,57,63,69,75,81,87,120,126,132,138,144,150,156,162,168,174
+  s_3a89ab1f2b1a99::t_a0465a7da661af 32,38,44,50,56,62,68,74,80,119,125,131,137,143,149,155,161,167
+  s_3a89ab1f2b1a99::t_66ae05104cac79 1-31,34-37,40-43,46-49,52-55,58-61,64-67,70-73,76-79,82-85,88-118,121-124,127-130,133-136,139-142,145-148,151-154,157-160,163-166,169-172,175-180
+  s_3a89ab1f2b1a99::t_1befbeec73c012 86,173
+__tests__/snapshots/force/self-loop.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/radial/unitRadius-100.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/dagre/nodesep-20.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1,42,48,54,60,66,72,78,84,90,96,138,144,150,156,162,168,174,180,186,192
+__tests__/snapshots/random/disconnected-graph.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/concentric/custom-center.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/d3-force/manyBody-strength.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/concentric/startAngle-PI-2-counterclockwise.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/circular/ordering-degree.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/grid/default.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/concentric/equidistant-preventOverlap.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/grid/custom-width-height.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/radial/sortStrength-50.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/radial/strictRadial-false.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/demos/grid.ts
+  s_3a89ab1f2b1a99::t_aa9ba637b9883b 17-19,21
+  s_3a89ab1f2b1a99::t_5c16153fa41819 1
+  s_3a89ab1f2b1a99::t_8a716972b4bc3c 41
+__tests__/snapshots/concentric/equidistant.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/grid/preventOverlap-false.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/concentric/preventOverlap.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/grid/custom-begin.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/unit/fruchterman.test.ts
+  s_3a89ab1f2b1a99::t_fcf5fd1ccb5f9a 5-9
+  s_3a89ab1f2b1a99::t_1d29ac16257778 102,118
+  s_3a89ab1f2b1a99::t_136dbe18016a0c 467
+  s_3a89ab1f2b1a99::t_b2f04850fcb9b6 154
+site/docs/en/guide/api/hierarchy/indented.mdx
+  s_3a89ab1f2b1a99::t_a5737dfdf787aa 1-19,27-28
+  s_3a89ab1f2b1a99::t_c0a1db79f8d996 20-26
+__tests__/unit/combo-combined.test.ts
+  s_3a89ab1f2b1a99::t_37cc8570479a57 3
+  s_3a89ab1f2b1a99::t_1856b076680a9f 76-77,80-81
+  s_3a89ab1f2b1a99::t_524f9570463508 266-271,274-275
+__tests__/snapshots/circular/ordering-original.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/mds/custom-center.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/radial/custom-center.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/radial/linkDistance-30.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+site/docs/en/guide/api/hierarchy/mindmap.mdx
+  s_3a89ab1f2b1a99::t_c0a1db79f8d996 20-27
+  s_3a89ab1f2b1a99::t_00703a136869e1 1-19,28-29
+__tests__/snapshots/radial/maxIteration-2000.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/dagre/ranker-tight-tree.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1,42,48,54,60,66,72,78,84,90,96,138,144,150,156,162,168,174,180,186,192
+__tests__/snapshots/force/disconnected-components.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/d3-force/default.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/grid/position-function.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+site/docs/en/guide/api/hierarchy/fishbone.mdx
+  s_3a89ab1f2b1a99::t_09f78c8bfc5640 1-19
+  s_3a89ab1f2b1a99::t_c0a1db79f8d996 20-26
+__tests__/unit/force.test.ts
+  s_3a89ab1f2b1a99::t_3a68058e2d55a3 401
+  s_3a89ab1f2b1a99::t_4f2c777eb2b918 410
+  s_3a89ab1f2b1a99::t_fcf5fd1ccb5f9a 8-12
+  s_3a89ab1f2b1a99::t_637e14c8e65d86 3
+  s_3a89ab1f2b1a99::t_f34d3026173012 2
+  s_3a89ab1f2b1a99::t_696a0132c563b1 236
+  s_3a89ab1f2b1a99::t_0812f34a215840 19
+__tests__/snapshots/dagre/default.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1,42,48,54,60,66,72,78,84,90,96,138,144,150,156,162,168,174,180,186,192
+__tests__/snapshots/dagre/align-UL.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1,42,48,54,60,66,72,78,84,90,96,138,144,150,156,162,168,174,180,186,192
+__tests__/snapshots/dagre/rankdir-BT.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1,42,48,54,60,66,72,78,84,90,96,138,144,150,156,162,168,174,180,186,192
+README.md
+  s_3a89ab1f2b1a99::t_917c6e98deee26 56-58
+__tests__/snapshots/force/edgeStrength-100.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/force/max-iteration-10.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/circular/startRadius-only.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/grid/complex-cell-occupation.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/force/damping-0.5.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+vitest.config.ts
+  s_3a89ab1f2b1a99::t_b258aca345c8c8 1-24
+__tests__/snapshots/dagre/custom-edge-properties.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1,42,48,54,60,66,72,78,84,90,96,138,144,150,156,162,168,174,180,186,192
+site/docs/zh/guide/api/hierarchy/fishbone.mdx
+  s_3a89ab1f2b1a99::t_c0a1db79f8d996 20-26
+  s_3a89ab1f2b1a99::t_f751c6f19862b9 1-19
+__tests__/snapshots/dagre/undirected.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1,42,48,54,60,66,72,78,84,90,96,138,144,150,156,162,168,174,180,186,192
+__tests__/unit/antv-dagre/rank/network-simplex.test.ts
+  s_3a89ab1f2b1a99::t_7b1765c8d34cc3 979-983
+  s_3a89ab1f2b1a99::t_718c71a1665756 1065,1068
+  s_3a89ab1f2b1a99::t_68d9964294fbbc 1072,1075
+.github/workflows/build.yml
+  s_3a89ab1f2b1a99::t_fcf5fd1ccb5f9a 3,27-28
+  s_3a89ab1f2b1a99::t_f17c8db1ec4a94 13
+  s_3a89ab1f2b1a99::t_0283997a29155c 6
+site/docs/zh/guide/api/hierarchy/indented.mdx
+  s_3a89ab1f2b1a99::t_6b52b62301c074 1-19,27-28
+  s_3a89ab1f2b1a99::t_c0a1db79f8d996 20-26
+__tests__/snapshots/radial/inexistent-focusNode.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/random/default.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/concentric/maxLevelDiff-05.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/dagre/edge-labels-function.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1,42,48,54,60,66,72,78,84,90,96,138,144,150,156,162,168,174,180,186,192
+tsconfig.json
+  s_3a89ab1f2b1a99::t_3889e2256f9022 23
+__tests__/snapshots/grid/cols-more-than-nodes.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/grid/rows-cols-less-nodes.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/mds/default.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/dagre/margins-50.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1,42,48,54,60,66,72,78,84,90,96,138,144,150,156,162,168,174,180,186,192
+__tests__/snapshots/radial/default.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/concentric/counterclockwise.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/concentric/sortBy-negative-values.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+__tests__/snapshots/dagre/rankdir-RL.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1,42,48,54,60,66,72,78,84,90,96,138,144,150,156,162,168,174,180,186,192
+__tests__/snapshots/dagre/ranksep-20.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1,42,48,54,60,66,72,78,84,90,96,138,144,150,156,162,168,174,180,186,192
+__tests__/snapshots/concentric/preventOverlap-fn-nodeSpacing.svg
+  s_3a89ab1f2b1a99::t_11c063ac99ab0d 1
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "c8c6e8321ace7bd313f4a6be9974d8dd8ef72b65",
+  "prompts": {},
+  "sessions": {
+    "s_3a89ab1f2b1a99": {
+      "agent_id": {
+        "tool": "codefuse",
+        "id": "0cb87f5b-d9c8-4b3a-adae-9a97b89fb0c7",
+        "model": "codefuse_official_channel/Kimi-K3.1-Pro:glink_domestic"
+      },
+      "human_author": "逍为 <xiaowei.wzw@antgroup.com>"
+    }
+  }
+}
