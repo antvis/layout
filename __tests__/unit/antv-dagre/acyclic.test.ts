@@ -1,6 +1,9 @@
 import { run, undo } from '@/src/algorithm/antv-dagre/acyclic';
+import {
+  DagreGraph as Graph,
+  type GraphEdge,
+} from '@/src/algorithm/antv-dagre/graph';
 import type { EdgeData } from '@/src/types';
-import { DagreGraph as Graph } from '@/src/algorithm/antv-dagre/graph';
 import { findCycles } from '../../utils';
 
 describe('acyclic', function () {
@@ -370,7 +373,7 @@ describe('acyclic', function () {
   });
 });
 
-function stripLabel(edge: Edge<EdgeData>) {
+function stripLabel(edge: GraphEdge<EdgeData & { label?: unknown }>) {
   let c = { ...edge };
   delete c.data.label;
   return c;

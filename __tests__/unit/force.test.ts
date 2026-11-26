@@ -1,17 +1,22 @@
 import { ForceLayout } from '@/src';
+import type { Layout } from '@/src/algorithm/types';
+import type { GraphData } from '@/src/types';
 import { createCanvas } from '@@/utils/create';
 import type { Canvas } from '@antv/g';
 import { clear as clearMockRandom, mock as mockRandom } from 'jest-random-mock';
 import { cluster } from '../dataset';
-import { GraphRenderer, preprocessGraphData } from '../utils';
-import { calculatePositions } from '../utils';
+import {
+  calculatePositions,
+  GraphRenderer,
+  preprocessGraphData,
+} from '../utils';
 
 describe('layout force', () => {
   let canvas: Canvas;
   let width: number;
   let height: number;
   let renderer: GraphRenderer;
-  let data;
+  let data: GraphData;
 
   beforeEach(() => {
     mockRandom();
@@ -228,7 +233,7 @@ describe('layout force', () => {
 
   it('should handle onTick callback', async () => {
     let tickCount = 0;
-    const onTick = (layout: any) => {
+    const onTick = (layout: Layout<any>) => {
       layout.forEachNode((node) => {
         expect(node.x).toBeDefined();
         expect(node.y).toBeDefined();
@@ -393,7 +398,7 @@ describe('layout force', () => {
   it('should handle fixed node positions', async () => {
     const fixedGraph = {
       nodes: [
-        { id: 'a', data: { fx: 100, fy: 100 } },
+        { id: 'a', fx: 100, fy: 100, data: {} },
         { id: 'b', data: {} },
         { id: 'c', data: {} },
       ],
@@ -402,13 +407,7 @@ describe('layout force', () => {
         { id: 'e2', source: 'b', target: 'c', data: {} },
       ],
     };
-    const layout = new ForceLayout({
-      node: (d) => ({
-        fx: d.data.fx,
-        fy: d.data.fy,
-      }),
-      maxIteration: 100,
-    });
+    const layout = new ForceLayout({ maxIteration: 100 });
     layout.execute(fixedGraph);
     layout.stop();
     layout.tick(100);

@@ -1,4 +1,5 @@
 import { ComboCombinedLayout } from '@/src';
+import { parseSize } from '@/src/util';
 import { Canvas } from '@antv/g';
 import { Renderer } from '@antv/g-canvas';
 import type { GUI } from 'lil-gui';
@@ -12,7 +13,7 @@ data.combos.forEach((combo: any) => {
     isCombo: true,
   });
 });
-delete data.combos;
+Reflect.deleteProperty(data, 'combos');
 console.log('combo combined data:', data);
 
 export function render(gui?: GUI) {
@@ -47,7 +48,7 @@ export function render(gui?: GUI) {
       renderer.updateNodeAttributes(node.id, {
         cx: node.x,
         cy: node.y,
-        r: Math.max(...node.size) / 2,
+        r: Math.max(...parseSize(node.size)) / 2,
         zIndex: node.isCombo ? 0 : 1,
         fillOpacity: node.isCombo ? 0.3 : 1,
         fill: node.isCombo ? '#91D5FF' : '#FFD666',

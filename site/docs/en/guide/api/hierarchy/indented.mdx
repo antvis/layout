@@ -1,0 +1,28 @@
+import { Badge } from '@theme';
+
+# Indented Layout <Badge text="Non-Iterative" type="tip" />
+
+Place tree nodes in DFS order with depth-based indentation for outlines and hierarchical lists.
+
+## Usage
+
+```ts
+import { IndentedLayout } from '@antv/layout';
+
+const layout = new IndentedLayout({ direction: 'LR', indent: 80 });
+await layout.execute(data);
+```
+
+Provide tree data. The root is inferred unless `rootId` is specified.
+
+## Main options
+
+| Option                      | Description                     | Type           | Default     |
+| --------------------------- | ------------------------------- | -------------- | ----------- |
+| `direction`                 | Indentation direction           | `'LR' \| 'RL'` | `'LR'`      |
+| `rootId`                    | Root node ID                    | `string`       | Inferred    |
+| `indent`                    | Indentation per depth           | `number`       | `80`        |
+| `rowHeight`                 | Row height                      | `number`       | `40`        |
+| `nodeColors` / `edgeColors` | Color palettes indexed by depth | `string[]`     | `undefined` |
+
+The layout writes `depth` and `_isRoot` to `node.data`, plus `_nodeColor` and `_edgeColor` when palettes are provided.

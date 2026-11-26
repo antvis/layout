@@ -976,7 +976,11 @@ describe('network simplex', function () {
 
   describe('initLowLimValues', function () {
     it('assigns low, lim, and parent for each node in a tree', function () {
-      let g = new Graph({
+      let g = new Graph<{
+        low?: number;
+        lim?: number;
+        parent?: string;
+      }>({
         nodes: [
           {
             id: 'a',
@@ -1058,17 +1062,17 @@ describe('network simplex', function () {
       expect(a.data.lim).toEqual(5);
 
       expect(b.data.parent).toEqual('a');
-      expect(b.data.lim).toBeLessThan(a.data.lim);
+      expect(b.data.lim).toBeLessThan(a.data.lim!);
 
       expect(c.data.parent).toEqual('a');
-      expect(c.data.lim).toBeLessThan(a.data.lim);
+      expect(c.data.lim).toBeLessThan(a.data.lim!);
       expect(c.data.lim).not.toEqual(b.data.lim);
 
       expect(d.data.parent).toEqual('c');
-      expect(d.data.lim).toBeLessThan(c.data.lim);
+      expect(d.data.lim).toBeLessThan(c.data.lim!);
 
       expect(e.data.parent).toEqual('c');
-      expect(e.data.lim).toBeLessThan(c.data.lim);
+      expect(e.data.lim).toBeLessThan(c.data.lim!);
       expect(e.data.lim).not.toEqual(d.data.lim);
     });
   });

@@ -1,11 +1,11 @@
 import { DagreLayout } from '@/src';
 import type { Point } from '@/src/types';
+import { parseSize } from '@/src/util';
 import { createCanvas } from '@@/utils/create';
 import type { Canvas } from '@antv/g';
 import { clear as clearMockRandom, mock as mockRandom } from 'jest-random-mock';
 import { combo as comboData, dagre as data } from '../dataset';
-import { GraphRenderer } from '../utils';
-import { calculatePositions } from '../utils';
+import { calculatePositions, GraphRenderer } from '../utils';
 
 describe('layout dagre', () => {
   let canvas: Canvas;
@@ -25,11 +25,12 @@ describe('layout dagre', () => {
     // Apply rect positioning for dagre
     layout.forEachNode((node) => {
       if (node.size) {
+        const [nodeWidth, nodeHeight] = parseSize(node.size);
         renderer.updateNodeAttributes(node.id, {
-          x: node.x - node.size[0] / 2,
-          y: node.y - node.size[1] / 2,
-          width: node.size[0],
-          height: node.size[1],
+          x: node.x - nodeWidth / 2,
+          y: node.y - nodeHeight / 2,
+          width: nodeWidth,
+          height: nodeHeight,
         });
       }
     });
@@ -429,9 +430,9 @@ describe('layout dagre', () => {
     expect(positions.edges).toHaveLength(2);
 
     // In TB direction, y positions should increase
-    const nodeA = positions.nodes.find((n) => n.id === 'a');
-    const nodeB = positions.nodes.find((n) => n.id === 'b');
-    const nodeC = positions.nodes.find((n) => n.id === 'c');
+    const nodeA = positions.nodes.find((n) => n.id === 'a')!;
+    const nodeB = positions.nodes.find((n) => n.id === 'b')!;
+    const nodeC = positions.nodes.find((n) => n.id === 'c')!;
     expect(nodeA.y).toBeLessThan(nodeB.y);
     expect(nodeB.y).toBeLessThan(nodeC.y);
 
@@ -505,8 +506,7 @@ describe('layout dagre', () => {
     positions.nodes.forEach((node) => {
       expect(Number.isFinite(node.x)).toBe(true);
       expect(Number.isFinite(node.y)).toBe(true);
-      if (node.size) {
-        expect(Array.isArray(node.size)).toBe(true);
+      if (Array.isArray(node.size)) {
         expect(node.size.length).toBe(2);
         expect(Number.isFinite(node.size[0])).toBe(true);
         expect(Number.isFinite(node.size[1])).toBe(true);

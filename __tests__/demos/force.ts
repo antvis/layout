@@ -47,17 +47,17 @@ export async function render(gui?: GUI) {
   renderer.setDragCallbacks({
     onDragStart: (nodeId, position) => {
       console.log(`🎯 Start dragging node: ${nodeId}`);
-      layout.setFixedPosition(nodeId, [position.x, position.y]);
+      layout.setFixedPosition(String(nodeId), [position.x, position.y]);
     },
 
     onDrag: (nodeId, position) => {
       console.log(`🚚 Dragging node: ${position}`);
-      layout.setFixedPosition(nodeId, [position.x, position.y]);
+      layout.setFixedPosition(String(nodeId), [position.x, position.y]);
       layout.tick(10);
     },
 
     onDragEnd: (nodeId) => {
-      layout.setFixedPosition(nodeId, null);
+      layout.setFixedPosition(String(nodeId), null);
     },
   });
 

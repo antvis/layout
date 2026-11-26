@@ -1,0 +1,162 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="540" color-interpolation-filters="sRGB" style="background: none; touch-action: none;">
+  <g transform="matrix(1 0 0 1 0 0)">
+    <g fill="none" stroke="none" stroke-dashoffset="0" font-family="sans-serif" font-size="16" font-style="normal" font-variant="normal" font-weight="normal" text-anchor="left" transform="matrix(1 0 0 1 0 0)" visibility="visible">
+      <g stroke-width="1.2" pointer-events="none" transform="matrix(1 0 0 1 80 60)">
+        <line x1="0" x2="180" y1="0" y2="54" fill="none" stroke="rgba(203,213,225,1)"/>
+      </g>
+      <g stroke-width="1.2" pointer-events="none" transform="matrix(1 0 0 1 260 114)">
+        <line x1="0" x2="180" y1="0" y2="54" fill="none" stroke="rgba(203,213,225,1)"/>
+      </g>
+      <g stroke-width="1.2" pointer-events="none" transform="matrix(1 0 0 1 260 114)">
+        <line x1="0" x2="180" y1="0" y2="108" fill="none" stroke="rgba(203,213,225,1)"/>
+      </g>
+      <g stroke-width="1.2" pointer-events="none" transform="matrix(1 0 0 1 80 60)">
+        <line x1="0" x2="180" y1="0" y2="216" fill="none" stroke="rgba(203,213,225,1)"/>
+      </g>
+      <g stroke-width="1.2" pointer-events="none" transform="matrix(1 0 0 1 260 276)">
+        <line x1="0" x2="180" y1="0" y2="54" fill="none" stroke="rgba(203,213,225,1)"/>
+      </g>
+      <g stroke-width="1.2" pointer-events="none" transform="matrix(1 0 0 1 260 276)">
+        <line x1="0" x2="180" y1="0" y2="108" fill="none" stroke="rgba(203,213,225,1)"/>
+      </g>
+      <g stroke-width="1.2" pointer-events="none" transform="matrix(1 0 0 1 80 60)">
+        <line x1="0" x2="180" y1="0" y2="378" fill="none" stroke="rgba(203,213,225,1)"/>
+      </g>
+      <g stroke-width="1.2" pointer-events="none" transform="matrix(1 0 0 1 260 438)">
+        <line x1="0" x2="180" y1="0" y2="54" fill="none" stroke="rgba(203,213,225,1)"/>
+      </g>
+      <g stroke-width="1.2" transform="matrix(1 0 0 1 10 40)">
+        <path width="140" height="40" fill="rgba(199,210,254,1)" stroke="rgba(129,140,248,1)" d="m0 0 140 0 0 40-140 0z" rx="9" ry="9"/>
+        <g font-size="12" font-weight="500" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 70 20)">
+          <text fill="rgba(51,65,85,1)" stroke="none" dominant-baseline="central" dx=".6" paint-order="stroke">Design System</text>
+        </g>
+      </g>
+      <g stroke-width="1.2" transform="matrix(1 0 0 1 190 94)">
+        <path width="140" height="40" fill="rgba(221,214,254,1)" stroke="rgba(221,214,254,1)" d="m0 0 140 0 0 40-140 0z" rx="9" ry="9"/>
+        <g font-size="12" font-weight="500" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 70 20)">
+          <text fill="rgba(51,65,85,1)" stroke="none" dominant-baseline="central" dx=".6" paint-order="stroke">Foundations</text>
+        </g>
+      </g>
+      <g stroke-width="1.2" transform="matrix(1 0 0 1 370 148)">
+        <path width="140" height="40" fill="rgba(237,233,254,1)" stroke="rgba(237,233,254,1)" d="m0 0 140 0 0 40-140 0z" rx="9" ry="9"/>
+        <g font-size="12" font-weight="500" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 70 20)">
+          <text fill="rgba(51,65,85,1)" stroke="none" dominant-baseline="central" dx=".6" paint-order="stroke">Colors</text>
+        </g>
+      </g>
+      <g stroke-width="1.2" transform="matrix(1 0 0 1 370 202)">
+        <path width="140" height="40" fill="rgba(237,233,254,1)" stroke="rgba(237,233,254,1)" d="m0 0 140 0 0 40-140 0z" rx="9" ry="9"/>
+        <g font-size="12" font-weight="500" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 70 20)">
+          <text fill="rgba(51,65,85,1)" stroke="none" dominant-baseline="central" dx=".6" paint-order="stroke">Typography</text>
+        </g>
+      </g>
+      <g stroke-width="1.2" transform="matrix(1 0 0 1 190 256)">
+        <path width="140" height="40" fill="rgba(221,214,254,1)" stroke="rgba(221,214,254,1)" d="m0 0 140 0 0 40-140 0z" rx="9" ry="9"/>
+        <g font-size="12" font-weight="500" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 70 20)">
+          <text fill="rgba(51,65,85,1)" stroke="none" dominant-baseline="central" dx=".6" paint-order="stroke">Components</text>
+        </g>
+      </g>
+      <g stroke-width="1.2" transform="matrix(1 0 0 1 370 310)">
+        <path width="140" height="40" fill="rgba(237,233,254,1)" stroke="rgba(237,233,254,1)" d="m0 0 140 0 0 40-140 0z" rx="9" ry="9"/>
+        <g font-size="12" font-weight="500" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 70 20)">
+          <text fill="rgba(51,65,85,1)" stroke="none" dominant-baseline="central" dx=".6" paint-order="stroke">Buttons</text>
+        </g>
+      </g>
+      <g stroke-width="1.2" transform="matrix(1 0 0 1 370 364)">
+        <path width="140" height="40" fill="rgba(237,233,254,1)" stroke="rgba(237,233,254,1)" d="m0 0 140 0 0 40-140 0z" rx="9" ry="9"/>
+        <g font-size="12" font-weight="500" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 70 20)">
+          <text fill="rgba(51,65,85,1)" stroke="none" dominant-baseline="central" dx=".6" paint-order="stroke">Forms</text>
+        </g>
+      </g>
+      <g stroke-width="1.2" transform="matrix(1 0 0 1 190 418)">
+        <path width="140" height="40" fill="rgba(221,214,254,1)" stroke="rgba(221,214,254,1)" d="m0 0 140 0 0 40-140 0z" rx="9" ry="9"/>
+        <g font-size="12" font-weight="500" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 70 20)">
+          <text fill="rgba(51,65,85,1)" stroke="none" dominant-baseline="central" dx=".6" paint-order="stroke">Guidelines</text>
+        </g>
+      </g>
+      <g stroke-width="1.2" transform="matrix(1 0 0 1 370 472)">
+        <path width="140" height="40" fill="rgba(237,233,254,1)" stroke="rgba(237,233,254,1)" d="m0 0 140 0 0 40-140 0z" rx="9" ry="9"/>
+        <g font-size="12" font-weight="500" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 70 20)">
+          <text fill="rgba(51,65,85,1)" stroke="none" dominant-baseline="central" dx=".6" paint-order="stroke">Accessibility</text>
+        </g>
+      </g>
+      <g stroke-width="1.2" pointer-events="none" transform="matrix(1 0 0 1 80 60)">
+        <line x1="0" x2="180" y1="0" y2="54" fill="none" stroke="rgba(203,213,225,1)"/>
+      </g>
+      <g stroke-width="1.2" pointer-events="none" transform="matrix(1 0 0 1 260 114)">
+        <line x1="0" x2="180" y1="0" y2="54" fill="none" stroke="rgba(203,213,225,1)"/>
+      </g>
+      <g stroke-width="1.2" pointer-events="none" transform="matrix(1 0 0 1 260 114)">
+        <line x1="0" x2="180" y1="0" y2="108" fill="none" stroke="rgba(203,213,225,1)"/>
+      </g>
+      <g stroke-width="1.2" pointer-events="none" transform="matrix(1 0 0 1 80 60)">
+        <line x1="0" x2="180" y1="0" y2="216" fill="none" stroke="rgba(203,213,225,1)"/>
+      </g>
+      <g stroke-width="1.2" pointer-events="none" transform="matrix(1 0 0 1 260 276)">
+        <line x1="0" x2="180" y1="0" y2="54" fill="none" stroke="rgba(203,213,225,1)"/>
+      </g>
+      <g stroke-width="1.2" pointer-events="none" transform="matrix(1 0 0 1 260 276)">
+        <line x1="0" x2="180" y1="0" y2="108" fill="none" stroke="rgba(203,213,225,1)"/>
+      </g>
+      <g stroke-width="1.2" pointer-events="none" transform="matrix(1 0 0 1 80 60)">
+        <line x1="0" x2="180" y1="0" y2="378" fill="none" stroke="rgba(203,213,225,1)"/>
+      </g>
+      <g stroke-width="1.2" pointer-events="none" transform="matrix(1 0 0 1 260 438)">
+        <line x1="0" x2="180" y1="0" y2="54" fill="none" stroke="rgba(203,213,225,1)"/>
+      </g>
+      <g stroke-width="1.2" transform="matrix(1 0 0 1 10 40)">
+        <path width="140" height="40" fill="rgba(199,210,254,1)" stroke="rgba(129,140,248,1)" d="m0 0 140 0 0 40-140 0z" rx="9" ry="9"/>
+        <g font-size="12" font-weight="500" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 70 20)">
+          <text fill="rgba(51,65,85,1)" stroke="none" dominant-baseline="central" dx=".6" paint-order="stroke">Design System</text>
+        </g>
+      </g>
+      <g stroke-width="1.2" transform="matrix(1 0 0 1 190 94)">
+        <path width="140" height="40" fill="rgba(221,214,254,1)" stroke="rgba(221,214,254,1)" d="m0 0 140 0 0 40-140 0z" rx="9" ry="9"/>
+        <g font-size="12" font-weight="500" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 70 20)">
+          <text fill="rgba(51,65,85,1)" stroke="none" dominant-baseline="central" dx=".6" paint-order="stroke">Foundations</text>
+        </g>
+      </g>
+      <g stroke-width="1.2" transform="matrix(1 0 0 1 370 148)">
+        <path width="140" height="40" fill="rgba(237,233,254,1)" stroke="rgba(237,233,254,1)" d="m0 0 140 0 0 40-140 0z" rx="9" ry="9"/>
+        <g font-size="12" font-weight="500" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 70 20)">
+          <text fill="rgba(51,65,85,1)" stroke="none" dominant-baseline="central" dx=".6" paint-order="stroke">Colors</text>
+        </g>
+      </g>
+      <g stroke-width="1.2" transform="matrix(1 0 0 1 370 202)">
+        <path width="140" height="40" fill="rgba(237,233,254,1)" stroke="rgba(237,233,254,1)" d="m0 0 140 0 0 40-140 0z" rx="9" ry="9"/>
+        <g font-size="12" font-weight="500" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 70 20)">
+          <text fill="rgba(51,65,85,1)" stroke="none" dominant-baseline="central" dx=".6" paint-order="stroke">Typography</text>
+        </g>
+      </g>
+      <g stroke-width="1.2" transform="matrix(1 0 0 1 190 256)">
+        <path width="140" height="40" fill="rgba(221,214,254,1)" stroke="rgba(221,214,254,1)" d="m0 0 140 0 0 40-140 0z" rx="9" ry="9"/>
+        <g font-size="12" font-weight="500" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 70 20)">
+          <text fill="rgba(51,65,85,1)" stroke="none" dominant-baseline="central" dx=".6" paint-order="stroke">Components</text>
+        </g>
+      </g>
+      <g stroke-width="1.2" transform="matrix(1 0 0 1 370 310)">
+        <path width="140" height="40" fill="rgba(237,233,254,1)" stroke="rgba(237,233,254,1)" d="m0 0 140 0 0 40-140 0z" rx="9" ry="9"/>
+        <g font-size="12" font-weight="500" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 70 20)">
+          <text fill="rgba(51,65,85,1)" stroke="none" dominant-baseline="central" dx=".6" paint-order="stroke">Buttons</text>
+        </g>
+      </g>
+      <g stroke-width="1.2" transform="matrix(1 0 0 1 370 364)">
+        <path width="140" height="40" fill="rgba(237,233,254,1)" stroke="rgba(237,233,254,1)" d="m0 0 140 0 0 40-140 0z" rx="9" ry="9"/>
+        <g font-size="12" font-weight="500" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 70 20)">
+          <text fill="rgba(51,65,85,1)" stroke="none" dominant-baseline="central" dx=".6" paint-order="stroke">Forms</text>
+        </g>
+      </g>
+      <g stroke-width="1.2" transform="matrix(1 0 0 1 190 418)">
+        <path width="140" height="40" fill="rgba(221,214,254,1)" stroke="rgba(221,214,254,1)" d="m0 0 140 0 0 40-140 0z" rx="9" ry="9"/>
+        <g font-size="12" font-weight="500" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 70 20)">
+          <text fill="rgba(51,65,85,1)" stroke="none" dominant-baseline="central" dx=".6" paint-order="stroke">Guidelines</text>
+        </g>
+      </g>
+      <g stroke-width="1.2" transform="matrix(1 0 0 1 370 472)">
+        <path width="140" height="40" fill="rgba(237,233,254,1)" stroke="rgba(237,233,254,1)" d="m0 0 140 0 0 40-140 0z" rx="9" ry="9"/>
+        <g font-size="12" font-weight="500" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 70 20)">
+          <text fill="rgba(51,65,85,1)" stroke="none" dominant-baseline="central" dx=".6" paint-order="stroke">Accessibility</text>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

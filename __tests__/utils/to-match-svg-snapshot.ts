@@ -86,7 +86,7 @@ export type ToMatchSVGSnapshotOptions = {
   fileFormat?: string;
 };
 
-// @see https://jestjs.io/docs/26.x/expect#expectextendmatchers
+// @see https://vitest.dev/api/expect.html#expect-extend
 export async function toMatchSVGSnapshot(
   canvas: Canvas,
   dir: string,
@@ -107,8 +107,6 @@ export async function toMatchSVGSnapshot(
     canvas.getContextService().getDomElement() as unknown as SVGElement
   ).cloneNode(true) as SVGElement;
   const gRoot = svg.querySelector('#g-root');
-  // remove css style
-  svg.style.gridArea = '';
 
   const dom = (
     canvas.getContextService().getDomElement() as unknown as SVGElement
@@ -135,6 +133,17 @@ export async function toMatchSVGSnapshot(
         encoding: 'utf8',
         flag: 'r',
       });
+      if (
+        process.env.UPDATE_SNAPSHOTS === 'true' &&
+        process.env.CI !== 'true'
+      ) {
+        writeFileSync(expectedPath, actual);
+        if (existsSync(actualPath)) unlinkSync(actualPath);
+        return {
+          message: () => `update ${namePath}`,
+          pass: true,
+        };
+      }
       if (actual === expected) {
         if (existsSync(actualPath)) unlinkSync(actualPath);
         return {
@@ -146,7 +155,7 @@ export async function toMatchSVGSnapshot(
       // Perverse actual file.
       if (actual) writeFileSync(actualPath, actual);
 
-      const formatPath = (p: string) => p.split('/g6/')[1];
+      const formatPath = (p: string) => p.replace(`${process.cwd()}/`, '');
       return {
         message: () =>
           `mismatch: \n expected: ${chalk.green(

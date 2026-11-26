@@ -1,7 +1,9 @@
-import { CircularLayout } from '@/src';
+import { CircularLayout, type CircularLayoutOptions } from '@/src';
 import type { GUI } from 'lil-gui';
 import { radial as data } from '../dataset';
 import { GraphRenderer } from '../utils/renderer';
+
+type CircularOrdering = NonNullable<CircularLayoutOptions['ordering']>;
 
 export function render(gui?: GUI) {
   const renderer = new GraphRenderer();
@@ -10,10 +12,10 @@ export function render(gui?: GUI) {
     center: [250, 250],
     radius: 200,
     nodeSize: 20,
-      startAngle: Math.PI / 4,
-      endAngle: Math.PI,
-      divisions: 5,
-      ordering: 'degree',
+    startAngle: Math.PI / 4,
+    endAngle: Math.PI,
+    divisions: 5,
+    ordering: 'degree',
   });
 
   const relayout = async (options = {}) => {
@@ -39,7 +41,7 @@ export function render(gui?: GUI) {
       endAngle: 2 * Math.PI,
       clockwise: true,
       divisions: 1,
-      ordering: 'original',
+      ordering: 'original' as CircularOrdering,
     };
     folder.add(config, 'centerX', 0, 500).onChange((centerX: number) => {
       relayout({ ...config, center: [centerX, config.centerY] });
@@ -94,7 +96,7 @@ export function render(gui?: GUI) {
         'topology',
         'topology-directed',
       ])
-      .onChange((ordering) => {
+      .onChange((ordering: CircularOrdering) => {
         relayout({ ...config, ordering });
       });
   }

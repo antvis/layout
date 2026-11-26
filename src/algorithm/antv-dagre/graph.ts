@@ -10,6 +10,11 @@ export interface GraphNode<N extends NodeData = NodeData> {
   data: N;
 }
 
+export interface GraphTreeNode<N extends NodeData = NodeData>
+  extends GraphNode<N> {
+  children?: GraphTreeNode<N>[];
+}
+
 /**
  * <zh/> 图中的边
  *
@@ -31,7 +36,7 @@ export interface GraphOptions<
   N extends NodeData = NodeData,
   E extends EdgeData = EdgeData,
 > {
-  tree?: string[] | (GraphNode<N> & { children?: GraphNode<N>[] })[];
+  tree?: string[] | GraphTreeNode<N>[];
   nodes?: GraphNode<N>[];
   edges?: GraphEdge<E>[];
 }
@@ -360,9 +365,7 @@ export class DagreGraph<
    * <en/> Add tree structure (recursively add nodes and their children)
    */
   addTree(
-    tree:
-      | (GraphNode<N> & { children?: GraphNode<N>[] })
-      | (GraphNode<N> & { children?: GraphNode<N>[] })[],
+    tree: GraphTreeNode<N> | GraphTreeNode<N>[],
     treeName?: string,
   ): void {
     const actualTreeName =
@@ -374,10 +377,7 @@ export class DagreGraph<
 
     const trees = Array.isArray(tree) ? tree : [tree];
 
-    const addTreeNode = (
-      node: GraphNode<N> & { children?: GraphNode<N>[] },
-      parentId?: ID,
-    ) => {
+    const addTreeNode = (node: GraphTreeNode<N>, parentId?: ID) => {
       // Add the node itself
       this.addNode({ id: node.id, data: node.data });
 

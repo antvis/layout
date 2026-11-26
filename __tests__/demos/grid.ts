@@ -1,4 +1,4 @@
-import { GridLayout } from '@/src';
+import { GridLayout, type GridLayoutOptions } from '@/src';
 import type { GUI } from 'lil-gui';
 import { GraphRenderer } from '../utils/renderer';
 
@@ -14,11 +14,11 @@ export function render(gui?: GUI) {
     preventOverlap: true,
     preventOverlapPadding: 10,
     condense: false,
-    rows: undefined,
-    cols: undefined,
-    sortBy: 'degree',
+    rows: undefined as number | undefined,
+    cols: undefined as number | undefined,
+    sortBy: 'degree' as 'degree' | 'id',
     nodeSize: 30,
-    nodeSpacing: undefined,
+    nodeSpacing: undefined as number | undefined,
   };
 
   let options = { ...defaultOptions };
@@ -38,7 +38,7 @@ export function render(gui?: GUI) {
   });
 
   const relayout = async () => {
-    const _options = {
+    const _options: Partial<GridLayoutOptions> = {
       width: options.width,
       height: options.height,
       begin: [options.beginX, options.beginY],

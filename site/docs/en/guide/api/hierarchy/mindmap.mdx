@@ -1,0 +1,29 @@
+import { Badge } from '@theme';
+
+# Mindmap Layout <Badge text="Non-Iterative" type="tip" />
+
+Expand branches to one or both sides of a central root for mind maps and topic relationships.
+
+## Usage
+
+```ts
+import { MindmapLayout } from '@antv/layout';
+
+const layout = new MindmapLayout({ direction: 'H', levelGap: 120 });
+await layout.execute(data);
+```
+
+Provide tree data. `H` assigns sides with `getSide`; `LR` and `RL` expand to the right and left.
+
+## Main options
+
+| Option                   | Description                             | Type                                             | Default          |
+| ------------------------ | --------------------------------------- | ------------------------------------------------ | ---------------- |
+| `direction`              | Branch direction                        | `'H' \| 'LR' \| 'RL'`                            | `'H'`            |
+| `levelGap`               | Gap between parent and child boundaries | `number`                                         | `120`            |
+| `nodeGap`                | Gap between adjacent children           | `number`                                         | `30`             |
+| `branchColors`           | Branch color palette                    | `string[]`                                       | Built-in palette |
+| `getWidth` / `getHeight` | Get node width or height                | `(node) => number`                               | `100` / `40`     |
+| `getSide`                | Get the side of a child                 | `(node, index, parentSide) => 'left' \| 'right'` | Always right     |
+
+The selected branch color is written to `node.data._branchColor`.

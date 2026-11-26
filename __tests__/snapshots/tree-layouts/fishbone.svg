@@ -1,0 +1,180 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="600" color-interpolation-filters="sRGB" style="background: none; touch-action: none;">
+  <g transform="matrix(1 0 0 1 0 0)">
+    <g fill="none" stroke="none" stroke-dashoffset="0" font-family="sans-serif" font-size="16" font-style="normal" font-variant="normal" font-weight="normal" text-anchor="left" transform="matrix(1 0 0 1 0 0)" visibility="visible">
+      <g stroke-width="1.2" pointer-events="none" transform="matrix(1 0 0 1 115 80)">
+        <line x1="745" x2="0" y1="200" y2="0" fill="none" stroke="rgba(203,213,225,1)"/>
+      </g>
+      <g stroke-width="1.2" pointer-events="none" transform="matrix(1 0 0 1 305 280)">
+        <line x1="555" x2="0" y1="0" y2="200" fill="none" stroke="rgba(203,213,225,1)"/>
+      </g>
+      <g stroke-width="1.2" pointer-events="none" transform="matrix(1 0 0 1 495 80)">
+        <line x1="365" x2="0" y1="200" y2="0" fill="none" stroke="rgba(203,213,225,1)"/>
+      </g>
+      <g stroke-width="1.2" pointer-events="none" transform="matrix(1 0 0 1 81.6667 80)">
+        <line x1="33.3333" x2="0" y1="0" y2="66.6667" fill="none" stroke="rgba(203,213,225,1)"/>
+      </g>
+      <g stroke-width="1.2" pointer-events="none" transform="matrix(1 0 0 1 115 80)">
+        <line x1="0" x2="33.3333" y1="0" y2="133.3333" fill="none" stroke="rgba(203,213,225,1)"/>
+      </g>
+      <g stroke-width="1.2" pointer-events="none" transform="matrix(1 0 0 1 271.6667 413.3333)">
+        <line x1="33.3333" x2="0" y1="66.6667" y2="0" fill="none" stroke="rgba(203,213,225,1)"/>
+      </g>
+      <g stroke-width="1.2" pointer-events="none" transform="matrix(1 0 0 1 305 346.6667)">
+        <line x1="0" x2="33.3333" y1="133.3333" y2="0" fill="none" stroke="rgba(203,213,225,1)"/>
+      </g>
+      <g stroke-width="1.2" pointer-events="none" transform="matrix(1 0 0 1 461.6667 80)">
+        <line x1="33.3333" x2="0" y1="0" y2="66.6667" fill="none" stroke="rgba(203,213,225,1)"/>
+      </g>
+      <g stroke-width="1.2" pointer-events="none" transform="matrix(1 0 0 1 495 80)">
+        <line x1="0" x2="33.3333" y1="0" y2="133.3333" fill="none" stroke="rgba(203,213,225,1)"/>
+      </g>
+      <g stroke-width="1.2" transform="matrix(1 0 0 1 790 260)">
+        <path width="140" height="40" fill="rgba(254,243,199,1)" stroke="rgba(245,158,11,1)" d="m0 0 140 0 0 40-140 0z" rx="9" ry="9"/>
+        <g font-size="12" font-weight="500" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 70 20)">
+          <text fill="rgba(51,65,85,1)" stroke="none" dominant-baseline="central" dx=".6" paint-order="stroke">Delivery Risk</text>
+        </g>
+      </g>
+      <g stroke-width="1.2" transform="matrix(1 0 0 1 45 60)">
+        <path width="140" height="40" fill="rgba(219,234,254,1)" stroke="rgba(96,165,250,1)" d="m0 0 140 0 0 40-140 0z" rx="9" ry="9"/>
+        <g font-size="12" font-weight="500" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 70 20)">
+          <text fill="rgba(51,65,85,1)" stroke="none" dominant-baseline="central" dx=".6" paint-order="stroke">People</text>
+        </g>
+      </g>
+      <g stroke-width="1.2" transform="matrix(1 0 0 1 235 460)">
+        <path width="140" height="40" fill="rgba(209,250,229,1)" stroke="rgba(52,211,153,1)" d="m0 0 140 0 0 40-140 0z" rx="9" ry="9"/>
+        <g font-size="12" font-weight="500" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 70 20)">
+          <text fill="rgba(51,65,85,1)" stroke="none" dominant-baseline="central" dx=".6" paint-order="stroke">Process</text>
+        </g>
+      </g>
+      <g stroke-width="1.2" transform="matrix(1 0 0 1 425 60)">
+        <path width="140" height="40" fill="rgba(237,233,254,1)" stroke="rgba(167,139,250,1)" d="m0 0 140 0 0 40-140 0z" rx="9" ry="9"/>
+        <g font-size="12" font-weight="500" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 70 20)">
+          <text fill="rgba(51,65,85,1)" stroke="none" dominant-baseline="central" dx=".6" paint-order="stroke">Tools</text>
+        </g>
+      </g>
+      <g stroke-width="1.2" transform="matrix(1 0 0 1 11.6667 126.6667)">
+        <path width="140" height="40" fill="rgba(219,234,254,1)" stroke="rgba(203,213,225,1)" d="m0 0 140 0 0 40-140 0z" rx="9" ry="9"/>
+        <g font-size="12" font-weight="500" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 70 20)">
+          <text fill="rgba(51,65,85,1)" stroke="none" dominant-baseline="central" dx=".6" paint-order="stroke">Skill gaps</text>
+        </g>
+      </g>
+      <g stroke-width="1.2" transform="matrix(1 0 0 1 78.3333 193.3333)">
+        <path width="140" height="40" fill="rgba(239,246,255,1)" stroke="rgba(203,213,225,1)" d="m0 0 140 0 0 40-140 0z" rx="9" ry="9"/>
+        <g font-size="12" font-weight="500" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 70 20)">
+          <text fill="rgba(51,65,85,1)" stroke="none" dominant-baseline="central" dx=".6" paint-order="stroke">Late reviews</text>
+        </g>
+      </g>
+      <g stroke-width="1.2" transform="matrix(1 0 0 1 201.6667 393.3333)">
+        <path width="140" height="40" fill="rgba(209,250,229,1)" stroke="rgba(203,213,225,1)" d="m0 0 140 0 0 40-140 0z" rx="9" ry="9"/>
+        <g font-size="12" font-weight="500" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 70 20)">
+          <text fill="rgba(51,65,85,1)" stroke="none" dominant-baseline="central" dx=".6" paint-order="stroke">Unclear scope</text>
+        </g>
+      </g>
+      <g stroke-width="1.2" transform="matrix(1 0 0 1 268.3333 326.6667)">
+        <path width="140" height="40" fill="rgba(236,253,245,1)" stroke="rgba(203,213,225,1)" d="m0 0 140 0 0 40-140 0z" rx="9" ry="9"/>
+        <g font-size="12" font-weight="500" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 70 20)">
+          <text fill="rgba(51,65,85,1)" stroke="none" dominant-baseline="central" dx=".6" paint-order="stroke">Late changes</text>
+        </g>
+      </g>
+      <g stroke-width="1.2" transform="matrix(1 0 0 1 391.6667 126.6667)">
+        <path width="140" height="40" fill="rgba(243,232,255,1)" stroke="rgba(203,213,225,1)" d="m0 0 140 0 0 40-140 0z" rx="9" ry="9"/>
+        <g font-size="12" font-weight="500" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 70 20)">
+          <text fill="rgba(51,65,85,1)" stroke="none" dominant-baseline="central" dx=".6" paint-order="stroke">Missing tests</text>
+        </g>
+      </g>
+      <g stroke-width="1.2" transform="matrix(1 0 0 1 458.3333 193.3333)">
+        <path width="140" height="40" fill="rgba(250,245,255,1)" stroke="rgba(203,213,225,1)" d="m0 0 140 0 0 40-140 0z" rx="9" ry="9"/>
+        <g font-size="12" font-weight="500" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 70 20)">
+          <text fill="rgba(51,65,85,1)" stroke="none" dominant-baseline="central" dx=".6" paint-order="stroke">Build failures</text>
+        </g>
+      </g>
+      <g stroke-width="1.2" pointer-events="none" transform="matrix(1 0 0 1 115 80)">
+        <line x1="745" x2="0" y1="200" y2="0" fill="none" stroke="rgba(203,213,225,1)"/>
+      </g>
+      <g stroke-width="1.2" pointer-events="none" transform="matrix(1 0 0 1 305 280)">
+        <line x1="555" x2="0" y1="0" y2="200" fill="none" stroke="rgba(203,213,225,1)"/>
+      </g>
+      <g stroke-width="1.2" pointer-events="none" transform="matrix(1 0 0 1 495 80)">
+        <line x1="365" x2="0" y1="200" y2="0" fill="none" stroke="rgba(203,213,225,1)"/>
+      </g>
+      <g stroke-width="1.2" pointer-events="none" transform="matrix(1 0 0 1 81.6667 80)">
+        <line x1="33.3333" x2="0" y1="0" y2="66.6667" fill="none" stroke="rgba(203,213,225,1)"/>
+      </g>
+      <g stroke-width="1.2" pointer-events="none" transform="matrix(1 0 0 1 115 80)">
+        <line x1="0" x2="33.3333" y1="0" y2="133.3333" fill="none" stroke="rgba(203,213,225,1)"/>
+      </g>
+      <g stroke-width="1.2" pointer-events="none" transform="matrix(1 0 0 1 271.6667 413.3333)">
+        <line x1="33.3333" x2="0" y1="66.6667" y2="0" fill="none" stroke="rgba(203,213,225,1)"/>
+      </g>
+      <g stroke-width="1.2" pointer-events="none" transform="matrix(1 0 0 1 305 346.6667)">
+        <line x1="0" x2="33.3333" y1="133.3333" y2="0" fill="none" stroke="rgba(203,213,225,1)"/>
+      </g>
+      <g stroke-width="1.2" pointer-events="none" transform="matrix(1 0 0 1 461.6667 80)">
+        <line x1="33.3333" x2="0" y1="0" y2="66.6667" fill="none" stroke="rgba(203,213,225,1)"/>
+      </g>
+      <g stroke-width="1.2" pointer-events="none" transform="matrix(1 0 0 1 495 80)">
+        <line x1="0" x2="33.3333" y1="0" y2="133.3333" fill="none" stroke="rgba(203,213,225,1)"/>
+      </g>
+      <g stroke-width="1.2" transform="matrix(1 0 0 1 790 260)">
+        <path width="140" height="40" fill="rgba(254,243,199,1)" stroke="rgba(245,158,11,1)" d="m0 0 140 0 0 40-140 0z" rx="9" ry="9"/>
+        <g font-size="12" font-weight="500" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 70 20)">
+          <text fill="rgba(51,65,85,1)" stroke="none" dominant-baseline="central" dx=".6" paint-order="stroke">Delivery Risk</text>
+        </g>
+      </g>
+      <g stroke-width="1.2" transform="matrix(1 0 0 1 45 60)">
+        <path width="140" height="40" fill="rgba(219,234,254,1)" stroke="rgba(96,165,250,1)" d="m0 0 140 0 0 40-140 0z" rx="9" ry="9"/>
+        <g font-size="12" font-weight="500" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 70 20)">
+          <text fill="rgba(51,65,85,1)" stroke="none" dominant-baseline="central" dx=".6" paint-order="stroke">People</text>
+        </g>
+      </g>
+      <g stroke-width="1.2" transform="matrix(1 0 0 1 235 460)">
+        <path width="140" height="40" fill="rgba(209,250,229,1)" stroke="rgba(52,211,153,1)" d="m0 0 140 0 0 40-140 0z" rx="9" ry="9"/>
+        <g font-size="12" font-weight="500" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 70 20)">
+          <text fill="rgba(51,65,85,1)" stroke="none" dominant-baseline="central" dx=".6" paint-order="stroke">Process</text>
+        </g>
+      </g>
+      <g stroke-width="1.2" transform="matrix(1 0 0 1 425 60)">
+        <path width="140" height="40" fill="rgba(237,233,254,1)" stroke="rgba(167,139,250,1)" d="m0 0 140 0 0 40-140 0z" rx="9" ry="9"/>
+        <g font-size="12" font-weight="500" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 70 20)">
+          <text fill="rgba(51,65,85,1)" stroke="none" dominant-baseline="central" dx=".6" paint-order="stroke">Tools</text>
+        </g>
+      </g>
+      <g stroke-width="1.2" transform="matrix(1 0 0 1 11.6667 126.6667)">
+        <path width="140" height="40" fill="rgba(219,234,254,1)" stroke="rgba(203,213,225,1)" d="m0 0 140 0 0 40-140 0z" rx="9" ry="9"/>
+        <g font-size="12" font-weight="500" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 70 20)">
+          <text fill="rgba(51,65,85,1)" stroke="none" dominant-baseline="central" dx=".6" paint-order="stroke">Skill gaps</text>
+        </g>
+      </g>
+      <g stroke-width="1.2" transform="matrix(1 0 0 1 78.3333 193.3333)">
+        <path width="140" height="40" fill="rgba(239,246,255,1)" stroke="rgba(203,213,225,1)" d="m0 0 140 0 0 40-140 0z" rx="9" ry="9"/>
+        <g font-size="12" font-weight="500" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 70 20)">
+          <text fill="rgba(51,65,85,1)" stroke="none" dominant-baseline="central" dx=".6" paint-order="stroke">Late reviews</text>
+        </g>
+      </g>
+      <g stroke-width="1.2" transform="matrix(1 0 0 1 201.6667 393.3333)">
+        <path width="140" height="40" fill="rgba(209,250,229,1)" stroke="rgba(203,213,225,1)" d="m0 0 140 0 0 40-140 0z" rx="9" ry="9"/>
+        <g font-size="12" font-weight="500" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 70 20)">
+          <text fill="rgba(51,65,85,1)" stroke="none" dominant-baseline="central" dx=".6" paint-order="stroke">Unclear scope</text>
+        </g>
+      </g>
+      <g stroke-width="1.2" transform="matrix(1 0 0 1 268.3333 326.6667)">
+        <path width="140" height="40" fill="rgba(236,253,245,1)" stroke="rgba(203,213,225,1)" d="m0 0 140 0 0 40-140 0z" rx="9" ry="9"/>
+        <g font-size="12" font-weight="500" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 70 20)">
+          <text fill="rgba(51,65,85,1)" stroke="none" dominant-baseline="central" dx=".6" paint-order="stroke">Late changes</text>
+        </g>
+      </g>
+      <g stroke-width="1.2" transform="matrix(1 0 0 1 391.6667 126.6667)">
+        <path width="140" height="40" fill="rgba(243,232,255,1)" stroke="rgba(203,213,225,1)" d="m0 0 140 0 0 40-140 0z" rx="9" ry="9"/>
+        <g font-size="12" font-weight="500" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 70 20)">
+          <text fill="rgba(51,65,85,1)" stroke="none" dominant-baseline="central" dx=".6" paint-order="stroke">Missing tests</text>
+        </g>
+      </g>
+      <g stroke-width="1.2" transform="matrix(1 0 0 1 458.3333 193.3333)">
+        <path width="140" height="40" fill="rgba(250,245,255,1)" stroke="rgba(203,213,225,1)" d="m0 0 140 0 0 40-140 0z" rx="9" ry="9"/>
+        <g font-size="12" font-weight="500" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 70 20)">
+          <text fill="rgba(51,65,85,1)" stroke="none" dominant-baseline="central" dx=".6" paint-order="stroke">Build failures</text>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

@@ -2,9 +2,12 @@ import { FruchtermanLayout } from '@/src';
 import { Canvas } from '@antv/g';
 import { clear as clearMockRandom, mock as mockRandom } from 'jest-random-mock';
 import { fruchterman as fruchtermanData } from '../dataset';
-import { createCanvas, getEuclideanDistance } from '../utils';
+import {
+  calculatePositions,
+  createCanvas,
+  getEuclideanDistance,
+} from '../utils';
 import { preprocessGraphData } from '../utils/preprocess';
-import { calculatePositions } from '../utils';
 import { GraphRenderer } from '../utils/renderer';
 
 describe('FruchtermanLayout', () => {
@@ -96,7 +99,7 @@ describe('FruchtermanLayout', () => {
     fruchterman.setFixedPosition('n1', [100, 200]);
     fruchterman.tick(10);
     const positions = calculatePositions(fruchterman);
-    const node = positions.nodes.find((node) => node.id === 'n1');
+    const node = positions.nodes.find((node) => node.id === 'n1')!;
     expect(node.x).toBe(100);
     expect(node.y).toBe(200);
   });
@@ -112,7 +115,7 @@ describe('FruchtermanLayout', () => {
     fruchterman.tick(10);
 
     const positions = calculatePositions(fruchterman);
-    const node = positions.nodes.find((node) => node.id === 'n1');
+    const node = positions.nodes.find((node) => node.id === 'n1')!;
     expect(node.x).toBe(100);
     expect(node.y).toBe(200);
     expect(node.z).toBe(300);
@@ -148,7 +151,7 @@ describe('FruchtermanLayout', () => {
     const positions = calculatePositions(fruchterman);
 
     // z 轴有变化
-    const before = graph.nodes.find((n) => n.id === 'n1').data.z;
+    const before = graph.nodes.find((n) => n.id === 'n1')!.data.z;
     expect(positions.nodes[0].z).not.toBe(before);
   });
 
@@ -461,7 +464,7 @@ describe('FruchtermanLayout', () => {
     fruchterman.stop();
     fruchterman.tick(1);
     const positions = calculatePositions(fruchterman);
-    const node1 = positions.nodes.find((n) => n.id === 'n1');
+    const node1 = positions.nodes.find((n) => n.id === 'n1')!;
     expect(node1.z).toBe(3);
   });
 

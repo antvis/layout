@@ -1,5 +1,6 @@
 import { ComboCombinedLayout } from '@/src';
 import { registry } from '@/src/registry';
+import { parseSize } from '@/src/util';
 import { createCanvas } from '@@/utils/create';
 import type { Canvas } from '@antv/g';
 import { clear as clearMockRandom, mock as mockRandom } from 'jest-random-mock';
@@ -72,10 +73,12 @@ describe('layout combo-combined', () => {
 
     const comboA = nodesById.get('combo-a')!;
     const comboA1 = nodesById.get('combo-a1')!;
+    const [aWidth, aHeight] = parseSize(comboA.size);
+    const [a1Width, a1Height] = parseSize(comboA1.size);
     expect(comboA.isCombo).toBeTruthy();
     expect(comboA1.isCombo).toBeTruthy();
-    expect(comboA.size[0]).toBeGreaterThan(comboA1.size[0]);
-    expect(comboA.size[1]).toBeGreaterThan(comboA1.size[1]);
+    expect(aWidth).toBeGreaterThan(a1Width);
+    expect(aHeight).toBeGreaterThan(a1Height);
 
     const assertCombo = (comboId: string, leafNodeIds: string[]) => {
       const combo = nodesById.get(comboId);
@@ -260,12 +263,16 @@ describe('layout combo-combined', () => {
     const inner1 = byId1.get('inner')!;
     const loose1 = byId1.get('loose')!;
 
-    expect(mix1.size[0]).toBeGreaterThan(mix0.size[0]);
-    expect(mix1.size[1]).toBeGreaterThan(mix0.size[1]);
+    const [mix0Width, mix0Height] = parseSize(mix0.size);
+    const [mix1Width, mix1Height] = parseSize(mix1.size);
+    const [inner0Width, inner0Height] = parseSize(inner0.size);
+    const [inner1Width, inner1Height] = parseSize(inner1.size);
+    expect(mix1Width).toBeGreaterThan(mix0Width);
+    expect(mix1Height).toBeGreaterThan(mix0Height);
 
     // inner contains only nodes, so it should expand with comboPadding.
-    expect(inner1.size[0]).toBeGreaterThan(inner0.size[0]);
-    expect(inner1.size[1]).toBeGreaterThan(inner0.size[1]);
+    expect(inner1Width).toBeGreaterThan(inner0Width);
+    expect(inner1Height).toBeGreaterThan(inner0Height);
   });
 
   it('returns empty output for empty graph', async () => {

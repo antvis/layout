@@ -57,8 +57,6 @@ export async function render(gui?: GUI) {
   //   },
   // });
 
-  console.log('Total ticks:', tickCount2);
-
   renderer.setDragCallbacks({
     onDragStart: (nodeId, position) => {
       console.log(`🎯 Start dragging node: ${nodeId}`);

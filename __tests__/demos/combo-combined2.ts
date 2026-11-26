@@ -141,7 +141,7 @@ data.combos.forEach((combo: any) => {
     isCombo: true,
   });
 });
-delete data.combos;
+Reflect.deleteProperty(data, 'combos');
 console.log('combo combined data:', data);
 
 export function render(gui?: GUI) {

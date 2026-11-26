@@ -1,0 +1,28 @@
+import { Badge } from '@theme';
+
+# Indented 缩进树布局 <Badge text="Non-Iterative" type="tip" />
+
+按 DFS 顺序排列树节点，并根据深度设置缩进，适合目录和层级列表。
+
+## 用法
+
+```ts
+import { IndentedLayout } from '@antv/layout';
+
+const layout = new IndentedLayout({ direction: 'LR', indent: 80 });
+await layout.execute(data);
+```
+
+输入为树形数据；未指定 `rootId` 时自动选择根节点。
+
+## 核心配置
+
+| 配置项                      | 说明                 | 类型           | 默认值      |
+| --------------------------- | -------------------- | -------------- | ----------- |
+| `direction`                 | 缩进方向             | `'LR' \| 'RL'` | `'LR'`      |
+| `rootId`                    | 根节点 ID            | `string`       | 自动推断    |
+| `indent`                    | 每层缩进距离         | `number`       | `80`        |
+| `rowHeight`                 | 行高                 | `number`       | `40`        |
+| `nodeColors` / `edgeColors` | 按深度写入的颜色序列 | `string[]`     | `undefined` |
+
+布局后会在 `node.data` 中写入 `depth` 和 `_isRoot`；配置颜色时还会写入 `_nodeColor` 和 `_edgeColor`。

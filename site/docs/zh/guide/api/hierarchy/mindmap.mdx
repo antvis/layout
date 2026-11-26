@@ -1,0 +1,29 @@
+import { Badge } from '@theme';
+
+# Mindmap 脑图布局 <Badge text="Non-Iterative" type="tip" />
+
+以根节点为中心向单侧或双侧展开分支，适合脑图和主题关系展示。
+
+## 用法
+
+```ts
+import { MindmapLayout } from '@antv/layout';
+
+const layout = new MindmapLayout({ direction: 'H', levelGap: 120 });
+await layout.execute(data);
+```
+
+输入为树形数据。`H` 通过 `getSide` 分配左右分支，`LR` 和 `RL` 分别向右侧和左侧展开。
+
+## 核心配置
+
+| 配置项                   | 说明             | 类型                                             | 默认值       |
+| ------------------------ | ---------------- | ------------------------------------------------ | ------------ |
+| `direction`              | 分支方向         | `'H' \| 'LR' \| 'RL'`                            | `'H'`        |
+| `levelGap`               | 父子节点边界间距 | `number`                                         | `120`        |
+| `nodeGap`                | 相邻子节点间距   | `number`                                         | `30`         |
+| `branchColors`           | 分支颜色序列     | `string[]`                                       | 内置色板     |
+| `getWidth` / `getHeight` | 获取节点宽高     | `(node) => number`                               | `100` / `40` |
+| `getSide`                | 获取子节点所在侧 | `(node, index, parentSide) => 'left' \| 'right'` | 始终右侧     |
+
+配置 `branchColors` 后，会在 `node.data._branchColor` 中写入对应分支颜色。

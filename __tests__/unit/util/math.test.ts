@@ -1,3 +1,4 @@
+import { GraphLib } from '@/src/model/data';
 import type { EdgeData, NodeData, PointObject } from '@/src/types';
 import {
   floydWarshall,
@@ -8,7 +9,6 @@ import {
   johnson,
   scaleMatrix,
 } from '@/src/util/math';
-import { GraphLib } from '@/src/model/data';
 
 describe('getAdjMatrix', () => {
   test('should create adjacency matrix for undirected graph', () => {
@@ -63,7 +63,7 @@ describe('getAdjMatrix', () => {
     const model = new GraphLib({ nodes, edges });
     const matrix = getAdjMatrix(model, false);
 
-    expect(matrix).toEqual([[], []]);
+    expect(matrix).toEqual([Array(2), Array(2)]);
   });
 
   test('should handle single node', () => {
@@ -73,7 +73,7 @@ describe('getAdjMatrix', () => {
     const model = new GraphLib({ nodes, edges });
     const matrix = getAdjMatrix(model, false);
 
-    expect(matrix).toEqual([[]]);
+    expect(matrix).toEqual([Array(1)]);
   });
 
   test('should handle self-loop edge', () => {
@@ -123,7 +123,7 @@ describe('getAdjMatrix', () => {
     const model = new GraphLib({ nodes, edges: undefined as any });
     const matrix = getAdjMatrix(model, false);
 
-    expect(matrix).toEqual([[], []]);
+    expect(matrix).toEqual([Array(2), Array(2)]);
   });
 
   test('should handle empty nodes', () => {
