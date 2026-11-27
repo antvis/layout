@@ -1,0 +1,31 @@
+name: Publish to npm
+on:
+  push:
+    tags:
+      - 'v[0-9]*.[0-9]*.[0-9]*'
+permissions:
+  contents: read
+  id-token: write
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          registry-url: 'https://registry.npmjs.org'
+      - name: Verify tag matches package version
+        run: |
+          node -e "if (process.env.GITHUB_REF_NAME !== 'v' + require('./package.json').version) { throw new Error('Tag does not match package version'); }"
+      - name: Install dependencies
+        run: npm install
+      - name: Publish to npm
+        run: |
+          if [[ "$GITHUB_REF_NAME" == *"-alpha"* ]]; then
+            npm publish --access public --tag alpha
+          elif [[ "$GITHUB_REF_NAME" == *"-beta"* ]]; then
+            npm publish --access public --tag beta
+          else
+            npm publish --access public --tag latest
+          fi
