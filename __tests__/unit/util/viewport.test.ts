@@ -1,5 +1,5 @@
 /**
- * @jest-environment node
+ * @vitest-environment node
  */
 import { normalizeViewport } from '@/src/util/viewport';
 

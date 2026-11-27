@@ -23,6 +23,9 @@ export {
   type FruchtermanLayoutOptions,
 } from './fruchterman';
 export { GridLayout, type GridLayoutOptions } from './grid';
+export { IndentedLayout, type IndentedLayoutOptions } from './indented';
+export { MindmapLayout, type MindmapLayoutOptions } from './mindmap';
+export { FishboneLayout, type FishboneLayoutOptions } from './fishbone';
 export { MDSLayout, type MDSLayoutOptions } from './mds';
 export { RadialLayout, type RadialLayoutOptions } from './radial';
 export { RandomLayout, type RandomLayoutOptions } from './random';

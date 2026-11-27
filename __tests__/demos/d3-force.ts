@@ -1,4 +1,5 @@
 import { D3ForceLayout } from '@/src';
+import type { NodeData } from '@/src/types';
 import { Canvas } from '@antv/g';
 import { Renderer } from '@antv/g-canvas';
 import type { GUI } from 'lil-gui';
@@ -21,7 +22,7 @@ export async function render(gui?: GUI) {
   layout.execute(data, {
     width,
     height,
-    nodeSize: (d) => d.size || 10,
+    nodeSize: (d: NodeData) => d.size || 10,
     x: {},
     y: {},
     // linkDistance: 100,

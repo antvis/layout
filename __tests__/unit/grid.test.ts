@@ -1,4 +1,5 @@
-import { GridLayout, type NodeData } from '@/src';
+import { GridLayout } from '@/src';
+import type { NodeData } from '@/src/types';
 import { createCanvas } from '@@/utils/create';
 import type { Canvas } from '@antv/g';
 import { deepMix } from '@antv/util';

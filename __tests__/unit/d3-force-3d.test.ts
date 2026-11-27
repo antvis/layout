@@ -21,7 +21,7 @@ describe('d3 force 3d', () => {
   test('tick layout', async () => {
     const d3Force3D = new D3Force3DLayout();
 
-    const onTick = jest.fn();
+    const onTick = vi.fn();
 
     await d3Force3D.execute(data, {
       onTick,

@@ -1,0 +1,33 @@
+---
+title: Fishbone 鱼骨图布局
+---
+import { Badge } from '@theme';
+import { LayoutDemo } from '../../../../components/LayoutDemo';
+
+# Fishbone 鱼骨图布局
+<Badge text="Non-Iterative" type="tip" />
+
+将根节点、分类和条目组织为鱼骨图，适合按类别分析问题原因。
+
+<LayoutDemo type="fishbone" />
+
+## 用法
+
+```ts
+import { FishboneLayout } from '@antv/layout';
+
+const layout = new FishboneLayout({ direction: 'LR' });
+await layout.execute(data);
+```
+
+输入为树形数据，通过 `edges` 表达“根节点 → 分类 → 条目”的关系。
+
+## 核心配置
+
+| 配置项                   | 说明                   | 类型               | 默认值      |
+| ------------------------ | ---------------------- | ------------------ | ----------- |
+| `direction`              | 布局方向               | `'LR' \| 'RL'`     | `'LR'`      |
+| `categoryGap`            | 分类节点之间的水平间距 | `number`           | `180`       |
+| `categoryDistance`       | 分类节点到主干的距离   | `number`           | `200`       |
+| `itemHStep`              | 条目节点的额外水平偏移 | `number`           | `20`        |
+| `getWidth` / `getHeight` | 获取节点宽高           | `(node) => number` | `80` / `30` |

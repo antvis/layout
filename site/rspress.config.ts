@@ -20,6 +20,7 @@ export default defineConfig({
 
   route: {
     cleanUrls: true,
+    exclude: ['components/**'],
   },
 
   // 默认语言

@@ -1,4 +1,7 @@
-import { D3ForceLayout } from '@/src';
+import { D3ForceLayout, type D3ForceLayoutOptions } from '@/src';
+import type { Layout } from '@/src/algorithm/types';
+import type { EdgeData, NodeData } from '@/src/types';
+import { parseSize } from '@/src/util';
 import { createCanvas } from '@@/utils/create';
 import type { Canvas } from '@antv/g';
 import { clear as clearMockRandom, mock as mockRandom } from 'jest-random-mock';
@@ -22,8 +25,8 @@ describe('layout d3-force', () => {
     mockRandom();
     canvas = createCanvas(null, 700, 700);
     renderer = new GraphRenderer(canvas);
-    width = canvas.getConfig().width;
-    height = canvas.getConfig().height;
+    width = canvas.getConfig().width!;
+    height = canvas.getConfig().height!;
   });
 
   afterEach(() => {
@@ -47,7 +50,7 @@ describe('layout d3-force', () => {
   it('should render inside specified viewport', async () => {
     const constrainBox = { x: 60, y: 50, width: 500, height: 150 };
 
-    const onTick = (layout) => {
+    const onTick = (layout: Layout<any>) => {
       let minx = 99999999;
       let maxx = -99999999;
       let miny = 99999999;
@@ -66,8 +69,9 @@ describe('layout d3-force', () => {
         if (maxy < node.y) {
           maxy = node.y;
         }
-        if (maxsize < node.size) {
-          maxsize = node.size;
+        const [size] = parseSize(node.size);
+        if (maxsize < size) {
+          maxsize = size;
         }
       });
       const scalex = (constrainBox.width - maxsize) / (maxx - minx);
@@ -278,7 +282,7 @@ describe('layout d3-force', () => {
     };
     const d3Force = new D3ForceLayout();
     await d3Force.execute(positionGraph, {
-      node: (d) => ({
+      node: (d: NodeData) => ({
         id: d.id,
         x: d.data.x,
         y: d.data.y,
@@ -478,7 +482,7 @@ describe('layout d3-force', () => {
   });
 
   it('should handle disabled forces', async () => {
-    const d3Force = new D3ForceLayout({
+    const d3Force = new D3ForceLayout<D3ForceLayoutOptions>({
       width,
       height,
       center: false,
@@ -498,11 +502,11 @@ describe('layout d3-force', () => {
     const d3Force = new D3ForceLayout({
       width,
       height,
-      nodeSize: (d) => (d.id === 'a' ? 20 : 10),
-      nodeSpacing: (d) => (d.id === 'a' ? 5 : 2),
-      nodeStrength: (d) => (d.id === 'a' ? -50 : -30),
-      linkDistance: (d) => (d.source === 'a' ? 100 : 50),
-      edgeStrength: (d) => (d.source === 'a' ? 0.8 : 0.5),
+      nodeSize: (d: NodeData) => (d.id === 'a' ? 20 : 10),
+      nodeSpacing: (d: NodeData) => (d.id === 'a' ? 5 : 2),
+      nodeStrength: (d: NodeData) => (d.id === 'a' ? -50 : -30),
+      linkDistance: (d: EdgeData) => (d.source === 'a' ? 100 : 50),
+      edgeStrength: (d: EdgeData) => (d.source === 'a' ? 0.8 : 0.5),
       x: {},
       y: {},
     });
@@ -550,5 +554,17 @@ describe('layout d3-force', () => {
     await d3Force.execute(getData());
     await renderLayout(d3Force);
     await expect(canvas).toMatchSnapshot(__filename, 'lattice');
+  });
+
+  it('should stop simulation when destroyed during execution', () => {
+    vi.useFakeTimers();
+    try {
+      const layout = new D3ForceLayout();
+      void layout.execute(data);
+      layout.destroy();
+      expect(() => vi.runAllTicks()).not.toThrow();
+    } finally {
+      vi.useRealTimers();
+    }
   });
 });

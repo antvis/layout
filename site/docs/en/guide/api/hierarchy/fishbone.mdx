@@ -1,0 +1,33 @@
+---
+title: Fishbone Layout
+---
+import { Badge } from '@theme';
+import { LayoutDemo } from '../../../../components/LayoutDemo';
+
+# Fishbone Layout
+<Badge text="Non-Iterative" type="tip" />
+
+Arrange a root, categories, and items as a fishbone diagram for category-based analysis.
+
+<LayoutDemo type="fishbone" />
+
+## Usage
+
+```ts
+import { FishboneLayout } from '@antv/layout';
+
+const layout = new FishboneLayout({ direction: 'LR' });
+await layout.execute(data);
+```
+
+Provide tree data whose edges express the root → category → item hierarchy.
+
+## Main options
+
+| Option                   | Description                           | Type               | Default     |
+| ------------------------ | ------------------------------------- | ------------------ | ----------- |
+| `direction`              | Layout direction                      | `'LR' \| 'RL'`     | `'LR'`      |
+| `categoryGap`            | Horizontal gap between categories     | `number`           | `180`       |
+| `categoryDistance`       | Distance from a category to the spine | `number`           | `200`       |
+| `itemHStep`              | Extra horizontal offset for items     | `number`           | `20`        |
+| `getWidth` / `getHeight` | Get node width or height              | `(node) => number` | `80` / `30` |

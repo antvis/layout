@@ -1,0 +1,234 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="520" color-interpolation-filters="sRGB" style="background: none; touch-action: none;">
+  <g transform="matrix(1 0 0 1 0 0)">
+    <g fill="none" stroke="none" stroke-dashoffset="0" font-family="sans-serif" font-size="16" font-style="normal" font-variant="normal" font-weight="normal" text-anchor="left" transform="matrix(1 0 0 1 0 0)" visibility="visible">
+      <g stroke-width="1.2" pointer-events="none" transform="matrix(1 0 0 1 320 184)">
+        <line x1="230" x2="0" y1="76" y2="0" fill="none" stroke="rgba(203,213,225,1)"/>
+      </g>
+      <g stroke-width="1.2" pointer-events="none" transform="matrix(1 0 0 1 550 184)">
+        <line x1="0" x2="230" y1="76" y2="0" fill="none" stroke="rgba(203,213,225,1)"/>
+      </g>
+      <g stroke-width="1.2" pointer-events="none" transform="matrix(1 0 0 1 320 260)">
+        <line x1="230" x2="0" y1="0" y2="0" fill="none" stroke="rgba(203,213,225,1)"/>
+      </g>
+      <g stroke-width="1.2" pointer-events="none" transform="matrix(1 0 0 1 550 260)">
+        <line x1="0" x2="230" y1="0" y2="0" fill="none" stroke="rgba(203,213,225,1)"/>
+      </g>
+      <g stroke-width="1.2" pointer-events="none" transform="matrix(1 0 0 1 320 260)">
+        <line x1="230" x2="0" y1="0" y2="76" fill="none" stroke="rgba(203,213,225,1)"/>
+      </g>
+      <g stroke-width="1.2" pointer-events="none" transform="matrix(1 0 0 1 550 260)">
+        <line x1="0" x2="230" y1="0" y2="76" fill="none" stroke="rgba(203,213,225,1)"/>
+      </g>
+      <g stroke-width="1.2" pointer-events="none" transform="matrix(1 0 0 1 90 184)">
+        <line x1="230" x2="0" y1="0" y2="0" fill="none" stroke="rgba(203,213,225,1)"/>
+      </g>
+      <g stroke-width="1.2" pointer-events="none" transform="matrix(1 0 0 1 780 184)">
+        <line x1="0" x2="230" y1="0" y2="0" fill="none" stroke="rgba(203,213,225,1)"/>
+      </g>
+      <g stroke-width="1.2" pointer-events="none" transform="matrix(1 0 0 1 90 260)">
+        <line x1="230" x2="0" y1="0" y2="0" fill="none" stroke="rgba(203,213,225,1)"/>
+      </g>
+      <g stroke-width="1.2" pointer-events="none" transform="matrix(1 0 0 1 780 260)">
+        <line x1="0" x2="230" y1="0" y2="0" fill="none" stroke="rgba(203,213,225,1)"/>
+      </g>
+      <g stroke-width="1.2" pointer-events="none" transform="matrix(1 0 0 1 90 336)">
+        <line x1="230" x2="0" y1="0" y2="0" fill="none" stroke="rgba(203,213,225,1)"/>
+      </g>
+      <g stroke-width="1.2" pointer-events="none" transform="matrix(1 0 0 1 780 336)">
+        <line x1="0" x2="230" y1="0" y2="0" fill="none" stroke="rgba(203,213,225,1)"/>
+      </g>
+      <g stroke-width="1.2" transform="matrix(1 0 0 1 480 240)">
+        <path width="140" height="40" fill="rgba(254,243,199,1)" stroke="rgba(217,119,6,1)" d="m0 0 140 0 0 40-140 0z" rx="9" ry="9"/>
+        <g font-size="12" font-weight="500" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 70 20)">
+          <text fill="rgba(51,65,85,1)" stroke="none" dominant-baseline="central" dx=".6" paint-order="stroke">Product Strategy</text>
+        </g>
+      </g>
+      <g stroke-width="1.2" transform="matrix(1 0 0 1 250 164)">
+        <path width="140" height="40" fill="rgba(191,219,254,1)" stroke="rgba(191,219,254,1)" d="m0 0 140 0 0 40-140 0z" rx="9" ry="9"/>
+        <g font-size="12" font-weight="500" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 70 20)">
+          <text fill="rgba(51,65,85,1)" stroke="none" dominant-baseline="central" dx=".6" paint-order="stroke">Research</text>
+        </g>
+      </g>
+      <g stroke-width="1.2" transform="matrix(1 0 0 1 710 164)">
+        <path width="140" height="40" fill="rgba(251,207,232,1)" stroke="rgba(251,207,232,1)" d="m0 0 140 0 0 40-140 0z" rx="9" ry="9"/>
+        <g font-size="12" font-weight="500" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 70 20)">
+          <text fill="rgba(51,65,85,1)" stroke="none" dominant-baseline="central" dx=".6" paint-order="stroke">Design</text>
+        </g>
+      </g>
+      <g stroke-width="1.2" transform="matrix(1 0 0 1 250 240)">
+        <path width="140" height="40" fill="rgba(191,219,254,1)" stroke="rgba(191,219,254,1)" d="m0 0 140 0 0 40-140 0z" rx="9" ry="9"/>
+        <g font-size="12" font-weight="500" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 70 20)">
+          <text fill="rgba(51,65,85,1)" stroke="none" dominant-baseline="central" dx=".6" paint-order="stroke">Delivery</text>
+        </g>
+      </g>
+      <g stroke-width="1.2" transform="matrix(1 0 0 1 710 240)">
+        <path width="140" height="40" fill="rgba(251,207,232,1)" stroke="rgba(251,207,232,1)" d="m0 0 140 0 0 40-140 0z" rx="9" ry="9"/>
+        <g font-size="12" font-weight="500" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 70 20)">
+          <text fill="rgba(51,65,85,1)" stroke="none" dominant-baseline="central" dx=".6" paint-order="stroke">Engineering</text>
+        </g>
+      </g>
+      <g stroke-width="1.2" transform="matrix(1 0 0 1 250 316)">
+        <path width="140" height="40" fill="rgba(191,219,254,1)" stroke="rgba(191,219,254,1)" d="m0 0 140 0 0 40-140 0z" rx="9" ry="9"/>
+        <g font-size="12" font-weight="500" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 70 20)">
+          <text fill="rgba(51,65,85,1)" stroke="none" dominant-baseline="central" dx=".6" paint-order="stroke">Quality</text>
+        </g>
+      </g>
+      <g stroke-width="1.2" transform="matrix(1 0 0 1 710 316)">
+        <path width="140" height="40" fill="rgba(251,207,232,1)" stroke="rgba(251,207,232,1)" d="m0 0 140 0 0 40-140 0z" rx="9" ry="9"/>
+        <g font-size="12" font-weight="500" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 70 20)">
+          <text fill="rgba(51,65,85,1)" stroke="none" dominant-baseline="central" dx=".6" paint-order="stroke">Growth</text>
+        </g>
+      </g>
+      <g stroke-width="1.2" transform="matrix(1 0 0 1 20 164)">
+        <path width="140" height="40" fill="rgba(239,246,255,1)" stroke="rgba(191,219,254,1)" d="m0 0 140 0 0 40-140 0z" rx="9" ry="9"/>
+        <g font-size="12" font-weight="500" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 70 20)">
+          <text fill="rgba(51,65,85,1)" stroke="none" dominant-baseline="central" dx=".6" paint-order="stroke">Interviews</text>
+        </g>
+      </g>
+      <g stroke-width="1.2" transform="matrix(1 0 0 1 940 164)">
+        <path width="140" height="40" fill="rgba(255,241,242,1)" stroke="rgba(251,207,232,1)" d="m0 0 140 0 0 40-140 0z" rx="9" ry="9"/>
+        <g font-size="12" font-weight="500" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 70 20)">
+          <text fill="rgba(51,65,85,1)" stroke="none" dominant-baseline="central" dx=".6" paint-order="stroke">Prototypes</text>
+        </g>
+      </g>
+      <g stroke-width="1.2" transform="matrix(1 0 0 1 20 240)">
+        <path width="140" height="40" fill="rgba(239,246,255,1)" stroke="rgba(191,219,254,1)" d="m0 0 140 0 0 40-140 0z" rx="9" ry="9"/>
+        <g font-size="12" font-weight="500" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 70 20)">
+          <text fill="rgba(51,65,85,1)" stroke="none" dominant-baseline="central" dx=".6" paint-order="stroke">Milestones</text>
+        </g>
+      </g>
+      <g stroke-width="1.2" transform="matrix(1 0 0 1 940 240)">
+        <path width="140" height="40" fill="rgba(255,241,242,1)" stroke="rgba(251,207,232,1)" d="m0 0 140 0 0 40-140 0z" rx="9" ry="9"/>
+        <g font-size="12" font-weight="500" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 70 20)">
+          <text fill="rgba(51,65,85,1)" stroke="none" dominant-baseline="central" dx=".6" paint-order="stroke">Architecture</text>
+        </g>
+      </g>
+      <g stroke-width="1.2" transform="matrix(1 0 0 1 20 316)">
+        <path width="140" height="40" fill="rgba(239,246,255,1)" stroke="rgba(191,219,254,1)" d="m0 0 140 0 0 40-140 0z" rx="9" ry="9"/>
+        <g font-size="12" font-weight="500" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 70 20)">
+          <text fill="rgba(51,65,85,1)" stroke="none" dominant-baseline="central" dx=".6" paint-order="stroke">Automation</text>
+        </g>
+      </g>
+      <g stroke-width="1.2" transform="matrix(1 0 0 1 940 316)">
+        <path width="140" height="40" fill="rgba(255,241,242,1)" stroke="rgba(251,207,232,1)" d="m0 0 140 0 0 40-140 0z" rx="9" ry="9"/>
+        <g font-size="12" font-weight="500" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 70 20)">
+          <text fill="rgba(51,65,85,1)" stroke="none" dominant-baseline="central" dx=".6" paint-order="stroke">Activation</text>
+        </g>
+      </g>
+      <g stroke-width="1.2" pointer-events="none" transform="matrix(1 0 0 1 320 184)">
+        <line x1="230" x2="0" y1="76" y2="0" fill="none" stroke="rgba(203,213,225,1)"/>
+      </g>
+      <g stroke-width="1.2" pointer-events="none" transform="matrix(1 0 0 1 550 184)">
+        <line x1="0" x2="230" y1="76" y2="0" fill="none" stroke="rgba(203,213,225,1)"/>
+      </g>
+      <g stroke-width="1.2" pointer-events="none" transform="matrix(1 0 0 1 320 260)">
+        <line x1="230" x2="0" y1="0" y2="0" fill="none" stroke="rgba(203,213,225,1)"/>
+      </g>
+      <g stroke-width="1.2" pointer-events="none" transform="matrix(1 0 0 1 550 260)">
+        <line x1="0" x2="230" y1="0" y2="0" fill="none" stroke="rgba(203,213,225,1)"/>
+      </g>
+      <g stroke-width="1.2" pointer-events="none" transform="matrix(1 0 0 1 320 260)">
+        <line x1="230" x2="0" y1="0" y2="76" fill="none" stroke="rgba(203,213,225,1)"/>
+      </g>
+      <g stroke-width="1.2" pointer-events="none" transform="matrix(1 0 0 1 550 260)">
+        <line x1="0" x2="230" y1="0" y2="76" fill="none" stroke="rgba(203,213,225,1)"/>
+      </g>
+      <g stroke-width="1.2" pointer-events="none" transform="matrix(1 0 0 1 90 184)">
+        <line x1="230" x2="0" y1="0" y2="0" fill="none" stroke="rgba(203,213,225,1)"/>
+      </g>
+      <g stroke-width="1.2" pointer-events="none" transform="matrix(1 0 0 1 780 184)">
+        <line x1="0" x2="230" y1="0" y2="0" fill="none" stroke="rgba(203,213,225,1)"/>
+      </g>
+      <g stroke-width="1.2" pointer-events="none" transform="matrix(1 0 0 1 90 260)">
+        <line x1="230" x2="0" y1="0" y2="0" fill="none" stroke="rgba(203,213,225,1)"/>
+      </g>
+      <g stroke-width="1.2" pointer-events="none" transform="matrix(1 0 0 1 780 260)">
+        <line x1="0" x2="230" y1="0" y2="0" fill="none" stroke="rgba(203,213,225,1)"/>
+      </g>
+      <g stroke-width="1.2" pointer-events="none" transform="matrix(1 0 0 1 90 336)">
+        <line x1="230" x2="0" y1="0" y2="0" fill="none" stroke="rgba(203,213,225,1)"/>
+      </g>
+      <g stroke-width="1.2" pointer-events="none" transform="matrix(1 0 0 1 780 336)">
+        <line x1="0" x2="230" y1="0" y2="0" fill="none" stroke="rgba(203,213,225,1)"/>
+      </g>
+      <g stroke-width="1.2" transform="matrix(1 0 0 1 480 240)">
+        <path width="140" height="40" fill="rgba(254,243,199,1)" stroke="rgba(217,119,6,1)" d="m0 0 140 0 0 40-140 0z" rx="9" ry="9"/>
+        <g font-size="12" font-weight="500" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 70 20)">
+          <text fill="rgba(51,65,85,1)" stroke="none" dominant-baseline="central" dx=".6" paint-order="stroke">Product Strategy</text>
+        </g>
+      </g>
+      <g stroke-width="1.2" transform="matrix(1 0 0 1 250 164)">
+        <path width="140" height="40" fill="rgba(191,219,254,1)" stroke="rgba(191,219,254,1)" d="m0 0 140 0 0 40-140 0z" rx="9" ry="9"/>
+        <g font-size="12" font-weight="500" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 70 20)">
+          <text fill="rgba(51,65,85,1)" stroke="none" dominant-baseline="central" dx=".6" paint-order="stroke">Research</text>
+        </g>
+      </g>
+      <g stroke-width="1.2" transform="matrix(1 0 0 1 710 164)">
+        <path width="140" height="40" fill="rgba(251,207,232,1)" stroke="rgba(251,207,232,1)" d="m0 0 140 0 0 40-140 0z" rx="9" ry="9"/>
+        <g font-size="12" font-weight="500" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 70 20)">
+          <text fill="rgba(51,65,85,1)" stroke="none" dominant-baseline="central" dx=".6" paint-order="stroke">Design</text>
+        </g>
+      </g>
+      <g stroke-width="1.2" transform="matrix(1 0 0 1 250 240)">
+        <path width="140" height="40" fill="rgba(191,219,254,1)" stroke="rgba(191,219,254,1)" d="m0 0 140 0 0 40-140 0z" rx="9" ry="9"/>
+        <g font-size="12" font-weight="500" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 70 20)">
+          <text fill="rgba(51,65,85,1)" stroke="none" dominant-baseline="central" dx=".6" paint-order="stroke">Delivery</text>
+        </g>
+      </g>
+      <g stroke-width="1.2" transform="matrix(1 0 0 1 710 240)">
+        <path width="140" height="40" fill="rgba(251,207,232,1)" stroke="rgba(251,207,232,1)" d="m0 0 140 0 0 40-140 0z" rx="9" ry="9"/>
+        <g font-size="12" font-weight="500" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 70 20)">
+          <text fill="rgba(51,65,85,1)" stroke="none" dominant-baseline="central" dx=".6" paint-order="stroke">Engineering</text>
+        </g>
+      </g>
+      <g stroke-width="1.2" transform="matrix(1 0 0 1 250 316)">
+        <path width="140" height="40" fill="rgba(191,219,254,1)" stroke="rgba(191,219,254,1)" d="m0 0 140 0 0 40-140 0z" rx="9" ry="9"/>
+        <g font-size="12" font-weight="500" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 70 20)">
+          <text fill="rgba(51,65,85,1)" stroke="none" dominant-baseline="central" dx=".6" paint-order="stroke">Quality</text>
+        </g>
+      </g>
+      <g stroke-width="1.2" transform="matrix(1 0 0 1 710 316)">
+        <path width="140" height="40" fill="rgba(251,207,232,1)" stroke="rgba(251,207,232,1)" d="m0 0 140 0 0 40-140 0z" rx="9" ry="9"/>
+        <g font-size="12" font-weight="500" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 70 20)">
+          <text fill="rgba(51,65,85,1)" stroke="none" dominant-baseline="central" dx=".6" paint-order="stroke">Growth</text>
+        </g>
+      </g>
+      <g stroke-width="1.2" transform="matrix(1 0 0 1 20 164)">
+        <path width="140" height="40" fill="rgba(239,246,255,1)" stroke="rgba(191,219,254,1)" d="m0 0 140 0 0 40-140 0z" rx="9" ry="9"/>
+        <g font-size="12" font-weight="500" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 70 20)">
+          <text fill="rgba(51,65,85,1)" stroke="none" dominant-baseline="central" dx=".6" paint-order="stroke">Interviews</text>
+        </g>
+      </g>
+      <g stroke-width="1.2" transform="matrix(1 0 0 1 940 164)">
+        <path width="140" height="40" fill="rgba(255,241,242,1)" stroke="rgba(251,207,232,1)" d="m0 0 140 0 0 40-140 0z" rx="9" ry="9"/>
+        <g font-size="12" font-weight="500" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 70 20)">
+          <text fill="rgba(51,65,85,1)" stroke="none" dominant-baseline="central" dx=".6" paint-order="stroke">Prototypes</text>
+        </g>
+      </g>
+      <g stroke-width="1.2" transform="matrix(1 0 0 1 20 240)">
+        <path width="140" height="40" fill="rgba(239,246,255,1)" stroke="rgba(191,219,254,1)" d="m0 0 140 0 0 40-140 0z" rx="9" ry="9"/>
+        <g font-size="12" font-weight="500" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 70 20)">
+          <text fill="rgba(51,65,85,1)" stroke="none" dominant-baseline="central" dx=".6" paint-order="stroke">Milestones</text>
+        </g>
+      </g>
+      <g stroke-width="1.2" transform="matrix(1 0 0 1 940 240)">
+        <path width="140" height="40" fill="rgba(255,241,242,1)" stroke="rgba(251,207,232,1)" d="m0 0 140 0 0 40-140 0z" rx="9" ry="9"/>
+        <g font-size="12" font-weight="500" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 70 20)">
+          <text fill="rgba(51,65,85,1)" stroke="none" dominant-baseline="central" dx=".6" paint-order="stroke">Architecture</text>
+        </g>
+      </g>
+      <g stroke-width="1.2" transform="matrix(1 0 0 1 20 316)">
+        <path width="140" height="40" fill="rgba(239,246,255,1)" stroke="rgba(191,219,254,1)" d="m0 0 140 0 0 40-140 0z" rx="9" ry="9"/>
+        <g font-size="12" font-weight="500" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 70 20)">
+          <text fill="rgba(51,65,85,1)" stroke="none" dominant-baseline="central" dx=".6" paint-order="stroke">Automation</text>
+        </g>
+      </g>
+      <g stroke-width="1.2" transform="matrix(1 0 0 1 940 316)">
+        <path width="140" height="40" fill="rgba(255,241,242,1)" stroke="rgba(251,207,232,1)" d="m0 0 140 0 0 40-140 0z" rx="9" ry="9"/>
+        <g font-size="12" font-weight="500" pointer-events="none" text-anchor="middle" transform="matrix(1 0 0 1 70 20)">
+          <text fill="rgba(51,65,85,1)" stroke="none" dominant-baseline="central" dx=".6" paint-order="stroke">Activation</text>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

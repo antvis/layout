@@ -2,7 +2,7 @@ import * as lil from 'lil-gui';
 import * as demos from './demos';
 
 // GUI
-const $container = document.getElementById('container');
+const $container = document.getElementById('container')!;
 let gui = new lil.GUI({ autoPlace: false });
 $container.appendChild(gui.domElement);
 

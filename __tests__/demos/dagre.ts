@@ -1,4 +1,5 @@
 import { DagreLayout } from '@/src';
+import { parseSize } from '@/src/util';
 import { Canvas } from '@antv/g';
 import { Renderer } from '@antv/g-canvas';
 import type { GUI } from 'lil-gui';
@@ -58,11 +59,12 @@ export function render(gui?: GUI) {
     });
 
     dagre.forEachNode((node) => {
+      const [nodeWidth, nodeHeight] = parseSize(node.size);
       renderer.updateNodeAttributes(node.id, {
-        x: node.x - node.size[0] / 2,
-        y: node.y - node.size[1] / 2,
-        width: node.size[0],
-        height: node.size[1],
+        x: node.x - nodeWidth / 2,
+        y: node.y - nodeHeight / 2,
+        width: nodeWidth,
+        height: nodeHeight,
         zIndex: node._original.isCombo ? 0 : 1,
         fillOpacity: node._original.isCombo ? 0.3 : 1,
       });

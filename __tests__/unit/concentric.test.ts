@@ -2,8 +2,7 @@ import { ConcentricLayout } from '@/src';
 import { createCanvas } from '@@/utils/create';
 import type { Canvas } from '@antv/g';
 import { countries as data } from '../dataset';
-import { GraphRenderer, RenderOptions } from '../utils';
-import { calculatePositions } from '../utils';
+import { calculatePositions, GraphRenderer, RenderOptions } from '../utils';
 
 describe('layout concentric', () => {
   let canvas: Canvas;
@@ -25,7 +24,7 @@ describe('layout concentric', () => {
     canvas = createCanvas();
     const { width, height } = canvas.getConfig();
     concentricLayout = new ConcentricLayout({
-      center: [width / 2, height / 2],
+      center: [width! / 2, height! / 2],
     });
     renderer = new GraphRenderer(canvas);
   });

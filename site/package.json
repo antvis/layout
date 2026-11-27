@@ -13,10 +13,14 @@
   "keywords": [],
   "author": "yvonneyx",
   "devDependencies": {
-    "@rspress/plugin-playground": "^1.47.0",
-    "rspress": "^1.47.0",
     "@antv/g-canvas": "^1.11.27",
     "@antv/g-lite": "^2.5.1",
-    "@antv/layout": "file:../"
+    "@antv/layout": "file:../",
+    "@rspress/plugin-playground": "^1.47.0",
+    "@types/d3-selection": "^3.0.13",
+    "@types/three": "^0.187.0",
+    "d3-selection": "^3.0.1",
+    "rspress": "^1.47.0",
+    "three": "^0.187.0"
   }
 }

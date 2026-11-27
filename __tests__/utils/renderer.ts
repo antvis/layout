@@ -1,42 +1,11 @@
-import { Layout } from '@/src/core/types';
-import { Point } from '@/src/types';
-import { LayoutEdge, LayoutNode } from '@/src/types/data';
+import type { Layout } from '@/src/algorithm/types';
+import type { Point } from '@/src/types';
+import type { GraphData, LayoutEdge, LayoutNode } from '@/src/types/data';
+import type { TextStyleProps } from '@antv/g';
 import { Canvas, Circle, Line, Polyline, Rect, Text } from '@antv/g';
 import { Renderer } from '@antv/g-canvas';
 import { deepMix } from '@antv/util';
 import interact from 'interactjs';
-
-export interface GraphNode {
-  id: string | number;
-  data?: {
-    x: number;
-    y: number;
-    shape?: 'circle' | 'rect';
-    width?: number;
-    height?: number;
-    [key: string]: any;
-  };
-  style?: {
-    fill?: string;
-    stroke?: string;
-    lineWidth?: number;
-    radius?: number;
-    [key: string]: any;
-  };
-  [key: string]: any;
-}
-
-export interface GraphEdge {
-  id: string | number;
-  source: string | number;
-  target: string | number;
-  [key: string]: any;
-}
-
-export interface GraphData {
-  nodes: GraphNode[];
-  edges?: GraphEdge[];
-}
 
 export interface RenderOptions {
   nodeRadius?: number;
@@ -46,6 +15,8 @@ export interface RenderOptions {
     fill?: string;
     stroke?: string;
     lineWidth?: number;
+    rx?: number;
+    ry?: number;
   };
   edgeShape?: 'line' | 'polyline';
   edgeStyle?: {
@@ -55,7 +26,7 @@ export interface RenderOptions {
   labelStyle?: {
     fontSize?: number;
     fill?: string;
-    fontWeight?: CSSStyleDeclaration['fontWeight'];
+    fontWeight?: TextStyleProps['fontWeight'];
     [key: string]: any;
   };
   showLabel?: boolean;
@@ -196,6 +167,8 @@ export class GraphRenderer {
     data?: GraphData,
   ): Circle | Rect {
     const nodeData = data?.nodes.find((n) => n.id === node.id);
+    const nodeColor =
+      nodeData?.data?._branchColor || nodeData?.data?._nodeColor;
     const shape = options.nodeShape;
 
     let elem;
@@ -212,6 +185,10 @@ export class GraphRenderer {
           width,
           height,
           ...options.nodeStyle,
+          ...nodeData?.style,
+          fill: nodeData?.style?.fill || nodeColor || options.nodeStyle.fill,
+          stroke:
+            nodeData?.style?.stroke || nodeColor || options.nodeStyle.stroke,
           cursor: options.enableDrag ? 'grab' : 'default',
         },
       });
@@ -222,8 +199,9 @@ export class GraphRenderer {
           cx: node.x,
           cy: node.y,
           r: options.nodeRadius,
-          fill: nodeData?.style?.fill || options.nodeStyle.fill,
-          stroke: nodeData?.style?.stroke || options.nodeStyle.stroke,
+          fill: nodeData?.style?.fill || nodeColor || options.nodeStyle.fill,
+          stroke:
+            nodeData?.style?.stroke || nodeColor || options.nodeStyle.stroke,
           lineWidth: nodeData?.style?.lineWidth || options.nodeStyle.lineWidth,
           cursor: options.enableDrag ? 'grab' : 'default',
         },
@@ -233,8 +211,8 @@ export class GraphRenderer {
     if (options.showLabel) {
       const label = new Text({
         style: {
-          x: 0,
-          y: 0,
+          x: shape === 'rect' ? options.nodeSize.width / 2 : 0,
+          y: shape === 'rect' ? options.nodeSize.height / 2 : 0,
           text: String(node.id),
           textAlign: 'center',
           textBaseline: 'middle',
@@ -438,7 +416,7 @@ export class GraphRenderer {
 }
 
 export function calculatePositions(layout: Layout<any>) {
-  const results: any = {
+  const results: { nodes: LayoutNode[]; edges: LayoutEdge[] } = {
     nodes: [],
     edges: [],
   };
