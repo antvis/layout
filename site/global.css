@@ -137,6 +137,98 @@
   }
 }
 
+/* Live layout demos */
+.layoutDemo {
+  margin: 16px 0 24px;
+  overflow: hidden;
+  border: 1px solid var(--rp-c-divider-light);
+  border-radius: 12px;
+  background: var(--rp-c-bg);
+}
+
+.layoutDemoToolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--rp-c-divider-light);
+  color: var(--rp-c-text-3);
+  font-size: 12px;
+}
+
+.layoutDemoMeta {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.layoutDemoMeta strong {
+  color: var(--rp-c-text-2);
+  font-weight: 500;
+}
+
+.layoutDemoMeta span {
+  color: var(--rp-c-text-3);
+  font-size: 11px;
+}
+
+.layoutDemoToolbar button {
+  padding: 3px 10px;
+  border: 1px solid var(--rp-c-divider-light);
+  border-radius: 6px;
+  background: var(--rp-c-bg-soft);
+  color: var(--rp-c-text-2);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.layoutDemoToolbar button:hover:not(:disabled) {
+  border-color: var(--rp-c-brand);
+  color: var(--rp-c-brand);
+}
+
+.layoutDemoToolbar button:disabled {
+  cursor: wait;
+  opacity: 0.55;
+}
+
+.layoutDemoCanvas {
+  position: relative;
+  background: var(--rp-c-bg-soft);
+}
+
+.layoutDemoCanvas svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  transition: opacity 150ms ease;
+}
+
+.layoutDemo[data-status='loading'] svg {
+  opacity: 0.5;
+}
+
+.layoutThreeCanvas {
+  aspect-ratio: 16 / 9;
+}
+
+.layoutThreeCanvas canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.layoutDemoError {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  color: var(--rp-c-text-2);
+  background: var(--rp-c-bg-soft);
+  text-align: center;
+}
+
 /* Perf dashboard */
 .rspress-sidebar-menu-container.no-toc + .rspress-doc-container .rspress-doc {
   max-width: 1240px;

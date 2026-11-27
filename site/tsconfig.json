@@ -10,6 +10,7 @@
     "isolatedModules": true,
     "resolveJsonModule": true,
     "moduleResolution": "bundler",
+    "types": ["vite/client"],
     "useDefineForClassFields": true,
     "allowImportingTsExtensions": true
   },

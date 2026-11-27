@@ -95,6 +95,11 @@ export class D3ForceLayout<
     return this;
   }
 
+  public destroy(): void {
+    this.stop();
+    super.destroy();
+  }
+
   public tick(iterations: number = 1): this {
     if (this.simulation) {
       for (let i = 0; i < iterations; i++) {

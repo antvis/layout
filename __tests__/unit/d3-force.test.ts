@@ -473,4 +473,16 @@ describe('layout d3-force', () => {
     await renderLayout(d3Force);
     await expect(canvas).toMatchSnapshot(__filename, 'lattice');
   });
+
+  it('should stop simulation when destroyed during execution', () => {
+    vi.useFakeTimers();
+    try {
+      const layout = new D3ForceLayout();
+      void layout.execute(data);
+      layout.destroy();
+      expect(() => vi.runAllTicks()).not.toThrow();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 });

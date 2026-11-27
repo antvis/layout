@@ -34,4 +34,18 @@ export {
   type RadialLayoutOptions,
   RandomLayout,
   type RandomLayoutOptions,
+  // Others
+  isLayoutWithIterations,
 } from './algorithm';
+
+// Types
+export {
+  type GraphData,
+  type GraphEdge,
+  type GraphNode,
+} from './types';
+
+export {
+  type Layout,
+  type LayoutWithIterations
+} from './algorithm/types';
