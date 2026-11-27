@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-01-13T02:33:11.488Z",
+  "generatedAt": "2026-11-27T11:13:11.932Z",
   "sourceDir": "../perf/reports",
   "defaultReport": "c593cabd_2025-12-16_22-31-41.json",
   "reports": [
@@ -7,7 +7,7 @@
       "file": "c593cabd_2025-12-16_22-31-41.json",
       "repo": "4e8803d72bf0cec4527fc406c458aea56bab4186",
       "repoShort": "4e8803d",
-      "timestampMs": 1765895501000,
+      "timestampMs": 1765924301000,
       "benchmarks": 98,
       "deviceLabel": "M2 (8 cores)",
       "osLabel": "macOS"
@@ -16,7 +16,7 @@
       "file": "c593cabd_2025-12-06_11-35-56.json",
       "repo": "907d667d4c8a159535a5a5c1ec704d513ca12ac2",
       "repoShort": "907d667",
-      "timestampMs": 1764992156000,
+      "timestampMs": 1765020956000,
       "benchmarks": 88,
       "deviceLabel": "M2 (8 cores)",
       "osLabel": "macOS"
@@ -25,7 +25,7 @@
       "file": "c593cabd_2025-12-03_14-41-27.json",
       "repo": "7450fd1917186d0d5e969924e67e6599b5797ce5",
       "repoShort": "7450fd1",
-      "timestampMs": 1764744087000,
+      "timestampMs": 1764772887000,
       "benchmarks": 30,
       "deviceLabel": "M2 (8 cores)",
       "osLabel": "macOS"
@@ -34,7 +34,7 @@
       "file": "c593cabd_2025-12-03_12-04-21.json",
       "repo": "7450fd1917186d0d5e969924e67e6599b5797ce5",
       "repoShort": "7450fd1",
-      "timestampMs": 1764734661000,
+      "timestampMs": 1764763461000,
       "benchmarks": 44,
       "deviceLabel": "M2 (8 cores)",
       "osLabel": "macOS"
@@ -43,7 +43,7 @@
       "file": "9821ed36_2024-08-29_15-29-12.json",
       "repo": "ee6714c42b02ba09912e17bc405d2607caf25e69",
       "repoShort": "ee6714c",
-      "timestampMs": 1724916552000,
+      "timestampMs": 1724945352000,
       "benchmarks": 1,
       "deviceLabel": "M1 Pro (10 cores)",
       "osLabel": "macOS"
@@ -52,7 +52,7 @@
       "file": "9821ed36_2024-08-29_15-28-33.json",
       "repo": "a7ec123a4112a8995c869daf084f51a7ffee8f94",
       "repoShort": "a7ec123",
-      "timestampMs": 1724916513000,
+      "timestampMs": 1724945313000,
       "benchmarks": 1,
       "deviceLabel": "M1 Pro (10 cores)",
       "osLabel": "macOS"
