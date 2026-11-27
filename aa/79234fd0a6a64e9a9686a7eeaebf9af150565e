@@ -1,0 +1,23 @@
+.github/workflows/deploy-site.yml
+  s_3a89ab1f2b1a99::t_5d307820f2aff9 1-49
+.github/workflows/publish.yml
+  s_3a89ab1f2b1a99::t_f3332ff88face6 1-31
+.github/workflows/surge-preview.yml
+  s_3a89ab1f2b1a99::t_c192dc788c53f5 1-50
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "aa79234fd0a6a64e9a9686a7eeaebf9af150565e",
+  "prompts": {},
+  "sessions": {
+    "s_3a89ab1f2b1a99": {
+      "agent_id": {
+        "tool": "codefuse",
+        "id": "0cb87f5b-d9c8-4b3a-adae-9a97b89fb0c7",
+        "model": "codefuse_official_channel/Kimi-K3.1-Pro:glink_domestic"
+      },
+      "human_author": "逍为 <xiaowei.wzw@antgroup.com>"
+    }
+  }
+}
