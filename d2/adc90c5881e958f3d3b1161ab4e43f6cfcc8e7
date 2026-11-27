@@ -1,0 +1,14 @@
+package.json
+  h_15c7359be8727b 3
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "d2adc90c5881e958f3d3b1161ab4e43f6cfcc8e7",
+  "prompts": {},
+  "humans": {
+    "h_15c7359be8727b": {
+      "author": "逍为 <xiaowei.wzw@antgroup.com>"
+    }
+  }
+}
